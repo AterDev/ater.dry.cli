@@ -1,0 +1,61 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>gt</ToolCommandName>
+    <PackageOutputPath>./nupkg</PackageOutputPath>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+    <FileVersion>0.1.0.0</FileVersion>
+    <Version>2.0.0-beta1.2108.1</Version>
+    <Description>web cli tool</Description>
+    <Authors>NilTor</Authors>
+    <Company>Geethin</Company>
+    <Copyright>Geethin</Copyright>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/niltor/geethin</PackageProjectUrl>
+    <RepositoryType>github</RepositoryType>
+    <RepositoryUrl>https://github.com/niltor/geethin/tree/dev/libs/GT.CLI</RepositoryUrl>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageReleaseNotes>关联模型类的导入</PackageReleaseNotes>
+    <PackageIcon>logo.jpg</PackageIcon>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Droplet.$(MSBuildProjectName.Replace("cli", "CLI"))</RootNamespace>
+    <AssemblyName>$(MSBuildProjectName)</AssemblyName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\**\*.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Templates\NgViews\add\add.component.html.tpl" />
+    <None Remove="Templates\NgViews\edit\edit.component.html.tpl" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.0.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.0.1" />
+    <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.2.3" />
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20371.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="logo.jpg">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+</Project>
