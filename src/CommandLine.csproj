@@ -7,21 +7,27 @@
     <PackageOutputPath>./nupkg</PackageOutputPath>
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
     <FileVersion>0.1.0.0</FileVersion>
-    <Version>2.0.0-beta1.2108.1</Version>
-    <Description>web cli tool</Description>
+    <Version>6.0-beta</Version>
+    <Description>The code generate to save your time.
+define the entity and generate commonly codes</Description>
     <Authors>NilTor</Authors>
-    <Company>Geethin</Company>
-    <Copyright>Geethin</Copyright>
+    <Company>Atersoft</Company>
+    <Copyright>Atersoft</Copyright>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/niltor/geethin</PackageProjectUrl>
-    <RepositoryType>github</RepositoryType>
-    <RepositoryUrl>https://github.com/niltor/geethin/tree/dev/libs/GT.CLI</RepositoryUrl>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>关联模型类的导入</PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/AterDev/cli</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/AterDev/cli.git</RepositoryUrl>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <PackageReleaseNotes></PackageReleaseNotes>
     <PackageIcon>logo.jpg</PackageIcon>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Droplet.$(MSBuildProjectName.Replace("cli", "CLI"))</RootNamespace>
     <AssemblyName>$(MSBuildProjectName)</AssemblyName>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>cli;atersoft;code generate</PackageTags>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -49,6 +55,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Include="logo.jpg">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
