@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>Library</OutputType>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>gt</ToolCommandName>
@@ -55,7 +55,7 @@ define the entity and generate commonly codes</Description>
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\README.md">
+    <None Include="README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
@@ -63,6 +63,10 @@ define the entity and generate commonly codes</Description>
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CodeGenerator\CodeGenerator.csproj" />
   </ItemGroup>
 
   <ItemGroup>

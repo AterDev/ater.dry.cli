@@ -203,9 +203,9 @@ public class NgServiceGenerate : GenerateBase
 /// </summary>
 public class NgServiceFile
 {
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public List<NgServiceFunction> Functions { get; set; }
+    public string? Name { get; set; }
+    public string? Description { get; set; }
+    public List<NgServiceFunction>? Functions { get; set; }
 
     public override string ToString()
     {
@@ -255,31 +255,31 @@ export class {Name}Service extends BaseService {{
 /// </summary>
 public class NgServiceFunction
 {
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public string Method { get; set; }
-    public string ResponseType { get; set; }
+    public string? Name { get; set; }
+    public string? Description { get; set; }
+    public string? Method { get; set; }
+    public string? ResponseType { get; set; }
     /// <summary>
     /// 返回中的引用类型
     /// </summary>
-    public string ResponseRefType { get; set; }
+    public string? ResponseRefType { get; set; }
     public string RequestType { get; set; } = string.Empty;
     /// <summary>
     /// 请求中的引用类型
     /// </summary>
-    public string RequestRefType { get; set; }
+    public string? RequestRefType { get; set; }
     /// <summary>
     /// 参数及类型
     /// </summary>
-    public List<FunctionParams> Params { get; set; }
+    public List<FunctionParams>? Params { get; set; }
     /// <summary>
     /// 相对请求路径
     /// </summary>
-    public string Path { get; set; }
+    public string? Path { get; set; }
     /// <summary>
     /// 标签
     /// </summary>
-    public string Tag { get; set; }
+    public string? Tag { get; set; }
 
     public override string ToString()
     {
@@ -360,9 +360,9 @@ public class NgServiceFunction
 /// </summary>
 public class FunctionParams
 {
-    public string Name { get; set; }
-    public string Type { get; set; }
-    public string Description { get; set; }
+    public string? Name { get; set; }
+    public string? Type { get; set; }
+    public string? Description { get; set; }
     public bool IsRequired { get; set; } = true;
     /// <summary>
     /// 是否路由参数

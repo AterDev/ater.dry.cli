@@ -292,11 +292,11 @@ public class TypescriptGenerate
 
 public class TsProperty
 {
-    public string Name { get; set; }
-    public string Type { get; set; }
+    public string? Name { get; set; }
+    public string? Type { get; set; }
     public string Reference { get; set; } = string.Empty;
     public bool IsNullable { get; set; }
-    public string Comments { get; set; }
+    public string? Comments { get; set; }
 
     public override string ToString()
     {

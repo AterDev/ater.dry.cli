@@ -9,6 +9,7 @@ internal class Program
     {
         var cmdTet = new RootCommands();
         var test = new Test();
+        test.TestEFCoreEntityTypeModel();
         //await cmdTet.GenerateNgAsync("http://localhost:5002/swagger/v1/swagger.json", "./webapp");
         //var projectPath = @"E:\niltor\Incubate\src";
         //var entityPath = System.IO.Path.Combine(projectPath, "Core.Entity", "Account.cs");

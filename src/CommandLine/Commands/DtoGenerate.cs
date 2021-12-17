@@ -162,12 +162,12 @@ public class DtoGenerate : GenerateBase
 
     public class DtoInfo
     {
-        public string Name { get; set; }
-        public string BaseType { get; set; }
-        public List<PropertyInfo> Properties { get; set; }
-        public string Tag { get; set; }
-        public string NamespaceName { get; set; }
-        public string Comment { get; set; }
+        public string? Name { get; set; }
+        public string? BaseType { get; set; }
+        public List<PropertyInfo>? Properties { get; set; }
+        public string? Tag { get; set; }
+        public string? NamespaceName { get; set; }
+        public string? Comment { get; set; }
 
         public override string ToString()
         {

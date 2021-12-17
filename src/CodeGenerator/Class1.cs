@@ -1,7 +1,6 @@
-﻿namespace CodeGenerator
-{
-    public class Class1
-    {
+﻿namespace CodeGenerator;
 
-    }
+public class Class1
+{
+
 }
