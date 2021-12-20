@@ -43,21 +43,6 @@ public class Test
 
     public void TestEFCoreEntityTypeModel()
     {
-        var serviceCollection = new ServiceCollection();
-        var serviceBuilder = new EntityFrameworkRelationalServicesBuilder(serviceCollection);
-        serviceBuilder.TryAddCoreServices();
-
-        var serviceProvider = serviceCollection.BuildServiceProvider();
-        
-        var modelCreationDependencies = serviceProvider.GetRequiredService<ModelCreationDependencies>();
-        var builder = new ModelBuilder(
-             modelCreationDependencies.ConventionSetBuilder.CreateConventionSet(),
-            modelCreationDependencies.ModelDependencies,
-            null);
-
-        builder.Entity<Comments>();
-        var entityType = builder.Model.FindEntityType(typeof(Comments));
-        var content = entityType.FindProperty(nameof(Comments.Content));
 
     }
 }
