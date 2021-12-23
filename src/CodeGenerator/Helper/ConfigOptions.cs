@@ -1,4 +1,4 @@
-﻿namespace Droplet.CommandLine.Common;
+﻿namespace CodeGenerator.Common;
 
 public class ConfigOptions
 {

@@ -1,4 +1,5 @@
-﻿namespace Droplet.CommandLine.Common;
+﻿
+namespace CodeGenerator.Common;
 
 /// <summary>
 /// angular material 表单生成
@@ -28,7 +29,7 @@ public class NgInputBuilder
         {
             return default;
         }
-        string str = "";
+        var str = "";
         switch (Type)
         {
             case "string":

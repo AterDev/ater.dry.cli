@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Droplet.CommandLine.Common;
+namespace CodeGenerator.Common;
 
 public class GenerateBase
 {

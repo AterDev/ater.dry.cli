@@ -12,6 +12,7 @@ public class Blog
     public string? Name { get; set; }
     public string? Content { get; set; }
     List<Comments>? Comments { get; set; }
+    public Status Status { get; set; }
 }
 
 

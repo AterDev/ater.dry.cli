@@ -1,8 +1,9 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Reflection;
 
-namespace Droplet.CommandLine.Common;
+namespace CodeGenerator.Common;
 
 /// <summary>
 /// 类型解析帮助类
@@ -117,8 +118,8 @@ public class ClassParseHelper
                         propertyInfo.MinLength = Convert.ToInt32(minLength.ToString());
                     }
                 }
-                    // TODO:此判断不准确
-                    if (((INamedTypeSymbol)typeInfo.Type).IsGenericType)
+                // TODO:此判断不准确
+                if (((INamedTypeSymbol)typeInfo.Type).IsGenericType)
                 {
                     propertyInfo.IsList = true;
                 }
@@ -160,7 +161,6 @@ public class ClassParseHelper
 
     public List<PropertyInfo> GetPropertyInfos(string dllName, string className)
     {
-
         var help = new CompilationHelper("./", dllName);
         var cls = help.GetClass(className);
         if (cls == null) return default;
@@ -208,8 +208,8 @@ public class ClassParseHelper
                 propertyInfo.IsReference = true;
             }
 
-                // TODO:处理父类
-                return propertyInfo;
+            // TODO:处理父类
+            return propertyInfo;
         }).ToList();
         return properties;
     }

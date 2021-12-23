@@ -1,4 +1,6 @@
-﻿namespace Droplet.CommandLine.Utils;
+﻿using CodeGenerator.Utils;
+
+namespace CodeGenerator.Utils;
 
 public static class StringExtenstion
 {
@@ -15,8 +17,8 @@ public static class StringExtenstion
         }
 
         var builder = new StringBuilder();
-        int upperNumber = 0;
-        for (int i = 0; i < str.Length; i++)
+        var upperNumber = 0;
+        for (var i = 0; i < str.Length; i++)
         {
             var item = str[i];
             // 连续的大写只添加一个-
@@ -50,8 +52,8 @@ public static class StringExtenstion
         {
             return string.Empty;
         }
-        StringBuilder resultBuilder = new StringBuilder();
-        foreach (char c in str)
+        var resultBuilder = new StringBuilder();
+        foreach (var c in str)
         {
             if (!char.IsLetterOrDigit(c))
             {

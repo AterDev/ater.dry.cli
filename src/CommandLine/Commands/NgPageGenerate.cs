@@ -1,4 +1,7 @@
-﻿namespace Droplet.CommandLine.Commands;
+﻿using CodeGenerator.Common;
+using CodeGenerator.Utils;
+
+namespace Droplet.CommandLine.Commands;
 
 /// <summary>
 /// angular 根据模型生成页面

@@ -1,6 +1,7 @@
 ﻿using System.Security.Cryptography;
+using System.Text;
 
-namespace Droplet.CommandLine.Utils;
+namespace CodeGenerator.Utils;
 
 /// <summary>
 /// hash加密
@@ -19,7 +20,7 @@ public class HashCrypto
     }
     public static string BuildSalt()
     {
-        byte[] randomBytes = new byte[128 / 8];
+        var randomBytes = new byte[128 / 8];
         using (var generator = RandomNumberGenerator.Create())
         {
             generator.GetBytes(randomBytes);
@@ -35,8 +36,8 @@ public class HashCrypto
     {
         using var md5 = MD5.Create();
         var data = md5.ComputeHash(Encoding.UTF8.GetBytes(str));
-        StringBuilder sBuilder = new StringBuilder();
-        for (int i = 0; i < data.Length; i++)
+        var sBuilder = new StringBuilder();
+        for (var i = 0; i < data.Length; i++)
         {
             sBuilder.Append(data[i].ToString("x2"));
         }
@@ -51,8 +52,8 @@ public class HashCrypto
     {
         using var md5 = MD5.Create();
         var data = md5.ComputeHash(stream);
-        StringBuilder sBuilder = new StringBuilder();
-        for (int i = 0; i < data.Length; i++)
+        var sBuilder = new StringBuilder();
+        for (var i = 0; i < data.Length; i++)
         {
             sBuilder.Append(data[i].ToString("x2"));
         }
@@ -70,15 +71,15 @@ public class HashCrypto
     /// <returns></returns>
     public static string GetRnd(int length = 4, bool useNum = true, bool useLow = false, bool useUpp = true, bool useSpe = false, string custom = "")
     {
-        byte[] b = new byte[4];
+        var b = new byte[4];
         new RNGCryptoServiceProvider().GetBytes(b);
-        Random r = new Random(BitConverter.ToInt32(b, 0));
+        var r = new Random(BitConverter.ToInt32(b, 0));
         string s = null, str = custom;
         if (useNum) { str += "0123456789"; }
         if (useLow) { str += "abcdefghijklmnopqrstuvwxyz"; }
         if (useUpp) { str += "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; }
         if (useSpe) { str += "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"; }
-        for (int i = 0; i < length; i++)
+        for (var i = 0; i < length; i++)
         {
             s += str.Substring(r.Next(0, str.Length - 1), 1);
         }

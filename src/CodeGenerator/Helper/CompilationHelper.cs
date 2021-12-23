@@ -1,6 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
-
-namespace Droplet.CommandLine.Common;
+﻿
+namespace CodeGenerator.Common;
 
 public class CompilationHelper
 {
@@ -18,7 +17,7 @@ public class CompilationHelper
                     {
                         if (!string.IsNullOrEmpty(ProjectName))
                         {
-                            string fileName = Path.GetFileName(dll);
+                            var fileName = Path.GetFileName(dll);
                             return fileName.ToLower().StartsWith(ProjectName);
                         }
                         else

@@ -1,4 +1,6 @@
-﻿namespace Droplet.CommandLine.Commands;
+﻿using CodeGenerator.Common;
+
+namespace Droplet.CommandLine.Commands;
 
 public class DtoGenerate : GenerateBase
 {
