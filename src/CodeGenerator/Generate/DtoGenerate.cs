@@ -6,19 +6,20 @@ namespace CodeGenerator.Generate;
 /// </summary>
 public class DtoGenerate : GenerateBase
 {
-    /// <summary>
-    /// entity file path
-    /// </summary>
-    public string EntityPath { get; set; }
-    /// <summary>
-    /// dto generate dir path 
-    /// </summary>
-    public string DtoPath { get; set; }
-
-    public DtoGenerate(string entityPath, string dtoPath)
+    public string? EntityContent { get; set; }
+    public string? EntityPath { get; set; }
+    public DtoGenerate(string entityPath)
     {
-        EntityPath = entityPath;
-        DtoPath = dtoPath;
+        if (File.Exists(entityPath))
+        {
+            EntityPath = entityPath;
+            EntityContent = File.ReadAllText(EntityPath);
+        }
+        else
+        {
+            //TODO: 
+            _ = new FileNotFoundException();
+        }
     }
 
     /// <summary>
@@ -27,13 +28,8 @@ public class DtoGenerate : GenerateBase
     /// </summary>
     public void GenerateDtos(bool force = false)
     {
-        if (!File.Exists(EntityPath))
-        {
-            Console.WriteLine(EntityPath + " not found!");
-            return;
-        }
         Console.WriteLine("开始解析实体");
-        var typeHelper = new ClassParseHelper(EntityPath);
+        var typeHelper = new EntityParseHelper(EntityPath);
         var properties = typeHelper.PropertyInfos;
         var className = typeHelper.Name;
         var comment = typeHelper.Comment;
@@ -109,12 +105,12 @@ public class DtoGenerate : GenerateBase
             Properties = referenceProps
         };
         // TODO:可能存在自身到自身的转换
-        addDto.Save(DtoPath, force);
-        updateDto.Save(DtoPath, force);
-        ListDto.Save(DtoPath, force);
-        ItemDto.Save(DtoPath, force);
-        DetailDto.Save(DtoPath, force);
-        FilterDto.Save(DtoPath, force);
+        //addDto.Save(DtoPath, force);
+        //updateDto.Save(DtoPath, force);
+        //ListDto.Save(DtoPath, force);
+        //ItemDto.Save(DtoPath, force);
+        //DetailDto.Save(DtoPath, force);
+        //FilterDto.Save(DtoPath, force);
         Console.WriteLine("生成dto模型完成");
 
         // 添加autoMapper配置
@@ -136,7 +132,7 @@ public class DtoGenerate : GenerateBase
             CreateMap<{entityName}, {entityName}DetailDto>();        
 ";
         // 先判断是否存在配置文件
-        var path = Path.Combine(DtoPath, "AutoMapper");
+        var path = Path.Combine("", "AutoMapper");
         if (!Directory.Exists(path))
         {
             Directory.CreateDirectory(path);

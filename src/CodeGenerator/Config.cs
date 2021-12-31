@@ -3,6 +3,7 @@
 public static class Config
 {
     public static readonly string ConfigPath = "./.gtcli-config.json";
+
     public static string ENTITY_NAMESPACE = "Entity";
     public static string SERVICE_NAMESPACE = "Services";
     public static string WEB_NAMESPACE = "App.Api";

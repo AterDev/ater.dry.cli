@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+using static Humanizer.In;
 using PropertyInfo = CodeGenerator.Models.PropertyInfo;
 
 namespace CodeGenerator.Infrastructure.Helper;
@@ -6,68 +7,89 @@ namespace CodeGenerator.Infrastructure.Helper;
 /// <summary>
 /// 类型解析帮助类
 /// </summary>
-public class ClassParseHelper
+public class EntityParseHelper
 {
     /// <summary>
     /// 类名
     /// </summary>
-    public string Name { get; }
+    public string? Name { get; set; }
     /// <summary>
     /// 命名空间
     /// </summary>
-    public string NamespaceName { get; set; }
+    public string? NamespaceName { get; set; }
+    /// <summary>
+    /// 程序集名称
+    /// </summary>
+    public string? AssemblyName { get; set; }
     /// <summary>
     /// 类注释
     /// </summary>
-    public string Comment { get; set; }
+    public string? Comment { get; set; }
     /// <summary>
     /// 属性
     /// </summary>
-    public List<PropertyInfo> PropertyInfos { get; }
+    public List<PropertyInfo>? PropertyInfos { get; set; }
 
+    protected SyntaxTree? SyntaxTree { get; set; }
 
-    public ClassParseHelper(string filePath)
+    public EntityParseHelper(string filePath)
     {
-        if (File.Exists(filePath))
-        {
-            PropertyInfos = GetPropertyInfos(filePath);
 
-            var content = File.ReadAllText(filePath);
-            var tree = CSharpSyntaxTree.ParseText(content);
-            var root = tree.GetCompilationUnitRoot();
-            // 获取当前类名
-            var classDeclarationSyntax = root.DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
-
-            var trivia = classDeclarationSyntax.GetLeadingTrivia();
-            Comment = trivia.ToString().TrimEnd(' ');
-            var namespaceDeclarationSyntax = root.DescendantNodes().OfType<NamespaceDeclarationSyntax>().FirstOrDefault();
-
-            NamespaceName = namespaceDeclarationSyntax?.Name.ToString();
-            Name = classDeclarationSyntax?.Identifier.ToString();
-        }
-        else
-        {
-            Console.WriteLine("dto file not exist, path:" + filePath);
-        }
     }
 
-    public ClassParseHelper() { }
+    /// <summary>
+    /// 获取程序集名称
+    /// </summary>
+    public string GetAssemblyName(string filePath)
+    {
+        var fileInfo = new FileInfo(filePath);
+        // TODO: 解析csproj --> AssemblyName，如果没有取csproj文件名
+        var projectFile = FindProjectFile(fileInfo.Directory!, fileInfo.Directory!.Root);
+        // TODO: 解析项目文件xml 获取名称
+        // TODO: 无自定义名称则取文件名称
+
+
+        return default;
+    }
+
+    public FileInfo? FindProjectFile(DirectoryInfo dir, DirectoryInfo root)
+    {
+        if (dir.FullName == root.FullName) return default;
+        var file = dir.GetFiles("*.csproj").FirstOrDefault();
+        if (file == null)
+        {
+            return FindProjectFile(dir.Parent!, root);
+        }
+        return file;
+    }
+    public void Parse(string content)
+    {
+        SyntaxTree = CSharpSyntaxTree.ParseText(content);
+        var root = SyntaxTree.GetCompilationUnitRoot();
+        // 获取当前类名
+        var classDeclarationSyntax = root.DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
+        var trivia = classDeclarationSyntax.GetLeadingTrivia();
+        var namespaceDeclarationSyntax = root.DescendantNodes().OfType<NamespaceDeclarationSyntax>().FirstOrDefault();
+        NamespaceName = namespaceDeclarationSyntax?.Name.ToString();
+        Name = classDeclarationSyntax?.Identifier.ToString();
+        Comment = trivia.ToString().TrimEnd(' ');
+
+        PropertyInfos = GetPropertyInfos();
+    }
 
     /// <summary>
     /// /// 获取该类的所有属性
     /// </summary>
     /// <param name="filePath"></param>
     /// <returns></returns>
-    public List<PropertyInfo> GetPropertyInfos(string filePath)
+    public List<PropertyInfo>? GetPropertyInfos()
     {
+        if (SyntaxTree == null) return default;
         var properties = new List<PropertyInfo>();
-        if (!File.Exists(filePath)) return properties;
 
-        var content = File.ReadAllText(filePath);
-        var tree = CSharpSyntaxTree.ParseText(content);
-        var root = tree.GetCompilationUnitRoot();
-        var compilation = CSharpCompilation.Create("tmp", new[] { tree });
-        var semanticModel = compilation.GetSemanticModel(tree);
+        var root = SyntaxTree.GetCompilationUnitRoot();
+        var compilation = CSharpCompilation.Create("tmp", new[] { SyntaxTree });
+        var semanticModel = compilation.GetSemanticModel(SyntaxTree);
         var specialTypes = new[] { "DateTime", "DateTimeOffset", "Guid" };
         properties = root.DescendantNodes().OfType<PropertyDeclarationSyntax>()
             .Select(prop =>
@@ -140,14 +162,7 @@ public class ClassParseHelper
             // 如果找到父类，则添加父类中的属性
             if (!string.IsNullOrEmpty(baseTypeInfo.Type.Name))
             {
-                var dir = new FileInfo(filePath).Directory;
-                // TODO:临时处理，寻找父类方式
-                var parentPath = Path.Combine(dir.FullName, baseTypeInfo.Type.Name + ".cs");
-                if (!File.Exists(parentPath))
-                {
-                    parentPath = Path.Combine(dir.Parent.FullName, "Common", baseTypeInfo.Type.Name + ".cs");
-                }
-                var parentProperties = GetPropertyInfos(parentPath);
+                var parentProperties = GetPropertyInfos();
                 properties.AddRange(parentProperties);
             }
         }

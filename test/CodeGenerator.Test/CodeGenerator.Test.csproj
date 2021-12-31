@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
@@ -27,5 +26,4 @@
   <ItemGroup>
     <Folder Include="Hepler\" />
   </ItemGroup>
-
 </Project>
