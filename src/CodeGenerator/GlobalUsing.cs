@@ -1,9 +1,10 @@
-﻿global using System;
-global using System.Collections.Generic;
-global using System.Linq;
-global using System.Text;
-global using System.Threading.Tasks;
-global using CodeGenerator.Utils;
+﻿global using CodeGenerator.Infrastructure.Helper;
+global using CodeGenerator.Infrastructure.Utils;
+global using CodeGenerator.Models;
 global using Microsoft.CodeAnalysis;
 global using Microsoft.CodeAnalysis.CSharp;
-
+global using System;
+global using System.Collections.Generic;
+global using System.Linq;
+global using System.Reflection;
+global using System.Text;

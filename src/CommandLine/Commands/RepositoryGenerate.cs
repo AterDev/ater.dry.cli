@@ -1,4 +1,4 @@
-﻿using CodeGenerator.Common;
+﻿using CodeGenerator.Infrastructure.Helper;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Droplet.CommandLine.Commands;

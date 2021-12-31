@@ -1,5 +1,4 @@
-﻿
-namespace CodeGenerator.Common;
+﻿namespace CodeGenerator.Infrastructure.Helper;
 
 /// <summary>
 /// angular material 表单生成

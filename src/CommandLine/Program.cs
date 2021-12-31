@@ -8,8 +8,6 @@ internal class Program
     private static async Task<int> Main(string[] args)
     {
         var cmdTet = new RootCommands();
-        var test = new Test();
-        test.TestEFCoreEntityTypeModel();
         //await cmdTet.GenerateNgAsync("http://localhost:5002/swagger/v1/swagger.json", "./webapp");
         //var projectPath = @"E:\niltor\Incubate\src";
         //var entityPath = System.IO.Path.Combine(projectPath, "Core.Entity", "Account.cs");
@@ -22,7 +20,7 @@ internal class Program
         //return 0;
 
         // 读取配置
-        Config.ReadConfigFile();
+        ConfigCommand.ReadConfigFile();
 
         var gtCommand = new RootCommand("geethin commands")
         {
@@ -35,7 +33,7 @@ internal class Program
             Description = "编辑config",
             Handler = CommandHandler.Create(() =>
             {
-                Config.EditConfigFile();
+                ConfigCommand.EditConfigFile();
             })
         });
         configCommand.AddCommand(new Command("init", "初始化config")
@@ -43,7 +41,7 @@ internal class Program
             Description = "初始化config",
             Handler = CommandHandler.Create(async () =>
             {
-                await Config.InitConfigFileAsync();
+                await ConfigCommand.InitConfigFileAsync();
             })
         });
 

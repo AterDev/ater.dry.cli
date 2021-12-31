@@ -1,6 +1,4 @@
-﻿using CodeGenerator.Utils;
-
-namespace CodeGenerator.Utils;
+﻿namespace CodeGenerator.Infrastructure.Utils;
 
 public static class StringExtenstion
 {

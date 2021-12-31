@@ -1,5 +1,4 @@
-﻿using CodeGenerator.Common;
-using CodeGenerator.Utils;
+﻿using CodeGenerator.Infrastructure.Helper;
 using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
 using Path = System.IO.Path;

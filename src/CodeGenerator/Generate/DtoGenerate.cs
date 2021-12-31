@@ -1,10 +1,18 @@
-﻿using CodeGenerator.Common;
+﻿using PropertyInfo = CodeGenerator.Models.PropertyInfo;
 
-namespace Droplet.CommandLine.Commands;
-
+namespace CodeGenerator.Generate;
+/// <summary>
+/// dto generate
+/// </summary>
 public class DtoGenerate : GenerateBase
 {
+    /// <summary>
+    /// entity file path
+    /// </summary>
     public string EntityPath { get; set; }
+    /// <summary>
+    /// dto generate dir path 
+    /// </summary>
     public string DtoPath { get; set; }
 
     public DtoGenerate(string entityPath, string dtoPath)
@@ -12,6 +20,7 @@ public class DtoGenerate : GenerateBase
         EntityPath = entityPath;
         DtoPath = dtoPath;
     }
+
     /// <summary>
     /// 生成dtos
     /// <param name="force">覆盖</param>
@@ -26,8 +35,8 @@ public class DtoGenerate : GenerateBase
         Console.WriteLine("开始解析实体");
         var typeHelper = new ClassParseHelper(EntityPath);
         var properties = typeHelper.PropertyInfos;
-        string className = typeHelper.Name;
-        string comment = typeHelper.Comment;
+        var className = typeHelper.Name;
+        var comment = typeHelper.Comment;
 
         // 创建相关dto文件
         var referenceProps = properties.Where(p => p.IsReference)
@@ -118,7 +127,7 @@ public class DtoGenerate : GenerateBase
     /// <param name="entityName"></param>
     protected void GenerateAutoMapperProfile(string entityName)
     {
-        string code =
+        var code =
 @$"            CreateMap<{entityName}AddDto, {entityName}>();
             CreateMap<{entityName}UpdateDto, {entityName}>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => NotNull(srcMember)));;
@@ -160,53 +169,5 @@ public class DtoGenerate : GenerateBase
         // 写入文件
         File.WriteAllText(mapperFilePath, content, Encoding.UTF8);
         Console.WriteLine("AutoMapper 配置完成");
-    }
-
-    public class DtoInfo
-    {
-        public string? Name { get; set; }
-        public string? BaseType { get; set; }
-        public List<PropertyInfo>? Properties { get; set; }
-        public string? Tag { get; set; }
-        public string? NamespaceName { get; set; }
-        public string? Comment { get; set; }
-
-        public override string ToString()
-        {
-            var propStrings = string.Join(string.Empty, Properties.Select(p => p.ToCsharpLine()).ToArray());
-            var baseType = string.IsNullOrEmpty(BaseType) ? "" : " : " + BaseType;
-            var tpl = $@"using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using {Config.SHARE_NAMESPACE}.Models;
-using {NamespaceName};
-namespace Share.Models
-{{
-    {Comment}
-    public class {Name}{baseType}
-    {{
-{propStrings}    
-    }}
-}}";
-            return tpl;
-        }
-        public void Save(string dir, bool cover)
-        {
-            var path = Path.Combine(dir, Tag);
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
-            var fileName = Path.Combine(path, Name + ".cs");
-            // 不覆盖
-            if (!cover && File.Exists(fileName))
-            {
-                Console.WriteLine("skip dto file:" + fileName);
-                return;
-            }
-            File.WriteAllText(fileName, ToString());
-            Console.WriteLine("Created dto file:" + fileName);
-        }
     }
 }

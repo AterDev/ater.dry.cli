@@ -1,6 +1,4 @@
-﻿
-using CodeGenerator.Utils;
-using Microsoft.OpenApi.Any;
+﻿using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 namespace Droplet.CommandLine.Commands;
 
@@ -66,8 +64,8 @@ public class TypescriptGenerate
             .ToList();
         importsProps.ForEach(ip =>
         {
-                // 引用的导入，自引用不需要导入
-                if (ip != name)
+            // 引用的导入，自引用不需要导入
+            if (ip != name)
             {
                 importString += @$"import {{ {ip} }} from './{ip.ToHyphen()}.model';" + Environment.NewLine;
             }

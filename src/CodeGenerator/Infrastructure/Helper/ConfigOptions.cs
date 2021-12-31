@@ -1,4 +1,4 @@
-﻿namespace CodeGenerator.Common;
+﻿namespace CodeGenerator.Infrastructure.Helper;
 
 public class ConfigOptions
 {

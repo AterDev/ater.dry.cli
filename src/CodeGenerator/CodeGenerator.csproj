@@ -11,8 +11,4 @@
 		<PackageReference Include="Microsoft.OpenApi.Readers" Version="1.2.3" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Infrastructure\" />
-	</ItemGroup>
-
 </Project>

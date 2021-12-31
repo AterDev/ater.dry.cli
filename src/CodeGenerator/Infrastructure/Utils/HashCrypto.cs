@@ -1,7 +1,6 @@
 ﻿using System.Security.Cryptography;
-using System.Text;
 
-namespace CodeGenerator.Utils;
+namespace CodeGenerator.Infrastructure.Utils;
 
 /// <summary>
 /// hash加密

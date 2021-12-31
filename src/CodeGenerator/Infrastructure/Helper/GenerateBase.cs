@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-namespace CodeGenerator.Common;
+﻿namespace CodeGenerator.Infrastructure.Helper;
 
 public class GenerateBase
 {
