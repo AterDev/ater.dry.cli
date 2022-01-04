@@ -45,7 +45,7 @@ public class NgPageGenerate : GenerateBase
         tplContent = tplContent.Replace("{$EntityName}", EntityName)
             .Replace("{$EntityPathName}", EntityName.ToHyphen());
         // 解析属性，并生成相应代码
-        var typeHelper = new ClassParseHelper(Path.Combine(ServicePath, "models", EntityName, EntityName + "AddDto.cs"));
+        var typeHelper = new EntityParseHelper(Path.Combine(ServicePath, "models", EntityName, EntityName + "AddDto.cs"));
         var props = typeHelper.PropertyInfos?.Where(p => !p.IsList && !p.IsReference)?.ToList();
 
         var definedProperties = "";
@@ -95,7 +95,7 @@ public class NgPageGenerate : GenerateBase
         tplContent = tplContent.Replace("{$EntityName}", EntityName)
             .Replace("{$EntityPathName}", EntityName.ToHyphen());
         // 解析属性，并生成相应代码
-        var typeHelper = new ClassParseHelper(Path.Combine(ServicePath, "models", EntityName, EntityName + "UpdateDto.cs"));
+        var typeHelper = new EntityParseHelper(Path.Combine(ServicePath, "models", EntityName, EntityName + "UpdateDto.cs"));
         var props = typeHelper.PropertyInfos?.Where(p => !p.IsList && !p.IsReference)?.ToList();
 
         var definedProperties = "";
@@ -143,7 +143,7 @@ public class NgPageGenerate : GenerateBase
         var tplContent = GetTplContent("NgViews.index.index.component.css.tpl");
         SaveToFile(Path.Combine(Output, "index"), "index.component.css", tplContent);
 
-        var typeHelper = new ClassParseHelper(Path.Combine(ServicePath, "models", EntityName, EntityName + "Dto.cs"));
+        var typeHelper = new EntityParseHelper(Path.Combine(ServicePath, "models", EntityName, EntityName + "Dto.cs"));
         // 需要展示的列
         var columns = typeHelper.PropertyInfos.Where(p => !p.IsList && !p.IsReference)
             .Select(p => p.Name)
@@ -192,7 +192,7 @@ public class NgPageGenerate : GenerateBase
         var tplContent = GetTplContent("NgViews.detail.detail.component.css.tpl");
         SaveToFile(Path.Combine(Output, "detail"), "detail.component.css", tplContent);
 
-        var typeHelper = new ClassParseHelper(Path.Combine(ServicePath, "models", EntityName, EntityName + "Dto.cs"));
+        var typeHelper = new EntityParseHelper(Path.Combine(ServicePath, "models", EntityName, EntityName + "Dto.cs"));
         var props = typeHelper.PropertyInfos?.Where(p => !p.IsList && !p.IsReference)?.ToList();
 
         // html

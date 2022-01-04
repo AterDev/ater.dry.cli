@@ -2,7 +2,7 @@
 
 namespace CodeGenerator.Test.Entity;
 
-public class Blog
+public class Blog : BaseDB
 {
     [Key]
     public Guid Id { get; set; }
@@ -10,6 +10,9 @@ public class Blog
     [StringLength(100)]
     [MinLength(10)]
     public string? Name { get; set; }
+    /// <summary>
+    /// 内容
+    /// </summary>
     public string? Content { get; set; }
     List<Comments>? Comments { get; set; }
     public Status Status { get; set; }

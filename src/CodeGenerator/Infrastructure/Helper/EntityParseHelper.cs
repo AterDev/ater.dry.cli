@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Humanizer.In;
 using PropertyInfo = CodeGenerator.Models.PropertyInfo;
 
@@ -20,7 +21,8 @@ public class EntityParseHelper
     /// <summary>
     /// 程序集名称
     /// </summary>
-    public string? AssemblyName { get; set; }
+    public string AssemblyName { get; set; }
+    public FileInfo ProjectFile { get; set; }
     /// <summary>
     /// 类注释
     /// </summary>
@@ -34,7 +36,8 @@ public class EntityParseHelper
 
     public EntityParseHelper(string filePath)
     {
-
+        AssemblyName = GetAssemblyName(filePath);
+        Parse(File.ReadAllText(filePath));
     }
 
     /// <summary>
@@ -43,25 +46,12 @@ public class EntityParseHelper
     public string GetAssemblyName(string filePath)
     {
         var fileInfo = new FileInfo(filePath);
-        // TODO: 解析csproj --> AssemblyName，如果没有取csproj文件名
-        var projectFile = FindProjectFile(fileInfo.Directory!, fileInfo.Directory!.Root);
-        // TODO: 解析项目文件xml 获取名称
-        // TODO: 无自定义名称则取文件名称
-
-
-        return default;
+        var projectFile = AssemblyHelper.FindProjectFile(fileInfo.Directory!, fileInfo.Directory!.Root);
+        if (projectFile == null) throw new ArgumentException("can't find project file");
+        ProjectFile = projectFile;
+        return AssemblyHelper.GetAssemblyName(ProjectFile);
     }
 
-    public FileInfo? FindProjectFile(DirectoryInfo dir, DirectoryInfo root)
-    {
-        if (dir.FullName == root.FullName) return default;
-        var file = dir.GetFiles("*.csproj").FirstOrDefault();
-        if (file == null)
-        {
-            return FindProjectFile(dir.Parent!, root);
-        }
-        return file;
-    }
     public void Parse(string content)
     {
         SyntaxTree = CSharpSyntaxTree.ParseText(content);
@@ -78,7 +68,7 @@ public class EntityParseHelper
     }
 
     /// <summary>
-    /// /// 获取该类的所有属性
+    /// 获取该类的所有属性
     /// </summary>
     /// <param name="filePath"></param>
     /// <returns></returns>
@@ -151,7 +141,6 @@ public class EntityParseHelper
             }).ToList();
         // 获取当前类名
         var classDeclarationSyntax = root.DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
-
         // 继承的类名
         var baseList = classDeclarationSyntax.BaseList;
         if (baseList != null)
@@ -162,8 +151,8 @@ public class EntityParseHelper
             // 如果找到父类，则添加父类中的属性
             if (!string.IsNullOrEmpty(baseTypeInfo.Type.Name))
             {
-                var parentProperties = GetPropertyInfos();
-                properties.AddRange(parentProperties);
+                //var parentProperties = GetPropertyInfos();
+                //properties.AddRange(parentProperties);
             }
         }
         return properties.GroupBy(p => p.Name)
@@ -172,21 +161,29 @@ public class EntityParseHelper
     }
 
 
-    public List<PropertyInfo> GetPropertyInfos(string dllName, string className)
+    public List<PropertyInfo> GetPropertyInfos(string className)
     {
-        var help = new CompilationHelper("./", dllName);
+        var help = new CompilationHelper();
+        var filePath = AssemblyHelper.FindFileInProject(ProjectFile!.FullName, className);
+        help.AddDllReferences("./", AssemblyName);
+        if (File.Exists(filePath))
+        {
+            help.AddSyntaxTree(File.ReadAllText(filePath));
+        }
         var cls = help.GetClass(className);
         if (cls == null) return default;
-
         var members = cls.GetMembers()
                          .Where(m => m.Kind == SymbolKind.Property)
                          .Select(m => m as IPropertySymbol)
                          .ToList();
+
+        var baseClass = cls.BaseType.Name;
         var props = members.Select(m => new
         {
             m.Type,
             ItemType = (m.Type as INamedTypeSymbol).TypeArguments.FirstOrDefault()?.Name,
             m.Name,
+            Attritutes = m.GetAttributes()
         }).ToList();
 
         var properties = new List<PropertyInfo>();
@@ -195,6 +192,33 @@ public class EntityParseHelper
         {
             var type = p.Type.Name;
             var propertyInfo = new PropertyInfo(type, p.Name);
+            var attributes = p.Attritutes;
+            if (attributes != null)
+            {
+
+                foreach (var attr in attributes)
+                {
+
+                    if (attr.AttributeConstructor != null)
+                    {
+                        var constructorParams = attr.AttributeConstructor.Parameters;
+                        var argumentNames = constructorParams.Select(x => x.Name).ToArray();
+                        var allArguments = attr.ConstructorArguments
+                            // For unnamed args, we get the name from the array we just made
+                            .Select((info, index) => new KeyValuePair<string, TypedConstant>(argumentNames[index], info))
+                            // Then we use name + value from the named values
+                            .Union(attr.NamedArguments.Select(x => new KeyValuePair<string, TypedConstant>(x.Key, x.Value)))
+                            .Distinct();
+                    }
+
+
+                    var argu = attr.ConstructorArguments
+                        .Select(s => new { s.Value })
+                        .ToList();
+
+                    Console.WriteLine();
+                }
+            }
 
             if (type.Equals("decimal"))
             {

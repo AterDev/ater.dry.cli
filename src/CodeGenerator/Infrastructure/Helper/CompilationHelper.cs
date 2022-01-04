@@ -2,30 +2,36 @@
 
 public class CompilationHelper
 {
-    public string ProjectPath { get; }
-    public string ProjectName { get; }
+    public CSharpCompilation Compilation { get; set; }
 
-    public CSharpCompilation Compilation { get; }
-    public CompilationHelper(string path, string projectName = "")
+    public SemanticModel SemanticModel { get; set; }
+    public CompilationHelper()
     {
-        ProjectPath = path;
-        ProjectName = projectName?.ToLower() ?? null;
+        Compilation = CSharpCompilation.Create("tmp");
+    }
+    public void AddDllReferences(string path, string? dllFilter)
+    {
+        var dlls = Directory.EnumerateFiles(path, "*.dll", SearchOption.AllDirectories)
+                  .Where(dll =>
+                  {
+                      if (!string.IsNullOrEmpty(dllFilter))
+                      {
+                          var fileName = Path.GetFileName(dll);
+                          return fileName.ToLower().StartsWith(dllFilter);
+                      }
+                      else
+                      {
+                          return true;
+                      }
+                  }).ToList();
+        Compilation.AddReferences(dlls.Select(dll => MetadataReference.CreateFromFile(dll)));
+    }
 
-        var dlls = Directory.EnumerateFiles(ProjectPath, "*.dll", SearchOption.AllDirectories)
-                    .Where(dll =>
-                    {
-                        if (!string.IsNullOrEmpty(ProjectName))
-                        {
-                            var fileName = Path.GetFileName(dll);
-                            return fileName.ToLower().StartsWith(ProjectName);
-                        }
-                        else
-                        {
-                            return true;
-                        }
-                    }).ToList();
-        Compilation = CSharpCompilation.Create("tmp")
-            .AddReferences(dlls.Select(dll => MetadataReference.CreateFromFile(dll)));
+    public void AddSyntaxTree(string content)
+    {
+        var syntaxTree = CSharpSyntaxTree.ParseText(content);
+        Compilation.AddSyntaxTrees(syntaxTree);
+        SemanticModel = Compilation.GetSemanticModel(syntaxTree);
     }
 
     /// <summary>
@@ -37,7 +43,6 @@ public class CompilationHelper
         var namespaces = Compilation.GlobalNamespace.GetNamespaceMembers();
         return GetNamespacesClasses(namespaces);
     }
-
 
     public INamedTypeSymbol GetClass(string name)
     {

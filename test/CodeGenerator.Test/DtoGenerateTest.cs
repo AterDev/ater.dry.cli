@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CodeGenerator.Infrastructure.Helper;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,24 +12,23 @@ public class DtoGenerateTest
     [Fact]
     public void Should_find_project_file()
     {
-        var filePath = @"C:\self\cli\test\CodeGenerator.Test\Entity\Comments.cs";
-        var fileInfo = new FileInfo(filePath);
-        var root = fileInfo.Directory.Root;
-        var dir = fileInfo.Directory;
+        var dir = new DirectoryInfo(Environment.CurrentDirectory);
+        var root = dir.Root;
+        var projectFile = AssemblyHelper.FindProjectFile(dir, root);
+        var name = AssemblyHelper.GetAssemblyName(projectFile);
 
-        var projectFile = Search(dir, root);
+        Assert.Equal("CodeGenerator.Test.csproj", projectFile.Name);
+        Assert.Equal("CodeGenerator.Test", name);
+    }
 
-        Console.WriteLine(projectFile);
-        string? Search(DirectoryInfo dir, DirectoryInfo root)
-        {
-            if (dir.FullName == root.FullName) return default;
-            var file = dir.GetFiles("*.csproj").FirstOrDefault();
-            if (file == null)
-            {
-                return Search(dir.Parent, root);
-            }
-            return file.Name;
-        }
+    [Fact]
+    public void Shoud_parse_entity_properties()
+    {
+        var filePath = @"C:\self\cli\test\CodeGenerator.Test\Entity\Blog.cs";
+        var entityHelper = new EntityParseHelper(filePath);
+
+        entityHelper.GetPropertyInfos("Blog");
+        Console.WriteLine();
     }
 
 }
