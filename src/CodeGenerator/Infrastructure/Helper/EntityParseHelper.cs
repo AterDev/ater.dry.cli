@@ -164,8 +164,8 @@ public class EntityParseHelper
     public List<PropertyInfo> GetPropertyInfos(string className)
     {
         var help = new CompilationHelper();
-        var filePath = AssemblyHelper.FindFileInProject(ProjectFile!.FullName, className);
-        help.AddDllReferences("./", AssemblyName);
+        var filePath = AssemblyHelper.FindFileInProject(ProjectFile!.FullName, className + ".cs");
+        //help.AddDllReferences("./", AssemblyName);
         if (File.Exists(filePath))
         {
             help.AddSyntaxTree(File.ReadAllText(filePath));

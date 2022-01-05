@@ -17,7 +17,7 @@ public class CompilationHelper
                       if (!string.IsNullOrEmpty(dllFilter))
                       {
                           var fileName = Path.GetFileName(dll);
-                          return fileName.ToLower().StartsWith(dllFilter);
+                          return fileName.ToLower().StartsWith(dllFilter.ToLower());
                       }
                       else
                       {
@@ -30,7 +30,7 @@ public class CompilationHelper
     public void AddSyntaxTree(string content)
     {
         var syntaxTree = CSharpSyntaxTree.ParseText(content);
-        Compilation.AddSyntaxTrees(syntaxTree);
+        Compilation = Compilation.AddSyntaxTrees(syntaxTree);
         SemanticModel = Compilation.GetSemanticModel(syntaxTree);
     }
 

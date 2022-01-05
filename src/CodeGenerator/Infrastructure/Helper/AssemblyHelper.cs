@@ -30,7 +30,7 @@ public class AssemblyHelper
     /// <returns>the search file path,return null if not found </returns>
     public static string? FindFileInProject(string projectFilePath, string searchFileName)
     {
-        var dir = new DirectoryInfo(projectFilePath);
+        var dir = new DirectoryInfo(Path.GetDirectoryName(projectFilePath));
         var files = Directory.GetFiles(dir.FullName, searchFileName, SearchOption.AllDirectories);
         if (files != null)
         {
