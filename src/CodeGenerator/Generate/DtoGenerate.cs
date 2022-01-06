@@ -35,7 +35,7 @@ public class DtoGenerate : GenerateBase
         var comment = typeHelper.Comment;
 
         // 创建相关dto文件
-        var referenceProps = properties.Where(p => p.IsReference)
+        var referenceProps = properties.Where(p => p.IsNavigation)
                 .Select(s => new PropertyInfo("Guid?", s.Name + "Id"))
                 .ToList();
         var addDto = new DtoInfo
@@ -48,7 +48,7 @@ public class DtoGenerate : GenerateBase
                 && p.Name != "CreatedTime"
                 && p.Name != "UpdatedTime"
                 && !p.IsList
-                && !p.IsReference)
+                && !p.IsNavigation)
             .ToList()
         };
         foreach (var item in referenceProps)
@@ -68,7 +68,7 @@ public class DtoGenerate : GenerateBase
                 && p.Name != "CreatedTime"
                 && p.Name != "UpdatedTime"
                 && !p.IsList
-                && !p.IsReference).ToList()
+                && !p.IsNavigation).ToList()
         };
         // 列表项dto
         var ListDto = new DtoInfo
@@ -85,7 +85,7 @@ public class DtoGenerate : GenerateBase
             NamespaceName = typeHelper.NamespaceName,
             Comment = comment,
             Tag = className,
-            Properties = properties.Where(p => !p.IsList && p.Name != "UpdatedTime" && !p.IsReference).ToList()
+            Properties = properties.Where(p => !p.IsList && p.Name != "UpdatedTime" && !p.IsNavigation).ToList()
         };
         var DetailDto = new DtoInfo
         {

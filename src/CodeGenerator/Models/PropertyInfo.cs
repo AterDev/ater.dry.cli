@@ -5,18 +5,29 @@ public class PropertyInfo
 {
     public string Type { get; set; }
     public string Name { get; set; }
-    public string DisplayName { get; set; }
+    public string? DisplayName { get; set; }
     /// <summary>
     /// 是否是数组
     /// </summary>
     public bool IsList { get; set; } = false;
     /// <summary>
-    /// 是否为引用类型
+    /// 是否为导航属性
     /// </summary>
-    public bool IsReference { get; set; } = false;
-    public string AttributeText { get; set; }
-    public string Comments { get; set; }
+    public bool IsNavigation { get; set; } = false;
+    /// <summary>
+    /// 导航属性名称
+    /// </summary>
+    public string? NavigationName { get; set; }
+    public string? AttributeText { get; set; }
+    public string? Comments { get; set; }
+    /// <summary>
+    /// 是否必须
+    /// </summary>
     public bool IsRequired { get; set; } = false;
+    /// <summary>
+    /// 可空？
+    /// </summary>
+    public bool IsNullable { get; set; } = false;
     public int? MinLength { get; set; }
     public int? MaxLength { get; set; }
     public bool IsDecimal { get; set; } = false;
@@ -44,7 +55,7 @@ public class PropertyInfo
         }
         var content = @$"        public {Type} {Name} {{ get; set; }}";
         // 如果是引用对象
-        if (IsReference || Name.ToLower().Contains("password"))
+        if (IsNavigation || Name.ToLower().Contains("password"))
         {
             content = @$"        // public {Type}Dto {Name} {{ get; set; }}";
         }

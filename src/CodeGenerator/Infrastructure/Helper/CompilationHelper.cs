@@ -1,15 +1,19 @@
-﻿namespace CodeGenerator.Infrastructure.Helper;
+﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis;
+
+namespace CodeGenerator.Infrastructure.Helper;
 
 public class CompilationHelper
 {
     public CSharpCompilation Compilation { get; set; }
 
     public SemanticModel SemanticModel { get; set; }
+    public ITypeSymbol? ClassSymbol { get; set; }
     public CompilationHelper()
     {
         Compilation = CSharpCompilation.Create("tmp");
     }
-    public void AddDllReferences(string path, string? dllFilter)
+    public void AddDllReferences(string path, string? dllFilter = null)
     {
         var dlls = Directory.EnumerateFiles(path, "*.dll", SearchOption.AllDirectories)
                   .Where(dll =>
@@ -32,6 +36,8 @@ public class CompilationHelper
         var syntaxTree = CSharpSyntaxTree.ParseText(content);
         Compilation = Compilation.AddSyntaxTrees(syntaxTree);
         SemanticModel = Compilation.GetSemanticModel(syntaxTree);
+        var classNode = syntaxTree.GetCompilationUnitRoot().DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
+        ClassSymbol = SemanticModel.GetDeclaredSymbol(classNode);
     }
 
     /// <summary>

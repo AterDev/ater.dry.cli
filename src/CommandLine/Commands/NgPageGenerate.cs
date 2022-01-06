@@ -46,7 +46,7 @@ public class NgPageGenerate : GenerateBase
             .Replace("{$EntityPathName}", EntityName.ToHyphen());
         // 解析属性，并生成相应代码
         var typeHelper = new EntityParseHelper(Path.Combine(ServicePath, "models", EntityName, EntityName + "AddDto.cs"));
-        var props = typeHelper.PropertyInfos?.Where(p => !p.IsList && !p.IsReference)?.ToList();
+        var props = typeHelper.PropertyInfos?.Where(p => !p.IsList && !p.IsNavigation)?.ToList();
 
         var definedProperties = "";
         var definedFormControls = "";
@@ -96,7 +96,7 @@ public class NgPageGenerate : GenerateBase
             .Replace("{$EntityPathName}", EntityName.ToHyphen());
         // 解析属性，并生成相应代码
         var typeHelper = new EntityParseHelper(Path.Combine(ServicePath, "models", EntityName, EntityName + "UpdateDto.cs"));
-        var props = typeHelper.PropertyInfos?.Where(p => !p.IsList && !p.IsReference)?.ToList();
+        var props = typeHelper.PropertyInfos?.Where(p => !p.IsList && !p.IsNavigation)?.ToList();
 
         var definedProperties = "";
         var definedFormControls = "";
@@ -145,7 +145,7 @@ public class NgPageGenerate : GenerateBase
 
         var typeHelper = new EntityParseHelper(Path.Combine(ServicePath, "models", EntityName, EntityName + "Dto.cs"));
         // 需要展示的列
-        var columns = typeHelper.PropertyInfos.Where(p => !p.IsList && !p.IsReference)
+        var columns = typeHelper.PropertyInfos.Where(p => !p.IsList && !p.IsNavigation)
             .Select(p => p.Name)
             .Skip(0).Take(3)
             .ToList();
@@ -193,7 +193,7 @@ public class NgPageGenerate : GenerateBase
         SaveToFile(Path.Combine(Output, "detail"), "detail.component.css", tplContent);
 
         var typeHelper = new EntityParseHelper(Path.Combine(ServicePath, "models", EntityName, EntityName + "Dto.cs"));
-        var props = typeHelper.PropertyInfos?.Where(p => !p.IsList && !p.IsReference)?.ToList();
+        var props = typeHelper.PropertyInfos?.Where(p => !p.IsList && !p.IsNavigation)?.ToList();
 
         // html
         tplContent = GetTplContent("NgViews.detail.detail.component.html.tpl");

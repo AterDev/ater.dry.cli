@@ -23,7 +23,7 @@ public class AssemblyHelper
 
 
     /// <summary>
-    /// 寻找项目文件
+    /// 在项目中寻找文件
     /// </summary>
     /// <param name="projectFilePath"></param>
     /// <param name="searchFileName"></param>

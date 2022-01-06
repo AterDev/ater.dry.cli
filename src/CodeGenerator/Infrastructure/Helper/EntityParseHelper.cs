@@ -1,5 +1,7 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using CodeGenerator.Models;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Reflection;
 using static Humanizer.In;
 using PropertyInfo = CodeGenerator.Models.PropertyInfo;
 
@@ -31,13 +33,20 @@ public class EntityParseHelper
     /// 属性
     /// </summary>
     public List<PropertyInfo>? PropertyInfos { get; set; }
-
-    protected SyntaxTree? SyntaxTree { get; set; }
+    public CSharpCompilation Compilation { get; set; }
+    public SemanticModel? SemanticModel { get; set; }
+    protected SyntaxTree SyntaxTree { get; set; }
+    public IEnumerable<SyntaxNode> RootNodes { get; set; }
 
     public EntityParseHelper(string filePath)
     {
         AssemblyName = GetAssemblyName(filePath);
-        Parse(File.ReadAllText(filePath));
+        if (!File.Exists(filePath)) throw new FileNotFoundException(filePath);
+        var content = File.ReadAllText(filePath, Encoding.UTF8);
+        SyntaxTree = CSharpSyntaxTree.ParseText(content);
+        Compilation = CSharpCompilation.Create("tmp", new[] { SyntaxTree });
+        SemanticModel = Compilation.GetSemanticModel(SyntaxTree);
+        RootNodes = SyntaxTree.GetCompilationUnitRoot().DescendantNodes();
     }
 
     /// <summary>
@@ -52,18 +61,16 @@ public class EntityParseHelper
         return AssemblyHelper.GetAssemblyName(ProjectFile);
     }
 
-    public void Parse(string content)
+    public void Parse()
     {
-        SyntaxTree = CSharpSyntaxTree.ParseText(content);
         var root = SyntaxTree.GetCompilationUnitRoot();
         // 获取当前类名
-        var classDeclarationSyntax = root.DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
+        var classDeclarationSyntax = RootNodes.OfType<ClassDeclarationSyntax>().FirstOrDefault();
         var trivia = classDeclarationSyntax.GetLeadingTrivia();
-        var namespaceDeclarationSyntax = root.DescendantNodes().OfType<NamespaceDeclarationSyntax>().FirstOrDefault();
+        var namespaceDeclarationSyntax = RootNodes.OfType<NamespaceDeclarationSyntax>().FirstOrDefault();
         NamespaceName = namespaceDeclarationSyntax?.Name.ToString();
         Name = classDeclarationSyntax?.Identifier.ToString();
         Comment = trivia.ToString().TrimEnd(' ');
-
         PropertyInfos = GetPropertyInfos();
     }
 
@@ -72,183 +79,168 @@ public class EntityParseHelper
     /// </summary>
     /// <param name="filePath"></param>
     /// <returns></returns>
-    public List<PropertyInfo>? GetPropertyInfos()
+    public List<PropertyInfo>? GetPropertyInfos(string? parentClassName = null)
     {
-        if (SyntaxTree == null) return default;
         var properties = new List<PropertyInfo>();
-
         var root = SyntaxTree.GetCompilationUnitRoot();
-        var compilation = CSharpCompilation.Create("tmp", new[] { SyntaxTree });
-        var semanticModel = compilation.GetSemanticModel(SyntaxTree);
-        var specialTypes = new[] { "DateTime", "DateTimeOffset", "Guid" };
-        properties = root.DescendantNodes().OfType<PropertyDeclarationSyntax>()
-            .Select(prop =>
-            {
-                var trivia = prop.GetLeadingTrivia();
-                var typeInfo = semanticModel.GetTypeInfo(prop.Type);
-                var metadataName = typeInfo.Type.MetadataName.ToString();
-
-                var type = prop.Type.ToString();
-                var name = prop.Identifier.ToString();
-
-                var attributeListSyntax = prop.AttributeLists
-                    .Where(a => a.Attributes.Any(at => at.Name.ToString() != "Column"))
-                    .Where(a => !a.ToString().Contains("Column"))
-                    .ToList();
-
-                var propertyInfo = new PropertyInfo(type, name)
-                {
-                    AttributeText = string.Join("\r\n",
-                        attributeListSyntax.Select(a => a.ToString())),
-                    Comments = trivia.ToString().TrimEnd(' '),
-                };
-                if (type.Equals("decimal"))
-                {
-                    propertyInfo.IsDecimal = true;
-                }
-                if (prop.Type.IsNotNull)
-                {
-                    propertyInfo.IsRequired = true;
-                }
-                var attributes = prop.DescendantNodes().OfType<AttributeSyntax>().ToList();
-                if (attributes != null && attributes.Count > 0)
-                {
-                    var maxLength = attributes.Where(a => a.Name.ToString().Equals("MaxLength"))
-                        .Select(a => a.ArgumentList.Arguments.FirstOrDefault())?
-                        .FirstOrDefault();
-                    var minLength = attributes.Where(a => a.Name.ToString().Equals("MinLength"))
-                        .Select(a => a.ArgumentList.Arguments.FirstOrDefault())?
-                        .FirstOrDefault();
-                    if (maxLength != null)
-                    {
-                        propertyInfo.MaxLength = Convert.ToInt32(maxLength.ToString());
-                    }
-                    if (minLength != null)
-                    {
-                        propertyInfo.MinLength = Convert.ToInt32(minLength.ToString());
-                    }
-                }
-                // TODO:此判断不准确
-                if (((INamedTypeSymbol)typeInfo.Type).IsGenericType)
-                {
-                    propertyInfo.IsList = true;
-                }
-                else if (typeInfo.Type.OriginalDefinition.ToString() == metadataName && !specialTypes.Contains(metadataName))
-                {
-                    propertyInfo.IsReference = true;
-                }
-                return propertyInfo;
-            }).ToList();
-        // 获取当前类名
-        var classDeclarationSyntax = root.DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
-        // 继承的类名
-        var baseList = classDeclarationSyntax.BaseList;
-        if (baseList != null)
+        var propertySyntax = root.DescendantNodes().OfType<PropertyDeclarationSyntax>();
+        // 如果指定父类名称
+        if (parentClassName != null)
         {
-            var baseType = baseList.DescendantNodes().OfType<SimpleBaseTypeSyntax>()
-                .FirstOrDefault(node => !node.ToFullString().StartsWith("I"))?.Type;
-            var baseTypeInfo = semanticModel.GetTypeInfo(baseType);
-            // 如果找到父类，则添加父类中的属性
-            if (!string.IsNullOrEmpty(baseTypeInfo.Type.Name))
-            {
-                //var parentProperties = GetPropertyInfos();
-                //properties.AddRange(parentProperties);
-            }
+            var filePath = AssemblyHelper.FindFileInProject(ProjectFile.FullName, parentClassName + ".cs");
+            var entity = new EntityParseHelper(filePath);
+            return entity.GetPropertyInfos();
         }
+        foreach (var prop in propertySyntax)
+        {
+            // type and name
+            var propertyInfo = ParsePropertyType(prop);
+            // attribute and comments text
+            propertyInfo.AttributeText = GetAttributeText(prop);
+            propertyInfo.Comments = GetComment(prop);
+            // attributes
+            ParsePropertyAttributes(prop, propertyInfo);
+
+            properties.Add(propertyInfo);
+        }
+        var parentClass = GetParentClassName();
+        if (parentClass != null)
+        {
+            var parentProperties = GetPropertyInfos(parentClass.FirstOrDefault());
+            if (parentProperties != null)
+                properties.AddRange(parentProperties);
+        }
+
         return properties.GroupBy(p => p.Name)
-            .Select(s => s.FirstOrDefault())
-            .ToList();
+             .Select(s => s.FirstOrDefault()!)
+             .ToList();
     }
 
-
-    public List<PropertyInfo> GetPropertyInfos(string className)
+    /// <summary>
+    /// 获取属性注释内容
+    /// </summary>
+    /// <returns></returns>
+    protected string GetComment(PropertyDeclarationSyntax syntax)
     {
-        var help = new CompilationHelper();
-        var filePath = AssemblyHelper.FindFileInProject(ProjectFile!.FullName, className + ".cs");
-        //help.AddDllReferences("./", AssemblyName);
-        if (File.Exists(filePath))
+        var trivia = syntax.GetLeadingTrivia();
+        return trivia.ToString().TrimEnd(' ');
+    }
+    /// <summary>
+    /// 获取属性特性文本内容
+    /// </summary>
+    /// <returns></returns>
+    protected string GetAttributeText(PropertyDeclarationSyntax syntax)
+    {
+        var attributeListSyntax = syntax.AttributeLists
+             .Where(a => a.Attributes.Any(attr => attr.Name.ToString() != "Column"))
+             .Where(a => !a.ToString().Contains("Column"))
+             .ToList();
+        return string.Join("\r\n", attributeListSyntax.Select(a => a.ToString()));
+
+    }
+
+    /// <summary>
+    /// 对属性的类型进行解析
+    /// </summary>
+    /// <param name="syntax"></param>
+    /// <param name="propertyInfo"></param>
+    protected PropertyInfo ParsePropertyType(PropertyDeclarationSyntax syntax)
+    {
+        var specialTypes = new[] { "DateTime", "DateTimeOffset", "Guid" };
+        var listTypes = new[] { "IList", "List", "ICollection", "IEnumerable" };
+        var type = syntax.Type.ToString();
+        var name = syntax.Identifier.ToString();
+        var typeInfo = SemanticModel.GetTypeInfo(syntax.Type);
+        var propertyInfo = new PropertyInfo(type, name);
+        // 移除?
+        if (type.EndsWith("?"))
         {
-            help.AddSyntaxTree(File.ReadAllText(filePath));
+            propertyInfo.Type = type[^1..];
+            propertyInfo.IsNullable = true;
         }
-        var cls = help.GetClass(className);
-        if (cls == null) return default;
-        var members = cls.GetMembers()
-                         .Where(m => m.Kind == SymbolKind.Property)
-                         .Select(m => m as IPropertySymbol)
-                         .ToList();
-
-        var baseClass = cls.BaseType.Name;
-        var props = members.Select(m => new
+        if (typeInfo.Type!.Name.Equals("Nullable"))
         {
-            m.Type,
-            ItemType = (m.Type as INamedTypeSymbol).TypeArguments.FirstOrDefault()?.Name,
-            m.Name,
-            Attritutes = m.GetAttributes()
-        }).ToList();
-
-        var properties = new List<PropertyInfo>();
-
-        properties = props.Select(p =>
+            propertyInfo.IsNullable = true;
+        }
+        if (propertyInfo.Type.StartsWith("decimal"))
         {
-            var type = p.Type.Name;
-            var propertyInfo = new PropertyInfo(type, p.Name);
-            var attributes = p.Attritutes;
-            if (attributes != null)
+            propertyInfo.IsDecimal = true;
+        }
+
+        propertyInfo.IsList = true;
+
+
+        // TODO:是否为列表，是否为自定义类型
+        var metadataName = typeInfo.Type.MetadataName.ToString();
+        if (typeInfo.Type.OriginalDefinition.ToString() == metadataName && !specialTypes.Contains(metadataName))
+        {
+            propertyInfo.IsNavigation = true;
+        }
+        return propertyInfo;
+    }
+    /// <summary>
+    /// 解析属性特性
+    /// </summary>
+    /// <param name="property"></param>
+    protected void ParsePropertyAttributes(PropertyDeclarationSyntax syntax, PropertyInfo propertyInfo)
+    {
+        var attributes = syntax.DescendantNodes().OfType<AttributeSyntax>().ToList();
+        if (attributes != null && attributes.Count > 0)
+        {
+            var maxLength = GetAttributeArguments(attributes, "MaxLength")?
+                .FirstOrDefault();
+            var minLength = GetAttributeArguments(attributes, "MinLength")?
+                .FirstOrDefault();
+            var stringLength = GetAttributeArguments(attributes, "StringLength")?
+                .FirstOrDefault();
+            var required = GetAttributeArguments(attributes, "Required")?
+                .FirstOrDefault();
+            if (required != null) propertyInfo.IsRequired = true;
+            if (maxLength != null)
             {
-
-                foreach (var attr in attributes)
-                {
-
-                    if (attr.AttributeConstructor != null)
-                    {
-                        var constructorParams = attr.AttributeConstructor.Parameters;
-                        var argumentNames = constructorParams.Select(x => x.Name).ToArray();
-                        var allArguments = attr.ConstructorArguments
-                            // For unnamed args, we get the name from the array we just made
-                            .Select((info, index) => new KeyValuePair<string, TypedConstant>(argumentNames[index], info))
-                            // Then we use name + value from the named values
-                            .Union(attr.NamedArguments.Select(x => new KeyValuePair<string, TypedConstant>(x.Key, x.Value)))
-                            .Distinct();
-                    }
-
-
-                    var argu = attr.ConstructorArguments
-                        .Select(s => new { s.Value })
-                        .ToList();
-
-                    Console.WriteLine();
-                }
+                propertyInfo.MaxLength = Convert.ToInt32(maxLength.ToString());
             }
-
-            if (type.Equals("decimal"))
+            if (minLength != null)
             {
-                propertyInfo.IsDecimal = true;
+                propertyInfo.MinLength = Convert.ToInt32(minLength.ToString());
             }
+            if (stringLength != null)
+            {
+                propertyInfo.MaxLength = Convert.ToInt32(stringLength.ToString());
+            }
+        }
+    }
+    /// <summary>
+    /// 获取特性中的参数内容
+    /// </summary>
+    /// <param name="syntax"></param>
+    /// <param name="attributeName"></param>
+    /// <returns></returns>
+    protected IEnumerable<AttributeArgumentSyntax>? GetAttributeArguments(List<AttributeSyntax> syntax, string attributeName)
+    {
+        var theSyntax = syntax.Where(s => s.Name.ToString().ToLower().Equals(attributeName.ToLower()))
+            .FirstOrDefault();
 
-            if (type.Equals("Nullable"))
-            {
-                propertyInfo.IsRequired = false;
-                propertyInfo.Type = (p.Type as INamedTypeSymbol).TypeArguments.FirstOrDefault()?.Name;
-            }
-            if (type.Equals("List"))
-            {
-                propertyInfo.IsList = true;
-                if (!string.IsNullOrEmpty(p.ItemType))
-                {
-                    propertyInfo.Type = p.ItemType;
-                }
-            }
-            if (p.Type.SpecialType == SpecialType.None
-                && p.Type.Name != "Nullable"
-                && p.Type.Name != "List")
-            {
-                propertyInfo.IsReference = true;
-            }
-
-            // TODO:处理父类
-            return propertyInfo;
-        }).ToList();
-        return properties;
+        if (theSyntax != null)
+        {
+            return theSyntax.ArgumentList?.Arguments;
+        }
+        return default;
+    }
+    /// <summary>
+    /// 获取父类名称
+    /// </summary>
+    /// <returns></returns>
+    protected List<string>? GetParentClassName()
+    {
+        // 获取当前类名
+        var classDeclarationSyntax = RootNodes.OfType<ClassDeclarationSyntax>().FirstOrDefault();
+        // 继承的类名
+        var baseList = classDeclarationSyntax!.BaseList.DescendantNodes()
+            .OfType<SimpleBaseTypeSyntax>();
+        return baseList.Where(node => !node.ToFullString().StartsWith("I"))
+            .Select(s => s.ToString())
+            .ToList();
     }
 
 

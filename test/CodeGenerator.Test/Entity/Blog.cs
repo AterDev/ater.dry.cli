@@ -15,6 +15,13 @@ public class Blog : BaseDB
     /// </summary>
     public string? Content { get; set; }
     List<Comments>? Comments { get; set; }
+
+    public Comments OneComment { get; set; }
+    IEnumerable<string> Test1 { get; set; }
+
+    public Nullable<int> Age { get; set; }
+    public int? Age2 { get; set; }
+    ICollection<string> Test2 { get; set; }
     public Status Status { get; set; }
 }
 
