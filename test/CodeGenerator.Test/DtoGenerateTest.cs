@@ -1,8 +1,10 @@
 ﻿using CodeGenerator.Infrastructure.Helper;
+using CodeGenerator.Test.Entity;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace CodeGenerator.Test;
@@ -22,12 +24,16 @@ public class DtoGenerateTest
     }
 
     [Fact]
-    public void Shoud_parse_entity_properties()
+    public void Shoud_parse_entity_and_properties()
     {
         var filePath = @"C:\self\cli\test\CodeGenerator.Test\Entity\Blog.cs";
         var entityHelper = new EntityParseHelper(filePath);
+        entityHelper.Parse();
+        Assert.Equal("Blog", entityHelper.Name);
+        var assembly = typeof(Blog).Assembly.ManifestModule.Name;
+        Assert.Equal(assembly, entityHelper.AssemblyName + ".dll");
 
-        var props = entityHelper.GetPropertyInfos("Blog");
+        var props = entityHelper.PropertyInfos;
         Assert.NotEmpty(props);
 
         // 验证属性内容
@@ -49,6 +55,10 @@ public class DtoGenerateTest
 
         var statusProp = props!.Where(p => p.Name.Equals("Status")).FirstOrDefault();
         Assert.True(statusProp!.IsEnum);
+
+        // 父类属性
+        var datetimeProp = props!.SingleOrDefault(p => p.Name.Equals("CreatedTime"));
+        Assert.Equal("DateTimeOffset", datetimeProp!.Type);
         Console.WriteLine();
     }
 
