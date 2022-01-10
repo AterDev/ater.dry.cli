@@ -67,12 +67,28 @@ public class EntityParseHelper
     {
         // 获取当前类名
         var classDeclarationSyntax = RootNodes.OfType<ClassDeclarationSyntax>().FirstOrDefault();
-        var trivia = classDeclarationSyntax.GetLeadingTrivia();
+        var trivia = classDeclarationSyntax!.GetLeadingTrivia();
         var namespaceDeclarationSyntax = RootNodes.OfType<NamespaceDeclarationSyntax>().FirstOrDefault();
         NamespaceName = namespaceDeclarationSyntax?.Name.ToString();
         Name = classDeclarationSyntax?.Identifier.ToString();
         Comment = trivia.ToString().TrimEnd(' ');
         PropertyInfos = GetPropertyInfos();
+    }
+    public EntityInfo GetEntity()
+    {
+        var classDeclarationSyntax = RootNodes.OfType<ClassDeclarationSyntax>().FirstOrDefault();
+        var trivia = classDeclarationSyntax!.GetLeadingTrivia();
+        var namespaceDeclarationSyntax = RootNodes.OfType<NamespaceDeclarationSyntax>().FirstOrDefault();
+        var namespaceName = namespaceDeclarationSyntax?.Name.ToString();
+        var name = classDeclarationSyntax!.Identifier.ToString();
+        var comment = trivia.ToString().TrimEnd(' ');
+        return new EntityInfo(name)
+        {
+            AssemblyName = AssemblyName,
+            NamespaceName = namespaceName,
+            Comment = comment,
+            PropertyInfos = GetPropertyInfos()
+        };
     }
 
     /// <summary>
@@ -88,8 +104,8 @@ public class EntityParseHelper
         // 如果指定父类名称
         if (parentClassName != null)
         {
-            var filePath = AssemblyHelper.FindFileInProject(ProjectFile.FullName, parentClassName + ".cs");
-            var entity = new EntityParseHelper(filePath);
+            var filePath = AssemblyHelper.FindFileInProject(ProjectFile!.FullName, parentClassName + ".cs");
+            var entity = new EntityParseHelper(filePath!);
             return entity.GetPropertyInfos();
         }
         foreach (var prop in propertySyntax)

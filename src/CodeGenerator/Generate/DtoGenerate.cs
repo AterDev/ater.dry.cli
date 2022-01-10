@@ -6,18 +6,16 @@ namespace CodeGenerator.Generate;
 /// </summary>
 public class DtoGenerate : GenerateBase
 {
-    public string? EntityContent { get; set; }
-    public string? EntityPath { get; set; }
+    public EntityInfo? EntityInfo { get; set; }
     public DtoGenerate(string entityPath)
     {
         if (File.Exists(entityPath))
         {
-            EntityPath = entityPath;
-            EntityContent = File.ReadAllText(EntityPath);
+            var entityHelper = new EntityParseHelper(entityPath);
+            EntityInfo = entityHelper.GetEntity();
         }
         else
         {
-            //TODO: 
             _ = new FileNotFoundException();
         }
     }
@@ -28,23 +26,59 @@ public class DtoGenerate : GenerateBase
     /// </summary>
     public void GenerateDtos(bool force = false)
     {
-        Console.WriteLine("开始解析实体");
-        var typeHelper = new EntityParseHelper(EntityPath);
-        var properties = typeHelper.PropertyInfos;
-        var className = typeHelper.Name;
-        var comment = typeHelper.Comment;
+        //Console.WriteLine("开始解析实体");
 
-        // 创建相关dto文件
-        var referenceProps = properties.Where(p => p.IsNavigation)
-                .Select(s => new PropertyInfo("Guid?", s.Name + "Id"))
-                .ToList();
-        var addDto = new DtoInfo
+        // 列表项dto
+        var ListDto = new DtoInfo
         {
-            Name = className + "AddDto",
-            NamespaceName = typeHelper.NamespaceName,
-            Comment = comment,
-            Tag = className,
-            Properties = properties.Where(p => p.Name != "Id"
+            Name = EntityInfo.Name + "Dto",
+            NamespaceName = EntityInfo.NamespaceName,
+            Comment = EntityInfo.Comment,
+            Tag = EntityInfo.Name,
+            Properties = EntityInfo.PropertyInfos.Where(p => !p.IsList).ToList()
+        };
+        var ItemDto = new DtoInfo
+        {
+            Name = EntityInfo.Name + "ItemDto",
+            NamespaceName = EntityInfo.NamespaceName,
+            Comment = EntityInfo.Comment,
+            Tag = EntityInfo.Name,
+            Properties = EntityInfo.PropertyInfos.Where(p => !p.IsList && p.Name != "UpdatedTime" && !p.IsNavigation).ToList()
+        };
+        var DetailDto = new DtoInfo
+        {
+            Name = EntityInfo.Name + "DetailDto",
+            NamespaceName = EntityInfo.NamespaceName,
+            Comment = EntityInfo.Comment,
+            Tag = EntityInfo.Name,
+            Properties = EntityInfo.PropertyInfos
+        };
+        var FilterDto = new DtoInfo
+        {
+            Name = EntityInfo.Name + "Filter",
+            NamespaceName = EntityInfo.NamespaceName,
+            Comment = EntityInfo.Comment,
+            Tag = EntityInfo.Name,
+            BaseType = "FilterBase",
+            //Properties = referenceProps
+        };
+        // 添加autoMapper配置
+        //GenerateAutoMapperProfile(EntityInfo.Name);
+    }
+
+    public string? GetAddDto()
+    {
+        if (EntityInfo == null) return default;
+        var referenceProps = EntityInfo.PropertyInfos?.Where(p => p.IsNavigation)
+               .Select(s => new PropertyInfo("Guid?", s.Name + "Id"))
+               .ToList();
+        var dto = new DtoInfo
+        {
+            Name = EntityInfo.Name + "AddDto",
+            NamespaceName = EntityInfo.NamespaceName,
+            Comment = EntityInfo.Comment,
+            Tag = EntityInfo.Name,
+            Properties = EntityInfo.PropertyInfos?.Where(p => p.Name != "Id"
                 && p.Name != "CreatedTime"
                 && p.Name != "UpdatedTime"
                 && !p.IsList
@@ -53,70 +87,31 @@ public class DtoGenerate : GenerateBase
         };
         foreach (var item in referenceProps)
         {
-            if (!addDto.Properties.Any(p => p.Name == item.Name))
+            if (!dto.Properties.Any(p => p.Name == item.Name))
             {
-                addDto.Properties.Add(item);
+                dto.Properties.Add(item);
             }
         }
-        var updateDto = new DtoInfo
+        return dto.ToString();
+    }
+
+    public string? GetUpdateDto()
+    {
+        if (EntityInfo == null) return default;
+        var dto = new DtoInfo
         {
-            Name = className + "UpdateDto",
-            NamespaceName = typeHelper.NamespaceName,
-            Comment = comment,
-            Tag = className,
-            Properties = properties.Where(p => p.Name != "Id"
+            Name = EntityInfo.Name + "UpdateDto",
+            NamespaceName = EntityInfo.NamespaceName,
+            Comment = EntityInfo.Comment,
+            Tag = EntityInfo.Name,
+            Properties = EntityInfo.PropertyInfos?.Where(p => p.Name != "Id"
                 && p.Name != "CreatedTime"
                 && p.Name != "UpdatedTime"
                 && !p.IsList
                 && !p.IsNavigation).ToList()
         };
-        // 列表项dto
-        var ListDto = new DtoInfo
-        {
-            Name = className + "Dto",
-            NamespaceName = typeHelper.NamespaceName,
-            Comment = comment,
-            Tag = className,
-            Properties = properties.Where(p => !p.IsList).ToList()
-        };
-        var ItemDto = new DtoInfo
-        {
-            Name = className + "ItemDto",
-            NamespaceName = typeHelper.NamespaceName,
-            Comment = comment,
-            Tag = className,
-            Properties = properties.Where(p => !p.IsList && p.Name != "UpdatedTime" && !p.IsNavigation).ToList()
-        };
-        var DetailDto = new DtoInfo
-        {
-            Name = className + "DetailDto",
-            NamespaceName = typeHelper.NamespaceName,
-            Comment = comment,
-            Tag = className,
-            Properties = properties
-        };
-        var FilterDto = new DtoInfo
-        {
-            Name = className + "Filter",
-            NamespaceName = typeHelper.NamespaceName,
-            Comment = comment,
-            Tag = className,
-            BaseType = "FilterBase",
-            Properties = referenceProps
-        };
-        // TODO:可能存在自身到自身的转换
-        //addDto.Save(DtoPath, force);
-        //updateDto.Save(DtoPath, force);
-        //ListDto.Save(DtoPath, force);
-        //ItemDto.Save(DtoPath, force);
-        //DetailDto.Save(DtoPath, force);
-        //FilterDto.Save(DtoPath, force);
-        Console.WriteLine("生成dto模型完成");
-
-        // 添加autoMapper配置
-        GenerateAutoMapperProfile(className);
+        return dto.ToString();
     }
-
     /// <summary>
     /// 生成AutoMapperProfile
     /// </summary>
