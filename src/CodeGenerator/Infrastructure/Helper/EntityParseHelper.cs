@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using static Humanizer.In;
 using PropertyInfo = CodeGenerator.Models.PropertyInfo;
 
@@ -37,6 +38,7 @@ public class EntityParseHelper
     public SemanticModel? SemanticModel { get; set; }
     protected SyntaxTree SyntaxTree { get; set; }
     public IEnumerable<SyntaxNode> RootNodes { get; set; }
+    public string[] SpecialTypes = new[] { "DateTime", "DateTimeOffset", "DateOnly", "TimeOnly", "Guid" };
 
     public EntityParseHelper(string filePath)
     {
@@ -146,16 +148,15 @@ public class EntityParseHelper
     /// <param name="propertyInfo"></param>
     protected PropertyInfo ParsePropertyType(PropertyDeclarationSyntax syntax)
     {
-        var specialTypes = new[] { "DateTime", "DateTimeOffset", "Guid" };
         var listTypes = new[] { "IList", "List", "ICollection", "IEnumerable" };
         var type = syntax.Type.ToString();
         var name = syntax.Identifier.ToString();
         var typeInfo = SemanticModel.GetTypeInfo(syntax.Type);
         var propertyInfo = new PropertyInfo(type, name);
-        // 移除?
+        // 移除?，获取类型名
         if (type.EndsWith("?"))
         {
-            propertyInfo.Type = type[^1..];
+            propertyInfo.Type = type[..^1];
             propertyInfo.IsNullable = true;
         }
         if (typeInfo.Type!.Name.Equals("Nullable"))
@@ -166,17 +167,60 @@ public class EntityParseHelper
         {
             propertyInfo.IsDecimal = true;
         }
-
-        propertyInfo.IsList = true;
-
-
-        // TODO:是否为列表，是否为自定义类型
-        var metadataName = typeInfo.Type.MetadataName.ToString();
-        if (typeInfo.Type.OriginalDefinition.ToString() == metadataName && !specialTypes.Contains(metadataName))
+        if (typeInfo.Type.TypeKind == TypeKind.Enum)
         {
+            propertyInfo.IsEnum = true;
+        }
+        // 列表的判断
+        if (propertyInfo.Type.EndsWith("[]"))
+        {
+            propertyInfo.IsList = true;
+        }
+        // 正则匹配 \s+(\w+)<(\w+)>
+        string pattern = @"(?<Type>\w+)<(?<GenericType>\w+)>";
+        var match = Regex.Match(type, pattern);
+        if (match.Success)
+        {
+            if (listTypes.Contains(match.Groups["Type"]?.Value))
+            {
+                propertyInfo.IsList = true;
+            }
+        }
+        // 导航属性判断
+        ParseNavigation(typeInfo.Type! as INamedTypeSymbol, propertyInfo);
+        return propertyInfo;
+    }
+
+    /// <summary>
+    /// 解析导航属性
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="propertyInfo"></param>
+    protected void ParseNavigation(INamedTypeSymbol type, PropertyInfo propertyInfo)
+    {
+        var navigationType = type;
+        propertyInfo.HasMany = false;
+        // 可空的列表，取泛型类型
+        if (propertyInfo.IsNullable)
+        {
+            navigationType = navigationType.TypeArguments[0] as INamedTypeSymbol;
+            if (propertyInfo.IsList)
+            {
+                navigationType = navigationType.TypeArguments[0] as INamedTypeSymbol;
+                propertyInfo.HasMany = true;
+            }
+        }
+        else if (propertyInfo.IsList)
+        {
+            navigationType = navigationType.TypeArguments[0] as INamedTypeSymbol;
+            propertyInfo.HasMany = true;
+        }
+        if (navigationType.SpecialType == SpecialType.None
+            && !SpecialTypes.Contains(navigationType.Name))
+        {
+            propertyInfo.NavigationName = navigationType.Name;
             propertyInfo.IsNavigation = true;
         }
-        return propertyInfo;
     }
     /// <summary>
     /// 解析属性特性
@@ -236,8 +280,9 @@ public class EntityParseHelper
         // 获取当前类名
         var classDeclarationSyntax = RootNodes.OfType<ClassDeclarationSyntax>().FirstOrDefault();
         // 继承的类名
-        var baseList = classDeclarationSyntax!.BaseList.DescendantNodes()
+        var baseList = classDeclarationSyntax!.BaseList?.DescendantNodes()
             .OfType<SimpleBaseTypeSyntax>();
+        if (baseList == null) return default;
         return baseList.Where(node => !node.ToFullString().StartsWith("I"))
             .Select(s => s.ToString())
             .ToList();

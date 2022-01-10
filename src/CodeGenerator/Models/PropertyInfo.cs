@@ -18,6 +18,11 @@ public class PropertyInfo
     /// 导航属性名称
     /// </summary>
     public string? NavigationName { get; set; }
+    /// <summary>
+    /// 导航属性的对应关系
+    /// </summary>
+    public bool? HasMany { get; set; }
+    public bool IsEnum { get; set; } = false;
     public string? AttributeText { get; set; }
     public string? Comments { get; set; }
     /// <summary>
