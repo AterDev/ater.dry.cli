@@ -27,7 +27,28 @@ public class DtoGenerateTest
         var filePath = @"C:\self\cli\test\CodeGenerator.Test\Entity\Blog.cs";
         var entityHelper = new EntityParseHelper(filePath);
 
-        entityHelper.GetPropertyInfos("Blog");
+        var props = entityHelper.GetPropertyInfos("Blog");
+        Assert.NotEmpty(props);
+
+        // 验证属性内容
+        var nameProp = props!.Where(p => p.Name.Equals("Name")).FirstOrDefault();
+        Assert.True(nameProp!.IsRequired);
+        Assert.True(nameProp!.IsNullable);
+        Assert.Equal(100, nameProp!.MaxLength);
+        Assert.Equal(10, nameProp!.MinLength);
+
+        var commentsProp = props!.Where(p => p.Name.Equals("Comments")).FirstOrDefault();
+        Assert.True(commentsProp!.IsList);
+        Assert.True(commentsProp!.IsNullable);
+        Assert.True(commentsProp!.IsNavigation);
+        Assert.Equal("Comments", commentsProp!.NavigationName);
+
+        var commentProp = props!.SingleOrDefault(p => p.Name.Equals("Comments2"));
+        Assert.True(commentsProp!.IsNavigation);
+        Assert.True(commentsProp!.IsNullable);
+
+        var statusProp = props!.Where(p => p.Name.Equals("Status")).FirstOrDefault();
+        Assert.True(statusProp!.IsEnum);
         Console.WriteLine();
     }
 

@@ -25,7 +25,7 @@ public class EntityParseHelper
     /// 程序集名称
     /// </summary>
     public string AssemblyName { get; set; }
-    public FileInfo ProjectFile { get; set; }
+    public FileInfo? ProjectFile { get; set; }
     /// <summary>
     /// 类注释
     /// </summary>
@@ -65,7 +65,6 @@ public class EntityParseHelper
 
     public void Parse()
     {
-        var root = SyntaxTree.GetCompilationUnitRoot();
         // 获取当前类名
         var classDeclarationSyntax = RootNodes.OfType<ClassDeclarationSyntax>().FirstOrDefault();
         var trivia = classDeclarationSyntax.GetLeadingTrivia();
@@ -153,12 +152,20 @@ public class EntityParseHelper
         var name = syntax.Identifier.ToString();
         var typeInfo = SemanticModel.GetTypeInfo(syntax.Type);
         var propertyInfo = new PropertyInfo(type, name);
+
+        // 是否为public
+        var modifier = syntax.Modifiers.FirstOrDefault().Text;
+        if (string.IsNullOrEmpty(modifier) || !modifier.ToLower().Equals("public"))
+        {
+            propertyInfo.IsPublic = false;
+        }
         // 移除?，获取类型名
         if (type.EndsWith("?"))
         {
             propertyInfo.Type = type[..^1];
             propertyInfo.IsNullable = true;
         }
+
         if (typeInfo.Type!.Name.Equals("Nullable"))
         {
             propertyInfo.IsNullable = true;
@@ -216,7 +223,8 @@ public class EntityParseHelper
             propertyInfo.HasMany = true;
         }
         if (navigationType.SpecialType == SpecialType.None
-            && !SpecialTypes.Contains(navigationType.Name))
+            && !SpecialTypes.Contains(navigationType.Name)
+            && !propertyInfo.IsEnum)
         {
             propertyInfo.NavigationName = navigationType.Name;
             propertyInfo.IsNavigation = true;
@@ -237,8 +245,7 @@ public class EntityParseHelper
                 .FirstOrDefault();
             var stringLength = GetAttributeArguments(attributes, "StringLength")?
                 .FirstOrDefault();
-            var required = GetAttributeArguments(attributes, "Required")?
-                .FirstOrDefault();
+            var required = GetAttributeArguments(attributes, "Required");
             if (required != null) propertyInfo.IsRequired = true;
             if (maxLength != null)
             {
@@ -264,10 +271,10 @@ public class EntityParseHelper
     {
         var theSyntax = syntax.Where(s => s.Name.ToString().ToLower().Equals(attributeName.ToLower()))
             .FirstOrDefault();
-
         if (theSyntax != null)
         {
-            return theSyntax.ArgumentList?.Arguments;
+            return theSyntax.ArgumentList?.Arguments ??
+                new SeparatedSyntaxList<AttributeArgumentSyntax>();
         }
         return default;
     }

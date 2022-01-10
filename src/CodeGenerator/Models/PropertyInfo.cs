@@ -10,6 +10,7 @@ public class PropertyInfo
     /// 是否是数组
     /// </summary>
     public bool IsList { get; set; } = false;
+    public bool IsPublic { get; set; } = true;
     /// <summary>
     /// 是否为导航属性
     /// </summary>
