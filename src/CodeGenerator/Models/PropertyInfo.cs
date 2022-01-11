@@ -49,23 +49,24 @@ public class PropertyInfo
     /// <returns></returns>
     public string ToCsharpLine()
     {
-        if (!string.IsNullOrEmpty(AttributeText))
+        var attributeText = AttributeText;
+        if (!string.IsNullOrEmpty(attributeText))
         {
-            AttributeText = AttributeText.Trim();
-            AttributeText = $@"        {AttributeText}
-";
+            attributeText = attributeText.Trim();
+            attributeText = $@"    {attributeText.Replace("\r\n", "\r\n    ")}";
         }
         else
         {
             AttributeText = string.Empty;
         }
-        var content = @$"        public {Type} {Name} {{ get; set; }}";
-        // 如果是引用对象
-        if (IsNavigation || Name.ToLower().Contains("password"))
+        var nullableMark = IsNullable ? "?" : "";
+        var content = @$"    public {Type}{nullableMark} {Name} {{ get; set; }}";
+        if (Name.ToLower().Contains("password"))
         {
-            content = @$"        // public {Type}Dto {Name} {{ get; set; }}";
+            content = @$"    // public {Type}{nullableMark} {Name} {{ get; set; }}";
         }
-        return $@"{Comments}{AttributeText}{content}
+        return $@"{Comments}{attributeText}
+{content}
 ";
     }
 

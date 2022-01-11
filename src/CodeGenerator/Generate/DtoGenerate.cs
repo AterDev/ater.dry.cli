@@ -9,6 +9,10 @@ public class DtoGenerate : GenerateBase
 {
     public EntityInfo? EntityInfo { get; set; }
     public string KeyType { get; set; } = "Guid";
+    /// <summary>
+    /// dto 输出的 程序集名称
+    /// </summary>
+    public string AssemblyName { get; set; } = "Share";
     public DtoGenerate(string entityPath)
     {
         if (File.Exists(entityPath))
@@ -43,7 +47,7 @@ public class DtoGenerate : GenerateBase
                     && !(p.IsList && p.IsNavigation))
                 .ToList()
         };
-        return dto.ToString();
+        return dto.ToString(AssemblyName, EntityInfo.Name);
     }
 
     public string? GetItemDto()
@@ -62,7 +66,7 @@ public class DtoGenerate : GenerateBase
                     && !p.IsNavigation)
                 .ToList()
         };
-        return dto.ToString();
+        return dto.ToString(AssemblyName, EntityInfo.Name);
     }
 
     public string? GetFilterDto()
@@ -72,6 +76,8 @@ public class DtoGenerate : GenerateBase
             .Where(p => p.IsNavigation && !p.IsList)
             .Select(s => new PropertyInfo($"{KeyType}?", s.Name + "Id"))
             .ToList();
+
+        var filterFields = new string[] { "Id", "CreatedTime", "UpdatedTime" };
         var dto = new DtoInfo
         {
             Name = EntityInfo.Name + "Filter",
@@ -81,10 +87,18 @@ public class DtoGenerate : GenerateBase
             BaseType = "FilterBase",
             Properties = EntityInfo.PropertyInfos?
                 .Where(p => p.IsRequired
-                    || (!p.IsNullable && !p.IsList))
+                    || (!p.IsNullable
+                        && !p.IsList
+                        && !p.IsNavigation
+                        && !filterFields.Contains(p.Name))
+                    )
                 .ToList()
         };
-        return dto.ToString();
+        referenceProps?.ForEach(item =>
+        {
+            dto.Properties?.Add(item);
+        });
+        return dto.ToString(AssemblyName, EntityInfo.Name);
     }
 
     public string? GetAddDto()
@@ -111,7 +125,7 @@ public class DtoGenerate : GenerateBase
         {
             dto.Properties?.Add(item);
         });
-        return dto.ToString();
+        return dto.ToString(AssemblyName, EntityInfo.Name);
     }
 
     /// <summary>
@@ -124,7 +138,7 @@ public class DtoGenerate : GenerateBase
         if (EntityInfo == null) return default;
         // 导航属性处理
         var referenceProps = EntityInfo.PropertyInfos?
-            .Where(p => p.IsNavigation && !p.IsList)
+            .Where(p => p.IsNavigation && !p.IsList && !p.IsNullable)
             .Select(s => new PropertyInfo($"{KeyType}?", s.Name + "Id"))
             .ToList();
         var dto = new DtoInfo
@@ -143,7 +157,7 @@ public class DtoGenerate : GenerateBase
         {
             dto.Properties?.Add(item);
         });
-        return dto.ToString();
+        return dto.ToString(AssemblyName, EntityInfo.Name);
     }
     /// <summary>
     /// 生成AutoMapperProfile

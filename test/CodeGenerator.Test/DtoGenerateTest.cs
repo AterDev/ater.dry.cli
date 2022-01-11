@@ -1,4 +1,5 @@
-﻿using CodeGenerator.Infrastructure.Helper;
+﻿using CodeGenerator.Generate;
+using CodeGenerator.Infrastructure.Helper;
 using CodeGenerator.Test.Entity;
 using System;
 using System.Collections.Generic;
@@ -59,7 +60,21 @@ public class DtoGenerateTest
         // 父类属性
         var datetimeProp = props!.SingleOrDefault(p => p.Name.Equals("CreatedTime"));
         Assert.Equal("DateTimeOffset", datetimeProp!.Type);
-        Console.WriteLine();
     }
 
+
+    [Fact]
+    public void Shoud_generate_dto_content()
+    {
+        var filePath = @"C:\self\cli\test\CodeGenerator.Test\Entity\Blog.cs";
+        var gen = new DtoGenerate(filePath);
+        var shortDto = gen.GetShortDto();
+        var filterDto = gen.GetFilterDto();
+        var updateDto = gen.GetUpdateDto();
+        var itemDto = gen.GetItemDto();
+        Assert.NotNull(shortDto);
+        Assert.NotNull(filterDto);
+        Assert.NotNull(updateDto);
+        Assert.NotNull(itemDto);
+    }
 }

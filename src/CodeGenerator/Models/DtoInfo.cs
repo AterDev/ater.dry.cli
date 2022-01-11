@@ -9,24 +9,17 @@ public class DtoInfo
     public string? NamespaceName { get; set; }
     public string? Comment { get; set; }
 
-    public override string ToString()
+    public string ToString(string projectName = "Share", string entityName = "")
     {
-        var propStrings = string.Join(string.Empty, Properties.Select(p => p.ToCsharpLine()).ToArray());
+        var propStrings = string.Join(string.Empty, Properties?.Select(p => p.ToCsharpLine()).ToArray());
         var baseType = string.IsNullOrEmpty(BaseType) ? "" : " : " + BaseType;
-        var tpl = $@"using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using {Config.SHARE_NAMESPACE}.Models;
-using {NamespaceName};
-namespace Share.Models
+        var tpl = $@"namespace {projectName}.Models.{entityName}Dtos;
+{Comment}
+public class {Name}{baseType}
 {{
-    {Comment}
-    public class {Name}{baseType}
-    {{
 {propStrings}    
-    }}
-}}";
+}}
+";
         return tpl;
     }
     public void Save(string dir, bool cover)
