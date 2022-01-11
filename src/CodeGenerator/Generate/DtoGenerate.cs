@@ -1,4 +1,5 @@
-﻿using PropertyInfo = CodeGenerator.Models.PropertyInfo;
+﻿using static CodeGenerator.Models.EntityInfo;
+using PropertyInfo = CodeGenerator.Models.PropertyInfo;
 
 namespace CodeGenerator.Generate;
 /// <summary>
@@ -7,12 +8,19 @@ namespace CodeGenerator.Generate;
 public class DtoGenerate : GenerateBase
 {
     public EntityInfo? EntityInfo { get; set; }
+    public string KeyType { get; set; } = "Guid";
     public DtoGenerate(string entityPath)
     {
         if (File.Exists(entityPath))
         {
             var entityHelper = new EntityParseHelper(entityPath);
             EntityInfo = entityHelper.GetEntity();
+            KeyType = (EntityInfo.KeyType) switch
+            {
+                EntityKeyType.Int => "Int",
+                EntityKeyType.String => "String",
+                _ => "Guid"
+            };
         }
         else
         {
@@ -20,32 +28,9 @@ public class DtoGenerate : GenerateBase
         }
     }
 
-    /// <summary>
-    /// 生成dtos
-    /// <param name="force">覆盖</param>
-    /// </summary>
-    public void GenerateDtos(bool force = false)
+    public string? GetShortDto()
     {
-        //Console.WriteLine("开始解析实体");
-
-        // 列表项dto
-        var ListDto = new DtoInfo
-        {
-            Name = EntityInfo.Name + "Dto",
-            NamespaceName = EntityInfo.NamespaceName,
-            Comment = EntityInfo.Comment,
-            Tag = EntityInfo.Name,
-            Properties = EntityInfo.PropertyInfos.Where(p => !p.IsList).ToList()
-        };
-        var ItemDto = new DtoInfo
-        {
-            Name = EntityInfo.Name + "ItemDto",
-            NamespaceName = EntityInfo.NamespaceName,
-            Comment = EntityInfo.Comment,
-            Tag = EntityInfo.Name,
-            Properties = EntityInfo.PropertyInfos.Where(p => !p.IsList && p.Name != "UpdatedTime" && !p.IsNavigation).ToList()
-        };
-        var DetailDto = new DtoInfo
+        var dto = new DtoInfo
         {
             Name = EntityInfo.Name + "DetailDto",
             NamespaceName = EntityInfo.NamespaceName,
@@ -53,25 +38,51 @@ public class DtoGenerate : GenerateBase
             Tag = EntityInfo.Name,
             Properties = EntityInfo.PropertyInfos
         };
-        var FilterDto = new DtoInfo
+        return dto.ToString();
+    }
+
+    public string? GetItemDto()
+    {
+        var dto = new DtoInfo
+        {
+            Name = EntityInfo.Name + "ItemDto",
+            NamespaceName = EntityInfo.NamespaceName,
+            Comment = EntityInfo.Comment,
+            Tag = EntityInfo.Name,
+            Properties = EntityInfo.PropertyInfos.Where(p => !p.IsList && p.Name != "UpdatedTime" && !p.IsNavigation).ToList()
+        };
+        return dto.ToString();
+    }
+
+    public string? GetFilterDto()
+    {
+        if (EntityInfo == null) return default;
+        var referenceProps = EntityInfo.PropertyInfos?
+            .Where(p => p.IsNavigation && !p.IsList)
+            .Select(s => new PropertyInfo("Guid?", s.Name + "Id"))
+            .ToList();
+        var dto = new DtoInfo
         {
             Name = EntityInfo.Name + "Filter",
             NamespaceName = EntityInfo.NamespaceName,
             Comment = EntityInfo.Comment,
             Tag = EntityInfo.Name,
             BaseType = "FilterBase",
-            //Properties = referenceProps
+            Properties = EntityInfo.PropertyInfos?
+                .Where(p => p.IsRequired
+                    || (!p.IsNullable && !p.IsList))
+                .ToList()
         };
-        // 添加autoMapper配置
-        //GenerateAutoMapperProfile(EntityInfo.Name);
+        return dto.ToString();
     }
 
     public string? GetAddDto()
     {
         if (EntityInfo == null) return default;
-        var referenceProps = EntityInfo.PropertyInfos?.Where(p => p.IsNavigation)
-               .Select(s => new PropertyInfo("Guid?", s.Name + "Id"))
-               .ToList();
+        var referenceProps = EntityInfo.PropertyInfos?
+            .Where(p => p.IsNavigation && !p.IsList)
+            .Select(s => new PropertyInfo("Guid", s.Name + "Id"))
+            .ToList();
         var dto = new DtoInfo
         {
             Name = EntityInfo.Name + "AddDto",
@@ -85,19 +96,26 @@ public class DtoGenerate : GenerateBase
                 && !p.IsNavigation)
             .ToList()
         };
-        foreach (var item in referenceProps)
+        referenceProps?.ForEach(item =>
         {
-            if (!dto.Properties.Any(p => p.Name == item.Name))
-            {
-                dto.Properties.Add(item);
-            }
-        }
+            dto.Properties?.Add(item);
+        });
         return dto.ToString();
     }
 
+    /// <summary>
+    /// 更新dto
+    /// 导航属性Name+Id,过滤列表属性
+    /// </summary>
+    /// <returns></returns>
     public string? GetUpdateDto()
     {
         if (EntityInfo == null) return default;
+        // 导航属性处理
+        var referenceProps = EntityInfo.PropertyInfos?
+            .Where(p => p.IsNavigation && !p.IsList)
+            .Select(s => new PropertyInfo("Guid?", s.Name + "Id"))
+            .ToList();
         var dto = new DtoInfo
         {
             Name = EntityInfo.Name + "UpdateDto",
@@ -110,6 +128,10 @@ public class DtoGenerate : GenerateBase
                 && !p.IsList
                 && !p.IsNavigation).ToList()
         };
+        referenceProps?.ForEach(item =>
+        {
+            dto.Properties?.Add(item);
+        });
         return dto.ToString();
     }
     /// <summary>

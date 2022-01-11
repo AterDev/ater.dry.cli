@@ -38,7 +38,7 @@ public class EntityParseHelper
     public SemanticModel? SemanticModel { get; set; }
     protected SyntaxTree SyntaxTree { get; set; }
     public IEnumerable<SyntaxNode> RootNodes { get; set; }
-    public EntityInfo.EntityKeyType KeyType { get; set; } = EntityInfo.EntityKeyType.Guid;
+    public EntityKeyType KeyType { get; set; } = EntityKeyType.Guid;
     public string[] SpecialTypes = new[] { "DateTime", "DateTimeOffset", "DateOnly", "TimeOnly", "Guid" };
 
     public EntityParseHelper(string filePath)
@@ -270,9 +270,9 @@ public class EntityParseHelper
             {
                 KeyType = propertyInfo.Type.ToLower() switch
                 {
-                    "string" => EntityInfo.EntityKeyType.String,
-                    "int" => EntityInfo.EntityKeyType.Int,
-                    _ => EntityInfo.EntityKeyType.Guid,
+                    "string" => EntityKeyType.String,
+                    "int" => EntityKeyType.Int,
+                    _ => EntityKeyType.Guid,
                 };
             }
 

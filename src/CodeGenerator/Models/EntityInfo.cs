@@ -31,11 +31,10 @@ public class EntityInfo
         Name = name;
     }
 
-
-    public enum EntityKeyType
-    {
-        Guid,
-        Int,
-        String
-    }
+}
+public enum EntityKeyType
+{
+    Guid,
+    Int,
+    String
 }
