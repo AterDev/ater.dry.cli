@@ -1,5 +1,6 @@
 ﻿using CodeGenerator.Models;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -72,17 +73,17 @@ public class EntityParseHelper
         var namespaceDeclarationSyntax = RootNodes.OfType<NamespaceDeclarationSyntax>().FirstOrDefault();
         NamespaceName = namespaceDeclarationSyntax?.Name.ToString();
         Name = classDeclarationSyntax?.Identifier.ToString();
-        Comment = trivia.ToString().TrimEnd(' ');
+        Comment = trivia.ToString().TrimEnd();
         PropertyInfos = GetPropertyInfos();
     }
     public EntityInfo GetEntity()
     {
         var classDeclarationSyntax = RootNodes.OfType<ClassDeclarationSyntax>().FirstOrDefault();
         var trivia = classDeclarationSyntax!.GetLeadingTrivia();
-        var namespaceDeclarationSyntax = RootNodes.OfType<NamespaceDeclarationSyntax>().FirstOrDefault();
-        var namespaceName = namespaceDeclarationSyntax?.Name.ToString();
         var name = classDeclarationSyntax!.Identifier.ToString();
-        var comment = trivia.ToString().TrimEnd(' ');
+        var comment = trivia.ToString().TrimEnd();
+        var classSymbol = SemanticModel.GetDeclaredSymbol(classDeclarationSyntax);
+        var namespaceName = classSymbol?.ContainingNamespace.ToString();
 
         return new EntityInfo(name)
         {

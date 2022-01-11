@@ -7,11 +7,16 @@ public class CompilationHelper
 {
     public CSharpCompilation Compilation { get; set; }
 
-    public SemanticModel SemanticModel { get; set; }
+    public SemanticModel? SemanticModel { get; set; }
     public ITypeSymbol? ClassSymbol { get; set; }
     public CompilationHelper()
     {
         Compilation = CSharpCompilation.Create("tmp");
+    }
+    public CompilationHelper(string path, string? dllFilter = null)
+    {
+        Compilation = CSharpCompilation.Create("tmp");
+        AddDllReferences(path, dllFilter);
     }
     public void AddDllReferences(string path, string? dllFilter = null)
     {

@@ -32,11 +32,53 @@ public class DtoCommand
         }
         if (!Directory.Exists(DtoPath))
         {
-            Console.WriteLine("DtoPath not exist!");
+            Console.WriteLine("Dto project not exist!");
             return;
         }
-        //var gen = new DtoGenerate();
+        var gen = new DtoGenerate(EntityPath)
+        {
+            AssemblyName = new DirectoryInfo(DtoPath).Name
+        };
+        if (gen.EntityInfo == null)
+        {
+            Console.WriteLine("Entity parse failed!");
+        }
+        else
+        {
+            SaveToFile("Update", gen.GetUpdateDto());
+            SaveToFile("Filter", gen.GetFilterDto());
+            SaveToFile("Item", gen.GetItemDto());
+            SaveToFile("Short", gen.GetShortDto());
+
+            GenerateUsingsFile(gen.GetDtoUsings());
+        }
+    }
+    public void GenerateUsingsFile(string content)
+    {
+        var outputDir = Path.Combine(DtoPath, "Models", "GlobalUsing.cs");
+        if (!File.Exists(outputDir))
+            File.WriteAllTextAsync(outputDir, content);
     }
 
-
+    /// <summary>
+    /// 保存文件
+    /// </summary>
+    /// <param name="dtoType"></param>
+    /// <param name="content"></param>
+    /// <param name="cover">是否覆盖</param>
+    public async void SaveToFile(string dtoType, string? content, bool cover = false)
+    {
+        // 以文件名为准
+        var entityName = Path.GetFileNameWithoutExtension(new FileInfo(EntityPath).Name);
+        var outputDir = Path.Combine(DtoPath, "Models", entityName + "Dtos");
+        var filePath = Path.Combine(outputDir, $"{entityName}{dtoType}Dto.cs");
+        if (!Directory.Exists(outputDir))
+        {
+            Directory.CreateDirectory(outputDir);
+        }
+        if (!File.Exists(filePath) || cover)
+        {
+            await File.WriteAllTextAsync(filePath, content);
+        }
+    }
 }

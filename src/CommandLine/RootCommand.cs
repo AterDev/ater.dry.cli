@@ -62,8 +62,8 @@ public class RootCommands
     /// <param name="entityPath"></param>
     public void GenerateDto(string entityPath, string output)
     {
-        var dtoGen = new DtoGenerate(entityPath, output);
-        dtoGen.GenerateDtos(true);
+        //var dtoGen = new DtoGenerate(entityPath, output);
+        //dtoGen.GenerateDtos(true);
         Console.WriteLine("Task done!");
     }
 
@@ -76,8 +76,8 @@ public class RootCommands
     public void GenerateApi(string path, string servicePath = "", string webPath = "", string dtoPath = "")
     {
         var reposGen = new RepositoryGenerate(path, servicePath);
-        var dtoGen = new DtoGenerate(path, dtoPath);
-        dtoGen.GenerateDtos();
+        //var dtoGen = new DtoGenerate(path, dtoPath);
+        //dtoGen.GenerateDtos();
         reposGen.GenerateReponsitory();
 
         Console.WriteLine("api webpath:" + webPath);

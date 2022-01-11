@@ -43,8 +43,4 @@ public class NgFormGenerate : GenerateBase
         return tplContent;
     }
 
-    public string Build()
-    {
-        return default;
-    }
 }

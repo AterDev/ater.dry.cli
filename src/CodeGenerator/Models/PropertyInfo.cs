@@ -53,11 +53,8 @@ public class PropertyInfo
         if (!string.IsNullOrEmpty(attributeText))
         {
             attributeText = attributeText.Trim();
-            attributeText = $@"    {attributeText.Replace("\r\n", "\r\n    ")}";
-        }
-        else
-        {
-            AttributeText = string.Empty;
+            attributeText = $@"    {attributeText.Replace("\r\n", "\r\n    ")}"
+                + Environment.NewLine;
         }
         var nullableMark = IsNullable ? "?" : "";
         var content = @$"    public {Type}{nullableMark} {Name} {{ get; set; }}";
@@ -65,8 +62,7 @@ public class PropertyInfo
         {
             content = @$"    // public {Type}{nullableMark} {Name} {{ get; set; }}";
         }
-        return $@"{Comments}{attributeText}
-{content}
+        return $@"{Comments}{attributeText}{content}
 ";
     }
 

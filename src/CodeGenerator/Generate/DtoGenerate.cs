@@ -159,6 +159,13 @@ public class DtoGenerate : GenerateBase
         });
         return dto.ToString(AssemblyName, EntityInfo.Name);
     }
+
+    public string GetDtoUsings()
+    {
+        var nsName = EntityInfo!.NamespaceName;
+        return @$"global using System.ComponentModel.DataAnnotations;
+global using {nsName};";
+    }
     /// <summary>
     /// 生成AutoMapperProfile
     /// </summary>
