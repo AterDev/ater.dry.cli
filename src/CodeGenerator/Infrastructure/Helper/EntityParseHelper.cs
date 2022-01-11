@@ -38,6 +38,7 @@ public class EntityParseHelper
     public SemanticModel? SemanticModel { get; set; }
     protected SyntaxTree SyntaxTree { get; set; }
     public IEnumerable<SyntaxNode> RootNodes { get; set; }
+    public EntityInfo.EntityKeyType KeyType { get; set; } = EntityInfo.EntityKeyType.Guid;
     public string[] SpecialTypes = new[] { "DateTime", "DateTimeOffset", "DateOnly", "TimeOnly", "Guid" };
 
     public EntityParseHelper(string filePath)
@@ -82,12 +83,14 @@ public class EntityParseHelper
         var namespaceName = namespaceDeclarationSyntax?.Name.ToString();
         var name = classDeclarationSyntax!.Identifier.ToString();
         var comment = trivia.ToString().TrimEnd(' ');
+
         return new EntityInfo(name)
         {
             AssemblyName = AssemblyName,
             NamespaceName = namespaceName,
             Comment = comment,
-            PropertyInfos = GetPropertyInfos()
+            PropertyInfos = GetPropertyInfos(),
+            KeyType = KeyType
         };
     }
 
@@ -262,6 +265,17 @@ public class EntityParseHelper
             var stringLength = GetAttributeArguments(attributes, "StringLength")?
                 .FirstOrDefault();
             var required = GetAttributeArguments(attributes, "Required");
+            var key = GetAttributeArguments(attributes, "Key");
+            if (key != null)
+            {
+                KeyType = propertyInfo.Type.ToLower() switch
+                {
+                    "string" => EntityInfo.EntityKeyType.String,
+                    "int" => EntityInfo.EntityKeyType.Int,
+                    _ => EntityInfo.EntityKeyType.Guid,
+                };
+            }
+
             if (required != null) propertyInfo.IsRequired = true;
             if (maxLength != null)
             {

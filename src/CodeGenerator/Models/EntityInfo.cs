@@ -20,6 +20,7 @@ public class EntityInfo
     /// 类注释
     /// </summary>
     public string? Comment { get; set; }
+    public EntityKeyType KeyType { get; set; } = EntityKeyType.Guid;
     /// <summary>
     /// 属性
     /// </summary>
@@ -30,4 +31,11 @@ public class EntityInfo
         Name = name;
     }
 
+
+    public enum EntityKeyType
+    {
+        Guid,
+        Int,
+        String
+    }
 }
