@@ -4,14 +4,14 @@ cli tools
 
 ## 常用Dto类型
 - UpdateDto
-  - 过滤列表属性,如`List<string>`,`List<Blog>`.
-  - 转换非列表非空导航属性，如 `Blog` 使其变成 `Name+Id` 形式，即 `BlogId`.
+  - 过滤列表属性,如`List<string>`,`List<Blog>`
+  - 转换非列表非空导航属性，如 `Blog` 使其变成 `Name+Id` 形式，即 `BlogId`
 - FilterDto
-  - 具有Required 属性.
-  - 非列表且不为空,如 `public string Title`.
+  - 具有Required 属性
+  - 非列表且不为空,如 `public string Title`
   - 过滤列表及导航属性
-  - 过滤`Id,CreatedTime,UpdatedTime`等名称，基类处理.
-  - 转换非列表导航属性的Id,如 `UserId`.
+  - 过滤`Id,CreatedTime,UpdatedTime`等名称，基类处理
+  - 转换非列表导航属性的Id,如 `UserId`
 - ItemDto 作为数组中的元素时
   - 过滤Content字段
   - 过滤超过1000长度的字段
@@ -26,6 +26,8 @@ cli tools
 ## 生成Dto
 - 默认跳过已生成
 - 强制覆盖选项
+- 生成`GlobalUsing.cs`，以引用依赖
+- 生成基础类，如`FilterBase`
 
 ## 数据仓储接口操作
 - 添加
