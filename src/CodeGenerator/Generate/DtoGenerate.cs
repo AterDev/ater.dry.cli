@@ -30,26 +30,37 @@ public class DtoGenerate : GenerateBase
 
     public string? GetShortDto()
     {
+        if (EntityInfo == null) return default;
         var dto = new DtoInfo
         {
-            Name = EntityInfo.Name + "DetailDto",
+            Name = EntityInfo.Name + "ShortDto",
             NamespaceName = EntityInfo.NamespaceName,
             Comment = EntityInfo.Comment,
             Tag = EntityInfo.Name,
-            Properties = EntityInfo.PropertyInfos
+            Properties = EntityInfo.PropertyInfos?
+                .Where(p => p.Name != "Content"
+                    && (p.MaxLength < 2000 || p.MaxLength == null)
+                    && !(p.IsList && p.IsNavigation))
+                .ToList()
         };
         return dto.ToString();
     }
 
     public string? GetItemDto()
     {
+        if (EntityInfo == null) return default;
         var dto = new DtoInfo
         {
             Name = EntityInfo.Name + "ItemDto",
             NamespaceName = EntityInfo.NamespaceName,
             Comment = EntityInfo.Comment,
             Tag = EntityInfo.Name,
-            Properties = EntityInfo.PropertyInfos.Where(p => !p.IsList && p.Name != "UpdatedTime" && !p.IsNavigation).ToList()
+            Properties = EntityInfo.PropertyInfos?
+                .Where(p => !p.IsList
+                    && p.Name != "Content"
+                    && (p.MaxLength < 1000 || p.MaxLength == null)
+                    && !p.IsNavigation)
+                .ToList()
         };
         return dto.ToString();
     }
@@ -59,7 +70,7 @@ public class DtoGenerate : GenerateBase
         if (EntityInfo == null) return default;
         var referenceProps = EntityInfo.PropertyInfos?
             .Where(p => p.IsNavigation && !p.IsList)
-            .Select(s => new PropertyInfo("Guid?", s.Name + "Id"))
+            .Select(s => new PropertyInfo($"{KeyType}?", s.Name + "Id"))
             .ToList();
         var dto = new DtoInfo
         {
@@ -81,7 +92,7 @@ public class DtoGenerate : GenerateBase
         if (EntityInfo == null) return default;
         var referenceProps = EntityInfo.PropertyInfos?
             .Where(p => p.IsNavigation && !p.IsList)
-            .Select(s => new PropertyInfo("Guid", s.Name + "Id"))
+            .Select(s => new PropertyInfo($"{KeyType}", s.Name + "Id"))
             .ToList();
         var dto = new DtoInfo
         {
@@ -114,7 +125,7 @@ public class DtoGenerate : GenerateBase
         // 导航属性处理
         var referenceProps = EntityInfo.PropertyInfos?
             .Where(p => p.IsNavigation && !p.IsList)
-            .Select(s => new PropertyInfo("Guid?", s.Name + "Id"))
+            .Select(s => new PropertyInfo($"{KeyType}?", s.Name + "Id"))
             .ToList();
         var dto = new DtoInfo
         {
@@ -141,7 +152,7 @@ public class DtoGenerate : GenerateBase
     protected void GenerateAutoMapperProfile(string entityName)
     {
         var code =
-@$"            CreateMap<{entityName}AddDto, {entityName}>();
+    @$"            CreateMap<{entityName}AddDto, {entityName}>();
             CreateMap<{entityName}UpdateDto, {entityName}>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => NotNull(srcMember)));;
             CreateMap<{entityName}, {entityName}Dto>();
