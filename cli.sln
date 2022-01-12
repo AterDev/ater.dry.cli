@@ -7,8 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommandLine", "src\CommandL
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "config", "config", "{749452B4-5415-4ABE-A691-70718DDED23F}"
 	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
-		PublishToLocal.ps1 = PublishToLocal.ps1
+		config\.editorconfig = config\.editorconfig
+		config\PublishToLocal.ps1 = config\PublishToLocal.ps1
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeGenerator", "src\CodeGenerator\CodeGenerator.csproj", "{4D08D738-532E-449D-9A82-D4DAFF850A70}"

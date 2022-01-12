@@ -1,73 +1,76 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
-    <PackAsTool>true</PackAsTool>
-    <ToolCommandName>gt</ToolCommandName>
-    <PackageOutputPath>./nupkg</PackageOutputPath>
-    <AssemblyVersion>0.1.0.0</AssemblyVersion>
-    <FileVersion>0.1.0.0</FileVersion>
-    <Version>6.0-beta</Version>
-    <Description>The code generate to save your time.
-define the entity and generate commonly codes</Description>
-    <Authors>NilTor</Authors>
-    <Company>Atersoft</Company>
-    <Copyright>Atersoft</Copyright>
-    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/AterDev/cli</PackageProjectUrl>
-    <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/AterDev/cli.git</RepositoryUrl>
-    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes></PackageReleaseNotes>
-    <PackageIcon>logo.jpg</PackageIcon>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>Droplet.$(MSBuildProjectName.Replace("cli", "CLI"))</RootNamespace>
-    <AssemblyName>$(MSBuildProjectName)</AssemblyName>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageTags>cli;atersoft;code generate</PackageTags>
-    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net6.0</TargetFramework>
+		<PackAsTool>true</PackAsTool>
+		<ToolCommandName>droplet</ToolCommandName>
+		<PackageOutputPath>./nupkg</PackageOutputPath>
+		<AssemblyVersion>0.1.0.0</AssemblyVersion>
+		<FileVersion>0.1.0.0</FileVersion>
+		<PackageId>ater.droplet.cli</PackageId>
+		<Version>6.0.0-beta</Version>
+		<Description>
+			The code generate to save your time.
+			define the entity and generate commonly codes
+		</Description>
+		<Authors>NilTor</Authors>
+		<Company>Atersoft</Company>
+		<Copyright>Atersoft</Copyright>
+		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+		<PackageProjectUrl>https://github.com/AterDev/cli</PackageProjectUrl>
+		<RepositoryType>git</RepositoryType>
+		<RepositoryUrl>https://github.com/AterDev/cli.git</RepositoryUrl>
+		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+		<PackageReleaseNotes></PackageReleaseNotes>
+		<PackageIcon>logo.jpg</PackageIcon>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<RootNamespace>Droplet.$(MSBuildProjectName.Replace("cli", "CLI"))</RootNamespace>
+		<AssemblyName>$(MSBuildProjectName)</AssemblyName>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageTags>cli;atersoft;code generate</PackageTags>
+		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<PlatformTarget>AnyCPU</PlatformTarget>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<PlatformTarget>AnyCPU</PlatformTarget>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="Templates\**\*.*" />
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Templates\**\*.*" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Remove="Templates\NgViews\add\add.component.html.tpl" />
-    <None Remove="Templates\NgViews\edit\edit.component.html.tpl" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="Templates\NgViews\add\add.component.html.tpl" />
+		<None Remove="Templates\NgViews\edit\edit.component.html.tpl" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.2.3" />
-    <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20371.2" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.OpenApi.Readers" Version="1.2.3" />
+		<PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20371.2" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Include="README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-    <None Include="logo.jpg">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="logo.jpg">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\CodeGenerator\CodeGenerator.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\CodeGenerator\CodeGenerator.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-  </ItemGroup>
+	<ItemGroup>
+		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+	</ItemGroup>
 </Project>

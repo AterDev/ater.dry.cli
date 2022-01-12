@@ -15,6 +15,8 @@ public class DtoCommandTest
 
         var entityName = Path.GetFileNameWithoutExtension(new FileInfo(entityFilePath).Name);
         var generateFile = Path.Combine(outputPath, "Models", $"{entityName}Dtos", $"{entityName}UpdateDto.cs");
+        var usingFile = Path.Combine(outputPath, "Models", $"GlobalUsing.cs");
         Assert.True(File.Exists(generateFile));
+        Assert.True(File.Exists(usingFile));
     }
 }
