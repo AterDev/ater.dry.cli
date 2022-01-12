@@ -51,11 +51,18 @@ public class DtoCommand
             SaveToFile("Short", gen.GetShortDto());
 
             GenerateUsingsFile(gen.GetDtoUsings());
+            GenerateFilterBaseFile(gen.GetFilterBase());
         }
     }
     public void GenerateUsingsFile(string content)
     {
         var outputDir = Path.Combine(DtoPath, "Models", "GlobalUsing.cs");
+        if (!File.Exists(outputDir))
+            File.WriteAllTextAsync(outputDir, content);
+    }
+    public void GenerateFilterBaseFile(string content)
+    {
+        var outputDir = Path.Combine(DtoPath, "Models", "FilterBase.cs");
         if (!File.Exists(outputDir))
             File.WriteAllTextAsync(outputDir, content);
     }
