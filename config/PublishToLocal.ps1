@@ -10,10 +10,10 @@ try {
     # uninstall old version
     Write-Host 'uninstall old version'
     dotnet tool uninstall -g $PackageId
-    Write-Host 'packing new version...'
-    # pack 
-
-    dotnet pack 
+    Write-Host 'build and pack new version...'
+    # build & pack
+    dotnet build -c release
+    dotnet pack -c release
     Write-Host 'install new version'
     dotnet tool install -g --add-source ./nupkg $PackageId --version $Version
 

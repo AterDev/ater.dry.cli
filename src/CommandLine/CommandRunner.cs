@@ -1,8 +1,8 @@
 ﻿namespace Droplet.CommandLine;
 
-public class RootCommands
+public class CommandRunner
 {
-    public RootCommands()
+    public CommandRunner()
     {
     }
 
@@ -62,9 +62,10 @@ public class RootCommands
     /// <param name="entityPath"></param>
     public void GenerateDto(string entityPath, string output)
     {
-        //var dtoGen = new DtoGenerate(entityPath, output);
-        //dtoGen.GenerateDtos(true);
-        Console.WriteLine("Task done!");
+        Console.WriteLine("Generating Dtos...");
+        var cmd = new DtoCommand(entityPath, output);
+        cmd.Generate();
+        Console.WriteLine("Dto files generate success!");
     }
 
     /// <summary>

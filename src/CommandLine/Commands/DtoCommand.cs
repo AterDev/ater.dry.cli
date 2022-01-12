@@ -23,7 +23,7 @@ public class DtoCommand
         DtoPath = dtoPath;
     }
 
-    public void Generate()
+    public void Generate(bool cover = false)
     {
         if (!File.Exists(EntityPath))
         {
@@ -45,10 +45,10 @@ public class DtoCommand
         }
         else
         {
-            SaveToFile("Update", gen.GetUpdateDto());
-            SaveToFile("Filter", gen.GetFilterDto());
-            SaveToFile("Item", gen.GetItemDto());
-            SaveToFile("Short", gen.GetShortDto());
+            SaveToFile("Update", gen.GetUpdateDto(), cover);
+            SaveToFile("Filter", gen.GetFilterDto(), cover);
+            SaveToFile("Item", gen.GetItemDto(), cover);
+            SaveToFile("Short", gen.GetShortDto(), cover);
 
             GenerateUsingsFile(gen.GetDtoUsings());
             GenerateFilterBaseFile(gen.GetFilterBase());
