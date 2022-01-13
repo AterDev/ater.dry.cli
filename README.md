@@ -23,12 +23,6 @@ cli tools
   - 过滤超过2000长度的字段
   - 过滤列表导航属性，如`List<Blog>`
 
-## 生成Dto
-- 默认跳过已生成
-- 强制覆盖选项
-- 生成`GlobalUsing.cs`，以引用依赖
-- 生成基础类，如`FilterBase`
-
 ## 数据仓储接口操作
 - 添加
 - 删除
@@ -41,6 +35,22 @@ cli tools
 - 批量添加
 
 ## 命令
+
+### Dto生成命令
+- 默认跳过已生成
+- 强制覆盖选项
+- 生成`GlobalUsing.cs`，以引用依赖
+- 生成基础类，如`FilterBase`
+
+### 数据仓储生成
+- 在`Interface`目录，生成`IDataStore.cs`，提供接口
+- 在`DataStore`目录，生成`DataStore.cs`，接口的实现
+- 生成对应 `DataStore`
+- 重新生成`DataStoreExtensions`,扫描所有Store
+
+### API服务生成
+
+### gRPC服务生成
 
 ### 配置项
 - 项目目录
