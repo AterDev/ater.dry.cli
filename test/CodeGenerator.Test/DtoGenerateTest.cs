@@ -67,7 +67,7 @@ public class DtoGenerateTest
     public void Shoud_generate_dto_content()
     {
         var filePath = @"C:\self\cli\test\CodeGenerator.Test\Entity\Blog.cs";
-        var gen = new DtoGenerate(filePath);
+        var gen = new DtoCodeGenerate(filePath);
         var shortDto = gen.GetShortDto();
         var filterDto = gen.GetFilterDto();
         var updateDto = gen.GetUpdateDto();

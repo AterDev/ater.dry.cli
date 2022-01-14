@@ -1,4 +1,4 @@
-﻿namespace CodeGenerator.Infrastructure.Helper;
+﻿namespace CodeGenerator.Generate;
 
 public class GenerateBase
 {
@@ -28,9 +28,7 @@ public class GenerateBase
     protected void SaveToFile(string path, string fileName, string content)
     {
         if (!Directory.Exists(path))
-        {
             Directory.CreateDirectory(path);
-        }
         File.WriteAllText(Path.Combine(path, fileName), content);
         Console.WriteLine($"Created file {Path.Combine(path, fileName)}.");
     }

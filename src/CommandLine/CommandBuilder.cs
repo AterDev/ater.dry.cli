@@ -47,21 +47,54 @@ public class CommandBuilder
 
         var path = new Argument<string>("entity path", "The entity file path");
         var outputOption = new Option<string>(new[] { "--output", "-o" },
-            "output project directory，default ./Share/Models");
-        var forceOption = new Option<bool>(new[] { "--force" }, "force overwrite file");
+            "output project directory，default ./Share");
+        var forceOption = new Option<bool>(new[] { "--force", "-f" }, "force overwrite file");
         dtoCommand.AddArgument(path);
         dtoCommand.AddOption(outputOption);
         dtoCommand.AddOption(forceOption);
-        dtoCommand.SetHandler((string entity, string output, bool force) =>
+        dtoCommand.SetHandler((string entity, string? output, bool? force) =>
         {
             if (string.IsNullOrEmpty(output))
             {
                 output = Config.DTO_PATH;
             }
-            executor.GenerateDto(entity, output);
+            var isForce = false;
+            if (force != null && force.Value) isForce = true;
+            executor.GenerateDto(entity, output, isForce);
         }, path, outputOption, forceOption);
 
         RootCommand.Add(dtoCommand);
+    }
+
+    public void AddApi()
+    {
+        var executor = new CommandRunner();
+        // api 生成命令
+        var apiCommand = new Command("webapi", "generate dtos, datastore, api controllers");
+        apiCommand.AddAlias("api");
+        var path = new Argument<string>("entity path", "The entity file path");
+        var dtoOption = new Option<string>(new[] { "--dto", "-d" },
+            "dto project directory，default ./Share");
+        var storeOption = new Option<string>(new[] { "--datastore", "-s" },
+            "dataStore project directory，default ./Http.Application");
+        var outputOption = new Option<string>(new[] { "--output", "-o" },
+            "api controller project directory，default ./Http.API");
+
+        apiCommand.AddArgument(path);
+        apiCommand.AddOption(dtoOption);
+        apiCommand.AddOption(storeOption);
+        apiCommand.AddOption(outputOption);
+
+        apiCommand.SetHandler((string entity, string dto, string store, string output) =>
+        {
+            //dto = string.IsNullOrEmpty(dto) ? Config.DTO_PATH : dto;
+            dto ??= Config.DTO_PATH;
+            store ??= Config.SERVICE_PATH;
+            output ??= Config.API_PATH;
+            executor.GenerateApi(entity, dto,store, output);
+        }, path, dtoOption, storeOption, outputOption);
+
+        RootCommand.Add(apiCommand);
     }
 
 }

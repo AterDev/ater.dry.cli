@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Droplet.CommandLine.Commands;
 
-public class DtoCommand
+public class DtoCommand : CommandBase
 {
     /// <summary>
     /// 实体文件路径
@@ -16,14 +17,19 @@ public class DtoCommand
     /// dto项目目录
     /// </summary>
     public string DtoPath { get; set; }
+    public DtoCodeGenerate CodeGen { get; set; }
 
     public DtoCommand(string entityPath, string dtoPath)
     {
         EntityPath = entityPath;
         DtoPath = dtoPath;
+        CodeGen = new DtoCodeGenerate(EntityPath)
+        {
+            AssemblyName = new DirectoryInfo(DtoPath).Name
+        };
     }
 
-    public void Generate(bool cover = false)
+    public void Run(bool cover = false)
     {
         if (!File.Exists(EntityPath))
         {
@@ -35,36 +41,30 @@ public class DtoCommand
             Console.WriteLine("Dto project not exist!");
             return;
         }
-        var gen = new DtoGenerate(EntityPath)
-        {
-            AssemblyName = new DirectoryInfo(DtoPath).Name
-        };
-        if (gen.EntityInfo == null)
+
+        if (CodeGen.EntityInfo == null)
         {
             Console.WriteLine("Entity parse failed!");
         }
         else
         {
-            SaveToFile("Update", gen.GetUpdateDto(), cover);
-            SaveToFile("Filter", gen.GetFilterDto(), cover);
-            SaveToFile("Item", gen.GetItemDto(), cover);
-            SaveToFile("Short", gen.GetShortDto(), cover);
-
-            GenerateUsingsFile(gen.GetDtoUsings());
-            GenerateFilterBaseFile(gen.GetFilterBase());
+            SaveToFile("Update", CodeGen.GetUpdateDto(), cover);
+            SaveToFile("Filter", CodeGen.GetFilterDto(), cover);
+            SaveToFile("Item", CodeGen.GetItemDto(), cover);
+            SaveToFile("Short", CodeGen.GetShortDto(), cover);
+            GenerateCommonFiles();
         }
     }
-    public void GenerateUsingsFile(string content)
+    public async void GenerateCommonFiles()
     {
-        var outputDir = Path.Combine(DtoPath, "Models", "GlobalUsing.cs");
-        if (!File.Exists(outputDir))
-            File.WriteAllTextAsync(outputDir, content);
+        await GenerateFileAsync("GlobalUsing.cs", CodeGen.GetDtoUsings());
+        await GenerateFileAsync("FilterBase.cs", CodeGen.GetFilterBase());
+        await GenerateFileAsync("PageResult.cs", CodeGen.GetPageResult());
     }
-    public void GenerateFilterBaseFile(string content)
+
+    public async Task GenerateFileAsync(string fileName, string content)
     {
-        var outputDir = Path.Combine(DtoPath, "Models", "FilterBase.cs");
-        if (!File.Exists(outputDir))
-            File.WriteAllTextAsync(outputDir, content);
+        await GenerateFileAsync(Path.Combine(DtoPath, "Models"), fileName, content);
     }
 
     /// <summary>
@@ -78,14 +78,6 @@ public class DtoCommand
         // 以文件名为准
         var entityName = Path.GetFileNameWithoutExtension(new FileInfo(EntityPath).Name);
         var outputDir = Path.Combine(DtoPath, "Models", entityName + "Dtos");
-        var filePath = Path.Combine(outputDir, $"{entityName}{dtoType}Dto.cs");
-        if (!Directory.Exists(outputDir))
-        {
-            Directory.CreateDirectory(outputDir);
-        }
-        if (!File.Exists(filePath) || cover)
-        {
-            await File.WriteAllTextAsync(filePath, content);
-        }
+        await GenerateFileAsync(outputDir, $"{entityName}{dtoType}Dto.cs", content ?? "", cover);
     }
 }

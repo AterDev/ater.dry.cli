@@ -1,6 +1,4 @@
-﻿using CodeGenerator.Infrastructure.Helper;
-
-namespace Droplet.CommandLine.Commands;
+﻿namespace Droplet.CommandLine.Commands;
 
 /// <summary>
 /// 表单生成

@@ -51,22 +51,7 @@ internal class Program
             Description = "前端目录路径"
         });
 
-        // api 生成命令
-        var apiCommand = new Command("webapi", "aspnetcore webapi代码生成，模型，仓储！");
-        apiCommand.AddAlias("api");
-        apiCommand.AddOption(new Option<string>(new[] { "--entity", "-e" })
-        {
-            IsRequired = true,
-            Description = "实体模型文件路径"
-        });
-        apiCommand.AddOption(new Option<string>(new[] { "--service", "-s" })
-        {
-            Description = "数据仓储服务的项目路径，默认为./Core.Services",
-        });
-        apiCommand.AddOption(new Option<string>(new[] { "--web", "-w" })
-        {
-            Description = "网站项目路径，默认为./App.Api"
-        });
+
         // 集成命令
         var genCommand = new Command("generate", "代码生成");
         genCommand.AddAlias("g");
@@ -143,7 +128,6 @@ internal class Program
           });*/
 
         gtCommand.Add(ngCommand);
-        gtCommand.Add(apiCommand);
         gtCommand.Add(viewCommand);
         gtCommand.Add(genCommand);
         //return await gtCommand.InvokeAsync("");

@@ -60,11 +60,11 @@ public class CommandRunner
     /// dto生成或更新
     /// </summary>
     /// <param name="entityPath"></param>
-    public void GenerateDto(string entityPath, string output)
+    public void GenerateDto(string entityPath, string output, bool force)
     {
         Console.WriteLine("Generating Dtos...");
         var cmd = new DtoCommand(entityPath, output);
-        cmd.Generate();
+        cmd.Run(force);
         Console.WriteLine("Dto files generate success!");
     }
 
@@ -74,11 +74,11 @@ public class CommandRunner
     /// <param name="path">实体文件路径</param>
     /// <param name="servicePath">service目录</param>
     /// <param name="webPath">网站目录</param>
-    public void GenerateApi(string path, string servicePath = "", string webPath = "", string dtoPath = "")
+    public void GenerateApi(string path, string dtoPath = "", string servicePath = "", string webPath = "")
     {
-        var reposGen = new RepositoryGenerate(path, servicePath);
-        //var dtoGen = new DtoGenerate(path, dtoPath);
-        //dtoGen.GenerateDtos();
+        var reposGen = new StoreCommand(path, servicePath);
+        var cmd = new DtoCommand(path, dtoPath);
+        cmd.Run();
         reposGen.GenerateReponsitory();
 
         Console.WriteLine("api webpath:" + webPath);

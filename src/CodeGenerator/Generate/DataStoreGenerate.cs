@@ -1,5 +1,4 @@
-﻿using CodeGenerator.Infrastructure.Helper;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeGenerator.Generate;
 
@@ -53,6 +52,42 @@ public class DataStoreGenerate : GenerateBase
         tplContent = tplContent.Replace("{$ContextName}", contextName);
         SaveToFile(Path.Combine(ServicePath, "Repositories"), className + "Repository.cs", tplContent);
         Console.WriteLine("仓储生成完成");
+    }
+
+
+    /// <summary>
+    /// 接口文件内容
+    /// </summary>
+    /// <returns></returns>
+    public string GetStoreInterface()
+    {
+        return default;
+    }
+
+    /// <summary>
+    /// 接口实现类
+    /// </summary>
+    /// <returns></returns>
+    public string GetStoreBase()
+    {
+        return default;
+    }
+
+    /// <summary>
+    /// 自定义内容
+    /// </summary>
+    /// <returns></returns>
+    public string GetStoreContent()
+    {
+        return default;
+    }
+    /// <summary>
+    /// 服务注册
+    /// </summary>
+    /// <returns></returns>
+    public string GetStoreService()
+    {
+        return default;
     }
 
 

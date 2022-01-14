@@ -11,7 +11,7 @@ public class DtoCommandTest
         var entityFilePath = @"C:\self\cli\test\CodeGenerator.Test\Entity\Blog.cs";
         var outputPath = @"C:\self\cli\test\CommandLine.Test";
         var cmd = new DtoCommand(entityFilePath, outputPath);
-        cmd.Generate();
+        cmd.Run();
 
         var entityName = Path.GetFileNameWithoutExtension(new FileInfo(entityFilePath).Name);
         var generateFile = Path.Combine(outputPath, "Models", $"{entityName}Dtos", $"{entityName}UpdateDto.cs");
