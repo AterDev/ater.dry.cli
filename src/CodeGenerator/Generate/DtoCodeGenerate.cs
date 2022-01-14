@@ -5,7 +5,7 @@ namespace CodeGenerator.Generate;
 /// <summary>
 /// dto generate
 /// </summary>
-public class DtoGenerate : GenerateBase
+public class DtoCodeGenerate : GenerateBase
 {
     public EntityInfo? EntityInfo { get; set; }
     public string KeyType { get; set; } = "Guid";
@@ -13,7 +13,7 @@ public class DtoGenerate : GenerateBase
     /// dto 输出的 程序集名称
     /// </summary>
     public string AssemblyName { get; set; } = "Share";
-    public DtoGenerate(string entityPath)
+    public DtoCodeGenerate(string entityPath)
     {
         if (File.Exists(entityPath))
         {
@@ -153,6 +153,15 @@ public class DtoGenerate : GenerateBase
                 && !p.IsList
                 && !p.IsNavigation).ToList()
         };
+        // 处理非required的都设置为nullable
+        if (dto.Properties != null)
+            foreach (var item in dto.Properties)
+            {
+                if (!item.IsRequired)
+                {
+                    item.IsNullable = true;
+                }
+            }
         referenceProps?.ForEach(item =>
         {
             dto.Properties?.Add(item);
@@ -179,6 +188,16 @@ public class FilterBase
     public DateTimeOffset? MaxCreatedTime {{ get; set; }}
 }}
 ";
+    }
+
+    public string GetPageResult()
+    {
+        var content = GetTplContent("PageResult.tpl");
+        if (content.NotNull())
+        {
+            content = content.Replace("@{AssemblyName}", AssemblyName);
+        }
+        return content;
     }
 
     /// <summary>

@@ -11,7 +11,7 @@ public class GenerateBase
     /// <param name="tplPath"></param>
     protected string GetTplContent(string tplPath)
     {
-        tplPath = "GT.CLI.Templates." + tplPath;
+        tplPath = "CodeGenerator.Templates." + tplPath;
         // 读取模板文件
         var assembly = Assembly.GetExecutingAssembly();
         using var stream = assembly.GetManifestResourceStream(tplPath);

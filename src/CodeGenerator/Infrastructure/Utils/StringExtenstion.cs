@@ -89,4 +89,9 @@ public static class StringExtenstion
         }
         return char.ToUpper(str[0]) + str.Substring(1);
     }
+
+    public static bool NotNull(this string? str)
+    {
+        return !string.IsNullOrEmpty(str);
+    }
 }
