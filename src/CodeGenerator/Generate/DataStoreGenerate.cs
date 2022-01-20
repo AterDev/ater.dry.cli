@@ -20,16 +20,18 @@ public class DataStoreGenerate : GenerateBase
     /// DTO 所有项目目录路径
     /// </summary>
     public string SharePath { get; set; }
+    public string? ContextName { get; set; }
     /// <summary>
     /// DataStore 项目的命名空间
     /// </summary>
     public string? ShareNamespace { get; set; }
     public string? ServiceNamespace { get; set; }
-    public DataStoreGenerate(string entityPath, string dtoPath, string servicePath)
+    public DataStoreGenerate(string entityPath, string dtoPath, string servicePath, string? contextName = null)
     {
         EntityPath = entityPath;
         ServicePath = servicePath;
         SharePath = dtoPath;
+        ContextName = contextName;
         ShareNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(SharePath));
         ServiceNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(ServicePath));
     }
@@ -67,6 +69,7 @@ public class DataStoreGenerate : GenerateBase
             "global using Microsoft.Extensions.DependencyInjection;",
             "global using Microsoft.Extensions.Logging;",
             $"global using {ServiceNamespace}.Interface;",
+            $"global using {ServiceNamespace}.DataStore;",
             $"global using {ShareNamespace}.Models;"
         };
     }
@@ -77,10 +80,10 @@ public class DataStoreGenerate : GenerateBase
     /// <returns></returns>
     public string GetStoreContent()
     {
-        var contextName = GetContextName();
+        var contextName = GetContextName(ContextName);
         var entityName = Path.GetFileNameWithoutExtension(EntityPath);
         // 生成基础仓储实现类，替换模板变量并写入文件
-        var tplContent = GetTplContent("DataStore.tpl");
+        var tplContent = GetTplContent("Implement.DataStore.tpl");
         tplContent = tplContent.Replace(TplConstant.NAMESPACE, ServiceNamespace);
         tplContent = tplContent.Replace(TplConstant.SHARE_NAMESPACE, ShareNamespace);
         tplContent = tplContent.Replace(TplConstant.DBCONTEXT_NAME, contextName);
@@ -97,7 +100,7 @@ public class DataStoreGenerate : GenerateBase
         var dataStoreContent = "";
         dataStores.ForEach(dataStore =>
         {
-            var row = $"        services.AddScoped(typeof({dataStore}));{Environment.NewLine}";
+            var row = $"        services.AddScoped(typeof({dataStore}DataStore));{Environment.NewLine}";
             dataStoreContent += row;
         });
         // 构建服务

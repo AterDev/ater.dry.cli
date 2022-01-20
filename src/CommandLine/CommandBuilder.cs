@@ -79,20 +79,26 @@ public class CommandBuilder
             "dataStore project directory，default ./Http.Application");
         var outputOption = new Option<string>(new[] { "--output", "-o" },
             "api controller project directory，default ./Http.API");
+        var contextOption = new Option<string>(new[] { "--contextName", "-c" },
+            "the entityframework dbcontext name, default ContextBase");
+        var typeOption = new Option<string>(new[] { "--type", "-t" },
+            "api type, valid values:rest/grpc/graph");
 
         apiCommand.AddArgument(path);
         apiCommand.AddOption(dtoOption);
         apiCommand.AddOption(storeOption);
         apiCommand.AddOption(outputOption);
+        apiCommand.AddOption(contextOption);
 
-        apiCommand.SetHandler((string entity, string dto, string store, string output) =>
+        apiCommand.SetHandler(
+            (string entity, string dto, string store, string output, string context) =>
         {
             //dto = string.IsNullOrEmpty(dto) ? Config.DTO_PATH : dto;
             dto ??= Config.DTO_PATH;
             store ??= Config.SERVICE_PATH;
             output ??= Config.API_PATH;
-            executor.GenerateApi(entity, dto,store, output);
-        }, path, dtoOption, storeOption, outputOption);
+            executor.GenerateApi(entity, dto, store, output);
+        }, path, dtoOption, storeOption, outputOption, contextOption);
 
         RootCommand.Add(apiCommand);
     }

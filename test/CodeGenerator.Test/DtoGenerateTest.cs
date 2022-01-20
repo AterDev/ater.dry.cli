@@ -1,12 +1,9 @@
 ﻿using CodeGenerator.Generate;
 using CodeGenerator.Infrastructure.Helper;
 using CodeGenerator.Test.Entity;
-using System;
-using System.Collections.Generic;
+using CodeGenerator.Test.Hepler;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 
 namespace CodeGenerator.Test;
 
@@ -27,7 +24,7 @@ public class DtoGenerateTest
     [Fact]
     public void Shoud_parse_entity_and_properties()
     {
-        var filePath = @"C:\self\cli\test\CodeGenerator.Test\Entity\Blog.cs";
+        var filePath = PathHelper.GetProjectFilePath(@"Entity\Blog.cs");
         var entityHelper = new EntityParseHelper(filePath);
         entityHelper.Parse();
         Assert.Equal("Blog", entityHelper.Name);
@@ -66,7 +63,7 @@ public class DtoGenerateTest
     [Fact]
     public void Shoud_generate_dto_content()
     {
-        var filePath = @"C:\self\cli\test\CodeGenerator.Test\Entity\Blog.cs";
+        var filePath = PathHelper.GetProjectFilePath(@"Entity\Blog.cs");
         var gen = new DtoCodeGenerate(filePath);
         var shortDto = gen.GetShortDto();
         var filterDto = gen.GetFilterDto();

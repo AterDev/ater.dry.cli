@@ -22,8 +22,4 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\CodeGenerator\CodeGenerator.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Hepler\" />
-  </ItemGroup>
 </Project>

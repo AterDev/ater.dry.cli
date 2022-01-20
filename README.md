@@ -47,6 +47,8 @@ cli tools
   - 重写添加
 - 重新生成`DataStoreExtensions`,扫描所有Store，用来进行仓储服务注册
 
+### Rest API生成
+- 
 ## 命令
 
 ### Dto生成命令
@@ -58,6 +60,12 @@ cli tools
 
 ### API服务生成
 `api entityPath [--dtoPath --storePath --output --contextName --type]`
+- 参数说明
+  - contextName，使用EF时的 数据库上下文名称，不指定将会自动搜索，默认为'ContextBase'
+- 生成DTO
+- 生成DataStore
+- 生成ApiController
+- 支持多种类型(`Rest`,`GRPC`,`GraphQL`)生成
 
 ### gRPC服务生成
 

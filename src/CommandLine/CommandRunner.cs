@@ -73,18 +73,20 @@ public class CommandRunner
     /// </summary>
     /// <param name="path">实体文件路径</param>
     /// <param name="servicePath">service目录</param>
-    /// <param name="webPath">网站目录</param>
-    public void GenerateApi(string path, string dtoPath = "", string servicePath = "", string webPath = "")
+    /// <param name="apiPath">网站目录</param>
+    /// <param name="dbContext"></param>
+    public void GenerateApi(string path, string dtoPath = "",
+            string servicePath = "", string apiPath = "", string dbContext = "")
     {
         var reposGen = new StoreCommand(path, servicePath);
         var cmd = new DtoCommand(path, dtoPath);
         cmd.Run();
-        reposGen.GenerateReponsitory();
+        //reposGen.GenerateReponsitory();
 
-        Console.WriteLine("api webpath:" + webPath);
-        if (!string.IsNullOrEmpty(webPath))
+        Console.WriteLine("api webpath:" + apiPath);
+        if (!string.IsNullOrEmpty(apiPath))
         {
-            var apiGen = new ApiGenerate(path, servicePath, webPath);
+            var apiGen = new ApiGenerate(path, servicePath, apiPath);
             apiGen.GenerateRepositoryServicesDI();
             apiGen.GenerateController();
         }

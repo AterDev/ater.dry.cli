@@ -16,7 +16,6 @@ public class CompilationHelper
     public CompilationHelper(string path, string? dllFilter = null)
     {
         Compilation = CSharpCompilation.Create("tmp");
-        AddDllReferences(path, dllFilter);
     }
     public void AddDllReferences(string path, string? dllFilter = null)
     {
@@ -33,7 +32,7 @@ public class CompilationHelper
                           return true;
                       }
                   }).ToList();
-        Compilation.AddReferences(dlls.Select(dll => MetadataReference.CreateFromFile(dll)));
+        Compilation = Compilation.AddReferences(dlls.Select(dll => MetadataReference.CreateFromFile(dll)));
     }
 
     public void AddSyntaxTree(string content)

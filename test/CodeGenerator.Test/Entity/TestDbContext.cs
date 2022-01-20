@@ -1,5 +1,5 @@
 ﻿namespace CodeGenerator.Test.Entity;
-internal class TestDbContext : DbContext
+public class TestDbContext : DbContext
 {
     public DbSet<Comments> Comments { get; set; }
     public DbSet<Blog> Blogs { get; set; }
