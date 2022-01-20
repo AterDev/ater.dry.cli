@@ -73,7 +73,9 @@ public class CompilationHelper
         {
             return default;
         }
-        return namedTypes.Where(c => c.BaseType.Name.Equals(baseTypeName)).ToList();
+        return namedTypes
+            .Where(c => c.BaseType.Name.Equals(baseTypeName))
+            .ToList();
     }
 
     /// <summary>

@@ -9,12 +9,20 @@ namespace CodeGenerator.Infrastructure.Helper;
 
 public class AssemblyHelper
 {
-
-    public static FileInfo? FindProjectFile(DirectoryInfo dir, DirectoryInfo root)
+    /// <summary>
+    /// 搜索项目文件,直到根目录
+    /// </summary>
+    /// <param name="dir">起始目录</param>
+    /// <param name="root">根目录</param>
+    /// <returns></returns>
+    public static FileInfo? FindProjectFile(DirectoryInfo dir, DirectoryInfo? root = null)
     {
-        if (dir.FullName == root.FullName) return default;
         var file = dir.GetFiles("*.csproj").FirstOrDefault();
-        if (file == null)
+        if (root == null)
+        {
+            return file;
+        }
+        if (file == null && dir != root)
         {
             return FindProjectFile(dir.Parent!, root);
         }
@@ -50,11 +58,46 @@ public class AssemblyHelper
         var nodes = xml.Descendants("PropertyGroup")
             .Where(pg => pg.Elements().Any(e => e.Name.LocalName.Equals("AssemblyName")))
             .ToList();
+        // 默认名称
+        var name = Path.GetFileNameWithoutExtension(file.Name);
         if (nodes != null && nodes.Count > 0)
         {
-            return nodes.First().Value;
+            if (!nodes.First().Value.Equals("$(MSBuildProjectName)"))
+            {
+                name = nodes.First().Value;
+            }
         }
-        return Path.GetFileNameWithoutExtension(file.Name);
+        return name;
+    }
 
+    public static string? GetAssemblyName(DirectoryInfo dir)
+    {
+        var file = FindProjectFile(dir);
+        if (file == null) return null;
+        return GetAssemblyName(file);
+    }
+    /// <summary>
+    /// 获取命名空间名称， 不支持MSBuildProjectName表达式
+    /// </summary>
+    /// <param name="dir"></param>
+    /// <returns></returns>
+    public static string? GetNamespaceName(DirectoryInfo dir)
+    {
+        var file = FindProjectFile(dir);
+        if (file == null) return null;
+        var xml = XElement.Load(file.FullName);
+        var nodes = xml.Descendants("PropertyGroup")
+            .Where(pg => pg.Elements().Any(e => e.Name.LocalName.Equals("RootNamespace")))
+            .ToList();
+        // 默认名称
+        var name = Path.GetFileNameWithoutExtension(file.Name);
+        if (nodes != null && nodes.Count > 0)
+        {
+            if (!nodes.First().Value.Contains("MSBuildProjectName"))
+            {
+                name = nodes.First().Value;
+            }
+        }
+        return name;
     }
 }

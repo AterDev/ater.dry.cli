@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeGenerator.Generate;
 
@@ -7,53 +8,31 @@ namespace CodeGenerator.Generate;
 /// </summary>
 public class DataStoreGenerate : GenerateBase
 {
+    /// <summary>
+    /// Entity 文件路径
+    /// </summary>
     public string EntityPath { get; set; }
+    /// <summary>
+    /// DataStroe所在项目目录路径
+    /// </summary>
     public string ServicePath { get; set; }
+    /// <summary>
+    /// DTO 所有项目目录路径
+    /// </summary>
     public string SharePath { get; set; }
-    public DataStoreGenerate(string entityPath, string servicePath)
+    /// <summary>
+    /// DataStore 项目的命名空间
+    /// </summary>
+    public string? ShareNamespace { get; set; }
+    public string? ServiceNamespace { get; set; }
+    public DataStoreGenerate(string entityPath, string dtoPath, string servicePath)
     {
         EntityPath = entityPath;
         ServicePath = servicePath;
-        SharePath = Config.SHARE_PATH;
+        SharePath = dtoPath;
+        ShareNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(SharePath));
+        ServiceNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(ServicePath));
     }
-
-    /// <summary>
-    /// 生成仓储
-    /// </summary>
-    public void GenerateReponsitory()
-    {
-        // 获取生成需要的实体名称
-        if (!File.Exists(EntityPath))
-            return;
-        var content = File.ReadAllText(EntityPath);
-        var tree = CSharpSyntaxTree.ParseText(content);
-        var root = tree.GetCompilationUnitRoot();
-        var classDeclarationSyntax = root.DescendantNodes().OfType<ClassDeclarationSyntax>().Single();
-        var className = classDeclarationSyntax.Identifier.ToString();
-        // 获取数据库上下文信息
-
-        var cpl = new CompilationHelper(Config.DBCONTEXT_PATH, Config.DBCONTEXT_NAMESPACE);
-        var classes = cpl.GetAllClasses();
-        if (classes == null)
-            return;
-        var contextClass = cpl.GetClassNameByBaseType(classes, "IdentityDbContext")?.FirstOrDefault();
-        if (contextClass == null)
-            contextClass = cpl.GetClassNameByBaseType(classes, "DbContext").FirstOrDefault();
-        var contextName = contextClass?.Name ?? "ContextBase";
-        // 生成基础仓储实现类，替换模板变量并写入文件
-        var tplContent = GetTplContent("Repository.tpl");
-
-        tplContent = tplContent.Replace("{ServiceNamespace}", Config.SERVICE_NAMESPACE);
-        tplContent = tplContent.Replace("{$ContextName}", contextName);
-        SaveToFile(Path.Combine(ServicePath, "Repositories"), "Repository.cs", tplContent);
-        // 生成当前实体的仓储服务
-        tplContent = GetTplContent("MyRepository.tpl");
-        tplContent = tplContent.Replace("{$EntityName}", className);
-        tplContent = tplContent.Replace("{$ContextName}", contextName);
-        SaveToFile(Path.Combine(ServicePath, "Repositories"), className + "Repository.cs", tplContent);
-        Console.WriteLine("仓储生成完成");
-    }
-
 
     /// <summary>
     /// 接口文件内容
@@ -61,7 +40,9 @@ public class DataStoreGenerate : GenerateBase
     /// <returns></returns>
     public string GetStoreInterface()
     {
-        return default;
+        var content = GetTplContent("Interface.IDataStore.tpl");
+        content = content.Replace(TplConstant.NAMESPACE, ServiceNamespace);
+        return content;
     }
 
     /// <summary>
@@ -70,7 +51,24 @@ public class DataStoreGenerate : GenerateBase
     /// <returns></returns>
     public string GetStoreBase()
     {
-        return default;
+        var content = GetTplContent("Implement.DataStoreBase.tpl");
+        content = content.Replace(TplConstant.NAMESPACE, ServiceNamespace);
+        return content;
+    }
+
+    /// <summary>
+    /// 命名空间
+    /// </summary>
+    /// <returns></returns>
+    public List<string> GetGlobalUsings()
+    {
+        return new List<string>
+        {
+            "global using Microsoft.Extensions.DependencyInjection;",
+            "global using Microsoft.Extensions.Logging;",
+            $"global using {ServiceNamespace}.Interface;",
+            $"global using {ShareNamespace}.Models;"
+        };
     }
 
     /// <summary>
@@ -79,15 +77,67 @@ public class DataStoreGenerate : GenerateBase
     /// <returns></returns>
     public string GetStoreContent()
     {
-        return default;
+        var contextName = GetContextName();
+        var entityName = Path.GetFileNameWithoutExtension(EntityPath);
+        // 生成基础仓储实现类，替换模板变量并写入文件
+        var tplContent = GetTplContent("DataStore.tpl");
+        tplContent = tplContent.Replace(TplConstant.NAMESPACE, ServiceNamespace);
+        tplContent = tplContent.Replace(TplConstant.SHARE_NAMESPACE, ShareNamespace);
+        tplContent = tplContent.Replace(TplConstant.DBCONTEXT_NAME, contextName);
+        tplContent = tplContent.Replace(TplConstant.ENTITY_NAME, entityName);
+        return tplContent;
     }
     /// <summary>
     /// 服务注册
     /// </summary>
+    /// <param name="dataStores">all store names</param>
     /// <returns></returns>
-    public string GetStoreService()
+    public string GetStoreService(List<string> dataStores)
     {
-        return default;
+        var dataStoreContent = "";
+        dataStores.ForEach(dataStore =>
+        {
+            var row = $"        services.AddScoped(typeof({dataStore}));{Environment.NewLine}";
+            dataStoreContent += row;
+        });
+        // 构建服务
+        var content = GetTplContent("Implement.DataStoreExtensioins.tpl");
+        content = content.Replace(TplConstant.NAMESPACE, ServiceNamespace);
+        content = content.Replace(TplConstant.DATASTORE_SERVICES, dataStoreContent);
+        return content;
+    }
+
+    /// <summary>
+    /// get user DbContext name
+    /// </summary>
+    /// <param name="contextName"></param>
+    /// <returns></returns>
+    protected string GetContextName(string? contextName = null)
+    {
+        var name = "ContextBase";
+        var assemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(ServicePath));
+        var cpl = new CompilationHelper(ServicePath, assemblyName);
+        var classes = cpl.GetAllClasses();
+        if (classes != null)
+        {
+            // 获取所有继承 dbcontext的上下文
+            var allDbContexts = cpl.GetClassNameByBaseType(classes, "IdentityDbContext");
+            if (allDbContexts == null)
+                allDbContexts = cpl.GetClassNameByBaseType(classes, "DbContext");
+
+            if (allDbContexts != null)
+            {
+                if (contextName == null)
+                {
+                    name = allDbContexts.FirstOrDefault()!.Name;
+                }
+                else if (allDbContexts.Any(c => c.Name.Equals(contextName)))
+                {
+                    name = contextName;
+                }
+            }
+        }
+        return name;
     }
 
 

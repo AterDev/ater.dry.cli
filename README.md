@@ -57,7 +57,7 @@ cli tools
 - 生成基础类，如`FilterBase`,`PageResult`
 
 ### API服务生成
-`api entityPath [--type --dtoPath --dataPath --output]`
+`api entityPath [--dtoPath --storePath --output --contextName --type]`
 
 ### gRPC服务生成
 

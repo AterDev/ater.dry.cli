@@ -9,7 +9,7 @@ public class GenerateBase
     /// 获取模板内容
     /// </summary>
     /// <param name="tplPath"></param>
-    protected string GetTplContent(string tplPath)
+    protected static string GetTplContent(string tplPath)
     {
         tplPath = "CodeGenerator.Templates." + tplPath;
         // 读取模板文件
@@ -25,7 +25,7 @@ public class GenerateBase
     /// <param name="path">目录</param>
     /// <param name="fileName">文件名称</param>
     /// <param name="content">文件内容</param>
-    protected void SaveToFile(string path, string fileName, string content)
+    protected static void SaveToFile(string path, string fileName, string content)
     {
         if (!Directory.Exists(path))
             Directory.CreateDirectory(path);
