@@ -12,7 +12,7 @@ public class StoreCommand : CommandBase
     public string DtoPath { get; set; }
     public DataStoreGenerate CodeGen { get; set; }
 
-    public StoreCommand(string entityPath, string dtoPath, string servicePath, string? contextName)
+    public StoreCommand(string entityPath, string dtoPath, string servicePath, string? contextName = null)
     {
         EntityPath = entityPath;
         StorePath = servicePath;
@@ -51,12 +51,16 @@ public class StoreCommand : CommandBase
     /// </summary>
     public async Task GenerateCommonFilesAsync()
     {
-        var interfaceDir = Path.Combine(StorePath, "IDataStore");
+        var interfaceDir = Path.Combine(StorePath, "Interface");
         var storeDir = Path.Combine(StorePath, "DataStore");
         var storeInterface = CodeGen.GetStoreInterface();
+        var userInterface = CodeGen.GetUserContextInterface();
+        var userClass = CodeGen.GetUserContextClass();
         var storeBase = CodeGen.GetStoreBase();
         await GenerateFileAsync(interfaceDir, "IDataStore.cs", storeInterface);
+        await GenerateFileAsync(interfaceDir, "IUserContext.cs", userInterface);
         await GenerateFileAsync(storeDir, "DataStoreBase.cs", storeBase);
+        await GenerateFileAsync(StorePath, "UserContext.cs", userClass);
     }
 
     /// <summary>

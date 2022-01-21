@@ -9,6 +9,7 @@
 		<None Remove="Templates\Implement\DataStore.tpl" />
 		<None Remove="Templates\Implement\DataStoreBase.tpl" />
 		<None Remove="Templates\Implement\DataStoreExtensioins.tpl" />
+		<None Remove="Templates\Implement\UserContext.tpl" />
 		<None Remove="Templates\Interface\IDataStore.tpl" />
 		<None Remove="Templates\Interface\IUserContext.tpl" />
 	</ItemGroup>
@@ -16,6 +17,7 @@
 		<EmbeddedResource Include="Templates\Implement\DataStore.tpl" />
 		<EmbeddedResource Include="Templates\Implement\DataStoreBase.tpl" />
 		<EmbeddedResource Include="Templates\Implement\DataStoreExtensioins.tpl" />
+		<EmbeddedResource Include="Templates\Implement\UserContext.tpl" />
 		<EmbeddedResource Include="Templates\Interface\IDataStore.tpl" />
 		<EmbeddedResource Include="Templates\Interface\IUserContext.tpl" />
 	</ItemGroup>

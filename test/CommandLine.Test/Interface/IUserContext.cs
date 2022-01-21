@@ -1,6 +1,6 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 
-namespace ${Namespace}.Interface;
+namespace CommandLine.Test.Interface;
 
 /// <summary>
 /// 用户上下文

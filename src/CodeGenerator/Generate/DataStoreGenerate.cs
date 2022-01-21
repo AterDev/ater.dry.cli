@@ -16,7 +16,7 @@ public class DataStoreGenerate : GenerateBase
     /// <summary>
     /// DataStroe所在项目目录路径
     /// </summary>
-    public string ServicePath { get; set; }
+    public string StorePath { get; set; }
     /// <summary>
     /// DTO 所有项目目录路径
     /// </summary>
@@ -30,11 +30,11 @@ public class DataStoreGenerate : GenerateBase
     public DataStoreGenerate(string entityPath, string dtoPath, string servicePath, string? contextName = null)
     {
         EntityPath = entityPath;
-        ServicePath = servicePath;
+        StorePath = servicePath;
         SharePath = dtoPath;
         ContextName = contextName;
         ShareNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(SharePath));
-        ServiceNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(ServicePath));
+        ServiceNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(StorePath));
     }
 
     /// <summary>
@@ -44,6 +44,19 @@ public class DataStoreGenerate : GenerateBase
     public string GetStoreInterface()
     {
         var content = GetTplContent("Interface.IDataStore.tpl");
+        content = content.Replace(TplConstant.NAMESPACE, ServiceNamespace);
+        return content;
+    }
+
+    public string GetUserContextInterface()
+    {
+        var content = GetTplContent("Interface.IUserContext.tpl");
+        content = content.Replace(TplConstant.NAMESPACE, ServiceNamespace);
+        return content;
+    }
+    public string GetUserContextClass()
+    {
+        var content = GetTplContent("Implement.UserContext.tpl");
         content = content.Replace(TplConstant.NAMESPACE, ServiceNamespace);
         return content;
     }
@@ -67,6 +80,7 @@ public class DataStoreGenerate : GenerateBase
     {
         return new List<string>
         {
+            "global using System;",
             "global using Microsoft.Extensions.DependencyInjection;",
             "global using Microsoft.Extensions.Logging;",
             $"global using {ServiceNamespace}.Interface;",
@@ -92,16 +106,42 @@ public class DataStoreGenerate : GenerateBase
         return tplContent;
     }
     /// <summary>
-    /// 服务注册
+    /// 服务注册代码
     /// </summary>
-    /// <param name="dataStores">all store names</param>
     /// <returns></returns>
     public string GetStoreService()
     {
         var storeServiceDIContent = "";
+        var storeDir = Path.Combine(StorePath, "DataStore");
+        if (!Directory.Exists(storeDir)) return string.Empty;
+        var files = Directory.GetFiles(storeDir, "*DataStore.cs", SearchOption.TopDirectoryOnly);
+        if (files != null)
+        {
+            files.ToList().ForEach(file =>
+            {
+                var name = Path.GetFileNameWithoutExtension(file);
+                var row = $"        services.AddScoped(typeof({name}));";
+                storeServiceDIContent += row + Environment.NewLine;
+            });
+        }
+        // 构建服务
+        var content = GetTplContent("Implement.DataStoreExtensioins.tpl");
+        content = content.Replace(TplConstant.NAMESPACE, ServiceNamespace);
+        content = content.Replace(TplConstant.DATASTORE_SERVICES, storeServiceDIContent);
+        return content;
+    }
+
+    /// <summary>
+    /// 服务注册
+    /// </summary>
+    /// <param name="dataStores">all store names</param>
+    /// <returns></returns>
+    public string GetStoreServiceAfterBuild()
+    {
+        var storeServiceDIContent = "";
         // 获取所有继承了 DataStoreBase 的类
-        var assemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(ServicePath));
-        var cpl = new CompilationHelper(ServicePath, assemblyName);
+        var assemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(StorePath));
+        var cpl = new CompilationHelper(StorePath, assemblyName);
         var classes = cpl.GetAllClasses();
         if (classes != null)
         {
@@ -130,8 +170,8 @@ public class DataStoreGenerate : GenerateBase
     public string GetContextName(string? contextName = null)
     {
         var name = "ContextBase";
-        var assemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(ServicePath));
-        var cpl = new CompilationHelper(ServicePath, assemblyName);
+        var assemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(StorePath));
+        var cpl = new CompilationHelper(StorePath, assemblyName);
         var classes = cpl.GetAllClasses();
         if (classes != null)
         {

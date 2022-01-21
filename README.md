@@ -38,7 +38,7 @@ cli tools
 - 批量添加
 
 ### 数据仓储生成
-- 在`Interface`目录，生成`IDataStore.cs`，提供接口
+- 在`Interface`目录，生成`IDataStore.cs`及`IUserContext`，提供接口
 - 在`DataStore`目录，生成`DataStoreBase.cs`，接口的实现
 - 生成对应 `DataStore`
   - 重写列表及分页查询
@@ -46,6 +46,7 @@ cli tools
   - 重写更新
   - 重写添加
 - 重新生成`DataStoreExtensions`,扫描所有Store，用来进行仓储服务注册
+- 生成`UserContext.cs` 及 `GlobalUsings.cs`
 
 ### Rest API生成
 - 
@@ -62,9 +63,10 @@ cli tools
 `api entityPath [--dtoPath --storePath --output --contextName --type]`
 - 参数说明
   - contextName，使用EF时的 数据库上下文名称，不指定将会自动搜索，默认为'ContextBase'
-- 生成DTO
-- 生成DataStore
-- 生成ApiController
+- 执行 DtoCommand
+- 执行 StoreCommand
+- 生成 ApiController
+
 - 支持多种类型(`Rest`,`GRPC`,`GraphQL`)生成
 
 ### gRPC服务生成

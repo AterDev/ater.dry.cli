@@ -31,14 +31,16 @@ public class StoreGenerateTest
         var storeInterface = gen.GetStoreInterface();
         var storeBase = gen.GetStoreBase();
         var storeContent = gen.GetStoreContent();
-        var storeService = gen.GetStoreService(new List<string> { "Blog" });
         var globalUsings = gen.GetGlobalUsings();
+        var userInterface = gen.GetUserContextInterface();
+        var userContnet = gen.GetUserContextClass();
 
-        Assert.NotNull(storeService);
         Assert.NotNull(globalUsings);
         Assert.NotNull(storeBase);
         Assert.NotNull(storeContent);
         Assert.NotNull(storeInterface);
+        Assert.NotNull(userInterface);
+        Assert.NotNull(userContnet);
 
     }
 
