@@ -115,7 +115,7 @@ public class DataStoreGenerate : GenerateBase
     /// </summary>
     /// <param name="contextName"></param>
     /// <returns></returns>
-    protected string GetContextName(string? contextName = null)
+    public string GetContextName(string? contextName = null)
     {
         var name = "ContextBase";
         var assemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(ServicePath));
@@ -125,10 +125,10 @@ public class DataStoreGenerate : GenerateBase
         {
             // 获取所有继承 dbcontext的上下文
             var allDbContexts = cpl.GetClassNameByBaseType(classes, "IdentityDbContext");
-            if (allDbContexts == null)
+            if (!allDbContexts.Any())
                 allDbContexts = cpl.GetClassNameByBaseType(classes, "DbContext");
 
-            if (allDbContexts != null)
+            if (allDbContexts.Any())
             {
                 if (contextName == null)
                 {

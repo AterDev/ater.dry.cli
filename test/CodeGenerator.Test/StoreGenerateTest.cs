@@ -10,12 +10,22 @@ namespace CodeGenerator.Test;
 
 public class StoreGenerateTest
 {
+
     [Fact]
-    public void Should_generate_store_files()
+    public void Should_get_dbcontext_name()
     {
         var entityPath = PathHelper.GetProjectFilePath("Entity/Blog.cs");
         var projectPath = PathHelper.GetProjectPath();
+        var gen = new DataStoreGenerate(entityPath, projectPath, projectPath);
+        var contextName = gen.GetContextName();
+        Assert.Equal("TestDbContext", contextName);
+    }
 
+    [Fact]
+    public void Should_generate_store_content()
+    {
+        var entityPath = PathHelper.GetProjectFilePath("Entity/Blog.cs");
+        var projectPath = PathHelper.GetProjectPath();
         var gen = new DataStoreGenerate(entityPath, projectPath, projectPath);
 
         var storeInterface = gen.GetStoreInterface();

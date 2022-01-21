@@ -16,6 +16,7 @@ public class CompilationHelper
     public CompilationHelper(string path, string? dllFilter = null)
     {
         Compilation = CSharpCompilation.Create("tmp");
+        AddDllReferences(path, dllFilter);
     }
     public void AddDllReferences(string path, string? dllFilter = null)
     {
@@ -68,10 +69,6 @@ public class CompilationHelper
     /// <returns></returns>
     public IEnumerable<INamedTypeSymbol> GetClassNameByBaseType(IEnumerable<INamedTypeSymbol> namedTypes, string baseTypeName)
     {
-        if (namedTypes == null || namedTypes.Count() < 1)
-        {
-            return default;
-        }
         return namedTypes
             .Where(c => c.BaseType.Name.Equals(baseTypeName))
             .ToList();
