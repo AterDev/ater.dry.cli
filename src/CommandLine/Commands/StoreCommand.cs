@@ -1,4 +1,5 @@
-﻿
+﻿using static Humanizer.In;
+
 namespace Droplet.CommandLine.Commands;
 
 /// <summary>
@@ -11,36 +12,95 @@ public class StoreCommand : CommandBase
     public string DtoPath { get; set; }
     public DataStoreGenerate CodeGen { get; set; }
 
-    public StoreCommand(string entityPath, string servicePath)
+    public StoreCommand(string entityPath, string dtoPath, string servicePath, string? contextName)
     {
         EntityPath = entityPath;
         StorePath = servicePath;
-        DtoPath = Config.SHARE_PATH;
-        CodeGen = new DataStoreGenerate(entityPath, servicePath);
+        DtoPath = dtoPath;
+        CodeGen = new DataStoreGenerate(entityPath, dtoPath, servicePath, contextName);
+        var entityName = Path.GetFileNameWithoutExtension(entityPath);
+        Instructions.Add("1) generate interface & base class.");
+        Instructions.Add($"2) generate {entityName} DataStore.");
+        Instructions.Add($"3) update Globalusings files.");
+        Instructions.Add($"4) update Services inject files.");
     }
 
     /// <summary>
     /// 生成仓储
     /// </summary>
-    public void Run()
+    public async Task RunAsync()
     {
-        // 获取生成需要的实体名称
         if (!File.Exists(EntityPath))
         {
+            Console.WriteLine($"the {EntityPath} not exist");
             return;
         }
-        Console.WriteLine("仓储生成完成");
+        Console.WriteLine(Instructions[0]);
+        await GenerateCommonFilesAsync();
+        Console.WriteLine(Instructions[1]);
+        await GenerateStoreDataAsync();
+        Console.WriteLine(Instructions[2]);
+        await GenerateGlobalUsingsFilesAsync();
+        Console.WriteLine(Instructions[3]);
+        await GenerateServicesAsync();
+        Console.WriteLine("=== DataStroe generate completed! ===");
     }
-
-
 
     /// <summary>
     /// 生成常规文件
     /// </summary>
-    public void GenerateCommonFiles()
+    public async Task GenerateCommonFilesAsync()
     {
-
+        var interfaceDir = Path.Combine(StorePath, "IDataStore");
+        var storeDir = Path.Combine(StorePath, "DataStore");
+        var storeInterface = CodeGen.GetStoreInterface();
+        var storeBase = CodeGen.GetStoreBase();
+        await GenerateFileAsync(interfaceDir, "IDataStore.cs", storeInterface);
+        await GenerateFileAsync(storeDir, "DataStoreBase.cs", storeBase);
     }
 
+    /// <summary>
+    /// 生成全局依赖文件GlobalUsings.cs
+    /// </summary>
+    /// <returns></returns>
+    public async Task GenerateGlobalUsingsFilesAsync()
+    {
+        var globalUsings = CodeGen.GetGlobalUsings();
+        var filePath = Path.Combine(StorePath, "GlobalUsings.cs");
+        // 如果不存在则生成，如果存在，则添加
+        if (File.Exists(filePath))
+        {
+            var content = File.ReadAllText(filePath);
+            globalUsings = globalUsings.Where(g => !content.Contains(g))
+                .ToList();
 
+            if (globalUsings.Any())
+                File.AppendAllLines(filePath, globalUsings);
+        }
+        else
+        {
+            await GenerateFileAsync(StorePath, "GlobalUsings.cs",
+                string.Join(Environment.NewLine, globalUsings));
+        }
+
+    }
+    /// <summary>
+    /// 生成仓储
+    /// </summary>
+    public async Task GenerateStoreDataAsync()
+    {
+        var storeDir = Path.Combine(StorePath, "DataStore");
+        var entityName = Path.GetFileNameWithoutExtension(EntityPath);
+        var storeContent = CodeGen.GetStoreContent();
+        await GenerateFileAsync(storeDir, $"{entityName}DataStore.cs", storeContent);
+    }
+    /// <summary>
+    /// 生成注入服务
+    /// </summary>
+    public async Task GenerateServicesAsync()
+    {
+        var storeDir = Path.Combine(StorePath, "DataStore");
+        var storeService = CodeGen.GetStoreService();
+        await GenerateFileAsync(storeDir, "DataStoreExtensions.cs", storeService);
+    }
 }

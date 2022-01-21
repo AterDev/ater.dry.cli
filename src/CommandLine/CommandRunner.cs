@@ -78,7 +78,7 @@ public class CommandRunner
     public void GenerateApi(string path, string dtoPath = "",
             string servicePath = "", string apiPath = "", string dbContext = "")
     {
-        var reposGen = new StoreCommand(path, servicePath);
+        var reposGen = new StoreCommand(path, dtoPath, servicePath, dbContext);
         var cmd = new DtoCommand(path, dtoPath);
         cmd.Run();
         //reposGen.GenerateReponsitory();

@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Xml.Linq;
 
 namespace CodeGenerator.Generate;
 
@@ -59,7 +60,7 @@ public class DataStoreGenerate : GenerateBase
     }
 
     /// <summary>
-    /// 命名空间
+    /// 全局依赖
     /// </summary>
     /// <returns></returns>
     public List<string> GetGlobalUsings()
@@ -95,18 +96,29 @@ public class DataStoreGenerate : GenerateBase
     /// </summary>
     /// <param name="dataStores">all store names</param>
     /// <returns></returns>
-    public string GetStoreService(List<string> dataStores)
+    public string GetStoreService()
     {
-        var dataStoreContent = "";
-        dataStores.ForEach(dataStore =>
+        var storeServiceDIContent = "";
+        // 获取所有继承了 DataStoreBase 的类
+        var assemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(ServicePath));
+        var cpl = new CompilationHelper(ServicePath, assemblyName);
+        var classes = cpl.GetAllClasses();
+        if (classes != null)
         {
-            var row = $"        services.AddScoped(typeof({dataStore}DataStore));{Environment.NewLine}";
-            dataStoreContent += row;
-        });
+            var allDataStores = cpl.GetClassNameByBaseType(classes, "DataStoreBase");
+            if (allDataStores.Any())
+            {
+                allDataStores.ToList().ForEach(dataStore =>
+                {
+                    var row = $"        services.AddScoped(typeof({dataStore.Name}));";
+                    storeServiceDIContent += row + Environment.NewLine;
+                });
+            }
+        }
         // 构建服务
         var content = GetTplContent("Implement.DataStoreExtensioins.tpl");
         content = content.Replace(TplConstant.NAMESPACE, ServiceNamespace);
-        content = content.Replace(TplConstant.DATASTORE_SERVICES, dataStoreContent);
+        content = content.Replace(TplConstant.DATASTORE_SERVICES, storeServiceDIContent);
         return content;
     }
 
