@@ -9,7 +9,9 @@ public class Blog : BaseDB
     [Required]
     [StringLength(100)]
     [MinLength(10)]
-    public string? Name { get; set; }
+    public string Name { get; set; } = string.Empty;
+
+    public string Title { get; set; } = string.Empty;
     /// <summary>
     /// 内容
     /// </summary>

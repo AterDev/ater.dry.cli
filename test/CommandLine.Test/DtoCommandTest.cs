@@ -12,6 +12,10 @@ public class DtoCommandTest
         var projectPath = PathHelper.GetProjectPath();
         var entityFilePath =  PathHelper.GetProjectFilePath(@"..\CodeGenerator.Test\Entity\Blog.cs");
         var outputPath = projectPath;
+
+        entityFilePath = @"D:\codes\DevPlatform\src\Core\Models\NewsTags.cs";
+        outputPath = @"D:\codes\DevPlatform\src\Share";
+
         var cmd = new DtoCommand(entityFilePath, outputPath);
         cmd.Run();
 

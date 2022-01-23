@@ -43,24 +43,21 @@ public class CommandBuilder
         var executor = new CommandRunner();
         // dto 生成命令
         var dtoCommand = new Command("dto", "generate entity dto files");
-        dtoCommand.AddAlias("dto");
 
         var path = new Argument<string>("entity path", "The entity file path");
         var outputOption = new Option<string>(new[] { "--output", "-o" },
             "output project directory，default ./Share");
-        var forceOption = new Option<bool>(new[] { "--force", "-f" }, "force overwrite file");
+        outputOption.SetDefaultValue(Config.SHAREMODEL_PATH);
+        var forceOption = new Option<bool>(new[] { "--force", "-f" },
+            "force overwrite file");
+        forceOption.SetDefaultValue(false);
+
         dtoCommand.AddArgument(path);
         dtoCommand.AddOption(outputOption);
         dtoCommand.AddOption(forceOption);
-        dtoCommand.SetHandler((string entity, string? output, bool? force) =>
+        dtoCommand.SetHandler((string entity, string output, bool force) =>
         {
-            if (string.IsNullOrEmpty(output))
-            {
-                output = Config.SHAREMODEL_PATH;
-            }
-            var isForce = false;
-            if (force != null && force.Value) isForce = true;
-            executor.GenerateDto(entity, output, isForce);
+            executor.GenerateDto(entity, output, force);
         }, path, outputOption, forceOption);
 
         RootCommand.Add(dtoCommand);

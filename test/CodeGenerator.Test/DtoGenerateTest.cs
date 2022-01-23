@@ -37,9 +37,12 @@ public class DtoGenerateTest
         // 验证属性内容
         var nameProp = props!.Where(p => p.Name.Equals("Name")).FirstOrDefault();
         Assert.True(nameProp!.IsRequired);
-        Assert.True(nameProp!.IsNullable);
+        Assert.False(nameProp!.IsNullable);
         Assert.Equal(100, nameProp!.MaxLength);
         Assert.Equal(10, nameProp!.MinLength);
+
+        var titleProp = props!.Where(p => p.Name.Equals("Title")).FirstOrDefault();
+        Assert.False(titleProp!.IsNullable);
 
         var commentsProp = props!.Where(p => p.Name.Equals("Comments")).FirstOrDefault();
         Assert.True(commentsProp!.IsList);

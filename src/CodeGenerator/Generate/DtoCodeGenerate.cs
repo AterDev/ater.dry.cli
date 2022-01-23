@@ -7,7 +7,7 @@ namespace CodeGenerator.Generate;
 /// </summary>
 public class DtoCodeGenerate : GenerateBase
 {
-    public EntityInfo? EntityInfo { get; set; }
+    public readonly EntityInfo? EntityInfo;
     public string KeyType { get; set; } = "Guid";
     /// <summary>
     /// dto 输出的 程序集名称
@@ -147,13 +147,17 @@ public class DtoCodeGenerate : GenerateBase
             NamespaceName = EntityInfo.NamespaceName,
             Comment = EntityInfo.Comment,
             Tag = EntityInfo.Name,
-            Properties = EntityInfo.PropertyInfos?.Where(p => p.Name != "Id"
+
+        };
+        // 处理非required的都设置为nullable
+        var properties = EntityInfo.PropertyInfos?.Where(p => p.Name != "Id"
                 && p.Name != "CreatedTime"
                 && p.Name != "UpdatedTime"
                 && !p.IsList
-                && !p.IsNavigation).ToList()
-        };
-        // 处理非required的都设置为nullable
+                && !p.IsNavigation)
+            .ToList();
+
+        dto.Properties = properties.Copy();
         if (dto.Properties != null)
             foreach (var item in dto.Properties)
             {

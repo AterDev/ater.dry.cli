@@ -1,6 +1,9 @@
-﻿namespace CodeGenerator.Infrastructure.Utils;
+﻿using System.Runtime.Serialization.Formatters.Binary;
+using System.Text.Json;
 
-public static class StringExtenstion
+namespace CodeGenerator.Infrastructure.Utils;
+
+public static class Extenstions
 {
     /// <summary>
     /// to hyphen style: HelloWord->hellow-word
@@ -93,5 +96,13 @@ public static class StringExtenstion
     public static bool NotNull(this string? str)
     {
         return !string.IsNullOrEmpty(str);
+    }
+
+    public static T? Copy<T>(this T origin)
+    {
+        var stream = new MemoryStream();
+        JsonSerializer.Serialize(stream, origin);
+        stream.Position = 0;
+        return JsonSerializer.Deserialize<T>(stream);
     }
 }
