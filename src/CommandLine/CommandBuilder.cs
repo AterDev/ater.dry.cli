@@ -56,7 +56,7 @@ public class CommandBuilder
         {
             if (string.IsNullOrEmpty(output))
             {
-                output = Config.DTO_PATH;
+                output = Config.SHAREMODEL_PATH;
             }
             var isForce = false;
             if (force != null && force.Value) isForce = true;
@@ -94,9 +94,9 @@ public class CommandBuilder
             (string entity, string dto, string store, string output, string context) =>
         {
             //dto = string.IsNullOrEmpty(dto) ? Config.DTO_PATH : dto;
-            dto ??= Config.DTO_PATH;
+            dto ??= Config.SHAREMODEL_PATH;
             store ??= Config.SERVICE_PATH;
-            output ??= Config.API_PATH;
+            output ??= Config.HTTPAPI_PATH;
             executor.GenerateApi(entity, dto, store, output);
         }, path, dtoOption, storeOption, outputOption, contextOption);
 

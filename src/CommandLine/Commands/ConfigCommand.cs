@@ -23,13 +23,13 @@ public class ConfigCommand
         {
             BasePath = "./",
 
-            ApiNamespace = Config.WEB_NAMESPACE,
+            ApiNamespace = Config.HTTPAPI_NAMESPACE,
             EntityNamespace = Config.ENTITY_NAMESPACE,
             ServiceNamespace = Config.SERVICE_NAMESPACE,
             ShareNamespace = Config.SHARE_NAMESPACE,
             DbContextNamespace = Config.DBCONTEXT_NAMESPACE,
 
-            ApiPath = "app/" + Config.WEB_NAMESPACE,
+            ApiPath = "app/" + Config.HTTPAPI_NAMESPACE,
             EntityPath = "src/" + Config.ENTITY_NAMESPACE,
             ServicePath = "src/" + Config.SERVICE_NAMESPACE,
             DbContextPath = "src/EntityFrameworkCore",
@@ -58,17 +58,17 @@ public class ConfigCommand
         var config = File.ReadAllText(path);
         var options = JsonSerializer.Deserialize<ConfigOptions>(config);
 
-        Config.WEB_NAMESPACE = options.ApiNamespace;
+        Config.HTTPAPI_NAMESPACE = options.ApiNamespace;
         Config.ENTITY_NAMESPACE = options.EntityNamespace;
         Config.SERVICE_NAMESPACE = options.ServiceNamespace;
         Config.SHARE_NAMESPACE = options.ShareNamespace;
         Config.DBCONTEXT_NAMESPACE = options.DbContextNamespace;
 
         Config.CLIENT_PATH = Path.Combine(options.BasePath, options.ClientPath);
-        Config.API_PATH = Path.Combine(options.BasePath, options.ApiPath);
+        Config.HTTPAPI_PATH = Path.Combine(options.BasePath, options.ApiPath);
         Config.SERVICE_PATH = Path.Combine(options.BasePath, options.ServicePath);
         Config.SHARE_PATH = Path.Combine(options.BasePath, options.SharePath);
-        Config.DTO_PATH = Path.Combine(options.BasePath, options.DtoPath);
+        Config.SHAREMODEL_PATH = Path.Combine(options.BasePath, options.DtoPath);
         Config.DBCONTEXT_PATH = Path.Combine(options.BasePath, options.DbContextPath);
 
         return options;

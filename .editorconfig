@@ -124,3 +124,7 @@ csharp_preferred_modifier_order = public,protected,private,static,async,override
 dotnet_style_qualification_for_method = false:suggestion
 #prefer properties not to be prefaced with this. or Me. in Visual Basic
 dotnet_style_qualification_for_property = false:suggestion
+
+# CA2211: 非常量字段应当不可见
+dotnet_diagnostic.CA2211.severity = silent
+csharp_space_around_declaration_statements = ignore

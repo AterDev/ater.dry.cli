@@ -1,4 +1,5 @@
 
+using CodeGenerator.Test.Hepler;
 using Xunit;
 
 namespace CommandLine.Test;
@@ -8,8 +9,9 @@ public class DtoCommandTest
     [Fact]
     public void Shoud_generate_files()
     {
-        var entityFilePath = @"C:\self\cli\test\CodeGenerator.Test\Entity\Blog.cs";
-        var outputPath = @"C:\self\cli\test\CommandLine.Test";
+        var projectPath = PathHelper.GetProjectPath();
+        var entityFilePath =  PathHelper.GetProjectFilePath(@"..\CodeGenerator.Test\Entity\Blog.cs");
+        var outputPath = projectPath;
         var cmd = new DtoCommand(entityFilePath, outputPath);
         cmd.Run();
 

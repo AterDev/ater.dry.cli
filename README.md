@@ -49,7 +49,15 @@ cli tools
 - 生成`UserContext.cs` 及 `GlobalUsings.cs`
 
 ### Rest API生成
+- `IRestApiBase` RestAPI 接口
+  - 添加/更新/删除/分页/详情/批量删除和更新
+  - [ ] **添加时关联关系的处理**
+- `RestApiBase` 常规接口方法实现
 - 
+
+
+
+
 ## 命令
 
 ### Dto生成命令

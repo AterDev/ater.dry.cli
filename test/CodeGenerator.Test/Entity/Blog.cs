@@ -20,14 +20,6 @@ public class Blog : BaseDB
     public Comments? Comments2 { get; set; }
     public int? Age2 { get; set; }
     ICollection<string> Test2 { get; set; }
-    public Status Status { get; set; }
     public DateOnly DateOnly { get; set; }
 }
 
-
-public enum Status
-{
-    Default,
-    New,
-    Deleted
-}
