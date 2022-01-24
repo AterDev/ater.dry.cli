@@ -1,5 +1,5 @@
-﻿using static Humanizer.In;
-
+﻿using CodeGenerator.Infrastructure;
+using CodeGenerator.Infrastructure.Helper;
 namespace Droplet.CommandLine.Commands;
 
 /// <summary>
@@ -47,10 +47,20 @@ public class StoreCommand : CommandBase
     }
 
     /// <summary>
-    /// 生成常规文件
+    /// 生成接口和实现类
     /// </summary>
     public async Task GenerateCommonFilesAsync()
     {
+        // 生成Utils 扩展类
+        var dir = new FileInfo(EntityPath).Directory;
+        var projectFile =  AssemblyHelper.FindProjectFile(dir!, dir!.Root);
+        if (projectFile != null)
+        {
+            var entityDir = Path.Combine(projectFile.Directory!.FullName,"Utils" );
+            var content = CodeGen.GetExtensions();
+            await GenerateFileAsync(entityDir, GenConst.EXTIONSIONS_NAME, content);
+        }
+
         var interfaceDir = Path.Combine(StorePath, "Interface");
         var storeDir = Path.Combine(StorePath, "DataStore");
         var storeInterface = CodeGen.GetStoreInterface();

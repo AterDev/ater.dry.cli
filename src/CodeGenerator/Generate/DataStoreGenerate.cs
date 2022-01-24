@@ -44,20 +44,20 @@ public class DataStoreGenerate : GenerateBase
     public string GetStoreInterface()
     {
         var content = GetTplContent("Interface.IDataStore.tpl");
-        content = content.Replace(TplConstant.NAMESPACE, ServiceNamespace);
+        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace);
         return content;
     }
 
     public string GetUserContextInterface()
     {
         var content = GetTplContent("Interface.IUserContext.tpl");
-        content = content.Replace(TplConstant.NAMESPACE, ServiceNamespace);
+        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace);
         return content;
     }
     public string GetUserContextClass()
     {
         var content = GetTplContent("Implement.UserContext.tpl");
-        content = content.Replace(TplConstant.NAMESPACE, ServiceNamespace);
+        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace);
         return content;
     }
 
@@ -68,7 +68,7 @@ public class DataStoreGenerate : GenerateBase
     public string GetStoreBase()
     {
         var content = GetTplContent("Implement.DataStoreBase.tpl");
-        content = content.Replace(TplConstant.NAMESPACE, ServiceNamespace);
+        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace);
         return content;
     }
 
@@ -99,10 +99,10 @@ public class DataStoreGenerate : GenerateBase
         var entityName = Path.GetFileNameWithoutExtension(EntityPath);
         // 生成基础仓储实现类，替换模板变量并写入文件
         var tplContent = GetTplContent("Implement.DataStore.tpl");
-        tplContent = tplContent.Replace(TplConstant.NAMESPACE, ServiceNamespace);
-        tplContent = tplContent.Replace(TplConstant.SHARE_NAMESPACE, ShareNamespace);
-        tplContent = tplContent.Replace(TplConstant.DBCONTEXT_NAME, contextName);
-        tplContent = tplContent.Replace(TplConstant.ENTITY_NAME, entityName);
+        tplContent = tplContent.Replace(TplConst.NAMESPACE, ServiceNamespace);
+        tplContent = tplContent.Replace(TplConst.SHARE_NAMESPACE, ShareNamespace);
+        tplContent = tplContent.Replace(TplConst.DBCONTEXT_NAME, contextName);
+        tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName);
         return tplContent;
     }
     /// <summary>
@@ -126,8 +126,8 @@ public class DataStoreGenerate : GenerateBase
         }
         // 构建服务
         var content = GetTplContent("Implement.DataStoreExtensioins.tpl");
-        content = content.Replace(TplConstant.NAMESPACE, ServiceNamespace);
-        content = content.Replace(TplConstant.DATASTORE_SERVICES, storeServiceDIContent);
+        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace);
+        content = content.Replace(TplConst.DATASTORE_SERVICES, storeServiceDIContent);
         return content;
     }
 
@@ -157,8 +157,8 @@ public class DataStoreGenerate : GenerateBase
         }
         // 构建服务
         var content = GetTplContent("Implement.DataStoreExtensioins.tpl");
-        content = content.Replace(TplConstant.NAMESPACE, ServiceNamespace);
-        content = content.Replace(TplConstant.DATASTORE_SERVICES, storeServiceDIContent);
+        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace);
+        content = content.Replace(TplConst.DATASTORE_SERVICES, storeServiceDIContent);
         return content;
     }
 
@@ -193,5 +193,13 @@ public class DataStoreGenerate : GenerateBase
             }
         }
         return name;
+    }
+
+    public string GetExtensions()
+    {
+        var entityNamespace= AssemblyHelper.GetNamespaceName(new FileInfo(EntityPath).Directory!);
+        var tplContent = GetTplContent("Extentsions.tpl");
+        tplContent = tplContent.Replace(TplConst.NAMESPACE, entityNamespace);
+        return tplContent;
     }
 }

@@ -52,7 +52,7 @@ public class RestApiGenerate : GenerateBase
     public string GetRestApiInterface()
     {
         var content = GetTplContent("Interface.IRestApiBase.tpl");
-        content = content.Replace(TplConstant.NAMESPACE, ServiceNamespace);
+        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace);
         return content;
     }
 
@@ -65,8 +65,8 @@ public class RestApiGenerate : GenerateBase
     {
         var dbContextName = GetContextName("contextBase");
         var content = GetTplContent("Implement.RestApiBase.tpl");
-        content = content.Replace(TplConstant.NAMESPACE, ServiceNamespace)
-            .Replace(TplConstant.DBCONTEXT_NAME, dbContextName);
+        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace)
+            .Replace(TplConst.DBCONTEXT_NAME, dbContextName);
         return content;
     }
 
@@ -91,9 +91,9 @@ public class RestApiGenerate : GenerateBase
     {
         var entityName = Path.GetFileNameWithoutExtension(EntityPath);
         var tplContent = GetTplContent("Implement.RestApi.tpl");
-        tplContent = tplContent.Replace(TplConstant.NAMESPACE, ApiNamespace)
-            .Replace(TplConstant.SHARE_NAMESPACE, ShareNamespace)
-            .Replace(TplConstant.ENTITY_NAME, entityName);
+        tplContent = tplContent.Replace(TplConst.NAMESPACE, ApiNamespace)
+            .Replace(TplConst.SHARE_NAMESPACE, ShareNamespace)
+            .Replace(TplConst.ENTITY_NAME, entityName);
         return tplContent;
     }
 
