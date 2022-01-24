@@ -86,7 +86,7 @@ public class CommandRunner
         Console.WriteLine("api webpath:" + apiPath);
         if (!string.IsNullOrEmpty(apiPath))
         {
-            var apiGen = new ApiGenerate(path, servicePath, apiPath);
+            var apiGen = new ApiCommand(path, servicePath, apiPath);
             apiGen.GenerateRepositoryServicesDI();
             apiGen.GenerateController();
         }
