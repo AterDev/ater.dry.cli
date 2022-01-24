@@ -60,11 +60,11 @@ public class CommandRunner
     /// dto生成或更新
     /// </summary>
     /// <param name="entityPath"></param>
-    public void GenerateDto(string entityPath, string output, bool force)
+    public async Task GenerateDtoAsync(string entityPath, string output, bool force)
     {
         Console.WriteLine("Generating Dtos...");
         var cmd = new DtoCommand(entityPath, output);
-        cmd.Run(force);
+        await cmd.RunAsync(force);
         Console.WriteLine("Dto files generate success!");
     }
 
@@ -75,20 +75,17 @@ public class CommandRunner
     /// <param name="servicePath">service目录</param>
     /// <param name="apiPath">网站目录</param>
     /// <param name="dbContext"></param>
-    public void GenerateApi(string path, string dtoPath = "",
+    public async void GenerateApi(string path, string dtoPath = "",
             string servicePath = "", string apiPath = "", string dbContext = "")
     {
-        var reposGen = new StoreCommand(path, dtoPath, servicePath, dbContext);
-        var cmd = new DtoCommand(path, dtoPath);
-        cmd.Run();
-        //reposGen.GenerateReponsitory();
-
-        Console.WriteLine("api webpath:" + apiPath);
+        var dtoCmd = new DtoCommand(path, dtoPath);
+        await dtoCmd.RunAsync();
+        var storeCmd = new StoreCommand(path, dtoPath, servicePath, dbContext);
+        await storeCmd.RunAsync();
         if (!string.IsNullOrEmpty(apiPath))
         {
-            var apiGen = new ApiCommand(path, servicePath, apiPath);
-            apiGen.GenerateRepositoryServicesDI();
-            apiGen.GenerateController();
+            var apiCmd = new ApiCommand(path,dtoPath, servicePath, apiPath,dbContext);
+            await apiCmd.RunAsync();
         }
     }
 

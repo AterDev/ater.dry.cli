@@ -29,7 +29,7 @@ public class DtoCommand : CommandBase
         };
     }
 
-    public void Run(bool cover = false)
+    public async Task RunAsync(bool cover = false)
     {
         if (!File.Exists(EntityPath))
         {
@@ -48,10 +48,10 @@ public class DtoCommand : CommandBase
         }
         else
         {
-            SaveToFile("Update", CodeGen.GetUpdateDto(), cover);
-            SaveToFile("Filter", CodeGen.GetFilterDto(), cover);
-            SaveToFile("Item", CodeGen.GetItemDto(), cover);
-            SaveToFile("Short", CodeGen.GetShortDto(), cover);
+            await SaveToFileAsync("Update", CodeGen.GetUpdateDto(), cover);
+            await SaveToFileAsync("Filter", CodeGen.GetFilterDto(), cover);
+            await SaveToFileAsync("Item", CodeGen.GetItemDto(), cover);
+            await SaveToFileAsync("Short", CodeGen.GetShortDto(), cover);
             GenerateCommonFiles();
         }
     }
@@ -73,7 +73,7 @@ public class DtoCommand : CommandBase
     /// <param name="dtoType"></param>
     /// <param name="content"></param>
     /// <param name="cover">是否覆盖</param>
-    public async void SaveToFile(string dtoType, string? content, bool cover = false)
+    public async Task SaveToFileAsync(string dtoType, string? content, bool cover = false)
     {
         // 以文件名为准
         var entityName = Path.GetFileNameWithoutExtension(new FileInfo(EntityPath).Name);

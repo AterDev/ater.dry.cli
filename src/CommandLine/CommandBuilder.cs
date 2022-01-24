@@ -57,7 +57,7 @@ public class CommandBuilder
         dtoCommand.AddOption(forceOption);
         dtoCommand.SetHandler((string entity, string output, bool force) =>
         {
-            executor.GenerateDto(entity, output, force);
+            executor.GenerateDtoAsync(entity, output, force);
         }, path, outputOption, forceOption);
 
         RootCommand.Add(dtoCommand);

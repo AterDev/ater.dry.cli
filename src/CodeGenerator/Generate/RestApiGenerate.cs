@@ -63,7 +63,7 @@ public class RestApiGenerate : GenerateBase
     /// <returns></returns>
     public string GetRestApiBase()
     {
-        var dbContextName = GetContextName("contextBase");
+        var dbContextName = GetContextName();
         var content = GetTplContent("Implement.RestApiBase.tpl");
         content = content.Replace(TplConst.NAMESPACE, ServiceNamespace)
             .Replace(TplConst.DBCONTEXT_NAME, dbContextName);

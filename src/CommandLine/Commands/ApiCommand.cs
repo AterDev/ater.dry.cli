@@ -85,7 +85,7 @@ public class ApiCommand : CommandBase
     {
         var interfaceDir = Path.Combine(ApiPath, "Interface");
         var apiDir = Path.Combine(ApiPath, "Controllers");
-        await GenerateFileAsync(interfaceDir, TplConstant.IRESTAPI_BASE_NAME, interfaceDir);
-        await GenerateFileAsync(apiDir, TplConstant.RESTAPI_BASE_NAME, apiDir);
+        await GenerateFileAsync(interfaceDir, GenConst.IRESTAPI_BASE_NAME, interfaceDir);
+        await GenerateFileAsync(apiDir, GenConst.RESTAPI_BASE_NAME, apiDir);
     }
 }
