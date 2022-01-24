@@ -30,8 +30,8 @@ public class DataStoreGenerate : GenerateBase
     public DataStoreGenerate(string entityPath, string dtoPath, string servicePath, string? contextName = null)
     {
         EntityPath = entityPath;
-        StorePath = servicePath;
         SharePath = dtoPath;
+        StorePath = servicePath;
         ContextName = contextName;
         ShareNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(SharePath));
         ServiceNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(StorePath));
@@ -194,6 +194,4 @@ public class DataStoreGenerate : GenerateBase
         }
         return name;
     }
-
-
 }
