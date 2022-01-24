@@ -17,7 +17,7 @@ public class DtoCommandTest
         outputPath = @"D:\codes\DevPlatform\src\Share";
 
         var cmd = new DtoCommand(entityFilePath, outputPath);
-        cmd.Run();
+        cmd.RunAsync();
 
         var entityName = Path.GetFileNameWithoutExtension(new FileInfo(entityFilePath).Name);
         var generateFile = Path.Combine(outputPath, "Models", $"{entityName}Dtos", $"{entityName}UpdateDto.cs");
