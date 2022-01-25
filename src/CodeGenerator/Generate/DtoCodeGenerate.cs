@@ -84,15 +84,24 @@ public class DtoCodeGenerate : GenerateBase
             Comment = EntityInfo.Comment,
             Tag = EntityInfo.Name,
             BaseType = "FilterBase",
-            Properties = EntityInfo.PropertyInfos?
+        };
+
+        var properties = EntityInfo.PropertyInfos?
                 .Where(p => p.IsRequired
                     || (!p.IsNullable
                         && !p.IsList
                         && !p.IsNavigation
                         && !filterFields.Contains(p.Name))
                     )
-                .ToList()
-        };
+                .ToList();
+        dto.Properties = properties.Copy();
+        // 筛选条件调整为可空
+        if (dto.Properties != null)
+            foreach (var item in dto.Properties)
+            {
+                item.IsNullable = true;
+            }
+
         referenceProps?.ForEach(item =>
         {
             dto.Properties?.Add(item);

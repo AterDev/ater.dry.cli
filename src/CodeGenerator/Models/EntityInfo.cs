@@ -31,6 +31,16 @@ public class EntityInfo
         Name = name;
     }
 
+    /// <summary>
+    /// 获取导航属性
+    /// </summary>
+    /// <returns></returns>
+    public PropertyInfo? GetNavigation()
+    {
+        return PropertyInfos?.Where(p => p.IsNavigation && p.HasMany == false).FirstOrDefault();
+    }
+
+
 }
 public enum EntityKeyType
 {

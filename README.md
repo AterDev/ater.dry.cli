@@ -3,6 +3,14 @@ cli tools
 ## 实体模型解析
 - TODO:
 
+## 约定
+- .Net6.0+
+- `<Nullable>enable</Nullable>`
+- 实体模型定义示例
+- DbContext 定义示例
+
+
+
 ## 功能设计
 ### 工具类
 - 扩展类 `partial class Extentions`

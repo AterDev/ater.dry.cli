@@ -8,6 +8,8 @@ public class ${EntityName}Controller : RestApiBase<${EntityName}DataStore, ${Ent
     {
     }
 
+${AdditionAction}
+
     /// <summary>
     /// 分页筛选
     /// </summary>
@@ -23,15 +25,13 @@ public class ${EntityName}Controller : RestApiBase<${EntityName}DataStore, ${Ent
     /// </summary>
     /// <param name="form"></param>
     /// <returns></returns>
-    public override Task<ActionResult<${EntityName}>> AddAsync(${EntityName} form)
-    {
-        return base.AddAsync(form);
-    }
+    public override Task<ActionResult<NewsTags>> AddAsync(NewsTags form) => base.AddAsync(form);
 
     /// <summary>
     /// ⚠更新
     /// </summary>
     /// <param name="id"></param>
+    /// <param name="form"></param>
     /// <returns></returns>
     public override Task<ActionResult<${EntityName}?>> UpdateAsync([FromRoute] Guid id, ${EntityName}UpdateDto form)
         => base.UpdateAsync(id, form);

@@ -27,7 +27,6 @@ public class RestApiGenerate : GenerateBase
     public string ApiPath { get; }
 
     public string? ContextName { get; set; }
-
     public string? EntityNamespace { get; set; }
     /// <summary>
     /// DataStore 项目的命名空间
@@ -35,7 +34,7 @@ public class RestApiGenerate : GenerateBase
     public string? ShareNamespace { get; set; }
     public string? ServiceNamespace { get; set; }
     public string? ApiNamespace { get; set; }
-    public readonly EntityInfo? EntityInfo;
+    public readonly EntityInfo EntityInfo;
 
     public RestApiGenerate(string entityPath, string dtoPath, string servicePath, string apiPath, string? contextName = null)
     {
@@ -98,17 +97,49 @@ public class RestApiGenerate : GenerateBase
     {
         var entityName = Path.GetFileNameWithoutExtension(EntityPath);
         var tplContent = GetTplContent("Implement.RestApi.tpl");
+
+        var actionContent = GetAddApiContent();
+        actionContent += GetUpdateApiContent();
+
         tplContent = tplContent.Replace(TplConst.NAMESPACE, ApiNamespace)
             .Replace(TplConst.SHARE_NAMESPACE, ShareNamespace)
             .Replace(TplConst.ENTITY_NAME, entityName)
-            .Replace(TplConst.COMMENT, EntityInfo?.Comment ?? "");
+            .Replace(TplConst.COMMENT, EntityInfo?.Comment ?? "")
+            .Replace(TplConst.ADDITION_ACTION, actionContent ?? "");
         return tplContent;
     }
 
     // TODO:add api
     public string? GetAddApiContent()
     {
-        return default;
+        var entityName = EntityInfo.Name;
+        var navigationProp = EntityInfo.GetNavigation();
+        if (navigationProp == null) return null;
+        var content = $@"
+    /// <summary>
+    /// 关联添加
+    /// </summary>
+    /// <param name=""id"">所属对象id</param>
+    /// <param name=""list"">数组</param>
+    /// <param name=""dependStore""></param>
+    /// <returns></returns>
+    [HttpPost(""{{id}}"")]
+    public async Task<ActionResult<int>> AddAsync([FromRoute] Guid id, List<{entityName}UpdateDto> list, [FromServices] {navigationProp.NavigationName}DataStore dependStore)
+    {{
+        var depend = await dependStore.FindAsync(id);
+        var newList = new List<{entityName}>();
+        list.ForEach(item =>
+        {{
+            var newItem = new {entityName}()
+            {{
+                ThirdNews = depend
+            }};
+            newList.Add(newItem.Merge(item));
+        }});
+        return await _store.BatchAddAsync(newList);
+    }}";
+
+        return content;
     }
     // TODO:update api 
     public string? GetUpdateApiContent()
