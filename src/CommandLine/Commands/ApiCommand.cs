@@ -32,9 +32,9 @@ public class ApiCommand : CommandBase
         ApiPath = apiPath;
         CodeGen = new RestApiGenerate(entityPath, dtoPath, servicePath, apiPath, contextName);
         var entityName = Path.GetFileNameWithoutExtension(entityPath);
-        Instructions.Add("1) generate interface & base class.");
-        Instructions.Add($"2) generate {entityName} RestApi.");
-        Instructions.Add($"3) update Globalusings files.");
+        Instructions.Add("  🔹 generate interface & base class.");
+        Instructions.Add($"  🔹 generate {entityName} RestApi.");
+        Instructions.Add($"  🔹 update Globalusings files.");
     }
     public async Task RunAsync()
     {
@@ -49,13 +49,13 @@ public class ApiCommand : CommandBase
         await GenerateRestApiAsync();
         Console.WriteLine(Instructions[2]);
         await GenerateGlobalUsingsFilesAsync();
-        Console.WriteLine("=== RestApi generate completed! ===");
+        Console.WriteLine("😀 RestApi generate completed!" + Environment.NewLine);
     }
 
     private async Task GenerateGlobalUsingsFilesAsync()
     {
         var globalUsings = CodeGen.GetGlobalUsings();
-        var filePath = Path.Combine(StorePath, "GlobalUsings.cs");
+        var filePath = Path.Combine(ApiPath, "GlobalUsings.cs");
         // 如果不存在则生成，如果存在，则添加
         if (File.Exists(filePath))
         {
@@ -63,6 +63,7 @@ public class ApiCommand : CommandBase
             globalUsings = globalUsings.Where(g => !content.Contains(g))
                 .ToList();
 
+            globalUsings.Insert(0, Environment.NewLine);
             if (globalUsings.Any())
                 File.AppendAllLines(filePath, globalUsings);
         }
@@ -84,8 +85,10 @@ public class ApiCommand : CommandBase
     private async Task GenerateCommonFilesAsync()
     {
         var interfaceDir = Path.Combine(ApiPath, "Interface");
-        var apiDir = Path.Combine(ApiPath, "Controllers");
-        await GenerateFileAsync(interfaceDir, GenConst.IRESTAPI_BASE_NAME, interfaceDir);
-        await GenerateFileAsync(apiDir, GenConst.RESTAPI_BASE_NAME, apiDir);
+        var apiBaseDir = Path.Combine(ApiPath, "Controllers");
+        var interfaceContent = CodeGen.GetRestApiInterface();
+        var apiBaseContent = CodeGen.GetRestApiBase();
+        await GenerateFileAsync(interfaceDir, GenConst.IRESTAPI_BASE_NAME, interfaceContent);
+        await GenerateFileAsync(apiBaseDir, GenConst.RESTAPI_BASE_NAME, apiBaseContent);
     }
 }

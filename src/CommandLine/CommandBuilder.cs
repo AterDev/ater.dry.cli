@@ -18,6 +18,7 @@ public class CommandBuilder
     {
         AddConfig();
         AddDto();
+        AddApi();
         return RootCommand;
     }
 
@@ -55,9 +56,9 @@ public class CommandBuilder
         dtoCommand.AddArgument(path);
         dtoCommand.AddOption(outputOption);
         dtoCommand.AddOption(forceOption);
-        dtoCommand.SetHandler((string entity, string output, bool force) =>
+        dtoCommand.SetHandler(async (string entity, string output, bool force) =>
         {
-            executor.GenerateDtoAsync(entity, output, force);
+            await executor.GenerateDtoAsync(entity, output, force);
         }, path, outputOption, forceOption);
 
         RootCommand.Add(dtoCommand);
@@ -88,13 +89,13 @@ public class CommandBuilder
         apiCommand.AddOption(contextOption);
 
         apiCommand.SetHandler(
-            (string entity, string dto, string store, string output, string context) =>
+            async (string entity, string dto, string store, string output, string context) =>
         {
             //dto = string.IsNullOrEmpty(dto) ? Config.DTO_PATH : dto;
             dto ??= Config.SHAREMODEL_PATH;
             store ??= Config.SERVICE_PATH;
             output ??= Config.HTTPAPI_PATH;
-            executor.GenerateApi(entity, dto, store, output);
+            await executor.GenerateApi(entity, dto, store, output);
         }, path, dtoOption, storeOption, outputOption, contextOption);
 
         RootCommand.Add(apiCommand);

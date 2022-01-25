@@ -13,6 +13,14 @@ public class CommandBase
         }
         var filePath = Path.Combine(dir, fileName);
         if (!File.Exists(filePath) || cover)
+        {
             await File.WriteAllTextAsync(filePath, content);
+            Console.WriteLine(@$"  ✔ generate file {fileName}.");
+        }
+        else
+        {
+            Console.WriteLine($"  📣 Skip exist file: {fileName}.");
+        }
+
     }
 }

@@ -54,6 +54,7 @@ public class DtoCommand : CommandBase
             await SaveToFileAsync("Short", CodeGen.GetShortDto(), cover);
             GenerateCommonFiles();
         }
+        Console.WriteLine("😀 Dto generate completed!" + Environment.NewLine);
     }
     public async void GenerateCommonFiles()
     {

@@ -19,10 +19,10 @@ public class StoreCommand : CommandBase
         DtoPath = dtoPath;
         CodeGen = new DataStoreGenerate(entityPath, dtoPath, servicePath, contextName);
         var entityName = Path.GetFileNameWithoutExtension(entityPath);
-        Instructions.Add("1) generate interface & base class.");
-        Instructions.Add($"2) generate {entityName} DataStore.");
-        Instructions.Add($"3) update Globalusings files.");
-        Instructions.Add($"4) update Services inject files.");
+        Instructions.Add("  🔹 generate interface & base class.");
+        Instructions.Add($"  🔹 generate {entityName} DataStore.");
+        Instructions.Add($"  🔹 update Globalusings files.");
+        Instructions.Add($"  🔹 update Services inject files.");
     }
 
     /// <summary>
@@ -43,7 +43,7 @@ public class StoreCommand : CommandBase
         await GenerateGlobalUsingsFilesAsync();
         Console.WriteLine(Instructions[3]);
         await GenerateServicesAsync();
-        Console.WriteLine("=== DataStroe generate completed! ===");
+        Console.WriteLine("😀 DataStroe generate completed!" + Environment.NewLine);
     }
 
     /// <summary>
@@ -87,7 +87,7 @@ public class StoreCommand : CommandBase
             var content = File.ReadAllText(filePath);
             globalUsings = globalUsings.Where(g => !content.Contains(g))
                 .ToList();
-
+            globalUsings.Insert(0, Environment.NewLine);
             if (globalUsings.Any())
                 File.AppendAllLines(filePath, globalUsings);
         }

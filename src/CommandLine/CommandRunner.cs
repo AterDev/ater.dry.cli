@@ -75,15 +75,18 @@ public class CommandRunner
     /// <param name="servicePath">service目录</param>
     /// <param name="apiPath">网站目录</param>
     /// <param name="dbContext"></param>
-    public async void GenerateApi(string path, string dtoPath = "",
+    public async Task GenerateApi(string path, string dtoPath = "",
             string servicePath = "", string apiPath = "", string dbContext = "")
     {
+        Console.WriteLine("🔵 Generate dtos");
         var dtoCmd = new DtoCommand(path, dtoPath);
         await dtoCmd.RunAsync();
+        Console.WriteLine("🔵 Generate store");
         var storeCmd = new StoreCommand(path, dtoPath, servicePath, dbContext);
         await storeCmd.RunAsync();
         if (!string.IsNullOrEmpty(apiPath))
         {
+            Console.WriteLine("🔵 Generate rest api");
             var apiCmd = new ApiCommand(path,dtoPath, servicePath, apiPath,dbContext);
             await apiCmd.RunAsync();
         }
