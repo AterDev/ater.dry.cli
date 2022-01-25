@@ -53,13 +53,14 @@ public class PropertyInfo
         if (!string.IsNullOrEmpty(attributeText))
         {
             attributeText = attributeText.Trim();
-            attributeText = $@"    {attributeText.Replace("\r\n", "\r\n    ")}"
+            attributeText = $@"    {attributeText.Replace(Environment.NewLine, Environment.NewLine + "    ")}"
                 + Environment.NewLine;
         }
         var nullableMark = IsNullable ? "?" : "";
         var content = @$"    public {Type}{nullableMark} {Name} {{ get; set; }}";
         if (Name.ToLower().Contains("password"))
         {
+            attributeText = attributeText?.Replace("    ", "//     ");
             content = @$"    // public {Type}{nullableMark} {Name} {{ get; set; }}";
         }
         return $@"{Comments}{attributeText}{content}
