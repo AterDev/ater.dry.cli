@@ -35,6 +35,7 @@ public class RestApiGenerate : GenerateBase
     public string? ShareNamespace { get; set; }
     public string? ServiceNamespace { get; set; }
     public string? ApiNamespace { get; set; }
+    public readonly EntityInfo? EntityInfo;
 
     public RestApiGenerate(string entityPath, string dtoPath, string servicePath, string apiPath, string? contextName = null)
     {
@@ -50,6 +51,9 @@ public class RestApiGenerate : GenerateBase
         ShareNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(SharePath));
         ServiceNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(StorePath));
         ApiNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(ApiPath));
+
+        var entityHelper = new EntityParseHelper(entityPath);
+        EntityInfo = entityHelper.GetEntity();
     }
 
     public string GetRestApiInterface()
@@ -80,7 +84,7 @@ public class RestApiGenerate : GenerateBase
             "global using Microsoft.Extensions.DependencyInjection;",
             "global using Microsoft.AspNetCore.Mvc;",
             $"global using {EntityNamespace}.Models",
-            $"global using {ApiNamespace}.Interface;",
+            $"global using {ApiNamespace}.Controllers;",
             $"global using {ServiceNamespace}.Interface;",
             $"global using {ServiceNamespace}.DataStore;",
             $"global using {ShareNamespace}.Models;"
@@ -96,7 +100,8 @@ public class RestApiGenerate : GenerateBase
         var tplContent = GetTplContent("Implement.RestApi.tpl");
         tplContent = tplContent.Replace(TplConst.NAMESPACE, ApiNamespace)
             .Replace(TplConst.SHARE_NAMESPACE, ShareNamespace)
-            .Replace(TplConst.ENTITY_NAME, entityName);
+            .Replace(TplConst.ENTITY_NAME, entityName)
+            .Replace(TplConst.COMMENT, EntityInfo?.Comment ?? "");
         return tplContent;
     }
 

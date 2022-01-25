@@ -84,12 +84,10 @@ public class CommandRunner
         Console.WriteLine("🔵 Generate store");
         var storeCmd = new StoreCommand(path, dtoPath, servicePath, dbContext);
         await storeCmd.RunAsync();
-        if (!string.IsNullOrEmpty(apiPath))
-        {
-            Console.WriteLine("🔵 Generate rest api");
-            var apiCmd = new ApiCommand(path,dtoPath, servicePath, apiPath,dbContext);
-            await apiCmd.RunAsync();
-        }
+
+        Console.WriteLine("🔵 Generate rest api");
+        var apiCmd = new ApiCommand(path,dtoPath, servicePath, apiPath,dbContext);
+        await apiCmd.RunAsync();
     }
 
     /// <summary>

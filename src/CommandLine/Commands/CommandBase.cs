@@ -21,6 +21,5 @@ public class CommandBase
         {
             Console.WriteLine($"  📣 Skip exist file: {fileName}.");
         }
-
     }
 }

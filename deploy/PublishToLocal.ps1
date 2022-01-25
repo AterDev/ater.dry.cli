@@ -17,6 +17,7 @@ try {
     Write-Host 'install new version'
     dotnet tool install -g --add-source ./nupkg $PackageId --version $Version
 
+    cd $PSScriptRoot
 }
 catch {
     Write-Host $_.Exception.Message

@@ -1,5 +1,4 @@
-﻿using static CodeGenerator.Models.EntityInfo;
-using PropertyInfo = CodeGenerator.Models.PropertyInfo;
+﻿using PropertyInfo = CodeGenerator.Models.PropertyInfo;
 
 namespace CodeGenerator.Generate;
 /// <summary>
