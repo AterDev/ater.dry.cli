@@ -100,6 +100,7 @@ public static class Extenstions
 
     public static T? Copy<T>(this T origin)
     {
+        if (origin == null) return default;
         var stream = new MemoryStream();
         JsonSerializer.Serialize(stream, origin);
         stream.Position = 0;

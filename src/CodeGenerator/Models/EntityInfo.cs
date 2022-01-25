@@ -39,8 +39,6 @@ public class EntityInfo
     {
         return PropertyInfos?.Where(p => p.IsNavigation && p.HasMany == false).FirstOrDefault();
     }
-
-
 }
 public enum EntityKeyType
 {

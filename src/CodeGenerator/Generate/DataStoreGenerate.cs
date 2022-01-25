@@ -81,11 +81,12 @@ public class DataStoreGenerate : GenerateBase
         return new List<string>
         {
             "global using System;",
-            "global using Microsoft.Extensions.DependencyInjection;",
+            "global using Microsoft.EntityFrameworkCore;",
             "global using Microsoft.Extensions.Logging;",
+            $"global using {ShareNamespace}.Models;",
             $"global using {ServiceNamespace}.Interface;",
             $"global using {ServiceNamespace}.DataStore;",
-            $"global using {ShareNamespace}.Models;"
+            "global using Microsoft.Extensions.DependencyInjection;",
         };
     }
 

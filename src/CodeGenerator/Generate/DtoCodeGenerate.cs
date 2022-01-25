@@ -85,7 +85,6 @@ public class DtoCodeGenerate : GenerateBase
             Tag = EntityInfo.Name,
             BaseType = "FilterBase",
         };
-
         var properties = EntityInfo.PropertyInfos?
                 .Where(p => p.IsRequired
                     || (!p.IsNullable
@@ -94,17 +93,16 @@ public class DtoCodeGenerate : GenerateBase
                         && !filterFields.Contains(p.Name))
                     )
                 .ToList();
-        dto.Properties = properties.Copy();
+        dto.Properties = properties.Copy() ?? new List<PropertyInfo>();
         // 筛选条件调整为可空
-        if (dto.Properties != null)
-            foreach (var item in dto.Properties)
-            {
-                item.IsNullable = true;
-            }
-
+        foreach (var item in dto.Properties)
+        {
+            item.IsNullable = true;
+        }
         referenceProps?.ForEach(item =>
         {
-            dto.Properties?.Add(item);
+            if (!dto.Properties.Any(p => p.Name.Equals(item.Name)))
+                dto.Properties.Add(item);
         });
         return dto.ToString(AssemblyName, EntityInfo.Name);
     }
@@ -127,11 +125,12 @@ public class DtoCodeGenerate : GenerateBase
                 && p.Name != "UpdatedTime"
                 && !p.IsList
                 && !p.IsNavigation)
-            .ToList()
+            .ToList()?? new List<PropertyInfo>()
         };
         referenceProps?.ForEach(item =>
         {
-            dto.Properties?.Add(item);
+            if (!dto.Properties.Any(p => p.Name.Equals(item.Name)))
+                dto.Properties.Add(item);
         });
         return dto.ToString(AssemblyName, EntityInfo.Name);
     }
@@ -165,18 +164,18 @@ public class DtoCodeGenerate : GenerateBase
                 && !p.IsNavigation)
             .ToList();
 
-        dto.Properties = properties.Copy();
-        if (dto.Properties != null)
-            foreach (var item in dto.Properties)
+        dto.Properties = properties?.Copy() ?? new List<PropertyInfo>();
+        foreach (var item in dto.Properties)
+        {
+            if (!item.IsRequired)
             {
-                if (!item.IsRequired)
-                {
-                    item.IsNullable = true;
-                }
+                item.IsNullable = true;
             }
+        }
         referenceProps?.ForEach(item =>
         {
-            dto.Properties?.Add(item);
+            if (!dto.Properties.Any(p => p.Name.Equals(item.Name)))
+                dto.Properties.Add(item);
         });
         return dto.ToString(AssemblyName, EntityInfo.Name);
     }

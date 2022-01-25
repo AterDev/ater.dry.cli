@@ -11,9 +11,11 @@ public class DtoInfo
 
     public string ToString(string projectName = "Share", string entityName = "")
     {
-        var propStrings = string.Join(string.Empty, Properties?.Select(p => p.ToCsharpLine()).ToArray());
-        var baseType = string.IsNullOrEmpty(BaseType) ? "" : " : " + BaseType;
-        var tpl = $@"namespace {projectName}.Models.{entityName}Dtos;
+        var props = Properties?.Select(p => p.ToCsharpLine()).ToArray()
+            ?? Array.Empty<string>();
+        var propStrings = string.Join(string.Empty, props);
+        var baseType    = string.IsNullOrEmpty(BaseType) ? "" : " : " + BaseType;
+        var tpl         = $@"namespace {projectName}.Models.{entityName}Dtos;
 {Comment}
 public class {Name}{baseType}
 {{
