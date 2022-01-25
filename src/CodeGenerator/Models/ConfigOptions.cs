@@ -9,10 +9,10 @@ public class ConfigOptions
     /// <summary>
     /// dto项目目录
     /// </summary>
-    public string? DtoPath { get; set; } = "Share";
-    public string? EntityPath { get; set; } = "Core";
-    public string? DbContextPath { get; set; } = "Database/EntityFramework";
-    public string? StorePath { get; set; } = "Http.Application";
-    public string? ApiPath { get; set; } = "Http.API";
+    public string DtoPath { get; set; } = "Share";
+    public string EntityPath { get; set; } = "Core";
+    public string DbContextPath { get; set; } = "Database/EntityFramework";
+    public string StorePath { get; set; } = "Http.Application";
+    public string ApiPath { get; set; } = "Http.API";
 
 }

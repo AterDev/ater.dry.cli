@@ -51,7 +51,7 @@ public class CommandBuilder
         var path = new Argument<string>("entity path", "The entity file path");
         var outputOption = new Option<string>(new[] { "--output", "-o" },
             "output project directory，default ./Share");
-        outputOption.SetDefaultValue(ConfigOptions.DtoPath);
+        outputOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.DtoPath));
         var forceOption = new Option<bool>(new[] { "--force", "-f" },
             "force overwrite file");
         forceOption.SetDefaultValue(false);
@@ -76,13 +76,13 @@ public class CommandBuilder
         var path = new Argument<string>("entity path", "The entity file path");
         var dtoOption = new Option<string>(new[] { "--dto", "-d" },
             "dto project directory，default ./Share");
-        dtoOption.SetDefaultValue(ConfigOptions.DtoPath);
+        dtoOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.DtoPath));
         var storeOption = new Option<string>(new[] { "--datastore", "-s" },
             "dataStore project directory，default ./Http.Application");
-        storeOption.SetDefaultValue(ConfigOptions.StorePath);
+        storeOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.StorePath));
         var apiOption = new Option<string>(new[] { "--output", "-o" },
             "api controller project directory，default ./Http.API");
-        apiOption.SetDefaultValue(ConfigOptions.ApiPath);
+        apiOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.ApiPath));
         var contextOption = new Option<string>(new[] { "--contextName", "-c" },
             "the entityframework dbcontext name, default ContextBase");
         contextOption.SetDefaultValue("ContextBase");

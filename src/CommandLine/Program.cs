@@ -19,7 +19,6 @@ internal class Program
         {
             Name = "droplet"
         };
-        // config 配置命令
 
         // angular 生成命令
         var ngCommand = new Command("angular", "angular请求服务生成，包括类型接口！");
@@ -79,54 +78,6 @@ internal class Program
             IsRequired = true,
             Description = "前端项目根目录"
         });
-
-        // 执行方法
-        /*ngCommand.Handler = CommandHandler.Create<string, string>(
-             async (url, output) =>
-             {
-                 if (string.IsNullOrEmpty(url))
-                 {
-                     url = "http://localhost:5002/swagger/app/swagger.json";
-                 }
-                 await cmd.GenerateNgAsync(url, output);
-             });
-
-        apiCommand.Handler = CommandHandler.Create<string, string, string>(
-             (entity, service, web) =>
-             {
-                 if (string.IsNullOrEmpty(service))
-                 {
-                     service = Config.SERVICE_PATH;
-                 }
-                 if (string.IsNullOrEmpty(web))
-                 {
-                     web = Config.API_PATH;
-                 }
-                 cmd.GenerateApi(entity, service, web, Config.DTO_PATH);
-             });
-        viewCommand.Handler = CommandHandler.Create<string, string, string>(
-            (name, share, output) =>
-            {
-                if (string.IsNullOrEmpty(share))
-                {
-                    share = "./" + Config.SHARE_NAMESPACE;
-                }
-                cmd.GenerateNgPages(name, share, output);
-            });
-
-        genCommand.Handler = CommandHandler.Create<string, string, string, string, string>(
-          async (entity, service, share, web, output) =>
-          {
-              if (string.IsNullOrEmpty(service))
-              {
-                  service = "./" + Config.SERVICE_NAMESPACE;
-              }
-              if (string.IsNullOrEmpty(share))
-              {
-                  service = "./" + Config.SHARE_NAMESPACE;
-              }
-              await cmd.GenerateAsync(entity, service, share, web, output);
-          });*/
 
         gtCommand.Add(ngCommand);
         gtCommand.Add(viewCommand);

@@ -25,7 +25,7 @@ ${AdditionAction}
     /// </summary>
     /// <param name="form"></param>
     /// <returns></returns>
-    public override Task<ActionResult<NewsTags>> AddAsync(NewsTags form) => base.AddAsync(form);
+    public override Task<ActionResult<${EntityName}>> AddAsync(${EntityName} form) => base.AddAsync(form);
 
     /// <summary>
     /// ⚠更新
