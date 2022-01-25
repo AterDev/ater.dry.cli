@@ -55,16 +55,17 @@ public class AssemblyHelper
     public static string GetAssemblyName(FileInfo file)
     {
         var xml = XElement.Load(file.FullName);
-        var nodes = xml.Descendants("PropertyGroup")
-            .Where(pg => pg.Elements().Any(e => e.Name.LocalName.Equals("AssemblyName")))
-            .ToList();
+        var node = xml.Descendants("PropertyGroup")
+            .SelectMany(pg => pg.Elements())
+            .Where(el => el.Name.LocalName.Equals("AssemblyName"))
+            .FirstOrDefault();
         // 默认名称
         var name = Path.GetFileNameWithoutExtension(file.Name);
-        if (nodes != null && nodes.Count > 0)
+        if (node != null)
         {
-            if (!nodes.First().Value.Equals("$(MSBuildProjectName)"))
+            if (!node.Value.Contains("$(MSBuildProjectName)"))
             {
-                name = nodes.First().Value;
+                name = node.Value;
             }
         }
         return name;
@@ -86,16 +87,17 @@ public class AssemblyHelper
         var file = FindProjectFile(dir);
         if (file == null) return null;
         var xml = XElement.Load(file.FullName);
-        var nodes = xml.Descendants("PropertyGroup")
-            .Where(pg => pg.Elements().Any(e => e.Name.LocalName.Equals("RootNamespace")))
-            .ToList();
+        var node = xml.Descendants("PropertyGroup")
+            .SelectMany(pg => pg.Elements())
+            .Where(el => el.Name.LocalName.Equals("RootNamespace"))
+            .FirstOrDefault();
         // 默认名称
         var name = Path.GetFileNameWithoutExtension(file.Name);
-        if (nodes != null && nodes.Count > 0)
+        if (node != null)
         {
-            if (!nodes.First().Value.Contains("MSBuildProjectName"))
+            if (!node.Value.Contains("MSBuildProjectName"))
             {
-                name = nodes.First().Value;
+                name = node.Value;
             }
         }
         return name;

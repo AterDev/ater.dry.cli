@@ -70,7 +70,8 @@ public class CompilationHelper
     public IEnumerable<INamedTypeSymbol> GetClassNameByBaseType(IEnumerable<INamedTypeSymbol> namedTypes, string baseTypeName)
     {
         return namedTypes
-            .Where(c => c.BaseType.Name.Equals(baseTypeName))
+            .Where(c => c.BaseType != null
+                && c.BaseType.Name.Equals(baseTypeName))
             .ToList();
     }
 

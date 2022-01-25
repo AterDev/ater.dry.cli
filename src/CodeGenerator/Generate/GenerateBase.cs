@@ -15,6 +15,11 @@ public class GenerateBase
         // 读取模板文件
         var assembly = Assembly.GetExecutingAssembly();
         using var stream = assembly.GetManifestResourceStream(tplPath);
+        if (stream == null)
+        {
+            Console.WriteLine("  ❌ can't find tpl file:" + tplPath);
+            return "";
+        }
         using var reader = new StreamReader(stream);
         return reader.ReadToEnd();
     }
