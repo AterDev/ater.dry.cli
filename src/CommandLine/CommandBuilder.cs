@@ -5,6 +5,7 @@ namespace Droplet.CommandLine;
 public class CommandBuilder
 {
     public RootCommand RootCommand { get; set; }
+    public ConfigOptions ConfigOptions { get; set; }
 
     public CommandBuilder()
     {
@@ -12,6 +13,8 @@ public class CommandBuilder
         {
             Name = "droplet"
         };
+
+        ConfigOptions = ConfigCommand.ReadConfigFile();
     }
 
     public RootCommand Build()
@@ -48,7 +51,7 @@ public class CommandBuilder
         var path = new Argument<string>("entity path", "The entity file path");
         var outputOption = new Option<string>(new[] { "--output", "-o" },
             "output project directory，default ./Share");
-        outputOption.SetDefaultValue(Config.SHAREMODEL_PATH);
+        outputOption.SetDefaultValue(ConfigOptions.DtoPath);
         var forceOption = new Option<bool>(new[] { "--force", "-f" },
             "force overwrite file");
         forceOption.SetDefaultValue(false);
@@ -73,30 +76,30 @@ public class CommandBuilder
         var path = new Argument<string>("entity path", "The entity file path");
         var dtoOption = new Option<string>(new[] { "--dto", "-d" },
             "dto project directory，default ./Share");
+        dtoOption.SetDefaultValue(ConfigOptions.DtoPath);
         var storeOption = new Option<string>(new[] { "--datastore", "-s" },
             "dataStore project directory，default ./Http.Application");
-        var outputOption = new Option<string>(new[] { "--output", "-o" },
+        storeOption.SetDefaultValue(ConfigOptions.StorePath);
+        var apiOption = new Option<string>(new[] { "--output", "-o" },
             "api controller project directory，default ./Http.API");
+        apiOption.SetDefaultValue(ConfigOptions.ApiPath);
         var contextOption = new Option<string>(new[] { "--contextName", "-c" },
             "the entityframework dbcontext name, default ContextBase");
+        contextOption.SetDefaultValue("ContextBase");
         var typeOption = new Option<string>(new[] { "--type", "-t" },
             "api type, valid values:rest/grpc/graph");
-
+        typeOption.SetDefaultValue("rest");
         apiCommand.AddArgument(path);
         apiCommand.AddOption(dtoOption);
         apiCommand.AddOption(storeOption);
-        apiCommand.AddOption(outputOption);
+        apiCommand.AddOption(apiOption);
         apiCommand.AddOption(contextOption);
 
         apiCommand.SetHandler(
             async (string entity, string dto, string store, string output, string context) =>
         {
-            //dto = string.IsNullOrEmpty(dto) ? Config.DTO_PATH : dto;
-            dto ??= Config.SHAREMODEL_PATH;
-            store ??= Config.SERVICE_PATH;
-            output ??= Config.HTTPAPI_PATH;
             await executor.GenerateApi(entity, dto, store, output);
-        }, path, dtoOption, storeOption, outputOption, contextOption);
+        }, path, dtoOption, storeOption, apiOption, contextOption);
 
         RootCommand.Add(apiCommand);
     }

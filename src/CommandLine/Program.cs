@@ -6,6 +6,7 @@ internal class Program
 {
     private static async Task<int> Main(string[] args)
     {
+        await ConfigCommand.InitConfigFileAsync();
         var root = new CommandBuilder().Build();
         // 读取配置
         ConfigCommand.ReadConfigFile();
