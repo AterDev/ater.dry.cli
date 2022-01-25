@@ -41,6 +41,10 @@ public class EntityParseHelper
     public IEnumerable<SyntaxNode> RootNodes { get; set; }
     public EntityKeyType KeyType { get; set; } = EntityKeyType.Guid;
     public string[] SpecialTypes = new[] { "DateTime", "DateTimeOffset", "DateOnly", "TimeOnly", "Guid" };
+    /// <summary>
+    /// 可复制的特性
+    /// </summary>
+    public string [] ValidAttributes = new[] { "MaxLength", "MinLength", "StringLength" };
 
     public EntityParseHelper(string filePath)
     {
@@ -69,19 +73,17 @@ public class EntityParseHelper
     {
         // 获取当前类名
         var classDeclarationSyntax = RootNodes.OfType<ClassDeclarationSyntax>().FirstOrDefault();
-        var trivia = classDeclarationSyntax!.GetLeadingTrivia();
         var namespaceDeclarationSyntax = RootNodes.OfType<NamespaceDeclarationSyntax>().FirstOrDefault();
         NamespaceName = namespaceDeclarationSyntax?.Name.ToString();
         Name = classDeclarationSyntax?.Identifier.ToString();
-        Comment = trivia.ToString().TrimEnd();
+        Comment = GetClassComment(classDeclarationSyntax);
         PropertyInfos = GetPropertyInfos();
     }
     public EntityInfo GetEntity()
     {
         var classDeclarationSyntax = RootNodes.OfType<ClassDeclarationSyntax>().FirstOrDefault();
-        var trivia = classDeclarationSyntax!.GetLeadingTrivia();
         var name = classDeclarationSyntax!.Identifier.ToString();
-        var comment = trivia.ToString().TrimEnd();
+        var comment = GetClassComment(classDeclarationSyntax);
         var classSymbol = SemanticModel.GetDeclaredSymbol(classDeclarationSyntax);
         var namespaceName = classSymbol?.ContainingNamespace.ToString();
 
@@ -93,6 +95,18 @@ public class EntityParseHelper
             PropertyInfos = GetPropertyInfos(),
             KeyType = KeyType
         };
+    }
+
+    public string GetClassComment(ClassDeclarationSyntax? syntax)
+    {
+        if (syntax == null) return string.Empty;
+        var trivias = syntax.GetLeadingTrivia();
+        var comment = trivias.ToString().Trim();
+        if (!comment.StartsWith("///"))
+        {
+            comment = "/// " + comment;
+        }
+        return comment;
     }
 
     /// <summary>
@@ -153,11 +167,10 @@ public class EntityParseHelper
     protected string GetAttributeText(PropertyDeclarationSyntax syntax)
     {
         var attributeListSyntax = syntax.AttributeLists
-             .Where(a => a.Attributes.Any(attr => attr.Name.ToString() != "Column"))
-             .Where(a => !a.ToString().Contains("Column"))
+             .Where(a => a.Attributes.Any(attr => ValidAttributes.Contains(attr.Name.ToString())))
+             .Where(a => ValidAttributes.Any(valid => a.ToString().Contains(valid)))
              .ToList();
-        return string.Join("\r\n", attributeListSyntax.Select(a => a.ToString()));
-
+        return string.Join(Environment.NewLine, attributeListSyntax.Select(a => a.ToString()));
     }
 
     /// <summary>
