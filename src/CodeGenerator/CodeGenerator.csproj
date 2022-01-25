@@ -6,6 +6,7 @@
 		<RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
 	</PropertyGroup>
 	<ItemGroup>
+		<None Remove="Templates\Extensions.tpl" />
 		<None Remove="Templates\Implement\DataStore.tpl" />
 		<None Remove="Templates\Implement\DataStoreBase.tpl" />
 		<None Remove="Templates\Implement\DataStoreExtensioins.tpl" />
@@ -18,6 +19,7 @@
 		<None Remove="Templates\PageResult.tpl" />
 	</ItemGroup>
 	<ItemGroup>
+		<EmbeddedResource Include="Templates\Extensions.tpl" />
 		<EmbeddedResource Include="Templates\Implement\DataStore.tpl" />
 		<EmbeddedResource Include="Templates\Implement\DataStoreBase.tpl" />
 		<EmbeddedResource Include="Templates\Implement\DataStoreExtensioins.tpl" />

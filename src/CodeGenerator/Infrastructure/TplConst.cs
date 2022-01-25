@@ -17,7 +17,8 @@ public static class TplConst
 public static class GenConst
 {
     // generate file names
-    public const string IRESTAPI_BASE_NAME ="IRestApiBase.cs";
-    public const string RESTAPI_BASE_NAME ="RestApiBase.cs";
-    public const string EXTIONSIONS_NAME ="Extensions.cs";
+    public const string IRESTAPI_BASE_NAME = "IRestApiBase.cs";
+    public const string RESTAPI_BASE_NAME = "RestApiBase.cs";
+    public const string EXTIONSIONS_NAME = "Extensions.cs";
+    public const string GLOBAL_USING_NAME = "GlobalUsings.cs";
 }

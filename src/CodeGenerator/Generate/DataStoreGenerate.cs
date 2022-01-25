@@ -198,7 +198,7 @@ public class DataStoreGenerate : GenerateBase
     public string GetExtensions()
     {
         var entityNamespace= AssemblyHelper.GetNamespaceName(new FileInfo(EntityPath).Directory!);
-        var tplContent = GetTplContent("Extentsions.tpl");
+        var tplContent = GetTplContent("Extensions.tpl");
         tplContent = tplContent.Replace(TplConst.NAMESPACE, entityNamespace);
         return tplContent;
     }

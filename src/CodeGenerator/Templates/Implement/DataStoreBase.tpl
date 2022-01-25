@@ -4,7 +4,6 @@ public class DataStoreBase<TContext, TEntity, TUpdate, TFilter, TItem> : IDataSt
     where TEntity : BaseDB
     where TFilter : FilterBase
     where TContext : DbContext
-    where TItem : class
 {
     public readonly TContext _context;
     public readonly IQueryable<TEntity> _query;

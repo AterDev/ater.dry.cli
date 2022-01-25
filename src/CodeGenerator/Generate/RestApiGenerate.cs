@@ -43,7 +43,10 @@ public class RestApiGenerate : GenerateBase
         StorePath = servicePath;
         ApiPath = apiPath;
         ContextName = contextName;
-        EntityNamespace = AssemblyHelper.GetNamespaceName(new FileInfo(entityPath).Directory!);
+
+        var entityDir =  new FileInfo(entityPath).Directory!;
+        var entityProjectFile = AssemblyHelper.FindProjectFile(entityDir, entityDir.Root);
+        EntityNamespace = AssemblyHelper.GetNamespaceName(entityProjectFile.Directory!);
         ShareNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(SharePath));
         ServiceNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(StorePath));
         ApiNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(ApiPath));
@@ -65,7 +68,7 @@ public class RestApiGenerate : GenerateBase
     {
         var dbContextName = GetContextName();
         var content = GetTplContent("Implement.RestApiBase.tpl");
-        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace)
+        content = content.Replace(TplConst.NAMESPACE, ApiNamespace)
             .Replace(TplConst.DBCONTEXT_NAME, dbContextName);
         return content;
     }
