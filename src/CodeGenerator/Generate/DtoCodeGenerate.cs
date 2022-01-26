@@ -189,24 +189,28 @@ global using {nsName};";
     }
     public string GetFilterBase()
     {
-        return @$"namespace {AssemblyName}.Models;
-public class FilterBase
-{{
-    public int PageIndex {{ get; set; }} = 1;
-    public int PageSize {{ get; set; }} = 12;
-    public {KeyType}? TenantId {{ get; set; }}
-    public DateTimeOffset? MinCreatedTime {{ get; set; }}
-    public DateTimeOffset? MaxCreatedTime {{ get; set; }}
-}}
-";
+        var content = GetTplContent("FilterBase.tpl");
+        if (content.NotNull())
+        {
+            content = content.Replace(TplConst.NAMESPACE, AssemblyName);
+        }
+        return content;
     }
-
+    public string GetBatchUpdate()
+    {
+        var content = GetTplContent("BatchUpdate.tpl");
+        if (content.NotNull())
+        {
+            content = content.Replace(TplConst.NAMESPACE, AssemblyName);
+        }
+        return content;
+    }
     public string GetPageResult()
     {
         var content = GetTplContent("PageResult.tpl");
         if (content.NotNull())
         {
-            content = content.Replace("@{AssemblyName}", AssemblyName);
+            content = content.Replace(TplConst.NAMESPACE, AssemblyName);
         }
         return content;
     }

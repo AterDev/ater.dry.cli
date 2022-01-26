@@ -15,7 +15,7 @@ public class CommandBase
         if (!File.Exists(filePath) || cover)
         {
             await File.WriteAllTextAsync(filePath, content);
-            Console.WriteLine(@$"  ✔ generate file {fileName}.");
+            Console.WriteLine(@$"  👍 generate file {fileName}.");
         }
         else
         {

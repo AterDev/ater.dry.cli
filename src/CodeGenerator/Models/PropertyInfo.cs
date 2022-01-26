@@ -16,7 +16,7 @@ public class PropertyInfo
     /// </summary>
     public bool IsNavigation { get; set; } = false;
     /// <summary>
-    /// 导航属性名称
+    /// 导航属性类名称
     /// </summary>
     public string? NavigationName { get; set; }
     /// <summary>
@@ -60,7 +60,7 @@ public class PropertyInfo
         var content = @$"    public {Type}{nullableMark} {Name} {{ get; set; }}";
         if (Name.ToLower().Contains("password"))
         {
-            attributeText = attributeText?.Replace("    ", "//     ");
+            attributeText = attributeText?.Replace("    ", "    // ");
             content = @$"    // public {Type}{nullableMark} {Name} {{ get; set; }}";
         }
         return $@"{Comments}{attributeText}{content}

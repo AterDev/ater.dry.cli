@@ -6,10 +6,11 @@ public class DataStoreBase<TContext, TEntity, TUpdate, TFilter, TItem> : IDataSt
     where TContext : DbContext
 {
     public readonly TContext _context;
-    public readonly IQueryable<TEntity> _query;
     public readonly ILogger _logger;
     protected readonly DbSet<TEntity> _db;
     protected readonly IUserContext _userCtx;
+
+    public IQueryable<TEntity> _query;
     public DbSet<TEntity> Db { get => _db; }
 
     public DataStoreBase(TContext context, IUserContext userContext, ILogger logger)
@@ -52,7 +53,8 @@ public class DataStoreBase<TContext, TEntity, TUpdate, TFilter, TItem> : IDataSt
         var count = _query.Count();
         if (filter.PageIndex < 1) filter.PageIndex = 1;
         if (filter.PageSize < 0) filter.PageSize = 0;
-        var data = await _query.Skip((filter.PageIndex - 1) * filter.PageSize)
+        var data = await _query.OrderByDescending(d => d.CreatedTime)
+            .Skip((filter.PageIndex - 1) * filter.PageSize)
             .Take(filter.PageSize)
             .Select<TEntity, TItem>()
             .ToListAsync();

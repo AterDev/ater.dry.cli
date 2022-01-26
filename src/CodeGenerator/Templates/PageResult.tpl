@@ -1,4 +1,4 @@
-﻿namespace @{AssemblyName}.Models;
+﻿namespace ${Namespace}.Models;
 public class PageResult<T>
 {
     public int Count { get; set; }

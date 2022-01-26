@@ -115,6 +115,6 @@ public class StoreCommand : CommandBase
     {
         var storeDir = Path.Combine(StorePath, "DataStore");
         var storeService = CodeGen.GetStoreService();
-        await GenerateFileAsync(storeDir, "DataStoreExtensions.cs", storeService);
+        await GenerateFileAsync(storeDir, "DataStoreExtensions.cs", storeService, true);
     }
 }

@@ -6,7 +6,9 @@
 		<RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
 	</PropertyGroup>
 	<ItemGroup>
+		<None Remove="Templates\BatchUpdate.tpl" />
 		<None Remove="Templates\Extensions.tpl" />
+		<None Remove="Templates\FilterBase.tpl" />
 		<None Remove="Templates\Implement\DataStore.tpl" />
 		<None Remove="Templates\Implement\DataStoreBase.tpl" />
 		<None Remove="Templates\Implement\DataStoreExtensioins.tpl" />
@@ -19,6 +21,7 @@
 		<None Remove="Templates\PageResult.tpl" />
 	</ItemGroup>
 	<ItemGroup>
+		<EmbeddedResource Include="Templates\FilterBase.tpl" />
 		<EmbeddedResource Include="Templates\Extensions.tpl" />
 		<EmbeddedResource Include="Templates\Implement\DataStore.tpl" />
 		<EmbeddedResource Include="Templates\Implement\DataStoreBase.tpl" />
@@ -29,6 +32,7 @@
 		<EmbeddedResource Include="Templates\Interface\IDataStore.tpl" />
 		<EmbeddedResource Include="Templates\Interface\IRestApiBase.tpl" />
 		<EmbeddedResource Include="Templates\Interface\IUserContext.tpl" />
+		<EmbeddedResource Include="Templates\BatchUpdate.tpl" />
 		<EmbeddedResource Include="Templates\PageResult.tpl" />
 	</ItemGroup>
 

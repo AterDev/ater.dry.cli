@@ -94,10 +94,9 @@ public class RestApiBase<TDataStore, TEntity, TUpdate, TFilter, TItem>
     /// <summary>
     /// 批量更新
     /// </summary>
-    /// <param name="ids"></param>
-    /// <param name="dto"></param>
+    /// <param name="data"></param>
     /// <returns></returns>
     [HttpPut]
-    public async virtual Task<int> BatchUpdateAsync([FromBody] List<Guid> ids, [FromQuery] TUpdate dto)
-    => await _store.BatchUpdateAsync(ids, dto);
+    public async virtual Task<int> BatchUpdateAsync([FromBody] BatchUpdate<TUpdate> data)
+    => await _store.BatchUpdateAsync(data.Ids, data.UpdateDto);
 }

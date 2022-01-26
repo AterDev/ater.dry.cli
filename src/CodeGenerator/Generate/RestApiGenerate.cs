@@ -82,7 +82,8 @@ public class RestApiGenerate : GenerateBase
         {
             "global using Microsoft.Extensions.DependencyInjection;",
             "global using Microsoft.AspNetCore.Mvc;",
-            $"global using {EntityNamespace}.Models",
+            $"global using {EntityNamespace}.Utils;",
+            $"global using {EntityNamespace}.Models;",
             $"global using {ApiNamespace}.Controllers;",
             $"global using {ServiceNamespace}.Interface;",
             $"global using {ServiceNamespace}.DataStore;",
@@ -109,7 +110,10 @@ public class RestApiGenerate : GenerateBase
         return tplContent;
     }
 
-    // TODO:add api
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     public string? GetAddApiContent()
     {
         var entityName = EntityInfo.Name;
@@ -132,7 +136,7 @@ public class RestApiGenerate : GenerateBase
         {{
             var newItem = new {entityName}()
             {{
-                {navigationProp.NavigationName} = depend
+                {navigationProp.Name} = depend
             }};
             newList.Add(newItem.Merge(item));
         }});
