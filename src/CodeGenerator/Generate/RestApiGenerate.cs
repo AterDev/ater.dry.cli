@@ -124,7 +124,7 @@ public class RestApiGenerate : GenerateBase
     /// <param name=""dependStore""></param>
     /// <returns></returns>
     [HttpPost(""{{id}}"")]
-    public async Task<ActionResult<int>> AddAsync([FromRoute] Guid id, List<{entityName}UpdateDto> list, [FromServices] {navigationProp.NavigationName}DataStore dependStore)
+    public async Task<ActionResult<int>> AddAsync([FromRoute] Guid id, List<{entityName}UpdateDto> list, [FromServices] {navigationProp.Type}DataStore dependStore)
     {{
         var depend = await dependStore.FindAsync(id);
         var newList = new List<{entityName}>();
@@ -132,7 +132,7 @@ public class RestApiGenerate : GenerateBase
         {{
             var newItem = new {entityName}()
             {{
-                ThirdNews = depend
+                {navigationProp.NavigationName} = depend
             }};
             newList.Add(newItem.Merge(item));
         }});

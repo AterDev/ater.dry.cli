@@ -11,8 +11,10 @@ public class Blog : BaseDB
     [StringLength(100)]
     [MinLength(10)]
     public string Name { get; set; } = string.Empty;
-
     public string Title { get; set; } = string.Empty;
+
+    public Blog? Parent { get; set; }
+    public List<Blog>? Children { get; set; }
     /// <summary>
     /// 内容
     /// </summary>

@@ -37,7 +37,10 @@ public class EntityInfo
     /// <returns></returns>
     public PropertyInfo? GetNavigation()
     {
-        return PropertyInfos?.Where(p => p.IsNavigation && p.HasMany == false).FirstOrDefault();
+        return PropertyInfos?.Where(p => p.IsNavigation
+            && p.HasMany == false
+            && p.IsNullable == false)
+            .FirstOrDefault();
     }
 }
 public enum EntityKeyType

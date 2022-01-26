@@ -239,28 +239,30 @@ public class EntityParseHelper
     protected void ParseNavigation(INamedTypeSymbol type, PropertyInfo propertyInfo)
     {
         var navigationType = type;
-        propertyInfo.HasMany = false;
+        var hasMany = false;
         // 可空的列表，取泛型类型
-        if (propertyInfo.IsNullable)
+        if (propertyInfo.IsNullable && navigationType.TypeArguments.Any())
         {
             navigationType = navigationType.TypeArguments[0] as INamedTypeSymbol;
-            if (propertyInfo.IsList)
+            if (propertyInfo.IsList && navigationType.TypeArguments.Any())
             {
                 navigationType = navigationType.TypeArguments[0] as INamedTypeSymbol;
                 propertyInfo.HasMany = true;
             }
         }
-        else if (propertyInfo.IsList)
+        else if (propertyInfo.IsList && navigationType.TypeArguments.Any())
         {
             navigationType = navigationType.TypeArguments[0] as INamedTypeSymbol;
-            propertyInfo.HasMany = true;
+            hasMany = true;
         }
+        // 自定义类型
         if (navigationType.SpecialType == SpecialType.None
             && !SpecialTypes.Contains(navigationType.Name)
             && !propertyInfo.IsEnum)
         {
             propertyInfo.NavigationName = navigationType.Name;
             propertyInfo.IsNavigation = true;
+            propertyInfo.HasMany = hasMany;
         }
     }
     /// <summary>
