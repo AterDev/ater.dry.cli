@@ -196,6 +196,17 @@ global using {nsName};";
         }
         return content;
     }
+    public string GetEntityBase()
+    {
+        var content = GetTplContent("EntityBase.tpl");
+        if (content.NotNull())
+        {
+            content = content.Replace(TplConst.NAMESPACE, AssemblyName)
+                .Replace(TplConst.ID_TYPE, Config.IdType)
+                .Replace(TplConst.CREATEDTIME_NAME, Config.CreatedTimeName);
+        }
+        return content;
+    }
     public string GetBatchUpdate()
     {
         var content = GetTplContent("BatchUpdate.tpl");

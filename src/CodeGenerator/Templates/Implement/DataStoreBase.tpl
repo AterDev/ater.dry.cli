@@ -1,7 +1,7 @@
 ﻿namespace ${Namespace}.DataStore;
 
-public class DataStoreBase<TContext, TEntity, TUpdate, TFilter, TItem> : IDataStore<TEntity, TUpdate, TFilter, TItem, Guid>
-    where TEntity : BaseDB
+public class DataStoreBase<TContext, TEntity, TUpdate, TFilter, TItem> : IDataStore<TEntity, TUpdate, TFilter, TItem, ${IdType}>
+    where TEntity : EntityBase
     where TFilter : FilterBase
     where TContext : DbContext
 {
@@ -27,7 +27,7 @@ public class DataStoreBase<TContext, TEntity, TUpdate, TFilter, TItem> : IDataSt
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public async virtual Task<TEntity?> FindAsync(Guid id) => await _db.FindAsync(id);
+    public async virtual Task<TEntity?> FindAsync(${IdType} id) => await _db.FindAsync(id);
 
     /// <summary>
     /// 筛选数据
@@ -36,7 +36,7 @@ public class DataStoreBase<TContext, TEntity, TUpdate, TFilter, TItem> : IDataSt
     /// <returns></returns>
     public async virtual Task<List<TItem>> FindAsync(TFilter filter)
     {
-        return await _query.OrderByDescending(d => d.CreatedTime)
+        return await _query.OrderByDescending(d => d.${CreatedTimeName})
             .Select<TEntity, TItem>()
             .Skip((filter.PageIndex - 1) * filter.PageSize)
             .Take(filter.PageSize)
@@ -53,7 +53,7 @@ public class DataStoreBase<TContext, TEntity, TUpdate, TFilter, TItem> : IDataSt
         var count = _query.Count();
         if (filter.PageIndex < 1) filter.PageIndex = 1;
         if (filter.PageSize < 0) filter.PageSize = 0;
-        var data = await _query.OrderByDescending(d => d.CreatedTime)
+        var data = await _query.OrderByDescending(d => d.${CreatedTimeName})
             .Skip((filter.PageIndex - 1) * filter.PageSize)
             .Take(filter.PageSize)
             .Select<TEntity, TItem>()
@@ -66,7 +66,7 @@ public class DataStoreBase<TContext, TEntity, TUpdate, TFilter, TItem> : IDataSt
         };
     }
 
-    public async virtual Task<bool> DeleteAsync(Guid id)
+    public async virtual Task<bool> DeleteAsync(${IdType} id)
     {
         var data = await _db.FindAsync(id);
         if (data == null) { return false; }
@@ -81,7 +81,7 @@ public class DataStoreBase<TContext, TEntity, TUpdate, TFilter, TItem> : IDataSt
         return data;
     }
 
-    public async virtual Task<TEntity?> UpdateAsync(Guid id, TUpdate dto)
+    public async virtual Task<TEntity?> UpdateAsync(${IdType} id, TUpdate dto)
     {
         var data = await _db.FindAsync(id);
         if (data == null) { return null; }
@@ -91,7 +91,7 @@ public class DataStoreBase<TContext, TEntity, TUpdate, TFilter, TItem> : IDataSt
         return data;
     }
 
-    public async virtual Task<bool> Exist(Guid id)
+    public async virtual Task<bool> Exist(${IdType} id)
     {
         var data = await _db.FindAsync(id);
         return data != null;
@@ -103,7 +103,7 @@ public class DataStoreBase<TContext, TEntity, TUpdate, TFilter, TItem> : IDataSt
     /// 批量更新
     /// </summary>
     /// <returns></returns>
-    public async virtual Task<int> BatchUpdateAsync(List<Guid> ids, TUpdate dto)
+    public async virtual Task<int> BatchUpdateAsync(List<${IdType}> ids, TUpdate dto)
     {
         try
         {
@@ -124,7 +124,7 @@ public class DataStoreBase<TContext, TEntity, TUpdate, TFilter, TItem> : IDataSt
     /// 批量删除
     /// </summary>
     /// <returns></returns>
-    public async virtual Task<int> BatchDeleteAsync(List<Guid> ids)
+    public async virtual Task<int> BatchDeleteAsync(List<${IdType}> ids)
     {
         try
         {

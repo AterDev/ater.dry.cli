@@ -68,7 +68,9 @@ public class DataStoreGenerate : GenerateBase
     public string GetStoreBase()
     {
         var content = GetTplContent("Implement.DataStoreBase.tpl");
-        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace);
+        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace)
+            .Replace(TplConst.ID_TYPE, Config.IdType)
+            .Replace(TplConst.CREATEDTIME_NAME, Config.CreatedTimeName);
         return content;
     }
 

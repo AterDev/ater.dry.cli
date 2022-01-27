@@ -13,8 +13,9 @@ public class CommandBuilder
         {
             Name = "droplet"
         };
-
         ConfigOptions = ConfigCommand.ReadConfigFile();
+        Config.IdType = ConfigOptions.IdType;
+        Config.CreatedTimeName = ConfigOptions.CreatedTimeName;
     }
 
     public RootCommand Build()

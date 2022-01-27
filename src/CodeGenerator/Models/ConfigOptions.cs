@@ -15,4 +15,11 @@ public class ConfigOptions
     public string StorePath { get; set; } = "Http.Application";
     public string ApiPath { get; set; } = "Http.API";
 
+    /// <summary>
+    /// NameId/Id
+    /// </summary>
+    public string IdStyle { get; set; } = "Id";
+    public string IdType { get; set; } = "Guid";
+    public string CreatedTimeName { get; set; } = "CreatedTime";
+    public string UpdatedTimeName { get; set; } = "UpdatedTime";
 }

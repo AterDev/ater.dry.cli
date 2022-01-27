@@ -3,6 +3,9 @@ cli tools
 ## 实体模型解析
 - TODO:
 - `BaseDB`及相关默认字段的设计
+  - 配置 Id类型及 CreatedTime 名称
+  - 创建 partial `EntityBase`,仅生成依赖, 生成在dto所在项目中
+- 
 
 ## 约定
 - .Net6.0+
@@ -15,6 +18,12 @@ cli tools
 - 扩展类 `partial class Extentions`
   - `IQueryable<TResult> Select<TSource, TResult>(this IQueryable<TSource> source)`
   - `TSource Merge<TSource, TMerge>(this TSource source, TMerge merge)`
+
+### 配置
+-  项目目录
+-  Id类型及更新字段名称
+-  [ ] 软删除支持
+-  [ ] 
 
 
 ### 常用Dto类型

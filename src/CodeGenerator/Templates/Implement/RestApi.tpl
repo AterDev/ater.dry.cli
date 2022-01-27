@@ -7,9 +7,7 @@ public class ${EntityName}Controller : RestApiBase<${EntityName}DataStore, ${Ent
     public ${EntityName}Controller(IUserContext user, ILogger<${EntityName}Controller> logger, ${EntityName}DataStore store) : base(user, logger, store)
     {
     }
-
 ${AdditionAction}
-
     /// <summary>
     /// 分页筛选
     /// </summary>
@@ -33,7 +31,7 @@ ${AdditionAction}
     /// <param name="id"></param>
     /// <param name="form"></param>
     /// <returns></returns>
-    public override Task<ActionResult<${EntityName}?>> UpdateAsync([FromRoute] Guid id, ${EntityName}UpdateDto form)
+    public override Task<ActionResult<${EntityName}?>> UpdateAsync([FromRoute] ${IdType} id, ${EntityName}UpdateDto form)
         => base.UpdateAsync(id, form);
 
     /// <summary>
@@ -41,7 +39,7 @@ ${AdditionAction}
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public override Task<ActionResult<bool>> DeleteAsync([FromRoute] Guid id)
+    public override Task<ActionResult<bool>> DeleteAsync([FromRoute] ${IdType} id)
     {
         return base.DeleteAsync(id);
     }
@@ -51,7 +49,7 @@ ${AdditionAction}
     /// </summary>
     /// <param name="ids"></param>
     /// <returns></returns>
-    public override async Task<ActionResult<int>> BatchDeleteAsync(List<Guid> ids)
+    public override async Task<ActionResult<int>> BatchDeleteAsync(List<${IdType}> ids)
     {
         // 危险操作，请确保该方法的执行权限
         //return base.BatchDeleteAsync(ids);

@@ -7,6 +7,7 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<None Remove="Templates\BatchUpdate.tpl" />
+		<None Remove="Templates\EntityBase.tpl" />
 		<None Remove="Templates\Extensions.tpl" />
 		<None Remove="Templates\FilterBase.tpl" />
 		<None Remove="Templates\Implement\DataStore.tpl" />
@@ -21,6 +22,7 @@
 		<None Remove="Templates\PageResult.tpl" />
 	</ItemGroup>
 	<ItemGroup>
+		<EmbeddedResource Include="Templates\EntityBase.tpl" />
 		<EmbeddedResource Include="Templates\FilterBase.tpl" />
 		<EmbeddedResource Include="Templates\Extensions.tpl" />
 		<EmbeddedResource Include="Templates\Implement\DataStore.tpl" />

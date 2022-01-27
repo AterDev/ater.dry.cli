@@ -106,7 +106,8 @@ public class RestApiGenerate : GenerateBase
             .Replace(TplConst.SHARE_NAMESPACE, ShareNamespace)
             .Replace(TplConst.ENTITY_NAME, entityName)
             .Replace(TplConst.COMMENT, EntityInfo?.Comment ?? "")
-            .Replace(TplConst.ADDITION_ACTION, actionContent ?? "");
+            .Replace(TplConst.ADDITION_ACTION, actionContent ?? "")
+            .Replace(TplConst.ID_TYPE, Config.IdType);
         return tplContent;
     }
 
@@ -128,7 +129,7 @@ public class RestApiGenerate : GenerateBase
     /// <param name=""dependStore""></param>
     /// <returns></returns>
     [HttpPost(""{{id}}"")]
-    public async Task<ActionResult<int>> AddAsync([FromRoute] Guid id, List<{entityName}UpdateDto> list, [FromServices] {navigationProp.Type}DataStore dependStore)
+    public async Task<ActionResult<int>> AddAsync([FromRoute] ${{IdType}} id, List<{entityName}UpdateDto> list, [FromServices] {navigationProp.Type}DataStore dependStore)
     {{
         var depend = await dependStore.FindAsync(id);
         var newList = new List<{entityName}>();

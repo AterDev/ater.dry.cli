@@ -3,15 +3,17 @@
 public static class TplConst
 {
     // tpl content varialbes
-    public const string COMMENT             = @"${Comment}";
-    public const string NAMESPACE           = @"${Namespace}";
-    public const string ENTITY_NAME         = @"${EntityName}";
-    public const string DEPEND_STORE        = @"${DependStore}";
-    public const string DBCONTEXT_NAME      = @"${DbContextName}";
-    public const string ADDITION_ACTION     = @"${AdditionAction}";
-    public const string SHARE_NAMESPACE     = @"${ShareNamespace}";
-    public const string STORE_NAMESPACE     = @"${StoreNamespace}";
-    public const string DATASTORE_SERVICES  = @"//${DataStoreServices}";
+    public const string ID_TYPE                      = @"${IdType}";
+    public const string COMMENT                      = @"${Comment}";
+    public const string NAMESPACE                    = @"${Namespace}";
+    public const string ENTITY_NAME                  = @"${EntityName}";
+    public const string DEPEND_STORE                 = @"${DependStore}";
+    public const string DBCONTEXT_NAME               = @"${DbContextName}";
+    public const string ADDITION_ACTION              = @"${AdditionAction}";
+    public const string SHARE_NAMESPACE              = @"${ShareNamespace}";
+    public const string STORE_NAMESPACE              = @"${StoreNamespace}";
+    public const string CREATEDTIME_NAME             = @"${CreatedTimeName}";
+    public const string DATASTORE_SERVICES           = @"//${DataStoreServices}";
 
     // tpl names
 }
