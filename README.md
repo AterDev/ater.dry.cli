@@ -25,7 +25,6 @@ cli tools
 -  [ ] 软删除支持
 -  [ ] 
 
-
 ### 常用Dto类型
 - UpdateDto
   - 过滤列表属性,如`List<string>`,`List<Blog>`
@@ -114,3 +113,20 @@ cli tools
 ### 功能
 前提：先进行配置，如没有配置则提示。
 
+
+
+# 模板
+## API项目模板
+`ASP.NET Core Api`
+### 目录结构及说明
+
+
+## 后台管理Admin 模板
+`Angular 13`
+### 目录结构及说明
+- share
+  - service
+  - pipe
+  - models
+- pages
+- components
