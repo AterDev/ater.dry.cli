@@ -11,13 +11,14 @@ public class DtoCodeGenerate : GenerateBase
     /// <summary>
     /// dto 输出的 程序集名称
     /// </summary>
-    public string AssemblyName { get; set; } = "Share";
-    public DtoCodeGenerate(string entityPath)
+    public string? AssemblyName { get; set; } = "Share";
+    public DtoCodeGenerate(string entityPath, string dtoPath)
     {
         if (File.Exists(entityPath))
         {
             var entityHelper = new EntityParseHelper(entityPath);
             EntityInfo = entityHelper.GetEntity();
+            AssemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(dtoPath));
             KeyType = (EntityInfo.KeyType) switch
             {
                 EntityKeyType.Int => "Int",
@@ -182,10 +183,10 @@ public class DtoCodeGenerate : GenerateBase
 
     public string GetDtoUsings()
     {
-        var nsName = EntityInfo!.NamespaceName;
         return @$"global using System.ComponentModel.DataAnnotations;
 global using {AssemblyName}.Models;
-global using {nsName};";
+global using {EntityInfo!.AssemblyName}.Identity;
+global using {EntityInfo!.AssemblyName}.Models;";
     }
     public string GetFilterBase()
     {

@@ -25,6 +25,7 @@ public class DtoGenerateTest
     public void Shoud_parse_entity_and_properties()
     {
         var filePath = PathHelper.GetProjectFilePath(@"Entity\Blog.cs");
+        //filePath = @"C:\self\DevPlatform\src\Core\Identity\Account.cs";
         var entityHelper = new EntityParseHelper(filePath);
         entityHelper.Parse();
         Assert.Equal("Blog", entityHelper.Name);
@@ -33,6 +34,10 @@ public class DtoGenerateTest
 
         var props = entityHelper.PropertyInfos;
         Assert.NotEmpty(props);
+
+        var idProp = props!.Where(p => p.Name.Equals("Id")).FirstOrDefault();
+        Assert.NotNull(idProp);
+        Assert.False(idProp!.IsNullable);
 
         // 验证属性内容
         var nameProp = props!.Where(p => p.Name.Equals("Name")).FirstOrDefault();
@@ -67,7 +72,8 @@ public class DtoGenerateTest
     public void Shoud_generate_dto_content()
     {
         var filePath = PathHelper.GetProjectFilePath(@"Entity\Blog.cs");
-        var gen = new DtoCodeGenerate(filePath);
+        var dtoPath = PathHelper.GetProjectPath();
+        var gen = new DtoCodeGenerate(filePath,dtoPath);
         var shortDto = gen.GetShortDto();
         var filterDto = gen.GetFilterDto();
         var updateDto = gen.GetUpdateDto();

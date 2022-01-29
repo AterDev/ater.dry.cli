@@ -102,7 +102,8 @@ public class EntityParseHelper
         if (syntax == null) return string.Empty;
         var trivias = syntax.GetLeadingTrivia();
         var comment = trivias.ToString().Trim();
-        if (!comment.StartsWith("///"))
+        if (!string.IsNullOrWhiteSpace(comment)
+            && !comment.StartsWith("///"))
         {
             comment = "/// " + comment;
         }
@@ -120,11 +121,17 @@ public class EntityParseHelper
         var root = SyntaxTree.GetCompilationUnitRoot();
         var propertySyntax = root.DescendantNodes().OfType<PropertyDeclarationSyntax>();
         // 如果指定父类名称
+
+        parentClassName ??= GetParentClassName();
+        var parentProperties = new List<PropertyInfo>();
         if (parentClassName != null)
         {
             var filePath = AssemblyHelper.FindFileInProject(ProjectFile!.FullName, parentClassName + ".cs");
-            var entity = new EntityParseHelper(filePath!);
-            return entity.GetPropertyInfos();
+            if (filePath != null)
+            {
+                var entity = new EntityParseHelper(filePath);
+                parentProperties = entity.GetPropertyInfos();
+            }
         }
         foreach (var prop in propertySyntax)
         {
@@ -138,13 +145,9 @@ public class EntityParseHelper
 
             properties.Add(propertyInfo);
         }
-        var parentClass = GetParentClassName();
-        if (parentClass != null)
-        {
-            var parentProperties = GetPropertyInfos(parentClass.FirstOrDefault());
-            if (parentProperties != null)
-                properties.AddRange(parentProperties);
-        }
+        
+        if (parentProperties != null)
+            properties.AddRange(parentProperties);
 
         return properties.GroupBy(p => p.Name)
              .Select(s => s.FirstOrDefault()!)
@@ -328,17 +331,12 @@ public class EntityParseHelper
     /// 获取父类名称
     /// </summary>
     /// <returns></returns>
-    protected List<string>? GetParentClassName()
+    protected string? GetParentClassName()
     {
         // 获取当前类名
         var classDeclarationSyntax = RootNodes.OfType<ClassDeclarationSyntax>().FirstOrDefault();
-        // 继承的类名
-        var baseList = classDeclarationSyntax!.BaseList?.DescendantNodes()
-            .OfType<SimpleBaseTypeSyntax>();
-        if (baseList == null) return default;
-        return baseList.Where(node => !node.ToFullString().StartsWith("I"))
-            .Select(s => s.ToString())
-            .ToList();
+        var classSymbol = SemanticModel.GetDeclaredSymbol(classDeclarationSyntax!);
+        return classSymbol?.BaseType?.Name;
     }
 
 }

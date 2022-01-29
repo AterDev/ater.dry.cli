@@ -40,7 +40,7 @@ public class AssemblyHelper
     {
         var dir = new DirectoryInfo(Path.GetDirectoryName(projectFilePath));
         var files = Directory.GetFiles(dir.FullName, searchFileName, SearchOption.AllDirectories);
-        if (files != null)
+        if (files.Any())
         {
             return files[0];
         }

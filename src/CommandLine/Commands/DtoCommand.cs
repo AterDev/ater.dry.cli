@@ -23,7 +23,7 @@ public class DtoCommand : CommandBase
     {
         EntityPath = entityPath;
         DtoPath = dtoPath;
-        CodeGen = new DtoCodeGenerate(EntityPath)
+        CodeGen = new DtoCodeGenerate(EntityPath, DtoPath)
         {
             AssemblyName = new DirectoryInfo(DtoPath).Name
         };
@@ -58,7 +58,7 @@ public class DtoCommand : CommandBase
     }
     public async void GenerateCommonFiles()
     {
-        await GenerateFileAsync("GlobalUsing.cs", CodeGen.GetDtoUsings());
+        await GenerateFileAsync("GlobalUsings.cs", CodeGen.GetDtoUsings());
         await GenerateFileAsync("FilterBase.cs", CodeGen.GetFilterBase());
         await GenerateFileAsync("PageResult.cs", CodeGen.GetPageResult());
         await GenerateFileAsync("BatchUpdate.cs", CodeGen.GetBatchUpdate());
