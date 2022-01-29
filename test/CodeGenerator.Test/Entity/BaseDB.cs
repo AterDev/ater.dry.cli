@@ -2,7 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace CodeGenerator.Test.Entity;
+namespace CodeGenerator.Test.Base;
 
 /// <summary>
 /// 数据加基础字段模型

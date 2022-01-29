@@ -39,6 +39,7 @@ public class EntityParseHelper
     public SemanticModel? SemanticModel { get; set; }
     protected SyntaxTree SyntaxTree { get; set; }
     public IEnumerable<SyntaxNode> RootNodes { get; set; }
+    public CompilationHelper CompilationHelper { get; set; }
     public EntityKeyType KeyType { get; set; } = EntityKeyType.Guid;
     public string[] SpecialTypes = new[] { "DateTime", "DateTimeOffset", "DateOnly", "TimeOnly", "Guid" };
     /// <summary>
@@ -50,10 +51,15 @@ public class EntityParseHelper
     {
         AssemblyName = GetAssemblyName(filePath);
         if (!File.Exists(filePath)) throw new FileNotFoundException(filePath);
+        var fileInfo = new FileInfo(filePath);
+
+        CompilationHelper = new CompilationHelper(ProjectFile.Directory.FullName, AssemblyName);
         var content = File.ReadAllText(filePath, Encoding.UTF8);
-        SyntaxTree = CSharpSyntaxTree.ParseText(content);
-        Compilation = CSharpCompilation.Create("tmp", new[] { SyntaxTree });
-        SemanticModel = Compilation.GetSemanticModel(SyntaxTree);
+        CompilationHelper.AddSyntaxTree(content);
+
+        SyntaxTree = CompilationHelper.SyntaxTree!;
+        Compilation = CompilationHelper.Compilation;
+        SemanticModel = CompilationHelper.SemanticModel;
         RootNodes = SyntaxTree.GetCompilationUnitRoot().DescendantNodes();
     }
 
@@ -145,7 +151,7 @@ public class EntityParseHelper
 
             properties.Add(propertyInfo);
         }
-        
+
         if (parentProperties != null)
             properties.AddRange(parentProperties);
 
@@ -210,7 +216,11 @@ public class EntityParseHelper
         {
             propertyInfo.IsDecimal = true;
         }
-        if (typeInfo.Type.TypeKind == TypeKind.Enum)
+        // 判断是否为枚举类型(待改进)
+        var enums = CompilationHelper.GetAllEnumClasses();
+        if (typeInfo.Type.TypeKind == TypeKind.Enum
+            || typeInfo.Type.BaseType?.Name == "Enum"
+            || enums.Any(e => e == typeInfo.Type.Name))
         {
             propertyInfo.IsEnum = true;
         }
@@ -220,7 +230,7 @@ public class EntityParseHelper
             propertyInfo.IsList = true;
         }
         // 正则匹配 \s+(\w+)<(\w+)>
-        string pattern = @"(?<Type>\w+)<(?<GenericType>\w+)>";
+        var pattern = @"(?<Type>\w+)<(?<GenericType>\w+)>";
         var match = Regex.Match(type, pattern);
         if (match.Success)
         {
@@ -230,7 +240,7 @@ public class EntityParseHelper
             }
         }
         // 导航属性判断
-        ParseNavigation(typeInfo.Type! as INamedTypeSymbol, propertyInfo);
+        ParseNavigation((INamedTypeSymbol)typeInfo.Type!, propertyInfo);
         return propertyInfo;
     }
 

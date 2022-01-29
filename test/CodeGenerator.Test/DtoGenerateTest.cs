@@ -25,7 +25,7 @@ public class DtoGenerateTest
     public void Shoud_parse_entity_and_properties()
     {
         var filePath = PathHelper.GetProjectFilePath(@"Entity\Blog.cs");
-        //filePath = @"C:\self\DevPlatform\src\Core\Identity\Account.cs";
+        filePath = @"C:\self\DevPlatform\src\Core\Identity\Account.cs";
         var entityHelper = new EntityParseHelper(filePath);
         entityHelper.Parse();
         Assert.Equal("Blog", entityHelper.Name);
@@ -61,6 +61,7 @@ public class DtoGenerateTest
 
         var statusProp = props!.Where(p => p.Name.Equals("Status")).FirstOrDefault();
         Assert.True(statusProp!.IsEnum);
+        Assert.False(statusProp!.IsNavigation);
 
         // 父类属性
         var datetimeProp = props!.SingleOrDefault(p => p.Name.Equals("CreatedTime"));

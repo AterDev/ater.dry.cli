@@ -62,7 +62,7 @@ public class DtoCommand : CommandBase
         await GenerateFileAsync("FilterBase.cs", CodeGen.GetFilterBase());
         await GenerateFileAsync("PageResult.cs", CodeGen.GetPageResult());
         await GenerateFileAsync("BatchUpdate.cs", CodeGen.GetBatchUpdate());
-        await GenerateFileAsync("EntityBase.cs", CodeGen.GetEntityBase());
+        //await GenerateFileAsync("EntityBase.cs", CodeGen.GetEntityBase());
     }
 
     public async Task GenerateFileAsync(string fileName, string content)

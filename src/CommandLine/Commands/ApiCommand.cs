@@ -69,7 +69,7 @@ public class ApiCommand : CommandBase
         }
         else
         {
-            await GenerateFileAsync(StorePath, "GlobalUsings.cs",
+            await GenerateFileAsync(ApiPath, "GlobalUsings.cs",
                 string.Join(Environment.NewLine, globalUsings));
         }
     }

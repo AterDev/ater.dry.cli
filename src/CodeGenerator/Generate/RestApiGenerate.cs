@@ -82,12 +82,18 @@ public class RestApiGenerate : GenerateBase
         {
             "global using Microsoft.Extensions.DependencyInjection;",
             "global using Microsoft.AspNetCore.Mvc;",
+            "global using Microsoft.AspNetCore.Authorization;",
+            "global using System.Text.Json.Serialization;",
+            "global using Microsoft.EntityFrameworkCore;",
             $"global using {EntityNamespace}.Utils;",
             $"global using {EntityNamespace}.Models;",
+            $"global using {EntityNamespace}.Identity;",
+            $"global using {ShareNamespace};",
+            $"global using {ShareNamespace}.Models;",
             $"global using {ApiNamespace}.Controllers;",
+            $"global using {ServiceNamespace};",
             $"global using {ServiceNamespace}.Interface;",
-            $"global using {ServiceNamespace}.DataStore;",
-            $"global using {ShareNamespace}.Models;"
+            $"global using {ServiceNamespace}.DataStore;"
         };
     }
 

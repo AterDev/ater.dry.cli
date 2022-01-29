@@ -9,6 +9,7 @@ public class CompilationHelper
 
     public SemanticModel? SemanticModel { get; set; }
     public ITypeSymbol? ClassSymbol { get; set; }
+    public SyntaxTree? SyntaxTree { get; set; }
     public CompilationHelper()
     {
         Compilation = CSharpCompilation.Create("tmp");
@@ -38,10 +39,10 @@ public class CompilationHelper
 
     public void AddSyntaxTree(string content)
     {
-        var syntaxTree = CSharpSyntaxTree.ParseText(content);
-        Compilation = Compilation.AddSyntaxTrees(syntaxTree);
-        SemanticModel = Compilation.GetSemanticModel(syntaxTree);
-        var classNode = syntaxTree.GetCompilationUnitRoot().DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
+        SyntaxTree = CSharpSyntaxTree.ParseText(content);
+        Compilation = Compilation.AddSyntaxTrees(SyntaxTree);
+        SemanticModel = Compilation.GetSemanticModel(SyntaxTree);
+        var classNode = SyntaxTree.GetCompilationUnitRoot().DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
         ClassSymbol = SemanticModel.GetDeclaredSymbol(classNode);
     }
 
@@ -55,10 +56,24 @@ public class CompilationHelper
         return GetNamespacesClasses(namespaces);
     }
 
+    /// <summary>
+    /// 获取所有枚举类型名称
+    /// </summary>
+    /// <returns></returns>
+    public List<string> GetAllEnumClasses()
+    {
+        return GetAllClasses()
+            .Where(c => c.BaseType != null
+                && c.BaseType.Name.Equals("Enum"))
+            .Select(c => c.Name)
+            .ToList();
+    }
+
     public INamedTypeSymbol GetClass(string name)
     {
         return GetAllClasses().Where(cls => cls.Name == name).FirstOrDefault();
     }
+
 
 
     /// <summary>

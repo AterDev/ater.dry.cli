@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿
+using System.ComponentModel.DataAnnotations;
 
 namespace CodeGenerator.Test.Entity;
 
@@ -12,9 +13,8 @@ public class Blog : BaseDB
     [MinLength(10)]
     public string Name { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
-
     public Blog? Parent { get; set; }
-    public List<Blog>? Children { get; set; }
+    public Comments? Comment { get; set; }
     /// <summary>
     /// 内容
     /// </summary>
@@ -22,4 +22,3 @@ public class Blog : BaseDB
     public List<Comments>? Comments { get; set; }
     public DateOnly DateOnly { get; set; }
 }
-

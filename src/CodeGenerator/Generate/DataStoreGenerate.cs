@@ -80,11 +80,18 @@ public class DataStoreGenerate : GenerateBase
     /// <returns></returns>
     public List<string> GetGlobalUsings()
     {
+        var fileInfo = new FileInfo(EntityPath);
+        var projectFile = AssemblyHelper.FindProjectFile(fileInfo.Directory!, fileInfo.Directory!.Root);
+        var entityNamepapce = AssemblyHelper.GetNamespaceName(projectFile!.Directory!);
         return new List<string>
         {
             "global using System;",
+            "global using EntityFramework;",
             "global using Microsoft.EntityFrameworkCore;",
             "global using Microsoft.Extensions.Logging;",
+            $"global using {entityNamepapce}.Utils;",
+            $"global using {entityNamepapce}.Models;",
+            $"global using {entityNamepapce}.Identity;",
             $"global using {ShareNamespace}.Models;",
             $"global using {ServiceNamespace}.Interface;",
             $"global using {ServiceNamespace}.DataStore;",
