@@ -57,7 +57,8 @@ public class PropertyInfo
                 + Environment.NewLine;
         }
         var nullableMark = IsNullable ? "?" : "";
-        var content = @$"    public {Type}{nullableMark} {Name} {{ get; set; }}";
+        var defaultValue = IsNullable && !IsNavigation ? "" : " = default!;";
+        var content = @$"    public {Type}{nullableMark} {Name} {{ get; set; }}{defaultValue}";
         if (Name.ToLower().Contains("password"))
         {
             attributeText = attributeText?.Replace("    ", "    // ");
