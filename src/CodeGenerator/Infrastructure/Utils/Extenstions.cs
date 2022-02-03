@@ -1,5 +1,4 @@
-﻿using System.Runtime.Serialization.Formatters.Binary;
-using System.Text.Json;
+﻿using System.Text.Json;
 
 namespace CodeGenerator.Infrastructure.Utils;
 

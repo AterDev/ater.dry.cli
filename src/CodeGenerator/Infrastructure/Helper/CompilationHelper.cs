@@ -1,5 +1,4 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis;
 
 namespace CodeGenerator.Infrastructure.Helper;
 

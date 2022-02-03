@@ -1,5 +1,4 @@
-﻿using CodeGenerator.Infrastructure.Helper;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Text.Json;
 
 namespace Droplet.CommandLine.Commands;

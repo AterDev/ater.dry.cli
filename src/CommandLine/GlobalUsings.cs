@@ -3,7 +3,6 @@ global using CodeGenerator.Generate;
 global using CodeGenerator.Infrastructure.Utils;
 global using CodeGenerator.Models;
 global using Droplet.CommandLine.Commands;
-global using Microsoft.CodeAnalysis.CSharp;
 global using Microsoft.OpenApi.Readers;
 global using System;
 global using System.Collections.Generic;

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Droplet.CommandLine.Commands;
+﻿namespace Droplet.CommandLine.Commands;
 
 public class DtoCommand : CommandBase
 {

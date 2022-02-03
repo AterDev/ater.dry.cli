@@ -1,8 +1,4 @@
-﻿
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Xml.Linq;
-
-namespace CodeGenerator.Generate;
+﻿namespace CodeGenerator.Generate;
 
 /// <summary>
 /// 数据仓储生成

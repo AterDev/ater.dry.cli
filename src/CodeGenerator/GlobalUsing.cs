@@ -1,4 +1,5 @@
-﻿global using CodeGenerator.Infrastructure.Helper;
+﻿global using CodeGenerator.Infrastructure;
+global using CodeGenerator.Infrastructure.Helper;
 global using CodeGenerator.Infrastructure.Utils;
 global using CodeGenerator.Models;
 global using Microsoft.CodeAnalysis;
@@ -8,4 +9,3 @@ global using System.Collections.Generic;
 global using System.Linq;
 global using System.Reflection;
 global using System.Text;
-global using CodeGenerator.Infrastructure;

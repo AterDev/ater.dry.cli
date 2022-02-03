@@ -5,7 +5,7 @@ public class CommandBase
 {
     protected List<string> Instructions = new();
 
-    public virtual async Task GenerateFileAsync(string dir, string fileName, string content, bool cover = false)
+    public async virtual Task GenerateFileAsync(string dir, string fileName, string content, bool cover = false)
     {
         if (!Directory.Exists(dir))
         {

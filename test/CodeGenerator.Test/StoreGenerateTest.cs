@@ -1,10 +1,5 @@
 ﻿using CodeGenerator.Generate;
 using CodeGenerator.Test.Hepler;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CodeGenerator.Test;
 
