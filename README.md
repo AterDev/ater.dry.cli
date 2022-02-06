@@ -88,7 +88,7 @@ cli tools
 ### Typescript Interface生成
 生成接口所需要的模型类，如dto相关内容
 - 根据OpenApi进行解析生成
-- 
+- 父类泛型的处理，如`PageResultOfXXX`，`PageResult<XXX>`.
 
 
 ### Angular Http Service生成
@@ -116,7 +116,9 @@ cli tools
 - 支持多种类型(`Rest`,`GRPC`,`GraphQL`)生成
 
 ### NgService 生成
-- 输出路径:`share/models/[EntityName]`
+- models 生成路径:`share/models/[EntityName]`
+- 生成`base.service.ts`
+- 
 
 
 

@@ -12,13 +12,14 @@ public class TSModelGenerate
     {
         Schemas = schemas;
     }
+
     /// <summary>
     /// 
     /// </summary>
     /// <returns></returns>
     public List<GenFileInfo> GetInterfaces()
     {
-        var dtoSigns = new string[] { "ItemDto","UpdateDto","Filter"};
+
         // 生成文件的目录名称
         var files = new List<GenFileInfo>();
         foreach (var schema in Schemas)
@@ -34,32 +35,45 @@ public class TSModelGenerate
             }
             else
             {
-                path = schema.Key;
                 tsContent = ToInterfaceString(schema.Value, schema.Key);
-                // 处理目录名
-                if (schema.Key.StartsWith("PageResultOf")
-                    || dtoSigns.Any(s => schema.Key.EndsWith(s)))
-                {
-                    path = ReplaceDtoSign(schema.Key);
-                }
-            }
-            if (schema.Key.ToLower().StartsWith("base")
-                || schema.Key.ToLower().EndsWith("base"))
-            {
-                path = "";
+                path = GetDirName(schema.Key);
             }
             var file = new GenFileInfo(tsContent)
             {
                 Name = fileName,
-                Path = path.ToHyphen()
+                Path = path
             };
             files.Add(file);
         }
         return files;
     }
+
+    /// <summary>
+    /// 获取对就models应该存储的目录名称,不含enum类型
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    private string GetDirName(string name = "")
+    {
+        if (name.ToLower().StartsWith("base")
+         || name.ToLower().EndsWith("base"))
+        {
+            return "";
+        }
+        var suffix = new string[] { "ItemDto", "UpdateDto", "Filter"};
+        var prefix = new string[]{ "PageResultOf", "BatchUpdateOf" };
+        if (prefix.Any(s => name.StartsWith(s))
+                    || suffix.Any(s => name.EndsWith(s)))
+        {
+            return ReplaceDtoSign(name).ToHyphen();
+        }
+        return name.ToHyphen();
+    }
+
     private static string ReplaceDtoSign(string name)
     {
         return name.Replace("ItemDto", "")
+            .Replace("BatchUpdateOf", "")
             .Replace("PageResultOf", "")
             .Replace("UpdateDto", "")
             .Replace("Filter", "");
@@ -87,7 +101,13 @@ public class TSModelGenerate
                 extendString = "extends " + extend + " ";
                 // 如果是自引用，不需要导入
                 if (extend != name)
-                    importString += @$"import {{ {extend} }} from './{extend.ToHyphen()}.model';" + Environment.NewLine;
+                {
+                    var dirName = GetDirName(extend);
+                    dirName = dirName.NotNull() ? dirName + "/" : "";
+                    importString += @$"import {{ {extend} }} from '../{dirName}{extend.ToHyphen()}.model';"
+                        + Environment.NewLine;
+                }
+
             }
         }
         if (!string.IsNullOrEmpty(schema.Description))
@@ -105,14 +125,19 @@ public class TSModelGenerate
         });
         // 去重
         var importsProps = props.Where(p => !string.IsNullOrEmpty(p.Reference))
-            .Select(p => p.Reference)
             .Distinct()
             .ToList();
         importsProps.ForEach(ip =>
         {
             // 引用的导入，自引用不需要导入
-            if (ip != name)
-                importString += @$"import {{ {ip} }} from './{ip.ToHyphen()}.model';" + Environment.NewLine;
+            if (ip.Reference != name)
+            {
+                var dirName = GetDirName(ip.Reference);
+                dirName = dirName.NotNull() ? dirName + "/" : "";
+                if (ip.IsEnum) dirName = "enum/";
+                importString += @$"import {{ {ip.Reference} }} from '../{dirName}{ip.Reference.ToHyphen()}.model';" + Environment.NewLine;
+            }
+
         });
 
         res = @$"{importString}{comment}export interface {name} {extendString}{{
@@ -203,12 +228,17 @@ public class TSModelGenerate
                     property.Reference = refType.Reference.Id;
                 if (prop.Value.Reference != null)
                     property.Reference = prop.Value.Reference.Id;
+                if (prop.Value.Enum.Any() ||
+                    (refType != null && refType.Enum.Any()))
+                    property.IsEnum = true;
+
                 // 可空处理
                 tsProperties.Add(property);
             }
         }
         // 重写的属性去重
-        var res = tsProperties.GroupBy(p => p.Name).Select(s => s.FirstOrDefault()).ToList();
+        var res = tsProperties.GroupBy(p => p.Name)
+            .Select(s => s.FirstOrDefault()).ToList();
         return res;
     }
 
@@ -286,6 +316,7 @@ public class TsProperty
     public string? Name { get; set; }
     public string? Type { get; set; }
     public string Reference { get; set; } = string.Empty;
+    public bool IsEnum { get; set; } = false;
     public bool IsNullable { get; set; }
     public string? Comments { get; set; }
 
@@ -295,6 +326,6 @@ public class TsProperty
         // 引用的类型可空
         if (!string.IsNullOrEmpty(Reference))
             name = Name + "?: ";
-        return $"{Comments}  {name}{Type};\n";
+        return $"{Comments}  {name}{Type};" + Environment.NewLine;
     }
 }

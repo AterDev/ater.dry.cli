@@ -5,9 +5,9 @@
 /// </summary>
 public class GenFileInfo
 {
-    public string? Name { get; set; }
+    public string Name { get; set; } = default!;
     public string Content { get; set; }
-    public string? Path { get; set; }
+    public string Path { get; set; } = string.Empty;
 
     public GenFileInfo(string content)
     {

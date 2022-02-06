@@ -16,7 +16,7 @@ public class NgServiceGenerate : GenerateBase
         PathsPairs = paths;
     }
 
-    public static string GetBaseService()
+    public string GetBaseService()
     {
         var content = GetTplContent("angular.base.service.tpl");
         return content;
@@ -205,7 +205,7 @@ public class NgServiceFile
         refTypes = refTypes.GroupBy(t => t).Select(g => g.FirstOrDefault()).ToList();
         refTypes.ForEach(t =>
         {
-            importModels += $"import {{ {t} }} from '../share/models/{Name.ToHyphen()}/{t.ToHyphen()}.model';{Environment.NewLine}";
+            importModels += $"import {{ {t} }} from '../models/{Name.ToHyphen()}/{t.ToHyphen()}.model';{Environment.NewLine}";
         });
         var result = $@"import {{ Injectable }} from '@angular/core';
 import {{ BaseService }} from './base.service';

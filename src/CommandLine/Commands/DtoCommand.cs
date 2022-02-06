@@ -20,6 +20,8 @@ public class DtoCommand : CommandBase
         {
             AssemblyName = new DirectoryInfo(DtoPath).Name
         };
+        var entityName = Path.GetFileNameWithoutExtension(entityPath);
+        Instructions.Add($"  🔹 generate {entityName} dtos.");
     }
 
     public async Task RunAsync(bool cover = false)
@@ -41,13 +43,14 @@ public class DtoCommand : CommandBase
         }
         else
         {
+            Console.WriteLine(Instructions[0]);
             await SaveToFileAsync("Update", CodeGen.GetUpdateDto(), cover);
             await SaveToFileAsync("Filter", CodeGen.GetFilterDto(), cover);
             await SaveToFileAsync("Item", CodeGen.GetItemDto(), cover);
             await SaveToFileAsync("Short", CodeGen.GetShortDto(), cover);
             GenerateCommonFiles();
+            Console.WriteLine("😀 Dto generate completed!" + Environment.NewLine);
         }
-        Console.WriteLine("😀 Dto generate completed!" + Environment.NewLine);
     }
     public async void GenerateCommonFiles()
     {

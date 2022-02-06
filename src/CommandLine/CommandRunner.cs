@@ -14,45 +14,16 @@ public class CommandRunner
     /// <returns></returns>
     public async Task GenerateNgAsync(string url = "", string output = "")
     {
-        if (string.IsNullOrEmpty(url))
-        {
-            url = "https://localhost:5002/swagger/app/swagger.json";
-        }
         try
         {
-            var openApiContent = "";
-            if (url.StartsWith("http://") || url.StartsWith("https://"))
-            {
-                using var http = new HttpClient();
-                openApiContent = await http.GetStringAsync(url);
-            }
-            else
-            {
-                openApiContent = File.ReadAllText(url);
-            }
-            var openApiDoc = new OpenApiStringReader().Read(openApiContent, out var context);
-
-            // 所有类型
-            Console.WriteLine("Generating ts models...");
-            var schemas = openApiDoc.Components.Schemas;
-            var tsGen = new TSModelGenerate(schemas);
-            var modles = tsGen.GetInterfaces();
-            // TODO: 写入文件
-
-
-            // 请求服务构建
-            Console.WriteLine("Generating ng services...");
-            var operations = openApiDoc.Paths.Values;
-            var serviceGen = new NgServiceGenerate(openApiDoc.Paths);
-            //serviceGen.CopyBaseService(output);
-            //await serviceGen.BuildServiceAsync(openApiDoc.Tags, output);
-
-            Console.WriteLine("ng请求服务生成完成");
+            Console.WriteLine("🔵 Generating ts models and ng services...");
+            var cmd = new NgCommand(url, output);
+            await cmd.RunAsync();
         }
         catch (WebException webExp)
         {
             Console.WriteLine(webExp.Message);
-            Console.WriteLine("请确定您的后台开启了swagger，并输入了正确的地址!");
+            Console.WriteLine("Ensure you had input correct url!");
         }
         catch (Exception exp)
         {
@@ -67,10 +38,9 @@ public class CommandRunner
     /// <param name="entityPath"></param>
     public async Task GenerateDtoAsync(string entityPath, string output, bool force)
     {
-        Console.WriteLine("Generating Dtos...");
+        Console.WriteLine("🔵 Generating Dtos...");
         var cmd = new DtoCommand(entityPath, output);
         await cmd.RunAsync(force);
-        Console.WriteLine("Dto files generate success!");
     }
 
     /// <summary>
