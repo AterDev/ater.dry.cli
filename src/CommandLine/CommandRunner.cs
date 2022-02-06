@@ -31,16 +31,21 @@ public class CommandRunner
                 openApiContent = File.ReadAllText(url);
             }
             var openApiDoc = new OpenApiStringReader().Read(openApiContent, out var context);
+
             // 所有类型
+            Console.WriteLine("Generating ts models...");
             var schemas = openApiDoc.Components.Schemas;
-            var tsGen = new TypescriptGenerate(schemas);
-            await tsGen.BuildInterfaceAsync(output);
+            var tsGen = new TSModelGenerate(schemas);
+            var modles = tsGen.GetInterfaces();
+            // TODO: 写入文件
+
 
             // 请求服务构建
+            Console.WriteLine("Generating ng services...");
             var operations = openApiDoc.Paths.Values;
             var serviceGen = new NgServiceGenerate(openApiDoc.Paths);
-            serviceGen.CopyBaseService(output);
-            await serviceGen.BuildServiceAsync(openApiDoc.Tags, output);
+            //serviceGen.CopyBaseService(output);
+            //await serviceGen.BuildServiceAsync(openApiDoc.Tags, output);
 
             Console.WriteLine("ng请求服务生成完成");
         }

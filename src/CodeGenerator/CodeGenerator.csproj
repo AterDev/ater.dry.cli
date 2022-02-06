@@ -6,6 +6,7 @@
 		<RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
 	</PropertyGroup>
 	<ItemGroup>
+		<None Remove="Templates\angular\base.service.tpl" />
 		<None Remove="Templates\BatchUpdate.tpl" />
 		<None Remove="Templates\EntityBase.tpl" />
 		<None Remove="Templates\Extensions.tpl" />
@@ -22,6 +23,7 @@
 		<None Remove="Templates\PageResult.tpl" />
 	</ItemGroup>
 	<ItemGroup>
+		<EmbeddedResource Include="Templates\angular\base.service.tpl" />
 		<EmbeddedResource Include="Templates\EntityBase.tpl" />
 		<EmbeddedResource Include="Templates\FilterBase.tpl" />
 		<EmbeddedResource Include="Templates\Extensions.tpl" />

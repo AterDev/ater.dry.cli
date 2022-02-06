@@ -11,8 +11,8 @@ namespace CodeGenerator.Test;
 
 public class NgGenerateTest
 {
-    [Fact]
 
+    [Fact]
     public void should_generate_ts_models_from_openapi()
     {
         var projectPath = PathHelper.GetProjectPath();
@@ -21,7 +21,7 @@ public class NgGenerateTest
         // 所有类型
         var schemas = openApiDoc.Components.Schemas;
         var tsGen = new TSModelGenerate(schemas);
-        var files = tsGen.BuildInterface();
+        var files = tsGen.GetInterfaces();
 
         var updateDto = files.SingleOrDefault(f => f.Name == "article-catalog-update-dto.model.ts");
         Assert.NotNull(updateDto);
@@ -38,5 +38,18 @@ public class NgGenerateTest
         var userDto = files.SingleOrDefault(f => f.Name == "user.model.ts");
         Assert.NotNull(userDto);
         Assert.Equal("user", userDto!.Path);
+    }
+
+    [Fact]
+    public void should_generate_ng_services()
+    {
+        var projectPath = PathHelper.GetProjectPath();
+        var file = Path.Combine(projectPath,"Data/openapi.json");
+        var openApiDoc = new OpenApiStringReader().Read(File.ReadAllText(file), out var context);
+
+        var serviceGen = new NgServiceGenerate(openApiDoc.Paths);
+        var services = serviceGen.GetServices(openApiDoc.Tags);
+
+        Assert.NotNull(services);
     }
 }

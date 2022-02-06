@@ -2,7 +2,7 @@
 using Microsoft.OpenApi.Models;
 using Path = System.IO.Path;
 
-namespace Droplet.CommandLine.Commands;
+namespace CodeGenerator.Generate;
 
 /// <summary>
 /// angular request service
@@ -16,38 +16,15 @@ public class NgServiceGenerate : GenerateBase
         PathsPairs = paths;
     }
 
-    public void CopyBaseService(string ngRootPath = "")
+    public static string GetBaseService()
     {
-        string content = GetTplContent("base.service.tpl");
-        if (string.IsNullOrEmpty(ngRootPath))
-        {
-            var parentPath = new DirectoryInfo(Environment.CurrentDirectory).Parent.FullName;
-            ngRootPath = Path.Combine(parentPath, "angluar");
-        }
-        var servicePath = Path.Combine(ngRootPath, "src", "app", "services");
-        if (!Directory.Exists(servicePath))
-        {
-            Directory.CreateDirectory(servicePath);
-        }
-        var dstPath = Path.Combine(servicePath, "base.service.ts");
-        File.WriteAllText(dstPath, content);
-
-        Console.WriteLine("写入基础服务完成");
+        var content = GetTplContent("angular.base.service.tpl");
+        return content;
     }
 
-    public async Task BuildServiceAsync(IList<OpenApiTag> tags, string ngRootPath = "")
+    public List<GenFileInfo> GetServices(IList<OpenApiTag> tags)
     {
-        if (string.IsNullOrEmpty(ngRootPath))
-        {
-            var parentPath = new DirectoryInfo(Environment.CurrentDirectory).Parent.FullName;
-            ngRootPath = Path.Combine(parentPath, "angluar");
-        }
-        // 生成文件的目录名称
-        var servicesPath = Path.Combine(ngRootPath, "src", "app", "services");
-        if (!Directory.Exists(servicesPath))
-        {
-            Directory.CreateDirectory(servicesPath);
-        }
+        var files = new List<GenFileInfo>();
 
         var functions = new List<NgServiceFunction>();
         // 处理所有方法
@@ -61,7 +38,7 @@ public class NgServiceGenerate : GenerateBase
                     Method = operation.Key.ToString(),
                     Name = operation.Value.OperationId,
                     Path = path.Key,
-                    Tag = operation.Value.Tags.FirstOrDefault().Name,
+                    Tag = operation.Value.Tags.FirstOrDefault()?.Name,
                 };
                 (function.RequestType, function.RequestRefType) = GetParamType(operation.Value.RequestBody?.Content?.Values.FirstOrDefault()?.Schema);
                 (function.ResponseType, function.ResponseRefType) = GetParamType(operation.Value.Responses?.FirstOrDefault().Value
@@ -94,9 +71,7 @@ public class NgServiceGenerate : GenerateBase
             var tagFunctions = group.ToList();
             var currentTag = tags.Where(t => t.Name == group.Key).FirstOrDefault();
             if (currentTag == null)
-            {
                 currentTag = new OpenApiTag { Name = group.Key, Description = group.Key };
-            }
             var ngServiceFile = new NgServiceFile
             {
                 Description = currentTag.Description,
@@ -104,24 +79,27 @@ public class NgServiceGenerate : GenerateBase
                 Functions = tagFunctions
             };
             var content = ngServiceFile.ToString();
-            var fileName = currentTag.Name.ToHyphen() + ".service.ts";
-            await File.WriteAllTextAsync(Path.Combine(servicesPath, fileName), content);
-            Console.WriteLine(fileName + "生成完成");
+            var fileName = currentTag.Name?.ToHyphen() + ".service.ts";
+
+            var file = new GenFileInfo(content)
+            {
+                Name = fileName,
+            };
+            files.Add(file);
         }
+        return files;
     }
-    private (string type, string refType) GetParamType(OpenApiSchema schema)
+
+
+    private (string? type, string? refType) GetParamType(OpenApiSchema? schema)
     {
         if (schema == null)
-        {
             return (string.Empty, string.Empty);
-        }
 
-        string type = "any";
-        string refType = schema.Reference?.Id;
+        var type = "any";
+        var refType = schema.Reference?.Id;
         if (schema.Reference != null)
-        {
             return (schema.Reference.Id, schema.Reference.Id);
-        }
         // 常规类型
         switch (schema.Type)
         {
@@ -179,9 +157,7 @@ public class NgServiceGenerate : GenerateBase
                 if (obj != null)
                 {
                     if (obj.Format == "binary")
-                    {
                         type = "FormData";
-                    }
                 }
                 break;
             default:
@@ -203,7 +179,7 @@ public class NgServiceGenerate : GenerateBase
 /// </summary>
 public class NgServiceFile
 {
-    public string? Name { get; set; }
+    public string Name { get; set; } = default!;
     public string? Description { get; set; }
     public List<NgServiceFunction>? Functions { get; set; }
 
@@ -229,9 +205,9 @@ public class NgServiceFile
         refTypes = refTypes.GroupBy(t => t).Select(g => g.FirstOrDefault()).ToList();
         refTypes.ForEach(t =>
         {
-            importModels += $"import {{ {t} }} from '../share/models/{t.ToHyphen()}.model';\n";
+            importModels += $"import {{ {t} }} from '../share/models/{Name.ToHyphen()}/{t.ToHyphen()}.model';{Environment.NewLine}";
         });
-        string result = $@"import {{ Injectable }} from '@angular/core';
+        var result = $@"import {{ Injectable }} from '@angular/core';
 import {{ BaseService }} from './base.service';
 import {{ Observable }} from 'rxjs';
 {importModels}
@@ -240,10 +216,7 @@ import {{ Observable }} from 'rxjs';
  */
 @Injectable({{ providedIn: 'root' }})
 export class {Name}Service extends BaseService {{
-
 {functions}
-
-
 }}
 ";
         return result;
@@ -255,9 +228,9 @@ export class {Name}Service extends BaseService {{
 /// </summary>
 public class NgServiceFunction
 {
-    public string? Name { get; set; }
+    public string Name { get; set; } = default!;
     public string? Description { get; set; }
-    public string? Method { get; set; }
+    public string Method { get; set; } = default!;
     public string? ResponseType { get; set; }
     /// <summary>
     /// 返回中的引用类型
@@ -275,7 +248,7 @@ public class NgServiceFunction
     /// <summary>
     /// 相对请求路径
     /// </summary>
-    public string? Path { get; set; }
+    public string Path { get; set; } = default!;
     /// <summary>
     /// 标签
     /// </summary>
@@ -304,9 +277,7 @@ public class NgServiceFunction
         if (!string.IsNullOrEmpty(RequestType))
         {
             if (Params?.Count > 0)
-            {
                 paramsString += $", data: {RequestType}";
-            }
             else
             {
                 paramsString = $"data: {RequestType}";
@@ -321,29 +292,26 @@ public class NgServiceFunction
 {paramsComments}   */";
 
         // 构造请求url
-        var paths = Params.Where(p => p.InPath).Select(p => p.Name)?.ToList();
-        paths.ForEach(p =>
-        {
-            var origin = $"{{{p}}}";
-            Path = Path.Replace(origin, "$" + origin);
-        });
+        var paths = Params?.Where(p => p.InPath).Select(p => p.Name)?.ToList();
+        if (paths != null)
+            paths.ForEach(p =>
+            {
+                var origin = $"{{{p}}}";
+                Path = Path.Replace(origin, "$" + origin);
+            });
         // 需要拼接的参数,特殊处理文件上传
-        var reqParams = Params.Where(p => !p.InPath && p.Type != "FormData")
+        var reqParams = Params?.Where(p => !p.InPath && p.Type != "FormData")
             .Select(p => p.Name)?.ToList();
         if (reqParams != null)
         {
             var queryParams = "";
             queryParams = string.Join("&", reqParams.Select(p => { return $"{p}=${{{p}}}"; }).ToArray());
             if (!string.IsNullOrEmpty(queryParams))
-            {
                 Path += "?" + queryParams;
-            }
         }
-        var file = Params.Where(p => p.Type.Equals("FormData")).FirstOrDefault();
+        var file = Params?.Where(p => p.Type.Equals("FormData")).FirstOrDefault();
         if (file != null)
-        {
             dataString = $", {file.Name}";
-        }
 
         var function = @$"{comments}
   {Name}({paramsString}): Observable<{ResponseType}> {{

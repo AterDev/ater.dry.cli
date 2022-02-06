@@ -16,7 +16,7 @@ public class TSModelGenerate
     /// 
     /// </summary>
     /// <returns></returns>
-    public List<GenFileInfo> BuildInterface()
+    public List<GenFileInfo> GetInterfaces()
     {
         var dtoSigns = new string[] { "ItemDto","UpdateDto","Filter"};
         // 生成文件的目录名称
