@@ -1,0 +1,7313 @@
+﻿{
+  "x-generator": "NSwag v13.15.5.0 (NJsonSchema v10.6.6.0 (Newtonsoft.Json v13.0.0.0))",
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Dev Platform",
+    "description": "Api 文档",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5002"
+    }
+  ],
+  "paths": {
+    "/api/ArticleCatalog/{id}": {
+      "post": {
+        "tags": [
+          "ArticleCatalog"
+        ],
+        "summary": "关联添加",
+        "operationId": "ArticleCatalog_Add",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "所属对象id",
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "list",
+          "description": "数组",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "xml": {
+                  "name": "ArrayOfArticleCatalogUpdateDto",
+                  "wrapped": true
+                },
+                "items": {
+                  "xml": {
+                    "name": "ArticleCatalogUpdateDto"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ArticleCatalogUpdateDto"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "ArticleCatalog"
+        ],
+        "summary": "⚠更新",
+        "operationId": "ArticleCatalog_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "form",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ArticleCatalogUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleCatalog"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "ArticleCatalog"
+        ],
+        "summary": "⚠删除",
+        "operationId": "ArticleCatalog_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "ArticleCatalog"
+        ],
+        "summary": "详情",
+        "operationId": "ArticleCatalog_GetDetail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleCatalog"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ArticleCatalog/filter": {
+      "post": {
+        "tags": [
+          "ArticleCatalog"
+        ],
+        "summary": "分页筛选",
+        "operationId": "ArticleCatalog_Filter",
+        "requestBody": {
+          "x-name": "filter",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ArticleCatalogFilter"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResultOfArticleCatalogItemDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ArticleCatalog": {
+      "post": {
+        "tags": [
+          "ArticleCatalog"
+        ],
+        "summary": "添加",
+        "operationId": "ArticleCatalog_Add2",
+        "requestBody": {
+          "x-name": "form",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ArticleCatalog"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleCatalog"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "ArticleCatalog"
+        ],
+        "summary": "⚠ 批量删除",
+        "operationId": "ArticleCatalog_BatchDelete",
+        "requestBody": {
+          "x-name": "ids",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "xml": {
+                  "name": "ArrayOfGuid",
+                  "wrapped": true
+                },
+                "items": {
+                  "type": "string",
+                  "format": "guid",
+                  "xml": {
+                    "name": "Guid"
+                  }
+                }
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "ArticleCatalog"
+        ],
+        "summary": "批量更新",
+        "operationId": "ArticleCatalog_BatchUpdate",
+        "requestBody": {
+          "x-name": "data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchUpdateOfArticleCatalogUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Article/{id}": {
+      "post": {
+        "tags": [
+          "Article"
+        ],
+        "summary": "关联添加",
+        "operationId": "Article_Add",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "所属对象id",
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "list",
+          "description": "数组",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "xml": {
+                  "name": "ArrayOfArticleUpdateDto",
+                  "wrapped": true
+                },
+                "items": {
+                  "xml": {
+                    "name": "ArticleUpdateDto"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ArticleUpdateDto"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Article"
+        ],
+        "summary": "⚠更新",
+        "operationId": "Article_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "form",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ArticleUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Article"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Article"
+        ],
+        "summary": "⚠删除",
+        "operationId": "Article_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Article"
+        ],
+        "summary": "详情",
+        "operationId": "Article_GetDetail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Article"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Article/filter": {
+      "post": {
+        "tags": [
+          "Article"
+        ],
+        "summary": "分页筛选",
+        "operationId": "Article_Filter",
+        "requestBody": {
+          "x-name": "filter",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ArticleFilter"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResultOfArticleItemDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Article": {
+      "post": {
+        "tags": [
+          "Article"
+        ],
+        "summary": "添加",
+        "operationId": "Article_Add2",
+        "requestBody": {
+          "x-name": "form",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Article"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Article"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Article"
+        ],
+        "summary": "⚠ 批量删除",
+        "operationId": "Article_BatchDelete",
+        "requestBody": {
+          "x-name": "ids",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "xml": {
+                  "name": "ArrayOfGuid",
+                  "wrapped": true
+                },
+                "items": {
+                  "type": "string",
+                  "format": "guid",
+                  "xml": {
+                    "name": "Guid"
+                  }
+                }
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Article"
+        ],
+        "summary": "批量更新",
+        "operationId": "Article_BatchUpdate",
+        "requestBody": {
+          "x-name": "data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchUpdateOfArticleUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ArticleExtend/{id}": {
+      "post": {
+        "tags": [
+          "ArticleExtend"
+        ],
+        "summary": "关联添加",
+        "operationId": "ArticleExtend_Add",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "所属对象id",
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "list",
+          "description": "数组",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "xml": {
+                  "name": "ArrayOfArticleExtendUpdateDto",
+                  "wrapped": true
+                },
+                "items": {
+                  "xml": {
+                    "name": "ArticleExtendUpdateDto"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ArticleExtendUpdateDto"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "ArticleExtend"
+        ],
+        "summary": "⚠更新",
+        "operationId": "ArticleExtend_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "form",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ArticleExtendUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleExtend"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "ArticleExtend"
+        ],
+        "summary": "⚠删除",
+        "operationId": "ArticleExtend_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "ArticleExtend"
+        ],
+        "summary": "详情",
+        "operationId": "ArticleExtend_GetDetail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleExtend"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ArticleExtend/filter": {
+      "post": {
+        "tags": [
+          "ArticleExtend"
+        ],
+        "summary": "分页筛选",
+        "operationId": "ArticleExtend_Filter",
+        "requestBody": {
+          "x-name": "filter",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ArticleExtendFilter"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResultOfArticleExtendItemDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ArticleExtend": {
+      "post": {
+        "tags": [
+          "ArticleExtend"
+        ],
+        "summary": "添加",
+        "operationId": "ArticleExtend_Add2",
+        "requestBody": {
+          "x-name": "form",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ArticleExtend"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleExtend"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "ArticleExtend"
+        ],
+        "summary": "⚠ 批量删除",
+        "operationId": "ArticleExtend_BatchDelete",
+        "requestBody": {
+          "x-name": "ids",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "xml": {
+                  "name": "ArrayOfGuid",
+                  "wrapped": true
+                },
+                "items": {
+                  "type": "string",
+                  "format": "guid",
+                  "xml": {
+                    "name": "Guid"
+                  }
+                }
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "ArticleExtend"
+        ],
+        "summary": "批量更新",
+        "operationId": "ArticleExtend_BatchUpdate",
+        "requestBody": {
+          "x-name": "data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchUpdateOfArticleExtendUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/BaseDB/filter": {
+      "post": {
+        "tags": [
+          "BaseDB"
+        ],
+        "summary": "分页筛选",
+        "operationId": "BaseDB_Filter",
+        "requestBody": {
+          "x-name": "filter",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BaseDBFilter"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResultOfBaseDBItemDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/BaseDB": {
+      "post": {
+        "tags": [
+          "BaseDB"
+        ],
+        "summary": "添加",
+        "operationId": "BaseDB_Add",
+        "requestBody": {
+          "x-name": "form",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EntityBase"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntityBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "BaseDB"
+        ],
+        "summary": "⚠ 批量删除",
+        "operationId": "BaseDB_BatchDelete",
+        "requestBody": {
+          "x-name": "ids",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "xml": {
+                  "name": "ArrayOfGuid",
+                  "wrapped": true
+                },
+                "items": {
+                  "type": "string",
+                  "format": "guid",
+                  "xml": {
+                    "name": "Guid"
+                  }
+                }
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "BaseDB"
+        ],
+        "summary": "批量更新",
+        "operationId": "BaseDB_BatchUpdate",
+        "requestBody": {
+          "x-name": "data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchUpdateOfBaseDBUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/BaseDB/{id}": {
+      "put": {
+        "tags": [
+          "BaseDB"
+        ],
+        "summary": "⚠更新",
+        "operationId": "BaseDB_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "form",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BaseDBUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntityBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "BaseDB"
+        ],
+        "summary": "⚠删除",
+        "operationId": "BaseDB_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "BaseDB"
+        ],
+        "summary": "详情",
+        "operationId": "BaseDB_GetDetail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntityBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/CodeSnippet/filter": {
+      "post": {
+        "tags": [
+          "CodeSnippet"
+        ],
+        "summary": "分页筛选",
+        "operationId": "CodeSnippet_Filter",
+        "requestBody": {
+          "x-name": "filter",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodeSnippetFilter"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResultOfCodeSnippetItemDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/CodeSnippet": {
+      "post": {
+        "tags": [
+          "CodeSnippet"
+        ],
+        "summary": "添加",
+        "operationId": "CodeSnippet_Add",
+        "requestBody": {
+          "x-name": "form",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodeSnippet"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CodeSnippet"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "CodeSnippet"
+        ],
+        "summary": "⚠ 批量删除",
+        "operationId": "CodeSnippet_BatchDelete",
+        "requestBody": {
+          "x-name": "ids",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "xml": {
+                  "name": "ArrayOfGuid",
+                  "wrapped": true
+                },
+                "items": {
+                  "type": "string",
+                  "format": "guid",
+                  "xml": {
+                    "name": "Guid"
+                  }
+                }
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "CodeSnippet"
+        ],
+        "summary": "批量更新",
+        "operationId": "CodeSnippet_BatchUpdate",
+        "requestBody": {
+          "x-name": "data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchUpdateOfCodeSnippetUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/CodeSnippet/{id}": {
+      "put": {
+        "tags": [
+          "CodeSnippet"
+        ],
+        "summary": "⚠更新",
+        "operationId": "CodeSnippet_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "form",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodeSnippetUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CodeSnippet"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "CodeSnippet"
+        ],
+        "summary": "⚠删除",
+        "operationId": "CodeSnippet_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "CodeSnippet"
+        ],
+        "summary": "详情",
+        "operationId": "CodeSnippet_GetDetail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CodeSnippet"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Comment/{id}": {
+      "post": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "关联添加",
+        "operationId": "Comment_Add",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "所属对象id",
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "list",
+          "description": "数组",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "xml": {
+                  "name": "ArrayOfCommentUpdateDto",
+                  "wrapped": true
+                },
+                "items": {
+                  "xml": {
+                    "name": "CommentUpdateDto"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/CommentUpdateDto"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "⚠更新",
+        "operationId": "Comment_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "form",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommentUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comment"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "⚠删除",
+        "operationId": "Comment_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "详情",
+        "operationId": "Comment_GetDetail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comment"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Comment/filter": {
+      "post": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "分页筛选",
+        "operationId": "Comment_Filter",
+        "requestBody": {
+          "x-name": "filter",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommentFilter"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResultOfCommentItemDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Comment": {
+      "post": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "添加",
+        "operationId": "Comment_Add2",
+        "requestBody": {
+          "x-name": "form",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Comment"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comment"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "⚠ 批量删除",
+        "operationId": "Comment_BatchDelete",
+        "requestBody": {
+          "x-name": "ids",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "xml": {
+                  "name": "ArrayOfGuid",
+                  "wrapped": true
+                },
+                "items": {
+                  "type": "string",
+                  "format": "guid",
+                  "xml": {
+                    "name": "Guid"
+                  }
+                }
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "批量更新",
+        "operationId": "Comment_BatchUpdate",
+        "requestBody": {
+          "x-name": "data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchUpdateOfCommentUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/LibraryCatalog/{id}": {
+      "post": {
+        "tags": [
+          "LibraryCatalog"
+        ],
+        "summary": "关联添加",
+        "operationId": "LibraryCatalog_Add",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "所属对象id",
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "list",
+          "description": "数组",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "xml": {
+                  "name": "ArrayOfLibraryCatalogUpdateDto",
+                  "wrapped": true
+                },
+                "items": {
+                  "xml": {
+                    "name": "LibraryCatalogUpdateDto"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/LibraryCatalogUpdateDto"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "LibraryCatalog"
+        ],
+        "summary": "⚠更新",
+        "operationId": "LibraryCatalog_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "form",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LibraryCatalogUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LibraryCatalog"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "LibraryCatalog"
+        ],
+        "summary": "⚠删除",
+        "operationId": "LibraryCatalog_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "LibraryCatalog"
+        ],
+        "summary": "详情",
+        "operationId": "LibraryCatalog_GetDetail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LibraryCatalog"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/LibraryCatalog/filter": {
+      "post": {
+        "tags": [
+          "LibraryCatalog"
+        ],
+        "summary": "分页筛选",
+        "operationId": "LibraryCatalog_Filter",
+        "requestBody": {
+          "x-name": "filter",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LibraryCatalogFilter"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResultOfLibraryCatalogItemDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/LibraryCatalog": {
+      "post": {
+        "tags": [
+          "LibraryCatalog"
+        ],
+        "summary": "添加",
+        "operationId": "LibraryCatalog_Add2",
+        "requestBody": {
+          "x-name": "form",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LibraryCatalog"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LibraryCatalog"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "LibraryCatalog"
+        ],
+        "summary": "⚠ 批量删除",
+        "operationId": "LibraryCatalog_BatchDelete",
+        "requestBody": {
+          "x-name": "ids",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "xml": {
+                  "name": "ArrayOfGuid",
+                  "wrapped": true
+                },
+                "items": {
+                  "type": "string",
+                  "format": "guid",
+                  "xml": {
+                    "name": "Guid"
+                  }
+                }
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "LibraryCatalog"
+        ],
+        "summary": "批量更新",
+        "operationId": "LibraryCatalog_BatchUpdate",
+        "requestBody": {
+          "x-name": "data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchUpdateOfLibraryCatalogUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Library/{id}": {
+      "post": {
+        "tags": [
+          "Library"
+        ],
+        "summary": "关联添加",
+        "operationId": "Library_Add",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "所属对象id",
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "list",
+          "description": "数组",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "xml": {
+                  "name": "ArrayOfLibraryUpdateDto",
+                  "wrapped": true
+                },
+                "items": {
+                  "xml": {
+                    "name": "LibraryUpdateDto"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/LibraryUpdateDto"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Library"
+        ],
+        "summary": "⚠更新",
+        "operationId": "Library_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "form",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LibraryUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Library"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Library"
+        ],
+        "summary": "⚠删除",
+        "operationId": "Library_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Library"
+        ],
+        "summary": "详情",
+        "operationId": "Library_GetDetail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Library"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Library/filter": {
+      "post": {
+        "tags": [
+          "Library"
+        ],
+        "summary": "分页筛选",
+        "operationId": "Library_Filter",
+        "requestBody": {
+          "x-name": "filter",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LibraryFilter"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResultOfLibraryItemDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Library": {
+      "post": {
+        "tags": [
+          "Library"
+        ],
+        "summary": "添加",
+        "operationId": "Library_Add2",
+        "requestBody": {
+          "x-name": "form",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Library"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Library"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Library"
+        ],
+        "summary": "⚠ 批量删除",
+        "operationId": "Library_BatchDelete",
+        "requestBody": {
+          "x-name": "ids",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "xml": {
+                  "name": "ArrayOfGuid",
+                  "wrapped": true
+                },
+                "items": {
+                  "type": "string",
+                  "format": "guid",
+                  "xml": {
+                    "name": "Guid"
+                  }
+                }
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Library"
+        ],
+        "summary": "批量更新",
+        "operationId": "Library_BatchUpdate",
+        "requestBody": {
+          "x-name": "data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchUpdateOfLibraryUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/NewsTags/{id}": {
+      "post": {
+        "tags": [
+          "NewsTags"
+        ],
+        "summary": "关联添加",
+        "operationId": "NewsTags_Add",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "所属对象id",
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "list",
+          "description": "数组",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "xml": {
+                  "name": "ArrayOfNewsTagsUpdateDto",
+                  "wrapped": true
+                },
+                "items": {
+                  "xml": {
+                    "name": "NewsTagsUpdateDto"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/NewsTagsUpdateDto"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "NewsTags"
+        ],
+        "summary": "⚠更新",
+        "operationId": "NewsTags_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "form",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewsTagsUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsTags"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "NewsTags"
+        ],
+        "summary": "⚠删除",
+        "operationId": "NewsTags_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "NewsTags"
+        ],
+        "summary": "详情",
+        "operationId": "NewsTags_GetDetail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsTags"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/NewsTags/filter": {
+      "post": {
+        "tags": [
+          "NewsTags"
+        ],
+        "summary": "分页筛选",
+        "operationId": "NewsTags_Filter",
+        "requestBody": {
+          "x-name": "filter",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewsTagsFilter"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResultOfNewsTagsItemDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/NewsTags": {
+      "post": {
+        "tags": [
+          "NewsTags"
+        ],
+        "summary": "添加",
+        "operationId": "NewsTags_Add2",
+        "requestBody": {
+          "x-name": "form",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewsTags"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsTags"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "NewsTags"
+        ],
+        "summary": "⚠ 批量删除",
+        "operationId": "NewsTags_BatchDelete",
+        "requestBody": {
+          "x-name": "ids",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "xml": {
+                  "name": "ArrayOfGuid",
+                  "wrapped": true
+                },
+                "items": {
+                  "type": "string",
+                  "format": "guid",
+                  "xml": {
+                    "name": "Guid"
+                  }
+                }
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "NewsTags"
+        ],
+        "summary": "批量更新",
+        "operationId": "NewsTags_BatchUpdate",
+        "requestBody": {
+          "x-name": "data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchUpdateOfNewsTagsUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Role": {
+      "get": {
+        "tags": [
+          "Role"
+        ],
+        "summary": "分页筛选",
+        "operationId": "Role_Filter",
+        "requestBody": {
+          "x-name": "filter",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoleFilter"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResultOfRoleItemDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Role"
+        ],
+        "summary": "添加",
+        "operationId": "Role_Add",
+        "requestBody": {
+          "x-name": "form",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Role"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Role"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Role"
+        ],
+        "summary": "⚠ 批量删除",
+        "operationId": "Role_BatchDelete",
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "path",
+            "style": "form",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "array",
+              "nullable": true,
+              "xml": {
+                "name": "ArrayOfGuid",
+                "wrapped": true
+              },
+              "items": {
+                "type": "string",
+                "format": "guid",
+                "xml": {
+                  "name": "Guid"
+                }
+              }
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Role/{id}": {
+      "put": {
+        "tags": [
+          "Role"
+        ],
+        "summary": "⚠更新",
+        "operationId": "Role_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "form",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoleUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Role"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Role"
+        ],
+        "summary": "⚠删除",
+        "operationId": "Role_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Role"
+        ],
+        "operationId": "Role_GetDetail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Role"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/TagLibrary/filter": {
+      "post": {
+        "tags": [
+          "TagLibrary"
+        ],
+        "summary": "分页筛选",
+        "operationId": "TagLibrary_Filter",
+        "requestBody": {
+          "x-name": "filter",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TagLibraryFilter"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResultOfTagLibraryItemDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/TagLibrary": {
+      "post": {
+        "tags": [
+          "TagLibrary"
+        ],
+        "summary": "添加",
+        "operationId": "TagLibrary_Add",
+        "requestBody": {
+          "x-name": "form",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TagLibrary"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TagLibrary"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "TagLibrary"
+        ],
+        "summary": "⚠ 批量删除",
+        "operationId": "TagLibrary_BatchDelete",
+        "requestBody": {
+          "x-name": "ids",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "xml": {
+                  "name": "ArrayOfGuid",
+                  "wrapped": true
+                },
+                "items": {
+                  "type": "string",
+                  "format": "guid",
+                  "xml": {
+                    "name": "Guid"
+                  }
+                }
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "TagLibrary"
+        ],
+        "summary": "批量更新",
+        "operationId": "TagLibrary_BatchUpdate",
+        "requestBody": {
+          "x-name": "data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchUpdateOfTagLibraryUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/TagLibrary/{id}": {
+      "put": {
+        "tags": [
+          "TagLibrary"
+        ],
+        "summary": "⚠更新",
+        "operationId": "TagLibrary_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "form",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TagLibraryUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TagLibrary"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "TagLibrary"
+        ],
+        "summary": "⚠删除",
+        "operationId": "TagLibrary_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "TagLibrary"
+        ],
+        "summary": "详情",
+        "operationId": "TagLibrary_GetDetail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TagLibrary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ThirdNews/filter": {
+      "post": {
+        "tags": [
+          "ThirdNews"
+        ],
+        "summary": "分页筛选",
+        "operationId": "ThirdNews_Filter",
+        "requestBody": {
+          "x-name": "filter",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ThirdNewsFilter"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResultOfThirdNewsItemDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ThirdNews/week": {
+      "get": {
+        "tags": [
+          "ThirdNews"
+        ],
+        "operationId": "ThirdNews_GetWeekNews",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "xml": {
+                    "name": "ArrayOfThirdNews",
+                    "wrapped": true
+                  },
+                  "items": {
+                    "xml": {
+                      "name": "ThirdNews"
+                    },
+                    "oneOf": [
+                      {
+                        "$ref": "#/components/schemas/ThirdNews"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ThirdNews": {
+      "post": {
+        "tags": [
+          "ThirdNews"
+        ],
+        "summary": "添加",
+        "operationId": "ThirdNews_Add",
+        "requestBody": {
+          "x-name": "form",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ThirdNews"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ThirdNews"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "ThirdNews"
+        ],
+        "summary": "⚠ 批量删除",
+        "operationId": "ThirdNews_BatchDelete",
+        "requestBody": {
+          "x-name": "ids",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "xml": {
+                  "name": "ArrayOfGuid",
+                  "wrapped": true
+                },
+                "items": {
+                  "type": "string",
+                  "format": "guid",
+                  "xml": {
+                    "name": "Guid"
+                  }
+                }
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "ThirdNews"
+        ],
+        "summary": "批量更新",
+        "operationId": "ThirdNews_BatchUpdate",
+        "requestBody": {
+          "x-name": "data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchUpdateOfThirdNewsUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ThirdNews/{id}": {
+      "put": {
+        "tags": [
+          "ThirdNews"
+        ],
+        "summary": "⚠更新",
+        "operationId": "ThirdNews_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "form",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ThirdNewsUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ThirdNews"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "ThirdNews"
+        ],
+        "summary": "⚠删除",
+        "operationId": "ThirdNews_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "ThirdNews"
+        ],
+        "summary": "详情",
+        "operationId": "ThirdNews_GetDetail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ThirdNews"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/User": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "分页筛选",
+        "operationId": "User_Filter",
+        "parameters": [
+          {
+            "name": "UserName",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 1
+          },
+          {
+            "name": "Email",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 2
+          },
+          {
+            "name": "EmailConfirmed",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            },
+            "x-position": 3
+          },
+          {
+            "name": "ConcurrencyStamp",
+            "in": "query",
+            "description": "A random value that must change whenever a user is persisted to the store",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 4
+          },
+          {
+            "name": "PhoneNumberConfirmed",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            },
+            "x-position": 5
+          },
+          {
+            "name": "TwoFactorEnabled",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            },
+            "x-position": 6
+          },
+          {
+            "name": "LockoutEnabled",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            },
+            "x-position": 7
+          },
+          {
+            "name": "AccessFailedCount",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            },
+            "x-position": 8
+          },
+          {
+            "name": "IsDeleted",
+            "in": "query",
+            "description": "软删除",
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            },
+            "x-position": 9
+          },
+          {
+            "name": "RetryCount",
+            "in": "query",
+            "description": "密码重试次数",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            },
+            "x-position": 10
+          },
+          {
+            "name": "Status",
+            "in": "query",
+            "schema": {
+              "nullable": true,
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/Status"
+                }
+              ]
+            },
+            "x-position": 11
+          },
+          {
+            "name": "ExtendId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "guid",
+              "nullable": true
+            },
+            "x-position": 12
+          },
+          {
+            "name": "PageIndex",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 13
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 14
+          },
+          {
+            "name": "TenantId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "guid",
+              "nullable": true
+            },
+            "x-position": 15
+          },
+          {
+            "name": "MinCreatedTime",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            },
+            "x-position": 16
+          },
+          {
+            "name": "MaxCreatedTime",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            },
+            "x-position": 17
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResultOfUserItemDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "添加",
+        "operationId": "User_Add",
+        "requestBody": {
+          "x-name": "form",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "User"
+        ],
+        "summary": "⚠ 批量删除",
+        "operationId": "User_BatchDelete",
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "path",
+            "style": "form",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "array",
+              "nullable": true,
+              "xml": {
+                "name": "ArrayOfGuid",
+                "wrapped": true
+              },
+              "items": {
+                "type": "string",
+                "format": "guid",
+                "xml": {
+                  "name": "Guid"
+                }
+              }
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/User/{id}": {
+      "put": {
+        "tags": [
+          "User"
+        ],
+        "summary": "⚠更新",
+        "operationId": "User_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "form",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "User"
+        ],
+        "summary": "⚠删除",
+        "operationId": "User_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "User_GetDetail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ArticleCatalogUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 50,
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "maxLength": 50,
+            "nullable": true
+          },
+          "sort": {
+            "type": "integer",
+            "nullable": true
+          },
+          "level": {
+            "type": "integer",
+            "nullable": true
+          },
+          "parentId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "accountId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "status": {
+            "description": "状态",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Status"
+              }
+            ]
+          }
+        }
+      },
+      "Status": {
+        "type": "integer",
+        "description": "0 = Default\n1 = Deleted\n2 = Invalid\n3 = Valid",
+        "x-enumNames": [
+          "Default",
+          "Deleted",
+          "Invalid",
+          "Valid"
+        ],
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "PageResultOfArticleCatalogItemDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "nullable": true,
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "xml": {
+                "name": "ArticleCatalogItemDto"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/ArticleCatalogItemDto"
+                }
+              ]
+            }
+          },
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ArticleCatalogItemDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 50
+          },
+          "type": {
+            "type": "string",
+            "maxLength": 50,
+            "nullable": true
+          },
+          "sort": {
+            "type": "integer"
+          },
+          "level": {
+            "type": "integer"
+          },
+          "parentId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "accountId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "status": {
+            "description": "状态",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Status"
+              }
+            ]
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ArticleCatalogFilter": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/FilterBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 50,
+                "nullable": true
+              },
+              "sort": {
+                "type": "integer",
+                "nullable": true
+              },
+              "level": {
+                "type": "integer",
+                "nullable": true
+              },
+              "accountId": {
+                "type": "string",
+                "format": "guid",
+                "nullable": true
+              },
+              "status": {
+                "description": "状态",
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Status"
+                  }
+                ]
+              },
+              "parentId": {
+                "type": "string",
+                "format": "guid",
+                "nullable": true
+              }
+            }
+          }
+        ]
+      },
+      "FilterBase": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "tenantId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "minCreatedTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "maxCreatedTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "ArticleCatalog": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EntityBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 50
+              },
+              "type": {
+                "type": "string",
+                "maxLength": 50,
+                "nullable": true
+              },
+              "sort": {
+                "type": "integer"
+              },
+              "level": {
+                "type": "integer"
+              },
+              "articles": {
+                "type": "array",
+                "nullable": true,
+                "xml": {
+                  "wrapped": true
+                },
+                "items": {
+                  "xml": {
+                    "name": "Article"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Article"
+                    }
+                  ]
+                }
+              },
+              "parent": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/ArticleCatalog"
+                  }
+                ]
+              },
+              "parentId": {
+                "type": "string",
+                "format": "guid",
+                "nullable": true
+              },
+              "account": {
+                "$ref": "#/components/schemas/User"
+              },
+              "accountId": {
+                "type": "string",
+                "format": "guid"
+              },
+              "catalogs": {
+                "type": "array",
+                "nullable": true,
+                "xml": {
+                  "wrapped": true
+                },
+                "items": {
+                  "xml": {
+                    "name": "ArticleCatalog"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ArticleCatalog"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      "Article": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EntityBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "title": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "summary": {
+                "type": "string",
+                "maxLength": 500,
+                "nullable": true
+              },
+              "authorName": {
+                "type": "string",
+                "maxLength": 100,
+                "nullable": true
+              },
+              "tags": {
+                "type": "string",
+                "maxLength": 100,
+                "nullable": true
+              },
+              "articleType": {
+                "$ref": "#/components/schemas/ArticleType"
+              },
+              "account": {
+                "$ref": "#/components/schemas/User"
+              },
+              "isPrivate": {
+                "type": "boolean",
+                "nullable": true
+              },
+              "extend": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/ArticleExtend"
+                  }
+                ]
+              },
+              "catalog": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/ArticleCatalog"
+                  }
+                ]
+              },
+              "comments": {
+                "type": "array",
+                "nullable": true,
+                "xml": {
+                  "wrapped": true
+                },
+                "items": {
+                  "xml": {
+                    "name": "Comment"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Comment"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ArticleType": {
+        "type": "integer",
+        "description": "0 = Transport\n1 = Course\n2 = News\n3 = Tech\n4 = Comment",
+        "x-enumNames": [
+          "Transport",
+          "Course",
+          "News",
+          "Tech",
+          "Comment"
+        ],
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "User": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/IdentityUserOfGuid"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "guid"
+              },
+              "userName": {
+                "type": "string"
+              },
+              "normalizedUserName": {
+                "type": "string",
+                "nullable": true
+              },
+              "email": {
+                "type": "string"
+              },
+              "normalizedEmail": {
+                "type": "string",
+                "nullable": true
+              },
+              "emailConfirmed": {
+                "type": "boolean"
+              },
+              "passwordHash": {
+                "type": "string"
+              },
+              "securityStamp": {
+                "type": "string",
+                "nullable": true
+              },
+              "concurrencyStamp": {
+                "type": "string"
+              },
+              "phoneNumber": {
+                "type": "string",
+                "nullable": true
+              },
+              "phoneNumberConfirmed": {
+                "type": "boolean"
+              },
+              "twoFactorEnabled": {
+                "type": "boolean"
+              },
+              "lockoutEnd": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true
+              },
+              "lockoutEnabled": {
+                "type": "boolean"
+              },
+              "accessFailedCount": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "lastLoginTime": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true
+              },
+              "isDeleted": {
+                "type": "boolean"
+              },
+              "retryCount": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "status": {
+                "$ref": "#/components/schemas/Status"
+              },
+              "createdTime": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updatedTime": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "avatar": {
+                "type": "string",
+                "maxLength": 200,
+                "nullable": true
+              },
+              "extend": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/UserInfo"
+                  }
+                ]
+              },
+              "articles": {
+                "type": "array",
+                "nullable": true,
+                "xml": {
+                  "wrapped": true
+                },
+                "items": {
+                  "xml": {
+                    "name": "Article"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Article"
+                    }
+                  ]
+                }
+              },
+              "articleCatalogs": {
+                "type": "array",
+                "nullable": true,
+                "xml": {
+                  "wrapped": true
+                },
+                "items": {
+                  "xml": {
+                    "name": "ArticleCatalog"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ArticleCatalog"
+                    }
+                  ]
+                }
+              },
+              "comments": {
+                "type": "array",
+                "nullable": true,
+                "xml": {
+                  "wrapped": true
+                },
+                "items": {
+                  "xml": {
+                    "name": "Comment"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Comment"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      "UserInfo": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EntityBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "account": {
+                "$ref": "#/components/schemas/User"
+              },
+              "accountId": {
+                "type": "string",
+                "format": "guid"
+              },
+              "realName": {
+                "type": "string",
+                "maxLength": 40,
+                "nullable": true
+              },
+              "nickName": {
+                "type": "string",
+                "maxLength": 40,
+                "nullable": true
+              },
+              "identityType": {
+                "type": "string",
+                "maxLength": 20,
+                "nullable": true
+              },
+              "identityCode": {
+                "type": "string",
+                "maxLength": 40,
+                "nullable": true
+              },
+              "birthday": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true
+              },
+              "address": {
+                "type": "string",
+                "maxLength": 100,
+                "nullable": true
+              },
+              "country": {
+                "type": "string",
+                "maxLength": 20,
+                "nullable": true
+              },
+              "province": {
+                "type": "string",
+                "maxLength": 20,
+                "nullable": true
+              },
+              "city": {
+                "type": "string",
+                "maxLength": 20,
+                "nullable": true
+              },
+              "county": {
+                "type": "string",
+                "maxLength": 20,
+                "nullable": true
+              },
+              "street": {
+                "type": "string",
+                "maxLength": 20,
+                "nullable": true
+              },
+              "addressDetail": {
+                "type": "string",
+                "maxLength": 50,
+                "nullable": true
+              },
+              "wxOpenId": {
+                "type": "string",
+                "maxLength": 40,
+                "nullable": true
+              },
+              "wxAvatar": {
+                "type": "string",
+                "maxLength": 150,
+                "nullable": true
+              },
+              "wxUnionId": {
+                "type": "string",
+                "maxLength": 40,
+                "nullable": true
+              }
+            }
+          }
+        ]
+      },
+      "EntityBase": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "status": {
+            "$ref": "#/components/schemas/Status"
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Comment": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EntityBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "article": {
+                "$ref": "#/components/schemas/Article"
+              },
+              "account": {
+                "$ref": "#/components/schemas/User"
+              },
+              "content": {
+                "type": "string",
+                "maxLength": 2000,
+                "nullable": true
+              }
+            }
+          }
+        ]
+      },
+      "IdentityUserOfGuid": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "userName": {
+            "type": "string",
+            "nullable": true
+          },
+          "normalizedUserName": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "normalizedEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "emailConfirmed": {
+            "type": "boolean"
+          },
+          "passwordHash": {
+            "type": "string",
+            "nullable": true
+          },
+          "securityStamp": {
+            "type": "string",
+            "nullable": true
+          },
+          "concurrencyStamp": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumberConfirmed": {
+            "type": "boolean"
+          },
+          "twoFactorEnabled": {
+            "type": "boolean"
+          },
+          "lockoutEnd": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lockoutEnabled": {
+            "type": "boolean"
+          },
+          "accessFailedCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ArticleExtend": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EntityBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "article": {
+                "$ref": "#/components/schemas/Article"
+              },
+              "articleId": {
+                "type": "string",
+                "format": "guid"
+              },
+              "content": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "BatchUpdateOfArticleCatalogUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "ids": {
+            "type": "array",
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "type": "string",
+              "format": "guid",
+              "xml": {
+                "name": "Guid"
+              }
+            }
+          },
+          "updateDto": {
+            "$ref": "#/components/schemas/ArticleCatalogUpdateDto"
+          }
+        }
+      },
+      "ArticleUpdateDto": {
+        "type": "object",
+        "description": "文章内容",
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "标题",
+            "maxLength": 100,
+            "nullable": true
+          },
+          "summary": {
+            "type": "string",
+            "description": "概要",
+            "maxLength": 500,
+            "nullable": true
+          },
+          "authorName": {
+            "type": "string",
+            "description": "作者名称",
+            "maxLength": 100,
+            "nullable": true
+          },
+          "tags": {
+            "type": "string",
+            "description": "标签",
+            "maxLength": 100,
+            "nullable": true
+          },
+          "articleType": {
+            "description": "文章类别",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ArticleType"
+              }
+            ]
+          },
+          "isPrivate": {
+            "type": "boolean",
+            "description": "仅个人查看",
+            "nullable": true
+          },
+          "status": {
+            "description": "状态",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Status"
+              }
+            ]
+          },
+          "accountId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          }
+        }
+      },
+      "PageResultOfArticleItemDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "nullable": true,
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "xml": {
+                "name": "ArticleItemDto"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/ArticleItemDto"
+                }
+              ]
+            }
+          },
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ArticleItemDto": {
+        "type": "object",
+        "description": "文章内容",
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "标题",
+            "maxLength": 100
+          },
+          "summary": {
+            "type": "string",
+            "description": "概要",
+            "maxLength": 500,
+            "nullable": true
+          },
+          "authorName": {
+            "type": "string",
+            "description": "作者名称",
+            "maxLength": 100,
+            "nullable": true
+          },
+          "tags": {
+            "type": "string",
+            "description": "标签",
+            "maxLength": 100,
+            "nullable": true
+          },
+          "articleType": {
+            "description": "文章类别",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ArticleType"
+              }
+            ]
+          },
+          "isPrivate": {
+            "type": "boolean",
+            "description": "仅个人查看",
+            "nullable": true
+          },
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "status": {
+            "description": "状态",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Status"
+              }
+            ]
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ArticleFilter": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/FilterBase"
+          },
+          {
+            "type": "object",
+            "description": "文章内容",
+            "additionalProperties": false,
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "标题",
+                "maxLength": 100,
+                "nullable": true
+              },
+              "articleType": {
+                "description": "文章类别",
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/ArticleType"
+                  }
+                ]
+              },
+              "status": {
+                "description": "状态",
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Status"
+                  }
+                ]
+              },
+              "accountId": {
+                "type": "string",
+                "format": "guid",
+                "nullable": true
+              },
+              "extendId": {
+                "type": "string",
+                "format": "guid",
+                "nullable": true
+              },
+              "catalogId": {
+                "type": "string",
+                "format": "guid",
+                "nullable": true
+              }
+            }
+          }
+        ]
+      },
+      "BatchUpdateOfArticleUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "ids": {
+            "type": "array",
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "type": "string",
+              "format": "guid",
+              "xml": {
+                "name": "Guid"
+              }
+            }
+          },
+          "updateDto": {
+            "$ref": "#/components/schemas/ArticleUpdateDto"
+          }
+        }
+      },
+      "ArticleExtendUpdateDto": {
+        "type": "object",
+        "description": "文章扩展",
+        "additionalProperties": false,
+        "properties": {
+          "articleId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "content": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "description": "状态",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Status"
+              }
+            ]
+          }
+        }
+      },
+      "PageResultOfArticleExtendItemDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "nullable": true,
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "xml": {
+                "name": "ArticleExtendItemDto"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/ArticleExtendItemDto"
+                }
+              ]
+            }
+          },
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ArticleExtendItemDto": {
+        "type": "object",
+        "description": "文章扩展",
+        "additionalProperties": false,
+        "properties": {
+          "articleId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "status": {
+            "description": "状态",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Status"
+              }
+            ]
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ArticleExtendFilter": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/FilterBase"
+          },
+          {
+            "type": "object",
+            "description": "文章扩展",
+            "additionalProperties": false,
+            "properties": {
+              "articleId": {
+                "type": "string",
+                "format": "guid",
+                "nullable": true
+              },
+              "content": {
+                "type": "string",
+                "nullable": true
+              },
+              "status": {
+                "description": "状态",
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Status"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "BatchUpdateOfArticleExtendUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "ids": {
+            "type": "array",
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "type": "string",
+              "format": "guid",
+              "xml": {
+                "name": "Guid"
+              }
+            }
+          },
+          "updateDto": {
+            "$ref": "#/components/schemas/ArticleExtendUpdateDto"
+          }
+        }
+      },
+      "PageResultOfBaseDBItemDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "nullable": true,
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "xml": {
+                "name": "BaseDBItemDto"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/BaseDBItemDto"
+                }
+              ]
+            }
+          },
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "BaseDBItemDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "status": {
+            "description": "状态",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Status"
+              }
+            ]
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "BaseDBFilter": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/FilterBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "status": {
+                "description": "状态",
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Status"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "BaseDBUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "description": "状态",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Status"
+              }
+            ]
+          }
+        }
+      },
+      "BatchUpdateOfBaseDBUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "ids": {
+            "type": "array",
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "type": "string",
+              "format": "guid",
+              "xml": {
+                "name": "Guid"
+              }
+            }
+          },
+          "updateDto": {
+            "$ref": "#/components/schemas/BaseDBUpdateDto"
+          }
+        }
+      },
+      "PageResultOfCodeSnippetItemDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "nullable": true,
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "xml": {
+                "name": "CodeSnippetItemDto"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/CodeSnippetItemDto"
+                }
+              ]
+            }
+          },
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "CodeSnippetItemDto": {
+        "type": "object",
+        "description": "代码片段",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "实体名称",
+            "maxLength": 100
+          },
+          "description": {
+            "type": "string",
+            "description": "描述",
+            "maxLength": 500,
+            "nullable": true
+          },
+          "language": {
+            "description": "语言类型",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Language"
+              }
+            ]
+          },
+          "codeType": {
+            "description": "类型",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CodeType"
+              }
+            ]
+          },
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "status": {
+            "description": "状态",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Status"
+              }
+            ]
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Language": {
+        "type": "integer",
+        "description": "0 = Csharp\n1 = Fsharp\n2 = Java\n3 = Php\n4 = Python\n5 = Kotlin\n6 = Swift\n7 = Typescript\n8 = Javascript\n9 = Html\n10 = Css\n11 = Dart\n12 = Rust\n13 = Cpp\n14 = Golang\n15 = Node\n16 = Deno\n17 = Markdown\n18 = Text\n19 = Shell\n20 = Powershell\n21 = Json\n22 = Xml\n23 = Else",
+        "x-enumNames": [
+          "Csharp",
+          "Fsharp",
+          "Java",
+          "Php",
+          "Python",
+          "Kotlin",
+          "Swift",
+          "Typescript",
+          "Javascript",
+          "Html",
+          "Css",
+          "Dart",
+          "Rust",
+          "Cpp",
+          "Golang",
+          "Node",
+          "Deno",
+          "Markdown",
+          "Text",
+          "Shell",
+          "Powershell",
+          "Json",
+          "Xml",
+          "Else"
+        ],
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23
+        ]
+      },
+      "CodeType": {
+        "type": "integer",
+        "description": "0 = Function\n1 = Util\n2 = Service\n3 = Controller\n4 = Entity\n5 = Model\n6 = Algorithm\n7 = Config\n8 = Interface\n9 = Else",
+        "x-enumNames": [
+          "Function",
+          "Util",
+          "Service",
+          "Controller",
+          "Entity",
+          "Model",
+          "Algorithm",
+          "Config",
+          "Interface",
+          "Else"
+        ],
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ]
+      },
+      "CodeSnippetFilter": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/FilterBase"
+          },
+          {
+            "type": "object",
+            "description": "代码片段",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "实体名称",
+                "maxLength": 100,
+                "nullable": true
+              },
+              "language": {
+                "description": "语言类型",
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Language"
+                  }
+                ]
+              },
+              "codeType": {
+                "description": "类型",
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/CodeType"
+                  }
+                ]
+              },
+              "status": {
+                "description": "状态",
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Status"
+                  }
+                ]
+              },
+              "libraryId": {
+                "type": "string",
+                "format": "guid",
+                "nullable": true
+              }
+            }
+          }
+        ]
+      },
+      "CodeSnippet": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EntityBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "description": {
+                "type": "string",
+                "maxLength": 500,
+                "nullable": true
+              },
+              "content": {
+                "type": "string",
+                "maxLength": 4000,
+                "nullable": true
+              },
+              "library": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Library"
+                  }
+                ]
+              },
+              "language": {
+                "$ref": "#/components/schemas/Language"
+              },
+              "codeType": {
+                "$ref": "#/components/schemas/CodeType"
+              }
+            }
+          }
+        ]
+      },
+      "Library": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EntityBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "namespace": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "description": {
+                "type": "string",
+                "maxLength": 500,
+                "nullable": true
+              },
+              "language": {
+                "type": "string",
+                "maxLength": 100,
+                "nullable": true
+              },
+              "isValid": {
+                "type": "boolean"
+              },
+              "isPublic": {
+                "type": "boolean"
+              },
+              "user": {
+                "$ref": "#/components/schemas/User"
+              },
+              "catalog": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/LibraryCatalog"
+                  }
+                ]
+              },
+              "snippets": {
+                "type": "array",
+                "nullable": true,
+                "xml": {
+                  "wrapped": true
+                },
+                "items": {
+                  "xml": {
+                    "name": "CodeSnippet"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/CodeSnippet"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      "LibraryCatalog": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EntityBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 50
+              },
+              "type": {
+                "type": "string",
+                "maxLength": 50,
+                "nullable": true
+              },
+              "sort": {
+                "type": "integer"
+              },
+              "level": {
+                "type": "integer"
+              },
+              "parent": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/LibraryCatalog"
+                  }
+                ]
+              },
+              "parentId": {
+                "type": "string",
+                "format": "guid",
+                "nullable": true
+              },
+              "account": {
+                "$ref": "#/components/schemas/User"
+              },
+              "accountId": {
+                "type": "string",
+                "format": "guid"
+              },
+              "catalogs": {
+                "type": "array",
+                "nullable": true,
+                "xml": {
+                  "wrapped": true
+                },
+                "items": {
+                  "xml": {
+                    "name": "LibraryCatalog"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/LibraryCatalog"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      "CodeSnippetUpdateDto": {
+        "type": "object",
+        "description": "代码片段",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "实体名称",
+            "maxLength": 100,
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "描述",
+            "maxLength": 500,
+            "nullable": true
+          },
+          "content": {
+            "type": "string",
+            "description": "实体定义内容",
+            "maxLength": 4000,
+            "nullable": true
+          },
+          "language": {
+            "description": "语言类型",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Language"
+              }
+            ]
+          },
+          "codeType": {
+            "description": "类型",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CodeType"
+              }
+            ]
+          },
+          "status": {
+            "description": "状态",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Status"
+              }
+            ]
+          }
+        }
+      },
+      "BatchUpdateOfCodeSnippetUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "ids": {
+            "type": "array",
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "type": "string",
+              "format": "guid",
+              "xml": {
+                "name": "Guid"
+              }
+            }
+          },
+          "updateDto": {
+            "$ref": "#/components/schemas/CodeSnippetUpdateDto"
+          }
+        }
+      },
+      "CommentUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "评论内容",
+            "maxLength": 2000,
+            "nullable": true
+          },
+          "status": {
+            "description": "状态",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Status"
+              }
+            ]
+          },
+          "articleId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "accountId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          }
+        }
+      },
+      "PageResultOfCommentItemDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "nullable": true,
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "xml": {
+                "name": "CommentItemDto"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/CommentItemDto"
+                }
+              ]
+            }
+          },
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "CommentItemDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "status": {
+            "description": "状态",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Status"
+              }
+            ]
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CommentFilter": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/FilterBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "status": {
+                "description": "状态",
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Status"
+                  }
+                ]
+              },
+              "articleId": {
+                "type": "string",
+                "format": "guid",
+                "nullable": true
+              },
+              "accountId": {
+                "type": "string",
+                "format": "guid",
+                "nullable": true
+              }
+            }
+          }
+        ]
+      },
+      "BatchUpdateOfCommentUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "ids": {
+            "type": "array",
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "type": "string",
+              "format": "guid",
+              "xml": {
+                "name": "Guid"
+              }
+            }
+          },
+          "updateDto": {
+            "$ref": "#/components/schemas/CommentUpdateDto"
+          }
+        }
+      },
+      "LibraryCatalogUpdateDto": {
+        "type": "object",
+        "description": "目录/文件目录 / 自引用",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 50,
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "maxLength": 50,
+            "nullable": true
+          },
+          "sort": {
+            "type": "integer",
+            "nullable": true
+          },
+          "level": {
+            "type": "integer",
+            "nullable": true
+          },
+          "parentId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "accountId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "status": {
+            "description": "状态",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Status"
+              }
+            ]
+          }
+        }
+      },
+      "PageResultOfLibraryCatalogItemDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "nullable": true,
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "xml": {
+                "name": "LibraryCatalogItemDto"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/LibraryCatalogItemDto"
+                }
+              ]
+            }
+          },
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "LibraryCatalogItemDto": {
+        "type": "object",
+        "description": "目录/文件目录 / 自引用",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 50
+          },
+          "type": {
+            "type": "string",
+            "maxLength": 50,
+            "nullable": true
+          },
+          "sort": {
+            "type": "integer"
+          },
+          "level": {
+            "type": "integer"
+          },
+          "parentId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "accountId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "status": {
+            "description": "状态",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Status"
+              }
+            ]
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "LibraryCatalogFilter": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/FilterBase"
+          },
+          {
+            "type": "object",
+            "description": "目录/文件目录 / 自引用",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 50,
+                "nullable": true
+              },
+              "sort": {
+                "type": "integer",
+                "nullable": true
+              },
+              "level": {
+                "type": "integer",
+                "nullable": true
+              },
+              "accountId": {
+                "type": "string",
+                "format": "guid",
+                "nullable": true
+              },
+              "status": {
+                "description": "状态",
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Status"
+                  }
+                ]
+              },
+              "parentId": {
+                "type": "string",
+                "format": "guid",
+                "nullable": true
+              }
+            }
+          }
+        ]
+      },
+      "BatchUpdateOfLibraryCatalogUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "ids": {
+            "type": "array",
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "type": "string",
+              "format": "guid",
+              "xml": {
+                "name": "Guid"
+              }
+            }
+          },
+          "updateDto": {
+            "$ref": "#/components/schemas/LibraryCatalogUpdateDto"
+          }
+        }
+      },
+      "LibraryUpdateDto": {
+        "type": "object",
+        "description": "模型库",
+        "additionalProperties": false,
+        "properties": {
+          "namespace": {
+            "type": "string",
+            "description": "库命名空间",
+            "maxLength": 100,
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "描述",
+            "maxLength": 500,
+            "nullable": true
+          },
+          "language": {
+            "type": "string",
+            "description": "语言类型",
+            "maxLength": 100,
+            "nullable": true
+          },
+          "isValid": {
+            "type": "boolean",
+            "description": "是否有效",
+            "nullable": true
+          },
+          "isPublic": {
+            "type": "boolean",
+            "description": "是否公开",
+            "nullable": true
+          },
+          "status": {
+            "description": "状态",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Status"
+              }
+            ]
+          },
+          "userId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          }
+        }
+      },
+      "PageResultOfLibraryItemDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "nullable": true,
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "xml": {
+                "name": "LibraryItemDto"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/LibraryItemDto"
+                }
+              ]
+            }
+          },
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "LibraryItemDto": {
+        "type": "object",
+        "description": "模型库",
+        "additionalProperties": false,
+        "properties": {
+          "namespace": {
+            "type": "string",
+            "description": "库命名空间",
+            "maxLength": 100
+          },
+          "description": {
+            "type": "string",
+            "description": "描述",
+            "maxLength": 500,
+            "nullable": true
+          },
+          "language": {
+            "type": "string",
+            "description": "语言类型",
+            "maxLength": 100,
+            "nullable": true
+          },
+          "isValid": {
+            "type": "boolean",
+            "description": "是否有效"
+          },
+          "isPublic": {
+            "type": "boolean",
+            "description": "是否公开"
+          },
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "status": {
+            "description": "状态",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Status"
+              }
+            ]
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "LibraryFilter": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/FilterBase"
+          },
+          {
+            "type": "object",
+            "description": "模型库",
+            "additionalProperties": false,
+            "properties": {
+              "namespace": {
+                "type": "string",
+                "description": "库命名空间",
+                "maxLength": 100,
+                "nullable": true
+              },
+              "isValid": {
+                "type": "boolean",
+                "description": "是否有效",
+                "nullable": true
+              },
+              "isPublic": {
+                "type": "boolean",
+                "description": "是否公开",
+                "nullable": true
+              },
+              "status": {
+                "description": "状态",
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Status"
+                  }
+                ]
+              },
+              "userId": {
+                "type": "string",
+                "format": "guid",
+                "nullable": true
+              },
+              "catalogId": {
+                "type": "string",
+                "format": "guid",
+                "nullable": true
+              }
+            }
+          }
+        ]
+      },
+      "BatchUpdateOfLibraryUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "ids": {
+            "type": "array",
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "type": "string",
+              "format": "guid",
+              "xml": {
+                "name": "Guid"
+              }
+            }
+          },
+          "updateDto": {
+            "$ref": "#/components/schemas/LibraryUpdateDto"
+          }
+        }
+      },
+      "NewsTagsUpdateDto": {
+        "type": "object",
+        "description": "新闻标签",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 40,
+            "nullable": true
+          },
+          "color": {
+            "type": "string",
+            "maxLength": 20,
+            "nullable": true
+          },
+          "status": {
+            "description": "状态",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Status"
+              }
+            ]
+          },
+          "thirdNewsId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          }
+        }
+      },
+      "PageResultOfNewsTagsItemDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "nullable": true,
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "xml": {
+                "name": "NewsTagsItemDto"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/NewsTagsItemDto"
+                }
+              ]
+            }
+          },
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "NewsTagsItemDto": {
+        "type": "object",
+        "description": "新闻标签",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 40
+          },
+          "color": {
+            "type": "string",
+            "maxLength": 20,
+            "nullable": true
+          },
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "status": {
+            "description": "状态",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Status"
+              }
+            ]
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NewsTagsFilter": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/FilterBase"
+          },
+          {
+            "type": "object",
+            "description": "新闻标签",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 40,
+                "nullable": true
+              },
+              "status": {
+                "description": "状态",
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Status"
+                  }
+                ]
+              },
+              "thirdNewsId": {
+                "type": "string",
+                "format": "guid",
+                "nullable": true
+              }
+            }
+          }
+        ]
+      },
+      "NewsTags": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EntityBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 40
+              },
+              "color": {
+                "type": "string",
+                "maxLength": 20,
+                "nullable": true
+              },
+              "thirdNews": {
+                "$ref": "#/components/schemas/ThirdNews"
+              }
+            }
+          }
+        ]
+      },
+      "ThirdNews": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EntityBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "authorName": {
+                "type": "string",
+                "maxLength": 100,
+                "nullable": true
+              },
+              "authorAvatar": {
+                "type": "string",
+                "maxLength": 300,
+                "nullable": true
+              },
+              "title": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "description": {
+                "type": "string",
+                "maxLength": 5000,
+                "nullable": true
+              },
+              "url": {
+                "type": "string",
+                "maxLength": 300,
+                "nullable": true
+              },
+              "thumbnailUrl": {
+                "type": "string",
+                "maxLength": 300,
+                "nullable": true
+              },
+              "provider": {
+                "type": "string",
+                "maxLength": 50,
+                "nullable": true
+              },
+              "datePublished": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true
+              },
+              "content": {
+                "type": "string",
+                "maxLength": 8000,
+                "nullable": true
+              },
+              "category": {
+                "type": "string",
+                "maxLength": 50,
+                "nullable": true
+              },
+              "identityId": {
+                "type": "string",
+                "maxLength": 50,
+                "nullable": true
+              },
+              "type": {
+                "$ref": "#/components/schemas/NewsSource"
+              },
+              "newsType": {
+                "$ref": "#/components/schemas/NewsType"
+              },
+              "newsTags": {
+                "type": "array",
+                "nullable": true,
+                "xml": {
+                  "wrapped": true
+                },
+                "items": {
+                  "xml": {
+                    "name": "NewsTags"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/NewsTags"
+                    }
+                  ]
+                }
+              },
+              "techType": {
+                "$ref": "#/components/schemas/TechType"
+              }
+            }
+          }
+        ]
+      },
+      "NewsSource": {
+        "type": "integer",
+        "description": "0 = News\n1 = Tweet\n2 = Weibo\n3 = Rss",
+        "x-enumNames": [
+          "News",
+          "Tweet",
+          "Weibo",
+          "Rss"
+        ],
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "NewsType": {
+        "type": "integer",
+        "description": "0 = Default\n1 = Company\n2 = OpenSource\n3 = LanguageAndFramework\n4 = DataAndAI\n5 = Else",
+        "x-enumNames": [
+          "Default",
+          "Company",
+          "OpenSource",
+          "LanguageAndFramework",
+          "DataAndAI",
+          "Else"
+        ],
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "TechType": {
+        "type": "integer",
+        "description": "0 = Default\n1 = Normal\n2 = Publish\n3 = Focus",
+        "x-enumNames": [
+          "Default",
+          "Normal",
+          "Publish",
+          "Focus"
+        ],
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "BatchUpdateOfNewsTagsUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "ids": {
+            "type": "array",
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "type": "string",
+              "format": "guid",
+              "xml": {
+                "name": "Guid"
+              }
+            }
+          },
+          "updateDto": {
+            "$ref": "#/components/schemas/NewsTagsUpdateDto"
+          }
+        }
+      },
+      "PageResultOfRoleItemDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "nullable": true,
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "xml": {
+                "name": "RoleItemDto"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/RoleItemDto"
+                }
+              ]
+            }
+          },
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "RoleItemDto": {
+        "type": "object",
+        "description": "角色表",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "normalizedName": {
+            "type": "string",
+            "nullable": true
+          },
+          "concurrencyStamp": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string",
+            "description": "图标",
+            "maxLength": 30,
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/Status"
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "RoleFilter": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/FilterBase"
+          },
+          {
+            "type": "object",
+            "description": "角色表",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "nullable": true
+              },
+              "concurrencyStamp": {
+                "type": "string",
+                "nullable": true
+              },
+              "status": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Status"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "Role": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/IdentityRoleOfGuid"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "guid"
+              },
+              "name": {
+                "type": "string"
+              },
+              "normalizedName": {
+                "type": "string",
+                "nullable": true
+              },
+              "concurrencyStamp": {
+                "type": "string"
+              },
+              "icon": {
+                "type": "string",
+                "maxLength": 30,
+                "nullable": true
+              },
+              "status": {
+                "$ref": "#/components/schemas/Status"
+              },
+              "createdTime": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updatedTime": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        ]
+      },
+      "IdentityRoleOfGuid": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "concurrencyStamp": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "normalizedName": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "RoleUpdateDto": {
+        "type": "object",
+        "description": "角色表",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "normalizedName": {
+            "type": "string",
+            "nullable": true
+          },
+          "concurrencyStamp": {
+            "type": "string",
+            "nullable": true
+          },
+          "icon": {
+            "type": "string",
+            "description": "图标",
+            "maxLength": 30,
+            "nullable": true
+          },
+          "status": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Status"
+              }
+            ]
+          }
+        }
+      },
+      "PageResultOfTagLibraryItemDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "nullable": true,
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "xml": {
+                "name": "TagLibraryItemDto"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/TagLibraryItemDto"
+                }
+              ]
+            }
+          },
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "TagLibraryItemDto": {
+        "type": "object",
+        "description": "标签库",
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "type": "string",
+            "maxLength": 40
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 40
+          },
+          "color": {
+            "type": "string",
+            "maxLength": 20,
+            "nullable": true
+          },
+          "style": {
+            "type": "string",
+            "maxLength": 40,
+            "nullable": true
+          },
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "status": {
+            "description": "状态",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Status"
+              }
+            ]
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TagLibraryFilter": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/FilterBase"
+          },
+          {
+            "type": "object",
+            "description": "标签库",
+            "additionalProperties": false,
+            "properties": {
+              "type": {
+                "type": "string",
+                "maxLength": 40,
+                "nullable": true
+              },
+              "name": {
+                "type": "string",
+                "maxLength": 40,
+                "nullable": true
+              },
+              "status": {
+                "description": "状态",
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Status"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "TagLibrary": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EntityBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "type": {
+                "type": "string",
+                "maxLength": 40
+              },
+              "name": {
+                "type": "string",
+                "maxLength": 40
+              },
+              "color": {
+                "type": "string",
+                "maxLength": 20,
+                "nullable": true
+              },
+              "style": {
+                "type": "string",
+                "maxLength": 40,
+                "nullable": true
+              }
+            }
+          }
+        ]
+      },
+      "TagLibraryUpdateDto": {
+        "type": "object",
+        "description": "标签库",
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "type": "string",
+            "maxLength": 40,
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 40,
+            "nullable": true
+          },
+          "color": {
+            "type": "string",
+            "maxLength": 20,
+            "nullable": true
+          },
+          "style": {
+            "type": "string",
+            "maxLength": 40,
+            "nullable": true
+          },
+          "status": {
+            "description": "状态",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Status"
+              }
+            ]
+          }
+        }
+      },
+      "BatchUpdateOfTagLibraryUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "ids": {
+            "type": "array",
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "type": "string",
+              "format": "guid",
+              "xml": {
+                "name": "Guid"
+              }
+            }
+          },
+          "updateDto": {
+            "$ref": "#/components/schemas/TagLibraryUpdateDto"
+          }
+        }
+      },
+      "PageResultOfThirdNewsItemDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "nullable": true,
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "xml": {
+                "name": "ThirdNewsItemDto"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/ThirdNewsItemDto"
+                }
+              ]
+            }
+          },
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ThirdNewsItemDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "authorName": {
+            "type": "string",
+            "maxLength": 100,
+            "nullable": true
+          },
+          "authorAvatar": {
+            "type": "string",
+            "maxLength": 300,
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "url": {
+            "type": "string",
+            "maxLength": 300,
+            "nullable": true
+          },
+          "thumbnailUrl": {
+            "type": "string",
+            "maxLength": 300,
+            "nullable": true
+          },
+          "provider": {
+            "type": "string",
+            "maxLength": 50,
+            "nullable": true
+          },
+          "datePublished": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "category": {
+            "type": "string",
+            "maxLength": 50,
+            "nullable": true
+          },
+          "identityId": {
+            "type": "string",
+            "maxLength": 50,
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/NewsSource"
+          },
+          "newsType": {
+            "$ref": "#/components/schemas/NewsType"
+          },
+          "techType": {
+            "$ref": "#/components/schemas/TechType"
+          },
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "status": {
+            "description": "状态",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Status"
+              }
+            ]
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ThirdNewsFilter": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/FilterBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "title": {
+                "type": "string",
+                "maxLength": 200,
+                "nullable": true
+              },
+              "type": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/NewsSource"
+                  }
+                ]
+              },
+              "newsType": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/NewsType"
+                  }
+                ]
+              },
+              "techType": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/TechType"
+                  }
+                ]
+              },
+              "status": {
+                "description": "状态",
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Status"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "ThirdNewsUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "authorName": {
+            "type": "string",
+            "maxLength": 100,
+            "nullable": true
+          },
+          "authorAvatar": {
+            "type": "string",
+            "maxLength": 300,
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 200,
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 5000,
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "maxLength": 300,
+            "nullable": true
+          },
+          "thumbnailUrl": {
+            "type": "string",
+            "maxLength": 300,
+            "nullable": true
+          },
+          "provider": {
+            "type": "string",
+            "maxLength": 50,
+            "nullable": true
+          },
+          "datePublished": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "content": {
+            "type": "string",
+            "maxLength": 8000,
+            "nullable": true
+          },
+          "category": {
+            "type": "string",
+            "maxLength": 50,
+            "nullable": true
+          },
+          "identityId": {
+            "type": "string",
+            "maxLength": 50,
+            "nullable": true
+          },
+          "type": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/NewsSource"
+              }
+            ]
+          },
+          "newsType": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/NewsType"
+              }
+            ]
+          },
+          "techType": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TechType"
+              }
+            ]
+          },
+          "status": {
+            "description": "状态",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Status"
+              }
+            ]
+          }
+        }
+      },
+      "BatchUpdateOfThirdNewsUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "ids": {
+            "type": "array",
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "type": "string",
+              "format": "guid",
+              "xml": {
+                "name": "Guid"
+              }
+            }
+          },
+          "updateDto": {
+            "$ref": "#/components/schemas/ThirdNewsUpdateDto"
+          }
+        }
+      },
+      "PageResultOfUserItemDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "nullable": true,
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "xml": {
+                "name": "UserItemDto"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/UserItemDto"
+                }
+              ]
+            }
+          },
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "UserItemDto": {
+        "type": "object",
+        "description": "账号表",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "userName": {
+            "type": "string"
+          },
+          "normalizedUserName": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string"
+          },
+          "normalizedEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "emailConfirmed": {
+            "type": "boolean"
+          },
+          "securityStamp": {
+            "type": "string",
+            "description": "A random value that must change whenever a users credentials change (password changed, login removed)",
+            "nullable": true
+          },
+          "concurrencyStamp": {
+            "type": "string",
+            "description": "A random value that must change whenever a user is persisted to the store"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumberConfirmed": {
+            "type": "boolean"
+          },
+          "twoFactorEnabled": {
+            "type": "boolean"
+          },
+          "lockoutEnd": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lockoutEnabled": {
+            "type": "boolean"
+          },
+          "accessFailedCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lastLoginTime": {
+            "type": "string",
+            "description": "最后登录时间",
+            "format": "date-time",
+            "nullable": true
+          },
+          "isDeleted": {
+            "type": "boolean",
+            "description": "软删除"
+          },
+          "retryCount": {
+            "type": "integer",
+            "description": "密码重试次数",
+            "format": "int32"
+          },
+          "status": {
+            "$ref": "#/components/schemas/Status"
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "avatar": {
+            "type": "string",
+            "description": "头像url",
+            "maxLength": 200,
+            "nullable": true
+          }
+        }
+      },
+      "UserUpdateDto": {
+        "type": "object",
+        "description": "账号表",
+        "additionalProperties": false,
+        "properties": {
+          "userName": {
+            "type": "string",
+            "nullable": true
+          },
+          "normalizedUserName": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "normalizedEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "emailConfirmed": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "securityStamp": {
+            "type": "string",
+            "description": "A random value that must change whenever a users credentials change (password changed, login removed)",
+            "nullable": true
+          },
+          "concurrencyStamp": {
+            "type": "string",
+            "description": "A random value that must change whenever a user is persisted to the store",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumberConfirmed": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "twoFactorEnabled": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "lockoutEnd": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lockoutEnabled": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "accessFailedCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "lastLoginTime": {
+            "type": "string",
+            "description": "最后登录时间",
+            "format": "date-time",
+            "nullable": true
+          },
+          "isDeleted": {
+            "type": "boolean",
+            "description": "软删除",
+            "nullable": true
+          },
+          "retryCount": {
+            "type": "integer",
+            "description": "密码重试次数",
+            "format": "int32",
+            "nullable": true
+          },
+          "status": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Status"
+              }
+            ]
+          },
+          "avatar": {
+            "type": "string",
+            "description": "头像url",
+            "maxLength": 200,
+            "nullable": true
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Article",
+      "description": "文章内容"
+    },
+    {
+      "name": "ArticleExtend",
+      "description": "文章扩展"
+    },
+    {
+      "name": "CodeSnippet",
+      "description": "代码片段"
+    },
+    {
+      "name": "LibraryCatalog",
+      "description": "目录/文件目录 / 自引用"
+    },
+    {
+      "name": "Library",
+      "description": "模型库"
+    },
+    {
+      "name": "NewsTags",
+      "description": "新闻标签"
+    },
+    {
+      "name": "Role",
+      "description": "角色表"
+    },
+    {
+      "name": "TagLibrary",
+      "description": "标签库"
+    },
+    {
+      "name": "User",
+      "description": "账号表"
+    }
+  ]
+}

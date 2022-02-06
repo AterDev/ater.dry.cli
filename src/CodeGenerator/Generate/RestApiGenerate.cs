@@ -131,6 +131,7 @@ public class RestApiGenerate : GenerateBase
     public async Task<ActionResult<int>> AddAsync([FromRoute] ${{IdType}} id, List<{entityName}UpdateDto> list, [FromServices] {navigationProp.Type}DataStore dependStore)
     {{
         var depend = await dependStore.FindAsync(id);
+        if (depend == null) return NotFound(""depend not exist"");
         var newList = new List<{entityName}>();
         list.ForEach(item =>
         {{

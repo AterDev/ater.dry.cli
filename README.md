@@ -85,6 +85,17 @@ cli tools
   - [ ] **多对多关系时的控制器生成**
 
 
+### Typescript Interface生成
+生成接口所需要的模型类，如dto相关内容
+- 根据OpenApi进行解析生成
+- 
+
+
+### Angular Http Service生成
+通过Http Restful api 请求接口
+- 引用路径
+
+
 ## 命令
 
 ### Dto生成命令
@@ -103,6 +114,11 @@ cli tools
 - 生成 RestApi
 
 - 支持多种类型(`Rest`,`GRPC`,`GraphQL`)生成
+
+### NgService 生成
+- 输出路径:`share/models/[EntityName]`
+
+
 
 ### gRPC服务生成
 

@@ -1,4 +1,6 @@
-﻿using System.CommandLine;
+﻿using Droplet.CommandLine.Commands;
+using System.CommandLine;
+using System.Windows.Input;
 
 namespace Droplet.CommandLine;
 
@@ -23,6 +25,7 @@ public class CommandBuilder
         AddConfig();
         AddDto();
         AddApi();
+        AddNgService();
         return RootCommand;
     }
 
@@ -105,4 +108,24 @@ public class CommandBuilder
         RootCommand.Add(apiCommand);
     }
 
+    public void AddNgService()
+    {
+        var executor = new CommandRunner();
+        var ngCommand = new Command("angular", "generate angular service and interface using openApi json");
+        ngCommand.AddAlias("ng");
+        var url = new Argument<string>("OpenApi Url", "openApi json file url");
+        var  outputOption=new Option<string>(new[] { "--output", "-o" })
+        {
+            IsRequired = true,
+            Description = "angular project root path"
+        };
+        ngCommand.AddArgument(url);
+        ngCommand.AddOption(outputOption);
+        ngCommand.SetHandler(async (string url, string output) =>
+        {
+            await executor.GenerateNgAsync(url, output);
+        }, url, outputOption);
+
+        RootCommand.Add(ngCommand);
+    }
 }
