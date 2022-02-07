@@ -171,9 +171,9 @@ public class TSModelGenerate
 
         var values = enumNames.Value as OpenApiArray;
 
-        for (var i = 0; i < values.Count; i++)
+        for (var i = 0; i < values?.Count; i++)
         {
-            propertyString += "  " + (values[i] as OpenApiString).Value + " = " + i + ",\n";
+            propertyString += "  " + ((OpenApiString)values[i]).Value + " = " + i + ",\n";
         }
         res = @$"{comment}export enum {name} {{
 {propertyString}
@@ -239,7 +239,7 @@ public class TSModelGenerate
         // 重写的属性去重
         var res = tsProperties.GroupBy(p => p.Name)
             .Select(s => s.FirstOrDefault()).ToList();
-        return res;
+        return res!;
     }
 
     /// <summary>
@@ -259,12 +259,9 @@ public class TSModelGenerate
 
             case "integer":
                 // 看是否为enum
-                if (prop.Enum.Count > 0)
-                    type = prop.Reference?.Id ?? "";
-                else
-                {
-                    type = "number";
-                }
+                type = prop.Enum.Count > 0
+                    ? prop.Reference?.Id
+                    : "number";
                 break;
             case "number":
                 type = "number";
@@ -286,12 +283,9 @@ public class TSModelGenerate
                 }
                 break;
             case "array":
-                if (prop.Items.Reference != null)
-                    type = prop.Items.Reference.Id + "[]";
-                else
-                {
-                    type = GetTsType(prop.Items) + "[]";
-                }
+                type = prop.Items.Reference != null
+                    ? prop.Items.Reference.Id + "[]"
+                    : GetTsType(prop.Items) + "[]";
                 break;
             default:
                 type = prop.Reference?.Id;
@@ -303,7 +297,7 @@ public class TSModelGenerate
             type = prop.OneOf.First()?.Reference.Id;
         if (prop.Nullable || prop.Reference != null)
             type += " | null";
-        return type;
+        return type ?? "string";
     }
 }
 
