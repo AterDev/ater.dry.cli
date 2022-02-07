@@ -285,18 +285,16 @@ public class TSModelGenerate
                         break;
                 }
                 break;
-
             case "array":
-
                 if (prop.Items.Reference != null)
                     type = prop.Items.Reference.Id + "[]";
                 else
                 {
                     type = GetTsType(prop.Items) + "[]";
                 }
-
                 break;
             default:
+                type = prop.Reference?.Id;
                 break;
         }
         // 引用对象
@@ -307,8 +305,6 @@ public class TSModelGenerate
             type += " | null";
         return type;
     }
-
-
 }
 
 public class TsProperty
