@@ -10,7 +10,6 @@ namespace CodeGenerator.Generate;
 public class NgServiceGenerate : GenerateBase
 {
     protected OpenApiPaths PathsPairs { get; }
-
     public NgServiceGenerate(OpenApiPaths paths)
     {
         PathsPairs = paths;

@@ -1,17 +1,12 @@
 ﻿using CodeGenerator.Generate;
-using CodeGenerator.Test.Base;
-using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
-using Microsoft.VisualStudio.TestPlatform.Utilities;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CodeGenerator.Test;
 
 public class NgGenerateTest
 {
-
     [Fact]
     public void should_generate_ts_models_from_openapi()
     {

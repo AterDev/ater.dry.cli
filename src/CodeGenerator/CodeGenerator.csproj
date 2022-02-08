@@ -6,7 +6,21 @@
 		<RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
 	</PropertyGroup>
 	<ItemGroup>
+		<None Remove="Templates\angular\add\add.component.css.tpl" />
+		<None Remove="Templates\angular\add\add.component.html.tpl" />
+		<None Remove="Templates\angular\add\add.component.ts" />
 		<None Remove="Templates\angular\base.service.tpl" />
+		<None Remove="Templates\angular\detail\detail.component.css.tpl" />
+		<None Remove="Templates\angular\detail\detail.component.html.tpl" />
+		<None Remove="Templates\angular\detail\detail.component.ts" />
+		<None Remove="Templates\angular\edit\edit.component.css.tpl" />
+		<None Remove="Templates\angular\edit\edit.component.html.tpl" />
+		<None Remove="Templates\angular\edit\edit.component.ts" />
+		<None Remove="Templates\angular\index\index.component.css.tpl" />
+		<None Remove="Templates\angular\index\index.component.html.tpl" />
+		<None Remove="Templates\angular\index\index.component.ts" />
+		<None Remove="Templates\angular\module.ts" />
+		<None Remove="Templates\angular\routing.module.ts" />
 		<None Remove="Templates\BatchUpdate.tpl" />
 		<None Remove="Templates\EntityBase.tpl" />
 		<None Remove="Templates\Extensions.tpl" />
@@ -23,7 +37,21 @@
 		<None Remove="Templates\PageResult.tpl" />
 	</ItemGroup>
 	<ItemGroup>
+		<EmbeddedResource Include="Templates\angular\add\add.component.css.tpl" />
+		<EmbeddedResource Include="Templates\angular\add\add.component.html.tpl" />
+		<EmbeddedResource Include="Templates\angular\add\add.component.ts" />
 		<EmbeddedResource Include="Templates\angular\base.service.tpl" />
+		<EmbeddedResource Include="Templates\angular\detail\detail.component.css.tpl" />
+		<EmbeddedResource Include="Templates\angular\detail\detail.component.html.tpl" />
+		<EmbeddedResource Include="Templates\angular\detail\detail.component.ts" />
+		<EmbeddedResource Include="Templates\angular\edit\edit.component.css.tpl" />
+		<EmbeddedResource Include="Templates\angular\edit\edit.component.html.tpl" />
+		<EmbeddedResource Include="Templates\angular\edit\edit.component.ts" />
+		<EmbeddedResource Include="Templates\angular\index\index.component.css.tpl" />
+		<EmbeddedResource Include="Templates\angular\index\index.component.html.tpl" />
+		<EmbeddedResource Include="Templates\angular\index\index.component.ts" />
+		<EmbeddedResource Include="Templates\angular\module.ts" />
+		<EmbeddedResource Include="Templates\angular\routing.module.ts" />
 		<EmbeddedResource Include="Templates\EntityBase.tpl" />
 		<EmbeddedResource Include="Templates\FilterBase.tpl" />
 		<EmbeddedResource Include="Templates\Extensions.tpl" />
