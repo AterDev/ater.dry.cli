@@ -1,5 +1,5 @@
 # cli
-cli tools
+Ater cli tools, it can help you to generate Dtos/Datastores/RestApiController source codes
 ## 实体模型解析
 - TODO:
 - `BaseDB`及相关默认字段的设计
