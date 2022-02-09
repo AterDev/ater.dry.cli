@@ -50,9 +50,7 @@ public class NgCommand : CommandBase
         var content = ngGen.GetBaseService();
         var dir = Path.Combine(SharePath,"services");
         await GenerateFileAsync(dir, "base.service.ts", content, true);
-
     }
-
 
     public async Task GenerateTsModelsAsync()
     {
@@ -65,7 +63,6 @@ public class NgCommand : CommandBase
             await GenerateFileAsync(dir, model.Name, model.Content, true);
         }
     }
-
     public async Task GenerateNgServicesAsync()
     {
         var ngGen = new NgServiceGenerate(ApiDocument!.Paths);

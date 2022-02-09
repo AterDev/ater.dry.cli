@@ -9,7 +9,7 @@ public class DtoInfo
     public string? NamespaceName { get; set; }
     public string? Comment { get; set; }
 
-    public string ToString(string projectName = "Share", string entityName = "")
+    public string ToString(string? projectName = "Share", string entityName = "")
     {
         var props = Properties?.Select(p => p.ToCsharpLine()).ToArray()
             ?? Array.Empty<string>();
