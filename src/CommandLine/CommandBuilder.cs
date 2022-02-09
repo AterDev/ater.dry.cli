@@ -26,6 +26,7 @@ public class CommandBuilder
         AddDto();
         AddApi();
         AddNgService();
+        AddView();
         return RootCommand;
     }
 
@@ -145,7 +146,7 @@ public class CommandBuilder
         viewCommand.AddOption(outputOption);
         viewCommand.SetHandler(async (string entity, string dtoPath, string output) =>
         {
-            executor.GenerateNgPages(entity, dtoPath, output);
+            await executor.GenerateNgPagesAsync(entity, dtoPath, output);
         }, entityArgument, dtoOption, outputOption);
         RootCommand.Add(viewCommand);
     }

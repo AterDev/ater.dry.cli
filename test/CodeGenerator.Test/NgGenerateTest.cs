@@ -47,4 +47,16 @@ public class NgGenerateTest
 
         Assert.NotNull(services);
     }
+
+
+    [Fact]
+    public void should_generate_ng_component()
+    {
+        var entityName = "Article";
+        var dtoPath = @"D:\codes\DevPlatform\src\Share";
+        var output=@"D:\codes\DevPlatform\src\Webapp\Admin";
+        var gen = new NgPageGenerate(entityName,dtoPath,output);
+        var component = gen.BuildAddPage();
+        Assert.Equal("add", component.Name);
+    }
 }

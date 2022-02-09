@@ -71,34 +71,11 @@ public class CommandRunner
     /// <param name="dtoPath">service根目录</param>
     /// <param name="name">实体类名称</param>
     /// <param name="output">前端根目录</param>
-    public void GenerateNgPages(string name, string dtoPath, string output = "")
+    public async Task GenerateNgPagesAsync(string name, string dtoPath, string output = "")
     {
-        var pageGen = new NgPageGenerate(name, dtoPath, output);
-        pageGen.Build();
-        Console.WriteLine("前端页面生成完成");
-    }
-
-    /// <summary>
-    /// 全部生成
-    /// </summary>
-    /// <param name="entityFile"></param>
-    /// <param name="servicePath"></param>
-    /// <param name="webPath"></param>
-    /// <param name="output"></param>
-    /// <returns></returns>
-    public async Task GenerateAsync(string entityFile, string servicePath, string share, string webPath, string output)
-    {
-        Console.WriteLine("生成后台Api代码");
-        GenerateApi(entityFile, servicePath, webPath);
-
-        Console.WriteLine("请输入swagger json在地址,按回车确认");
-        var url = Console.ReadLine();
-        Console.WriteLine("生成angular客户端请求服务");
-        await GenerateNgAsync(url, output);
-        Console.WriteLine("生成angular在基础表单页面");
-        var fileName = System.IO.Path.GetFileNameWithoutExtension(entityFile);
-        GenerateNgPages(fileName, share, output);
-        Console.WriteLine("全部执行完成，请在web项目中注入仓储服务 services.AddRepositories();");
+        Console.WriteLine("🔵 Generate view");
+        var viewCmd = new ViewCommand(name, dtoPath, output);
+        await viewCmd.RunAsync();
     }
 }
 

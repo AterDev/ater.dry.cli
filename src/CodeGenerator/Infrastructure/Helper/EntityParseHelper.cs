@@ -47,11 +47,11 @@ public class EntityParseHelper
         if (!File.Exists(filePath)) throw new FileNotFoundException(filePath);
 
         var fileInfo = new FileInfo(filePath);
-        AssemblyName = GetAssemblyName(filePath);
         var projectFile = AssemblyHelper.FindProjectFile(fileInfo.Directory!, fileInfo.Directory!.Root);
+
         if (projectFile == null) throw new ArgumentException("can't find project file");
         ProjectFile = projectFile;
-
+        AssemblyName = GetAssemblyName();
         CompilationHelper = new CompilationHelper(ProjectFile.Directory!.FullName, AssemblyName);
         var content = File.ReadAllText(filePath, Encoding.UTF8);
         CompilationHelper.AddSyntaxTree(content);
@@ -65,10 +65,8 @@ public class EntityParseHelper
     /// <summary>
     /// 获取程序集名称
     /// </summary>
-    public string GetAssemblyName(string filePath)
+    public string GetAssemblyName()
     {
-        
-
         return AssemblyHelper.GetAssemblyName(ProjectFile);
     }
 
