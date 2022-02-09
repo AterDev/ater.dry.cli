@@ -1,4 +1,7 @@
-﻿namespace Droplet.CommandLine.Commands;
+﻿using CodeGenerator.Generate;
+using PropertyInfo = CodeGenerator.Models.PropertyInfo;
+
+namespace Droplet.CommandLine.Commands;
 
 /// <summary>
 /// 表单生成

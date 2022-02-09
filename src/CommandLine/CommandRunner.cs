@@ -68,12 +68,12 @@ public class CommandRunner
     /// <summary>
     /// 根据已生成的dto生成相应的前端表单页面
     /// </summary>
-    /// <param name="servicePath">service根目录</param>
+    /// <param name="dtoPath">service根目录</param>
     /// <param name="name">实体类名称</param>
     /// <param name="output">前端根目录</param>
-    public void GenerateNgPages(string name, string servicePath, string output = "")
+    public void GenerateNgPages(string name, string dtoPath, string output = "")
     {
-        var pageGen = new NgPageGenerate(name, servicePath, output);
+        var pageGen = new NgPageGenerate(name, dtoPath, output);
         pageGen.Build();
         Console.WriteLine("前端页面生成完成");
     }

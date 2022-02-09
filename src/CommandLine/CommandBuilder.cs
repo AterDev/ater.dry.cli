@@ -51,7 +51,6 @@ public class CommandBuilder
         var executor = new CommandRunner();
         // dto 生成命令
         var dtoCommand = new Command("dto", "generate entity dto files");
-
         var path = new Argument<string>("entity path", "The entity file path");
         var outputOption = new Option<string>(new[] { "--output", "-o" },
             "output project directory，default ./Share");
@@ -127,5 +126,27 @@ public class CommandBuilder
         }, url, outputOption);
 
         RootCommand.Add(ngCommand);
+    }
+    public void AddView()
+    {
+        var executor = new CommandRunner();
+        // view生成命令
+        var viewCommand = new Command("view", "generate front view page, only support angular. ");
+        viewCommand.AddAlias("view");
+        var entityArgument = new Argument<string>("entity path","The entity file path, like path/xxx.cs");
+        var dtoOption = new Option<string>(new[] { "--dto", "-d" },"dto project directory，default ./Share");
+        var outputOption= new Option<string>(new[] { "--output", "-o" },"angular project root path")
+        {
+            IsRequired = true,
+        };
+
+        viewCommand.AddArgument(entityArgument);
+        viewCommand.AddOption(dtoOption);
+        viewCommand.AddOption(outputOption);
+        viewCommand.SetHandler(async (string entity, string dtoPath, string output) =>
+        {
+            executor.GenerateNgPages(entity, dtoPath, output);
+        }, entityArgument, dtoOption, outputOption);
+        RootCommand.Add(viewCommand);
     }
 }

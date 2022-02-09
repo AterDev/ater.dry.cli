@@ -1,5 +1,4 @@
-﻿using CodeGenerator.Infrastructure.Helper;
-
+﻿using CodeGenerator.Generate;
 namespace Droplet.CommandLine.Commands;
 
 /// <summary>
@@ -33,9 +32,7 @@ public class NgPageGenerate : GenerateBase
         {
             Console.WriteLine(e.Message + e.StackTrace);
         }
-
     }
-
 
     public void BuildAddPage()
     {
