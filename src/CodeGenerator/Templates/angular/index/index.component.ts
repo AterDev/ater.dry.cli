@@ -1,9 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { {$EntityName}Service } from 'src/app/services/{$EntityPathName}.service';
+import { {$EntityName}Service } from 'src/app/share/services/{$EntityPathName}.service';
 import { Router } from '@angular/router';
-import { ConfirmDialogComponent } from 'src/app/share/confirm-dialog/confirm-dialog.component';
-import { {$EntityName}Dto } from 'src/app/share/models/{$EntityPathName}-dto.model';
-import { {$EntityName}Filter } from 'src/app/share/models/{$EntityPathName}-filter.model';
+import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confirm-dialog.component';
+import { {$EntityName}ItemDto } from 'src/app/share/models/{$EntityPathName}/{$EntityPathName}-item-dto.model';
+import { {$EntityName}Filter } from 'src/app/share/models/{$EntityPathName}/{$EntityPathName}-filter.model';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -18,9 +18,9 @@ export class IndexComponent implements OnInit {
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
   isLoading = true;
   total = 0;
-  data: {$EntityName}Dto[] = [];
+  data: {$EntityName}ItemDto[] = [];
   columns: string[] = [{$Columns}];
-  dataSource!: MatTableDataSource<{$EntityName}Dto>;
+  dataSource!: MatTableDataSource<{$EntityName}ItemDto>;
   filter: {$EntityName}Filter;
   pageSizeOption = [12, 20, 50];
   constructor(
@@ -50,12 +50,12 @@ export class IndexComponent implements OnInit {
         if (res.data) {
           this.data = res.data;
           this.total = res.count;
-          this.dataSource = new MatTableDataSource<{$EntityName}Dto>(this.data);
+          this.dataSource = new MatTableDataSource<{$EntityName}ItemDto>(this.data);
         }
       });
   }
 
-  deleteConfirm(item: {$EntityName}Dto): void {
+  deleteConfirm(item: {$EntityName}ItemDto): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       hasBackdrop: true,
       disableClose: false,
@@ -71,12 +71,16 @@ export class IndexComponent implements OnInit {
       }
     });
   }
-  delete(item: {$EntityName}Dto): void {
+  delete(item: {$EntityName}ItemDto): void {
     this.service.delete(item.id)
       .subscribe(res => {
-        this.data = this.data.filter(_ => _.id !== res.id);
-        this.dataSource.data = this.data;
-        this.snb.open('删除成功');
+        if (res) {
+          this.data = this.data.filter(_ => _.id !== item.id);
+          this.dataSource.data = this.data;
+          this.snb.open('删除成功');
+        } else {
+          this.snb.open('删除失败');
+        }
       });
 }
 

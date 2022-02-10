@@ -4,7 +4,7 @@
   </button>
     添加
 </mat-toolbar>
-<form *ngIf="!isLoading" [formGroup]="formGroup" (ngSubmit)="edit()">
+<form *ngIf="!isLoading" [formGroup]="formGroup" (ngSubmit)="add()">
   <div fxLayout="row wrap" fxLayoutAlign="start start" fxLayoutGap="8px">
 {$FormControls}
   </div>

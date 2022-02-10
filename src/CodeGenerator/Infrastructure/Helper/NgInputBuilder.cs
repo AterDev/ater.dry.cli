@@ -58,7 +58,7 @@ public class NgInputBuilder
         var name = Name.ToCamelCase();
         var html = $@"  <mat-form-field>
     <mat-label>{Label}</mat-label>
-    <input matInput placeholder=""{Label}"" formControlName=""{name}""  {(IsRequired ? "required" : "")} minlength=""{MinLength}"" maxlength=""{MaxLength}"">
+    <input matInput placeholder=""{Label}"" formControlName=""{name}"" {(IsRequired ? "required" : "")} minlength=""{MinLength}"" maxlength=""{MaxLength}"">
     <mat-error *ngIf=""{name}?.invalid"">
     {{{{getValidatorMessage('{name}')}}}}
     </mat-error>
@@ -77,7 +77,7 @@ public class NgInputBuilder
         var name = Name.ToCamelCase();
         var html = $@"  <mat-form-field>
     <mat-label>{Label}</mat-label>
-    <input matInput type=""number"" placeholder=""{Label}"" formControlName=""{name}""  {(IsRequired ? "required" : "")} step=""{step}"" min=""{min}"">
+    <input matInput type=""number"" placeholder=""{Label}"" formControlName=""{name}"" {(IsRequired ? "required" : "")} step=""{step}"" min=""{min}"">
     <mat-error *ngIf=""{name}?.invalid"">
     {{{{getValidatorMessage('{name}')}}}}
     </mat-error>

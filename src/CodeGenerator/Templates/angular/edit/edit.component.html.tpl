@@ -4,11 +4,11 @@
   </button>
     编辑
 </mat-toolbar>
-<form *ngIf=""!isLoading"" [formGroup]=""formGroup"" (ngSubmit)=""edit()"">
-  <div fxLayout=""row wrap"" fxLayoutAlign=""start start"" fxLayoutGap=""8px"">
+<form *ngIf="!isLoading" [formGroup]="formGroup" (ngSubmit)="edit()">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxLayoutGap="8px">
 {$FormControls}
   </div>
-  <div fxLayout=""row"" fxLayoutAlign=""start start"" fxLayoutGap=""8px"" class=""mt-2"">
-    <button mat-flat-button color=""primary"" type=""submit"">保存</button>
+  <div fxLayout="row" fxLayoutAlign="start start" fxLayoutGap="8px" class="mt-2">
+    <button mat-flat-button color="primary" type="submit">保存</button>
   </div>
 </form>

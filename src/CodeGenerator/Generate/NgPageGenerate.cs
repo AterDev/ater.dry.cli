@@ -241,13 +241,13 @@ public class NgPageGenerate : GenerateBase
             if (property.IsRequired) validators.Add("Validators.required");
             if (property.MinLength != null) validators.Add($"Validators.minLength({property.MinLength})");
             if (property.MaxLength != null) validators.Add($"Validators.maxLength({property.MaxLength})");
-            var defaultValue = isEdit?name:"null";
+            var defaultValue = isEdit? $"this.{name}?.value":"null";
             definedFormControls += $@"      {name}: new FormControl({defaultValue}, [{string.Join(",", validators)}]),
 ";
             definedValidatorMessage += @$"      case '{name}':
-        return this.{name}?.errors?['required'] ? '{property.Name}必填' :
-          this.{name}?.errors?['minlength'] ? '{property.Name}长度最少{property.MinLength}位' :
-            this.{name}?.errors?['maxlength'] ? '{property.Name}长度最多{property.MaxLength}位' : '';
+        return this.{name}?.errors?.['required'] ? '{property.Name}必填' :
+          this.{name}?.errors?.['minlength'] ? '{property.Name}长度最少{property.MinLength}位' :
+            this.{name}?.errors?.['maxlength'] ? '{property.Name}长度最多{property.MaxLength}位' : '';
 ";
         }
     }
