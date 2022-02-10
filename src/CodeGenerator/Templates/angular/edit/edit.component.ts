@@ -40,6 +40,8 @@ export class EditComponent implements OnInit {
 
   ngOnInit(): void {
     this.getDetail();
+    // TODO:获取其他相关数据后设置加载状态
+    this.isLoading = false;
   }
 
   getDetail(): void {

@@ -61,7 +61,7 @@ public class TSModelGenerate
             return "";
         }
         var suffix = new string[] { "ItemDto", "UpdateDto", "Filter"};
-        var prefix = new string[]{ "PageResultOf", "BatchUpdateOf" };
+        var prefix = new string[] { "PageResultOf", "BatchUpdateOf" };
         if (prefix.Any(s => name.StartsWith(s))
                     || suffix.Any(s => name.EndsWith(s)))
         {
@@ -92,7 +92,12 @@ public class TSModelGenerate
         var propertyString = "";
         var extendString = "";
         var importString = "";// 需要导入的关联接口
-                              // 处理继承的情况
+
+        var relatePath = "../";
+        if (string.IsNullOrEmpty(GetDirName(name)))
+        {
+            relatePath = "./";
+        }
         if (schema.AllOf.Count > 0)
         {
             var extend = schema.AllOf.First()?.Reference?.Id;
@@ -104,10 +109,9 @@ public class TSModelGenerate
                 {
                     var dirName = GetDirName(extend);
                     dirName = dirName.NotNull() ? dirName + "/" : "";
-                    importString += @$"import {{ {extend} }} from '../{dirName}{extend.ToHyphen()}.model';"
+                    importString += @$"import {{ {extend} }} from '{relatePath}{dirName}{extend.ToHyphen()}.model';"
                         + Environment.NewLine;
                 }
-
             }
         }
         if (!string.IsNullOrEmpty(schema.Description))
@@ -135,9 +139,9 @@ public class TSModelGenerate
                 var dirName = GetDirName(ip.Reference);
                 dirName = dirName.NotNull() ? dirName + "/" : "";
                 if (ip.IsEnum) dirName = "enum/";
-                importString += @$"import {{ {ip.Reference} }} from '../{dirName}{ip.Reference.ToHyphen()}.model';" + Environment.NewLine;
+                importString += @$"import {{ {ip.Reference} }} from '{relatePath}{dirName}{ip.Reference.ToHyphen()}.model';"
+                + Environment.NewLine;
             }
-
         });
 
         res = @$"{importString}{comment}export interface {name} {extendString}{{

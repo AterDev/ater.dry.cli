@@ -14,13 +14,11 @@ public class NgServiceGenerate : GenerateBase
     {
         PathsPairs = paths;
     }
-
     public string GetBaseService()
     {
         var content = GetTplContent("angular.base.service.tpl");
         return content;
     }
-
     public List<GenFileInfo> GetServices(IList<OpenApiTag> tags)
     {
         var files = new List<GenFileInfo>();
@@ -88,7 +86,6 @@ public class NgServiceGenerate : GenerateBase
         }
         return files;
     }
-
 
     private (string? type, string? refType) GetParamType(OpenApiSchema? schema)
     {

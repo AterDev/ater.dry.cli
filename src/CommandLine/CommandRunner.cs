@@ -61,7 +61,7 @@ public class CommandRunner
         await storeCmd.RunAsync();
 
         Console.WriteLine("🔵 Generate rest api");
-        var apiCmd = new ApiCommand(path,dtoPath, servicePath, apiPath,dbContext);
+        var apiCmd = new ApiCommand(path, dtoPath, servicePath, apiPath, dbContext);
         await apiCmd.RunAsync();
     }
 
