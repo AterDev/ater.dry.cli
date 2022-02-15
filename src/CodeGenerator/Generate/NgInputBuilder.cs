@@ -1,4 +1,4 @@
-﻿namespace CodeGenerator.Infrastructure.Helper;
+﻿namespace CodeGenerator.Generate;
 
 /// <summary>
 /// angular material 表单生成
@@ -7,27 +7,27 @@ public class NgInputBuilder
 {
     public string Type { get; }
     public string Name { get; }
-    public string Label { get; set; }
+    public string? Label { get; set; }
     public bool IsRequired { get; set; } = false;
     public int? MinLength { get; set; }
     public int? MaxLength { get; set; }
     public bool IsDecimal { get; set; } = false;
+    public bool IsList { get; set; } = false;
+    public bool IsEnum { get; set; } = false;
 
-    public NgInputBuilder(string type, string name, string label)
+    public NgInputBuilder(string type, string name, string? label)
     {
         Type = type;
         Name = name;
         Label = label ?? name ?? type;
     }
 
-    public override string ToString()
+    public string ToFormControl()
     {
         // 过滤常规字段
         var filterNames = new string[] { "createdtime", "updatedtime", "createtime", "updatetime" };
         if (filterNames.Contains(Name.ToLower()))
-        {
-            return default;
-        }
+            return string.Empty;
         var str = "";
         switch (Type)
         {
@@ -50,13 +50,18 @@ public class NgInputBuilder
             default:
                 break;
         }
+        if (IsEnum)
+            str = BuildSelect();
         return str;
     }
 
     public string BuildInputText()
     {
         var name = Name.ToCamelCase();
-        var html = $@"  <mat-form-field>
+        var html = "";
+        if (MaxLength < 200)
+        {
+            html = $@"  <mat-form-field>
     <mat-label>{Label}</mat-label>
     <input matInput placeholder=""{Label}"" formControlName=""{name}"" {(IsRequired ? "required" : "")} minlength=""{MinLength}"" maxlength=""{MaxLength}"">
     <mat-error *ngIf=""{name}?.invalid"">
@@ -64,6 +69,25 @@ public class NgInputBuilder
     </mat-error>
   </mat-form-field>
 ";
+        }
+        else if (MaxLength <= 1000)
+        {
+            html = $@"  <mat-form-field>
+    <mat-label>{Label}</mat-label>
+    <textarea matInput placeholder=""{Label}"" formControlName=""{name}"" {(IsRequired ? "required" : "")} minlength=""{MinLength}"" maxlength=""{MaxLength}""
+      cols=""5""></textarea>
+    <mat-error *ngIf=""{name}?.invalid"">
+    {{{{getValidatorMessage('{name}')}}}}
+    </mat-error>
+  </mat-form-field>
+";
+        }
+        else if (MaxLength > 1000 || MinLength >= 100)
+        {
+            html = $@" <ckeditor [editor]=""editor"" [config]=""editorConfig"" formControlName=""{name}"" (ready)=""onReady($event)"">
+    </ckeditor>";
+        }
+
         return html;
     }
 
@@ -71,9 +95,7 @@ public class NgInputBuilder
     {
         string step = "1", min = "0";
         if (IsDecimal)
-        {
             step = "0.01";
-        }
         var name = Name.ToCamelCase();
         var html = $@"  <mat-form-field>
     <mat-label>{Label}</mat-label>
@@ -99,8 +121,6 @@ public class NgInputBuilder
   </mat-form-field>";
         return html;
     }
-
-
     public string BuildSelect()
     {
         var name = Name.ToCamelCase();

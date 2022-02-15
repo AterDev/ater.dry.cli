@@ -125,7 +125,7 @@ public class TSModelGenerate
         var props = GetTsProperties(schema);
         props.ForEach(p =>
         {
-            propertyString += p.ToString();
+            propertyString += p.ToProperty();
         });
         // 去重
         var importsProps = props.Where(p => !string.IsNullOrEmpty(p.Reference))
@@ -314,7 +314,7 @@ public class TsProperty
     public bool IsNullable { get; set; }
     public string? Comments { get; set; }
 
-    public override string ToString()
+    public string ToProperty()
     {
         var name = Name + (IsNullable ? "?: " : ": ");
         // 引用的类型可空

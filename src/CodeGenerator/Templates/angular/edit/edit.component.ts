@@ -7,19 +7,21 @@ import { {$EntityName}UpdateDto } from 'src/app/share/models/{$EntityPathName}/{
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Location } from '@angular/common';
-
+[@Imports]
 @Component({
   selector: 'app-edit',
   templateUrl: './edit.component.html',
   styleUrls: ['./edit.component.css']
 })
 export class EditComponent implements OnInit {
+  [@Declares]
   id!: string;
   isLoading = true;
   data = {} as {$EntityName};
   updateData = {} as {$EntityName}UpdateDto;
   formGroup!: FormGroup;
-  constructor(
+    constructor(
+    [@DI]
     private service: {$EntityName}Service,
     private snb: MatSnackBar,
     private router: Router,
@@ -40,10 +42,11 @@ export class EditComponent implements OnInit {
 
   ngOnInit(): void {
     this.getDetail();
+    [@Init]
     // TODO:获取其他相关数据后设置加载状态
     this.isLoading = false;
   }
-
+  [@Methods]
   getDetail(): void {
     this.service.getDetail(this.id)
       .subscribe(res => {

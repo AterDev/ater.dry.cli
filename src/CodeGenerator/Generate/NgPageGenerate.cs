@@ -14,6 +14,12 @@ public class NgPageGenerate : GenerateBase
     public string Output { get; }
     public string DtoDirName { get; set; }
 
+    public string[] TplVariables = new string[]
+    {
+        "[@Imports]","[@Declares]","[@DI]","[@Init]","[@Methods]",
+        "{$DefinedProperties}","{$DefinedFormControls}","{$DefinedValidatorMessage}"
+    };
+
     public NgPageGenerate(string entityName, string dtoPath, string output)
     {
         EntityName = entityName;
@@ -32,7 +38,9 @@ public class NgPageGenerate : GenerateBase
         // 解析属性，并生成相应代码
         var typeHelper = new EntityParseHelper(Path.Combine(DtoPath, "models", DtoDirName, EntityName + "UpdateDto.cs"));
         typeHelper.Parse();
-        var props = typeHelper.PropertyInfos?.Where(p => !p.IsList && !p.IsNavigation)?.ToList();
+        var props = typeHelper.PropertyInfos?
+            .Where(p => !p.IsNavigation && !p.Type.StartsWith("Guid"))
+            .ToList();
 
         var definedProperties = "";
         var definedFormControls = "";
@@ -43,6 +51,14 @@ public class NgPageGenerate : GenerateBase
         tplContent = tplContent.Replace("{$DefinedProperties}", definedProperties)
             .Replace("{$DefinedFormControls}", definedFormControls)
             .Replace("{$DefinedValidatorMessage}", definedValidatorMessage);
+
+        // 是否需要引用富文本编辑器
+        if (props != null && props.Any(p => p.MaxLength > 1000 || p.MinLength >= 100))
+        {
+            tplContent = InsertEditor(tplContent);
+        }
+        tplContent = CleanTsTplVariables(tplContent);
+
         // 生成html
         var formGen = new NgFormGenerate();
         var htmlContent = formGen.GenerateAddForm(props, EntityName);
@@ -57,6 +73,48 @@ public class NgPageGenerate : GenerateBase
         return component;
     }
 
+    private string InsertEditor(string tsContent)
+    {
+        return tsContent.Replace("[@Imports]", @"import * as ClassicEditor from 'ng-ckeditor5-classic';
+import { environment } from 'src/environments/environment';
+import { CKEditor5 } from '@ckeditor/ckeditor5-angular';
+import { OidcSecurityService } from 'angular-auth-oidc-client';")
+            .Replace("[@Declares]", @"public editorConfig!: CKEditor5.Config;
+  public editor: CKEditor5.EditorConstructor = ClassicEditor;")
+            .Replace("[@DI]", @"
+    private authService: OidcSecurityService,")
+            .Replace("[@Methods]", @"  initEditor(): void {
+    this.editorConfig = {
+      // placeholder: '请添加图文信息提供证据，也可以直接从Word文档中复制',
+      simpleUpload: {
+        uploadUrl: environment.uploadEditorFileUrl,
+        headers: {
+          Authorization: 'Bearer ' + this.authService.getAccessToken()
+        }
+      },
+      language: 'zh-cn'
+    };
+  }
+  onReady(editor: any) {
+    editor.ui.getEditableElement().parentElement.insertBefore(
+      editor.ui.view.toolbar.element,
+      editor.ui.getEditableElement()
+    );
+  }").Replace("[@Init]", "this.initEditor();");
+    }
+
+    /// <summary>
+    /// 清除模板中的点位符
+    /// </summary>
+    /// <returns></returns>
+    private string CleanTsTplVariables(string tplContent)
+    {
+        foreach (var item in TplVariables)
+        {
+            tplContent = tplContent.Replace(item, "");
+        }
+        return tplContent;
+    }
     public NgComponentInfo BuildEditPage()
     {
         // 生成.ts
@@ -67,7 +125,9 @@ public class NgPageGenerate : GenerateBase
         // 解析属性，并生成相应代码
         var typeHelper = new EntityParseHelper(Path.Combine(DtoPath, "models", DtoDirName, EntityName + "UpdateDto.cs"));
         typeHelper.Parse();
-        var props = typeHelper.PropertyInfos?.Where(p => !p.IsList && !p.IsNavigation)?.ToList();
+        var props = typeHelper.PropertyInfos?
+            .Where(p => !p.IsNavigation && !p.Type.StartsWith("Guid"))
+            .ToList();
 
         var definedProperties = "";
         var definedFormControls = "";
@@ -79,6 +139,13 @@ public class NgPageGenerate : GenerateBase
                 .Replace("{$DefinedFormControls}", definedFormControls)
                 .Replace("{$DefinedValidatorMessage}", definedValidatorMessage);
         }
+        // 是否需要引用富文本编辑器
+        if (props != null && props.Any(p => p.MaxLength > 1000 || p.MinLength >= 100))
+        {
+            tplContent = InsertEditor(tplContent);
+        }
+        tplContent = CleanTsTplVariables(tplContent);
+
         // 生成html
         var formGen = new NgFormGenerate();
         var htmlContent = formGen.GenerateEditForm(props, EntityName);

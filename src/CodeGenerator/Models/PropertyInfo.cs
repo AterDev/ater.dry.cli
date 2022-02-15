@@ -1,5 +1,4 @@
-﻿
-namespace CodeGenerator.Models;
+﻿namespace CodeGenerator.Models;
 
 public class PropertyInfo
 {
@@ -81,6 +80,6 @@ public class PropertyInfo
             MaxLength = MaxLength,
             MinLength = MinLength
         };
-        return input.ToString();
+        return input.ToFormControl();
     }
 }

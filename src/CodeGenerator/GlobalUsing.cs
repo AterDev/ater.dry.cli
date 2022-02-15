@@ -9,3 +9,4 @@ global using System.Collections.Generic;
 global using System.Linq;
 global using System.Reflection;
 global using System.Text;
+global using CodeGenerator.Generate;

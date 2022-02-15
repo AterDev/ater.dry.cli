@@ -8,19 +8,20 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Status } from 'src/app/share/models/enum/status.model';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Location } from '@angular/common';
-
+[@Imports]
 @Component({
     selector: 'app-add',
     templateUrl: './add.component.html',
     styleUrls: ['./add.component.css']
 })
 export class AddComponent implements OnInit {
-
+    [@Declares]
     formGroup!: FormGroup;
     data = {} as {$EntityName}UpdateDto;
     isLoading = true;
     status = Status;
     constructor(
+        [@DI]
         private service: {$EntityName}Service,
         public snb: MatSnackBar,
         private router: Router,
@@ -36,10 +37,11 @@ export class AddComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
+    [@Init]
     // TODO:获取其他相关数据后设置加载状态
     this.isLoading = false;
   }
-
+  [@Methods]
   initForm(): void {
     this.formGroup = new FormGroup({
 {$DefinedFormControls}

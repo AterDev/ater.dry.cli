@@ -75,7 +75,7 @@ public class NgServiceGenerate : GenerateBase
                 Name = currentTag.Name,
                 Functions = tagFunctions
             };
-            var content = ngServiceFile.ToString();
+            var content = ngServiceFile.ToService();
             var fileName = currentTag.Name?.ToHyphen() + ".service.ts";
 
             var file = new GenFileInfo(content)
@@ -179,9 +179,9 @@ public class NgServiceFile
     public string? Description { get; set; }
     public List<NgServiceFunction>? Functions { get; set; }
 
-    public override string ToString()
+    public string ToService()
     {
-        var functions = string.Join("\n", Functions.Select(f => f.ToString()).ToArray());
+        var functions = string.Join("\n", Functions.Select(f => f.ToFunction()).ToArray());
         // import引用的models
         var importModels = "";
         var refTypes = new List<string>();
@@ -250,7 +250,7 @@ public class NgServiceFunction
     /// </summary>
     public string? Tag { get; set; }
 
-    public override string ToString()
+    public string ToFunction()
     {
         // 函数名处理，去除tag前缀，然后格式化
         Name = Name.Replace(Tag + "_", "");
