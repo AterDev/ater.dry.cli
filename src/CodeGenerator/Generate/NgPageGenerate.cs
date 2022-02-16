@@ -57,6 +57,12 @@ public class NgPageGenerate : GenerateBase
         {
             tplContent = InsertEditor(tplContent);
         }
+        // 是否需要引用枚举类型
+        if (props != null && props.Any(p => p.IsEnum))
+        {
+            tplContent = InsertEnum(tplContent, props.Where(p => p.IsEnum).ToList());
+        }
+
         tplContent = CleanTsTplVariables(tplContent);
 
         // 生成html
@@ -71,49 +77,6 @@ public class NgPageGenerate : GenerateBase
             CssContent = cssContent,
         };
         return component;
-    }
-
-    private string InsertEditor(string tsContent)
-    {
-        return tsContent.Replace("[@Imports]", @"import * as ClassicEditor from 'ng-ckeditor5-classic';
-import { environment } from 'src/environments/environment';
-import { CKEditor5 } from '@ckeditor/ckeditor5-angular';
-import { OidcSecurityService } from 'angular-auth-oidc-client';")
-            .Replace("[@Declares]", @"public editorConfig!: CKEditor5.Config;
-  public editor: CKEditor5.EditorConstructor = ClassicEditor;")
-            .Replace("[@DI]", @"
-    private authService: OidcSecurityService,")
-            .Replace("[@Methods]", @"  initEditor(): void {
-    this.editorConfig = {
-      // placeholder: '请添加图文信息提供证据，也可以直接从Word文档中复制',
-      simpleUpload: {
-        uploadUrl: environment.uploadEditorFileUrl,
-        headers: {
-          Authorization: 'Bearer ' + this.authService.getAccessToken()
-        }
-      },
-      language: 'zh-cn'
-    };
-  }
-  onReady(editor: any) {
-    editor.ui.getEditableElement().parentElement.insertBefore(
-      editor.ui.view.toolbar.element,
-      editor.ui.getEditableElement()
-    );
-  }").Replace("[@Init]", "this.initEditor();");
-    }
-
-    /// <summary>
-    /// 清除模板中的点位符
-    /// </summary>
-    /// <returns></returns>
-    private string CleanTsTplVariables(string tplContent)
-    {
-        foreach (var item in TplVariables)
-        {
-            tplContent = tplContent.Replace(item, "");
-        }
-        return tplContent;
     }
     public NgComponentInfo BuildEditPage()
     {
@@ -144,6 +107,12 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';")
         {
             tplContent = InsertEditor(tplContent);
         }
+        // 是否需要引用枚举类型
+        if (props != null && props.Any(p => p.IsEnum))
+        {
+            tplContent = InsertEnum(tplContent, props.Where(p => p.IsEnum).ToList());
+        }
+
         tplContent = CleanTsTplVariables(tplContent);
 
         // 生成html
@@ -296,7 +265,75 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';")
             .Replace("{$ModulePathName}", pathName);
         return tplContent;
     }
+    /// <summary>
+    /// 插入枚举导入
+    /// </summary>
+    /// <param name="content"></param>
+    /// <param name="props"></param>
+    /// <returns></returns>
+    private string InsertEnum(string content, List<PropertyInfo> props)
+    {
+        var importStrings = "";
+        var declareStrings = "";
+        foreach (var item in props)
+        {
+            importStrings += @$"import {{ {item.Name} }} from 'src/app/share/models/enum/{item.Name.ToHyphen()}.model';" + Environment.NewLine;
+            declareStrings += @$"{item.Name} = {item.Name};" + Environment.NewLine;
+        }
+        return content.Replace("[@Imports]", importStrings + "[@Imports]")
+            .Replace("[@Declares]", declareStrings + "[@Declares]");
+    }
 
+    /// <summary>
+    /// 插入富文本编辑器内容
+    /// </summary>
+    /// <param name="tsContent"></param>
+    /// <returns></returns>
+    private string InsertEditor(string tsContent)
+    {
+        return tsContent.Replace("[@Imports]", @"import * as ClassicEditor from 'ng-ckeditor5-classic';
+import { environment } from 'src/environments/environment';
+import { CKEditor5 } from '@ckeditor/ckeditor5-angular';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
+[@Imports]")
+            .Replace("[@Declares]", @"public editorConfig!: CKEditor5.Config;
+  public editor: CKEditor5.EditorConstructor = ClassicEditor;
+  [@Declares]")
+            .Replace("[@DI]", @"
+    private authService: OidcSecurityService,")
+            .Replace("[@Methods]", @"  initEditor(): void {
+    this.editorConfig = {
+      // placeholder: '请添加图文信息提供证据，也可以直接从Word文档中复制',
+      simpleUpload: {
+        uploadUrl: environment.uploadEditorFileUrl,
+        headers: {
+          Authorization: 'Bearer ' + this.authService.getAccessToken()
+        }
+      },
+      language: 'zh-cn'
+    };
+  }
+  onReady(editor: any) {
+    editor.ui.getEditableElement().parentElement.insertBefore(
+      editor.ui.view.toolbar.element,
+      editor.ui.getEditableElement()
+    );
+  }").Replace("[@Init]", "this.initEditor();");
+    }
+
+
+    /// <summary>
+    /// 清除模板中的点位符
+    /// </summary>
+    /// <returns></returns>
+    private string CleanTsTplVariables(string tplContent)
+    {
+        foreach (var item in TplVariables)
+        {
+            tplContent = tplContent.Replace(item, "");
+        }
+        return tplContent;
+    }
     private static void GetFormControlAndValidate(List<PropertyInfo> props, bool isEdit, ref string definedProperties, ref string definedFormControls, ref string definedValidatorMessage)
     {
         foreach (var property in props)
