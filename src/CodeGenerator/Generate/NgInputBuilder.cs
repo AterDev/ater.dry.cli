@@ -127,7 +127,7 @@ public class NgInputBuilder
         var html = @$"<mat-form-field>
   <mat-label>{Label}</mat-label>
   <mat-select formControlName=""{name}"" multiple>
-    <mat-option *ngFor=""let item of {name}"" [value]=""item.id"">
+    <mat-option *ngFor=""let item of {name.ToPascalCase()}|keyvalue"" [value]=""item"">
       {{{{item}}}}
     </mat-option>
   </mat-select>

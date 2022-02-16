@@ -5,7 +5,6 @@ import { {$EntityName} } from 'src/app/share/models/{$EntityPathName}/{$EntityPa
 import { {$EntityName}UpdateDto } from 'src/app/share/models/{$EntityPathName}/{$EntityPathName}-update-dto.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Status } from 'src/app/share/models/enum/status.model';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Location } from '@angular/common';
 [@Imports]
@@ -19,7 +18,6 @@ export class AddComponent implements OnInit {
     formGroup!: FormGroup;
     data = {} as {$EntityName}UpdateDto;
     isLoading = true;
-    status = Status;
     constructor(
         [@DI]
         private service: {$EntityName}Service,

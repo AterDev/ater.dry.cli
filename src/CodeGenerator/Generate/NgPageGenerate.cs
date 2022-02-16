@@ -308,7 +308,7 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';")
             if (property.IsRequired) validators.Add("Validators.required");
             if (property.MinLength != null) validators.Add($"Validators.minLength({property.MinLength})");
             if (property.MaxLength != null) validators.Add($"Validators.maxLength({property.MaxLength})");
-            var defaultValue = isEdit? $"this.{name}?.value":"null";
+            var defaultValue = isEdit? $"this.data.{name}":"null";
             definedFormControls += $@"      {name}: new FormControl({defaultValue}, [{string.Join(",", validators)}]),
 ";
             definedValidatorMessage += @$"      case '{name}':

@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Text.RegularExpressions;
 using PropertyInfo = CodeGenerator.Models.PropertyInfo;
 
@@ -52,7 +53,7 @@ public class EntityParseHelper
         if (projectFile == null) throw new ArgumentException("can't find project file");
         ProjectFile = projectFile;
         AssemblyName = GetAssemblyName();
-        CompilationHelper = new CompilationHelper(ProjectFile.Directory!.FullName, AssemblyName);
+        CompilationHelper = new CompilationHelper(ProjectFile.Directory!.FullName);
         var content = File.ReadAllText(filePath, Encoding.UTF8);
         CompilationHelper.AddSyntaxTree(content);
 
@@ -215,7 +216,7 @@ public class EntityParseHelper
         var enums = CompilationHelper.GetAllEnumClasses();
         if (typeInfo.Type.TypeKind == TypeKind.Enum
             || typeInfo.Type.BaseType?.Name == "Enum"
-            || enums.Any(e => e == typeInfo.Type.Name))
+            || enums.Any(e => e == propertyInfo.Type))
         {
             propertyInfo.IsEnum = true;
         }

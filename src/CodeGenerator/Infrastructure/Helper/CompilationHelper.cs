@@ -65,6 +65,7 @@ public class CompilationHelper
             .Where(c => c.BaseType != null
                 && c.BaseType.Name.Equals("Enum"))
             .Select(c => c.Name)
+            .Distinct()
             .ToList();
     }
 

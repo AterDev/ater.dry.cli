@@ -78,7 +78,9 @@ public class PropertyInfo
             IsDecimal = IsDecimal,
             IsRequired = IsRequired,
             MaxLength = MaxLength,
-            MinLength = MinLength
+            MinLength = MinLength,
+            IsEnum = IsEnum,
+            IsList = IsList
         };
         return input.ToFormControl();
     }

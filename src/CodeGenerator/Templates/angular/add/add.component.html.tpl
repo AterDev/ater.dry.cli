@@ -4,11 +4,12 @@
   </button>
     添加
 </mat-toolbar>
-<form *ngIf="!isLoading" [formGroup]="formGroup" (ngSubmit)="add()">
-  <div fxLayout="row wrap" fxLayoutAlign="start start" fxLayoutGap="8px">
+<form class="d-flex" *ngIf="!isLoading" [formGroup]="formGroup" (ngSubmit)="add()">
+  <div class="d-flex flex-column w-100">
 {$FormControls}
-  </div>
-  <div fxLayout="row" fxLayoutAlign="start start" fxLayoutGap="8px" class="mt-2">
-    <button mat-flat-button color="primary" type="submit">保存</button>
+    <div class="d-flex">
+      <button class="d-flex flex-column" mat-flat-button color="primary" type="submit">保存</button>
+    </div>
   </div>
 </form>
+
