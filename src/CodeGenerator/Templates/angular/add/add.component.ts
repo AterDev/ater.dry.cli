@@ -57,7 +57,7 @@ export class AddComponent implements OnInit {
     if(this.formGroup.valid) {
     const data = this.formGroup.value as {$EntityName}UpdateDto;
     this.data = { ...data, ...this.data };
-    this.service.add(this.data as Article)
+    this.service.add(this.data as {$EntityName})
         .subscribe(res => {
             this.snb.open('添加成功');
             // this.dialogRef.close(res);

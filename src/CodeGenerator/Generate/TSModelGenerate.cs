@@ -60,7 +60,7 @@ public class TSModelGenerate
         {
             return "";
         }
-        var suffix = new string[] { "ItemDto", "UpdateDto", "Filter"};
+        var suffix = new string[] { "ItemDto", "UpdateDto", "Filter","AddDto"};
         var prefix = new string[] { "PageResultOf", "BatchUpdateOf" };
         if (prefix.Any(s => name.StartsWith(s))
                     || suffix.Any(s => name.EndsWith(s)))
@@ -75,6 +75,7 @@ public class TSModelGenerate
         return name.Replace("ItemDto", "")
             .Replace("BatchUpdateOf", "")
             .Replace("PageResultOf", "")
+            .Replace("AddDto", "")
             .Replace("UpdateDto", "")
             .Replace("Filter", "");
     }

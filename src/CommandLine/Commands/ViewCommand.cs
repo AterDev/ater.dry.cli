@@ -66,11 +66,20 @@ public class ViewCommand : CommandBase
         var editComponent = Gen.BuildEditPage();
         var indexComponent = Gen.BuildIndexPage();
         var detailComponent = Gen.BuildDetailPage();
+        var layoutComponent = Gen.BuildLayout();
+        var confirmDialogComponent = Gen.BuildConfirmDialog();
+
+        var componentsModule = Gen.GetComponentModule();
 
         await GenerateComponentAsync(dir, addComponent);
         await GenerateComponentAsync(dir, editComponent);
         await GenerateComponentAsync(dir, detailComponent);
         await GenerateComponentAsync(dir, indexComponent);
+
+        dir = Path.Combine(OutputPath, "src", "app", "components");
+        await GenerateComponentAsync(dir, layoutComponent);
+        await GenerateComponentAsync(dir, confirmDialogComponent);
+        await GenerateFileAsync(dir, "components.module.ts", componentsModule);
     }
 
     /// <summary>

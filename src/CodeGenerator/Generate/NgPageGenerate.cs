@@ -244,6 +244,21 @@ public class NgPageGenerate : GenerateBase
 
     }
 
+    public NgComponentInfo BuildConfirmDialog()
+    {
+        var cssContent = GetTplContent("angular.confirm-dialog.confirm-dialog.component.css.tpl");
+        var htmlContent = GetTplContent("angular.confirm-dialog.confirm-dialog.component.html.tpl");
+        var tplContent = GetTplContent("angular.confirm-dialog.confirm-dialog.component.ts");
+
+        var component = new NgComponentInfo("confirm-dialog")
+        {
+            HtmlContent = htmlContent,
+            TsContent = tplContent,
+            CssContent = cssContent,
+        };
+        return component;
+    }
+
     /// <summary>
     /// 创建模块路由
     /// </summary>
@@ -256,7 +271,6 @@ public class NgPageGenerate : GenerateBase
         return tplContent;
 
     }
-
     public string GetRoutingModule()
     {
         var pathName = EntityName.ToHyphen();
@@ -265,6 +279,12 @@ public class NgPageGenerate : GenerateBase
             .Replace("{$ModulePathName}", pathName);
         return tplContent;
     }
+
+    public string GetComponentModule()
+    {
+        return GetTplContent("angular.components.module.ts");
+    }
+
     /// <summary>
     /// 插入枚举导入
     /// </summary>
