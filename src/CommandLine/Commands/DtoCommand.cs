@@ -54,7 +54,7 @@ public class DtoCommand : CommandBase
     }
     public async void GenerateCommonFiles()
     {
-        await GenerateFileAsync("GlobalUsings.cs", CodeGen.GetDtoUsings());
+        await GenerateFileAsync(DtoPath, "GlobalUsings.cs", CodeGen.GetDtoUsings());
         await GenerateFileAsync("FilterBase.cs", CodeGen.GetFilterBase());
         await GenerateFileAsync("PageResult.cs", CodeGen.GetPageResult());
         await GenerateFileAsync("BatchUpdate.cs", CodeGen.GetBatchUpdate());

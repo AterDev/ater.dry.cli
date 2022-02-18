@@ -81,7 +81,7 @@ public static class Extenstions
             return string.Empty;
         }
         str = str.ToPascalCase();
-        return char.ToLower(str[0]) + str.Substring(1);
+        return char.ToLower(str[0]) + str[1..];
     }
     public static string ToUpperFirst(this string str)
     {
@@ -89,7 +89,7 @@ public static class Extenstions
         {
             return string.Empty;
         }
-        return char.ToUpper(str[0]) + str.Substring(1);
+        return char.ToUpper(str[0]) + str[1..];
     }
 
     public static bool NotNull(this string? str)

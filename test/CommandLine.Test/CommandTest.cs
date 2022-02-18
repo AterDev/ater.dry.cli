@@ -6,10 +6,10 @@ namespace CommandLine.Test;
 
 public class CommandTest
 {
-    protected string EntityPath = "";
-    protected string DtoPath = "";
-    protected string StorePath = "";
-    protected string ApiPath = "";
+    protected string EntityPath = @"D:\codes\DevPlatform\src\Microservice\DocAPI\Models\Docs.cs";
+    protected string DtoPath = @"D:\codes\DevPlatform\src\Microservice\DocAPI";
+    protected string StorePath = @"D:\codes\DevPlatform\src\Microservice\DocAPI";
+    protected string ApiPath = @"D:\codes\DevPlatform\src\Microservice\DocAPI";
 
 
     private void SetEnv()
@@ -21,14 +21,13 @@ public class CommandTest
     }
 
     [Fact]
-    public async Task Shoud_generate_filesAsync()
+    public async Task Shoud_generate_dto_filesAsync()
     {
         var cmd = new DtoCommand(EntityPath, DtoPath);
         await cmd.RunAsync();
-
         var entityName = Path.GetFileNameWithoutExtension(new FileInfo(EntityPath).Name);
         var generateFile = Path.Combine(DtoPath, "Models", $"{entityName}Dtos", $"{entityName}UpdateDto.cs");
-        var usingFile = Path.Combine(DtoPath, "Models", $"GlobalUsing.cs");
+        var usingFile = Path.Combine(DtoPath, $"GlobalUsings.cs");
         Assert.True(File.Exists(generateFile));
         Assert.True(File.Exists(usingFile));
     }
@@ -36,7 +35,7 @@ public class CommandTest
     [Fact]
     public async Task Should_generate_store_filesAsync()
     {
-        var cmd = new StoreCommand(EntityPath, StorePath, StorePath);
+        var cmd = new StoreCommand(EntityPath, StorePath, StorePath,"DocsContext");
         await cmd.RunAsync();
         var storeInterfaceFile = Path.Combine(StorePath, "Interface", "IDataStore.cs");
         var userInterfaceFile = Path.Combine(StorePath, "Interface", "IUserContext.cs");

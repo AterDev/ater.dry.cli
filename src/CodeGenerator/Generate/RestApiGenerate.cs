@@ -36,9 +36,10 @@ public class RestApiGenerate : GenerateBase
         StorePath = servicePath;
         ApiPath = apiPath;
         ContextName = contextName;
-
         var entityDir =  new FileInfo(entityPath).Directory!;
         var entityProjectFile = AssemblyHelper.FindProjectFile(entityDir, entityDir.Root);
+        if (entityProjectFile == null) throw new FileNotFoundException("project file not found!");
+
         EntityNamespace = AssemblyHelper.GetNamespaceName(entityProjectFile.Directory!);
         ShareNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(SharePath));
         ServiceNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(StorePath));
@@ -80,7 +81,7 @@ public class RestApiGenerate : GenerateBase
             "global using Microsoft.EntityFrameworkCore;",
             $"global using {EntityNamespace}.Utils;",
             $"global using {EntityNamespace}.Models;",
-            $"global using {EntityNamespace}.Identity;",
+            $"// global using {EntityNamespace}.Identity;",
             $"global using {ShareNamespace};",
             $"global using {ShareNamespace}.Models;",
             $"global using {ApiNamespace}.Controllers;",

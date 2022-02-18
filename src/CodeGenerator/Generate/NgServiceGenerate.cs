@@ -38,7 +38,7 @@ public class NgServiceGenerate : GenerateBase
                     Tag = operation.Value.Tags.FirstOrDefault()?.Name,
                 };
                 (function.RequestType, function.RequestRefType) = GetParamType(operation.Value.RequestBody?.Content?.Values.FirstOrDefault()?.Schema);
-                (function.ResponseType, function.ResponseRefType) = GetParamType(operation.Value.Responses?.FirstOrDefault().Value
+                (function.ResponseType, function.ResponseRefType) = GetParamType(operation.Value.Responses.FirstOrDefault().Value
                     ?.Content.FirstOrDefault().Value
                     ?.Schema);
                 function.Params = operation.Value.Parameters?.Select(p =>
@@ -72,7 +72,7 @@ public class NgServiceGenerate : GenerateBase
             var ngServiceFile = new NgServiceFile
             {
                 Description = currentTag.Description,
-                Name = currentTag.Name,
+                Name = currentTag.Name!,
                 Functions = tagFunctions
             };
             var content = ngServiceFile.ToService();
@@ -181,28 +181,32 @@ public class NgServiceFile
 
     public string ToService()
     {
-        var functions = string.Join("\n", Functions.Select(f => f.ToFunction()).ToArray());
+        var functions = "";
         // import引用的models
         var importModels = "";
         var refTypes = new List<string>();
-        // 获取请求和响应的类型，以便导入
-        var refs1 = Functions.Where(f => !string.IsNullOrEmpty(f.RequestRefType)).Select(f => f.RequestRefType).ToList();
-        var refs2 = Functions.Where(f => !string.IsNullOrEmpty(f.ResponseRefType)).Select(f => f.ResponseRefType).ToList();
-        // 参数中的类型
-        var baseTypes = new string[] { "string", "string[]", "number", "number[]", "boolean" };
-        var paramsRefs = Functions.SelectMany(f => f.Params)
-            .Where(p => !baseTypes.Contains(p.Type))
-            .Select(p => p.Type)
-            .ToList();
-        if (refs1 != null) refTypes.AddRange(refs1);
-        if (refs2 != null) refTypes.AddRange(refs2);
-        if (paramsRefs != null) refTypes.AddRange(paramsRefs);
-
-        refTypes = refTypes.GroupBy(t => t).Select(g => g.FirstOrDefault()).ToList();
-        refTypes.ForEach(t =>
+        if (Functions != null)
         {
-            importModels += $"import {{ {t} }} from '../models/{Name.ToHyphen()}/{t.ToHyphen()}.model';{Environment.NewLine}";
-        });
+            functions = string.Join("\n", Functions.Select(f => f.ToFunction()).ToArray());
+            // 获取请求和响应的类型，以便导入
+            var refs1 = Functions.Where(f => !string.IsNullOrEmpty(f.RequestRefType)).Select(f => f.RequestRefType).ToList();
+            var refs2 = Functions.Where(f => !string.IsNullOrEmpty(f.ResponseRefType)).Select(f => f.ResponseRefType).ToList();
+            // 参数中的类型
+            var baseTypes = new string[] { "string", "string[]", "number", "number[]", "boolean" };
+            var paramsRefs = Functions.SelectMany(f => f.Params)
+                .Where(p => !baseTypes.Contains(p.Type))
+                .Select(p => p.Type)
+                .ToList();
+            if (refs1 != null) refTypes.AddRange(refs1!);
+            if (refs2 != null) refTypes.AddRange(refs2!);
+            if (paramsRefs != null) refTypes.AddRange(paramsRefs!);
+
+            refTypes = refTypes.GroupBy(t => t).Select(g => g.FirstOrDefault()).ToList();
+            refTypes.ForEach(t =>
+            {
+                importModels += $"import {{ {t} }} from '../models/{Name.ToHyphen()}/{t.ToHyphen()}.model';{Environment.NewLine}";
+            });
+        }
         var result = $@"import {{ Injectable }} from '@angular/core';
 import {{ BaseService }} from './base.service';
 import {{ Observable }} from 'rxjs';

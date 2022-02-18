@@ -253,7 +253,7 @@ public class EntityParseHelper
         if (propertyInfo.IsNullable && navigationType.TypeArguments.Any())
         {
             navigationType = navigationType.TypeArguments[0] as INamedTypeSymbol;
-            if (propertyInfo.IsList && navigationType.TypeArguments.Any())
+            if (propertyInfo.IsList && navigationType != null && navigationType.TypeArguments.Any())
             {
                 navigationType = navigationType.TypeArguments[0] as INamedTypeSymbol;
                 propertyInfo.HasMany = true;
@@ -265,7 +265,7 @@ public class EntityParseHelper
             hasMany = true;
         }
         // 自定义类型
-        if (navigationType.SpecialType == SpecialType.None
+        if (navigationType?.SpecialType == SpecialType.None
             && !SpecialTypes.Contains(navigationType.Name)
             && !propertyInfo.IsEnum)
         {

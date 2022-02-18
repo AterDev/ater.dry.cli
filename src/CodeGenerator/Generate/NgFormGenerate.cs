@@ -19,7 +19,7 @@ public class NgFormGenerate : GenerateBase
     /// <summary>
     /// 生成添加组件
     /// </summary>
-    public string GenerateAddForm(List<PropertyInfo>? propertyInfos, string name)
+    public string GenerateAddForm(List<PropertyInfo>? propertyInfos)
     {
         var formControls = "";
         if (propertyInfos != null)
@@ -32,7 +32,7 @@ public class NgFormGenerate : GenerateBase
         return tplContent;
     }
 
-    public string GenerateEditForm(List<PropertyInfo> propertyInfos, string name)
+    public string GenerateEditForm(List<PropertyInfo>? propertyInfos)
     {
         var formControls = "";
         if (propertyInfos != null)

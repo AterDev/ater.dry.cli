@@ -67,7 +67,7 @@ public class NgPageGenerate : GenerateBase
 
         // 生成html
         var formGen = new NgFormGenerate();
-        var htmlContent = formGen.GenerateAddForm(props, EntityName);
+        var htmlContent = formGen.GenerateAddForm(props);
         var cssContent = GetTplContent("angular.add.add.component.css.tpl");
 
         var component = new NgComponentInfo("add")
@@ -117,7 +117,7 @@ public class NgPageGenerate : GenerateBase
 
         // 生成html
         var formGen = new NgFormGenerate();
-        var htmlContent = formGen.GenerateEditForm(props, EntityName);
+        var htmlContent = formGen.GenerateEditForm(props);
         var cssContent = GetTplContent("angular.edit.edit.component.css.tpl");
 
         var component = new NgComponentInfo("edit")

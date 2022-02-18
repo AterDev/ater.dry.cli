@@ -27,7 +27,7 @@ public class TSModelGenerate
             // 文件名及内容
             var fileName = schema.Key.ToHyphen() + ".model.ts";
             string tsContent;
-            var path = "";
+            string? path;
             if (schema.Value.Enum.Count > 0)
             {
                 tsContent = ToEnumString(schema.Value, schema.Key);

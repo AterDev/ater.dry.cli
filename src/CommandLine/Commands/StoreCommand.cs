@@ -56,7 +56,7 @@ public class StoreCommand : CommandBase
         var projectFile =  AssemblyHelper.FindProjectFile(dir!, dir!.Root);
         if (projectFile != null)
         {
-            var entityDir = Path.Combine(projectFile.Directory!.FullName,"Utils" );
+            var entityDir = Path.Combine(projectFile.Directory!.FullName, "Utils");
             var content = CodeGen.GetExtensions();
             await GenerateFileAsync(entityDir, GenConst.EXTIONSIONS_NAME, content);
         }

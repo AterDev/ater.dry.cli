@@ -20,11 +20,9 @@ public class HashCrypto
     public static string BuildSalt()
     {
         var randomBytes = new byte[128 / 8];
-        using (var generator = RandomNumberGenerator.Create())
-        {
-            generator.GetBytes(randomBytes);
-            return Convert.ToBase64String(randomBytes);
-        }
+        using var generator = RandomNumberGenerator.Create();
+        generator.GetBytes(randomBytes);
+        return Convert.ToBase64String(randomBytes);
     }
     /// <summary>
     /// 字符串md5值
@@ -71,9 +69,10 @@ public class HashCrypto
     public static string GetRnd(int length = 4, bool useNum = true, bool useLow = false, bool useUpp = true, bool useSpe = false, string custom = "")
     {
         var b = new byte[4];
-        new RNGCryptoServiceProvider().GetBytes(b);
+        var rand = RandomNumberGenerator.Create();
+        rand.GetBytes(b);
         var r = new Random(BitConverter.ToInt32(b, 0));
-        string s = null, str = custom;
+        string s = "", str = custom;
         if (useNum) { str += "0123456789"; }
         if (useLow) { str += "abcdefghijklmnopqrstuvwxyz"; }
         if (useUpp) { str += "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; }

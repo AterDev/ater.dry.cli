@@ -82,12 +82,12 @@ public class DataStoreGenerate : GenerateBase
         return new List<string>
         {
             "global using System;",
-            "global using EntityFramework;",
+            "// global using EntityFramework;",
             "global using Microsoft.EntityFrameworkCore;",
             "global using Microsoft.Extensions.Logging;",
             $"global using {entityNamepapce}.Utils;",
             $"global using {entityNamepapce}.Models;",
-            $"global using {entityNamepapce}.Identity;",
+            $"// global using {entityNamepapce}.Identity;",
             $"global using {ShareNamespace}.Models;",
             $"global using {ServiceNamespace}.Interface;",
             $"global using {ServiceNamespace}.DataStore;",
@@ -173,7 +173,7 @@ public class DataStoreGenerate : GenerateBase
     /// </summary>
     /// <param name="contextName"></param>
     /// <returns></returns>
-    public string GetContextName(string? contextName = null)
+    public string GetContextName(string? contextName)
     {
         var name = "ContextBase";
         var assemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(StorePath));
@@ -186,24 +186,29 @@ public class DataStoreGenerate : GenerateBase
             if (!allDbContexts.Any())
                 allDbContexts = cpl.GetClassNameByBaseType(classes, "DbContext");
 
+            //Console.WriteLine("find dbcontext:" + allDbContexts.FirstOrDefault().Name);
             if (allDbContexts.Any())
             {
-                if (contextName == null)
+                if (string.IsNullOrEmpty(contextName))
                 {
                     name = allDbContexts.FirstOrDefault()!.Name;
                 }
-                else if (allDbContexts.Any(c => c.Name.Equals(contextName)))
+                else if (allDbContexts.ToList().Any(c => c.Name.Equals(contextName)))
                 {
+                    Console.WriteLine("find contextName:" + contextName);
                     name = contextName;
                 }
             }
         }
+        Console.WriteLine("the contextName:" + name);
         return name;
     }
 
     public string GetExtensions()
     {
-        var entityNamespace= AssemblyHelper.GetNamespaceName(new FileInfo(EntityPath).Directory!);
+        var entityDir =  new FileInfo(EntityPath).Directory!;
+        var entityProjectFile = AssemblyHelper.FindProjectFile(entityDir, entityDir.Root);
+        var entityNamespace = AssemblyHelper.GetNamespaceName(entityProjectFile!.Directory!);
         var tplContent = GetTplContent("Extensions.tpl");
         tplContent = tplContent.Replace(TplConst.NAMESPACE, entityNamespace);
         return tplContent;
