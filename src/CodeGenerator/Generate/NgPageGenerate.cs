@@ -246,9 +246,9 @@ public class NgPageGenerate : GenerateBase
 
     public NgComponentInfo BuildConfirmDialog()
     {
-        var cssContent = GetTplContent("angular.confirm-dialog.confirm-dialog.component.css.tpl");
-        var htmlContent = GetTplContent("angular.confirm-dialog.confirm-dialog.component.html.tpl");
-        var tplContent = GetTplContent("angular.confirm-dialog.confirm-dialog.component.ts");
+        var cssContent = GetTplContent("angular.confirmDialog.confirm-dialog.component.css.tpl");
+        var htmlContent = GetTplContent("angular.confirmDialog.confirm-dialog.component.html.tpl");
+        var tplContent = GetTplContent("angular.confirmDialog.confirm-dialog.component.ts");
 
         var component = new NgComponentInfo("confirm-dialog")
         {

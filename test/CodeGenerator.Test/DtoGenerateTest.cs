@@ -72,7 +72,7 @@ public class DtoGenerateTest
     [Fact]
     public void Shoud_generate_dto_content()
     {
-        var filePath = PathHelper.GetProjectFilePath(@"Entity\Blog.cs");
+        var filePath = PathHelper.GetProjectFilePath(@"D:\codes\DevPlatform\src\Microservice\DocAPI\Models\DocsCatalog.cs");
         var dtoPath = PathHelper.GetProjectPath();
         var gen = new DtoCodeGenerate(filePath,dtoPath);
         var shortDto = gen.GetShortDto();

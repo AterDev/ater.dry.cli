@@ -173,7 +173,7 @@ public class DataStoreGenerate : GenerateBase
     /// </summary>
     /// <param name="contextName"></param>
     /// <returns></returns>
-    public string GetContextName(string? contextName)
+    public string GetContextName(string? contextName = null)
     {
         var name = "ContextBase";
         var assemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(StorePath));

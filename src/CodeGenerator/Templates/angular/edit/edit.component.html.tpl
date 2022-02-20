@@ -11,7 +11,4 @@
       <button class="d-flex flex-0column" mat-flat-button color="primary" type="submit">保存</button>
     </div>
   </div>
-  <div class="d-flex">
-    <button class="d-flex flex-0column" mat-flat-button color="primary" type="submit">保存</button>
-  </div>
 </form>
