@@ -8,9 +8,15 @@ namespace CodeGenerator.Generate;
 public class TSModelGenerate
 {
     public IDictionary<string, OpenApiSchema> Schemas { get; set; }
+    public List<OpenApiTag>? ApiTags { get; set; }
     public TSModelGenerate(IDictionary<string, OpenApiSchema> schemas)
     {
         Schemas = schemas;
+    }
+
+    public void SetTags(List<OpenApiTag> apiTags)
+    {
+        ApiTags = apiTags;
     }
 
     /// <summary>
@@ -19,7 +25,6 @@ public class TSModelGenerate
     /// <returns></returns>
     public List<GenFileInfo> GetInterfaces()
     {
-
         // 生成文件的目录名称
         var files = new List<GenFileInfo>();
         foreach (var schema in Schemas)
@@ -49,7 +54,7 @@ public class TSModelGenerate
     }
 
     /// <summary>
-    /// 获取对就models应该存储的目录名称,不含enum类型
+    /// 获取对应models应该存储的目录名称,不含enum类型
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
@@ -60,12 +65,18 @@ public class TSModelGenerate
         {
             return "";
         }
-        var suffix = new string[] { "ItemDto", "UpdateDto", "Filter","AddDto"};
+        var suffix = new string[] { "UpdateDto", "Filter", "AddDto", "FilterDto"};
         var prefix = new string[] { "PageResultOf", "BatchUpdateOf" };
         if (prefix.Any(s => name.StartsWith(s))
                     || suffix.Any(s => name.EndsWith(s)))
         {
             return ReplaceDtoSign(name).ToHyphen();
+        }
+        if (ApiTags != null)
+        {
+            var tag = ApiTags.Where(tag => name.StartsWith(tag.Name)).FirstOrDefault();
+            if (tag != null)
+                return tag.Name.ToHyphen();
         }
         return name.ToHyphen();
     }

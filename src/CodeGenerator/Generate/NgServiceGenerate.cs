@@ -145,11 +145,13 @@ public class NgServiceGenerate : GenerateBase
                 else if (schema.Items.Type != null)
                 {
                     // 基础类型?
-                    type = schema.Items.Type + "[]";
+                    refType = schema.Items.Type;
+                    type = refType + "[]";
                 }
                 else if (schema.Items.OneOf?.FirstOrDefault()?.Reference != null)
                 {
-                    type = schema.Items.OneOf?.FirstOrDefault()!.Reference.Id;
+                    refType = schema.Items.OneOf?.FirstOrDefault()!.Reference.Id;
+                    type = refType + "[]";
                 }
                 break;
             case "object":
@@ -193,16 +195,18 @@ public class NgServiceFile
         {
             functions = string.Join("\n", Functions.Select(f => f.ToFunction()).ToArray());
             // 获取请求和响应的类型，以便导入
-            var refs1 = Functions.Where(f => !string.IsNullOrEmpty(f.RequestRefType)).Select(f => f.RequestRefType).ToList();
-            var refs2 = Functions.Where(f => !string.IsNullOrEmpty(f.ResponseRefType)).Select(f => f.ResponseRefType).ToList();
+            var requestRefs = Functions.Where(f => !string.IsNullOrEmpty(f.RequestRefType))
+                .Select(f => f.RequestRefType).ToList();
+            var responseRefs = Functions.Where(f => !string.IsNullOrEmpty(f.ResponseRefType))
+                .Select(f => f.ResponseRefType).ToList();
             // 参数中的类型
             var baseTypes = new string[] { "string", "string[]", "number", "number[]", "boolean" };
             var paramsRefs = Functions.SelectMany(f => f.Params)
                 .Where(p => !baseTypes.Contains(p.Type))
                 .Select(p => p.Type)
                 .ToList();
-            if (refs1 != null) refTypes.AddRange(refs1!);
-            if (refs2 != null) refTypes.AddRange(refs2!);
+            if (requestRefs != null) refTypes.AddRange(requestRefs!);
+            if (responseRefs != null) refTypes.AddRange(responseRefs!);
             if (paramsRefs != null) refTypes.AddRange(paramsRefs!);
 
             refTypes = refTypes.GroupBy(t => t).Select(g => g.FirstOrDefault()).ToList();

@@ -56,10 +56,14 @@ public class NgCommand : CommandBase
     {
         var schemas = ApiDocument!.Components.Schemas;
         var ngGen = new TSModelGenerate(schemas);
+        if (ApiDocument!.Tags.Any())
+        {
+            ngGen.SetTags(ApiDocument!.Tags.ToList());
+        }
         var models = ngGen.GetInterfaces();
         foreach (var model in models)
         {
-            var dir = Path.Combine(SharePath, "models",model.Path);
+            var dir = Path.Combine(SharePath, "models", model.Path);
             await GenerateFileAsync(dir, model.Name, model.Content, true);
         }
     }
