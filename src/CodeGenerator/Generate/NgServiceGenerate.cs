@@ -121,26 +121,19 @@ public class NgServiceGenerate : GenerateBase
                 type = "FormData";
                 break;
             case "string":
-                switch (schema.Format)
+                type = schema.Format switch
                 {
-                    case "binary":
-                        type = "FormData";
-                        break;
-                    case "date-time":
-                        type = "string";
-                        break;
-                    default:
-                        type = "string";
-                        break;
-                }
+                    "binary" => "FormData",
+                    "date-time" => "string",
+                    _ => "string",
+                };
                 break;
 
             case "array":
-
                 if (schema.Items.Reference != null)
                 {
-                    type = schema.Items.Reference.Id + "[]";
                     refType = schema.Items.Reference.Id;
+                    type = refType + "[]";
                 }
                 else if (schema.Items.Type != null)
                 {
@@ -194,13 +187,18 @@ public class NgServiceFile
         if (Functions != null)
         {
             functions = string.Join("\n", Functions.Select(f => f.ToFunction()).ToArray());
-            // 获取请求和响应的类型，以便导入
-            var requestRefs = Functions.Where(f => !string.IsNullOrEmpty(f.RequestRefType))
-                .Select(f => f.RequestRefType).ToList();
-            var responseRefs = Functions.Where(f => !string.IsNullOrEmpty(f.ResponseRefType))
-                .Select(f => f.ResponseRefType).ToList();
-            // 参数中的类型
             var baseTypes = new string[] { "string", "string[]", "number", "number[]", "boolean" };
+            // 获取请求和响应的类型，以便导入
+            var requestRefs = Functions
+                .Where(f => !string.IsNullOrEmpty(f.RequestRefType)
+                    && !baseTypes.Contains(f.RequestRefType))
+                .Select(f => f.RequestRefType).ToList();
+            var responseRefs = Functions
+                .Where(f => !string.IsNullOrEmpty(f.ResponseRefType)
+                    && !baseTypes.Contains(f.ResponseRefType))
+                .Select(f => f.ResponseRefType).ToList();
+
+            // 参数中的类型
             var paramsRefs = Functions.SelectMany(f => f.Params)
                 .Where(p => !baseTypes.Contains(p.Type))
                 .Select(p => p.Type)
