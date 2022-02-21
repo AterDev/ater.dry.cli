@@ -49,7 +49,7 @@ public class NgCommand : CommandBase
         var ngGen = new NgServiceGenerate(ApiDocument!.Paths);
         var content = ngGen.GetBaseService();
         var dir = Path.Combine(SharePath,"services");
-        await GenerateFileAsync(dir, "base.service.ts", content, true);
+        await GenerateFileAsync(dir, "base.service.ts", content, false);
     }
 
     public async Task GenerateTsModelsAsync()

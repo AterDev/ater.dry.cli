@@ -142,10 +142,14 @@ public class NgServiceGenerate : GenerateBase
                     type = schema.Items.Reference.Id + "[]";
                     refType = schema.Items.Reference.Id;
                 }
-                else
+                else if (schema.Items.Type != null)
                 {
                     // 基础类型?
                     type = schema.Items.Type + "[]";
+                }
+                else if (schema.Items.OneOf?.FirstOrDefault()?.Reference != null)
+                {
+                    type = schema.Items.OneOf?.FirstOrDefault()!.Reference.Id;
                 }
                 break;
             case "object":
