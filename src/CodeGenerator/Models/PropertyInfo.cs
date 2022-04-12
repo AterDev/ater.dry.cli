@@ -36,6 +36,10 @@ public class PropertyInfo
     public int? MinLength { get; set; }
     public int? MaxLength { get; set; }
     public bool IsDecimal { get; set; } = false;
+    /// <summary>
+    /// 尾缀，如#endregion
+    /// </summary>
+    public string? SuffixContent { get; set; }
     public PropertyInfo(string type, string name)
     {
         Type = type;
@@ -63,7 +67,7 @@ public class PropertyInfo
             attributeText = attributeText?.Replace("    ", "    // ");
             content = @$"    // public {Type}{nullableMark} {Name} {{ get; set; }}";
         }
-        return $@"{Comments}{attributeText}{content}
+        return $@"{Comments}{attributeText}{content}{SuffixContent}
 ";
     }
 

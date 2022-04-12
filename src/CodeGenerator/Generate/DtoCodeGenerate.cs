@@ -185,7 +185,6 @@ public class DtoCodeGenerate : GenerateBase
     {
         return @$"global using System.ComponentModel.DataAnnotations;
 global using {AssemblyName}.Models;
-global using {EntityInfo!.AssemblyName}.Identity;
 global using {EntityInfo!.AssemblyName}.Models;";
     }
     public string GetFilterBase()

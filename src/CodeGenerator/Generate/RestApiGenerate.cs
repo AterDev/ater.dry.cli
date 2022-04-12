@@ -99,8 +99,9 @@ public class RestApiGenerate : GenerateBase
         var entityName = Path.GetFileNameWithoutExtension(EntityPath);
         var tplContent = GetTplContent("Implement.RestApi.tpl");
 
-        var actionContent = GetAddApiContent();
-        actionContent += GetUpdateApiContent();
+        //var actionContent = GetAddApiContent();
+        //actionContent += GetUpdateApiContent();
+        var actionContent = "";
 
         tplContent = tplContent.Replace(TplConst.NAMESPACE, ApiNamespace)
             .Replace(TplConst.SHARE_NAMESPACE, ShareNamespace)
@@ -112,7 +113,7 @@ public class RestApiGenerate : GenerateBase
     }
 
     /// <summary>
-    /// 
+    /// 生成关联添加
     /// </summary>
     /// <returns></returns>
     public string? GetAddApiContent()

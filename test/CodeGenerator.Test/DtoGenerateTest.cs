@@ -25,7 +25,7 @@ public class DtoGenerateTest
     public void Shoud_parse_entity_and_properties()
     {
         var filePath = PathHelper.GetProjectFilePath(@"Entity\Blog.cs");
-        filePath = @"C:\self\DevPlatform\src\Core\Identity\Account.cs";
+        //filePath = @"C:\self\DevPlatform\src\Core\Identity\Account.cs";
         var entityHelper = new EntityParseHelper(filePath);
         entityHelper.Parse();
         Assert.Equal("Blog", entityHelper.Name);
@@ -72,7 +72,8 @@ public class DtoGenerateTest
     [Fact]
     public void Shoud_generate_dto_content()
     {
-        var filePath = PathHelper.GetProjectFilePath(@"D:\codes\DevPlatform\src\Microservice\DocAPI\Models\DocsCatalog.cs");
+        var filePath = PathHelper.GetProjectFilePath(@"Entity\Blog.cs");
+        //var filePath = PathHelper.GetProjectFilePath(@"D:\codes\DevPlatform\src\Microservice\DocAPI\Models\DocsCatalog.cs");
         var dtoPath = PathHelper.GetProjectPath();
         var gen = new DtoCodeGenerate(filePath,dtoPath);
         var shortDto = gen.GetShortDto();

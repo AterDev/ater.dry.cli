@@ -144,7 +144,6 @@ public class EntityParseHelper
             propertyInfo.Comments = GetComment(prop);
             // attributes
             ParsePropertyAttributes(prop, propertyInfo);
-
             properties.Add(propertyInfo);
         }
 
@@ -165,6 +164,8 @@ public class EntityParseHelper
         var trivia = syntax.GetLeadingTrivia();
         return trivia.ToString().TrimEnd(' ');
     }
+ 
+
     /// <summary>
     /// 获取属性特性文本内容
     /// </summary>
