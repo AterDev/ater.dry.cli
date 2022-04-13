@@ -2,7 +2,7 @@
 namespace ${Namespace}.Controllers;
 
 ${Comment}
-public class ${EntityName}Controller : RestApiBase<${EntityName}DataStore, ${EntityName}, ${EntityName}UpdateDto, ${EntityName}Filter, ${EntityName}ItemDto>
+public class ${EntityName}Controller : RestApiBase<${EntityName}DataStore, ${EntityName}, ${EntityName}AddDto, ${EntityName}UpdateDto, ${EntityName}Filter, ${EntityName}ItemDto>
 {
     public ${EntityName}Controller(IUserContext user, ILogger<${EntityName}Controller> logger, ${EntityName}DataStore store) : base(user, logger, store)
     {
@@ -23,7 +23,7 @@ ${AdditionAction}
     /// </summary>
     /// <param name="form"></param>
     /// <returns></returns>
-    public override Task<ActionResult<${EntityName}>> AddAsync(${EntityName} form) => base.AddAsync(form);
+    public override Task<ActionResult<${EntityName}>> AddAsync(${EntityName}AddDto form) => base.AddAsync(form);
 
     /// <summary>
     /// ⚠更新

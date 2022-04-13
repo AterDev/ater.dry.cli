@@ -124,6 +124,7 @@ public class DtoCodeGenerate : GenerateBase
             Properties = EntityInfo.PropertyInfos?.Where(p => p.Name != "Id"
                 && p.Name != "CreatedTime"
                 && p.Name != "UpdatedTime"
+                && p.Name != "IsDeleted"
                 && !p.IsList
                 && !p.IsNavigation)
             .ToList()?? new List<PropertyInfo>()

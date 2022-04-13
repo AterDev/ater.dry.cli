@@ -1,6 +1,6 @@
 ﻿namespace ${Namespace}.DataStore;
 
-public class DataStoreBase<TContext, TEntity, TUpdate, TFilter, TItem> : IDataStore<TEntity, TUpdate, TFilter, TItem, ${IdType}>
+public class DataStoreBase<TContext, TEntity, TAdd, TUpdate, TFilter, TItem> : IDataStore<TEntity, TAdd, TUpdate, TFilter, TItem, ${IdType}>
     where TEntity : EntityBase
     where TFilter : FilterBase
     where TContext : DbContext
@@ -74,11 +74,12 @@ public class DataStoreBase<TContext, TEntity, TUpdate, TFilter, TItem> : IDataSt
         return (await _context.SaveChangesAsync() > 0);
     }
 
-    public virtual async Task<TEntity> AddAsync(TEntity data)
+    public virtual async Task<TEntity> AddAsync(TAdd data)
     {
-        _db.Add(data);
+        var entity = data.MapTo<TAdd, TEntity>();
+        _db.Add(entity);
         await _context.SaveChangesAsync();
-        return data;
+        return entity;
     }
 
     public virtual async Task<TEntity?> UpdateAsync(${IdType} id, TUpdate dto)

@@ -1,13 +1,13 @@
 ﻿namespace ${Namespace}.Interface;
 
-public interface IRestApiBase<TEntity, TUpdate, TFilter, TItem, Tkey>
+public interface IRestApiBase<TEntity, TAdd, TUpdate, TFilter, TItem, Tkey>
 {
     /// <summary>
     /// 添加
     /// </summary>
     /// <param name="form"></param>
     /// <returns></returns>
-    Task<ActionResult<TEntity>> AddAsync(TEntity form);
+    Task<ActionResult<TEntity>> AddAsync(TAdd form);
     /// <summary>
     /// 删除实体
     /// </summary>
