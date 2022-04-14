@@ -52,7 +52,7 @@ public class RestApiGenerate : GenerateBase
     public string GetRestApiInterface()
     {
         var content = GetTplContent("Interface.IRestApiBase.tpl");
-        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace);
+        content = content.Replace(TplConst.NAMESPACE, ApiNamespace);
         return content;
     }
 
