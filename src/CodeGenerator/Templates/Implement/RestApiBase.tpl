@@ -1,11 +1,12 @@
-﻿namespace ${Namespace}.Controllers;
+﻿using Http.API.Interface;
+namespace ${Namespace}.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
 public class RestApiBase<TDataStore, TEntity, TAdd, TUpdate, TFilter, TItem>
     : ControllerBase, IRestApiBase<TEntity, TAdd, TUpdate, TFilter, TItem, Guid>
-    where TDataStore : DataStoreBase<${DbContextName}, TEntity, TAdd, TUpdate, TFilter, TItem>
+    where TDataStore : DataStoreBase<${DbContextName}, TEntity, TUpdate, TFilter, TItem>
     where TEntity : EntityBase
     where TFilter : FilterBase
 {
@@ -26,8 +27,12 @@ public class RestApiBase<TDataStore, TEntity, TAdd, TUpdate, TFilter, TItem>
     /// <param name="form"></param>
     /// <returns></returns>
     [HttpPost]
-    public virtual async Task<ActionResult<TEntity>> AddAsync(TAdd form)
-        => await _store.AddAsync(form);
+    public virtual async Task<ActionResult<TEntity>> AddAsync(TAdd form){
+        var data = (TEntity)Activator.CreateInstance(typeof(TEntity))!;
+        data = data.Merge(form);
+        return await _store.AddAsync(data);
+    }
+        
 
     /// <summary>
     /// 删除

@@ -13,9 +13,9 @@ ${AdditionAction}
     /// </summary>
     /// <param name="filter"></param>
     /// <returns></returns>
-    public override Task<ActionResult<PageResult<${EntityName}ItemDto>>> FilterAsync(${EntityName}Filter filter)
+    public override async Task<ActionResult<PageResult<${EntityName}ItemDto>>> FilterAsync(${EntityName}Filter filter)
     {
-        return base.FilterAsync(filter);
+        return await base.FilterAsync(filter);
     }
 
     /// <summary>
@@ -23,7 +23,7 @@ ${AdditionAction}
     /// </summary>
     /// <param name="form"></param>
     /// <returns></returns>
-    public override Task<ActionResult<${EntityName}>> AddAsync(${EntityName}AddDto form) => base.AddAsync(form);
+    public override async Task<ActionResult<${EntityName}>> AddAsync(${EntityName}AddDto form) => await base.AddAsync(form);
 
     /// <summary>
     /// ⚠更新
@@ -31,17 +31,17 @@ ${AdditionAction}
     /// <param name="id"></param>
     /// <param name="form"></param>
     /// <returns></returns>
-    public override Task<ActionResult<${EntityName}?>> UpdateAsync([FromRoute] ${IdType} id, ${EntityName}UpdateDto form)
-        => base.UpdateAsync(id, form);
+    public override async Task<ActionResult<${EntityName}?>> UpdateAsync([FromRoute] ${IdType} id, ${EntityName}UpdateDto form)
+        => await base.UpdateAsync(id, form);
 
     /// <summary>
     /// ⚠删除
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public override Task<ActionResult<bool>> DeleteAsync([FromRoute] ${IdType} id)
+    public override async Task<ActionResult<bool>> DeleteAsync([FromRoute] ${IdType} id)
     {
-        return base.DeleteAsync(id);
+        return await base.DeleteAsync(id);
     }
 
     /// <summary>
@@ -52,7 +52,7 @@ ${AdditionAction}
     public override async Task<ActionResult<int>> BatchDeleteAsync(List<${IdType}> ids)
     {
         // 危险操作，请确保该方法的执行权限
-        //return base.BatchDeleteAsync(ids);
+        //return await base.BatchDeleteAsync(ids);
         return await Task.FromResult(0);
     }
 }

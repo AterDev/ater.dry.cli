@@ -1,6 +1,6 @@
 ﻿namespace ${Namespace}.Interface;
 
-public interface IDataStore<TEntity, TAdd, TUpdate, TFilter, TItem, Tkey>
+public interface IDataStore<TEntity, TUpdate, TFilter, TItem, Tkey>
 {
     /// <summary>
     /// 获取详情
@@ -31,7 +31,7 @@ public interface IDataStore<TEntity, TAdd, TUpdate, TFilter, TItem, Tkey>
     /// </summary>
     /// <param name="form"></param>
     /// <returns></returns>
-    Task<TEntity> AddAsync(TAdd form);
+    Task<TEntity> AddAsync(TEntity form);
     /// <summary>
     /// 更新
     /// </summary>
@@ -54,7 +54,7 @@ public interface IDataStore<TEntity, TAdd, TUpdate, TFilter, TItem, Tkey>
 /// <typeparam name="TUpdate"></typeparam>
 /// <typeparam name="TFilter"></typeparam>
 /// <typeparam name="TItem"></typeparam>
-public interface IDataStore<TEntity, TAdd, TUpdate, TFilter, TItem> : IDataStore<TEntity, TAdd, TUpdate, TFilter, TItem, Guid>
+public interface IDataStore<TEntity, TUpdate, TFilter, TItem> : IDataStore<TEntity, TUpdate, TFilter, TItem, Guid>
 {
 }
 
