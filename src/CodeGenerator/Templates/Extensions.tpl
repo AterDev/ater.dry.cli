@@ -70,7 +70,11 @@ public static partial class Extensions
         var resultType = typeof(TResult);
         var parameter = Expression.Parameter(sourceType, "e");
 
+        // 只构造都存在的属性
+        var sourceNames = sourceType.GetProperties()
+            .Select(s => s.Name).ToList();
         var props = resultType.GetProperties().ToList();
+        props = props.Where(p => sourceNames.Contains(p.Name)).ToList();
         var bindings = props.Select(p =>
              Expression.Bind(p, Expression.PropertyOrField(parameter, p.Name))
         ).ToList();

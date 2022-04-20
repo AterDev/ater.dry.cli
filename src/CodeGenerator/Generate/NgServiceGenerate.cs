@@ -14,7 +14,7 @@ public class NgServiceGenerate : GenerateBase
     {
         PathsPairs = paths;
     }
-    public string GetBaseService()
+    public static string GetBaseService()
     {
         var content = GetTplContent("angular.base.service.tpl");
         return content;
@@ -37,7 +37,7 @@ public class NgServiceGenerate : GenerateBase
                     Path = path.Key,
                     Tag = operation.Value.Tags.FirstOrDefault()?.Name,
                 };
-                (function.RequestType, function.RequestRefType) = GetParamType(operation.Value.RequestBody?.Content?.Values.FirstOrDefault()?.Schema);
+                (function.RequestType, function.RequestRefType) = GetParamType(operation.Value.RequestBody.Content.Values.FirstOrDefault()?.Schema);
                 (function.ResponseType, function.ResponseRefType) = GetParamType(operation.Value.Responses.FirstOrDefault().Value
                     ?.Content.FirstOrDefault().Value
                     ?.Schema);
@@ -87,7 +87,7 @@ public class NgServiceGenerate : GenerateBase
         return files;
     }
 
-    private (string? type, string? refType) GetParamType(OpenApiSchema? schema)
+    private static (string? type, string? refType) GetParamType(OpenApiSchema? schema)
     {
         if (schema == null)
             return (string.Empty, string.Empty);
@@ -199,7 +199,7 @@ public class NgServiceFile
                 .Select(f => f.ResponseRefType).ToList();
 
             // 参数中的类型
-            var paramsRefs = Functions.SelectMany(f => f.Params)
+            var paramsRefs = Functions.SelectMany(f => f.Params!)
                 .Where(p => !baseTypes.Contains(p.Type))
                 .Select(p => p.Type)
                 .ToList();
@@ -207,7 +207,9 @@ public class NgServiceFile
             if (responseRefs != null) refTypes.AddRange(responseRefs!);
             if (paramsRefs != null) refTypes.AddRange(paramsRefs!);
 
-            refTypes = refTypes.GroupBy(t => t).Select(g => g.FirstOrDefault()).ToList();
+            refTypes = refTypes.GroupBy(t => t)
+                .Select(g => g.FirstOrDefault()!)
+                .ToList();
             refTypes.ForEach(t =>
             {
                 importModels += $"import {{ {t} }} from '../models/{Name.ToHyphen()}/{t.ToHyphen()}.model';{Environment.NewLine}";
@@ -315,7 +317,7 @@ public class NgServiceFunction
             if (!string.IsNullOrEmpty(queryParams))
                 Path += "?" + queryParams;
         }
-        var file = Params?.Where(p => p.Type.Equals("FormData")).FirstOrDefault();
+        var file = Params?.Where(p => p.Type!.Equals("FormData")).FirstOrDefault();
         if (file != null)
             dataString = $", {file.Name}";
 

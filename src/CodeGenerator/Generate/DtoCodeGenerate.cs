@@ -231,7 +231,7 @@ global using {EntityInfo!.AssemblyName}.Models;";
     /// 生成AutoMapperProfile
     /// </summary>
     /// <param name="entityName"></param>
-    protected void GenerateAutoMapperProfile(string entityName)
+    protected static void GenerateAutoMapperProfile(string entityName)
     {
         var code =
     @$"            CreateMap<{entityName}AddDto, {entityName}>();

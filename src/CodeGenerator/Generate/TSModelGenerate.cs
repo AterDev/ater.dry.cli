@@ -169,7 +169,7 @@ public class TSModelGenerate
     /// <param name="schema"></param>
     /// <param name="name"></param>
     /// <returns></returns>
-    public string ToEnumString(OpenApiSchema schema, string name = "")
+    public static string ToEnumString(OpenApiSchema schema, string name = "")
     {
         var res = "";
         var comment = "";

@@ -57,7 +57,7 @@ public class NgGenerateTest
         var output=@"D:\codes\DevPlatform\src\Webapp\Admin";
         var gen = new NgPageGenerate(entityName,dtoPath,output);
 
-        var dialog = gen.BuildConfirmDialog();
+        var dialog = NgPageGenerate.BuildConfirmDialog();
         var component = gen.BuildAddPage();
         Assert.Equal("add", component.Name);
         Assert.NotNull(dialog);

@@ -82,7 +82,7 @@ public class CompilationHelper
     /// <param name="namedTypes">要查找所有类集合</param>
     /// <param name="baseTypeName">基类名称</param>
     /// <returns></returns>
-    public IEnumerable<INamedTypeSymbol> GetClassNameByBaseType(IEnumerable<INamedTypeSymbol> namedTypes, string baseTypeName)
+    public static IEnumerable<INamedTypeSymbol> GetClassNameByBaseType(IEnumerable<INamedTypeSymbol> namedTypes, string baseTypeName)
     {
         return namedTypes
             .Where(c => c.BaseType != null

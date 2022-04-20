@@ -149,7 +149,7 @@ public class RestApiGenerate : GenerateBase
         return content;
     }
     // TODO:update api 
-    public string? GetUpdateApiContent()
+    public static string? GetUpdateApiContent()
     {
         return default;
     }
@@ -189,9 +189,9 @@ public class RestApiGenerate : GenerateBase
         if (classes != null)
         {
             // 获取所有继承 dbcontext的上下文
-            var allDbContexts = cpl.GetClassNameByBaseType(classes, "IdentityDbContext");
+            var allDbContexts = CompilationHelper.GetClassNameByBaseType(classes, "IdentityDbContext");
             if (!allDbContexts.Any())
-                allDbContexts = cpl.GetClassNameByBaseType(classes, "DbContext");
+                allDbContexts = CompilationHelper.GetClassNameByBaseType(classes, "DbContext");
 
             if (allDbContexts.Any())
             {

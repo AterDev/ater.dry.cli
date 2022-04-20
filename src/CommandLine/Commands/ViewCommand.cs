@@ -35,7 +35,7 @@ public class ViewCommand : CommandBase
         Console.WriteLine("😀 View generate completed!" + Environment.NewLine);
     }
 
-    public void GenerateMenu()
+    public static void GenerateMenu()
     {
 
     }
@@ -67,9 +67,9 @@ public class ViewCommand : CommandBase
         var indexComponent = Gen.BuildIndexPage();
         var detailComponent = Gen.BuildDetailPage();
         var layoutComponent = Gen.BuildLayout();
-        var confirmDialogComponent = Gen.BuildConfirmDialog();
+        var confirmDialogComponent = NgPageGenerate.BuildConfirmDialog();
 
-        var componentsModule = Gen.GetComponentModule();
+        var componentsModule = NgPageGenerate.GetComponentModule();
 
         await GenerateComponentAsync(dir, addComponent);
         await GenerateComponentAsync(dir, editComponent);

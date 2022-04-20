@@ -35,7 +35,7 @@ public class {Name}{baseType}
     }
     public void Save(string dir, bool cover)
     {
-        var path = Path.Combine(dir, Tag);
+        var path = Path.Combine(dir, Tag??"");
         if (!Directory.Exists(path))
         {
             Directory.CreateDirectory(path);

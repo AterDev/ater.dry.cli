@@ -1,6 +1,4 @@
-﻿using Droplet.CommandLine.Commands;
-using System.CommandLine;
-using System.Windows.Input;
+﻿using System.CommandLine;
 
 namespace Droplet.CommandLine;
 
@@ -65,7 +63,7 @@ public class CommandBuilder
         dtoCommand.AddOption(forceOption);
         dtoCommand.SetHandler(async (string entity, string output, bool force) =>
         {
-            await executor.GenerateDtoAsync(entity, output, force);
+            await CommandRunner.GenerateDtoAsync(entity, output, force);
         }, path, outputOption, forceOption);
 
         RootCommand.Add(dtoCommand);
@@ -102,7 +100,7 @@ public class CommandBuilder
         apiCommand.SetHandler(
             async (string entity, string dto, string store, string output, string context) =>
         {
-            await executor.GenerateApi(entity, dto, store, output);
+            await CommandRunner.GenerateApi(entity, dto, store, output);
         }, path, dtoOption, storeOption, apiOption, contextOption);
 
         RootCommand.Add(apiCommand);
@@ -123,7 +121,7 @@ public class CommandBuilder
         ngCommand.AddOption(outputOption);
         ngCommand.SetHandler(async (string url, string output) =>
         {
-            await executor.GenerateNgAsync(url, output);
+            await CommandRunner.GenerateNgAsync(url, output);
         }, url, outputOption);
 
         RootCommand.Add(ngCommand);
@@ -146,7 +144,7 @@ public class CommandBuilder
         viewCommand.AddOption(outputOption);
         viewCommand.SetHandler(async (string entity, string dtoPath, string output) =>
         {
-            await executor.GenerateNgPagesAsync(entity, dtoPath, output);
+            await CommandRunner.GenerateNgPagesAsync(entity, dtoPath, output);
         }, entityArgument, dtoOption, outputOption);
         RootCommand.Add(viewCommand);
     }

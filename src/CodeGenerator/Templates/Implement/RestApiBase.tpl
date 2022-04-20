@@ -93,6 +93,7 @@ public class RestApiBase<TDataStore, TEntity, TAdd, TUpdate, TFilter, TItem>
     /// <param name="ids"></param>
     /// <returns></returns>
     [HttpDelete]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public virtual async Task<ActionResult<int>> BatchDeleteAsync(List<Guid> ids)
         => await _store.BatchDeleteAsync(ids);
 
@@ -102,6 +103,7 @@ public class RestApiBase<TDataStore, TEntity, TAdd, TUpdate, TFilter, TItem>
     /// <param name="data"></param>
     /// <returns></returns>
     [HttpPut]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public virtual async Task<int> BatchUpdateAsync([FromBody] BatchUpdate<TUpdate> data)
     => await _store.BatchUpdateAsync(data.Ids, data.UpdateDto);
 }

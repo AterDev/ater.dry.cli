@@ -12,7 +12,7 @@ public class CommandRunner
     /// <param name="url">swagger json地址</param>
     /// <param name="output">ng前端根目录</param>
     /// <returns></returns>
-    public async Task GenerateNgAsync(string url = "", string output = "")
+    public static async Task GenerateNgAsync(string url = "", string output = "")
     {
         try
         {
@@ -36,7 +36,7 @@ public class CommandRunner
     /// dto生成或更新
     /// </summary>
     /// <param name="entityPath"></param>
-    public async Task GenerateDtoAsync(string entityPath, string output, bool force)
+    public static async Task GenerateDtoAsync(string entityPath, string output, bool force)
     {
         Console.WriteLine("🔵 Generating Dtos...");
         var cmd = new DtoCommand(entityPath, output);
@@ -50,7 +50,7 @@ public class CommandRunner
     /// <param name="servicePath">service目录</param>
     /// <param name="apiPath">网站目录</param>
     /// <param name="dbContext"></param>
-    public async Task GenerateApi(string path, string dtoPath = "",
+    public static async Task GenerateApi(string path, string dtoPath = "",
             string servicePath = "", string apiPath = "", string dbContext = "")
     {
         Console.WriteLine("🔵 Generate dtos");
@@ -71,7 +71,7 @@ public class CommandRunner
     /// <param name="dtoPath">service根目录</param>
     /// <param name="name">实体类名称</param>
     /// <param name="output">前端根目录</param>
-    public async Task GenerateNgPagesAsync(string name, string dtoPath, string output = "")
+    public static async Task GenerateNgPagesAsync(string name, string dtoPath, string output = "")
     {
         Console.WriteLine("🔵 Generate view");
         var viewCmd = new ViewCommand(name, dtoPath, output);

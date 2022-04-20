@@ -39,6 +39,7 @@ ${AdditionAction}
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
+    // [ApiExplorerSettings(IgnoreApi = true)]
     public override async Task<ActionResult<bool>> DeleteAsync([FromRoute] ${IdType} id)
     {
         return await base.DeleteAsync(id);

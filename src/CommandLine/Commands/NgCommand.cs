@@ -1,5 +1,4 @@
 ﻿using Microsoft.OpenApi.Models;
-using System;
 
 namespace Droplet.CommandLine.Commands;
 
@@ -47,7 +46,7 @@ public class NgCommand : CommandBase
     public async Task GenerateCommonFilesAsync()
     {
         var ngGen = new NgServiceGenerate(ApiDocument!.Paths);
-        var content = ngGen.GetBaseService();
+        var content = NgServiceGenerate.GetBaseService();
         var dir = Path.Combine(SharePath,"services");
         await GenerateFileAsync(dir, "base.service.ts", content, false);
     }

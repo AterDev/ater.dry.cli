@@ -1,5 +1,4 @@
-﻿using CodeGenerator.Generate;
-using PropertyInfo = CodeGenerator.Models.PropertyInfo;
+﻿using PropertyInfo = CodeGenerator.Models.PropertyInfo;
 
 namespace Droplet.CommandLine.Commands;
 
@@ -12,14 +11,14 @@ public class NgFormGenerate : GenerateBase
     {
     }
 
-    public void Add(PropertyInfo input)
+    public static void Add(PropertyInfo input)
     {
     }
 
     /// <summary>
     /// 生成添加组件
     /// </summary>
-    public string GenerateAddForm(List<PropertyInfo>? propertyInfos)
+    public static string GenerateAddForm(List<PropertyInfo>? propertyInfos)
     {
         var formControls = "";
         if (propertyInfos != null)
@@ -32,7 +31,7 @@ public class NgFormGenerate : GenerateBase
         return tplContent;
     }
 
-    public string GenerateEditForm(List<PropertyInfo>? propertyInfos)
+    public static string GenerateEditForm(List<PropertyInfo>? propertyInfos)
     {
         var formControls = "";
         if (propertyInfos != null)
