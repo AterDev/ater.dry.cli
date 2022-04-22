@@ -6,6 +6,26 @@ public class CommandRunner
     {
     }
 
+
+    public static async Task GenerateTSAsync(string url = "", string output = "")
+    {
+        try
+        {
+            Console.WriteLine("🔵 Generating ts models");
+            var cmd = new TSCommand(url, output);
+            await cmd.RunAsync();
+        }
+        catch (WebException webExp)
+        {
+            Console.WriteLine(webExp.Message);
+            Console.WriteLine("Check the url!");
+        }
+        catch (Exception exp)
+        {
+            Console.WriteLine(exp.Message);
+            Console.WriteLine(exp.StackTrace);
+        }
+    }
     /// <summary>
     /// angular 代码生成
     /// </summary>

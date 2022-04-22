@@ -1,15 +1,14 @@
 ﻿using Microsoft.OpenApi.Models;
 
 namespace Droplet.CommandLine.Commands;
-
-public class NgCommand : CommandBase
+public class TSCommand : CommandBase
 {
     public string DocUrl { get; set; } = default!;
     public OpenApiDocument? ApiDocument { get; set; }
 
     public string SharePath { get; set; }
 
-    public NgCommand(string docUrl, string output)
+    public TSCommand(string docUrl, string output)
     {
         DocUrl = docUrl;
         SharePath = Path.Combine(output, "src", "app", "share");
@@ -36,19 +35,6 @@ public class NgCommand : CommandBase
         Console.WriteLine(Instructions[0]);
         await GenerateTsModelsAsync();
         Console.WriteLine("😀 Ts models generate completed!" + Environment.NewLine);
-
-        Console.WriteLine(Instructions[1]);
-        await GenerateCommonFilesAsync();
-        await GenerateNgServicesAsync();
-        Console.WriteLine("😀 Ng services generate completed!" + Environment.NewLine);
-    }
-
-
-    public async Task GenerateCommonFilesAsync()
-    {
-        var content = NgServiceGenerate.GetBaseService();
-        var dir = Path.Combine(SharePath,"services");
-        await GenerateFileAsync(dir, "base.service.ts", content, false);
     }
 
     public async Task GenerateTsModelsAsync()
@@ -66,15 +52,4 @@ public class NgCommand : CommandBase
             await GenerateFileAsync(dir, model.Name, model.Content, true);
         }
     }
-    public async Task GenerateNgServicesAsync()
-    {
-        var ngGen = new NgServiceGenerate(ApiDocument!.Paths);
-        var services = ngGen.GetServices(ApiDocument!.Tags);
-        foreach (var service in services)
-        {
-            var dir = Path.Combine(SharePath, "services");
-            await GenerateFileAsync(dir, service.Name, service.Content, true);
-        }
-    }
-
 }

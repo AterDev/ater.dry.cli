@@ -40,7 +40,7 @@ public class NgGenerateTest
     {
         var projectPath = PathHelper.GetProjectPath();
         var file = Path.Combine(projectPath,"Data/openapi.json");
-        var openApiDoc = new OpenApiStringReader().Read(File.ReadAllText(file), out var context);
+        var openApiDoc = new OpenApiStringReader().Read(File.ReadAllText(file), out _);
 
         var serviceGen = new NgServiceGenerate(openApiDoc.Paths);
         var services = serviceGen.GetServices(openApiDoc.Tags);
