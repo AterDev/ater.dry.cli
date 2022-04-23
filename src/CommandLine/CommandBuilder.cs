@@ -26,6 +26,7 @@ public class CommandBuilder
         AddTSModel();
         AddNgService();
         AddView();
+        AddDoc();
         return RootCommand;
     }
 
@@ -106,6 +107,31 @@ public class CommandBuilder
 
         RootCommand.Add(apiCommand);
     }
+
+    /// <summary>
+    /// 添加文档
+    /// </summary>
+    public void AddDoc()
+    {
+        var executor = new CommandRunner();
+        var docCommand = new Command("doc", "generate typescript interface using openApi json");
+        docCommand.AddAlias("doc");
+        var url = new Argument<string>("OpenApi Url", "openApi json file url");
+        var  outputOption=new Option<string>(new[] { "--output", "-o" })
+        {
+            IsRequired = true,
+            Description = "generate markdown doc"
+        };
+        docCommand.AddArgument(url);
+        docCommand.AddOption(outputOption);
+        docCommand.SetHandler(async (string url, string output) =>
+        {
+            await CommandRunner.GenerateDocAsync(url, output);
+        }, url, outputOption);
+
+        RootCommand.Add(docCommand);
+    }
+
 
     /// <summary>
     /// 添加typescript interface

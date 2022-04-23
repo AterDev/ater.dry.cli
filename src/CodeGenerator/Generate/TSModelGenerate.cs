@@ -5,7 +5,7 @@ namespace CodeGenerator.Generate;
 /// <summary>
 /// generate typescript model file
 /// </summary>
-public class TSModelGenerate
+public class TSModelGenerate : GenerateBase
 {
     public IDictionary<string, OpenApiSchema> Schemas { get; set; }
     public List<OpenApiTag>? ApiTags { get; set; }
@@ -323,7 +323,7 @@ public class TsProperty
     public string? Type { get; set; }
     public string Reference { get; set; } = string.Empty;
     public bool IsEnum { get; set; } = false;
-    public bool IsNullable { get; set; }
+    public bool IsNullable { get; set; } = false;
     public string? Comments { get; set; }
 
     public string ToProperty()
