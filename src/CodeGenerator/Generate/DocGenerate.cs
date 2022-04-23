@@ -21,8 +21,14 @@ public class DocGenerate : GenerateBase
         var content="";
         foreach (var schema in Schemas)
         {
+            var description = schema.Value.AllOf.LastOrDefault()?.Description
+                ??schema.Value.Description;
 
-            var header = $"### [{schema.Key}](#{schema.Key})" + Environment.NewLine;
+            Console.WriteLine(description);
+            description = description?.Replace("\n", " ") ?? "";
+            if (!string.IsNullOrEmpty(description)) description = $"({description})";
+
+            var header = $"### [{schema.Key}](#{schema.Key}) {description}" + Environment.NewLine;
             var props = tsGen.GetTsProperties(schema.Value);
 
             var row = "|字段名|类型|必须|说明|" + Environment.NewLine;

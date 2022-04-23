@@ -32,11 +32,11 @@ public class DocCommand : CommandBase
             .Read(openApiContent, out _);
 
         Console.WriteLine(Instructions[0]);
-        await GenerateDocAsync();
+        await GenerateDocAsync(ApiDocument.Info.Title);
         Console.WriteLine("😀 markdown generate completed!" + Environment.NewLine);
     }
 
-    public async Task GenerateDocAsync()
+    public async Task GenerateDocAsync(string title)
     {
         var schemas = ApiDocument!.Components.Schemas;
         var ngGen = new DocGenerate(schemas);
@@ -45,7 +45,7 @@ public class DocCommand : CommandBase
             ngGen.SetTags(ApiDocument!.Tags.ToList());
         }
         var content = ngGen.GetMarkdownContent();
-        await GenerateFileAsync(OutputPath, "api doc.md", content, true);
+        await GenerateFileAsync(OutputPath, title + ".md", content, true);
 
     }
 }

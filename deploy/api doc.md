@@ -55,24 +55,24 @@
 |userName|string|false|-|
 |wxOpenId|string|true|-|
 |wxUnionId|string|true|-|
-|wxName|string|true|-|
-|wxAvatar|string|true|-|
-|customerInvoiceInfo|CustomerInvoiceInfo|true|-|
-|personInfos|PersonInfo[]|true|-|
-|reservations|Reservation[]|true|-|
-|orders|Order[]|true|-|
-|payRecords|PayRecord[]|true|-|
-|refundRecords|RefundRecord[]|true|-|
+|wxName|string|true|微信昵称|
+|wxAvatar|string|true|微信头像|
+|customerInvoiceInfo|CustomerInvoiceInfo|true|发票信息|
+|personInfos|PersonInfo[]|true|关联的人员档案|
+|reservations|Reservation[]|true|预约|
+|orders|Order[]|true|订单|
+|payRecords|PayRecord[]|true|支付记录|
+|refundRecords|RefundRecord[]|true|退款记录|
 
 ### [CustomerInvoiceInfo](#CustomerInvoiceInfo)
 |字段名|类型|必须|说明|
 |-|-|-|-|
-|invoiceName|string|false|-|
-|number|string|false|-|
+|invoiceName|string|false|抬头名称|
+|number|string|false|税号|
 |userName|string|false|-|
 |userPhone|string|false|-|
 |email|string|true|-|
-|invoiceType|InvoiceType|false|0=Person;1=Company|
+|invoiceType|InvoiceType|false|发票类型|
 |customerId|string|false|-|
 |customer|Customer|false|-|
 
@@ -84,25 +84,25 @@
 |字段名|类型|必须|说明|
 |-|-|-|-|
 |id|string|false|-|
-|status|Status|false|0=Default;1=Deleted;2=Invalid;3=Valid|
+|status|Status|false|状态|
 |createdTime|Date|false|-|
 |updatedTime|Date|false|-|
-|isDeleted|boolean|false|-|
+|isDeleted|boolean|false|软删除|
 
 ### [PersonInfo](#PersonInfo)
 |字段名|类型|必须|说明|
 |-|-|-|-|
-|realName|string|false|-|
+|realName|string|false|真实姓名|
 |idNumber|string|false|-|
 |phone|string|false|-|
-|idType|IdType|false|0=IDCard|
-|sex|SexType|false|0=Male;1=Female;2=Else|
-|country|string|true|-|
-|address|string|true|-|
-|isSelf|boolean|false|-|
-|relation|string|true|-|
-|customer|Customer|false|-|
-|reservations|Reservation[]|true|-|
+|idType|IdType|false|证件类型;;0=IDCard|
+|sex|SexType|false|性别;;0=Male;1=Female;2=Else|
+|country|string|true|国家|
+|address|string|true|地址|
+|isSelf|boolean|false|是否本人|
+|relation|string|true|关系|
+|customer|Customer|false|客户信息|
+|reservations|Reservation[]|true|预约信息|
 
 ### [IdType](#IdType)
 |字段名|类型|必须|说明|
@@ -115,13 +115,13 @@
 ### [Reservation](#Reservation)
 |字段名|类型|必须|说明|
 |-|-|-|-|
-|name|string|true|-|
-|number|string|true|-|
-|remark|string|true|-|
-|reserveStatus|ReserveStatus|false|0=Default;1=ToBePay;2=Paid;3=Invoiced;4=Cancelled;5=Refunding;6=Refunded|
-|reserveTime|string|false|-|
-|detectProcessing|string|true|-|
-|reservationType|ReservationType|false|0=Single;1=Ten;2=Twenty|
+|name|string|true|检测项目名称|
+|number|string|true|预约编号,自动生成|
+|remark|string|true|备注|
+|reserveStatus|ReserveStatus|false|状态|
+|reserveTime|string|false|预约时间|
+|detectProcessing|string|true|检测进度|
+|reservationType|ReservationType|false|检测类型，如单人单管|
 |customer|Customer|false|-|
 |personInfo|PersonInfo|false|-|
 |order|Order|true|-|
@@ -137,13 +137,13 @@
 ### [Order](#Order)
 |字段名|类型|必须|说明|
 |-|-|-|-|
-|content|string|true|-|
-|price|number|false|-|
-|number|string|false|-|
-|orderType|OrderStatus|false|0=Default;1=ToBePay;2=Paid;3=Invoiced;4=Cancelled;5=Refunding;6=Refunded|
-|customer|Customer|false|-|
+|content|string|true|订单内容|
+|price|number|false|订单价格|
+|number|string|false|订单号|
+|orderType|OrderStatus|false|订单状态|
+|customer|Customer|false|客户信息|
 |reservationId|string|false|-|
-|reservation|Reservation|false|-|
+|reservation|Reservation|false|关联的预约|
 
 ### [OrderStatus](#OrderStatus)
 |字段名|类型|必须|说明|
@@ -153,22 +153,22 @@
 |字段名|类型|必须|说明|
 |-|-|-|-|
 |userName|string|false|-|
-|orderNumber|string|false|-|
-|orderContent|string|true|-|
-|content|string|true|-|
-|payType|string|true|-|
-|price|number|false|-|
+|orderNumber|string|false|订单编号|
+|orderContent|string|true|订单内容|
+|content|string|true|支付内容|
+|payType|string|true|支付方式|
+|price|number|false|支付金额|
 |customer|Customer|false|-|
 
 ### [RefundRecord](#RefundRecord)
 |字段名|类型|必须|说明|
 |-|-|-|-|
 |userName|string|false|-|
-|orderNumber|string|false|-|
-|orderContent|string|true|-|
-|content|string|true|-|
-|payType|string|true|-|
-|price|number|false|-|
+|orderNumber|string|false|订单编号|
+|orderContent|string|true|订单内容|
+|content|string|true|支付内容|
+|payType|string|true|支付方式|
+|price|number|false|支付金额|
 |customer|Customer|false|-|
 
 ### [PageResultOfCustomerInvoiceInfoItemDto](#PageResultOfCustomerInvoiceInfoItemDto)
@@ -271,10 +271,10 @@
 ### [DetectRecord](#DetectRecord)
 |字段名|类型|必须|说明|
 |-|-|-|-|
-|openTime|Date|false|-|
-|leaveTime|Date|false|-|
-|isFaceVerify|boolean|false|-|
-|isGetMaterials|boolean|false|-|
+|openTime|Date|false|开门时间|
+|leaveTime|Date|false|离开时间|
+|isFaceVerify|boolean|false|是否人脸验证|
+|isGetMaterials|boolean|false|是否获取物料|
 |orderId|string|false|-|
 |order|Order|true|-|
 |roomId|string|false|-|
@@ -286,12 +286,12 @@
 ### [Room](#Room)
 |字段名|类型|必须|说明|
 |-|-|-|-|
-|number|string|false|-|
+|number|string|false|编号|
 |province|string|true|-|
 |city|string|true|-|
 |district|string|true|-|
 |address|string|true|-|
-|devices|Device[]|false|-|
+|devices|Device[]|false|设备|
 
 ### [Device](#Device)
 |字段名|类型|必须|说明|
@@ -406,8 +406,8 @@
 |personName|string|false|-|
 |idNumber|string|false|-|
 |phone|string|false|-|
-|idType|IdType|false|0=IDCard|
-|sex|SexType|false|0=Male;1=Female;2=Else|
+|idType|IdType|false|证件类型;;0=IDCard|
+|sex|SexType|false|性别;;0=Male;1=Female;2=Else|
 |country|string|true|国家|
 |address|string|true|地址|
 |name|string|true|检测项目名称|
@@ -442,16 +442,16 @@
 |personName|string|false|-|
 |idNumber|string|false|-|
 |phone|string|false|-|
-|idType|IdType|false|0=IDCard|
-|sex|SexType|false|0=Male;1=Female;2=Else|
-|country|string|true|-|
-|address|string|true|-|
-|name|string|true|-|
-|reserveNumber|string|true|-|
-|remark|string|true|-|
-|content|string|true|-|
-|price|number|false|-|
-|orderNumber|string|false|-|
+|idType|IdType|false|证件类型;;0=IDCard|
+|sex|SexType|false|性别;;0=Male;1=Female;2=Else|
+|country|string|true|国家|
+|address|string|true|地址|
+|name|string|true|检测项目名称|
+|reserveNumber|string|true|预约编号,自动生成|
+|remark|string|true|备注|
+|content|string|true|订单内容|
+|price|number|false|订单价格|
+|orderNumber|string|false|订单号|
 
 ### [PageResultOfPayRecordItemDto](#PageResultOfPayRecordItemDto)
 |字段名|类型|必须|说明|
@@ -538,16 +538,16 @@
 |字段名|类型|必须|说明|
 |-|-|-|-|
 |name|string|false|-|
-|parent|Permission|true|-|
-|permissionPath|string|true|-|
+|parent|Permission|true|父级权限|
+|permissionPath|string|true|权限路径|
 |roles|Role[]|true|-|
 |rolePermissions|RolePermission[]|true|-|
 
 ### [Role](#Role)
 |字段名|类型|必须|说明|
 |-|-|-|-|
-|name|string|false|-|
-|icon|string|true|-|
+|name|string|false|角色名称|
+|icon|string|true|图标|
 |users|User[]|true|-|
 |permissions|Permission[]|true|-|
 |rolePermissions|RolePermission[]|true|-|
@@ -555,9 +555,9 @@
 ### [User](#User)
 |字段名|类型|必须|说明|
 |-|-|-|-|
-|userName|string|false|-|
-|realName|string|true|-|
-|position|string|true|-|
+|userName|string|false|用户名|
+|realName|string|true|真实姓名|
+|position|string|true|职位|
 |email|string|true|-|
 |emailConfirmed|boolean|false|-|
 |passwordHash|string|false|-|
@@ -568,9 +568,9 @@
 |lockoutEnd|Date|true|-|
 |lockoutEnabled|boolean|false|-|
 |accessFailedCount|number|false|-|
-|lastLoginTime|Date|true|-|
-|retryCount|number|false|-|
-|avatar|string|true|-|
+|lastLoginTime|Date|true|最后登录时间|
+|retryCount|number|false|密码重试次数|
+|avatar|string|true|头像url|
 |roles|Role[]|true|-|
 
 ### [RolePermission](#RolePermission)
@@ -578,7 +578,7 @@
 |-|-|-|-|
 |roleId|string|false|-|
 |permissionId|string|false|-|
-|permissionTypeMyProperty|PermissionType|false|0=Read;1=Audit;2=Add;3=Edit;4=Write;5=AuditWrite|
+|permissionTypeMyProperty|PermissionType|false|权限类型|
 |role|Role|false|-|
 |permission|Permission|false|-|
 
@@ -616,8 +616,8 @@
 |wxOpenId|string|false|微信openid|
 |idNumber|string|false|-|
 |phone|string|false|-|
-|idType|IdType|false|0=IDCard|
-|sex|SexType|false|0=Male;1=Female;2=Else|
+|idType|IdType|false|证件类型;;0=IDCard|
+|sex|SexType|false|性别;;0=Male;1=Female;2=Else|
 |country|string|true|国家|
 |address|string|true|地址|
 |isSelf|boolean|false|是否本人|
