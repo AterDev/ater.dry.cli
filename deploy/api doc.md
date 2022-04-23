@@ -390,7 +390,7 @@
 |reservationId|string|true|-|
 |status|Status|true|状态|
 |isDeleted|boolean|true|软删除|
-|customerId|string|true|用户id|
+|customerId|string|true|用户的订单|
 
 ### [PageResultOfOrderRecordItemDto](#PageResultOfOrderRecordItemDto)
 |字段名|类型|必须|说明|

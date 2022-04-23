@@ -50,9 +50,7 @@ public class DocGenerate : GenerateBase
             .Replace(" ","")
             .Trim(new char[] { ';' });
 
-
         if (string.IsNullOrEmpty(comments)) { comments = "-"; }
-        Console.WriteLine(comments);
 
         var type = property.Type?.Replace(" | null","");
         var isMust = property.IsNullable==false?"false":"true";
