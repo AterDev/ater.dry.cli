@@ -6,12 +6,12 @@ public class TSCommand : CommandBase
     public string DocUrl { get; set; } = default!;
     public OpenApiDocument? ApiDocument { get; set; }
 
-    public string SharePath { get; set; }
+    public string OutputPath { get; set; }
 
     public TSCommand(string docUrl, string output)
     {
         DocUrl = docUrl;
-        SharePath = Path.Combine(output, "src", "app", "share");
+        OutputPath = Path.Combine(output);
         Instructions.Add($"  🔹 generate Ts models.");
         Instructions.Add($"  🔹 generate ng services.");
     }
@@ -48,7 +48,7 @@ public class TSCommand : CommandBase
         var models = ngGen.GetInterfaces();
         foreach (var model in models)
         {
-            var dir = Path.Combine(SharePath, "models", model.Path);
+            var dir = Path.Combine(OutputPath, model.Path);
             await GenerateFileAsync(dir, model.Name, model.Content, true);
         }
     }
