@@ -24,7 +24,6 @@ public class DocGenerate : GenerateBase
             var description = schema.Value.AllOf.LastOrDefault()?.Description
                 ??schema.Value.Description;
 
-            Console.WriteLine(description);
             description = description?.Replace("\n", " ") ?? "";
             if (!string.IsNullOrEmpty(description)) description = $"({description})";
 
