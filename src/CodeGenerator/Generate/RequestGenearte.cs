@@ -294,7 +294,7 @@ public class RequestGenearte : GenerateBase
             dataString = $", {file.Name}";
 
         var functionString = @$"{comments}
-  {Name}({paramsString}): Observable<{ResponseType}> {{
+  {Name}({paramsString}): Promise<{ResponseType}> {{
     const url = `{Path}`;
     return this.request<{ResponseType}>('{function.Method.ToLower()}', url{dataString});
   }}

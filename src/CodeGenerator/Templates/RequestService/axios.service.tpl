@@ -9,7 +9,7 @@ import { ElMessage } from "element-plus";
 import store from "@/store";
 
 export class BaseService {
-    http: AxiosInstance;
+    private http: AxiosInstance
     constructor() {
         this.http = axios.create(options.base);
         this.http.interceptors.request.use(
@@ -60,7 +60,7 @@ export class BaseService {
         );
     }
 
-    request<R>(method: Method, path: string, body?: any): Promise<R> {
+    protected request<R>(method: Method, path: string, body?: any): Promise<R> {
         return this.http.request<any, R, any>(
             {
                 url: path,
