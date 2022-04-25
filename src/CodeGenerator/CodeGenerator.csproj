@@ -42,6 +42,8 @@
 		<None Remove="Templates\Interface\IRestApiBase.tpl" />
 		<None Remove="Templates\Interface\IUserContext.tpl" />
 		<None Remove="Templates\PageResult.tpl" />
+		<None Remove="Templates\RequestService\axios.service.tpl" />
+		<None Remove="Templates\RequestService\service.ts" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="Templates\angular\add\add.component.css.tpl" />
@@ -80,6 +82,8 @@
 		<EmbeddedResource Include="Templates\Interface\IUserContext.tpl" />
 		<EmbeddedResource Include="Templates\BatchUpdate.tpl" />
 		<EmbeddedResource Include="Templates\PageResult.tpl" />
+		<EmbeddedResource Include="Templates\RequestService\axios.service.tpl" />
+		<EmbeddedResource Include="Templates\RequestService\service.ts" />
 	</ItemGroup>
 
 	<ItemGroup>

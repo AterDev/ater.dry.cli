@@ -69,6 +69,31 @@ public class CommandRunner
             Console.WriteLine(exp.StackTrace);
         }
     }
+    /// <summary>
+    /// 请求服务生成
+    /// </summary>
+    /// <param name="url"></param>
+    /// <param name="output"></param>
+    /// <returns></returns>
+    public static async Task GenerateRequestAsync(string url = "", string output = "", RequestLibType type = RequestLibType.AngularHttpClient)
+    {
+        try
+        {
+            Console.WriteLine("🔵 Generating ts models and request services...");
+            var cmd = new RequestCommand(url, output, type);
+            await cmd.RunAsync();
+        }
+        catch (WebException webExp)
+        {
+            Console.WriteLine(webExp.Message);
+            Console.WriteLine("Ensure you had input correct url!");
+        }
+        catch (Exception exp)
+        {
+            Console.WriteLine(exp.Message);
+            Console.WriteLine(exp.StackTrace);
+        }
+    }
 
     /// <summary>
     /// dto生成或更新

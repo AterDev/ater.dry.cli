@@ -48,6 +48,22 @@ public class NgGenerateTest
         Assert.NotNull(services);
     }
 
+    [Fact]
+    public void should_generate_axios_services()
+    {
+        var projectPath = PathHelper.GetProjectPath();
+        var file = Path.Combine(projectPath,"Data/openapi.json");
+        var openApiDoc = new OpenApiStringReader().Read(File.ReadAllText(file), out _);
+
+        var serviceGen = new RequestGenearte(openApiDoc.Paths)
+        {
+            LibType = RequestLibType.Axios
+        };
+        var services = serviceGen.GetServices(openApiDoc.Tags);
+
+        Assert.NotNull(services);
+    }
+
 
     [Fact]
     public void should_generate_ng_component()

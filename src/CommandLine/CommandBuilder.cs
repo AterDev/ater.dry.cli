@@ -25,6 +25,7 @@ public class CommandBuilder
         AddApi();
         AddTSModel();
         AddNgService();
+        AddRequest();
         AddView();
         AddDoc();
         return RootCommand;
@@ -46,7 +47,6 @@ public class CommandBuilder
         configCommand.AddCommand(init);
         RootCommand.Add(configCommand);
     }
-
     public void AddDto()
     {
         var executor = new CommandRunner();
@@ -71,6 +71,29 @@ public class CommandBuilder
         RootCommand.Add(dtoCommand);
     }
 
+    public void AddRequest()
+    {
+        var executor = new CommandRunner();
+        var reqCommand = new Command("request", "generate request service and interface using openApi json");
+        reqCommand.AddAlias("request");
+        var url = new Argument<string>("OpenApi Url", "openApi json file url");
+        var outputOption=new Option<string>(new[] { "--output", "-o" })
+        {
+            IsRequired = true,
+            Description = "output path"
+        };
+
+        var typeOption = new Option<RequestLibType>(new []{"--type","-t"},"request lib type:axios or angularHttpClient");
+        reqCommand.AddArgument(url);
+        reqCommand.AddOption(outputOption);
+        reqCommand.AddOption(typeOption);
+        reqCommand.SetHandler(async (string url, string output, RequestLibType libType) =>
+        {
+            await CommandRunner.GenerateRequestAsync(url, output, libType);
+        }, url, outputOption, typeOption);
+
+        RootCommand.Add(reqCommand);
+    }
     public void AddApi()
     {
         var executor = new CommandRunner();
@@ -107,7 +130,6 @@ public class CommandBuilder
 
         RootCommand.Add(apiCommand);
     }
-
     /// <summary>
     /// 添加文档
     /// </summary>
@@ -131,8 +153,6 @@ public class CommandBuilder
 
         RootCommand.Add(docCommand);
     }
-
-
     /// <summary>
     /// 添加typescript interface
     /// </summary>
@@ -156,7 +176,6 @@ public class CommandBuilder
 
         RootCommand.Add(tsCommand);
     }
-
     public void AddNgService()
     {
         var executor = new CommandRunner();

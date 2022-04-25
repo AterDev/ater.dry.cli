@@ -18,6 +18,18 @@ public class RequestGenearte : GenerateBase
         PathsPairs = paths;
     }
 
+    public static string GetBaseService(RequestLibType libType)
+    {
+        var content = libType switch
+        {
+            RequestLibType.AngularHttpClient => GetTplContent("angular.base.service.tpl"),
+            RequestLibType.Axios => GetTplContent("RequestService.axios.service.tpl"),
+            _ => ""
+        };
+
+        return content;
+    }
+
     /// <summary>
     /// 获取所有请求接口解析的函数结构
     /// </summary>
@@ -38,7 +50,7 @@ public class RequestGenearte : GenerateBase
                     Path = path.Key,
                     Tag = operation.Value.Tags.FirstOrDefault()?.Name,
                 };
-                (function.RequestType, function.RequestRefType) = GetParamType(operation.Value.RequestBody.Content.Values.FirstOrDefault()?.Schema);
+                (function.RequestType, function.RequestRefType) = GetParamType(operation.Value.RequestBody?.Content.Values.FirstOrDefault()?.Schema);
                 (function.ResponseType, function.ResponseRefType) = GetParamType(operation.Value.Responses.FirstOrDefault().Value
                     ?.Content.FirstOrDefault().Value
                     ?.Schema);
@@ -92,7 +104,7 @@ public class RequestGenearte : GenerateBase
             var content = LibType switch
             {
                 RequestLibType.AngularHttpClient => serviceFile.ToNgService(),
-                RequestLibType.Axios=>ToAxiosRequestService(serviceFile),
+                RequestLibType.Axios => ToAxiosRequestService(serviceFile),
                 _ => ""
             };
 
@@ -189,7 +201,7 @@ public class RequestGenearte : GenerateBase
 
     public string ToAxiosRequestService(RequestServiceFile serviceFile)
     {
-        var tplContent = GetTplContent("request.request.ts");
+        var tplContent = GetTplContent("RequestService.service.ts");
         var functionString = "";
         var functions = serviceFile.Functions;
         // import引用的models
@@ -204,8 +216,10 @@ public class RequestGenearte : GenerateBase
                 importModels += $"import {{ {t} }} from '../models/{serviceFile.Name.ToHyphen()}/{t.ToHyphen()}.model';{Environment.NewLine}";
             });
         }
-        tplContent.Replace("", "");
-        return $@"";
+        tplContent = tplContent.Replace("[@Import]", importModels)
+            .Replace("[@ServiceName]", serviceFile.Name)
+            .Replace("[@Functions]", functionString);
+        return tplContent;
 
     }
 
