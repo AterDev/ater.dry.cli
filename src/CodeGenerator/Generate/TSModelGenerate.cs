@@ -1,5 +1,6 @@
 ﻿using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
+using System.Xml.Linq;
 
 namespace CodeGenerator.Generate;
 /// <summary>
@@ -18,6 +19,8 @@ public class TSModelGenerate : GenerateBase
     {
         ApiTags = apiTags;
     }
+
+
 
     /// <summary>
     /// 
@@ -81,6 +84,29 @@ public class TSModelGenerate : GenerateBase
         return name.ToHyphen();
     }
 
+    public static string GetDirName(string name, List<OpenApiTag> apiTags)
+    {
+        if (name.ToLower().StartsWith("base")
+             || name.ToLower().EndsWith("base"))
+        {
+            return "";
+        }
+        var suffix = new string[] { "UpdateDto", "Filter", "AddDto", "FilterDto"};
+        var prefix = new string[] { "PageResultOf", "BatchUpdateOf" };
+        if (prefix.Any(s => name.StartsWith(s))
+                    || suffix.Any(s => name.EndsWith(s)))
+        {
+            return ReplaceDtoSign(name).ToHyphen();
+        }
+        if (apiTags != null)
+        {
+            var tag = apiTags.Where(tag => name.StartsWith(tag.Name)).FirstOrDefault();
+            if (tag != null)
+                return tag.Name.ToHyphen();
+        }
+        return name.ToHyphen();
+    }
+
     private static string ReplaceDtoSign(string name)
     {
         return name.Replace("ItemDto", "")
@@ -90,6 +116,7 @@ public class TSModelGenerate : GenerateBase
             .Replace("UpdateDto", "")
             .Replace("Filter", "");
     }
+
     /// <summary>
     /// 将 Schemas 转换成 ts 接口
     /// </summary>

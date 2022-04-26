@@ -11,11 +11,13 @@ namespace CodeGenerator.Generate;
 public class RequestGenearte : GenerateBase
 {
     protected OpenApiPaths PathsPairs { get; }
+    protected List<OpenApiTag> ApiTags { get; }
     public RequestLibType LibType { get; set; } = RequestLibType.AngularHttpClient;
 
-    public RequestGenearte(OpenApiPaths paths)
+    public RequestGenearte(OpenApiDocument openApi)
     {
-        PathsPairs = paths;
+        PathsPairs = openApi.Paths;
+        ApiTags = openApi.Tags.ToList();
     }
 
     public static string GetBaseService(RequestLibType libType)
@@ -213,7 +215,8 @@ public class RequestGenearte : GenerateBase
             var refTypes = GetRefTyeps(functions);
             refTypes.ForEach(t =>
             {
-                importModels += $"import {{ {t} }} from '../models/{serviceFile.Name.ToHyphen()}/{t.ToHyphen()}.model';{Environment.NewLine}";
+                var dirName = TSModelGenerate.GetDirName(t, ApiTags);
+                importModels += $"import {{ {t} }} from '../models/{dirName}/{t.ToHyphen()}.model';{Environment.NewLine}";
             });
         }
         tplContent = tplContent.Replace("[@Import]", importModels)

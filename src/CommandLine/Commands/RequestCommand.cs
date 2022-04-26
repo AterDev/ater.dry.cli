@@ -71,7 +71,7 @@ public class RequestCommand : CommandBase
     }
     public async Task GenerateNgServicesAsync()
     {
-        var ngGen = new RequestGenearte(ApiDocument!.Paths)
+        var ngGen = new RequestGenearte(ApiDocument!)
         {
             LibType = LibType
         };
