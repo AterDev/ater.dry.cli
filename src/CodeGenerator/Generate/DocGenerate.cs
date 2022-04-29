@@ -17,17 +17,35 @@ public class DocGenerate : GenerateBase
 
     public string GetMarkdownContent()
     {
-        var tsGen = new TSModelGenerate(Schemas);
-        var content="";
+        var docContent = "";
+        var itemContent = "";
+        var tocContent = "- [目录](#目录)" + Environment.NewLine;
+
+        Schemas = Schemas.OrderBy(s => s.Key)
+            .ToDictionary(s => s.Key, s => s.Value);
+
         foreach (var schema in Schemas)
         {
             var description = schema.Value.AllOf.LastOrDefault()?.Description
                 ??schema.Value.Description;
 
             description = description?.Replace("\n", " ") ?? "";
-            if (!string.IsNullOrEmpty(description)) description = $"({description})";
+            // 构建目录
+
+            var des = string.IsNullOrEmpty(description) ? "" : "-"+description;
+            des = des.Replace(" ", "-")
+                .Replace(" = ", "=")
+                .Replace(",", "");
+
+            if (!string.IsNullOrEmpty(description)) description = $"({description})".Replace(" = ","=");
+
+            var toc = $"\t- [{schema.Key} {description}](#{schema.Key.ToLower()}{des})" + Environment.NewLine;
+
+            tocContent += toc;
 
             var header = $"### [{schema.Key}](#{schema.Key}) {description}" + Environment.NewLine;
+
+            var tsGen = new TSModelGenerate(Schemas);
             var props = tsGen.GetTsProperties(schema.Value);
 
             var row = "|字段名|类型|必须|说明|" + Environment.NewLine;
@@ -36,14 +54,16 @@ public class DocGenerate : GenerateBase
             {
                 row += FormatProperty(p);
             });
-            content += header + row + Environment.NewLine;
+            itemContent += header + row + Environment.NewLine;
         }
-        return content;
+        docContent = tocContent + itemContent;
+        return docContent;
     }
+
+
 
     public static string FormatProperty(TsProperty property)
     {
-
         var comments = property.Comments?.Replace("*","")
             .Replace("/","")
             .Replace("\r\n",Environment.NewLine)

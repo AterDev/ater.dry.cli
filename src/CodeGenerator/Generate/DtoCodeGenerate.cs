@@ -99,7 +99,7 @@ public class DtoCodeGenerate : GenerateBase
             .Select(s => new PropertyInfo($"{KeyType}?", s.Name + "Id"))
             .ToList();
 
-        var filterFields = new string[] { "Id", "CreatedTime", "UpdatedTime" };
+        var filterFields = new string[] { "Id", "CreatedTime", "UpdatedTime", "IsDeleted", "Status" };
         var dto = new DtoInfo
         {
             Name = EntityInfo.Name + "Filter",
