@@ -269,6 +269,8 @@ public class RequestGenearte : GenerateBase
             dataString = ", data";
             paramsComments += $"   * @param data {RequestType}\n";
         }
+        // 添加extOptions
+        paramsString += ", extOptions?: ExtOptions";
         // 注释生成
         var comments = $@"  /**
    * {function.Description ?? Name}
@@ -292,10 +294,20 @@ public class RequestGenearte : GenerateBase
             if (!string.IsNullOrEmpty(queryParams))
                 Path += "?" + queryParams;
         }
+        // 上传文件时的名称
         var file = Params?.Where(p => p.Type!.Equals("FormData")).FirstOrDefault();
         if (file != null)
             dataString = $", {file.Name}";
 
+        // 默认添加ext
+        if (string.IsNullOrEmpty(dataString))
+        {
+            dataString = ", null, extOptions";
+        }
+        else
+        {
+            dataString += ", extOptions";
+        }
         var functionString = @$"{comments}
   {Name}({paramsString}): Promise<{ResponseType}> {{
     const url = `{Path}`;
