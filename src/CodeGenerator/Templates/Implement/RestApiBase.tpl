@@ -105,5 +105,37 @@ public class RestApiBase<TDataStore, TEntity, TAdd, TUpdate, TFilter, TItem>
     [HttpPut]
     [ApiExplorerSettings(IgnoreApi = true)]
     public virtual async Task<int> BatchUpdateAsync([FromBody] BatchUpdate<TUpdate> data)
-    => await _store.BatchUpdateAsync(data.Ids, data.UpdateDto);
+        => await _store.BatchUpdateAsync(data.Ids, data.UpdateDto);
+
+    /// <summary>
+    /// 404返回格式处理
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public override NotFoundObjectResult NotFound([ActionResultObjectValue] object? value)
+    {
+        var res = new {
+            Title = "访问的资源不存在",
+            Detail = value?.ToString(),
+            Status = 404,
+            TraceId = HttpContext.TraceIdentifier
+        };
+        return base.NotFound(res);
+    }
+
+    /// <summary>
+    /// 409返回格式处理
+    /// </summary>
+    /// <param name="error"></param>
+    /// <returns></returns>
+    public override ConflictObjectResult Conflict([ActionResultObjectValue] object? error)
+    {
+        var res = new {
+            Title = "重复的资源",
+            Detail = error?.ToString(),
+            Status = 409,
+            TraceId = HttpContext.TraceIdentifier
+        };
+        return base.Conflict(res);
+    }
 }
