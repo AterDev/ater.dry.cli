@@ -102,7 +102,7 @@ public class DtoCodeGenerate : GenerateBase
         var filterFields = new string[] { "Id", "CreatedTime", "UpdatedTime", "IsDeleted", "Status" };
         var dto = new DtoInfo
         {
-            Name = EntityInfo.Name + "Filter",
+            Name = EntityInfo.Name + "FilterDto",
             NamespaceName = EntityInfo.NamespaceName,
             Comment = FormatComment(EntityInfo.Comment,"查询筛选"),
             Tag = EntityInfo.Name,

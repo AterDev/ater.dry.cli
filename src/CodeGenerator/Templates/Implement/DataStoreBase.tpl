@@ -22,22 +22,46 @@ public class DataStoreBase<TContext, TEntity, TUpdate, TFilter, TItem> : IDataSt
         _query = _db.AsQueryable();
     }
 
-     /// <summary>
-    /// 获取一条数据
+    /// <summary>
+    /// 根据id查询数据
     /// </summary>
     /// <param name="id"></param>
+    /// <param name="noTracking">是否追踪</param>
     /// <returns></returns>
-    public virtual async Task<TEntity?> FindAsync(${IdType} id) => await _db.FindAsync(id);
+    public virtual async Task<TEntity?> FindAsync(Guid id, bool noTracking = false)
+    {
+        var query = _db.Where(s => s.Id == id).AsQueryable();
+        if (noTracking == true)
+            query = query.AsNoTracking();
+        return await query.FirstOrDefaultAsync();
+    }
+
+    /// <summary>
+    /// 根据条件查询一条数据
+    /// </summary>
+    /// <param name="expression"></param>
+    /// <returns></returns>
+    public virtual async Task<TEntity?> FindAsync(Expression<Func<TEntity, bool>> expression, bool noTracking = false)
+    {
+        var query = _db.Where(expression).AsQueryable();
+        if (noTracking == true)
+            query = query.AsNoTracking();
+        return await query.FirstOrDefaultAsync();
+    }
 
     /// <summary>
     /// 筛选数据
     /// </summary>
     /// <param name="filter"></param>
+    /// <param name="noTracking"></param>
     /// <returns></returns>
-    public virtual async Task<List<TItem>> FindAsync(TFilter filter)
+    public virtual async Task<List<TItem>> FindAsync(TFilter filter, bool noTracking = true)
     {
-        return await _query.OrderByDescending(d => d.${CreatedTimeName})
-            .Select<TEntity, TItem>()
+        var query = _query.OrderByDescending(d => d.CreatedTime);
+
+        if (noTracking == true) query = query.AsNoTracking();
+
+        return await query.Select<TEntity, TItem>()
             .Skip((filter.PageIndex - 1) * filter.PageSize)
             .Take(filter.PageSize)
             .ToListAsync();
@@ -54,6 +78,7 @@ public class DataStoreBase<TContext, TEntity, TUpdate, TFilter, TItem> : IDataSt
         if (filter.PageIndex < 1) filter.PageIndex = 1;
         if (filter.PageSize < 0) filter.PageSize = 0;
         var data = await _query.OrderByDescending(d => d.${CreatedTimeName})
+            .AsNoTracking()
             .Skip((filter.PageIndex - 1) * filter.PageSize)
             .Take(filter.PageSize)
             .Select<TEntity, TItem>()

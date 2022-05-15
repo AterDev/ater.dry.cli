@@ -270,7 +270,11 @@ public class RequestGenearte : GenerateBase
             paramsComments += $"   * @param data {RequestType}\n";
         }
         // 添加extOptions
-        paramsString += ", extOptions?: ExtOptions";
+        if (!string.IsNullOrWhiteSpace(paramsComments))
+        {
+            paramsString += ", ";
+        }
+        paramsString += "extOptions?: ExtOptions";
         // 注释生成
         var comments = $@"  /**
    * {function.Description ?? Name}
