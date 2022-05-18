@@ -5,9 +5,9 @@ public class ${EntityName}DataStore : DataStoreBase<${DbContextName}, ${EntityNa
     public ${EntityName}DataStore(${DbContextName} context, IUserContext userContext, ILogger<${EntityName}DataStore> logger) : base(context, userContext, logger)
     {
     }
-    public override async Task<List<${EntityName}ItemDto>> FindAsync(${EntityName}Filter filter)
+    public override async Task<List<${EntityName}ItemDto>> FindAsync(${EntityName}Filter filter, bool noTracking = true)
     {
-        return await base.FindAsync(filter);
+        return await base.FindAsync(filter, noTracking);
     }
 
     public override async Task<PageResult<${EntityName}ItemDto>> FindWithPageAsync(${EntityName}Filter filter)
