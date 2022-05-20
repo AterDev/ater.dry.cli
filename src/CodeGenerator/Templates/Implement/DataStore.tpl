@@ -1,16 +1,16 @@
 ﻿using ${ShareNamespace}.Models.${EntityName}Dtos;
 namespace ${Namespace}.DataStore;
-public class ${EntityName}DataStore : DataStoreBase<${DbContextName}, ${EntityName}, ${EntityName}UpdateDto, ${EntityName}Filter, ${EntityName}ItemDto>
+public class ${EntityName}DataStore : DataStoreBase<${DbContextName}, ${EntityName}, ${EntityName}UpdateDto, ${EntityName}FilterDto, ${EntityName}ItemDto>
 {
     public ${EntityName}DataStore(${DbContextName} context, IUserContext userContext, ILogger<${EntityName}DataStore> logger) : base(context, userContext, logger)
     {
     }
-    public override async Task<List<${EntityName}ItemDto>> FindAsync(${EntityName}Filter filter, bool noTracking = true)
+    public override async Task<List<${EntityName}ItemDto>> FindAsync(${EntityName}FilterDto filter, bool noTracking = true)
     {
         return await base.FindAsync(filter, noTracking);
     }
 
-    public override async Task<PageResult<${EntityName}ItemDto>> FindWithPageAsync(${EntityName}Filter filter)
+    public override async Task<PageResult<${EntityName}ItemDto>> FindWithPageAsync(${EntityName}FilterDto filter)
     {
         return await base.FindWithPageAsync(filter);
     }

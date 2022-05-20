@@ -2,7 +2,7 @@
 namespace ${Namespace}.Controllers;
 
 ${Comment}
-public class ${EntityName}Controller : RestApiBase<${EntityName}DataStore, ${EntityName}, ${EntityName}AddDto, ${EntityName}UpdateDto, ${EntityName}Filter, ${EntityName}ItemDto>
+public class ${EntityName}Controller : RestApiBase<${EntityName}DataStore, ${EntityName}, ${EntityName}AddDto, ${EntityName}UpdateDto, ${EntityName}FilterDto, ${EntityName}ItemDto>
 {
     public ${EntityName}Controller(IUserContext user, ILogger<${EntityName}Controller> logger, ${EntityName}DataStore store) : base(user, logger, store)
     {
@@ -13,7 +13,7 @@ ${AdditionAction}
     /// </summary>
     /// <param name="filter"></param>
     /// <returns></returns>
-    public override async Task<ActionResult<PageResult<${EntityName}ItemDto>>> FilterAsync(${EntityName}Filter filter)
+    public override async Task<ActionResult<PageResult<${EntityName}ItemDto>>> FilterAsync(${EntityName}FilterDto filter)
     {
         return await base.FilterAsync(filter);
     }
