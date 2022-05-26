@@ -87,9 +87,12 @@ public class StoreCommand : CommandBase
             var content = File.ReadAllText(filePath);
             globalUsings = globalUsings.Where(g => !content.Contains(g))
                 .ToList();
-            globalUsings.Insert(0, Environment.NewLine);
             if (globalUsings.Any())
+            {
+                globalUsings.Insert(0, Environment.NewLine);
                 File.AppendAllLines(filePath, globalUsings);
+
+            }
         }
         else
         {

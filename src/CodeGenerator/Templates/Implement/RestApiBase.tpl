@@ -1,4 +1,5 @@
 ﻿using Http.API.Interface;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 namespace ${Namespace}.Controllers;
 
 [ApiController]

@@ -1,4 +1,5 @@
-﻿namespace ${Namespace}.DataStore;
+﻿using System.Linq.Expressions;
+namespace ${Namespace}.DataStore;
 
 public class DataStoreBase<TContext, TEntity, TUpdate, TFilter, TItem> : IDataStore<TEntity, TUpdate, TFilter, TItem, ${IdType}>
     where TEntity : EntityBase
@@ -57,7 +58,7 @@ public class DataStoreBase<TContext, TEntity, TUpdate, TFilter, TItem> : IDataSt
     /// <returns></returns>
     public virtual async Task<List<TItem>> FindAsync(TFilter filter, bool noTracking = true)
     {
-        var query = _query.OrderByDescending(d => d.CreatedTime);
+        var query = _query.OrderByDescending(d => d.CreatedTime).AsQueryable();
 
         if (noTracking == true) query = query.AsNoTracking();
 
