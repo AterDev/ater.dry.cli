@@ -23,7 +23,6 @@ public class CommandBuilder
         AddConfig();
         AddDto();
         AddApi();
-        AddTSModel();
         AddNgService();
         AddRequest();
         AddView();
@@ -153,29 +152,7 @@ public class CommandBuilder
 
         RootCommand.Add(docCommand);
     }
-    /// <summary>
-    /// 添加typescript interface
-    /// </summary>
-    public void AddTSModel()
-    {
-        var executor = new CommandRunner();
-        var tsCommand = new Command("ts", "generate typescript interface using openApi json");
-        tsCommand.AddAlias("ts");
-        var url = new Argument<string>("OpenApi Url", "openApi json file url");
-        var  outputOption=new Option<string>(new[] { "--output", "-o" })
-        {
-            IsRequired = true,
-            Description = "ts models output path"
-        };
-        tsCommand.AddArgument(url);
-        tsCommand.AddOption(outputOption);
-        tsCommand.SetHandler(async (string url, string output) =>
-        {
-            await CommandRunner.GenerateTSAsync(url, output);
-        }, url, outputOption);
 
-        RootCommand.Add(tsCommand);
-    }
     public void AddNgService()
     {
         var executor = new CommandRunner();

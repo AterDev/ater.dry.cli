@@ -25,25 +25,6 @@ public class CommandRunner
             Console.WriteLine(exp.StackTrace);
         }
     }
-    public static async Task GenerateTSAsync(string url = "", string output = "")
-    {
-        try
-        {
-            Console.WriteLine("🔵 Generating ts models");
-            var cmd = new TSCommand(url, output);
-            await cmd.RunAsync();
-        }
-        catch (WebException webExp)
-        {
-            Console.WriteLine(webExp.Message);
-            Console.WriteLine("Check the url!");
-        }
-        catch (Exception exp)
-        {
-            Console.WriteLine(exp.Message);
-            Console.WriteLine(exp.StackTrace);
-        }
-    }
     /// <summary>
     /// angular 代码生成
     /// </summary>
@@ -75,7 +56,7 @@ public class CommandRunner
     /// <param name="url"></param>
     /// <param name="output"></param>
     /// <returns></returns>
-    public static async Task GenerateRequestAsync(string url = "", string output = "", RequestLibType type = RequestLibType.AngularHttpClient)
+    public static async Task GenerateRequestAsync(string url = "", string output = "", RequestLibType type = RequestLibType.NgHttp)
     {
         try
         {

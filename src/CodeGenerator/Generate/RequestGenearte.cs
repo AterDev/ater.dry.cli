@@ -12,11 +12,24 @@ public class RequestGenearte : GenerateBase
 {
     protected OpenApiPaths PathsPairs { get; }
     protected List<OpenApiTag> ApiTags { get; }
-    public RequestLibType LibType { get; set; } = RequestLibType.AngularHttpClient;
+    public IDictionary<string, OpenApiSchema> Schemas { get; set; }
+    /// <summary>
+    /// 模型类字典
+    /// </summary>
+    public Dictionary<string, string?> ModelDictionary { get; set; } = new();
+    public RequestLibType LibType { get; set; } = RequestLibType.NgHttp;
 
     public RequestGenearte(OpenApiDocument openApi)
     {
         PathsPairs = openApi.Paths;
+        // 构建模型名及对应Tag目录的字典
+        openApi.Components.Schemas.Keys.ToList()
+            .ForEach(k =>
+            {
+                ModelDictionary[k] = null;
+            });
+
+        Schemas = openApi.Components.Schemas;
         ApiTags = openApi.Tags.ToList();
     }
 
@@ -24,7 +37,7 @@ public class RequestGenearte : GenerateBase
     {
         var content = libType switch
         {
-            RequestLibType.AngularHttpClient => GetTplContent("angular.base.service.tpl"),
+            RequestLibType.NgHttp => GetTplContent("angular.base.service.tpl"),
             RequestLibType.Axios => GetTplContent("RequestService.axios.service.tpl"),
             _ => ""
         };
@@ -70,10 +83,51 @@ public class RequestGenearte : GenerateBase
                         Type = type
                     };
                 }).ToList();
+
+                // 标记Tag
+                if (ModelDictionary.ContainsKey(function.RequestType))
+                {
+                    ModelDictionary[function.RequestType] = function.Tag;
+                }
+                if (ModelDictionary.ContainsKey(function.ResponseType))
+                {
+                    ModelDictionary[function.ResponseType] = function.Tag;
+                }
+
+                ManualModelDicitonary(ModelDictionary);
                 functions.Add(function);
             }
         }
         return functions;
+    }
+
+    /// <summary>
+    /// 处理类型对应的目录名称
+    /// </summary>
+    /// <param name="modelDic"></param>
+    private void ManualModelDicitonary(Dictionary<string, string?> modelDic)
+    {
+        var suffix = new string[] { "UpdateDto", "FilterDto", "AddDto", "ItemDto"};
+        var prefix = new string[] { "PageResultOf", "BatchUpdateOf" };
+        // 特殊处理
+        foreach (var dic in modelDic.Where(m => m.Value == null).ToList())
+        {
+            var name = dic.Key;
+            if (prefix.Any(s => name.StartsWith(s))
+                        || suffix.Any(s => name.EndsWith(s)))
+            {
+                ModelDictionary[dic.Key] = ReplaceDtoSign(name).ToHyphen();
+            }
+        }
+    }
+    private static string ReplaceDtoSign(string name)
+    {
+        return name.Replace("ItemDto", "")
+            .Replace("BatchUpdateOf", "")
+            .Replace("PageResultOf", "")
+            .Replace("AddDto", "")
+            .Replace("UpdateDto", "")
+            .Replace("FilterDto", "");
     }
 
     /// <summary>
@@ -85,8 +139,7 @@ public class RequestGenearte : GenerateBase
     {
         var files = new List<GenFileInfo>();
         var functions = GetAllRequestFunctions();
-        // 生成文件
-        var ngServices = new List<RequestServiceFile>();
+
         // 先以tag分组
         var funcGroups = functions.GroupBy(f => f.Tag).ToList();
         foreach (var group in funcGroups)
@@ -105,7 +158,7 @@ public class RequestGenearte : GenerateBase
 
             var content = LibType switch
             {
-                RequestLibType.AngularHttpClient => serviceFile.ToNgService(),
+                RequestLibType.NgHttp => serviceFile.ToNgService(),
                 RequestLibType.Axios => ToAxiosRequestService(serviceFile),
                 _ => ""
             };
@@ -118,6 +171,19 @@ public class RequestGenearte : GenerateBase
             files.Add(file);
         }
         return files;
+    }
+
+    public List<GenFileInfo> GetTSInterfaces()
+    {
+        var tsGen = new TSModelGenerate(ModelDictionary);
+        var  files = new List<GenFileInfo>();
+        foreach (var item in Schemas)
+        {
+            files.Add(tsGen.GenerateInterfaceFile(item.Key, item.Value));
+        }
+
+        return files;
+
     }
 
     private static (string? type, string? refType) GetParamType(OpenApiSchema? schema)
@@ -215,7 +281,7 @@ public class RequestGenearte : GenerateBase
             var refTypes = GetRefTyeps(functions);
             refTypes.ForEach(t =>
             {
-                var dirName = TSModelGenerate.GetDirName(t, ApiTags);
+                var dirName = ModelDictionary.GetValueOrDefault(t);
                 importModels += $"import {{ {t} }} from '../models/{dirName}/{t.ToHyphen()}.model';{Environment.NewLine}";
             });
         }
@@ -358,6 +424,6 @@ public class RequestGenearte : GenerateBase
 }
 public enum RequestLibType
 {
-    AngularHttpClient,
+    NgHttp,
     Axios
 }

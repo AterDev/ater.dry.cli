@@ -7,7 +7,7 @@ public class RequestCommand : CommandBase
     public string DocUrl { get; set; } = default!;
     public OpenApiDocument? ApiDocument { get; set; }
 
-    public RequestLibType LibType { get; set; } = RequestLibType.AngularHttpClient;
+    public RequestLibType LibType { get; set; } = RequestLibType.NgHttp;
 
     public string OutputPath { get; set; }
 
@@ -17,8 +17,8 @@ public class RequestCommand : CommandBase
         OutputPath = Path.Combine(output);
         LibType = libType;
 
-        Instructions.Add($"  🔹 generate ts models.");
         Instructions.Add($"  🔹 generate request services.");
+        Instructions.Add($"  🔹 generate ts interfaces.");
     }
 
     public async Task RunAsync()
@@ -37,12 +37,8 @@ public class RequestCommand : CommandBase
             .Read(openApiContent, out _);
 
         Console.WriteLine(Instructions[0]);
-        await GenerateTsModelsAsync();
-        Console.WriteLine("😀 Typescript models generate completed!" + Environment.NewLine);
-
-        Console.WriteLine(Instructions[1]);
         await GenerateCommonFilesAsync();
-        await GenerateNgServicesAsync();
+        await GenerateRequestServicesAsync();
         Console.WriteLine("😀 Request services generate completed!" + Environment.NewLine);
     }
 
@@ -54,33 +50,26 @@ public class RequestCommand : CommandBase
         await GenerateFileAsync(dir, "base.service.ts", content, false);
     }
 
-    public async Task GenerateTsModelsAsync()
-    {
-        var schemas = ApiDocument!.Components.Schemas;
-        var ngGen = new TSModelGenerate(schemas);
-        if (ApiDocument!.Tags.Any())
-        {
-            ngGen.SetTags(ApiDocument!.Tags.ToList());
-        }
-        var models = ngGen.GetInterfaces();
-        foreach (var model in models)
-        {
-            var dir = Path.Combine(OutputPath, "models", model.Path);
-            await GenerateFileAsync(dir, model.Name, model.Content, true);
-        }
-    }
-    public async Task GenerateNgServicesAsync()
+    public async Task GenerateRequestServicesAsync()
     {
         var ngGen = new RequestGenearte(ApiDocument!)
         {
             LibType = LibType
         };
+        // 获取请求服务并生成文件
         var services = ngGen.GetServices(ApiDocument!.Tags);
         foreach (var service in services)
         {
             var dir = Path.Combine(OutputPath, "services");
             await GenerateFileAsync(dir, service.Name, service.Content, true);
         }
+        // 获取对应的ts模型类，生成文件
+        Console.WriteLine(Instructions[1]);
+        var models = ngGen.GetTSInterfaces();
+        foreach (var model in models)
+        {
+            var dir = Path.Combine(OutputPath, "models", model.Path.ToHyphen());
+            await GenerateFileAsync(dir, model.Name, model.Content);
+        }
     }
-
 }

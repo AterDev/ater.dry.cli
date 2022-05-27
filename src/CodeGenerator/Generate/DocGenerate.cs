@@ -45,8 +45,7 @@ public class DocGenerate : GenerateBase
 
             var header = $"### [{schema.Key}](#{schema.Key}) {description}" + Environment.NewLine;
 
-            var tsGen = new TSModelGenerate(Schemas);
-            var props = tsGen.GetTsProperties(schema.Value);
+            var props = TSModelGenerate.GetTsProperties(schema.Value);
 
             var row = "|字段名|类型|必须|说明|" + Environment.NewLine;
             row += "|-|-|-|-|" + Environment.NewLine;

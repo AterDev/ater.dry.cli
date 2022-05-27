@@ -13,7 +13,6 @@ public class NgCommand : CommandBase
     {
         DocUrl = docUrl;
         SharePath = Path.Combine(output, "src", "app", "share");
-        Instructions.Add($"  🔹 generate Ts models.");
         Instructions.Add($"  🔹 generate ng services.");
     }
 
@@ -34,10 +33,6 @@ public class NgCommand : CommandBase
             .Read(openApiContent, out _);
 
         Console.WriteLine(Instructions[0]);
-        await GenerateTsModelsAsync();
-        Console.WriteLine("😀 Ts models generate completed!" + Environment.NewLine);
-
-        Console.WriteLine(Instructions[1]);
         await GenerateCommonFilesAsync();
         await GenerateNgServicesAsync();
         Console.WriteLine("😀 Ng services generate completed!" + Environment.NewLine);
@@ -51,21 +46,7 @@ public class NgCommand : CommandBase
         await GenerateFileAsync(dir, "base.service.ts", content, false);
     }
 
-    public async Task GenerateTsModelsAsync()
-    {
-        var schemas = ApiDocument!.Components.Schemas;
-        var ngGen = new TSModelGenerate(schemas);
-        if (ApiDocument!.Tags.Any())
-        {
-            ngGen.SetTags(ApiDocument!.Tags.ToList());
-        }
-        var models = ngGen.GetInterfaces();
-        foreach (var model in models)
-        {
-            var dir = Path.Combine(SharePath, "models", model.Path);
-            await GenerateFileAsync(dir, model.Name, model.Content, true);
-        }
-    }
+
     public async Task GenerateNgServicesAsync()
     {
         var ngGen = new NgServiceGenerate(ApiDocument!.Paths);

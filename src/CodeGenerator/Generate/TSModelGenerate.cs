@@ -8,113 +8,41 @@ namespace CodeGenerator.Generate;
 /// </summary>
 public class TSModelGenerate : GenerateBase
 {
-    public IDictionary<string, OpenApiSchema> Schemas { get; set; }
-    public List<OpenApiTag>? ApiTags { get; set; }
-    public TSModelGenerate(IDictionary<string, OpenApiSchema> schemas)
+    public Dictionary<string, string?> ModelDictionary { get; set; }
+    public TSModelGenerate(Dictionary<string, string?> modelDictionary)
     {
-        Schemas = schemas;
-    }
-
-    public void SetTags(List<OpenApiTag> apiTags)
-    {
-        ApiTags = apiTags;
-    }
-
-
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <returns></returns>
-    public List<GenFileInfo> GetInterfaces()
-    {
-        // 生成文件的目录名称
-        var files = new List<GenFileInfo>();
-        foreach (var schema in Schemas)
-        {
-            // 文件名及内容
-            var fileName = schema.Key.ToHyphen() + ".model.ts";
-            string tsContent;
-            string? path;
-            if (schema.Value.Enum.Count > 0)
-            {
-                tsContent = ToEnumString(schema.Value, schema.Key);
-                path = "enum";
-            }
-            else
-            {
-                tsContent = ToInterfaceString(schema.Value, schema.Key);
-                path = GetDirName(schema.Key);
-            }
-            var file = new GenFileInfo(tsContent)
-            {
-                Name = fileName,
-                Path = path
-            };
-            files.Add(file);
-        }
-        return files;
+        ModelDictionary = modelDictionary;
     }
 
     /// <summary>
-    /// 获取对应models应该存储的目录名称,不含enum类型
+    /// 生成ts interface
     /// </summary>
-    /// <param name="name"></param>
+    /// <param name="dir">目录 ,apiTag</param>
+    /// <param name="typeRefName">ref对应的名称</param>
     /// <returns></returns>
-    private string GetDirName(string name = "")
+    public GenFileInfo GenerateInterfaceFile(string schemaKey, OpenApiSchema schema)
     {
-        if (name.ToLower().StartsWith("base")
-         || name.ToLower().EndsWith("base"))
+        // 文件名及内容
+        var fileName = schemaKey.ToHyphen() + ".model.ts";
+        string tsContent;
+        ModelDictionary.TryGetValue(schemaKey, out var path);
+        if (schema.Enum.Count > 0)
         {
-            return "";
+            tsContent = ToEnumString(schema, schemaKey);
+            path = "enum";
         }
-        var suffix = new string[] { "UpdateDto", "Filter", "AddDto", "FilterDto"};
-        var prefix = new string[] { "PageResultOf", "BatchUpdateOf" };
-        if (prefix.Any(s => name.StartsWith(s))
-                    || suffix.Any(s => name.EndsWith(s)))
+        else
         {
-            return ReplaceDtoSign(name).ToHyphen();
+            tsContent = ToInterfaceString(schema, schemaKey);
         }
-        if (ApiTags != null)
+        var file = new GenFileInfo(tsContent)
         {
-            var tag = ApiTags.Where(tag => name.StartsWith(tag.Name)).FirstOrDefault();
-            if (tag != null)
-                return tag.Name.ToHyphen();
-        }
-        return name.ToHyphen();
-    }
+            Name = fileName,
+            Path = path??"",
+            Content = tsContent
 
-    public static string GetDirName(string name, List<OpenApiTag> apiTags)
-    {
-        if (name.ToLower().StartsWith("base")
-             || name.ToLower().EndsWith("base"))
-        {
-            return "";
-        }
-        var suffix = new string[] { "UpdateDto", "Filter", "AddDto", "FilterDto"};
-        var prefix = new string[] { "PageResultOf", "BatchUpdateOf" };
-        if (prefix.Any(s => name.StartsWith(s))
-                    || suffix.Any(s => name.EndsWith(s)))
-        {
-            return ReplaceDtoSign(name).ToHyphen();
-        }
-        if (apiTags != null)
-        {
-            var tag = apiTags.Where(tag => name.StartsWith(tag.Name)).FirstOrDefault();
-            if (tag != null)
-                return tag.Name.ToHyphen();
-        }
-        return name.ToHyphen();
-    }
-
-    private static string ReplaceDtoSign(string name)
-    {
-        return name.Replace("ItemDto", "")
-            .Replace("BatchUpdateOf", "")
-            .Replace("PageResultOf", "")
-            .Replace("AddDto", "")
-            .Replace("UpdateDto", "")
-            .Replace("Filter", "");
+        };
+        return file;
     }
 
     /// <summary>
@@ -131,9 +59,10 @@ public class TSModelGenerate : GenerateBase
         var propertyString = "";
         var extendString = "";
         var importString = "";// 需要导入的关联接口
-
         var relatePath = "../";
-        if (string.IsNullOrEmpty(GetDirName(name)))
+
+        // 不在tags里的默认的根目录
+        if (ModelDictionary.ContainsKey(name) && ModelDictionary[name] == null)
         {
             relatePath = "./";
         }
@@ -146,8 +75,8 @@ public class TSModelGenerate : GenerateBase
                 // 如果是自引用，不需要导入
                 if (extend != name)
                 {
-                    var dirName = GetDirName(extend);
-                    dirName = dirName.NotNull() ? dirName + "/" : "";
+                    ModelDictionary.TryGetValue(extend, out var dirName);
+                    dirName = dirName.NotNull() ? dirName!.ToHyphen() + "/" : "";
                     importString += @$"import {{ {extend} }} from '{relatePath}{dirName}{extend.ToHyphen()}.model';"
                         + Environment.NewLine;
                 }
@@ -175,8 +104,8 @@ public class TSModelGenerate : GenerateBase
             // 引用的导入，自引用不需要导入
             if (ip.Reference != name)
             {
-                var dirName = GetDirName(ip.Reference);
-                dirName = dirName.NotNull() ? dirName + "/" : "";
+                ModelDictionary.TryGetValue(name, out var dirName);
+                dirName = dirName.NotNull() ? dirName!.ToHyphen() + "/" : "";
                 if (ip.IsEnum) dirName = "enum/";
                 importString += @$"import {{ {ip.Reference} }} from '{relatePath}{dirName}{ip.Reference.ToHyphen()}.model';"
                 + Environment.NewLine;
@@ -189,6 +118,7 @@ public class TSModelGenerate : GenerateBase
 ";
         return res;
     }
+
 
     /// <summary>
     /// 生成enum
@@ -230,7 +160,7 @@ public class TSModelGenerate : GenerateBase
     /// </summary>
     /// <param name="schema"></param>
     /// <returns></returns>
-    public List<TsProperty> GetTsProperties(OpenApiSchema schema)
+    public static List<TsProperty> GetTsProperties(OpenApiSchema schema)
     {
         var tsProperties = new List<TsProperty>();
         // 继承的需要递归 从AllOf中获取属性
@@ -290,7 +220,7 @@ public class TSModelGenerate : GenerateBase
     /// </summary>
     /// <param name="prop"></param>
     /// <returns></returns>
-    public string GetTsType(OpenApiSchema prop)
+    public static string GetTsType(OpenApiSchema prop)
     {
         var type = "string";
         // 常规类型
