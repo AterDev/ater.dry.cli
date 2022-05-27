@@ -69,7 +69,7 @@ public class RequestCommand : CommandBase
         foreach (var model in models)
         {
             var dir = Path.Combine(OutputPath, "models", model.Path.ToHyphen());
-            await GenerateFileAsync(dir, model.Name, model.Content);
+            await GenerateFileAsync(dir, model.Name, model.Content, true);
         }
     }
 }

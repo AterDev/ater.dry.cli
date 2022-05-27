@@ -104,7 +104,7 @@ public class TSModelGenerate : GenerateBase
             // 引用的导入，自引用不需要导入
             if (ip.Reference != name)
             {
-                ModelDictionary.TryGetValue(name, out var dirName);
+                ModelDictionary.TryGetValue(ip.Reference, out var dirName);
                 dirName = dirName.NotNull() ? dirName!.ToHyphen() + "/" : "";
                 if (ip.IsEnum) dirName = "enum/";
                 importString += @$"import {{ {ip.Reference} }} from '{relatePath}{dirName}{ip.Reference.ToHyphen()}.model';"
