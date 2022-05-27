@@ -204,6 +204,7 @@ public class CommandBuilder
         viewCommand.AddAlias("view");
         var entityArgument = new Argument<string>("entity path","The entity file path, like path/xxx.cs");
         var dtoOption = new Option<string>(new[] { "--dto", "-d" },"dto project directory，default ./Share");
+        dtoOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.DtoPath));
         var outputOption= new Option<string>(new[] { "--output", "-o" },"angular project root path")
         {
             IsRequired = true,
