@@ -8,10 +8,10 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class BaseService {
-  baseUrl: string | null;
-  isMobile = false;
+  private baseUrl: string | null;
+  private isMobile = false;
   constructor(
-    public http: HttpClient,
+    private http: HttpClient,
     // private oidcSecurityService: OidcSecurityService
   ) {
     this.isMobile = this.isMoblie();
