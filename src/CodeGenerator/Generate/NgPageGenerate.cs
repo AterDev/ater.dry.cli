@@ -1,5 +1,4 @@
-﻿using Droplet.CommandLine.Commands;
-using PropertyInfo = CodeGenerator.Models.PropertyInfo;
+﻿using PropertyInfo = CodeGenerator.Models.PropertyInfo;
 
 namespace CodeGenerator.Generate;
 
@@ -150,10 +149,13 @@ public class NgPageGenerate : GenerateBase
                     .FirstOrDefault();
                 var pipe = "";
                 if (type != null)
+                {
                     if (type.Equals("DateTime") || type.Equals("DateTimeOffset"))
                     {
                         pipe = s.EndsWith("Date") ? " | date: 'yyyy-MM-dd'" : " | date: 'yyy-MM-dd HH:mm:ss'";
                     }
+                }
+
                 return $@"  <ng-container matColumnDef=""{s.ToCamelCase()}"">
     <th mat-header-cell *matHeaderCellDef>{s}</th>
     <td mat-cell *matCellDef=""let element"">

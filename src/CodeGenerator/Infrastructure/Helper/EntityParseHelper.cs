@@ -326,12 +326,10 @@ public class EntityParseHelper
     {
         var theSyntax = syntax.Where(s => s.Name.ToString().ToLower().Equals(attributeName.ToLower()))
             .FirstOrDefault();
-        if (theSyntax != null)
-        {
-            return theSyntax.ArgumentList?.Arguments ??
-                new SeparatedSyntaxList<AttributeArgumentSyntax>();
-        }
-        return default;
+        return theSyntax != null
+            ? theSyntax.ArgumentList?.Arguments ??
+                new SeparatedSyntaxList<AttributeArgumentSyntax>()
+            : (IEnumerable<AttributeArgumentSyntax>?)default;
     }
     /// <summary>
     /// 获取父类名称

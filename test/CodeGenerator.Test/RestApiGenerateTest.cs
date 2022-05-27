@@ -1,5 +1,4 @@
 ﻿using CodeGenerator.Generate;
-using CodeGenerator.Test.Hepler;
 
 namespace CodeGenerator.Test;
 

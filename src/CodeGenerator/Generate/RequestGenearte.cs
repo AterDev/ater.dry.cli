@@ -1,8 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Extensions;
+﻿using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
-using SharpYaml.Tokens;
-using System.Xml.Linq;
 
 namespace CodeGenerator.Generate;
 /// <summary>
@@ -326,7 +323,9 @@ public class RequestGenearte : GenerateBase
         if (!string.IsNullOrEmpty(RequestType))
         {
             if (Params?.Count > 0)
+            {
                 paramsString += $", data: {RequestType}";
+            }
             else
             {
                 paramsString = $"data: {RequestType}";
@@ -349,11 +348,13 @@ public class RequestGenearte : GenerateBase
         // 构造请求url
         var paths = Params?.Where(p => p.InPath).Select(p => p.Name)?.ToList();
         if (paths != null)
+        {
             paths.ForEach(p =>
             {
                 var origin = $"{{{p}}}";
                 Path = Path.Replace(origin, "$" + origin);
             });
+        }
         // 需要拼接的参数,特殊处理文件上传
         var reqParams = Params?.Where(p => !p.InPath && p.Type != "FormData")
             .Select(p => p.Name)?.ToList();

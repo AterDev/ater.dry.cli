@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using PropertyInfo = CodeGenerator.Models.PropertyInfo;
 
 namespace CodeGenerator.Generate;
@@ -21,7 +20,7 @@ public class DtoCodeGenerate : GenerateBase
             var entityHelper = new EntityParseHelper(entityPath);
             EntityInfo = entityHelper.GetEntity();
             AssemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(dtoPath));
-            KeyType = (EntityInfo.KeyType) switch
+            KeyType = EntityInfo.KeyType switch
             {
                 EntityKeyType.Int => "Int",
                 EntityKeyType.String => "String",

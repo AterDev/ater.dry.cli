@@ -1,6 +1,5 @@
 ﻿using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
-using System.Xml.Linq;
 
 namespace CodeGenerator.Generate;
 /// <summary>
@@ -203,7 +202,9 @@ public class TSModelGenerate : GenerateBase
                     property.Reference = prop.Value.Reference.Id;
                 if (prop.Value.Enum.Any() ||
                     (refType != null && refType.Enum.Any()))
+                {
                     property.IsEnum = true;
+                }
 
                 // 可空处理
                 tsProperties.Add(property);

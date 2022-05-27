@@ -1,7 +1,6 @@
 ﻿using CodeGenerator.Generate;
 using CodeGenerator.Infrastructure.Helper;
 using CodeGenerator.Test.Entity;
-using CodeGenerator.Test.Hepler;
 using System.IO;
 using System.Linq;
 

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CodeGenerator.Models;
+﻿namespace CodeGenerator.Models;
 /// <summary>
 /// 服务文件
 /// </summary>
@@ -127,7 +121,9 @@ public class RequestServiceFunction
         if (!string.IsNullOrEmpty(RequestType))
         {
             if (Params?.Count > 0)
+            {
                 paramsString += $", data: {RequestType}";
+            }
             else
             {
                 paramsString = $"data: {RequestType}";
@@ -144,11 +140,13 @@ public class RequestServiceFunction
         // 构造请求url
         var paths = Params?.Where(p => p.InPath).Select(p => p.Name)?.ToList();
         if (paths != null)
+        {
             paths.ForEach(p =>
             {
                 var origin = $"{{{p}}}";
                 Path = Path.Replace(origin, "$" + origin);
             });
+        }
         // 需要拼接的参数,特殊处理文件上传
         var reqParams = Params?.Where(p => !p.InPath && p.Type != "FormData")
             .Select(p => p.Name)?.ToList();

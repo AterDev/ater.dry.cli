@@ -13,15 +13,7 @@ public class AssemblyHelper
     public static FileInfo? FindProjectFile(DirectoryInfo dir, DirectoryInfo? root = null)
     {
         var file = dir.GetFiles("*.csproj").FirstOrDefault();
-        if (root == null)
-        {
-            return file;
-        }
-        if (file == null && dir != root)
-        {
-            return FindProjectFile(dir.Parent!, root);
-        }
-        return file;
+        return root == null ? file : file == null && dir != root ? FindProjectFile(dir.Parent!, root) : file;
     }
 
 
@@ -35,11 +27,7 @@ public class AssemblyHelper
     {
         var dir = new DirectoryInfo(Path.GetDirectoryName(projectFilePath));
         var files = Directory.GetFiles(dir.FullName, searchFileName, SearchOption.AllDirectories);
-        if (files.Any())
-        {
-            return files[0];
-        }
-        return default;
+        return files.Any() ? files[0] : default;
     }
 
     /// <summary>
@@ -69,8 +57,7 @@ public class AssemblyHelper
     public static string? GetAssemblyName(DirectoryInfo dir)
     {
         var file = FindProjectFile(dir);
-        if (file == null) return null;
-        return GetAssemblyName(file);
+        return file == null ? null : GetAssemblyName(file);
     }
     /// <summary>
     /// 获取命名空间名称， 不支持MSBuildProjectName表达式

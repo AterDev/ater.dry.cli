@@ -1,6 +1,5 @@
 ﻿using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
-using Path = System.IO.Path;
 
 namespace CodeGenerator.Generate;
 

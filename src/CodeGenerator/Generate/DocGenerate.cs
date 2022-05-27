@@ -37,7 +37,7 @@ public class DocGenerate : GenerateBase
                 .Replace(" = ", "=")
                 .Replace(",", "");
 
-            if (!string.IsNullOrEmpty(description)) description = $"({description})".Replace(" = ","=");
+            if (!string.IsNullOrEmpty(description)) description = $"({description})".Replace(" = ", "=");
 
             var toc = $"\t- [{schema.Key} {description}](#{schema.Key.ToLower()}{des})" + Environment.NewLine;
 

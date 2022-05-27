@@ -1,6 +1,6 @@
 ﻿using PropertyInfo = CodeGenerator.Models.PropertyInfo;
 
-namespace Droplet.CommandLine.Commands;
+namespace CodeGenerator.Generate;
 
 /// <summary>
 /// 表单生成
@@ -22,10 +22,13 @@ public class NgFormGenerate : GenerateBase
     {
         var formControls = "";
         if (propertyInfos != null)
+        {
             foreach (var input in propertyInfos)
             {
                 formControls += input.ToNgInputControl();
             }
+        }
+
         var tplContent = GetTplContent("angular.add.add.component.html.tpl");
         tplContent = tplContent.Replace("{$FormControls}", formControls);
         return tplContent;
@@ -35,10 +38,13 @@ public class NgFormGenerate : GenerateBase
     {
         var formControls = "";
         if (propertyInfos != null)
+        {
             foreach (var input in propertyInfos)
             {
                 formControls += input.ToNgInputControl();
             }
+        }
+
         var tplContent = GetTplContent("angular.edit.edit.component.html.tpl");
         tplContent = tplContent.Replace("{$FormControls}", formControls);
         return tplContent;
