@@ -52,7 +52,7 @@ public class RestApiGenerate : GenerateBase
     public string GetRestApiInterface()
     {
         var content = GetTplContent("Interface.IRestApiBase.tpl");
-        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace);
+        content = content.Replace(TplConst.NAMESPACE, ApiNamespace);
         return content;
     }
 
@@ -99,8 +99,9 @@ public class RestApiGenerate : GenerateBase
         var entityName = Path.GetFileNameWithoutExtension(EntityPath);
         var tplContent = GetTplContent("Implement.RestApi.tpl");
 
-        var actionContent = GetAddApiContent();
-        actionContent += GetUpdateApiContent();
+        //var actionContent = GetAddApiContent();
+        //actionContent += GetUpdateApiContent();
+        var actionContent = "";
 
         tplContent = tplContent.Replace(TplConst.NAMESPACE, ApiNamespace)
             .Replace(TplConst.SHARE_NAMESPACE, ShareNamespace)
@@ -112,7 +113,7 @@ public class RestApiGenerate : GenerateBase
     }
 
     /// <summary>
-    /// 
+    /// 生成关联添加
     /// </summary>
     /// <returns></returns>
     public string? GetAddApiContent()
@@ -148,7 +149,7 @@ public class RestApiGenerate : GenerateBase
         return content;
     }
     // TODO:update api 
-    public string? GetUpdateApiContent()
+    public static string? GetUpdateApiContent()
     {
         return default;
     }
@@ -188,9 +189,9 @@ public class RestApiGenerate : GenerateBase
         if (classes != null)
         {
             // 获取所有继承 dbcontext的上下文
-            var allDbContexts = cpl.GetClassNameByBaseType(classes, "IdentityDbContext");
+            var allDbContexts = CompilationHelper.GetClassNameByBaseType(classes, "IdentityDbContext");
             if (!allDbContexts.Any())
-                allDbContexts = cpl.GetClassNameByBaseType(classes, "DbContext");
+                allDbContexts = CompilationHelper.GetClassNameByBaseType(classes, "DbContext");
 
             if (allDbContexts.Any())
             {

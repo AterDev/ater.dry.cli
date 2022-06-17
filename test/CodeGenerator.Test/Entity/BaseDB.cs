@@ -1,8 +1,6 @@
-﻿
+﻿using System.ComponentModel.DataAnnotations;
 
-using System.ComponentModel.DataAnnotations;
-
-namespace CodeGenerator.Test.Base;
+namespace CodeGenerator.Test.Entity;
 
 /// <summary>
 /// 数据加基础字段模型

@@ -1,4 +1,5 @@
-﻿using PropertyInfo = CodeGenerator.Models.PropertyInfo;
+﻿using System.Text.RegularExpressions;
+using PropertyInfo = CodeGenerator.Models.PropertyInfo;
 
 namespace CodeGenerator.Generate;
 /// <summary>
@@ -19,7 +20,7 @@ public class DtoCodeGenerate : GenerateBase
             var entityHelper = new EntityParseHelper(entityPath);
             EntityInfo = entityHelper.GetEntity();
             AssemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(dtoPath));
-            KeyType = (EntityInfo.KeyType) switch
+            KeyType = EntityInfo.KeyType switch
             {
                 EntityKeyType.Int => "Int",
                 EntityKeyType.String => "String",
@@ -32,6 +33,26 @@ public class DtoCodeGenerate : GenerateBase
         }
     }
 
+    /// <summary>
+    /// 注释内容替换
+    /// </summary>
+    /// <param name="comment"></param>
+    /// <param name="extendString"></param>
+    /// <returns></returns>
+    private string FormatComment(string? comment, string extendString = "")
+    {
+        if (comment == null) return "";
+        var regex = new Regex(@"/// <summary>\r\n/// (?<comment>.*)\r\n/// </summary>");
+        var match = regex.Match(comment);
+        if (match.Success)
+        {
+            var summary = match.Groups["comment"].Value;
+            var newComment = summary.Replace("表", "") + extendString;
+            comment = comment.Replace(summary, newComment);
+        }
+        return comment;
+    }
+
     public string? GetShortDto()
     {
         if (EntityInfo == null) return default;
@@ -39,7 +60,7 @@ public class DtoCodeGenerate : GenerateBase
         {
             Name = EntityInfo.Name + "ShortDto",
             NamespaceName = EntityInfo.NamespaceName,
-            Comment = EntityInfo.Comment,
+            Comment = FormatComment(EntityInfo.Comment,"概要"),
             Tag = EntityInfo.Name,
             Properties = EntityInfo.PropertyInfos?
                 .Where(p => p.Name != "Content"
@@ -57,7 +78,7 @@ public class DtoCodeGenerate : GenerateBase
         {
             Name = EntityInfo.Name + "ItemDto",
             NamespaceName = EntityInfo.NamespaceName,
-            Comment = EntityInfo.Comment,
+            Comment = FormatComment(EntityInfo.Comment, "列表元素"),
             Tag = EntityInfo.Name,
             Properties = EntityInfo.PropertyInfos?
                 .Where(p => !p.IsList
@@ -77,12 +98,12 @@ public class DtoCodeGenerate : GenerateBase
             .Select(s => new PropertyInfo($"{KeyType}?", s.Name + "Id"))
             .ToList();
 
-        var filterFields = new string[] { "Id", "CreatedTime", "UpdatedTime" };
+        var filterFields = new string[] { "Id", "CreatedTime", "UpdatedTime", "IsDeleted", "Status" };
         var dto = new DtoInfo
         {
-            Name = EntityInfo.Name + "Filter",
+            Name = EntityInfo.Name + "FilterDto",
             NamespaceName = EntityInfo.NamespaceName,
-            Comment = EntityInfo.Comment,
+            Comment = FormatComment(EntityInfo.Comment,"查询筛选"),
             Tag = EntityInfo.Name,
             BaseType = "FilterBase",
         };
@@ -119,11 +140,12 @@ public class DtoCodeGenerate : GenerateBase
         {
             Name = EntityInfo.Name + "AddDto",
             NamespaceName = EntityInfo.NamespaceName,
-            Comment = EntityInfo.Comment,
+            Comment = FormatComment(EntityInfo.Comment,"添加时请求结构"),
             Tag = EntityInfo.Name,
             Properties = EntityInfo.PropertyInfos?.Where(p => p.Name != "Id"
                 && p.Name != "CreatedTime"
                 && p.Name != "UpdatedTime"
+                && p.Name != "IsDeleted"
                 && !p.IsList
                 && !p.IsNavigation)
             .ToList()?? new List<PropertyInfo>()
@@ -153,7 +175,7 @@ public class DtoCodeGenerate : GenerateBase
         {
             Name = EntityInfo.Name + "UpdateDto",
             NamespaceName = EntityInfo.NamespaceName,
-            Comment = EntityInfo.Comment,
+            Comment = FormatComment(EntityInfo.Comment,"更新时请求结构"),
             Tag = EntityInfo.Name,
 
         };
@@ -185,7 +207,6 @@ public class DtoCodeGenerate : GenerateBase
     {
         return @$"global using System.ComponentModel.DataAnnotations;
 global using {AssemblyName}.Models;
-global using {EntityInfo!.AssemblyName}.Identity;
 global using {EntityInfo!.AssemblyName}.Models;";
     }
     public string GetFilterBase()
@@ -231,7 +252,7 @@ global using {EntityInfo!.AssemblyName}.Models;";
     /// 生成AutoMapperProfile
     /// </summary>
     /// <param name="entityName"></param>
-    protected void GenerateAutoMapperProfile(string entityName)
+    protected static void GenerateAutoMapperProfile(string entityName)
     {
         var code =
     @$"            CreateMap<{entityName}AddDto, {entityName}>();

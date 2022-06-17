@@ -67,7 +67,7 @@ csharp_preserve_single_line_statements = true
 #Style - Code block preferences
 
 #prefer curly braces even for one line of code
-csharp_prefer_braces = when_multiline:suggestion
+csharp_prefer_braces = when_multiline:silent
 
 #Style - expression bodied member options
 
@@ -128,3 +128,6 @@ dotnet_style_qualification_for_property = false:suggestion
 # CA2211: 非常量字段应当不可见
 dotnet_diagnostic.CA2211.severity = silent
 csharp_space_around_declaration_statements = ignore
+
+# IDE0011: 添加大括号
+dotnet_diagnostic.IDE0011.severity = silent

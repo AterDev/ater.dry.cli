@@ -44,7 +44,7 @@ export class EditComponent implements OnInit {
     this.getDetail();
     [@Init]
     // TODO:获取其他相关数据后设置加载状态
-    this.isLoading = false;
+    // this.isLoading = false;
   }
   [@Methods]
   getDetail(): void {

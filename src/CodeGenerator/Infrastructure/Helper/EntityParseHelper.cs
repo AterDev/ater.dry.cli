@@ -1,5 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Text.RegularExpressions;
 using PropertyInfo = CodeGenerator.Models.PropertyInfo;
 
@@ -99,7 +98,7 @@ public class EntityParseHelper
         };
     }
 
-    public string GetClassComment(ClassDeclarationSyntax? syntax)
+    public static string GetClassComment(ClassDeclarationSyntax? syntax)
     {
         if (syntax == null) return string.Empty;
         var trivias = syntax.GetLeadingTrivia();
@@ -144,7 +143,6 @@ public class EntityParseHelper
             propertyInfo.Comments = GetComment(prop);
             // attributes
             ParsePropertyAttributes(prop, propertyInfo);
-
             properties.Add(propertyInfo);
         }
 
@@ -160,11 +158,13 @@ public class EntityParseHelper
     /// 获取属性注释内容
     /// </summary>
     /// <returns></returns>
-    protected string GetComment(PropertyDeclarationSyntax syntax)
+    protected static string GetComment(PropertyDeclarationSyntax syntax)
     {
         var trivia = syntax.GetLeadingTrivia();
         return trivia.ToString().TrimEnd(' ');
     }
+
+
     /// <summary>
     /// 获取属性特性文本内容
     /// </summary>
@@ -322,16 +322,14 @@ public class EntityParseHelper
     /// <param name="syntax"></param>
     /// <param name="attributeName"></param>
     /// <returns></returns>
-    protected IEnumerable<AttributeArgumentSyntax>? GetAttributeArguments(List<AttributeSyntax> syntax, string attributeName)
+    protected static IEnumerable<AttributeArgumentSyntax>? GetAttributeArguments(List<AttributeSyntax> syntax, string attributeName)
     {
         var theSyntax = syntax.Where(s => s.Name.ToString().ToLower().Equals(attributeName.ToLower()))
             .FirstOrDefault();
-        if (theSyntax != null)
-        {
-            return theSyntax.ArgumentList?.Arguments ??
-                new SeparatedSyntaxList<AttributeArgumentSyntax>();
-        }
-        return default;
+        return theSyntax != null
+            ? theSyntax.ArgumentList?.Arguments ??
+                new SeparatedSyntaxList<AttributeArgumentSyntax>()
+            : (IEnumerable<AttributeArgumentSyntax>?)default;
     }
     /// <summary>
     /// 获取父类名称

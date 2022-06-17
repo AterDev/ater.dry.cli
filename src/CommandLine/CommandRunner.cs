@@ -6,13 +6,32 @@ public class CommandRunner
     {
     }
 
+    public static async Task GenerateDocAsync(string url = "", string output = "")
+    {
+        try
+        {
+            Console.WriteLine("🔵 Generating markdown doc");
+            var cmd = new DocCommand(url, output);
+            await cmd.RunAsync();
+        }
+        catch (WebException webExp)
+        {
+            Console.WriteLine(webExp.Message);
+            Console.WriteLine("Check the url!");
+        }
+        catch (Exception exp)
+        {
+            Console.WriteLine(exp.Message);
+            Console.WriteLine(exp.StackTrace);
+        }
+    }
     /// <summary>
     /// angular 代码生成
     /// </summary>
     /// <param name="url">swagger json地址</param>
     /// <param name="output">ng前端根目录</param>
     /// <returns></returns>
-    public async Task GenerateNgAsync(string url = "", string output = "")
+    public static async Task GenerateNgAsync(string url = "", string output = "")
     {
         try
         {
@@ -31,12 +50,37 @@ public class CommandRunner
             Console.WriteLine(exp.StackTrace);
         }
     }
+    /// <summary>
+    /// 请求服务生成
+    /// </summary>
+    /// <param name="url"></param>
+    /// <param name="output"></param>
+    /// <returns></returns>
+    public static async Task GenerateRequestAsync(string url = "", string output = "", RequestLibType type = RequestLibType.NgHttp)
+    {
+        try
+        {
+            Console.WriteLine("🔵 Generating ts models and request services...");
+            var cmd = new RequestCommand(url, output, type);
+            await cmd.RunAsync();
+        }
+        catch (WebException webExp)
+        {
+            Console.WriteLine(webExp.Message);
+            Console.WriteLine("Ensure you had input correct url!");
+        }
+        catch (Exception exp)
+        {
+            Console.WriteLine(exp.Message);
+            Console.WriteLine(exp.StackTrace);
+        }
+    }
 
     /// <summary>
     /// dto生成或更新
     /// </summary>
     /// <param name="entityPath"></param>
-    public async Task GenerateDtoAsync(string entityPath, string output, bool force)
+    public static async Task GenerateDtoAsync(string entityPath, string output, bool force)
     {
         Console.WriteLine("🔵 Generating Dtos...");
         var cmd = new DtoCommand(entityPath, output);
@@ -50,7 +94,7 @@ public class CommandRunner
     /// <param name="servicePath">service目录</param>
     /// <param name="apiPath">网站目录</param>
     /// <param name="dbContext"></param>
-    public async Task GenerateApi(string path, string dtoPath = "",
+    public static async Task GenerateApi(string path, string dtoPath = "",
             string servicePath = "", string apiPath = "", string dbContext = "")
     {
         Console.WriteLine("🔵 Generate dtos");
@@ -71,7 +115,7 @@ public class CommandRunner
     /// <param name="dtoPath">service根目录</param>
     /// <param name="name">实体类名称</param>
     /// <param name="output">前端根目录</param>
-    public async Task GenerateNgPagesAsync(string name, string dtoPath, string output = "")
+    public static async Task GenerateNgPagesAsync(string name, string dtoPath, string output = "")
     {
         Console.WriteLine("🔵 Generate view");
         var viewCmd = new ViewCommand(name, dtoPath, output);

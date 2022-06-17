@@ -1,6 +1,4 @@
-﻿using Droplet.CommandLine.Commands;
-using System.Net.Http;
-using PropertyInfo = CodeGenerator.Models.PropertyInfo;
+﻿using PropertyInfo = CodeGenerator.Models.PropertyInfo;
 
 namespace CodeGenerator.Generate;
 
@@ -67,7 +65,7 @@ public class NgPageGenerate : GenerateBase
 
         // 生成html
         var formGen = new NgFormGenerate();
-        var htmlContent = formGen.GenerateAddForm(props);
+        var htmlContent = NgFormGenerate.GenerateAddForm(props);
         var cssContent = GetTplContent("angular.add.add.component.css.tpl");
 
         var component = new NgComponentInfo("add")
@@ -117,7 +115,7 @@ public class NgPageGenerate : GenerateBase
 
         // 生成html
         var formGen = new NgFormGenerate();
-        var htmlContent = formGen.GenerateEditForm(props);
+        var htmlContent = NgFormGenerate.GenerateEditForm(props);
         var cssContent = GetTplContent("angular.edit.edit.component.css.tpl");
 
         var component = new NgComponentInfo("edit")
@@ -151,10 +149,13 @@ public class NgPageGenerate : GenerateBase
                     .FirstOrDefault();
                 var pipe = "";
                 if (type != null)
+                {
                     if (type.Equals("DateTime") || type.Equals("DateTimeOffset"))
                     {
                         pipe = s.EndsWith("Date") ? " | date: 'yyyy-MM-dd'" : " | date: 'yyy-MM-dd HH:mm:ss'";
                     }
+                }
+
                 return $@"  <ng-container matColumnDef=""{s.ToCamelCase()}"">
     <th mat-header-cell *matHeaderCellDef>{s}</th>
     <td mat-cell *matCellDef=""let element"">
@@ -244,7 +245,7 @@ public class NgPageGenerate : GenerateBase
 
     }
 
-    public NgComponentInfo BuildConfirmDialog()
+    public static NgComponentInfo BuildConfirmDialog()
     {
         var cssContent = GetTplContent("angular.confirmDialog.confirm-dialog.component.css.tpl");
         var htmlContent = GetTplContent("angular.confirmDialog.confirm-dialog.component.html.tpl");
@@ -280,7 +281,7 @@ public class NgPageGenerate : GenerateBase
         return tplContent;
     }
 
-    public string GetComponentModule()
+    public static string GetComponentModule()
     {
         return GetTplContent("angular.components.module.ts");
     }
@@ -291,7 +292,7 @@ public class NgPageGenerate : GenerateBase
     /// <param name="content"></param>
     /// <param name="props"></param>
     /// <returns></returns>
-    private string InsertEnum(string content, List<PropertyInfo> props)
+    private static string InsertEnum(string content, List<PropertyInfo> props)
     {
         var importStrings = "";
         var declareStrings = "";
@@ -309,7 +310,7 @@ public class NgPageGenerate : GenerateBase
     /// </summary>
     /// <param name="tsContent"></param>
     /// <returns></returns>
-    private string InsertEditor(string tsContent)
+    private static string InsertEditor(string tsContent)
     {
         return tsContent.Replace("[@Imports]", @"import * as ClassicEditor from 'ng-ckeditor5-classic';
 import { environment } from 'src/environments/environment';

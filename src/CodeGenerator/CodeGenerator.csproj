@@ -42,6 +42,8 @@
 		<None Remove="Templates\Interface\IRestApiBase.tpl" />
 		<None Remove="Templates\Interface\IUserContext.tpl" />
 		<None Remove="Templates\PageResult.tpl" />
+		<None Remove="Templates\RequestService\axios.service.tpl" />
+		<None Remove="Templates\RequestService\service.ts" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="Templates\angular\add\add.component.css.tpl" />
@@ -80,12 +82,17 @@
 		<EmbeddedResource Include="Templates\Interface\IUserContext.tpl" />
 		<EmbeddedResource Include="Templates\BatchUpdate.tpl" />
 		<EmbeddedResource Include="Templates\PageResult.tpl" />
+		<EmbeddedResource Include="Templates\RequestService\axios.service.tpl" />
+		<EmbeddedResource Include="Templates\RequestService\service.ts" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.0.1" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.1" />
-		<PackageReference Include="Microsoft.OpenApi.Readers" Version="1.2.3" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.2.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.5">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.OpenApi.Readers" Version="1.3.1" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -7,13 +7,13 @@ public interface IDataStore<TEntity, TUpdate, TFilter, TItem, Tkey>
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    Task<TEntity?> FindAsync(Tkey id);
+    Task<TEntity?> FindAsync(Tkey id, bool noTracking = false);
     /// <summary>
     /// 列表筛选
     /// </summary>
     /// <param name="filter"></param>
     /// <returns></returns>
-    Task<List<TItem>> FindAsync(TFilter filter);
+    Task<List<TItem>> FindAsync(TFilter filter, bool noTracking = true);
     /// <summary>
     /// 分页列表
     /// </summary>

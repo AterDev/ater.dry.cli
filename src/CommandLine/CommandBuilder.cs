@@ -1,6 +1,4 @@
-﻿using Droplet.CommandLine.Commands;
-using System.CommandLine;
-using System.Windows.Input;
+﻿using System.CommandLine;
 
 namespace Droplet.CommandLine;
 
@@ -26,7 +24,9 @@ public class CommandBuilder
         AddDto();
         AddApi();
         AddNgService();
+        AddRequest();
         AddView();
+        AddDoc();
         return RootCommand;
     }
 
@@ -46,7 +46,6 @@ public class CommandBuilder
         configCommand.AddCommand(init);
         RootCommand.Add(configCommand);
     }
-
     public void AddDto()
     {
         var executor = new CommandRunner();
@@ -65,12 +64,35 @@ public class CommandBuilder
         dtoCommand.AddOption(forceOption);
         dtoCommand.SetHandler(async (string entity, string output, bool force) =>
         {
-            await executor.GenerateDtoAsync(entity, output, force);
+            await CommandRunner.GenerateDtoAsync(entity, output, force);
         }, path, outputOption, forceOption);
 
         RootCommand.Add(dtoCommand);
     }
 
+    public void AddRequest()
+    {
+        var executor = new CommandRunner();
+        var reqCommand = new Command("request", "generate request service and interface using openApi json");
+        reqCommand.AddAlias("request");
+        var url = new Argument<string>("OpenApi Url", "openApi json file url");
+        var outputOption=new Option<string>(new[] { "--output", "-o" })
+        {
+            IsRequired = true,
+            Description = "output path"
+        };
+
+        var typeOption = new Option<RequestLibType>(new []{"--type","-t"},"request lib type:axios or angularHttpClient");
+        reqCommand.AddArgument(url);
+        reqCommand.AddOption(outputOption);
+        reqCommand.AddOption(typeOption);
+        reqCommand.SetHandler(async (string url, string output, RequestLibType libType) =>
+        {
+            await CommandRunner.GenerateRequestAsync(url, output, libType);
+        }, url, outputOption, typeOption);
+
+        RootCommand.Add(reqCommand);
+    }
     public void AddApi()
     {
         var executor = new CommandRunner();
@@ -102,10 +124,33 @@ public class CommandBuilder
         apiCommand.SetHandler(
             async (string entity, string dto, string store, string output, string context) =>
         {
-            await executor.GenerateApi(entity, dto, store, output);
+            await CommandRunner.GenerateApi(entity, dto, store, output);
         }, path, dtoOption, storeOption, apiOption, contextOption);
 
         RootCommand.Add(apiCommand);
+    }
+    /// <summary>
+    /// 添加文档
+    /// </summary>
+    public void AddDoc()
+    {
+        var executor = new CommandRunner();
+        var docCommand = new Command("doc", "generate typescript interface using openApi json");
+        docCommand.AddAlias("doc");
+        var url = new Argument<string>("OpenApi Url", "openApi json file url");
+        var  outputOption=new Option<string>(new[] { "--output", "-o" })
+        {
+            IsRequired = true,
+            Description = "generate markdown doc"
+        };
+        docCommand.AddArgument(url);
+        docCommand.AddOption(outputOption);
+        docCommand.SetHandler(async (string url, string output) =>
+        {
+            await CommandRunner.GenerateDocAsync(url, output);
+        }, url, outputOption);
+
+        RootCommand.Add(docCommand);
     }
 
     public void AddNgService()
@@ -123,7 +168,7 @@ public class CommandBuilder
         ngCommand.AddOption(outputOption);
         ngCommand.SetHandler(async (string url, string output) =>
         {
-            await executor.GenerateNgAsync(url, output);
+            await CommandRunner.GenerateNgAsync(url, output);
         }, url, outputOption);
 
         RootCommand.Add(ngCommand);
@@ -136,6 +181,7 @@ public class CommandBuilder
         viewCommand.AddAlias("view");
         var entityArgument = new Argument<string>("entity path","The entity file path, like path/xxx.cs");
         var dtoOption = new Option<string>(new[] { "--dto", "-d" },"dto project directory，default ./Share");
+        dtoOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.DtoPath));
         var outputOption= new Option<string>(new[] { "--output", "-o" },"angular project root path")
         {
             IsRequired = true,
@@ -146,7 +192,7 @@ public class CommandBuilder
         viewCommand.AddOption(outputOption);
         viewCommand.SetHandler(async (string entity, string dtoPath, string output) =>
         {
-            await executor.GenerateNgPagesAsync(entity, dtoPath, output);
+            await CommandRunner.GenerateNgPagesAsync(entity, dtoPath, output);
         }, entityArgument, dtoOption, outputOption);
         RootCommand.Add(viewCommand);
     }

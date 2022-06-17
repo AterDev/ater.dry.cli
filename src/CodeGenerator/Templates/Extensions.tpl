@@ -27,6 +27,33 @@ public static partial class Extensions
         return source;
     }
 
+    /// <summary>
+    /// 类型转换
+    /// </summary>
+    /// <typeparam name="TSource">源类型</typeparam>
+    /// <typeparam name="TDestination">目标类型</typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public static TDestination MapTo<TSource, TDestination>(this TSource source) where TDestination : class
+    {
+        var destination = Activator.CreateInstance(typeof(TDestination));
+        if (destination != null)
+        {
+            var sourceProps = typeof(TSource).GetProperties().ToList();
+            sourceProps = sourceProps
+                .Where(p => p.GetValue(source) != null)
+                .ToList();
+            // set destine properties's value
+            sourceProps.ForEach(p =>
+            {
+                var destProp = typeof(TDestination).GetProperty(p.Name);
+                if (destProp != null)
+                    destProp.SetValue(destination, p.GetValue(source), null);
+            });
+            return (TDestination)destination;
+        }
+        return default!;
+    }
 
     /// <summary>
     /// select dto properties
@@ -43,7 +70,11 @@ public static partial class Extensions
         var resultType = typeof(TResult);
         var parameter = Expression.Parameter(sourceType, "e");
 
+        // 只构造都存在的属性
+        var sourceNames = sourceType.GetProperties()
+            .Select(s => s.Name).ToList();
         var props = resultType.GetProperties().ToList();
+        props = props.Where(p => sourceNames.Contains(p.Name)).ToList();
         var bindings = props.Select(p =>
              Expression.Bind(p, Expression.PropertyOrField(parameter, p.Name))
         ).ToList();

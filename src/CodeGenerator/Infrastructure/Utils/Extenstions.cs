@@ -31,7 +31,7 @@ public static class Extenstions
                     builder.Append('-');
                 }
             }
-            else if (item == '_' || item == ' ')
+            else if (item is '_' or ' ')
             {
                 builder.Append('-');
             }
@@ -85,11 +85,7 @@ public static class Extenstions
     }
     public static string ToUpperFirst(this string str)
     {
-        if (string.IsNullOrWhiteSpace(str))
-        {
-            return string.Empty;
-        }
-        return char.ToUpper(str[0]) + str[1..];
+        return string.IsNullOrWhiteSpace(str) ? string.Empty : char.ToUpper(str[0]) + str[1..];
     }
 
     public static bool NotNull(this string? str)

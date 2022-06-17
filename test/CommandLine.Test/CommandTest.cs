@@ -69,4 +69,12 @@ public class CommandTest
         Assert.True(File.Exists(apiFile));
         Assert.True(File.Exists(globalFile));
     }
+
+    [Fact]
+    public async Task Should_genearte_docAsync()
+    {
+        var url = "http://localhost:5002/swagger/v1/swagger.json";
+        var cmd = new DocCommand(url,"./");
+        await cmd.RunAsync();
+    }
 }

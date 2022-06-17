@@ -1,7 +1,6 @@
-﻿using CodeGenerator.Generate;
-using PropertyInfo = CodeGenerator.Models.PropertyInfo;
+﻿using PropertyInfo = CodeGenerator.Models.PropertyInfo;
 
-namespace Droplet.CommandLine.Commands;
+namespace CodeGenerator.Generate;
 
 /// <summary>
 /// 表单生成
@@ -12,34 +11,40 @@ public class NgFormGenerate : GenerateBase
     {
     }
 
-    public void Add(PropertyInfo input)
+    public static void Add(PropertyInfo input)
     {
     }
 
     /// <summary>
     /// 生成添加组件
     /// </summary>
-    public string GenerateAddForm(List<PropertyInfo>? propertyInfos)
+    public static string GenerateAddForm(List<PropertyInfo>? propertyInfos)
     {
         var formControls = "";
         if (propertyInfos != null)
+        {
             foreach (var input in propertyInfos)
             {
                 formControls += input.ToNgInputControl();
             }
+        }
+
         var tplContent = GetTplContent("angular.add.add.component.html.tpl");
         tplContent = tplContent.Replace("{$FormControls}", formControls);
         return tplContent;
     }
 
-    public string GenerateEditForm(List<PropertyInfo>? propertyInfos)
+    public static string GenerateEditForm(List<PropertyInfo>? propertyInfos)
     {
         var formControls = "";
         if (propertyInfos != null)
+        {
             foreach (var input in propertyInfos)
             {
                 formControls += input.ToNgInputControl();
             }
+        }
+
         var tplContent = GetTplContent("angular.edit.edit.component.html.tpl");
         tplContent = tplContent.Replace("{$FormControls}", formControls);
         return tplContent;

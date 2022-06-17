@@ -151,7 +151,7 @@ public class DataStoreGenerate : GenerateBase
         var classes = cpl.GetAllClasses();
         if (classes != null)
         {
-            var allDataStores = cpl.GetClassNameByBaseType(classes, "DataStoreBase");
+            var allDataStores = CompilationHelper.GetClassNameByBaseType(classes, "DataStoreBase");
             if (allDataStores.Any())
             {
                 allDataStores.ToList().ForEach(dataStore =>
@@ -182,9 +182,9 @@ public class DataStoreGenerate : GenerateBase
         if (classes != null)
         {
             // 获取所有继承 dbcontext的上下文
-            var allDbContexts = cpl.GetClassNameByBaseType(classes, "IdentityDbContext");
+            var allDbContexts = CompilationHelper.GetClassNameByBaseType(classes, "IdentityDbContext");
             if (!allDbContexts.Any())
-                allDbContexts = cpl.GetClassNameByBaseType(classes, "DbContext");
+                allDbContexts = CompilationHelper.GetClassNameByBaseType(classes, "DbContext");
 
             //Console.WriteLine("find dbcontext:" + allDbContexts.FirstOrDefault().Name);
             if (allDbContexts.Any())

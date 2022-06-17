@@ -1,10 +1,12 @@
-﻿namespace ${Namespace}.Controllers;
+﻿using Http.API.Interface;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+namespace ${Namespace}.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class RestApiBase<TDataStore, TEntity, TUpdate, TFilter, TItem>
-    : ControllerBase, IRestApiBase<TEntity, TUpdate, TFilter, TItem, Guid>
+public class RestApiBase<TDataStore, TEntity, TAdd, TUpdate, TFilter, TItem>
+    : ControllerBase, IRestApiBase<TEntity, TAdd, TUpdate, TFilter, TItem, Guid>
     where TDataStore : DataStoreBase<${DbContextName}, TEntity, TUpdate, TFilter, TItem>
     where TEntity : EntityBase
     where TFilter : FilterBase
@@ -26,8 +28,12 @@ public class RestApiBase<TDataStore, TEntity, TUpdate, TFilter, TItem>
     /// <param name="form"></param>
     /// <returns></returns>
     [HttpPost]
-    public async virtual Task<ActionResult<TEntity>> AddAsync(TEntity form)
-        => await _store.AddAsync(form);
+    public virtual async Task<ActionResult<TEntity>> AddAsync(TAdd form){
+        var data = (TEntity)Activator.CreateInstance(typeof(TEntity))!;
+        data = data.Merge(form);
+        return await _store.AddAsync(data);
+    }
+        
 
     /// <summary>
     /// 删除
@@ -35,7 +41,7 @@ public class RestApiBase<TDataStore, TEntity, TUpdate, TFilter, TItem>
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpDelete("{id}")]
-    public async virtual Task<ActionResult<bool>> DeleteAsync([FromRoute] Guid id)
+    public virtual async Task<ActionResult<bool>> DeleteAsync([FromRoute] Guid id)
     {
         if (_store.Any(d => d.Id == id))
         {
@@ -50,7 +56,7 @@ public class RestApiBase<TDataStore, TEntity, TUpdate, TFilter, TItem>
     /// <param name="filter"></param>
     /// <returns></returns>
     [HttpPost("filter")]
-    public async virtual Task<ActionResult<PageResult<TItem>>> FilterAsync(TFilter filter)
+    public virtual async Task<ActionResult<PageResult<TItem>>> FilterAsync(TFilter filter)
         => await _store.FindWithPageAsync(filter);
 
     /// <summary>
@@ -59,7 +65,7 @@ public class RestApiBase<TDataStore, TEntity, TUpdate, TFilter, TItem>
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpGet("{id}")]
-    public async virtual Task<ActionResult<TEntity?>> GetDetailAsync([FromRoute] Guid id)
+    public virtual async Task<ActionResult<TEntity?>> GetDetailAsync([FromRoute] Guid id)
     {
         var data = await _store.FindAsync(id);
         if (data == null) return NotFound();
@@ -73,7 +79,7 @@ public class RestApiBase<TDataStore, TEntity, TUpdate, TFilter, TItem>
     /// <param name="form"></param>
     /// <returns></returns>
     [HttpPut("{id}")]
-    public async virtual Task<ActionResult<TEntity?>> UpdateAsync([FromRoute] Guid id, TUpdate form)
+    public virtual async Task<ActionResult<TEntity?>> UpdateAsync([FromRoute] Guid id, TUpdate form)
     {
         if (_store.Any(d => d.Id == id))
         {
@@ -88,7 +94,8 @@ public class RestApiBase<TDataStore, TEntity, TUpdate, TFilter, TItem>
     /// <param name="ids"></param>
     /// <returns></returns>
     [HttpDelete]
-    public async virtual Task<ActionResult<int>> BatchDeleteAsync(List<Guid> ids)
+    [ApiExplorerSettings(IgnoreApi = true)]
+    public virtual async Task<ActionResult<int>> BatchDeleteAsync(List<Guid> ids)
         => await _store.BatchDeleteAsync(ids);
 
     /// <summary>
@@ -97,6 +104,39 @@ public class RestApiBase<TDataStore, TEntity, TUpdate, TFilter, TItem>
     /// <param name="data"></param>
     /// <returns></returns>
     [HttpPut]
-    public async virtual Task<int> BatchUpdateAsync([FromBody] BatchUpdate<TUpdate> data)
-    => await _store.BatchUpdateAsync(data.Ids, data.UpdateDto);
+    [ApiExplorerSettings(IgnoreApi = true)]
+    public virtual async Task<int> BatchUpdateAsync([FromBody] BatchUpdate<TUpdate> data)
+        => await _store.BatchUpdateAsync(data.Ids, data.UpdateDto);
+
+    /// <summary>
+    /// 404返回格式处理
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public override NotFoundObjectResult NotFound([ActionResultObjectValue] object? value)
+    {
+        var res = new {
+            Title = "访问的资源不存在",
+            Detail = value?.ToString(),
+            Status = 404,
+            TraceId = HttpContext.TraceIdentifier
+        };
+        return base.NotFound(res);
+    }
+
+    /// <summary>
+    /// 409返回格式处理
+    /// </summary>
+    /// <param name="error"></param>
+    /// <returns></returns>
+    public override ConflictObjectResult Conflict([ActionResultObjectValue] object? error)
+    {
+        var res = new {
+            Title = "重复的资源",
+            Detail = error?.ToString(),
+            Status = 409,
+            TraceId = HttpContext.TraceIdentifier
+        };
+        return base.Conflict(res);
+    }
 }

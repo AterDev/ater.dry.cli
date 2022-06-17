@@ -44,6 +44,7 @@ public class DtoCommand : CommandBase
         else
         {
             Console.WriteLine(Instructions[0]);
+            await SaveToFileAsync("Add", CodeGen.GetAddDto(), cover);
             await SaveToFileAsync("Update", CodeGen.GetUpdateDto(), cover);
             await SaveToFileAsync("Filter", CodeGen.GetFilterDto(), cover);
             await SaveToFileAsync("Item", CodeGen.GetItemDto(), cover);
