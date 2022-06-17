@@ -38,7 +38,7 @@ public class CommandBuilder
     {
         var configCommand = new Command("config", "config management");
         var edit = new Command("edit", "edit config");
-        var init = new Command("init", "intit config");
+        var init = new Command("init", "init config");
         edit.SetHandler(() => ConfigCommand.EditConfigFile());
         init.SetHandler(() => ConfigCommand.InitConfigFileAsync());
         configCommand.SetHandler(() => { });
