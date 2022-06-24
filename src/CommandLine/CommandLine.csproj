@@ -8,7 +8,7 @@
 		<AssemblyVersion>0.1.0.0</AssemblyVersion>
 		<FileVersion>0.1.0.0</FileVersion>
 		<PackageId>ater.droplet.cli</PackageId>
-		<Version>6.0.9</Version>
+		<Version>6.0.10</Version>
 		<Description>  The code generate to save your time.  
   define the entity and generate commonly codes
 </Description>
@@ -20,7 +20,7 @@
 		<RepositoryType>git</RepositoryType> 
 		<RepositoryUrl>https://github.com/AterDev/cli.git</RepositoryUrl>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-		<PackageReleaseNotes>生成view时dto参数的默认地址;优化ts interfaces生成时的目录；</PackageReleaseNotes>
+		<PackageReleaseNotes>修复生成axios请求服务，导入的路径命令错误问题</PackageReleaseNotes>
 		<PackageIcon>logo.jpg</PackageIcon>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<RootNamespace>Droplet.$(MSBuildProjectName.Replace("cli", "CLI"))</RootNamespace>

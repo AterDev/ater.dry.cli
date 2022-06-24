@@ -279,7 +279,7 @@ public class RequestGenearte : GenerateBase
             refTypes.ForEach(t =>
             {
                 var dirName = ModelDictionary.GetValueOrDefault(t);
-                importModels += $"import {{ {t} }} from '../models/{dirName}/{t.ToHyphen()}.model';{Environment.NewLine}";
+                importModels += $"import {{ {t} }} from '../models/{dirName?.ToHyphen()}/{t.ToHyphen()}.model';{Environment.NewLine}";
             });
         }
         tplContent = tplContent.Replace("[@Import]", importModels)
