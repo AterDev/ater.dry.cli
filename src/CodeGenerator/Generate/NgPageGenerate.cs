@@ -315,20 +315,20 @@ public class NgPageGenerate : GenerateBase
         return tsContent.Replace("[@Imports]", @"import * as ClassicEditor from 'ng-ckeditor5-classic';
 import { environment } from 'src/environments/environment';
 import { CKEditor5 } from '@ckeditor/ckeditor5-angular';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
+// import { OidcSecurityService } from 'angular-auth-oidc-client';
 [@Imports]")
             .Replace("[@Declares]", @"public editorConfig!: CKEditor5.Config;
   public editor: CKEditor5.EditorConstructor = ClassicEditor;
   [@Declares]")
             .Replace("[@DI]", @"
-    private authService: OidcSecurityService,")
+    // private authService: OidcSecurityService,")
             .Replace("[@Methods]", @"  initEditor(): void {
     this.editorConfig = {
       // placeholder: '请添加图文信息提供证据，也可以直接从Word文档中复制',
       simpleUpload: {
         uploadUrl: environment.uploadEditorFileUrl,
         headers: {
-          Authorization: 'Bearer ' + this.authService.getAccessToken()
+          Authorization: 'Bearer ' + localStorage.getItem(""accessToken"")
         }
       },
       language: 'zh-cn'
