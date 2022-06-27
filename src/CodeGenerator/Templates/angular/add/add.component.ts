@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { {$EntityName}Service } from 'src/app/share/services/{$EntityPathName}.service';
 import { {$EntityName} } from 'src/app/share/models/{$EntityPathName}/{$EntityPathName}.model';
-import { {$EntityName}UpdateDto } from 'src/app/share/models/{$EntityPathName}/{$EntityPathName}-update-dto.model';
+import { {$EntityName}AddDto } from 'src/app/share/models/{$EntityPathName}/{$EntityPathName}-add-dto.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -16,7 +16,7 @@ import { Location } from '@angular/common';
 export class AddComponent implements OnInit {
     [@Declares]
     formGroup!: FormGroup;
-    data = {} as {$EntityName}UpdateDto;
+    data = {} as {$EntityName}AddDto;
     isLoading = true;
     constructor(
         [@DI]
@@ -55,9 +55,9 @@ export class AddComponent implements OnInit {
 
   add(): void {
     if(this.formGroup.valid) {
-    const data = this.formGroup.value as {$EntityName}UpdateDto;
+    const data = this.formGroup.value as {$EntityName}AddDto;
     this.data = { ...data, ...this.data };
-    this.service.add(this.data as {$EntityName})
+    this.service.add(this.data)
         .subscribe(res => {
             this.snb.open('添加成功');
             // this.dialogRef.close(res);

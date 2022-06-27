@@ -3,7 +3,7 @@ import { {$EntityName}Service } from 'src/app/share/services/{$EntityPathName}.s
 import { Router } from '@angular/router';
 import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confirm-dialog.component';
 import { {$EntityName}ItemDto } from 'src/app/share/models/{$EntityPathName}/{$EntityPathName}-item-dto.model';
-import { {$EntityName}Filter } from 'src/app/share/models/{$EntityPathName}/{$EntityPathName}-filter.model';
+import { {$EntityName}FilterDto } from 'src/app/share/models/{$EntityPathName}/{$EntityPathName}-filter-dto.model';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSnackBar } from '@angular/material/snack-bar';
