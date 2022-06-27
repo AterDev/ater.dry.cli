@@ -183,7 +183,7 @@ public class NgPageGenerate : GenerateBase
         var tplContent = GetTplContent("angular.index.index.component.ts");
         tplContent = tplContent.Replace("{$EntityName}", EntityName)
             .Replace("{$EntityPathName}", EntityName.ToHyphen())
-            .Replace("{$Columns}", string.Join(",　", columnsDef));
+            .Replace("{$Columns}", string.Join(", ", columnsDef));
 
         var component = new NgComponentInfo("index")
         {

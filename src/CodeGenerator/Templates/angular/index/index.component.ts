@@ -21,7 +21,7 @@ export class IndexComponent implements OnInit {
   data: {$EntityName}ItemDto[] = [];
   columns: string[] = [{$Columns}];
   dataSource!: MatTableDataSource<{$EntityName}ItemDto>;
-  filter: {$EntityName}Filter;
+  filter: {$EntityName}FilterDto;
   pageSizeOption = [12, 20, 50];
   constructor(
     private service: {$EntityName}Service,
