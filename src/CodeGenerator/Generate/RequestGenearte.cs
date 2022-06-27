@@ -106,6 +106,7 @@ public class RequestGenearte : GenerateBase
     {
         var suffix = new string[] { "UpdateDto", "FilterDto", "AddDto", "ItemDto"};
         var prefix = new string[] { "PageResultOf", "BatchUpdateOf" };
+
         // 特殊处理
         foreach (var dic in modelDic.Where(m => m.Value == null).ToList())
         {
