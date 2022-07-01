@@ -96,7 +96,7 @@ public class TSModelGenerate : GenerateBase
         });
         // 去重
         var importsProps = props.Where(p => !string.IsNullOrEmpty(p.Reference))
-            .GroupBy(p=>p.Name)
+            .GroupBy(p=>p.Type)
             .Select(g=>new
             {
                 g.First().IsEnum,
@@ -305,8 +305,9 @@ public class TsProperty
     public string ToProperty()
     {
         // 引用的类型可空
-        //var name = Name + (IsNullable ? "?: " : ": ");
-        //if (!string.IsNullOrEmpty(Reference)) name = Name + "?: ";
-        return $"{Comments}  {Name}{Type};" + Environment.NewLine;
+        var name = Name + (IsNullable ? "?: " : ": ");
+        if (!string.IsNullOrEmpty(Reference))
+            name = Name + "?: ";
+        return $"{Comments}  {name}{Type};" + Environment.NewLine;
     }
 }
