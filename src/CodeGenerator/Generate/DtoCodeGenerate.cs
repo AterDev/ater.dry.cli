@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+
 using PropertyInfo = CodeGenerator.Models.PropertyInfo;
 
 namespace CodeGenerator.Generate;
@@ -146,6 +147,7 @@ public class DtoCodeGenerate : GenerateBase
                 && p.Name != "CreatedTime"
                 && p.Name != "UpdatedTime"
                 && p.Name != "IsDeleted"
+                && p.Name != "Status"
                 && !p.IsList
                 && !p.IsNavigation)
             .ToList()?? new List<PropertyInfo>()

@@ -43,8 +43,8 @@ export class EditComponent implements OnInit {
   ngOnInit(): void {
     this.getDetail();
     [@Init]
-    // TODO:获取其他相关数据后设置加载状态
-    this.isLoading = false;
+    // TODO:等待数据加载完成
+    // this.isLoading = false;
   }
   [@Methods]
   getDetail(): void {

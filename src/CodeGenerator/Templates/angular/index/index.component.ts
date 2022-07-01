@@ -130,7 +130,7 @@ openEditDialog(id: string): void {
    */
   edit(id: string): void {
     console.log(id);
-    this.router.navigateByUrl('/{$EntityPathName}/edit/' + id);
+    this.router.navigateByUrl('/admin/{$EntityPathName}/edit/' + id);
   }
 
 }
