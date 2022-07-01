@@ -19,8 +19,8 @@ public class TestDbContext : DbContext
         modelBuilder.Entity<Blog>(m =>
         {
             m.Property(nameof(Blog.Content))
-                .HasMaxLength(5000)
-                .HasComment("content");
+                .HasMaxLength(5000);
+
         });
         base.OnModelCreating(modelBuilder);
     }

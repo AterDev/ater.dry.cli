@@ -5,7 +5,7 @@ public class CommentEntityConfiguration : IEntityTypeConfiguration<Comments>
 {
     public void Configure(EntityTypeBuilder<Comments> builder)
     {
-        builder.Property(b => b.Content).HasComment("content")
+        builder.Property(b => b.Content)
             .HasMaxLength(1000)
             .IsRequired();
     }

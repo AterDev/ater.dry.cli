@@ -1,5 +1,7 @@
 ﻿using CodeGenerator.Generate;
+
 using Microsoft.OpenApi.Readers;
+
 using System.IO;
 
 namespace CodeGenerator.Test;
@@ -7,12 +9,18 @@ namespace CodeGenerator.Test;
 public class NgGenerateTest
 {
     [Fact]
-    public void should_generate_ts_models_from_openapi()
+    public void should_generate_ts_models_from_openapiAsync()
     {
         var projectPath = PathHelper.GetProjectPath();
         var file = Path.Combine(projectPath,"Data/openapi.json");
-        var openApiDoc = new OpenApiStringReader().Read(File.ReadAllText(file), out var context);
-        // TODO:
+        var ApiDocument = new OpenApiStringReader().Read(File.ReadAllText(file), out var context);
+        var ngGen = new RequestGenearte(ApiDocument)
+        {
+            LibType = RequestLibType.Axios
+        };
+        // 获取对应的ts模型类，生成文件
+        var models = ngGen.GetTSInterfaces();
+        Console.WriteLine();
     }
 
     [Fact]

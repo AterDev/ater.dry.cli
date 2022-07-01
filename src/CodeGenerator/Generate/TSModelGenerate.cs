@@ -96,7 +96,12 @@ public class TSModelGenerate : GenerateBase
         });
         // 去重
         var importsProps = props.Where(p => !string.IsNullOrEmpty(p.Reference))
-            .Distinct()
+            .GroupBy(p=>p.Name)
+            .Select(g=>new
+            {
+                g.First().IsEnum,
+                g.First().Reference
+            })
             .ToList();
         importsProps.ForEach(ip =>
         {
@@ -139,13 +144,26 @@ public class TSModelGenerate : GenerateBase
         }
         var enumNames = schema.Extensions
             .Where(e => e.Key == "x-enumNames")
-            .First();
+            .FirstOrDefault();
 
         var values = enumNames.Value as OpenApiArray;
-
-        for (var i = 0; i < values?.Count; i++)
+        if (values != null)
         {
-            propertyString += "  " + ((OpenApiString)values[i]).Value + " = " + i + ",\n";
+            for (var i = 0; i < values?.Count; i++)
+            {
+                propertyString += "  " + ((OpenApiString)values[i]).Value + " = " + i + ",\n";
+            }
+        }
+        else
+        {
+            if (schema.Enum.Any())
+            {
+                for (var i = 0; i < schema.Enum.Count; i++)
+                {
+                    if (schema.Enum[i] is OpenApiInteger) continue;
+                    propertyString += "  " + ((OpenApiString)schema.Enum[i]).Value + " = " + i + ",\n";
+                }
+            }
         }
         res = @$"{comment}export enum {name} {{
 {propertyString}
@@ -286,10 +304,9 @@ public class TsProperty
 
     public string ToProperty()
     {
-        var name = Name + (IsNullable ? "?: " : ": ");
         // 引用的类型可空
-        if (!string.IsNullOrEmpty(Reference))
-            name = Name + "?: ";
-        return $"{Comments}  {name}{Type};" + Environment.NewLine;
+        //var name = Name + (IsNullable ? "?: " : ": ");
+        //if (!string.IsNullOrEmpty(Reference)) name = Name + "?: ";
+        return $"{Comments}  {Name}{Type};" + Environment.NewLine;
     }
 }
