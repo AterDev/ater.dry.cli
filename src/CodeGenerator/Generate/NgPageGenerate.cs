@@ -134,8 +134,9 @@ public class NgPageGenerate : GenerateBase
         typeHelper.Parse();
         // 需要展示的列
         var columns = typeHelper.PropertyInfos?.Where(p => !p.IsList && !p.IsNavigation)
+            .Where(p => p.Name.ToLower()!="id")
             .Select(p => p.Name)
-            .Skip(0).Take(3)
+            .Skip(0).Take(5)
             .ToList();
 
         var columnsDef = Array.Empty<string>();

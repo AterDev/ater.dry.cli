@@ -61,7 +61,7 @@ export class AddComponent implements OnInit {
         .subscribe(res => {
             this.snb.open('添加成功');
             // this.dialogRef.close(res);
-            // this.router.navigate(['../index'],{relativeTo: this.route});
+            this.router.navigate(['../index'],{relativeTo: this.route});
         });
     }
   }
