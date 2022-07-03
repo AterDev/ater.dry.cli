@@ -58,8 +58,7 @@ public class DataStoreBase<TContext, TEntity, TUpdate, TFilter, TItem> : IDataSt
     /// <returns></returns>
     public virtual async Task<List<TItem>> FindAsync(TFilter filter, bool noTracking = true)
     {
-        var query = _query.OrderByDescending(d => d.CreatedTime).AsQueryable();
-
+        var query = _query.AsQueryable();
         if (noTracking == true) query = query.AsNoTracking();
 
         return await query.Select<TEntity, TItem>()
