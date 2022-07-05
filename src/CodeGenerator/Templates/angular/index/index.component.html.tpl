@@ -14,13 +14,13 @@
   <ng-container matColumnDef="actions">
     <th mat-header-cell *matHeaderCellDef>操作</th>
     <td mat-cell *matCellDef="let element">
-      <button mat-icon-button class="text-blue" [routerLink]="['../detail',element.id]" matTooltip="查看">
+      <button mat-icon-button color="link" [routerLink]="['../detail',element.id]" matTooltip="查看">
         <mat-icon>pages</mat-icon>
       </button>
-      <button mat-icon-button class="text-blue" (click)="edit(element.id)" matTooltip="编辑">
+      <button mat-icon-button color="primary" (click)="edit(element.id)" matTooltip="编辑">
         <mat-icon>edit</mat-icon>
       </button>
-      <button mat-icon-button class="text-accent" matTooltip="删除">
+      <button mat-icon-button color="warn" matTooltip="删除">
         <mat-icon (click)="deleteConfirm(element)">delete_forever</mat-icon>
       </button>
     </td>
