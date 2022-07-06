@@ -34,7 +34,7 @@ public class NgPageGenerate : GenerateBase
         tplContent = tplContent.Replace("{$EntityName}", EntityName)
             .Replace("{$EntityPathName}", EntityName.ToHyphen());
         // 解析属性，并生成相应代码
-        var typeHelper = new EntityParseHelper(Path.Combine(DtoPath, "models", DtoDirName, EntityName + "UpdateDto.cs"));
+        var typeHelper = new EntityParseHelper(Path.Combine(DtoPath, "models", DtoDirName, EntityName + "AddDto.cs"));
         typeHelper.Parse();
         var props = typeHelper.PropertyInfos?
             .Where(p => !p.IsNavigation && !p.Type.StartsWith("Guid"))
