@@ -1,4 +1,5 @@
-﻿import storage from "@/utils/storage";
+﻿import router from "@/router";
+import storage from "@/utils/storage";
 import server from "@/_config/server";
 import loading from "@/_packages/request/loading";
 import { RequestOptions } from "@/_packages/request/utils/request";
@@ -7,6 +8,7 @@ import axios, {
   Method,
   AxiosRequestConfig,
   AxiosResponse,
+  ResponseType,
 } from "axios";
 
 // 定义常见http状态码错误
@@ -188,18 +190,18 @@ export class BaseService {
       retry: ext?.retry,
       loading: ext?.loading,
       baseURL: ext?.baseUrl || options.base.baseURL,
+      responseType: ext?.responseType,
     });
   }
 }
 
 export interface ExtOptions {
-  queue?: boolean | undefined,
-  retry?: boolean | undefined,
-  loading?: boolean | undefined,
-  baseUrl?: string | null
+  queue?: boolean | undefined;
+  retry?: boolean | undefined;
+  loading?: boolean | undefined;
+  baseUrl?: string | null;
+  responseType?: ResponseType;
 }
-
-
 
 const options: RequestOptions = {
   base: {
@@ -208,9 +210,17 @@ const options: RequestOptions = {
   loading,
   interceptors: {
     request: (config) => {
-      const token = storage.get("token");
+      const token = storage.get("accountInfo")?.token;
       token && ((config.headers as any).Authorization = `Bearer ${token}`);
       return Promise.resolve(config);
+    },
+    responseError(errorResponse) {
+      if (errorResponse.status === 401) {
+        router.replace({
+          name: "login",
+        });
+      }
+      return Promise.reject("未授权，请登录");
     },
   },
 };
