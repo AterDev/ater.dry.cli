@@ -111,7 +111,9 @@ public class RequestServiceFunction
         {
             paramsString = string.Join(", ",
                 Params.OrderBy(p => p.IsRequired)
-                    .Select(p => p.Name + ": " + p.Type)
+                    .Select(p => p.IsRequired
+                        ? (p.Name + ": " + p.Type)
+                        : (p.Name + "?: " + p.Type))
                 .ToArray());
             Params.ForEach(p =>
             {
