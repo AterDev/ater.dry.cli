@@ -10,6 +10,8 @@ public class RequestGenearte : GenerateBase
     protected OpenApiPaths PathsPairs { get; }
     protected List<OpenApiTag> ApiTags { get; }
     public IDictionary<string, OpenApiSchema> Schemas { get; set; }
+    public OpenApiDocument OpenApi { get; set; }
+
     /// <summary>
     /// 模型类字典
     /// </summary>
@@ -18,6 +20,7 @@ public class RequestGenearte : GenerateBase
 
     public RequestGenearte(OpenApiDocument openApi)
     {
+        OpenApi = openApi;
         PathsPairs = openApi.Paths;
         // 构建模型名及对应Tag目录的字典
         openApi.Components.Schemas.Keys.ToList()
@@ -81,17 +84,6 @@ public class RequestGenearte : GenerateBase
                     };
                 }).ToList();
 
-                // 标记Tag
-                if (ModelDictionary.ContainsKey(function.RequestType))
-                {
-                    ModelDictionary[function.RequestType] = function.Tag;
-                }
-                if (ModelDictionary.ContainsKey(function.ResponseType))
-                {
-                    ModelDictionary[function.ResponseType] = function.Tag;
-                }
-
-                ManualModelDicitonary(ModelDictionary);
                 functions.Add(function);
             }
         }
@@ -173,7 +165,7 @@ public class RequestGenearte : GenerateBase
 
     public List<GenFileInfo> GetTSInterfaces()
     {
-        var tsGen = new TSModelGenerate(ModelDictionary);
+        var tsGen = new TSModelGenerate(OpenApi);
         var  files = new List<GenFileInfo>();
         foreach (var item in Schemas)
         {
@@ -184,7 +176,7 @@ public class RequestGenearte : GenerateBase
 
     }
 
-    private static (string? type, string? refType) GetParamType(OpenApiSchema? schema)
+    public static (string? type, string? refType) GetParamType(OpenApiSchema? schema)
     {
         if (schema == null)
             return (string.Empty, string.Empty);
