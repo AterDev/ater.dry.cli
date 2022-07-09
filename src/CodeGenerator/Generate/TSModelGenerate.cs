@@ -1,8 +1,6 @@
 ﻿using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 
-using SharpYaml.Tokens;
-
 namespace CodeGenerator.Generate;
 /// <summary>
 /// generate typescript model file
@@ -61,10 +59,10 @@ public class TSModelGenerate : GenerateBase
     /// 获取相关联的模型
     /// </summary>
     /// <returns></returns>
-    public Dictionary<string, string>? GetRelationModels(OpenApiSchema? schema, string? tag = "")
+    public Dictionary<string, string?>? GetRelationModels(OpenApiSchema? schema, string? tag = "")
     {
         if (schema == null) return default;
-        var dic = new Dictionary<string,string>();
+        var dic = new Dictionary<string,string?>();
         // 父类
         if (schema.AllOf != null)
         {
@@ -73,7 +71,7 @@ public class TSModelGenerate : GenerateBase
             {
                 if (!dic.ContainsKey(parent.Reference.Id))
                 {
-                    dic.Add(parent.Reference.Id, "");
+                    dic.Add(parent.Reference.Id, null);
                 }
 
             }
@@ -82,6 +80,7 @@ public class TSModelGenerate : GenerateBase
         var props = schema.Properties.Where(p => p.Value.OneOf != null)
             .Select(s=>s.Value).ToList();
         if (props != null)
+        {
             foreach (var prop in props)
             {
                 if (prop.OneOf.Any())
@@ -93,10 +92,12 @@ public class TSModelGenerate : GenerateBase
 
                 }
             }
+        }
         // 数组
         var arr = schema.Properties.Where(p=>p.Value.Type=="array")
             .Select(s=>s.Value).ToList();
         if (arr != null)
+        {
             foreach (var item in arr)
             {
                 if (item.Items.OneOf.Any())
@@ -107,6 +108,8 @@ public class TSModelGenerate : GenerateBase
                     }
                 }
             }
+        }
+
         return dic;
     }
     /// <summary>
@@ -121,10 +124,7 @@ public class TSModelGenerate : GenerateBase
         var fileName = schemaKey.ToHyphen() + ".model.ts";
         string tsContent;
         ModelDictionary.TryGetValue(schemaKey, out var path);
-        if (string.IsNullOrEmpty(path))
-        {
-            Console.WriteLine(schemaKey);
-        }
+
         if (schema.Enum.Count > 0)
         {
             tsContent = ToEnumString(schema, schemaKey);
@@ -137,7 +137,7 @@ public class TSModelGenerate : GenerateBase
         var file = new GenFileInfo(tsContent)
         {
             Name = fileName,
-            Path = path??"",
+            Path = path ?? "",
             Content = tsContent
 
         };
@@ -246,8 +246,7 @@ public class TSModelGenerate : GenerateBase
             .Where(e => e.Key == "x-enumNames")
             .FirstOrDefault();
 
-        var values = enumNames.Value as OpenApiArray;
-        if (values != null)
+        if (enumNames.Value is OpenApiArray values)
         {
             for (var i = 0; i < values?.Count; i++)
             {
