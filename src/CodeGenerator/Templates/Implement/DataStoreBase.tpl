@@ -112,6 +112,7 @@ public class DataStoreBase<TContext, TEntity, TUpdate, TFilter, TItem> : IDataSt
         if (data == null) { return null; }
         // merge data and save 
         data.Merge(dto);
+        data.UpdatedTime = DateTimeOffset.UtcNow;
         await _context.SaveChangesAsync();
         return data;
     }

@@ -204,6 +204,10 @@ public class DataStoreGenerate : GenerateBase
         return name;
     }
 
+    /// <summary>
+    /// 添加依赖注入扩展方法
+    /// </summary>
+    /// <returns></returns>
     public string GetExtensions()
     {
         var entityDir =  new FileInfo(EntityPath).Directory!;
@@ -212,5 +216,49 @@ public class DataStoreGenerate : GenerateBase
         var tplContent = GetTplContent("Extensions.tpl");
         tplContent = tplContent.Replace(TplConst.NAMESPACE, entityNamespace);
         return tplContent;
+    }
+
+    /// <summary>
+    /// store上下文
+    /// </summary>
+    /// <returns></returns>
+    public string GetDataStoreContext()
+    {
+        var storeContextContent = "";
+        // 获取所有继承了 DataStoreBase 的类
+        var assemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(StorePath));
+        var cpl = new CompilationHelper(StorePath, assemblyName);
+        var classes = cpl.GetAllClasses();
+        if (classes != null)
+        {
+            string props ="";
+            string ctorParams = "";
+            string ctorCodes = "";
+            string oneTab="    ";
+            string twoTab="        ";
+
+            var allDataStores = CompilationHelper.GetClassNameByBaseType(classes, "DataStoreBase");
+            if (allDataStores.Any())
+            {
+                allDataStores.ToList().ForEach(dataStore =>
+                {
+                    var propName = dataStore.Name.Replace("DataStore","");
+                    var row = $"{oneTab}public {dataStore.Name} {propName} {{ get; }};";
+                    props += row + Environment.NewLine;
+                    row = $"{twoTab}{dataStore.Name} {propName.ToCamelCase()}";
+                    ctorParams += row + Environment.NewLine;
+                    row = $"{twoTab}{propName} = {propName.ToCamelCase()}";
+                    ctorCodes += row + Environment.NewLine;
+                });
+            }
+            storeContextContent = @$"{props}public DataStoreContext(
+{ctorParams})
+    {{{ctorCodes}}}";
+        }
+        // 构建服务
+        var content = GetTplContent("Implement.DataStoreContext.tpl");
+        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace);
+        content = content.Replace(TplConst.DATASTORE_SERVICES, storeContextContent);
+        return content;
     }
 }

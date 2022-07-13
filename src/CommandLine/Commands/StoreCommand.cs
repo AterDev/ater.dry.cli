@@ -67,10 +67,12 @@ public class StoreCommand : CommandBase
         var userInterface = CodeGen.GetUserContextInterface();
         var userClass = CodeGen.GetUserContextClass();
         var storeBase = CodeGen.GetStoreBase();
+        var storeContext = CodeGen.GetStoreContent();
         await GenerateFileAsync(interfaceDir, "IDataStore.cs", storeInterface);
         await GenerateFileAsync(interfaceDir, "IUserContext.cs", userInterface);
         await GenerateFileAsync(storeDir, "DataStoreBase.cs", storeBase);
         await GenerateFileAsync(StorePath, "UserContext.cs", userClass);
+        await GenerateFileAsync(StorePath, "DataStoreContext.cs", storeContext);
     }
 
     /// <summary>

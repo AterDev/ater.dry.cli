@@ -14,6 +14,7 @@ public static class TplConst
     public const string STORE_NAMESPACE              = @"${StoreNamespace}";
     public const string CREATEDTIME_NAME             = @"${CreatedTimeName}";
     public const string DATASTORE_SERVICES           = @"//${DataStoreServices}";
+    public const string DATASTORE_CONTEXT            =@"${DataStoreContext}";
 
     // tpl names
 }
