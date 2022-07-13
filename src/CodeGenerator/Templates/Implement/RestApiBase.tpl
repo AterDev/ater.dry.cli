@@ -14,12 +14,14 @@ public class RestApiBase<TDataStore, TEntity, TAdd, TUpdate, TFilter, TItem>
     protected readonly ILogger _logger;
     protected readonly TDataStore _store;
     protected readonly IUserContext _user;
+    protected readonly DataStoreContext _storeContext;
 
-    public RestApiBase(IUserContext user, ILogger logger, TDataStore store)
+    public RestApiBase(IUserContext user, ILogger logger, TDataStore store, DataStoreContext storeContext)
     {
         _user = user;
         _store = store;
         _logger = logger;
+        _storeContext = storeContext;
     }
 
     /// <summary>
