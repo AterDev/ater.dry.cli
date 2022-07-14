@@ -20,7 +20,7 @@ public class NgGenerateTest
         };
         // 获取对应的ts模型类，生成文件
         var models = ngGen.GetTSInterfaces();
-        Console.WriteLine();
+        Console.WriteLine(models.Count);
     }
 
     [Fact]

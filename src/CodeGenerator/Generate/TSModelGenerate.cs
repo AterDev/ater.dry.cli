@@ -7,12 +7,111 @@ namespace CodeGenerator.Generate;
 /// </summary>
 public class TSModelGenerate : GenerateBase
 {
-    public Dictionary<string, string?> ModelDictionary { get; set; }
-    public TSModelGenerate(Dictionary<string, string?> modelDictionary)
-    {
-        ModelDictionary = modelDictionary;
-    }
+    public Dictionary<string, string?> ModelDictionary { get; set; } = new Dictionary<string, string?>();
 
+    public TSModelGenerate(OpenApiDocument openApi)
+    {
+        foreach (var path in openApi.Paths)
+        {
+            foreach (var operation in path.Value.Operations)
+            {
+                var tag = operation.Value.Tags.FirstOrDefault()?.Name;
+
+                var requestSchema = operation.Value.RequestBody?.Content.Values.FirstOrDefault()?.Schema;
+                var responseSchema = operation.Value.Responses.FirstOrDefault().Value
+                     ?.Content.FirstOrDefault().Value
+                     ?.Schema;
+                var (RequestType, requestRefType) = RequestGenearte.GetParamType(requestSchema);
+                var (ResponseType, responseRefType) = RequestGenearte.GetParamType(responseSchema);
+
+                // 存储对应的Tag
+                // 请求dto
+                if (requestRefType != null && !string.IsNullOrEmpty(requestRefType))
+                {
+                    ModelDictionary.TryAdd(requestRefType, tag);
+                }
+                // 返回dto
+                if (responseRefType != null && !string.IsNullOrEmpty(responseRefType))
+                {
+                    ModelDictionary.TryAdd(responseRefType, tag);
+                }
+
+                var relationModels = GetRelationModels(requestSchema, tag);
+                if (relationModels != null)
+                {
+                    foreach (var item in relationModels)
+                    {
+                        ModelDictionary.TryAdd(item.Key, item.Value);
+                    }
+                }
+                relationModels = GetRelationModels(responseSchema, tag);
+                if (relationModels != null)
+                {
+                    foreach (var item in relationModels)
+                    {
+                        ModelDictionary.TryAdd(item.Key, item.Value);
+                    }
+                }
+            }
+        }
+    }
+    /// <summary>
+    /// 获取相关联的模型
+    /// </summary>
+    /// <returns></returns>
+    public Dictionary<string, string?>? GetRelationModels(OpenApiSchema? schema, string? tag = "")
+    {
+        if (schema == null) return default;
+        var dic = new Dictionary<string,string?>();
+        // 父类
+        if (schema.AllOf != null)
+        {
+            var parent = schema.AllOf.FirstOrDefault();
+            if (parent != null)
+            {
+                if (!dic.ContainsKey(parent.Reference.Id))
+                {
+                    dic.Add(parent.Reference.Id, null);
+                }
+
+            }
+        }
+        // 属性中的类型
+        var props = schema.Properties.Where(p => p.Value.OneOf != null)
+            .Select(s=>s.Value).ToList();
+        if (props != null)
+        {
+            foreach (var prop in props)
+            {
+                if (prop.OneOf.Any())
+                {
+                    if (!dic.ContainsKey(prop.OneOf.FirstOrDefault()!.Reference.Id))
+                    {
+                        dic.Add(prop.OneOf.FirstOrDefault()!.Reference.Id, tag);
+                    }
+
+                }
+            }
+        }
+        // 数组
+        var arr = schema.Properties.Where(p=>p.Value.Type=="array")
+            .Select(s=>s.Value).ToList();
+        if (arr != null)
+        {
+            foreach (var item in arr)
+            {
+                if (item.Items.OneOf.Any())
+                {
+                    if (!dic.ContainsKey(item.Items.OneOf.FirstOrDefault()!.Reference.Id))
+                    {
+                        dic.Add(item.Items.OneOf.FirstOrDefault()!.Reference.Id, tag);
+                    }
+                }
+            }
+        }
+
+        return dic;
+    }
     /// <summary>
     /// 生成ts interface
     /// </summary>
@@ -25,6 +124,7 @@ public class TSModelGenerate : GenerateBase
         var fileName = schemaKey.ToHyphen() + ".model.ts";
         string tsContent;
         ModelDictionary.TryGetValue(schemaKey, out var path);
+
         if (schema.Enum.Count > 0)
         {
             tsContent = ToEnumString(schema, schemaKey);
@@ -37,7 +137,7 @@ public class TSModelGenerate : GenerateBase
         var file = new GenFileInfo(tsContent)
         {
             Name = fileName,
-            Path = path??"",
+            Path = path ?? "",
             Content = tsContent
 
         };
@@ -146,8 +246,7 @@ public class TSModelGenerate : GenerateBase
             .Where(e => e.Key == "x-enumNames")
             .FirstOrDefault();
 
-        var values = enumNames.Value as OpenApiArray;
-        if (values != null)
+        if (enumNames.Value is OpenApiArray values)
         {
             for (var i = 0; i < values?.Count; i++)
             {
