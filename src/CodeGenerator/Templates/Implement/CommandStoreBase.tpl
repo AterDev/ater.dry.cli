@@ -1,7 +1,7 @@
 ﻿using EFCore.BulkExtensions;
 
 namespace ${Namespace}.Implement;
-public class CommandStoreBase<TContext, TEntity> : IDataStoreCommand<TEntity>, IDataStoreCommandExt<TEntity>
+public class CommandStoreBase<TContext, TEntity> : ICommandStore<TEntity>, ICommandStoreExt<TEntity>
     where TContext : DbContext
     where TEntity : EntityBase
 {

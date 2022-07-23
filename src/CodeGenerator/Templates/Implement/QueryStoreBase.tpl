@@ -5,7 +5,7 @@
 /// <typeparam name="TContext"></typeparam>
 /// <typeparam name="TEntity"></typeparam>
 public class QueryStoreBase<TContext, TEntity> :
-    IDataStoreQuery<TEntity>, IDataStoreQueryExt<TEntity>
+    IQueryStore<TEntity>, IQueryStoreExt<TEntity>
     where TContext : DbContext
     where TEntity : EntityBase
 {
@@ -78,68 +78,7 @@ public class QueryStoreBase<TContext, TEntity> :
         return res;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TItem"></typeparam>
-    /// <param name="whereExp"></param>
-    /// <param name="pageIndex"></param>
-    /// <param name="pageSize"></param>
-    /// <returns></returns>
-    public virtual async Task<PageList<TItem>> PageListAsync<TItem>(Expression<Func<TEntity, bool>>? whereExp, int pageIndex = 1, int pageSize = 12)
-    {
-        if (pageIndex < 1) pageIndex = 1;
-        if (pageSize < 0) pageSize = 12;
-        Expression<Func<TEntity, bool>> exp = e => true;
-        whereExp ??= exp;
 
-        var count = _query.Count();
-        var data = await _query.Take(pageSize)
-            .Skip((pageIndex - 1) * pageSize)
-            .ProjectTo<TItem>()
-            .ToListAsync();
-        ResetQuery();
-        return new PageList<TItem>
-        {
-            Count = count,
-            Data = data,
-            PageIndex = pageIndex
-        };
-    }
-
-    /// <summary>
-    /// 分页筛选
-    /// </summary>
-    /// <typeparam name="TItem"></typeparam>
-    /// <param name="whereExp"></param>
-    /// <param name="order"></param>
-    /// <param name="pageIndex"></param>
-    /// <param name="pageSize"></param>
-    /// <returns></returns>
-    public virtual async Task<PageList<TItem>> FilterAsync<TItem>(Expression<Func<TEntity, bool>> whereExp, Dictionary<string, bool>? order = null, int pageIndex = 1, int pageSize = 12)
-    {
-        if (pageIndex < 1) pageIndex = 1;
-        Expression<Func<TEntity, bool>> exp = e => true;
-        whereExp ??= exp;
-        _query = _query.Where(whereExp);
-
-        if (order != null)
-        {
-            _query = _query.OrderBy(order);
-        }
-        var count = _query.Count();
-        var data = await _query.Take(pageSize)
-            .Skip((pageIndex - 1) * pageSize)
-            .ProjectTo<TItem>()
-            .ToListAsync();
-        ResetQuery();
-        return new PageList<TItem>
-        {
-            Count = count,
-            Data = data,
-            PageIndex = pageIndex
-        };
-    }
 }
 
 
