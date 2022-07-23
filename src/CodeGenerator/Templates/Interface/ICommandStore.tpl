@@ -3,7 +3,7 @@
 /// <summary>
 /// 仓储命令
 /// </summary>
-public interface IDataStoreCommand<TId, TEntity>
+public interface ICommandStore<TId, TEntity>
     where TEntity : class
 {
     /// <summary>
@@ -27,6 +27,6 @@ public interface IDataStoreCommand<TId, TEntity>
     /// <returns></returns>
     Task<TEntity?> DeleteAsync(TId id);
 }
-public interface IDataStoreCommand<TEntity> : IDataStoreCommand<Guid, TEntity>
+public interface ICommandStore<TEntity> : ICommandStore<Guid, TEntity>
     where TEntity : class
 { }

@@ -1,5 +1,5 @@
 ﻿namespace ${Namespace}.Interface;
-public interface IDataStoreCommandExt<TId, TEntity>
+public interface ICommandStoreExt<TId, TEntity>
     where TEntity : EntityBase
 {
     /// <summary>
@@ -38,6 +38,6 @@ public interface IDataStoreCommandExt<TId, TEntity>
     Task<int> DeleteRangeAsync(Expression<Func<TEntity, bool>> whereExp);
 }
 
-public interface IDataStoreCommandExt<TEntity> : IDataStoreCommandExt<Guid, TEntity>
+public interface ICommandStoreExt<TEntity> : ICommandStoreExt<Guid, TEntity>
      where TEntity : EntityBase
 { }

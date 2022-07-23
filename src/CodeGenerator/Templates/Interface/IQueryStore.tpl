@@ -2,7 +2,7 @@
 /// <summary>
 /// 基础查询接口
 /// </summary>
-public interface IDataStoreQuery<TId, TEntity>
+public interface IQueryStore<TId, TEntity>
     where TEntity : EntityBase
 {
     /// <summary>
@@ -34,6 +34,6 @@ public interface IDataStoreQuery<TId, TEntity>
     Task<PageList<TItem>> PageListAsync<TItem>(Expression<Func<TEntity, bool>>? whereExp, int pageIndex = 1, int pageSize = 12);
 }
 
-public interface IDataStoreQuery<TEntity> : IDataStoreQuery<Guid, TEntity>
+public interface IQueryStore<TEntity> : IQueryStore<Guid, TEntity>
     where TEntity : EntityBase
 { }

@@ -2,7 +2,7 @@
 /// <summary>
 /// 高级查询接口
 /// </summary>
-public interface IDataStoreQueryExt<TEntity>
+public interface IQueryStoreExt<TEntity>
 {
 
     /// <summary>
