@@ -57,7 +57,7 @@ public class CommandBuilder
         var dtoCommand = new Command("dto", "generate entity dto files");
         var path = new Argument<string>("entity path", "The entity file path");
         var outputOption = new Option<string>(new[] { "--output", "-o" },
-            "output project directory，default ./Share");
+            "output project directory");
         outputOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.DtoPath));
         var forceOption = new Option<bool>(new[] { "--force", "-f" },
             "force overwrite file");
@@ -111,10 +111,10 @@ public class CommandBuilder
         apiCommand.AddAlias("manager");
         var path = new Argument<string>("entity path", "The entity file path");
         var dtoOption = new Option<string>(new[] { "--dto", "-d" },
-            "dto project directory，default ./Share");
+            "dto project directory");
         dtoOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.DtoPath));
         var storeOption = new Option<string>(new[] { "--manager", "-m" },
-            "application project directory，default ./Http.Application");
+            "application project directory");
         storeOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.StorePath));
         var typeOption = new Option<string>(new[] { "--type", "-t" },
             "api type, valid values:rest/grpc/graph");
@@ -142,13 +142,13 @@ public class CommandBuilder
         apiCommand.AddAlias("api");
         var path = new Argument<string>("entity path", "The entity file path");
         var dtoOption = new Option<string>(new[] { "--dto", "-d" },
-            "dto project directory，default ./Share");
+            "dto project director");
         dtoOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.DtoPath));
         var storeOption = new Option<string>(new[] { "--datastore", "-s" },
-            "dataStore project directory，default ./Http.Application");
+            "dataStore project directory");
         storeOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.StorePath));
         var apiOption = new Option<string>(new[] { "--output", "-o" },
-            "api controller project directory，default ./Http.API");
+            "api controller project directory");
         apiOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.ApiPath));
         var contextOption = new Option<string>(new[] { "--contextName", "-c" },
             "the entityframework dbcontext name, default ContextBase");
@@ -220,7 +220,7 @@ public class CommandBuilder
         var viewCommand = new Command("view", "generate front view page, only support angular. ");
         viewCommand.AddAlias("view");
         var entityArgument = new Argument<string>("entity path","The entity file path, like path/xxx.cs");
-        var dtoOption = new Option<string>(new[] { "--dto", "-d" },"dto project directory，default ./Share");
+        var dtoOption = new Option<string>(new[] { "--dto", "-d" },"dto project directory");
         dtoOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.DtoPath));
         var outputOption= new Option<string>(new[] { "--output", "-o" },"angular project root path")
         {

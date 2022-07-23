@@ -111,7 +111,7 @@ public class DataStoreGenerate : GenerateBase
         tplContent = tplContent.Replace(TplConst.NAMESPACE, ServiceNamespace);
         //tplContent = tplContent.Replace(TplConst.SHARE_NAMESPACE, ShareNamespace);
         tplContent = tplContent.Replace(TplConst.DBCONTEXT_NAME, contextName);
-        tplContent = tplContent.Replace(TplConst.ENTITY_NAME, ServiceNamespace);
+        tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName);
         return tplContent;
     }
     /// <summary>

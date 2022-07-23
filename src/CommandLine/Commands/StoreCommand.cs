@@ -41,7 +41,7 @@ public class StoreCommand : CommandBase
         Console.WriteLine(Instructions[0]);
         await GenerateCommonFilesAsync();
         Console.WriteLine(Instructions[1]);
-        await GenerateStoreDataAsync();
+        await GenerateStoreFilesAsync();
 
         Console.WriteLine(Instructions[2]);
         await GenerateMangerAsync();
@@ -147,15 +147,16 @@ public class StoreCommand : CommandBase
     /// <summary>
     /// 生成仓储
     /// </summary>
-    public async Task GenerateStoreDataAsync()
+    public async Task GenerateStoreFilesAsync()
     {
-        var storeDir = Path.Combine(StorePath, "DataStore");
+        var queryStoreDir = Path.Combine(StorePath, "QueryStore");
+        var commandStoreDir = Path.Combine(StorePath, "CommandStore");
         var entityName = Path.GetFileNameWithoutExtension(EntityPath);
         var queryStoreContent = CodeGen.GetStoreContent("Query");
         var commandStoreContent = CodeGen.GetStoreContent("Command");
 
-        await GenerateFileAsync(storeDir, $"{entityName}QueryStore.cs", queryStoreContent);
-        await GenerateFileAsync(storeDir, $"{entityName}CommandStore.cs", commandStoreContent);
+        await GenerateFileAsync(queryStoreDir, $"{entityName}QueryStore.cs", queryStoreContent);
+        await GenerateFileAsync(commandStoreDir, $"{entityName}CommandStore.cs", commandStoreContent);
     }
     /// <summary>
     /// 生成注入服务
