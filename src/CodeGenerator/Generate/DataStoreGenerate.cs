@@ -84,8 +84,8 @@ public class DataStoreGenerate : GenerateBase
             $"// global using {entityNamepapce}.Identity;",
             $"global using {ShareNamespace}.Models;",
             $"global using {ServiceNamespace}.Interface;",
-            $"global using {ServiceNamespace}.QueryDataStore;",
-            $"global using {ServiceNamespace}.CommandDataStore;",
+            $"global using {ServiceNamespace}.QueryStore;",
+            $"global using {ServiceNamespace}.CommandStore;",
             $"global using {ServiceNamespace}.Implement;",
             $"global using {ServiceNamespace}.Manager;",
             $"global using {ServiceNamespace}.IManager;",
@@ -133,8 +133,8 @@ public class DataStoreGenerate : GenerateBase
             string oneTab = "    ";
             string twoTab = "        ";
 
-            var queryStores = CompilationHelper.GetClassNameByBaseType(classes, "QueryStoreBase");
-            var commandStores = CompilationHelper.GetClassNameByBaseType(classes, "CommandStoreBase");
+            var queryStores = CompilationHelper.GetClassNameByBaseType(classes, "QuerySet");
+            var commandStores = CompilationHelper.GetClassNameByBaseType(classes, "CommandSet");
 
             var allDataStores = queryStores.Concat(commandStores);
 
@@ -153,10 +153,10 @@ public class DataStoreGenerate : GenerateBase
                     var row = $"{oneTab}public {propType}<{propGeneric}> {propName} {{ get; init; }}";
                     props += row + Environment.NewLine;
                     // 构造函数参数
-                    row = $"{twoTab}{dataStore.Name} {propName.ToCamelCase()}";
+                    row = $"{twoTab}{dataStore.Name} {propName.ToCamelCase()},";
                     ctorParams += row + Environment.NewLine;
                     // 构造函数赋值
-                    row = $"{twoTab}{propName} = {propName.ToCamelCase()}";
+                    row = $"{twoTab}{propName} = {propName.ToCamelCase()};";
                     ctorAssign += row + Environment.NewLine;
                     ctorAssign += $"{twoTab}AddCache({propName})" + Environment.NewLine;
                 });
@@ -184,6 +184,12 @@ public class DataStoreGenerate : GenerateBase
         var storeDir = Path.Combine(StorePath, "DataStore");
         if (!Directory.Exists(storeDir)) return string.Empty;
         var files = Directory.GetFiles(storeDir, "*DataStore.cs", SearchOption.TopDirectoryOnly);
+
+        var queryFiles = Directory.GetFiles(Path.Combine(StorePath,"QueryStore"),"*QueryStore.cs",SearchOption.TopDirectoryOnly);
+        var commandFiles = Directory.GetFiles(Path.Combine(StorePath,"CommandStore"),"*CommandStore.cs",SearchOption.TopDirectoryOnly);
+
+        files = files.Concat(queryFiles).Concat(commandFiles).ToArray();
+
         if (files != null)
         {
             files.ToList().ForEach(file =>

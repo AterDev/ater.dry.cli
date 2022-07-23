@@ -168,7 +168,7 @@ public class StoreCommand : CommandBase
         var storeContext = CodeGen.GetDataStoreContext();
 
         // 生成仓储上下文
-        await GenerateFileAsync(implementDir, "DataStoreContext.cs", storeContext);
+        await GenerateFileAsync(implementDir, "DataStoreContext.cs", storeContext, true);
         await GenerateFileAsync(implementDir, "StoreServicesExtensions.cs", storeService, true);
 
 
