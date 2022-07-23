@@ -22,6 +22,7 @@ public class CommandBuilder
     {
         AddConfig();
         AddDto();
+        AddManager();
         AddApi();
         AddNgService();
         AddRequest();
@@ -46,6 +47,9 @@ public class CommandBuilder
         configCommand.AddCommand(init);
         RootCommand.Add(configCommand);
     }
+    /// <summary>
+    /// DTO命令
+    /// </summary>
     public void AddDto()
     {
         var executor = new CommandRunner();
@@ -69,7 +73,9 @@ public class CommandBuilder
 
         RootCommand.Add(dtoCommand);
     }
-
+    /// <summary>
+    /// 前端请求命令
+    /// </summary>
     public void AddRequest()
     {
         var executor = new CommandRunner();
@@ -93,11 +99,46 @@ public class CommandBuilder
 
         RootCommand.Add(reqCommand);
     }
+
+    /// <summary>
+    /// 后端manager服务
+    /// </summary>
+    public void AddManager()
+    {
+        var executor = new CommandRunner();
+        // api 生成命令
+        var apiCommand = new Command("manager", "generate dtos, datastore, manager");
+        apiCommand.AddAlias("manager");
+        var path = new Argument<string>("entity path", "The entity file path");
+        var dtoOption = new Option<string>(new[] { "--dto", "-d" },
+            "dto project directory，default ./Share");
+        dtoOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.DtoPath));
+        var storeOption = new Option<string>(new[] { "--manager", "-m" },
+            "application project directory，default ./Http.Application");
+        storeOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.StorePath));
+        var typeOption = new Option<string>(new[] { "--type", "-t" },
+            "api type, valid values:rest/grpc/graph");
+        typeOption.SetDefaultValue("rest");
+        apiCommand.AddArgument(path);
+        apiCommand.AddOption(dtoOption);
+        apiCommand.AddOption(storeOption);
+
+        apiCommand.SetHandler(
+            async (string entity, string dto, string store) =>
+            {
+                await CommandRunner.GenerateManagerAsync(entity, dto, store);
+            }, path, dtoOption, storeOption);
+
+        RootCommand.Add(apiCommand);
+    }
+    /// <summary>
+    /// 后端接口及仓储、dto
+    /// </summary>
     public void AddApi()
     {
         var executor = new CommandRunner();
         // api 生成命令
-        var apiCommand = new Command("webapi", "generate dtos, datastore, api controllers");
+        var apiCommand = new Command("webapi", "generate dtos, datastore, manager,api controllers");
         apiCommand.AddAlias("api");
         var path = new Argument<string>("entity path", "The entity file path");
         var dtoOption = new Option<string>(new[] { "--dto", "-d" },
@@ -152,7 +193,6 @@ public class CommandBuilder
 
         RootCommand.Add(docCommand);
     }
-
     public void AddNgService()
     {
         var executor = new CommandRunner();
