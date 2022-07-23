@@ -84,8 +84,8 @@ public class DataStoreGenerate : GenerateBase
             $"// global using {entityNamepapce}.Identity;",
             $"global using {ShareNamespace}.Models;",
             $"global using {ServiceNamespace}.Interface;",
-            $"global using {ServiceNamespace}.QueryStore;",
-            $"global using {ServiceNamespace}.CommandStore;",
+            $"global using {ServiceNamespace}.{Const.QUERY_STORE};",
+            $"global using {ServiceNamespace}.{Const.COMMAND_STORE};",
             $"global using {ServiceNamespace}.Implement;",
             $"global using {ServiceNamespace}.Manager;",
             $"global using {ServiceNamespace}.IManager;",
@@ -145,10 +145,10 @@ public class DataStoreGenerate : GenerateBase
                     // 属性名
                     var propName = dataStore.Name.Replace("Store","");
                     // 属性类型
-                    var propType = dataStore.Name.EndsWith("QueryStore")?"QuerySet":"CommandSet";
+                    var propType = dataStore.Name.EndsWith($"{Const.QUERY_STORE}")?"QuerySet":"CommandSet";
                     // 属性泛型
-                    var propGeneric = dataStore.Name.Replace("QueryStore","")
-                    .Replace("CommandStore","");
+                    var propGeneric = dataStore.Name.Replace($"{Const.QUERY_STORE}","")
+                    .Replace($"{Const.COMMAND_STORE}","");
 
                     var row = $"{oneTab}public {propType}<{propGeneric}> {propName} {{ get; init; }}";
                     props += row + Environment.NewLine;
@@ -158,7 +158,7 @@ public class DataStoreGenerate : GenerateBase
                     // 构造函数赋值
                     row = $"{twoTab}{propName} = {propName.ToCamelCase()};";
                     ctorAssign += row + Environment.NewLine;
-                    ctorAssign += $"{twoTab}AddCache({propName})" + Environment.NewLine;
+                    ctorAssign += $"{twoTab}AddCache({propName});" + Environment.NewLine;
                 });
             }
         }
@@ -185,8 +185,8 @@ public class DataStoreGenerate : GenerateBase
         if (!Directory.Exists(storeDir)) return string.Empty;
         var files = Directory.GetFiles(storeDir, "*DataStore.cs", SearchOption.TopDirectoryOnly);
 
-        var queryFiles = Directory.GetFiles(Path.Combine(StorePath,"QueryStore"),"*QueryStore.cs",SearchOption.TopDirectoryOnly);
-        var commandFiles = Directory.GetFiles(Path.Combine(StorePath,"CommandStore"),"*CommandStore.cs",SearchOption.TopDirectoryOnly);
+        var queryFiles = Directory.GetFiles(Path.Combine(StorePath,$"{Const.QUERY_STORE}"),$"*{Const.QUERY_STORE}.cs",SearchOption.TopDirectoryOnly);
+        var commandFiles = Directory.GetFiles(Path.Combine(StorePath,$"{Const.COMMAND_STORE}"),$"*{Const.COMMAND_STORE}.cs",SearchOption.TopDirectoryOnly);
 
         files = files.Concat(queryFiles).Concat(commandFiles).ToArray();
 
