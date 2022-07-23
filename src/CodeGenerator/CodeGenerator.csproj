@@ -32,18 +32,34 @@
 		<None Remove="Templates\EntityBase.tpl" />
 		<None Remove="Templates\Extensions.tpl" />
 		<None Remove="Templates\FilterBase.tpl" />
-		<None Remove="Templates\Implement\DataStore.tpl" />
-		<None Remove="Templates\Implement\DataStoreBase.tpl" />
-		<None Remove="Templates\Implement\DataStoreExtensioins.tpl" />
+		<None Remove="Templates\Implement\CommandStoreBase.tpl" />
+		<None Remove="Templates\Implement\CommandStoreContent.tpl" />
+		<None Remove="Templates\Implement\DataStoreContext.tpl" />
+		<None Remove="Templates\Implement\IManager.tpl" />
+		<None Remove="Templates\Implement\Manager.tpl" />
+		<None Remove="Templates\Implement\QueryStoreBase.tpl" />
+		<None Remove="Templates\Implement\QueryStoreContent.tpl" />
 		<None Remove="Templates\Implement\RestApi.tpl" />
 		<None Remove="Templates\Implement\RestApiBase.tpl" />
+		<None Remove="Templates\Implement\StoreServicesExtensions.tpl" />
 		<None Remove="Templates\Implement\UserContext.tpl" />
-		<None Remove="Templates\Interface\IDataStore.tpl" />
+		<None Remove="Templates\Interface\IDataStoreCommand.tpl" />
+		<None Remove="Templates\Interface\IDataStoreCommandExt.tpl" />
+		<None Remove="Templates\Interface\IDataStoreQuery.tpl" />
+		<None Remove="Templates\Interface\IDataStoreQueryExt.tpl" />
+		<None Remove="Templates\Interface\IDomainManager.tpl" />
 		<None Remove="Templates\Interface\IRestApiBase.tpl" />
 		<None Remove="Templates\Interface\IUserContext.tpl" />
 		<None Remove="Templates\PageResult.tpl" />
 		<None Remove="Templates\RequestService\axios.service.tpl" />
 		<None Remove="Templates\RequestService\service.ts" />
+	</ItemGroup>
+	<ItemGroup>
+	  <EmbeddedResource Include="Templates\Implement\CommandStoreBase.tpl" />
+	  <EmbeddedResource Include="Templates\Implement\DataStoreContext.tpl" />
+	  <EmbeddedResource Include="Templates\Implement\Manager.tpl" />
+	  <EmbeddedResource Include="Templates\Implement\IManager.tpl" />
+	  <EmbeddedResource Include="Templates\Implement\QueryStoreBase.tpl" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="Templates\angular\add\add.component.css.tpl" />
@@ -71,13 +87,17 @@
 		<EmbeddedResource Include="Templates\EntityBase.tpl" />
 		<EmbeddedResource Include="Templates\FilterBase.tpl" />
 		<EmbeddedResource Include="Templates\Extensions.tpl" />
-		<EmbeddedResource Include="Templates\Implement\DataStore.tpl" />
-		<EmbeddedResource Include="Templates\Implement\DataStoreBase.tpl" />
-		<EmbeddedResource Include="Templates\Implement\DataStoreExtensioins.tpl" />
+		<EmbeddedResource Include="Templates\Implement\StoreServicesExtensions.tpl" />
+		<EmbeddedResource Include="Templates\Implement\CommandStoreContent.tpl" />
+		<EmbeddedResource Include="Templates\Implement\QueryStoreContent.tpl" />
 		<EmbeddedResource Include="Templates\Implement\RestApi.tpl" />
 		<EmbeddedResource Include="Templates\Implement\RestApiBase.tpl" />
 		<EmbeddedResource Include="Templates\Implement\UserContext.tpl" />
-		<EmbeddedResource Include="Templates\Interface\IDataStore.tpl" />
+		<EmbeddedResource Include="Templates\Interface\IDataStoreCommand.tpl" />
+		<EmbeddedResource Include="Templates\Interface\IDataStoreCommandExt.tpl" />
+		<EmbeddedResource Include="Templates\Interface\IDataStoreQuery.tpl" />
+		<EmbeddedResource Include="Templates\Interface\IDataStoreQueryExt.tpl" />
+		<EmbeddedResource Include="Templates\Interface\IDomainManager.tpl" />
 		<EmbeddedResource Include="Templates\Interface\IRestApiBase.tpl" />
 		<EmbeddedResource Include="Templates\Interface\IUserContext.tpl" />
 		<EmbeddedResource Include="Templates\BatchUpdate.tpl" />
@@ -88,11 +108,11 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.2.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.5">
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.7">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.OpenApi.Readers" Version="1.3.1" />
+		<PackageReference Include="Microsoft.OpenApi.Readers" Version="1.3.2" />
 	</ItemGroup>
 
 	<ItemGroup>

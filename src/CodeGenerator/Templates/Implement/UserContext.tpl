@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 
-namespace ${Namespace};
+namespace ${Namespace}.Implement;
 
 public class UserContext : IUserContext
 {
