@@ -57,7 +57,7 @@ public class DtoCommand : CommandBase
     {
         await GenerateFileAsync(DtoPath, "GlobalUsings.cs", CodeGen.GetDtoUsings());
         await GenerateFileAsync("FilterBase.cs", CodeGen.GetFilterBase());
-        await GenerateFileAsync("PageResult.cs", CodeGen.GetPageResult());
+        await GenerateFileAsync("PageList.cs", CodeGen.GetPageList());
         await GenerateFileAsync("BatchUpdate.cs", CodeGen.GetBatchUpdate());
         //await GenerateFileAsync("EntityBase.cs", CodeGen.GetEntityBase());
     }

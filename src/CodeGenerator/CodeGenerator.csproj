@@ -50,7 +50,7 @@
 		<None Remove="Templates\Interface\IQueryStoreExt.tpl" />
 		<None Remove="Templates\Interface\IRestApiBase.tpl" />
 		<None Remove="Templates\Interface\IUserContext.tpl" />
-		<None Remove="Templates\PageResult.tpl" />
+		<None Remove="Templates\PageList.tpl" />
 		<None Remove="Templates\RequestService\axios.service.tpl" />
 		<None Remove="Templates\RequestService\service.ts" />
 	</ItemGroup>
@@ -101,7 +101,7 @@
 		<EmbeddedResource Include="Templates\Interface\IRestApiBase.tpl" />
 		<EmbeddedResource Include="Templates\Interface\IUserContext.tpl" />
 		<EmbeddedResource Include="Templates\BatchUpdate.tpl" />
-		<EmbeddedResource Include="Templates\PageResult.tpl" />
+		<EmbeddedResource Include="Templates\PageList.tpl" />
 		<EmbeddedResource Include="Templates\RequestService\axios.service.tpl" />
 		<EmbeddedResource Include="Templates\RequestService\service.ts" />
 	</ItemGroup>
