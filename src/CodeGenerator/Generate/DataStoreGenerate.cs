@@ -76,12 +76,13 @@ public class DataStoreGenerate : GenerateBase
         return new List<string>
         {
             "global using System;",
-            "// global using EntityFramework;",
+            "global using System.Text.Json;",
+            "global using EntityFramework;",
             "global using Microsoft.EntityFrameworkCore;",
             "global using Microsoft.Extensions.Logging;",
             $"global using {entityNamepapce}.Utils;",
+            $"global using {entityNamepapce}.Entities;",
             $"global using {entityNamepapce}.Models;",
-            $"// global using {entityNamepapce}.Identity;",
             $"global using {ShareNamespace}.Models;",
             $"global using {ServiceNamespace}.Interface;",
             $"global using {ServiceNamespace}.{Const.QUERY_STORE};",

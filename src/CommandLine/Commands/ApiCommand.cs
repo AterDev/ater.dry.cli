@@ -84,11 +84,10 @@ public class ApiCommand : CommandBase
 
     private async Task GenerateCommonFilesAsync()
     {
-        var interfaceDir = Path.Combine(ApiPath, "Interface");
-        var apiBaseDir = Path.Combine(ApiPath, "Controllers");
+        var infrastructureDir = Path.Combine(ApiPath, "Infrastructure");
         var interfaceContent = CodeGen.GetRestApiInterface();
         var apiBaseContent = CodeGen.GetRestApiBase();
-        await GenerateFileAsync(interfaceDir, GenConst.IRESTAPI_BASE_NAME, interfaceContent);
-        await GenerateFileAsync(apiBaseDir, GenConst.RESTAPI_BASE_NAME, apiBaseContent);
+        await GenerateFileAsync(infrastructureDir, GenConst.IRESTAPI_BASE_NAME, interfaceContent);
+        await GenerateFileAsync(infrastructureDir, GenConst.RESTAPI_BASE_NAME, apiBaseContent);
     }
 }

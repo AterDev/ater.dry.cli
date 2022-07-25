@@ -51,7 +51,7 @@ public class RestApiGenerate : GenerateBase
 
     public string GetRestApiInterface()
     {
-        var content = GetTplContent("Interface.IRestApiBase.tpl");
+        var content = GetTplContent("Interface.IRestController.tpl");
         content = content.Replace(TplConst.NAMESPACE, ApiNamespace);
         return content;
     }
@@ -64,7 +64,7 @@ public class RestApiGenerate : GenerateBase
     public string GetRestApiBase()
     {
         var dbContextName = GetContextName();
-        var content = GetTplContent("Implement.RestApiBase.tpl");
+        var content = GetTplContent("Implement.RestControllerBase.tpl");
         content = content.Replace(TplConst.NAMESPACE, ApiNamespace)
             .Replace(TplConst.DBCONTEXT_NAME, dbContextName);
         return content;
@@ -97,18 +97,17 @@ public class RestApiGenerate : GenerateBase
     public string GetRestApiContent()
     {
         var entityName = Path.GetFileNameWithoutExtension(EntityPath);
-        var tplContent = GetTplContent("Implement.RestApi.tpl");
+        var tplContent = GetTplContent("Implement.RestControllerContent.tpl");
 
         //var actionContent = GetAddApiContent();
         //actionContent += GetUpdateApiContent();
-        var actionContent = "";
 
         tplContent = tplContent.Replace(TplConst.NAMESPACE, ApiNamespace)
             .Replace(TplConst.SHARE_NAMESPACE, ShareNamespace)
             .Replace(TplConst.ENTITY_NAME, entityName)
-            .Replace(TplConst.COMMENT, EntityInfo?.Comment ?? "")
-            .Replace(TplConst.ADDITION_ACTION, actionContent ?? "")
-            .Replace(TplConst.ID_TYPE, Config.IdType);
+            .Replace(TplConst.COMMENT, EntityInfo?.Comment ?? "");
+        //.Replace(TplConst.ADDITION_ACTION, actionContent ?? "")
+        //.Replace(TplConst.ID_TYPE, Config.IdType);
         return tplContent;
     }
 
