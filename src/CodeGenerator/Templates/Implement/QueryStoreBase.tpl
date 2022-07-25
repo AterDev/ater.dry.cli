@@ -78,6 +78,65 @@ public class QueryStoreBase<TContext, TEntity> :
         return res;
     }
 
+    /// <summary>
+    /// 分页查询
+    /// </summary>
+    /// <typeparam name="TItem"></typeparam>
+    /// <param name="filter"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public virtual async Task<PageList<TItem>> PageListAsync<TItem>(Expression<Func<TEntity, bool>>? whereExp, int pageIndex = 1, int pageSize = 12)
+    {
+        if (pageIndex < 1) pageIndex = 1;
+        if (pageSize < 0) pageSize = 12;
+
+        var count = _query.Count();
+        var data = await _query.ProjectTo<TItem>()
+            .Skip((pageIndex - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+        ResetQuery();
+        return new PageList<TItem>
+        {
+            Count = count,
+            Data = data,
+            PageIndex = pageIndex
+        };
+    }
+
+    /// <summary>
+    /// 分页筛选
+    /// </summary>
+    /// <typeparam name="TItem"></typeparam>
+    /// <param name="whereExp"></param>
+    /// <param name="order"></param>
+    /// <param name="pageIndex"></param>
+    /// <param name="pageSize"></param>
+    /// <returns></returns>
+    public virtual async Task<PageList<TItem>> FilterAsync<TItem>(Expression<Func<TEntity, bool>> whereExp, Dictionary<string, bool>? order, int pageIndex = 1, int pageSize = 12)
+    {
+        if (pageIndex < 1) pageIndex = 1;
+        _query = _query.Where(whereExp);
+
+        if (order != null)
+        {
+            _query = _query.OrderBy(order);
+        }
+        var count = _query.Count();
+        var data = await _query
+            .ProjectTo<TItem>()
+            .Skip((pageIndex - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        ResetQuery();
+        return new PageList<TItem>
+        {
+            Count = count,
+            Data = data,
+            PageIndex = pageIndex
+        };
+    }
 
 }
 

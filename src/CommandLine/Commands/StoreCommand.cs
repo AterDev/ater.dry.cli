@@ -1,6 +1,5 @@
 ﻿using CodeGenerator.Infrastructure;
 using CodeGenerator.Infrastructure.Helper;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Droplet.CommandLine.Commands;
 
@@ -78,7 +77,7 @@ public class StoreCommand : CommandBase
         var interfaceFiles = new string[]{"ICommandStore","ICommandStoreExt","IQueryStore","IQueryStoreExt","IDomainManager","IUserContext"};
 
 
-        var implementFiles = new string[]{"CommandStoreBase","QueryStoreBase"};
+        var implementFiles = new string[]{"CommandStoreBase","QueryStoreBase","DomainManagerBase"};
         var userClass = CodeGen.GetUserContextClass();
 
 
