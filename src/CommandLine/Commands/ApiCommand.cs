@@ -20,15 +20,18 @@ public class ApiCommand : CommandBase
     /// Web站点路径
     /// </summary> 
     public string ApiPath { get; }
+
+    public string Suffix { get; set; }
     public RestApiGenerate CodeGen { get; set; }
 
-    public ApiCommand(string entityPath, string dtoPath, string servicePath, string apiPath, string? contextName = null)
+    public ApiCommand(string entityPath, string dtoPath, string servicePath, string apiPath, string? suffix = null)
     {
         EntityPath = entityPath;
         DtoPath = dtoPath;
         StorePath = servicePath;
         ApiPath = apiPath;
-        CodeGen = new RestApiGenerate(entityPath, dtoPath, servicePath, apiPath, contextName);
+        Suffix = suffix ?? "Controller";
+        CodeGen = new RestApiGenerate(entityPath, dtoPath, servicePath, apiPath, Suffix);
         var entityName = Path.GetFileNameWithoutExtension(entityPath);
         Instructions.Add("  🔹 generate interface & base class.");
         Instructions.Add($"  🔹 generate {entityName} RestApi.");
@@ -76,10 +79,10 @@ public class ApiCommand : CommandBase
 
     private async Task GenerateRestApiAsync()
     {
-        var apiDir = Path.Combine(ApiPath, "Controllers");
+        var apiDir = Path.Combine(ApiPath, Suffix);
         var entityName = Path.GetFileNameWithoutExtension(EntityPath);
         var apiContent = CodeGen.GetRestApiContent();
-        await GenerateFileAsync(apiDir, $"{entityName}Controller.cs", apiContent);
+        await GenerateFileAsync(apiDir, $"{entityName}{Suffix}.cs", apiContent);
     }
 
     private async Task GenerateCommonFilesAsync()

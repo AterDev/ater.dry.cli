@@ -2,13 +2,13 @@
 namespace ${Namespace}.Infrastructure;
 
 ${Comment}
-public class ${EntityName}Controller :
+public class ${EntityName}${APISuffix} :
     RestControllerBase<${EntityName}Manager>,
     IRestController<${EntityName}, ${EntityName}AddDto, ${EntityName}UpdateDto, ${EntityName}FilterDto, ${EntityName}ItemDto>
 {
-    public ${EntityName}Controller(
+    public ${EntityName}${APISuffix}(
         IUserContext user,
-        ILogger<${EntityName}Controller> logger,
+        ILogger<${EntityName}${APISuffix}> logger,
         ${EntityName}Manager manager
         ) : base(manager, user, logger)
     {

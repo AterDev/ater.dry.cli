@@ -6,6 +6,10 @@ public static class TplConst
     public const string ID_TYPE                      = @"${IdType}";
     public const string COMMENT                      = @"${Comment}";
     public const string NAMESPACE                    = @"${Namespace}";
+    /// <summary>
+    /// 控制器后缀
+    /// </summary>
+    public const string API_SUFFIX                   = @"${APISuffix}";
     public const string ENTITY_NAME                  = @"${EntityName}";
     public const string DEPEND_STORE                 = @"${DependStore}";
     public const string DBCONTEXT_NAME               = @"${DbContextName}";
@@ -13,6 +17,7 @@ public static class TplConst
     public const string SHARE_NAMESPACE              = @"${ShareNamespace}";
     public const string STORE_NAMESPACE              = @"${StoreNamespace}";
     public const string CREATEDTIME_NAME             = @"${CreatedTimeName}";
+
     /// <summary>
     /// 注入服务
     /// </summary>

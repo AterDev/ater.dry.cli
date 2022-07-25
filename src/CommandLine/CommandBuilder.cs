@@ -144,29 +144,32 @@ public class CommandBuilder
         var dtoOption = new Option<string>(new[] { "--dto", "-d" },
             "dto project director");
         dtoOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.DtoPath));
-        var storeOption = new Option<string>(new[] { "--datastore", "-s" },
-            "dataStore project directory");
-        storeOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.StorePath));
+
+        var managerOption = new Option<string>(new[] { "--manager", "-m" },
+            "manager and datastore project directory");
+        managerOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.StorePath));
+
         var apiOption = new Option<string>(new[] { "--output", "-o" },
             "api controller project directory");
         apiOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.ApiPath));
-        var contextOption = new Option<string>(new[] { "--contextName", "-c" },
-            "the entityframework dbcontext name, default ContextBase");
-        contextOption.SetDefaultValue("ContextBase");
+
+        var suffixOption = new Option<string>(new[] { "--suffix", "-s" },
+            "the controller suffix");
+        suffixOption.SetDefaultValue("Controller");
         var typeOption = new Option<string>(new[] { "--type", "-t" },
-            "api type, valid values:rest/grpc/graph");
+            "api type, valid values:rest/grpc/graph, just support rest");
         typeOption.SetDefaultValue("rest");
         apiCommand.AddArgument(path);
         apiCommand.AddOption(dtoOption);
-        apiCommand.AddOption(storeOption);
+        apiCommand.AddOption(managerOption);
         apiCommand.AddOption(apiOption);
-        apiCommand.AddOption(contextOption);
+        apiCommand.AddOption(suffixOption);
 
         apiCommand.SetHandler(
             async (string entity, string dto, string store, string output, string context) =>
         {
             await CommandRunner.GenerateApi(entity, dto, store, output);
-        }, path, dtoOption, storeOption, apiOption, contextOption);
+        }, path, dtoOption, managerOption, apiOption, suffixOption);
 
         RootCommand.Add(apiCommand);
     }

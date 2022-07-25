@@ -9,6 +9,6 @@ public class Comments
     [MaxLength(100)]
     public string? Name { get; set; }
     public string? Content { get; set; }
-    public Blog Blog { get; set; }
+    public Blog? Blog { get; set; }
     public Status Status { get; set; }
 }

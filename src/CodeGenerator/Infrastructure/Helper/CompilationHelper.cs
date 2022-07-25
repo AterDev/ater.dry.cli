@@ -42,7 +42,7 @@ public class CompilationHelper
         Compilation = Compilation.AddSyntaxTrees(SyntaxTree);
         SemanticModel = Compilation.GetSemanticModel(SyntaxTree);
         var classNode = SyntaxTree.GetCompilationUnitRoot().DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
-        ClassSymbol = SemanticModel.GetDeclaredSymbol(classNode);
+        ClassSymbol = SemanticModel.GetDeclaredSymbol(classNode!);
     }
 
     /// <summary>
@@ -69,11 +69,10 @@ public class CompilationHelper
             .ToList();
     }
 
-    public INamedTypeSymbol GetClass(string name)
+    public INamedTypeSymbol? GetClass(string name)
     {
         return GetAllClasses().Where(cls => cls.Name == name).FirstOrDefault();
     }
-
 
 
     /// <summary>

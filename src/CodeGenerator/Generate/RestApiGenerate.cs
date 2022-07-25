@@ -18,8 +18,10 @@ public class RestApiGenerate : GenerateBase
     /// api项目目录路径
     /// </summary>
     public string ApiPath { get; }
-
-    public string? ContextName { get; set; }
+    /// <summary>
+    /// API后缀
+    /// </summary>
+    public string? Suffix { get; set; }
     public string? EntityNamespace { get; set; }
     /// <summary>
     /// DataStore 项目的命名空间
@@ -29,13 +31,13 @@ public class RestApiGenerate : GenerateBase
     public string? ApiNamespace { get; set; }
     public readonly EntityInfo EntityInfo;
 
-    public RestApiGenerate(string entityPath, string dtoPath, string servicePath, string apiPath, string? contextName = null)
+    public RestApiGenerate(string entityPath, string dtoPath, string servicePath, string apiPath, string? suffix = null)
     {
         EntityPath = entityPath;
         SharePath = dtoPath;
         StorePath = servicePath;
         ApiPath = apiPath;
-        ContextName = contextName;
+        Suffix = suffix;
         var entityDir =  new FileInfo(entityPath).Directory!;
         var entityProjectFile = AssemblyHelper.FindProjectFile(entityDir, entityDir.Root);
         if (entityProjectFile == null) throw new FileNotFoundException("project file not found!");
@@ -105,6 +107,7 @@ public class RestApiGenerate : GenerateBase
         tplContent = tplContent.Replace(TplConst.NAMESPACE, ApiNamespace)
             .Replace(TplConst.SHARE_NAMESPACE, ShareNamespace)
             .Replace(TplConst.ENTITY_NAME, entityName)
+            .Replace(TplConst.ENTITY_NAME, Suffix)
             .Replace(TplConst.COMMENT, EntityInfo?.Comment ?? "");
         //.Replace(TplConst.ADDITION_ACTION, actionContent ?? "")
         //.Replace(TplConst.ID_TYPE, Config.IdType);
