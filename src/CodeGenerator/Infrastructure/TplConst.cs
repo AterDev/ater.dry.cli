@@ -13,8 +13,25 @@ public static class TplConst
     public const string SHARE_NAMESPACE              = @"${ShareNamespace}";
     public const string STORE_NAMESPACE              = @"${StoreNamespace}";
     public const string CREATEDTIME_NAME             = @"${CreatedTimeName}";
-    public const string DATASTORE_SERVICES           = @"//${DataStoreServices}";
+    /// <summary>
+    /// 注入服务
+    /// </summary>
+    public const string SERVICE_STORES               = @"${StoreServices}";
+    public const string SERVICE_MANAGER              = @"${ManagerServices}";
     public const string DATASTORE_CONTEXT            = @"${DataStoreContext}";
+    /// <summary>
+    /// 属性
+    /// </summary>
+    public const string STORECONTEXT_PROPS            = @"${Properties}";
+    /// <summary>
+    /// 构造方法参数
+    /// </summary>
+    public const string STORECONTEXT_PARAMS           = @"${CtorParams}";
+    /// <summary>
+    /// 构造方法赋值
+    /// </summary>
+    public const string STORECONTEXT_ASSIGN           = @"${CtorAssign}";
+
 
     // tpl names
 }

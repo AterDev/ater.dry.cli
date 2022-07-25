@@ -87,6 +87,25 @@ public class CommandRunner
         await cmd.RunAsync(force);
     }
 
+
+    /// <summary>
+    /// manager代码生成
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="dtoPath"></param>
+    /// <param name="servicePath"></param>
+    /// <returns></returns>
+    public static async Task GenerateManagerAsync(string path, string dtoPath = "",
+            string servicePath = "")
+    {
+        Console.WriteLine("🔵 Generate dtos");
+        var dtoCmd = new DtoCommand(path, dtoPath);
+        await dtoCmd.RunAsync();
+        Console.WriteLine("🔵 Generate manager");
+        var storeCmd = new StoreCommand(path, dtoPath, servicePath);
+        await storeCmd.RunAsync();
+    }
+
     /// <summary>
     /// api项目代码生成
     /// </summary>

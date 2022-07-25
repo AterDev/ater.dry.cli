@@ -1,5 +1,7 @@
 ﻿using CodeGenerator.Infrastructure;
 using CodeGenerator.Infrastructure.Helper;
+using System.Security.Cryptography.X509Certificates;
+
 namespace Droplet.CommandLine.Commands;
 
 /// <summary>
@@ -19,10 +21,11 @@ public class StoreCommand : CommandBase
         DtoPath = dtoPath;
         CodeGen = new DataStoreGenerate(entityPath, dtoPath, servicePath, contextName);
         var entityName = Path.GetFileNameWithoutExtension(entityPath);
-        Instructions.Add("  🔹 generate interface & base class.");
+        Instructions.Add($"  🔹 generate interface & base class.");
         Instructions.Add($"  🔹 generate {entityName} DataStore.");
+        Instructions.Add($"  🔹 generate Manger files.");
+        Instructions.Add($"  🔹 generate Services inject files.");
         Instructions.Add($"  🔹 update Globalusings files.");
-        Instructions.Add($"  🔹 update Services inject files.");
     }
 
     /// <summary>
@@ -38,11 +41,17 @@ public class StoreCommand : CommandBase
         Console.WriteLine(Instructions[0]);
         await GenerateCommonFilesAsync();
         Console.WriteLine(Instructions[1]);
-        await GenerateStoreDataAsync();
+        await GenerateStoreFilesAsync();
+
         Console.WriteLine(Instructions[2]);
-        await GenerateGlobalUsingsFilesAsync();
+        await GenerateMangerAsync();
+
         Console.WriteLine(Instructions[3]);
         await GenerateServicesAsync();
+
+        Console.WriteLine(Instructions[4]);
+        await GenerateGlobalUsingsFilesAsync();
+
         Console.WriteLine("😀 DataStroe generate completed!" + Environment.NewLine);
     }
 
@@ -61,18 +70,50 @@ public class StoreCommand : CommandBase
             await GenerateFileAsync(entityDir, GenConst.EXTIONSIONS_NAME, content);
         }
 
+        // 目录
         var interfaceDir = Path.Combine(StorePath, "Interface");
-        var storeDir = Path.Combine(StorePath, "DataStore");
-        var storeInterface = CodeGen.GetStoreInterface();
-        var userInterface = CodeGen.GetUserContextInterface();
+        var implementDir = Path.Combine(StorePath, "Implement");
+
+        // 文件
+        var interfaceFiles = new string[]{"ICommandStore","ICommandStoreExt","IQueryStore","IQueryStoreExt","IDomainManager","IUserContext"};
+
+
+        var implementFiles = new string[]{"CommandStoreBase","QueryStoreBase"};
         var userClass = CodeGen.GetUserContextClass();
-        var storeBase = CodeGen.GetStoreBase();
-        var storeContext = CodeGen.GetStoreContent();
-        await GenerateFileAsync(interfaceDir, "IDataStore.cs", storeInterface);
-        await GenerateFileAsync(interfaceDir, "IUserContext.cs", userInterface);
-        await GenerateFileAsync(storeDir, "DataStoreBase.cs", storeBase);
-        await GenerateFileAsync(StorePath, "UserContext.cs", userClass);
-        await GenerateFileAsync(StorePath, "DataStoreContext.cs", storeContext);
+
+
+        // 生成接口文件
+        foreach (var name in interfaceFiles)
+        {
+            var content = CodeGen.GetInterfaceFile(name);
+            await GenerateFileAsync(interfaceDir, $"{name}.cs", content);
+        }
+        // 生成实现文件
+        foreach (var name in implementFiles)
+        {
+            var content = CodeGen.GetImplementFile(name);
+            await GenerateFileAsync(implementDir, $"{name}.cs", content);
+        }
+        // 生成user上下文
+        await GenerateFileAsync(implementDir, "UserContext.cs", userClass);
+
+    }
+
+    /// <summary>
+    /// 生成manager
+    /// </summary>
+    public async Task GenerateMangerAsync()
+    {
+        var iManagerDir = Path.Combine(StorePath, "IManager");
+        var managerDir = Path.Combine(StorePath, "Manager");
+        var entityName = Path.GetFileNameWithoutExtension(EntityPath);
+
+        var interfaceContent = CodeGen.GetIManagerContent();
+        var managerContent = CodeGen.GetManagerContext();
+        // 生成接口
+        await GenerateFileAsync(iManagerDir, $"I{entityName}Manager.cs", interfaceContent);
+        // 生成manger
+        await GenerateFileAsync(managerDir, $"{entityName}Manager.cs", managerContent);
     }
 
     /// <summary>
@@ -101,25 +142,35 @@ public class StoreCommand : CommandBase
             await GenerateFileAsync(StorePath, "GlobalUsings.cs",
                 string.Join(Environment.NewLine, globalUsings));
         }
-
     }
+
     /// <summary>
     /// 生成仓储
     /// </summary>
-    public async Task GenerateStoreDataAsync()
+    public async Task GenerateStoreFilesAsync()
     {
-        var storeDir = Path.Combine(StorePath, "DataStore");
+        var queryStoreDir = Path.Combine(StorePath, "QueryStore");
+        var commandStoreDir = Path.Combine(StorePath, "CommandStore");
         var entityName = Path.GetFileNameWithoutExtension(EntityPath);
-        var storeContent = CodeGen.GetStoreContent();
-        await GenerateFileAsync(storeDir, $"{entityName}DataStore.cs", storeContent);
+        var queryStoreContent = CodeGen.GetStoreContent("Query");
+        var commandStoreContent = CodeGen.GetStoreContent("Command");
+
+        await GenerateFileAsync(queryStoreDir, $"{entityName}QueryStore.cs", queryStoreContent);
+        await GenerateFileAsync(commandStoreDir, $"{entityName}CommandStore.cs", commandStoreContent);
     }
     /// <summary>
     /// 生成注入服务
     /// </summary>
     public async Task GenerateServicesAsync()
     {
-        var storeDir = Path.Combine(StorePath, "DataStore");
+        var implementDir = Path.Combine(StorePath, "Implement");
         var storeService = CodeGen.GetStoreService();
-        await GenerateFileAsync(storeDir, "DataStoreExtensions.cs", storeService, true);
+        var storeContext = CodeGen.GetDataStoreContext();
+
+        // 生成仓储上下文
+        await GenerateFileAsync(implementDir, "DataStoreContext.cs", storeContext, true);
+        await GenerateFileAsync(implementDir, "StoreServicesExtensions.cs", storeService, true);
+
+
     }
 }

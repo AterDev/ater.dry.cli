@@ -240,9 +240,9 @@ global using {EntityInfo!.AssemblyName}.Models;";
         }
         return content;
     }
-    public string GetPageResult()
+    public string GetPageList()
     {
-        var content = GetTplContent("PageResult.tpl");
+        var content = GetTplContent("PageList.tpl");
         if (content.NotNull())
         {
             content = content.Replace(TplConst.NAMESPACE, AssemblyName);
