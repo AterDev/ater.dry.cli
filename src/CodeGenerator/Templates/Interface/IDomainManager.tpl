@@ -3,8 +3,9 @@
 /// <summary>
 /// 仓储数据管理接口
 /// </summary>
-public interface IDomainManager<TEntity, TUpdate>
+public interface IDomainManager<TEntity, TUpdate, TFilter>
        where TEntity : EntityBase
+       where TFilter : FilterBase
 {
     DataStoreContext Stores { get; init; }
     QuerySet<TEntity> Query { get; init; }
@@ -36,5 +37,5 @@ public interface IDomainManager<TEntity, TUpdate>
     /// <typeparam name="TFilter"></typeparam>
     /// <param name="filter"></param>
     /// <returns></returns>
-    Task<PageList<TItem>> FilterAsync<TItem, TFilter>(TFilter filter) where TFilter : FilterBase;
+    Task<PageList<TItem>> FilterAsync<TItem>(TFilter filter);
 }

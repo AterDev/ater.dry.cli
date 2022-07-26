@@ -1,12 +1,17 @@
 ﻿namespace ${Namespace}.Implement;
 
-public class DomainManagerBase<TEntity, TUpdate> : IDomainManager<TEntity, TUpdate>
+public class DomainManagerBase<TEntity, TUpdate, TFilter> : IDomainManager<TEntity, TUpdate, TFilter>
     where TEntity : EntityBase
+    where TFilter : FilterBase
 {
     public DataStoreContext Stores { get; init; }
     public QuerySet<TEntity> Query { get; init; }
     public CommandSet<TEntity> Command { get; init; }
 
+    /// <summary>
+    /// 是否自动保存(调用SaveChanges)
+    /// </summary>
+    public bool AutoSave { get; set; } = true;
     public DomainManagerBase(DataStoreContext storeContext)
     {
         Stores = storeContext;
@@ -17,6 +22,14 @@ public class DomainManagerBase<TEntity, TUpdate> : IDomainManager<TEntity, TUpda
     public async Task<int> SaveChangesAsync()
     {
         return await Stores.SaveChangesAsync();
+    }
+
+    public async Task AutoSaveAsync()
+    {
+        if (AutoSave)
+        {
+            await SaveChangesAsync();
+        }
     }
 
     /// <summary>
@@ -31,19 +44,24 @@ public class DomainManagerBase<TEntity, TUpdate> : IDomainManager<TEntity, TUpda
     }
     public virtual async Task<TEntity> AddAsync(TEntity entity)
     {
-        return await Command.CreateAsync(entity);
+        var res = await Command.CreateAsync(entity);
+        await AutoSaveAsync();
+        return res;
     }
 
-    public virtual Task<TEntity> UpdateAsync(TEntity entity, TUpdate dto)
+    public virtual async Task<TEntity> UpdateAsync(TEntity entity, TUpdate dto)
     {
         entity.Merge(dto);
         var res = Command.Update(entity);
-        return Task.FromResult(res);
+        await AutoSaveAsync();
+        return res;
     }
 
     public virtual async Task<TEntity?> DeleteAsync(Guid id)
     {
-        return await Command.DeleteAsync(id);
+        var res = await Command.DeleteAsync(id);
+        await AutoSaveAsync();
+        return res;
     }
 
     public virtual async Task<TDto?> FindAsync<TDto>(Expression<Func<TEntity, bool>>? whereExp) where TDto : class
@@ -52,19 +70,23 @@ public class DomainManagerBase<TEntity, TUpdate> : IDomainManager<TEntity, TUpda
     }
 
     /// <summary>
-    /// 分页筛选，需要重写该方法
+    /// 获取当前查询构造对象
+    /// </summary>
+    /// <returns></returns>
+    public IQueryable<TEntity> GetQueryable()
+    {
+        return Query._query;
+    }
+
+    /// <summary>
+    /// 分页筛选，重写该方法实现自己的查询逻辑
     /// </summary>
     /// <typeparam name="TItem"></typeparam>
-    /// <typeparam name="TFilter"></typeparam>
     /// <param name="filter"></param>
-    /// <param name="pageIndex"></param>
-    /// <param name="pageSize"></param>
     /// <returns></returns>
-    public virtual async Task<PageList<TItem>> FilterAsync<TItem, TFilter>(TFilter filter)
-        where TFilter : FilterBase
+    public virtual async Task<PageList<TItem>> FilterAsync<TItem>(TFilter filter)
     {
-        Expression<Func<TEntity, bool>> exp = e => true;
-        return await Query.FilterAsync<TItem>(exp, filter.OrderBy, filter.PageIndex ?? 1, filter.PageSize ?? 12);
+        return await Query.FilterAsync<TItem>(GetQueryable(), filter.OrderBy, filter.PageIndex ?? 1, filter.PageSize ?? 12);
     }
 
 }

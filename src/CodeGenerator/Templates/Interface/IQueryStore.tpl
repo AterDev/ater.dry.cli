@@ -2,6 +2,9 @@
 /// <summary>
 /// 基础查询接口
 /// </summary>
+/// <summary>
+/// 基础查询接口
+/// </summary>
 public interface IQueryStore<TId, TEntity>
     where TEntity : EntityBase
 {
@@ -27,11 +30,11 @@ public interface IQueryStore<TId, TEntity>
     /// 分页查询
     /// </summary>
     /// <typeparam name="TItem"></typeparam>
-    /// <param name="whereExp"></param>
+    /// <param name="query"></param>
     /// <param name="pageIndex"></param>
     /// <param name="pageSize"></param>
     /// <returns></returns>
-    Task<PageList<TItem>> PageListAsync<TItem>(Expression<Func<TEntity, bool>>? whereExp, int pageIndex = 1, int pageSize = 12);
+    Task<PageList<TItem>> PageListAsync<TItem>(IQueryable<TEntity> query, int pageIndex = 1, int pageSize = 12);
 }
 
 public interface IQueryStore<TEntity> : IQueryStore<Guid, TEntity>

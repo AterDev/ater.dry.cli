@@ -16,6 +16,7 @@ public class QueryStoreBase<TContext, TEntity> :
     /// </summary>
     protected readonly DbSet<TEntity> _db;
     public DbSet<TEntity> Db { get => _db; }
+    public TContext Context { get => _context; }
     public IQueryable<TEntity> _query;
 
 
@@ -26,6 +27,7 @@ public class QueryStoreBase<TContext, TEntity> :
         _db = _context.Set<TEntity>();
         _query = _db.AsQueryable();
     }
+
 
     private void ResetQuery()
     {
@@ -79,19 +81,22 @@ public class QueryStoreBase<TContext, TEntity> :
     }
 
     /// <summary>
-    /// 分页查询
+    /// 分页筛选
     /// </summary>
     /// <typeparam name="TItem"></typeparam>
-    /// <param name="filter"></param>
+    /// <param name="query"></param>
+    /// <param name="pageIndex"></param>
+    /// <param name="pageSize"></param>
     /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    public virtual async Task<PageList<TItem>> PageListAsync<TItem>(Expression<Func<TEntity, bool>>? whereExp, int pageIndex = 1, int pageSize = 12)
+    public virtual async Task<PageList<TItem>> PageListAsync<TItem>(IQueryable<TEntity> query, int pageIndex = 1, int pageSize = 12)
     {
         if (pageIndex < 1) pageIndex = 1;
         if (pageSize < 0) pageSize = 12;
+        _query = query;
 
         var count = _query.Count();
-        var data = await _query.ProjectTo<TItem>()
+        var data = await _query
+            .ProjectTo<TItem>()
             .Skip((pageIndex - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
@@ -108,16 +113,16 @@ public class QueryStoreBase<TContext, TEntity> :
     /// 分页筛选
     /// </summary>
     /// <typeparam name="TItem"></typeparam>
-    /// <param name="whereExp"></param>
+    /// <param name="query"></param>
     /// <param name="order"></param>
     /// <param name="pageIndex"></param>
     /// <param name="pageSize"></param>
     /// <returns></returns>
-    public virtual async Task<PageList<TItem>> FilterAsync<TItem>(Expression<Func<TEntity, bool>> whereExp, Dictionary<string, bool>? order, int pageIndex = 1, int pageSize = 12)
+    public virtual async Task<PageList<TItem>> FilterAsync<TItem>(IQueryable<TEntity> query, Dictionary<string, bool>? order = null, int pageIndex = 1, int pageSize = 12)
     {
         if (pageIndex < 1) pageIndex = 1;
-        _query = _query.Where(whereExp);
-
+        if (query != null)
+            _query = query;
         if (order != null)
         {
             _query = _query.OrderBy(order);
@@ -128,7 +133,6 @@ public class QueryStoreBase<TContext, TEntity> :
             .Skip((pageIndex - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
-
         ResetQuery();
         return new PageList<TItem>
         {

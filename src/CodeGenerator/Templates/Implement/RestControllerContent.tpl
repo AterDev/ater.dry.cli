@@ -22,7 +22,7 @@ public class ${EntityName}${APISuffix} :
     [HttpPost("filter")]
     public async Task<ActionResult<PageList<${EntityName}ItemDto>>> FilterAsync(${EntityName}FilterDto filter)
     {
-        return await manager.FilterAsync<${EntityName}ItemDto, ${EntityName}FilterDto>(filter);
+        return await manager.FilterAsync<${EntityName}ItemDto>(filter);
     }
 
     /// <summary>
