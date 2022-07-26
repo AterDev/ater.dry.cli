@@ -101,7 +101,7 @@ public class DataStoreGenerate : GenerateBase
     /// <returns></returns>
     public string GetStoreContent(string queryOrCommand)
     {
-        if (queryOrCommand != "Query" && queryOrCommand != "Command")
+        if (queryOrCommand is not "Query" and not "Command")
         {
             throw new ArgumentException("不允许的参数");
         }
@@ -122,46 +122,47 @@ public class DataStoreGenerate : GenerateBase
     public string GetDataStoreContext()
     {
         // 获取所有继承了 DataStoreBase 的类
-        var assemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(StorePath));
-        var cpl = new CompilationHelper(StorePath, assemblyName);
-        var classes = cpl.GetAllClasses();
+        //var assemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(StorePath));
+        //var cpl = new CompilationHelper(StorePath, assemblyName);
+        //var classes = cpl.GetAllClasses();
+        //var queryStores = CompilationHelper.GetClassNameByBaseType(classes, "QuerySet");
+        //var commandStores = CompilationHelper.GetClassNameByBaseType(classes, "CommandSet");
+        //var allDataStores = queryStores.Concat(commandStores);
 
-        string props = "";
-        string ctorParams = "";
-        string ctorAssign = "";
-        if (classes != null)
+        var queryPath = Path.Combine(StorePath, $"{Const.QUERY_STORE}");
+        var queryFiles = Directory.GetFiles(queryPath,$"*{Const.QUERY_STORE}.cs",SearchOption.TopDirectoryOnly);
+        var commandPath = Path.Combine(StorePath, $"{Const.COMMAND_STORE}");
+        var commandFiles = Directory.GetFiles(commandPath,$"*{Const.COMMAND_STORE}.cs",SearchOption.TopDirectoryOnly);
+        var allDataStores = queryFiles.Concat(commandFiles);
+
+        var props = "";
+        var ctorParams = "";
+        var ctorAssign = "";
+        var oneTab = "    ";
+        var twoTab = "        ";
+        if (allDataStores.Any())
         {
-            string oneTab = "    ";
-            string twoTab = "        ";
-
-            var queryStores = CompilationHelper.GetClassNameByBaseType(classes, "QuerySet");
-            var commandStores = CompilationHelper.GetClassNameByBaseType(classes, "CommandSet");
-
-            var allDataStores = queryStores.Concat(commandStores);
-
-            if (allDataStores.Any())
+            allDataStores.ToList().ForEach(filePath =>
             {
-                allDataStores.ToList().ForEach(dataStore =>
-                {
-                    // 属性名
-                    var propName = dataStore.Name.Replace("Store","");
-                    // 属性类型
-                    var propType = dataStore.Name.EndsWith($"{Const.QUERY_STORE}")?"QuerySet":"CommandSet";
-                    // 属性泛型
-                    var propGeneric = dataStore.Name.Replace($"{Const.QUERY_STORE}","")
+                var fileName = Path.GetFileNameWithoutExtension(filePath);
+                // 属性名
+                var propName = fileName.Replace("Store","");
+                // 属性类型
+                var propType = fileName.EndsWith($"{Const.QUERY_STORE}")?"QuerySet":"CommandSet";
+                // 属性泛型
+                var propGeneric = fileName.Replace($"{Const.QUERY_STORE}","")
                     .Replace($"{Const.COMMAND_STORE}","");
 
-                    var row = $"{oneTab}public {propType}<{propGeneric}> {propName} {{ get; init; }}";
-                    props += row + Environment.NewLine;
-                    // 构造函数参数
-                    row = $"{twoTab}{dataStore.Name} {propName.ToCamelCase()},";
-                    ctorParams += row + Environment.NewLine;
-                    // 构造函数赋值
-                    row = $"{twoTab}{propName} = {propName.ToCamelCase()};";
-                    ctorAssign += row + Environment.NewLine;
-                    ctorAssign += $"{twoTab}AddCache({propName});" + Environment.NewLine;
-                });
-            }
+                var row = $"{oneTab}public {propType}<{propGeneric}> {propName} {{ get; init; }}";
+                props += row + Environment.NewLine;
+                // 构造函数参数
+                row = $"{twoTab}{fileName} {propName.ToCamelCase()},";
+                ctorParams += row + Environment.NewLine;
+                // 构造函数赋值
+                row = $"{twoTab}{propName} = {propName.ToCamelCase()};";
+                ctorAssign += row + Environment.NewLine;
+                ctorAssign += $"{twoTab}AddCache({propName});" + Environment.NewLine;
+            });
         }
         // 构建服务
         var content = GetTplContent("Implement.DataStoreContext.tpl");
