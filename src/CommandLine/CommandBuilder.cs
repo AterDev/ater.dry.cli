@@ -88,7 +88,7 @@ public class CommandBuilder
             Description = "output path"
         };
 
-        var typeOption = new Option<RequestLibType>(new []{"--type","-t"},"request lib type:axios or angularHttpClient");
+        var typeOption = new Option<RequestLibType>(new []{"--type","-t"},"request lib type:axios or NgHttp");
         reqCommand.AddArgument(url);
         reqCommand.AddOption(outputOption);
         reqCommand.AddOption(typeOption);
@@ -155,7 +155,7 @@ public class CommandBuilder
 
         var suffixOption = new Option<string>(new[] { "--suffix", "-s" },
             "the controller suffix");
-        suffixOption.SetDefaultValue("Controller");
+        suffixOption.SetDefaultValue("Controllers");
         var typeOption = new Option<string>(new[] { "--type", "-t" },
             "api type, valid values:rest/grpc/graph, just support rest");
         typeOption.SetDefaultValue("rest");
@@ -166,9 +166,9 @@ public class CommandBuilder
         apiCommand.AddOption(suffixOption);
 
         apiCommand.SetHandler(
-            async (string entity, string dto, string store, string output, string context) =>
+            async (string entity, string dto, string store, string output, string suffix) =>
         {
-            await CommandRunner.GenerateApi(entity, dto, store, output);
+            await CommandRunner.GenerateApi(entity, dto, store, output, suffix);
         }, path, dtoOption, managerOption, apiOption, suffixOption);
 
         RootCommand.Add(apiCommand);

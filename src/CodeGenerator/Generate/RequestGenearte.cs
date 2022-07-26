@@ -65,7 +65,7 @@ public class RequestGenearte : GenerateBase
                     Path = path.Key,
                     Tag = operation.Value.Tags.FirstOrDefault()?.Name,
                 };
-                (function.RequestType, function.RequestRefType) = GetParamType(operation.Value.RequestBody.Content.Values.FirstOrDefault().Schema);
+                (function.RequestType, function.RequestRefType) = GetParamType(operation.Value.RequestBody?.Content.Values.FirstOrDefault().Schema);
                 (function.ResponseType, function.ResponseRefType) = GetParamType(operation.Value.Responses.FirstOrDefault().Value
                     ?.Content.FirstOrDefault().Value
                     ?.Schema);
@@ -88,36 +88,6 @@ public class RequestGenearte : GenerateBase
             }
         }
         return functions;
-    }
-
-    /// <summary>
-    /// 处理类型对应的目录名称
-    /// </summary>
-    /// <param name="modelDic"></param>
-    private void ManualModelDicitonary(Dictionary<string, string?> modelDic)
-    {
-        var suffix = new string[] { "UpdateDto", "FilterDto", "AddDto", "ItemDto"};
-        var prefix = new string[] { "PageResultOf", "BatchUpdateOf" };
-
-        // 特殊处理
-        foreach (var dic in modelDic.Where(m => m.Value == null).ToList())
-        {
-            var name = dic.Key;
-            if (prefix.Any(s => name.StartsWith(s))
-                        || suffix.Any(s => name.EndsWith(s)))
-            {
-                ModelDictionary[dic.Key] = ReplaceDtoSign(name).ToHyphen();
-            }
-        }
-    }
-    private static string ReplaceDtoSign(string name)
-    {
-        return name.Replace("ItemDto", "")
-            .Replace("BatchUpdateOf", "")
-            .Replace("PageResultOf", "")
-            .Replace("AddDto", "")
-            .Replace("UpdateDto", "")
-            .Replace("FilterDto", "");
     }
 
     /// <summary>

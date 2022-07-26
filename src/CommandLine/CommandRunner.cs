@@ -60,7 +60,7 @@ public class CommandRunner
     {
         try
         {
-            Console.WriteLine("🔵 Generating ts models and request services...");
+            Console.WriteLine($"🔵 Generating ts models and {type} request services...");
             var cmd = new RequestCommand(url, output, type);
             await cmd.RunAsync();
         }
@@ -112,19 +112,19 @@ public class CommandRunner
     /// <param name="path">实体文件路径</param>
     /// <param name="servicePath">service目录</param>
     /// <param name="apiPath">网站目录</param>
-    /// <param name="dbContext"></param>
+    /// <param name="suffix">控制器后缀名</param>
     public static async Task GenerateApi(string path, string dtoPath = "",
-            string servicePath = "", string apiPath = "", string dbContext = "")
+            string servicePath = "", string apiPath = "", string suffix = "")
     {
         Console.WriteLine("🔵 Generate dtos");
         var dtoCmd = new DtoCommand(path, dtoPath);
         await dtoCmd.RunAsync();
         Console.WriteLine("🔵 Generate store");
-        var storeCmd = new StoreCommand(path, dtoPath, servicePath, dbContext);
+        var storeCmd = new StoreCommand(path, dtoPath, servicePath, suffix);
         await storeCmd.RunAsync();
 
         Console.WriteLine("🔵 Generate rest api");
-        var apiCmd = new ApiCommand(path, dtoPath, servicePath, apiPath, dbContext);
+        var apiCmd = new ApiCommand(path, dtoPath, servicePath, apiPath, suffix);
         await apiCmd.RunAsync();
     }
 

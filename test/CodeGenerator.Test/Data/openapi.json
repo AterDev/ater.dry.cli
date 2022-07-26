@@ -1,5 +1,5 @@
 ﻿{
-  "x-generator": "NSwag v13.15.10.0 (NJsonSchema v10.6.10.0 (Newtonsoft.Json v9.0.0.0))",
+  "x-generator": "NSwag v13.16.1.0 (NJsonSchema v10.7.2.0 (Newtonsoft.Json v9.0.0.0))",
   "openapi": "3.0.0",
   "info": {
     "title": "DevCenter",
@@ -12,6 +12,147 @@
     }
   ],
   "paths": {
+    "/api/ResourceAttributeDefine/filter": {
+      "post": {
+        "tags": [
+          "ResourceAttributeDefine"
+        ],
+        "summary": "筛选",
+        "operationId": "ResourceAttributeDefine_Filter",
+        "requestBody": {
+          "x-name": "filter",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResourceAttributeDefineFilterDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageListOfResourceAttributeDefineItemDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ResourceAttributeDefine": {
+      "post": {
+        "tags": [
+          "ResourceAttributeDefine"
+        ],
+        "summary": "新增",
+        "operationId": "ResourceAttributeDefine_Add",
+        "requestBody": {
+          "x-name": "form",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResourceAttributeDefineAddDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResourceAttributeDefine"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ResourceAttributeDefine/{id}": {
+      "put": {
+        "tags": [
+          "ResourceAttributeDefine"
+        ],
+        "summary": "更新",
+        "operationId": "ResourceAttributeDefine_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "form",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResourceAttributeDefineUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResourceAttributeDefine"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "ResourceAttributeDefine"
+        ],
+        "operationId": "ResourceAttributeDefine_GetDetail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResourceAttributeDefine"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Auth": {
       "post": {
         "tags": [
@@ -103,7 +244,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PageResultOfCodeFolderItemDto"
+                  "$ref": "#/components/schemas/PageListOfCodeFolderItemDto"
                 }
               }
             }
@@ -276,7 +417,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PageResultOfCodeSnippetItemDto"
+                  "$ref": "#/components/schemas/PageListOfCodeSnippetItemDto"
                 }
               }
             }
@@ -449,7 +590,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PageResultOfConfigOptionItemDto"
+                  "$ref": "#/components/schemas/PageListOfConfigOptionItemDto"
                 }
               }
             }
@@ -622,7 +763,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PageResultOfDocFolderItemDto"
+                  "$ref": "#/components/schemas/PageListOfDocFolderItemDto"
                 }
               }
             }
@@ -795,7 +936,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PageResultOfDocumentItemDto"
+                  "$ref": "#/components/schemas/PageListOfDocumentItemDto"
                 }
               }
             }
@@ -968,7 +1109,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PageResultOfEnvironmentItemDto"
+                  "$ref": "#/components/schemas/PageListOfEnvironmentItemDto"
                 }
               }
             }
@@ -1141,7 +1282,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PageResultOfPermissionItemDto"
+                  "$ref": "#/components/schemas/PageListOfPermissionItemDto"
                 }
               }
             }
@@ -1314,7 +1455,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PageResultOfResourceAttributeItemDto"
+                  "$ref": "#/components/schemas/PageListOfResourceAttributeItemDto"
                 }
               }
             }
@@ -1462,179 +1603,6 @@
         }
       }
     },
-    "/api/ResourceAttributeDefine/filter": {
-      "post": {
-        "tags": [
-          "ResourceAttributeDefine"
-        ],
-        "summary": "分页筛选",
-        "operationId": "ResourceAttributeDefine_Filter",
-        "requestBody": {
-          "x-name": "filter",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ResourceAttributeDefineFilterDto"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 1
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PageResultOfResourceAttributeDefineItemDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/ResourceAttributeDefine": {
-      "post": {
-        "tags": [
-          "ResourceAttributeDefine"
-        ],
-        "summary": "添加",
-        "operationId": "ResourceAttributeDefine_Add",
-        "requestBody": {
-          "x-name": "form",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ResourceAttributeDefineAddDto"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 1
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ResourceAttributeDefine"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/ResourceAttributeDefine/{id}": {
-      "put": {
-        "tags": [
-          "ResourceAttributeDefine"
-        ],
-        "summary": "⚠更新",
-        "operationId": "ResourceAttributeDefine_Update",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 1
-          }
-        ],
-        "requestBody": {
-          "x-name": "form",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ResourceAttributeDefineUpdateDto"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 2
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ResourceAttributeDefine"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "ResourceAttributeDefine"
-        ],
-        "summary": "⚠删除",
-        "operationId": "ResourceAttributeDefine_Delete",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 1
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              }
-            }
-          }
-        }
-      },
-      "get": {
-        "tags": [
-          "ResourceAttributeDefine"
-        ],
-        "summary": "详情",
-        "operationId": "ResourceAttributeDefine_GetDetail",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "guid"
-            },
-            "x-position": 1
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ResourceAttributeDefine"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/Resource/filter": {
       "post": {
         "tags": [
@@ -1660,7 +1628,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PageResultOfResourceItemDto"
+                  "$ref": "#/components/schemas/PageListOfResourceItemDto"
                 }
               }
             }
@@ -1690,6 +1658,38 @@
       }
     },
     "/api/Resource": {
+      "get": {
+        "tags": [
+          "Resource"
+        ],
+        "operationId": "Resource_GetAllResources",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "xml": {
+                    "name": "ArrayOfResource",
+                    "wrapped": true
+                  },
+                  "items": {
+                    "xml": {
+                      "name": "Resource"
+                    },
+                    "oneOf": [
+                      {
+                        "$ref": "#/components/schemas/Resource"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
         "tags": [
           "Resource"
@@ -1854,7 +1854,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PageResultOfResourceGroupItemDto"
+                  "$ref": "#/components/schemas/PageListOfResourceGroupItemDto"
                 }
               }
             }
@@ -2074,7 +2074,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PageResultOfResourceTagsItemDto"
+                  "$ref": "#/components/schemas/PageListOfResourceTagsItemDto"
                 }
               }
             }
@@ -2247,7 +2247,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PageResultOfResourceTypeDefinitionItemDto"
+                  "$ref": "#/components/schemas/PageListOfResourceTypeDefinitionItemDto"
                 }
               }
             }
@@ -2420,7 +2420,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PageResultOfRoleItemDto"
+                  "$ref": "#/components/schemas/PageListOfRoleItemDto"
                 }
               }
             }
@@ -2568,6 +2568,39 @@
         }
       }
     },
+    "/api/Role/resourceGroup": {
+      "put": {
+        "tags": [
+          "Role"
+        ],
+        "summary": "分配资源组",
+        "operationId": "Role_SetResourceGroups",
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoleResourceDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/RolePermission/filter": {
       "post": {
         "tags": [
@@ -2593,7 +2626,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PageResultOfRolePermissionItemDto"
+                  "$ref": "#/components/schemas/PageListOfRolePermissionItemDto"
                 }
               }
             }
@@ -2746,7 +2779,7 @@
         "tags": [
           "User"
         ],
-        "summary": "分页筛选",
+        "summary": "筛选",
         "operationId": "User_Filter",
         "requestBody": {
           "x-name": "filter",
@@ -2766,7 +2799,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PageResultOfUserItemDto"
+                  "$ref": "#/components/schemas/PageListOfUserItemDto"
                 }
               }
             }
@@ -2779,7 +2812,7 @@
         "tags": [
           "User"
         ],
-        "summary": "添加",
+        "summary": "新增",
         "operationId": "User_Add",
         "requestBody": {
           "x-name": "form",
@@ -2805,6 +2838,25 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "获取当前用户信息",
+        "operationId": "User_GetMyInfo",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserShortDto"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/User/{id}": {
@@ -2812,7 +2864,7 @@
         "tags": [
           "User"
         ],
-        "summary": "⚠更新",
+        "summary": "更新",
         "operationId": "User_Update",
         "parameters": [
           {
@@ -2851,6 +2903,36 @@
           }
         }
       },
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "User_GetDetail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      },
       "delete": {
         "tags": [
           "User"
@@ -2875,27 +2957,28 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "boolean"
+                  "$ref": "#/components/schemas/User"
                 }
               }
             }
           }
         }
-      },
-      "get": {
+      }
+    },
+    "/api/User/changePassword": {
+      "put": {
         "tags": [
           "User"
         ],
-        "summary": "详情",
-        "operationId": "User_GetDetail",
+        "summary": "修改密码",
+        "operationId": "User_ChangePassword",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
+            "name": "newPassword",
+            "in": "query",
             "schema": {
               "type": "string",
-              "format": "guid"
+              "nullable": true
             },
             "x-position": 1
           }
@@ -2906,7 +2989,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/User"
+                  "type": "boolean"
                 }
               }
             }
@@ -2995,6 +3078,966 @@
   },
   "components": {
     "schemas": {
+      "PageListOfResourceAttributeDefineItemDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "xml": {
+                "name": "ResourceAttributeDefineItemDto"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/ResourceAttributeDefineItemDto"
+                }
+              ]
+            }
+          },
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ResourceAttributeDefineItemDto": {
+        "type": "object",
+        "description": "资源属性定义",
+        "additionalProperties": false,
+        "properties": {
+          "displayName": {
+            "type": "string",
+            "maxLength": 50
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 60
+          },
+          "isEnable": {
+            "type": "boolean"
+          },
+          "required": {
+            "type": "boolean",
+            "description": "是否必须"
+          },
+          "value": {
+            "type": "string",
+            "nullable": true
+          },
+          "sort": {
+            "type": "integer",
+            "description": "排序 "
+          },
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ResourceAttributeDefineFilterDto": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/FilterBase"
+          },
+          {
+            "type": "object",
+            "description": "资源属性定义",
+            "additionalProperties": false,
+            "properties": {
+              "displayName": {
+                "type": "string",
+                "maxLength": 50,
+                "nullable": true
+              },
+              "name": {
+                "type": "string",
+                "maxLength": 60,
+                "nullable": true
+              },
+              "isEnable": {
+                "type": "boolean",
+                "nullable": true
+              },
+              "required": {
+                "type": "boolean",
+                "description": "是否必须",
+                "nullable": true
+              },
+              "typeId": {
+                "type": "string",
+                "format": "guid",
+                "nullable": true
+              }
+            }
+          }
+        ]
+      },
+      "FilterBase": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "orderBy": {
+            "type": "object",
+            "description": "排序",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "boolean"
+            }
+          }
+        }
+      },
+      "ResourceAttributeDefine": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EntityBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "displayName": {
+                "type": "string",
+                "maxLength": 50
+              },
+              "name": {
+                "type": "string",
+                "maxLength": 60
+              },
+              "type": {
+                "$ref": "#/components/schemas/ValueType"
+              },
+              "isEnable": {
+                "type": "boolean"
+              },
+              "required": {
+                "type": "boolean"
+              },
+              "sort": {
+                "type": "integer"
+              },
+              "typeDefinitions": {
+                "type": "array",
+                "nullable": true,
+                "xml": {
+                  "wrapped": true
+                },
+                "items": {
+                  "xml": {
+                    "name": "ResourceTypeDefinition"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ResourceTypeDefinition"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ValueType": {
+        "type": "integer",
+        "description": "0 = Default\n1 = String\n2 = Long\n3 = Boolean\n4 = Double\n5 = Datetime\n6 = Json",
+        "x-enumNames": [
+          "Default",
+          "String",
+          "Long",
+          "Boolean",
+          "Double",
+          "Datetime",
+          "Json"
+        ],
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      "ResourceTypeDefinition": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EntityBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "description": {
+                "type": "string",
+                "maxLength": 400,
+                "nullable": true
+              },
+              "icon": {
+                "type": "string",
+                "maxLength": 300,
+                "nullable": true
+              },
+              "color": {
+                "type": "string",
+                "maxLength": 12,
+                "nullable": true
+              },
+              "attributeDefines": {
+                "type": "array",
+                "nullable": true,
+                "xml": {
+                  "wrapped": true
+                },
+                "items": {
+                  "xml": {
+                    "name": "ResourceAttributeDefine"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ResourceAttributeDefine"
+                    }
+                  ]
+                }
+              },
+              "resources": {
+                "type": "array",
+                "nullable": true,
+                "xml": {
+                  "wrapped": true
+                },
+                "items": {
+                  "xml": {
+                    "name": "Resource"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Resource"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      "Resource": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EntityBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "description": {
+                "type": "string",
+                "maxLength": 400,
+                "nullable": true
+              },
+              "resourceType": {
+                "$ref": "#/components/schemas/ResourceTypeDefinition"
+              },
+              "attributes": {
+                "type": "array",
+                "nullable": true,
+                "xml": {
+                  "wrapped": true
+                },
+                "items": {
+                  "xml": {
+                    "name": "ResourceAttribute"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ResourceAttribute"
+                    }
+                  ]
+                }
+              },
+              "group": {
+                "$ref": "#/components/schemas/ResourceGroup"
+              },
+              "tags": {
+                "type": "array",
+                "nullable": true,
+                "xml": {
+                  "wrapped": true
+                },
+                "items": {
+                  "xml": {
+                    "name": "ResourceTags"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ResourceTags"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ResourceAttribute": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EntityBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "displayName": {
+                "type": "string",
+                "maxLength": 50
+              },
+              "name": {
+                "type": "string",
+                "maxLength": 60
+              },
+              "type": {
+                "$ref": "#/components/schemas/ValueType"
+              },
+              "isEnable": {
+                "type": "boolean"
+              },
+              "value": {
+                "type": "string",
+                "maxLength": 2000
+              },
+              "sort": {
+                "type": "integer"
+              },
+              "resource": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        ]
+      },
+      "EntityBase": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isDeleted": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ResourceGroup": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EntityBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "descriptioin": {
+                "type": "string",
+                "maxLength": 400,
+                "nullable": true
+              },
+              "sort": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "layoutType": {
+                "$ref": "#/components/schemas/LayoutType"
+              },
+              "navigation": {
+                "$ref": "#/components/schemas/NavigationType"
+              },
+              "environment": {
+                "$ref": "#/components/schemas/Environment"
+              },
+              "resources": {
+                "type": "array",
+                "nullable": true,
+                "xml": {
+                  "wrapped": true
+                },
+                "items": {
+                  "xml": {
+                    "name": "Resource"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Resource"
+                    }
+                  ]
+                }
+              },
+              "roles": {
+                "type": "array",
+                "nullable": true,
+                "xml": {
+                  "wrapped": true
+                },
+                "items": {
+                  "xml": {
+                    "name": "Role"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Role"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      "LayoutType": {
+        "type": "integer",
+        "description": "0 = Default\n1 = Card\n2 = Grid\n3 = List\n4 = Table",
+        "x-enumNames": [
+          "Default",
+          "Card",
+          "Grid",
+          "List",
+          "Table"
+        ],
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "NavigationType": {
+        "type": "integer",
+        "description": "0 = Default\n1 = WebSite\n2 = Tools\n3 = Server\n4 = CodeSnippets",
+        "x-enumNames": [
+          "Default",
+          "WebSite",
+          "Tools",
+          "Server",
+          "CodeSnippets"
+        ],
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "Environment": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EntityBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 50
+              },
+              "description": {
+                "type": "string",
+                "maxLength": 200,
+                "nullable": true
+              },
+              "color": {
+                "type": "string",
+                "maxLength": 20,
+                "nullable": true
+              },
+              "resourceGroups": {
+                "type": "array",
+                "nullable": true,
+                "xml": {
+                  "wrapped": true
+                },
+                "items": {
+                  "xml": {
+                    "name": "ResourceGroup"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ResourceGroup"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      "Role": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EntityBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 30
+              },
+              "identifyName": {
+                "type": "string",
+                "maxLength": 30
+              },
+              "description": {
+                "type": "string",
+                "maxLength": 200,
+                "nullable": true
+              },
+              "icon": {
+                "type": "string",
+                "maxLength": 30,
+                "nullable": true
+              },
+              "users": {
+                "type": "array",
+                "nullable": true,
+                "xml": {
+                  "wrapped": true
+                },
+                "items": {
+                  "xml": {
+                    "name": "User"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  ]
+                }
+              },
+              "permissions": {
+                "type": "array",
+                "nullable": true,
+                "xml": {
+                  "wrapped": true
+                },
+                "items": {
+                  "xml": {
+                    "name": "Permission"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Permission"
+                    }
+                  ]
+                }
+              },
+              "resourceGroups": {
+                "type": "array",
+                "nullable": true,
+                "xml": {
+                  "wrapped": true
+                },
+                "items": {
+                  "xml": {
+                    "name": "ResourceGroup"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ResourceGroup"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      "User": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EntityBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "userName": {
+                "type": "string",
+                "maxLength": 30
+              },
+              "realName": {
+                "type": "string",
+                "maxLength": 30,
+                "nullable": true
+              },
+              "position": {
+                "type": "string",
+                "maxLength": 30,
+                "nullable": true
+              },
+              "email": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "emailConfirmed": {
+                "type": "boolean"
+              },
+              "passwordHash": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "passwordSalt": {
+                "type": "string",
+                "maxLength": 60
+              },
+              "phoneNumber": {
+                "type": "string",
+                "maxLength": 20,
+                "nullable": true
+              },
+              "phoneNumberConfirmed": {
+                "type": "boolean"
+              },
+              "twoFactorEnabled": {
+                "type": "boolean"
+              },
+              "lockoutEnd": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true
+              },
+              "lockoutEnabled": {
+                "type": "boolean"
+              },
+              "accessFailedCount": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "lastLoginTime": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true
+              },
+              "retryCount": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "avatar": {
+                "type": "string",
+                "maxLength": 200,
+                "nullable": true
+              },
+              "roles": {
+                "type": "array",
+                "nullable": true,
+                "xml": {
+                  "wrapped": true
+                },
+                "items": {
+                  "xml": {
+                    "name": "Role"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Role"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      "Permission": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EntityBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 30
+              },
+              "parent": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Permission"
+                  }
+                ]
+              },
+              "permissionPath": {
+                "type": "string",
+                "maxLength": 200,
+                "nullable": true
+              },
+              "roles": {
+                "type": "array",
+                "nullable": true,
+                "xml": {
+                  "wrapped": true
+                },
+                "items": {
+                  "xml": {
+                    "name": "Role"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Role"
+                    }
+                  ]
+                }
+              },
+              "rolePermissions": {
+                "type": "array",
+                "nullable": true,
+                "xml": {
+                  "wrapped": true
+                },
+                "items": {
+                  "xml": {
+                    "name": "RolePermission"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/RolePermission"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      "RolePermission": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EntityBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "roleId": {
+                "type": "string",
+                "format": "guid"
+              },
+              "permissionId": {
+                "type": "string",
+                "format": "guid"
+              },
+              "permissionTypeMyProperty": {
+                "$ref": "#/components/schemas/PermissionType"
+              },
+              "role": {
+                "$ref": "#/components/schemas/Role"
+              },
+              "permission": {
+                "$ref": "#/components/schemas/Permission"
+              }
+            }
+          }
+        ]
+      },
+      "PermissionType": {
+        "type": "integer",
+        "description": "0 = Read\n1 = Audit\n2 = Add\n3 = Edit\n4 = Write\n5 = AuditWrite",
+        "x-enumNames": [
+          "Read",
+          "Audit",
+          "Add",
+          "Edit",
+          "Write",
+          "AuditWrite"
+        ],
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "ResourceTags": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EntityBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "color": {
+                "type": "string",
+                "maxLength": 20,
+                "nullable": true
+              },
+              "icon": {
+                "type": "string",
+                "maxLength": 30,
+                "nullable": true
+              },
+              "resources": {
+                "type": "array",
+                "nullable": true,
+                "xml": {
+                  "wrapped": true
+                },
+                "items": {
+                  "xml": {
+                    "name": "Resource"
+                  },
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Resource"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ResourceAttributeDefineAddDto": {
+        "type": "object",
+        "description": "资源属性定义",
+        "additionalProperties": false,
+        "properties": {
+          "displayName": {
+            "type": "string",
+            "maxLength": 50
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 60
+          },
+          "isEnable": {
+            "type": "boolean"
+          },
+          "required": {
+            "type": "boolean",
+            "description": "是否必须"
+          },
+          "sort": {
+            "type": "integer",
+            "description": "排序 "
+          }
+        }
+      },
+      "ResourceAttributeDefineUpdateDto": {
+        "type": "object",
+        "description": "资源属性定义",
+        "additionalProperties": false,
+        "properties": {
+          "displayName": {
+            "type": "string",
+            "maxLength": 50,
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 60,
+            "nullable": true
+          },
+          "isEnable": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "required": {
+            "type": "boolean",
+            "description": "是否必须",
+            "nullable": true
+          },
+          "sort": {
+            "type": "integer",
+            "description": "排序 ",
+            "nullable": true
+          },
+          "status": {
+            "description": "状态",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Status"
+              }
+            ]
+          },
+          "typeId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          }
+        }
+      },
+      "Status": {
+        "type": "integer",
+        "description": "0 = Default\n1 = Deleted\n2 = Invalid\n3 = Valid",
+        "x-enumNames": [
+          "Default",
+          "Deleted",
+          "Invalid",
+          "Valid"
+        ],
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
       "AuthResult": {
         "type": "object",
         "additionalProperties": false,
@@ -3029,7 +4072,7 @@
           }
         }
       },
-      "PageResultOfCodeFolderItemDto": {
+      "PageListOfCodeFolderItemDto": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -3039,7 +4082,6 @@
           },
           "data": {
             "type": "array",
-            "nullable": true,
             "xml": {
               "wrapped": true
             },
@@ -3091,22 +4133,6 @@
           }
         }
       },
-      "Status": {
-        "type": "integer",
-        "description": "0 = Default\n1 = Deleted\n2 = Invalid\n3 = Valid",
-        "x-enumNames": [
-          "Default",
-          "Deleted",
-          "Invalid",
-          "Valid"
-        ],
-        "enum": [
-          0,
-          1,
-          2,
-          3
-        ]
-      },
       "CodeFolderFilterDto": {
         "allOf": [
           {
@@ -3130,20 +4156,6 @@
             }
           }
         ]
-      },
-      "FilterBase": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "pageIndex": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "pageSize": {
-            "type": "integer",
-            "format": "int32"
-          }
-        }
       },
       "CodeFolder": {
         "allOf": [
@@ -3235,27 +4247,6 @@
           }
         ]
       },
-      "EntityBase": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "guid"
-          },
-          "status": {
-            "$ref": "#/components/schemas/Status"
-          },
-          "createdTime": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updatedTime": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
       "CodeFolderAddDto": {
         "type": "object",
         "description": "代码目录",
@@ -3300,7 +4291,7 @@
           }
         }
       },
-      "PageResultOfCodeSnippetItemDto": {
+      "PageListOfCodeSnippetItemDto": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -3310,7 +4301,6 @@
           },
           "data": {
             "type": "array",
-            "nullable": true,
             "xml": {
               "wrapped": true
             },
@@ -3464,7 +4454,7 @@
           }
         }
       },
-      "PageResultOfConfigOptionItemDto": {
+      "PageListOfConfigOptionItemDto": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -3474,7 +4464,6 @@
           },
           "data": {
             "type": "array",
-            "nullable": true,
             "xml": {
               "wrapped": true
             },
@@ -3613,28 +4602,6 @@
           }
         ]
       },
-      "ValueType": {
-        "type": "integer",
-        "description": "0 = Default\n1 = String\n2 = Long\n3 = Boolean\n4 = Double\n5 = Datetime\n6 = Json",
-        "x-enumNames": [
-          "Default",
-          "String",
-          "Long",
-          "Boolean",
-          "Double",
-          "Datetime",
-          "Json"
-        ],
-        "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6
-        ]
-      },
       "ConfigOptionAddDto": {
         "type": "object",
         "description": "可配置的选项",
@@ -3723,7 +4690,7 @@
           }
         }
       },
-      "PageResultOfDocFolderItemDto": {
+      "PageListOfDocFolderItemDto": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -3733,7 +4700,6 @@
           },
           "data": {
             "type": "array",
-            "nullable": true,
             "xml": {
               "wrapped": true
             },
@@ -3945,7 +4911,7 @@
           }
         }
       },
-      "PageResultOfDocumentItemDto": {
+      "PageListOfDocumentItemDto": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -3955,7 +4921,6 @@
           },
           "data": {
             "type": "array",
-            "nullable": true,
             "xml": {
               "wrapped": true
             },
@@ -4123,7 +5088,7 @@
           }
         }
       },
-      "PageResultOfEnvironmentItemDto": {
+      "PageListOfEnvironmentItemDto": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -4133,7 +5098,6 @@
           },
           "data": {
             "type": "array",
-            "nullable": true,
             "xml": {
               "wrapped": true
             },
@@ -4201,663 +5165,6 @@
           }
         ]
       },
-      "Environment": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/EntityBase"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "name": {
-                "type": "string",
-                "maxLength": 50
-              },
-              "description": {
-                "type": "string",
-                "maxLength": 200,
-                "nullable": true
-              },
-              "color": {
-                "type": "string",
-                "maxLength": 20,
-                "nullable": true
-              },
-              "resourceGroups": {
-                "type": "array",
-                "nullable": true,
-                "xml": {
-                  "wrapped": true
-                },
-                "items": {
-                  "xml": {
-                    "name": "ResourceGroup"
-                  },
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/ResourceGroup"
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        ]
-      },
-      "ResourceGroup": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/EntityBase"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "name": {
-                "type": "string",
-                "maxLength": 100
-              },
-              "descriptioin": {
-                "type": "string",
-                "maxLength": 400,
-                "nullable": true
-              },
-              "environment": {
-                "$ref": "#/components/schemas/Environment"
-              },
-              "resources": {
-                "type": "array",
-                "nullable": true,
-                "xml": {
-                  "wrapped": true
-                },
-                "items": {
-                  "xml": {
-                    "name": "Resource"
-                  },
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Resource"
-                    }
-                  ]
-                }
-              },
-              "roles": {
-                "type": "array",
-                "nullable": true,
-                "xml": {
-                  "wrapped": true
-                },
-                "items": {
-                  "xml": {
-                    "name": "Role"
-                  },
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Role"
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        ]
-      },
-      "Resource": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/EntityBase"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "name": {
-                "type": "string",
-                "maxLength": 100
-              },
-              "description": {
-                "type": "string",
-                "maxLength": 400,
-                "nullable": true
-              },
-              "resourceType": {
-                "$ref": "#/components/schemas/ResourceTypeDefinition"
-              },
-              "attributes": {
-                "type": "array",
-                "nullable": true,
-                "xml": {
-                  "wrapped": true
-                },
-                "items": {
-                  "xml": {
-                    "name": "ResourceAttribute"
-                  },
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/ResourceAttribute"
-                    }
-                  ]
-                }
-              },
-              "group": {
-                "$ref": "#/components/schemas/ResourceGroup"
-              },
-              "tags": {
-                "type": "array",
-                "nullable": true,
-                "xml": {
-                  "wrapped": true
-                },
-                "items": {
-                  "xml": {
-                    "name": "ResourceTags"
-                  },
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/ResourceTags"
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        ]
-      },
-      "ResourceTypeDefinition": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/EntityBase"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "name": {
-                "type": "string",
-                "maxLength": 100
-              },
-              "description": {
-                "type": "string",
-                "maxLength": 400,
-                "nullable": true
-              },
-              "icon": {
-                "type": "string",
-                "maxLength": 300,
-                "nullable": true
-              },
-              "color": {
-                "type": "string",
-                "maxLength": 12,
-                "nullable": true
-              },
-              "attributeDefines": {
-                "type": "array",
-                "nullable": true,
-                "xml": {
-                  "wrapped": true
-                },
-                "items": {
-                  "xml": {
-                    "name": "ResourceAttributeDefine"
-                  },
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/ResourceAttributeDefine"
-                    }
-                  ]
-                }
-              },
-              "resources": {
-                "type": "array",
-                "nullable": true,
-                "xml": {
-                  "wrapped": true
-                },
-                "items": {
-                  "xml": {
-                    "name": "Resource"
-                  },
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Resource"
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        ]
-      },
-      "ResourceAttributeDefine": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/EntityBase"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "displayName": {
-                "type": "string",
-                "maxLength": 50
-              },
-              "name": {
-                "type": "string",
-                "maxLength": 60
-              },
-              "type": {
-                "$ref": "#/components/schemas/ValueType"
-              },
-              "isEnable": {
-                "type": "boolean"
-              },
-              "required": {
-                "type": "boolean"
-              },
-              "sort": {
-                "type": "integer"
-              },
-              "typeDefinitions": {
-                "type": "array",
-                "nullable": true,
-                "xml": {
-                  "wrapped": true
-                },
-                "items": {
-                  "xml": {
-                    "name": "ResourceTypeDefinition"
-                  },
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/ResourceTypeDefinition"
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        ]
-      },
-      "ResourceAttribute": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/EntityBase"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "displayName": {
-                "type": "string",
-                "maxLength": 50
-              },
-              "name": {
-                "type": "string",
-                "maxLength": 60
-              },
-              "type": {
-                "$ref": "#/components/schemas/ValueType"
-              },
-              "isEnable": {
-                "type": "boolean"
-              },
-              "value": {
-                "type": "string",
-                "maxLength": 2000
-              },
-              "sort": {
-                "type": "integer"
-              },
-              "resource": {
-                "$ref": "#/components/schemas/Resource"
-              }
-            }
-          }
-        ]
-      },
-      "ResourceTags": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/EntityBase"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "name": {
-                "type": "string",
-                "maxLength": 100
-              },
-              "color": {
-                "type": "string",
-                "maxLength": 20,
-                "nullable": true
-              },
-              "icon": {
-                "type": "string",
-                "maxLength": 30,
-                "nullable": true
-              },
-              "resources": {
-                "type": "array",
-                "nullable": true,
-                "xml": {
-                  "wrapped": true
-                },
-                "items": {
-                  "xml": {
-                    "name": "Resource"
-                  },
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Resource"
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        ]
-      },
-      "Role": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/EntityBase"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "name": {
-                "type": "string",
-                "maxLength": 30
-              },
-              "identifyName": {
-                "type": "string",
-                "maxLength": 30
-              },
-              "description": {
-                "type": "string",
-                "maxLength": 200,
-                "nullable": true
-              },
-              "icon": {
-                "type": "string",
-                "maxLength": 30,
-                "nullable": true
-              },
-              "users": {
-                "type": "array",
-                "nullable": true,
-                "xml": {
-                  "wrapped": true
-                },
-                "items": {
-                  "xml": {
-                    "name": "User"
-                  },
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/User"
-                    }
-                  ]
-                }
-              },
-              "permissions": {
-                "type": "array",
-                "nullable": true,
-                "xml": {
-                  "wrapped": true
-                },
-                "items": {
-                  "xml": {
-                    "name": "Permission"
-                  },
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Permission"
-                    }
-                  ]
-                }
-              },
-              "resourceGroups": {
-                "type": "array",
-                "nullable": true,
-                "xml": {
-                  "wrapped": true
-                },
-                "items": {
-                  "xml": {
-                    "name": "ResourceGroup"
-                  },
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/ResourceGroup"
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        ]
-      },
-      "User": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/EntityBase"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "userName": {
-                "type": "string",
-                "maxLength": 30
-              },
-              "realName": {
-                "type": "string",
-                "maxLength": 30,
-                "nullable": true
-              },
-              "position": {
-                "type": "string",
-                "maxLength": 30,
-                "nullable": true
-              },
-              "email": {
-                "type": "string",
-                "maxLength": 100
-              },
-              "emailConfirmed": {
-                "type": "boolean"
-              },
-              "passwordHash": {
-                "type": "string",
-                "maxLength": 100
-              },
-              "passwordSalt": {
-                "type": "string",
-                "maxLength": 60
-              },
-              "phoneNumber": {
-                "type": "string",
-                "maxLength": 20,
-                "nullable": true
-              },
-              "phoneNumberConfirmed": {
-                "type": "boolean"
-              },
-              "twoFactorEnabled": {
-                "type": "boolean"
-              },
-              "lockoutEnd": {
-                "type": "string",
-                "format": "date-time",
-                "nullable": true
-              },
-              "lockoutEnabled": {
-                "type": "boolean"
-              },
-              "accessFailedCount": {
-                "type": "integer",
-                "format": "int32"
-              },
-              "lastLoginTime": {
-                "type": "string",
-                "format": "date-time",
-                "nullable": true
-              },
-              "retryCount": {
-                "type": "integer",
-                "format": "int32"
-              },
-              "isDeleted": {
-                "type": "boolean"
-              },
-              "avatar": {
-                "type": "string",
-                "maxLength": 200,
-                "nullable": true
-              },
-              "roles": {
-                "type": "array",
-                "nullable": true,
-                "xml": {
-                  "wrapped": true
-                },
-                "items": {
-                  "xml": {
-                    "name": "Role"
-                  },
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Role"
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        ]
-      },
-      "Permission": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/EntityBase"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "name": {
-                "type": "string",
-                "maxLength": 30
-              },
-              "parent": {
-                "nullable": true,
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/Permission"
-                  }
-                ]
-              },
-              "permissionPath": {
-                "type": "string",
-                "maxLength": 200,
-                "nullable": true
-              },
-              "roles": {
-                "type": "array",
-                "nullable": true,
-                "xml": {
-                  "wrapped": true
-                },
-                "items": {
-                  "xml": {
-                    "name": "Role"
-                  },
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Role"
-                    }
-                  ]
-                }
-              },
-              "rolePermissions": {
-                "type": "array",
-                "nullable": true,
-                "xml": {
-                  "wrapped": true
-                },
-                "items": {
-                  "xml": {
-                    "name": "RolePermission"
-                  },
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/RolePermission"
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        ]
-      },
-      "RolePermission": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/EntityBase"
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "roleId": {
-                "type": "string",
-                "format": "guid"
-              },
-              "permissionId": {
-                "type": "string",
-                "format": "guid"
-              },
-              "permissionTypeMyProperty": {
-                "$ref": "#/components/schemas/PermissionType"
-              },
-              "role": {
-                "$ref": "#/components/schemas/Role"
-              },
-              "permission": {
-                "$ref": "#/components/schemas/Permission"
-              }
-            }
-          }
-        ]
-      },
-      "PermissionType": {
-        "type": "integer",
-        "description": "0 = Read\n1 = Audit\n2 = Add\n3 = Edit\n4 = Write\n5 = AuditWrite",
-        "x-enumNames": [
-          "Read",
-          "Audit",
-          "Add",
-          "Edit",
-          "Write",
-          "AuditWrite"
-        ],
-        "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5
-        ]
-      },
       "EnvironmentAddDto": {
         "type": "object",
         "description": "环境",
@@ -4909,7 +5216,7 @@
           }
         }
       },
-      "PageResultOfPermissionItemDto": {
+      "PageListOfPermissionItemDto": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -4919,7 +5226,6 @@
           },
           "data": {
             "type": "array",
-            "nullable": true,
             "xml": {
               "wrapped": true
             },
@@ -5057,7 +5363,7 @@
           }
         }
       },
-      "PageResultOfResourceAttributeItemDto": {
+      "PageListOfResourceAttributeItemDto": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -5067,7 +5373,6 @@
           },
           "data": {
             "type": "array",
-            "nullable": true,
             "xml": {
               "wrapped": true
             },
@@ -5270,7 +5575,7 @@
           }
         }
       },
-      "PageResultOfResourceAttributeDefineItemDto": {
+      "PageListOfResourceItemDto": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -5280,197 +5585,6 @@
           },
           "data": {
             "type": "array",
-            "nullable": true,
-            "xml": {
-              "wrapped": true
-            },
-            "items": {
-              "xml": {
-                "name": "ResourceAttributeDefineItemDto"
-              },
-              "oneOf": [
-                {
-                  "$ref": "#/components/schemas/ResourceAttributeDefineItemDto"
-                }
-              ]
-            }
-          },
-          "pageIndex": {
-            "type": "integer",
-            "format": "int32"
-          }
-        }
-      },
-      "ResourceAttributeDefineItemDto": {
-        "type": "object",
-        "description": "资源属性定义",
-        "additionalProperties": false,
-        "properties": {
-          "displayName": {
-            "type": "string",
-            "maxLength": 50
-          },
-          "name": {
-            "type": "string",
-            "maxLength": 60
-          },
-          "isEnable": {
-            "type": "boolean"
-          },
-          "required": {
-            "type": "boolean",
-            "description": "是否必须"
-          },
-          "value": {
-            "type": "string",
-            "nullable": true
-          },
-          "sort": {
-            "type": "integer",
-            "description": "排序 "
-          },
-          "id": {
-            "type": "string",
-            "format": "guid"
-          },
-          "createdTime": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "ResourceAttributeDefineFilterDto": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/FilterBase"
-          },
-          {
-            "type": "object",
-            "description": "资源属性定义",
-            "additionalProperties": false,
-            "properties": {
-              "displayName": {
-                "type": "string",
-                "maxLength": 50,
-                "nullable": true
-              },
-              "name": {
-                "type": "string",
-                "maxLength": 60,
-                "nullable": true
-              },
-              "isEnable": {
-                "type": "boolean",
-                "nullable": true
-              },
-              "required": {
-                "type": "boolean",
-                "description": "是否必须",
-                "nullable": true
-              },
-              "typeId": {
-                "type": "string",
-                "format": "guid",
-                "nullable": true
-              }
-            }
-          }
-        ]
-      },
-      "ResourceAttributeDefineAddDto": {
-        "type": "object",
-        "description": "资源属性定义",
-        "additionalProperties": false,
-        "properties": {
-          "displayName": {
-            "type": "string",
-            "maxLength": 50
-          },
-          "name": {
-            "type": "string",
-            "maxLength": 60
-          },
-          "isEnable": {
-            "type": "boolean"
-          },
-          "required": {
-            "type": "boolean",
-            "description": "是否必须"
-          },
-          "sort": {
-            "type": "integer",
-            "description": "排序 "
-          },
-          "status": {
-            "description": "状态",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/Status"
-              }
-            ]
-          },
-          "typeId": {
-            "type": "string",
-            "format": "guid"
-          }
-        }
-      },
-      "ResourceAttributeDefineUpdateDto": {
-        "type": "object",
-        "description": "资源属性定义",
-        "additionalProperties": false,
-        "properties": {
-          "displayName": {
-            "type": "string",
-            "maxLength": 50,
-            "nullable": true
-          },
-          "name": {
-            "type": "string",
-            "maxLength": 60,
-            "nullable": true
-          },
-          "isEnable": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "required": {
-            "type": "boolean",
-            "description": "是否必须",
-            "nullable": true
-          },
-          "sort": {
-            "type": "integer",
-            "description": "排序 ",
-            "nullable": true
-          },
-          "status": {
-            "description": "状态",
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/Status"
-              }
-            ]
-          },
-          "typeId": {
-            "type": "string",
-            "format": "guid",
-            "nullable": true
-          }
-        }
-      },
-      "PageResultOfResourceItemDto": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "count": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "data": {
-            "type": "array",
-            "nullable": true,
             "xml": {
               "wrapped": true
             },
@@ -5760,7 +5874,7 @@
           }
         }
       },
-      "PageResultOfResourceGroupItemDto": {
+      "PageListOfResourceGroupItemDto": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -5770,7 +5884,6 @@
           },
           "data": {
             "type": "array",
-            "nullable": true,
             "xml": {
               "wrapped": true
             },
@@ -5805,6 +5918,27 @@
             "description": "描述",
             "maxLength": 400,
             "nullable": true
+          },
+          "sort": {
+            "type": "integer",
+            "description": "排序",
+            "format": "int32"
+          },
+          "layoutType": {
+            "description": "展示类型",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LayoutType"
+              }
+            ]
+          },
+          "navigation": {
+            "description": "所属导航类型",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/NavigationType"
+              }
+            ]
           },
           "id": {
             "type": "string",
@@ -5852,12 +5986,30 @@
                 "maxLength": 100,
                 "nullable": true
               },
+              "layoutType": {
+                "description": "展示类型",
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/LayoutType"
+                  }
+                ]
+              },
+              "navigation": {
+                "description": "所属导航类型",
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/NavigationType"
+                  }
+                ]
+              },
               "environmentId": {
                 "type": "string",
                 "format": "guid",
                 "nullable": true
               },
-              "roleId": {
+              "userId": {
                 "type": "string",
                 "format": "guid",
                 "nullable": true
@@ -5884,6 +6036,30 @@
             "description": "描述",
             "maxLength": 400,
             "nullable": true
+          },
+          "sort": {
+            "type": "integer",
+            "description": "排序",
+            "format": "int32"
+          },
+          "layoutType": {
+            "description": "展示类型",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LayoutType"
+              }
+            ]
+          },
+          "navigation": {
+            "description": "所属导航类型",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/NavigationType"
+              }
+            ]
+          },
+          "environment": {
+            "$ref": "#/components/schemas/Environment"
           }
         }
       },
@@ -5901,6 +6077,27 @@
             "description": "描述",
             "maxLength": 400,
             "nullable": true
+          },
+          "sort": {
+            "type": "integer",
+            "description": "排序",
+            "format": "int32"
+          },
+          "layoutType": {
+            "description": "展示类型",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LayoutType"
+              }
+            ]
+          },
+          "navigation": {
+            "description": "所属导航类型",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/NavigationType"
+              }
+            ]
           },
           "environmentId": {
             "type": "string",
@@ -5933,6 +6130,30 @@
               }
             ]
           },
+          "sort": {
+            "type": "integer",
+            "description": "排序",
+            "format": "int32",
+            "nullable": true
+          },
+          "layoutType": {
+            "description": "展示类型",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LayoutType"
+              }
+            ]
+          },
+          "navigation": {
+            "description": "所属导航类型",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/NavigationType"
+              }
+            ]
+          },
           "environmentId": {
             "type": "string",
             "format": "guid",
@@ -5940,7 +6161,7 @@
           }
         }
       },
-      "PageResultOfResourceTagsItemDto": {
+      "PageListOfResourceTagsItemDto": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -5950,7 +6171,6 @@
           },
           "data": {
             "type": "array",
-            "nullable": true,
             "xml": {
               "wrapped": true
             },
@@ -6064,7 +6284,7 @@
           }
         }
       },
-      "PageResultOfResourceTypeDefinitionItemDto": {
+      "PageListOfResourceTypeDefinitionItemDto": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -6074,7 +6294,6 @@
           },
           "data": {
             "type": "array",
-            "nullable": true,
             "xml": {
               "wrapped": true
             },
@@ -6258,7 +6477,7 @@
           }
         }
       },
-      "PageResultOfRoleItemDto": {
+      "PageListOfRoleItemDto": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -6268,7 +6487,6 @@
           },
           "data": {
             "type": "array",
-            "nullable": true,
             "xml": {
               "wrapped": true
             },
@@ -6404,7 +6622,32 @@
           }
         }
       },
-      "PageResultOfRolePermissionItemDto": {
+      "RoleResourceDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "groupIds": {
+            "type": "array",
+            "description": "资源组",
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "type": "string",
+              "format": "guid",
+              "xml": {
+                "name": "Guid"
+              }
+            }
+          },
+          "roleId": {
+            "type": "string",
+            "description": "角色id",
+            "format": "guid"
+          }
+        }
+      },
+      "PageListOfRolePermissionItemDto": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -6414,7 +6657,6 @@
           },
           "data": {
             "type": "array",
-            "nullable": true,
             "xml": {
               "wrapped": true
             },
@@ -6577,7 +6819,7 @@
           }
         }
       },
-      "PageResultOfUserItemDto": {
+      "PageListOfUserItemDto": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -6587,7 +6829,6 @@
           },
           "data": {
             "type": "array",
-            "nullable": true,
             "xml": {
               "wrapped": true
             },
@@ -6787,6 +7028,61 @@
           }
         }
       },
+      "UserShortDto": {
+        "type": "object",
+        "description": "系统用户概要",
+        "additionalProperties": false,
+        "properties": {
+          "userName": {
+            "type": "string",
+            "description": "用户名",
+            "maxLength": 30
+          },
+          "realName": {
+            "type": "string",
+            "description": "真实姓名",
+            "maxLength": 30,
+            "nullable": true
+          },
+          "position": {
+            "type": "string",
+            "description": "职位",
+            "maxLength": 30,
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "emailConfirmed": {
+            "type": "boolean"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "maxLength": 20,
+            "nullable": true
+          },
+          "phoneNumberConfirmed": {
+            "type": "boolean"
+          },
+          "lastLoginTime": {
+            "type": "string",
+            "description": "最后登录时间",
+            "format": "date-time",
+            "nullable": true
+          },
+          "avatar": {
+            "type": "string",
+            "description": "头像url",
+            "maxLength": 200,
+            "nullable": true
+          },
+          "id": {
+            "type": "string",
+            "format": "guid"
+          }
+        }
+      },
       "UserUpdateDto": {
         "type": "object",
         "description": "系统用户更新时请求结构",
@@ -6915,6 +7211,10 @@
   },
   "tags": [
     {
+      "name": "ResourceAttributeDefine",
+      "description": "资源属性定义"
+    },
+    {
       "name": "Auth",
       "description": "系统用户授权登录"
     },
@@ -6949,10 +7249,6 @@
     {
       "name": "ResourceAttribute",
       "description": "资源属性值 "
-    },
-    {
-      "name": "ResourceAttributeDefine",
-      "description": "资源属性定义"
     },
     {
       "name": "Resource",

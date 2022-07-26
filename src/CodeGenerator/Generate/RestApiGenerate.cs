@@ -107,7 +107,7 @@ public class RestApiGenerate : GenerateBase
         tplContent = tplContent.Replace(TplConst.NAMESPACE, ApiNamespace)
             .Replace(TplConst.SHARE_NAMESPACE, ShareNamespace)
             .Replace(TplConst.ENTITY_NAME, entityName)
-            .Replace(TplConst.ENTITY_NAME, Suffix)
+            .Replace(TplConst.API_SUFFIX, Suffix)
             .Replace(TplConst.COMMENT, EntityInfo?.Comment ?? "");
         //.Replace(TplConst.ADDITION_ACTION, actionContent ?? "")
         //.Replace(TplConst.ID_TYPE, Config.IdType);

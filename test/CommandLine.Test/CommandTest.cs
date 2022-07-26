@@ -6,10 +6,12 @@ namespace CommandLine.Test;
 
 public class CommandTest
 {
-    protected string EntityPath = @"D:\codes\DevPlatform\src\Microservice\DocAPI\Models\Docs.cs";
-    protected string DtoPath = @"D:\codes\DevPlatform\src\Microservice\DocAPI";
-    protected string StorePath = @"D:\codes\DevPlatform\src\Microservice\DocAPI";
-    protected string ApiPath = @"D:\codes\DevPlatform\src\Microservice\DocAPI";
+
+    static string ProjectPath = @"E:\codes\DevCenter\src\";
+    protected string EntityPath = ProjectPath + @"Core\Entities\ResourceAttributeDefine.cs";
+    protected string DtoPath = ProjectPath + @"Share";
+    protected string StorePath = ProjectPath + @"Http.Application";
+    protected string ApiPath = ProjectPath +@"Http.API";
 
 
     private void SetEnv()
