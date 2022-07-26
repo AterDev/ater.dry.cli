@@ -30,5 +30,5 @@
   <tr mat-row *matRowDef="let row; columns: columns;"></tr>
 </table>
 <mat-paginator [pageSizeOptions]="pageSizeOption"
-[pageIndex]="filter.pageIndex-1" [pageSize]="filter.pageSize"
+[pageIndex]="filter.pageIndex!-1" [pageSize]="filter.pageSize"
   [length]="total" (page)="getList($event)"showFirstLastButtons></mat-paginator>

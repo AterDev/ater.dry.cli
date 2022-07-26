@@ -8,7 +8,7 @@ public interface IRestController<TEntity, TAdd, TUpdate, TFilter, TItem>
     /// </summary>
     /// <param name="form"></param>
     /// <returns></returns>
-    Task<ActionResult<User>> AddAsync(TAdd form);
+    Task<ActionResult<TEntity>> AddAsync(TAdd form);
 
     /// <summary>
     /// 分页筛选

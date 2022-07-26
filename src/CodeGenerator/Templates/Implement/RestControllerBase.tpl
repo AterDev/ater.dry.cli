@@ -1,4 +1,5 @@
-﻿namespace ${Namespace}.Infrastructure;
+﻿using Microsoft.AspNetCore.Mvc.Infrastructure;
+namespace ${Namespace}.Infrastructure;
 
 /// <summary>
 /// http api 基类，重写ControllerBase中的方法
