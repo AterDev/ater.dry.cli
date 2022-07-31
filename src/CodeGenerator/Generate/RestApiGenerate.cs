@@ -84,9 +84,7 @@ public class RestApiGenerate : GenerateBase
             $"global using {EntityNamespace}.Utils;",
             $"global using {EntityNamespace}.Models;",
             $"// global using {EntityNamespace}.Identity;",
-            $"global using {ShareNamespace};",
             $"global using {ShareNamespace}.Models;",
-            $"global using {ApiNamespace}.Controllers;",
             $"global using {ServiceNamespace};",
             $"global using {ServiceNamespace}.Interface;",
             $"global using {ServiceNamespace}.DataStore;"
