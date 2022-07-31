@@ -51,7 +51,11 @@ public class ${EntityName}${APISuffix} :
         return await manager.UpdateAsync(user, form);
     }
 
-
+    /// <summary>
+    /// 详情
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpGet("{id}")]
     public async Task<ActionResult<${EntityName}?>> GetDetailAsync([FromRoute] Guid id)
     {
