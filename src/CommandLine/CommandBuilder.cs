@@ -155,7 +155,7 @@ public class CommandBuilder
 
         var suffixOption = new Option<string>(new[] { "--suffix", "-s" },
             "the controller suffix");
-        suffixOption.SetDefaultValue("Controllers");
+        suffixOption.SetDefaultValue("Controller");
         var typeOption = new Option<string>(new[] { "--type", "-t" },
             "api type, valid values:rest/grpc/graph, just support rest");
         typeOption.SetDefaultValue("rest");

@@ -17,7 +17,7 @@ public class ApiCommand : CommandBase
     /// </summary>
     public string StorePath { get; }
     /// <summary>
-    /// Web站点路径
+    /// Http API路径
     /// </summary> 
     public string ApiPath { get; }
 
@@ -79,7 +79,7 @@ public class ApiCommand : CommandBase
 
     private async Task GenerateRestApiAsync()
     {
-        var apiDir = Path.Combine(ApiPath, Suffix);
+        var apiDir = Path.Combine(ApiPath, "Controllers");
         var entityName = Path.GetFileNameWithoutExtension(EntityPath);
         var apiContent = CodeGen.GetRestApiContent();
         await GenerateFileAsync(apiDir, $"{entityName}{Suffix}.cs", apiContent);
