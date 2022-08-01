@@ -68,7 +68,7 @@ public class ${EntityName}${APISuffix} :
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    [ApiExplorerSettings(IgnoreApi = true)]
+    // [ApiExplorerSettings(IgnoreApi = true)]
     [HttpDelete("{id}")]
     public async Task<ActionResult<${EntityName}?>> DeleteAsync([FromRoute] Guid id)
     {
