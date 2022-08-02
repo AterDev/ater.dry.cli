@@ -215,7 +215,7 @@ public class NgPageGenerate : GenerateBase
                 {
                     pipe = "|date:'yyyy-MM-dd HH:mm:ss'";
                 }
-                return $@"      <p><strong>{p.DisplayName}<strong><br> <span class=""text-primary"">{{{{data.{p.Name.ToCamelCase()}{pipe}}}}}</span></p>
+                return $@"      <p><strong>{p.Name}</strong><br> <span class=""text-primary"">{{{{data.{p.Name.ToCamelCase()}{pipe}}}}}</span></p>
 ";
             }).ToArray();
         }

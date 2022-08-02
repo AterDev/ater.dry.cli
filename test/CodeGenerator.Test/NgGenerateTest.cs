@@ -56,9 +56,9 @@ public class NgGenerateTest
     [Fact]
     public void should_generate_ng_component()
     {
-        var entityName = "Article";
-        var dtoPath = @"D:\codes\DevPlatform\src\Share";
-        var output=@"D:\codes\DevPlatform\src\Webapp\Admin";
+        var entityName = "CodeSnippet";
+        var dtoPath = @"E:\codes\DevCenter\src\Share";
+        var output=@"E:\codes\DevCenter\src\Webapp\Admin";
         var gen = new NgPageGenerate(entityName,dtoPath,output);
 
         var dialog = NgPageGenerate.BuildConfirmDialog();
