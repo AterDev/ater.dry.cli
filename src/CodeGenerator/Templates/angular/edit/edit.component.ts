@@ -77,7 +77,7 @@ export class EditComponent implements OnInit {
         .subscribe(res => {
           this.snb.open('修改成功');
            // this.dialogRef.close(res);
-          // this.router.navigate(['../index'],{relativeTo: this.route});
+          this.router.navigate(['../../index'],{relativeTo: this.route});
         });
     }
   }
