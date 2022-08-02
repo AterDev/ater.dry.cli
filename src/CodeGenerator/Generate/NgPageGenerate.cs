@@ -209,7 +209,13 @@ public class NgPageGenerate : GenerateBase
         {
             content = props.Select(p =>
             {
-                return $@"      <p>{p.Name}: <span class=""text-primary"">{{{{data.{p.Name.ToCamelCase()}}}}}</span></p>
+                // 管道处理
+                var pipe = "";
+                if (p.Type.ToLower().Contains("datetime"))
+                {
+                    pipe = "|date:'yyyy-MM-dd HH:mm:ss'";
+                }
+                return $@"      <p><strong>{p.DisplayName}<strong><br> <span class=""text-primary"">{{{{data.{p.Name.ToCamelCase()}{pipe}}}}}</span></p>
 ";
             }).ToArray();
         }
