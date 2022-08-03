@@ -38,6 +38,7 @@ public class NgInputBuilder
             case "DateTime":
                 str = BuildInputDate();
                 break;
+            case "short":
             case "int":
             case "decimal":
             case "double":
@@ -48,6 +49,7 @@ public class NgInputBuilder
                 str = BuildSlide();
                 break;
             default:
+                str = BuildInputText();
                 break;
         }
         if (IsEnum)
