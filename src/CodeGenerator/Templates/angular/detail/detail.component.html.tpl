@@ -1,4 +1,4 @@
-<mat-toolbar fxLayoutGap="4px">
+<mat-toolbar>
   <button color="basic" mat-icon-button matTooltip="返回" (click)="back()">
     <mat-icon>arrow_back</mat-icon>
   </button>
@@ -6,8 +6,8 @@
     <mat-icon>edit</mat-icon>
   </button>
 </mat-toolbar>
-<div *ngIf="!isLoading" fxLayout="row" fxLayoutAlign="start start" fxLayoutGap="8px">
-  <mat-card class="" style="width: 100%;">
+<div *ngIf="!isLoading" class="d-flex">
+  <mat-card class="w-100">
     <!-- <mat-card-header>
       <div mat-card-avatar class=""></div>
       <mat-card-title></mat-card-title>
