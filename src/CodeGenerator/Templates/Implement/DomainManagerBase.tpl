@@ -64,9 +64,9 @@ public class DomainManagerBase<TEntity, TUpdate, TFilter> : IDomainManager<TEnti
         return res;
     }
 
-    public virtual async Task<TDto?> FindAsync<TDto>(Expression<Func<TEntity, bool>>? whereExp) where TDto : class
+    public virtual async Task<TDto?> FindAsync<TDto>(Guid id) where TDto : class
     {
-        return await Query.FindAsync<TDto>(whereExp);
+        return await Query.FindAsync<TDto>(id);
     }
 
     /// <summary>

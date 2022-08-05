@@ -26,9 +26,9 @@ public interface IDomainManager<TEntity, TUpdate, TFilter>
     /// 查询对象
     /// </summary>
     /// <typeparam name="TDto"></typeparam>
-    /// <param name="whereExp"></param>
+    /// <param name="id"></param>
     /// <returns></returns>
-    Task<TDto?> FindAsync<TDto>(Expression<Func<TEntity, bool>>? whereExp) where TDto : class;
+    Task<TDto?> FindAsync<TDto>(Guid id) where TDto : class;
 
     /// <summary>
     /// 分页查询

@@ -171,7 +171,7 @@ public class DtoCodeGenerate : GenerateBase
         // 导航属性处理
         var referenceProps = EntityInfo.PropertyInfos?
             .Where(p => p.IsNavigation && !p.IsList && !p.IsNullable)
-            .Select(s => new PropertyInfo($"{KeyType}?", s.Name + "Id"))
+            .Select(s => new PropertyInfo($"{KeyType}", s.Name + "Id"))
             .ToList();
         var dto = new DtoInfo
         {
@@ -185,6 +185,7 @@ public class DtoCodeGenerate : GenerateBase
         var properties = EntityInfo.PropertyInfos?.Where(p => p.Name != "Id"
                 && p.Name != "CreatedTime"
                 && p.Name != "UpdatedTime"
+                && p.Name != "IsDeleted"
                 && !p.IsList
                 && !p.IsNavigation)
             .ToList();
