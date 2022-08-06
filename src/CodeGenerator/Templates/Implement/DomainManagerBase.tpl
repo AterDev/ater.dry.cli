@@ -57,9 +57,9 @@ public class DomainManagerBase<TEntity, TUpdate, TFilter> : IDomainManager<TEnti
         return res;
     }
 
-    public virtual async Task<TEntity?> DeleteAsync(Guid id)
+    public virtual async Task<TEntity?> DeleteAsync(TEntity entity)
     {
-        var res = await Command.DeleteAsync(id);
+        var res = Command.Remove(entity);
         await AutoSaveAsync();
         return res;
     }
