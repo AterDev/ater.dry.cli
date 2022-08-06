@@ -46,9 +46,9 @@ public class ${EntityName}${APISuffix} :
     [HttpPut("{id}")]
     public async Task<ActionResult<${EntityName}?>> UpdateAsync([FromRoute] Guid id, ${EntityName}UpdateDto form)
     {
-        var user = await manager.GetCurrent(id);
-        if (user == null) return NotFound();
-        return await manager.UpdateAsync(user, form);
+        var current = await manager.GetCurrent(id);
+        if (current == null) return NotFound();
+        return await manager.UpdateAsync(current, form);
     }
 
     /// <summary>
@@ -59,7 +59,7 @@ public class ${EntityName}${APISuffix} :
     [HttpGet("{id}")]
     public async Task<ActionResult<${EntityName}?>> GetDetailAsync([FromRoute] Guid id)
     {
-        var res = await manager.FindAsync<${EntityName}>(u => u.Id == id);
+        var res = await manager.FindAsync(id);
         return (res == null) ? NotFound() : res;
     }
 

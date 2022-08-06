@@ -24,7 +24,7 @@ public class DomainManagerBase<TEntity, TUpdate, TFilter> : IDomainManager<TEnti
         return await Stores.SaveChangesAsync();
     }
 
-    public async Task AutoSaveAsync()
+    private async Task AutoSaveAsync()
     {
         if (AutoSave)
         {
@@ -62,6 +62,11 @@ public class DomainManagerBase<TEntity, TUpdate, TFilter> : IDomainManager<TEnti
         var res = await Command.DeleteAsync(id);
         await AutoSaveAsync();
         return res;
+    }
+
+    public virtual async Task<TEntity?> FindAsync(Guid id)
+    {
+        return await Query.FindAsync<TEntity>(q => q.Id == id);
     }
 
     public virtual async Task<TDto?> FindAsync<TDto>(Guid id) where TDto : class

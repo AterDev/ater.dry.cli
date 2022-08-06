@@ -11,6 +11,7 @@ public class CommandStoreBase<TContext, TEntity> : ICommandStore<TEntity>, IComm
     /// 当前实体DbSet
     /// </summary>
     protected readonly DbSet<TEntity> _db;
+    public DbSet<TEntity> Db => _db;
     public bool EnableSoftDelete { get; set; } = true;
 
     //public TEntity CurrentEntity { get; }
