@@ -3,7 +3,7 @@
 /// <summary>
 /// 仓储数据管理接口
 /// </summary>
-public interface IDomainManager<TEntity, TUpdate, TFilter>
+public interface IDomainManager<TEntity, TUpdate, TFilter，TItem>
        where TEntity : EntityBase
        where TFilter : FilterBase
 {
@@ -17,7 +17,7 @@ public interface IDomainManager<TEntity, TUpdate, TFilter>
     /// <param name="id"></param>
     /// <param name="navigations">include </param>
     /// <returns></returns>
-    Task<TEntity?> GetCurrent(Guid id, string[]? navigations = null);
+    Task<TEntity?> GetCurrent(Guid id, params string[] navigations);
     Task<TEntity> AddAsync(TEntity entity);
     Task<TEntity> UpdateAsync(TEntity entity, TUpdate dto);
     Task<TEntity?> DeleteAsync(TEntity entity);
@@ -33,9 +33,8 @@ public interface IDomainManager<TEntity, TUpdate, TFilter>
     /// <summary>
     /// 分页查询
     /// </summary>
-    /// <typeparam name="TItem"></typeparam>
     /// <typeparam name="TFilter"></typeparam>
     /// <param name="filter"></param>
     /// <returns></returns>
-    Task<PageList<TItem>> FilterAsync<TItem>(TFilter filter);
+    Task<PageList<TItem>> FilterAsync(TFilter filter);
 }

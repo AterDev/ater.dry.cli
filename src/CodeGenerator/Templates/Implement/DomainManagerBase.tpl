@@ -7,7 +7,7 @@ public class DomainManagerBase<TEntity, TUpdate, TFilter> : IDomainManager<TEnti
     public DataStoreContext Stores { get; init; }
     public QuerySet<TEntity> Query { get; init; }
     public CommandSet<TEntity> Command { get; init; }
-
+    public IQueryable<TEntity> Queryable { get; set; }
     /// <summary>
     /// 是否自动保存(调用SaveChanges)
     /// </summary>
@@ -17,6 +17,7 @@ public class DomainManagerBase<TEntity, TUpdate, TFilter> : IDomainManager<TEnti
         Stores = storeContext;
         Query = Stores.QuerySet<TEntity>();
         Command = Stores.CommandSet<TEntity>();
+        Queryable = Query._query;
     }
 
     public async Task<int> SaveChangesAsync()
@@ -75,15 +76,6 @@ public class DomainManagerBase<TEntity, TUpdate, TFilter> : IDomainManager<TEnti
     }
 
     /// <summary>
-    /// 获取当前查询构造对象
-    /// </summary>
-    /// <returns></returns>
-    public IQueryable<TEntity> GetQueryable()
-    {
-        return Query._query;
-    }
-
-    /// <summary>
     /// 分页筛选，重写该方法实现自己的查询逻辑
     /// </summary>
     /// <typeparam name="TItem"></typeparam>
@@ -91,7 +83,7 @@ public class DomainManagerBase<TEntity, TUpdate, TFilter> : IDomainManager<TEnti
     /// <returns></returns>
     public virtual async Task<PageList<TItem>> FilterAsync<TItem>(TFilter filter)
     {
-        return await Query.FilterAsync<TItem>(GetQueryable(), filter.OrderBy, filter.PageIndex ?? 1, filter.PageSize ?? 12);
+        return await Query.FilterAsync<TItem>(Queryable, filter.OrderBy, filter.PageIndex ?? 1, filter.PageSize ?? 12);
     }
 
 }

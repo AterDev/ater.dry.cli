@@ -3,7 +3,7 @@ using Share.Models.${EntityName}Dtos;
 
 namespace ${Namespace}.Manager;
 
-public class ${EntityName}Manager : DomainManagerBase<${EntityName}, ${EntityName}UpdateDto, ${EntityName}FilterDto>, I${EntityName}Manager
+public class ${EntityName}Manager : DomainManagerBase<${EntityName}, ${EntityName}UpdateDto, ${EntityName}FilterDto, ${EntityName}ItemDto>, I${EntityName}Manager
 {
     public ${EntityName}Manager(DataStoreContext storeContext) : base(storeContext)
     {
@@ -15,11 +15,11 @@ public class ${EntityName}Manager : DomainManagerBase<${EntityName}, ${EntityNam
         return await base.UpdateAsync(entity, dto);
     }
 
-    public override async Task<PageList<TItem>> FilterAsync<TItem>(${EntityName}FilterDto filter)
+    public override async Task<PageList<${EntityName}ItemDto>> FilterAsync(${EntityName}FilterDto filter)
     {
         // TODO:根据实际业务构建筛选条件
-        var query = GetQueryable();
-        return await Query.FilterAsync<TItem>(query);
+        // if ... Queryable = ...
+        return await Query.FilterAsync<${EntityName}ItemDto>(Queryable);
     }
 
 }

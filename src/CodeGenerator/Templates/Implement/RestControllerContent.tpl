@@ -3,13 +3,13 @@ namespace ${Namespace}.Infrastructure;
 
 ${Comment}
 public class ${EntityName}${APISuffix} :
-    RestControllerBase<${EntityName}Manager>,
+    RestControllerBase<I${EntityName}Manager>,
     IRestController<${EntityName}, ${EntityName}AddDto, ${EntityName}UpdateDto, ${EntityName}FilterDto, ${EntityName}ItemDto>
 {
     public ${EntityName}${APISuffix}(
         IUserContext user,
         ILogger<${EntityName}${APISuffix}> logger,
-        ${EntityName}Manager manager
+        I${EntityName}Manager manager
         ) : base(manager, user, logger)
     {
     }
