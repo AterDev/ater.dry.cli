@@ -46,15 +46,13 @@ public class CommandStoreBase<TContext, TEntity> : ICommandStore<TEntity>, IComm
     /// <summary>
     /// 列表条件查询
     /// </summary>
-    /// <typeparam name="TItem"></typeparam>
     /// <param name="whereExp"></param>
     /// <returns></returns>
-    public virtual async Task<List<TItem>> ListAsync<TItem>(Expression<Func<TEntity, bool>>? whereExp)
+    public virtual async Task<List<TEntity>> ListAsync(Expression<Func<TEntity, bool>>? whereExp)
     {
         Expression<Func<TEntity, bool>> exp = e => true;
         whereExp ??= exp;
         var res = await _db.Where(whereExp)
-            .ProjectTo<TItem>()
             .ToListAsync();
         return res;
     }
