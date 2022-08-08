@@ -211,7 +211,7 @@ public class DataStoreGenerate : GenerateBase
             files.ToList().ForEach(file =>
             {
                 var name = Path.GetFileNameWithoutExtension(file);
-                var row = $"        services.AddScoped(typeof({name}));";
+                var row = $"        services.AddScoped<I{name}, {name}>();";
                 managerServiceContent += row + Environment.NewLine;
             });
         }

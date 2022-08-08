@@ -11,6 +11,7 @@ public class CommandStoreBase<TContext, TEntity> : ICommandStore<TEntity>, IComm
     /// 当前实体DbSet
     /// </summary>
     protected readonly DbSet<TEntity> _db;
+    public DbSet<TEntity> Db => _db;
     public bool EnableSoftDelete { get; set; } = true;
 
     //public TEntity CurrentEntity { get; }
@@ -42,6 +43,21 @@ public class CommandStoreBase<TContext, TEntity> : ICommandStore<TEntity>, IComm
         return await _query.FirstOrDefaultAsync();
     }
 
+    /// <summary>
+    /// 列表条件查询
+    /// </summary>
+    /// <typeparam name="TItem"></typeparam>
+    /// <param name="whereExp"></param>
+    /// <returns></returns>
+    public virtual async Task<List<TItem>> ListAsync<TItem>(Expression<Func<TEntity, bool>>? whereExp)
+    {
+        Expression<Func<TEntity, bool>> exp = e => true;
+        whereExp ??= exp;
+        var res = await _db.Where(whereExp)
+            .ProjectTo<TItem>()
+            .ToListAsync();
+        return res;
+    }
 
     /// <summary>
     /// 创建实体
@@ -68,25 +84,20 @@ public class CommandStoreBase<TContext, TEntity> : ICommandStore<TEntity>, IComm
     /// <summary>
     /// 删除实体,若未找到，返回null
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="entity"></param>
     /// <returns></returns>
-    public virtual async Task<TEntity?> DeleteAsync(Guid id)
+    public virtual TEntity? Remove(TEntity entity)
     {
-        var entity = await _db.FindAsync(id);
-        if (entity != null)
+        if (EnableSoftDelete)
         {
-            if (EnableSoftDelete)
-            {
-                entity.IsDeleted = true;
-            }
-            else
-            {
-                _db.Remove(entity!);
-            }
+            entity.IsDeleted = true;
+        }
+        else
+        {
+            _db.Remove(entity!);
         }
         return entity;
     }
-
 
     /// <summary>
     /// 批量创建

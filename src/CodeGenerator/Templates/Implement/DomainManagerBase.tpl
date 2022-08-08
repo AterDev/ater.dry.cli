@@ -7,7 +7,7 @@ public class DomainManagerBase<TEntity, TUpdate, TFilter> : IDomainManager<TEnti
     public DataStoreContext Stores { get; init; }
     public QuerySet<TEntity> Query { get; init; }
     public CommandSet<TEntity> Command { get; init; }
-
+    public IQueryable<TEntity> Queryable { get; set; }
     /// <summary>
     /// 是否自动保存(调用SaveChanges)
     /// </summary>
@@ -17,6 +17,7 @@ public class DomainManagerBase<TEntity, TUpdate, TFilter> : IDomainManager<TEnti
         Stores = storeContext;
         Query = Stores.QuerySet<TEntity>();
         Command = Stores.CommandSet<TEntity>();
+        Queryable = Query._query;
     }
 
     public async Task<int> SaveChangesAsync()
@@ -24,7 +25,7 @@ public class DomainManagerBase<TEntity, TUpdate, TFilter> : IDomainManager<TEnti
         return await Stores.SaveChangesAsync();
     }
 
-    public async Task AutoSaveAsync()
+    private async Task AutoSaveAsync()
     {
         if (AutoSave)
         {
@@ -57,16 +58,16 @@ public class DomainManagerBase<TEntity, TUpdate, TFilter> : IDomainManager<TEnti
         return res;
     }
 
-    public virtual async Task<TEntity?> DeleteAsync(Guid id)
+    public virtual async Task<TEntity?> DeleteAsync(TEntity entity)
     {
-        var res = await Command.DeleteAsync(id);
+        var res = Command.Remove(entity);
         await AutoSaveAsync();
         return res;
     }
 
-    public virtual async Task<TDto?> FindAsync<TDto>(Expression<Func<TEntity, bool>>? whereExp) where TDto : class
+    public virtual async Task<TEntity?> FindAsync(Guid id)
     {
-        return await Query.FindAsync<TDto>(whereExp);
+        return await Query.FindAsync<TEntity>(q => q.Id == id);
     }
 
     /// <summary>
@@ -86,7 +87,7 @@ public class DomainManagerBase<TEntity, TUpdate, TFilter> : IDomainManager<TEnti
     /// <returns></returns>
     public IQueryable<TEntity> GetQueryable()
     {
-        return Query._query;
+        return await Query.FindAsync<TDto>(id);
     }
 
     /// <summary>
@@ -97,7 +98,7 @@ public class DomainManagerBase<TEntity, TUpdate, TFilter> : IDomainManager<TEnti
     /// <returns></returns>
     public virtual async Task<PageList<TItem>> FilterAsync<TItem>(TFilter filter)
     {
-        return await Query.FilterAsync<TItem>(GetQueryable(), filter.OrderBy, filter.PageIndex ?? 1, filter.PageSize ?? 12);
+        return await Query.FilterAsync<TItem>(Queryable, filter.OrderBy, filter.PageIndex ?? 1, filter.PageSize ?? 12);
     }
 
 }

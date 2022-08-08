@@ -3,7 +3,7 @@
 /// <summary>
 /// 仓储命令
 /// </summary>
-public interface ICommandStore<TId, TEntity>
+public interface ICommandStore<TEntity>
     where TEntity : class
 {
     /// <summary>
@@ -23,10 +23,7 @@ public interface ICommandStore<TId, TEntity>
     /// <summary>
     /// 删除
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="entity"></param>
     /// <returns></returns>
-    Task<TEntity?> DeleteAsync(TId id);
+    TEntity? Remove(TEntity entity);
 }
-public interface ICommandStore<TEntity> : ICommandStore<Guid, TEntity>
-    where TEntity : class
-{ }

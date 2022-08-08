@@ -7,7 +7,7 @@ public class ${EntityName}${APISuffix} : RestControllerBase<${EntityName}Manager
     public ${EntityName}${APISuffix}(
         IUserContext user,
         ILogger<${EntityName}${APISuffix}> logger,
-        ${EntityName}Manager manager
+        I${EntityName}Manager manager
         ) : base(manager, user, logger)
     {
     }
@@ -44,9 +44,9 @@ public class ${EntityName}${APISuffix} : RestControllerBase<${EntityName}Manager
     [HttpPut("{id}")]
     public async Task<ActionResult<${EntityName}?>> UpdateAsync([FromRoute] Guid id, ${EntityName}UpdateDto form)
     {
-        var user = await manager.GetCurrent(id);
-        if (user == null) return NotFound();
-        return await manager.UpdateAsync(user, form);
+        var current = await manager.GetCurrent(id);
+        if (current == null) return NotFound();
+        return await manager.UpdateAsync(current, form);
     }
 
     /// <summary>
@@ -57,7 +57,7 @@ public class ${EntityName}${APISuffix} : RestControllerBase<${EntityName}Manager
     [HttpGet("{id}")]
     public async Task<ActionResult<${EntityName}?>> GetDetailAsync([FromRoute] Guid id)
     {
-        var res = await manager.FindAsync<${EntityName}>(u => u.Id == id);
+        var res = await manager.FindAsync(id);
         return (res == null) ? NotFound() : res;
     }
 
@@ -70,6 +70,8 @@ public class ${EntityName}${APISuffix} : RestControllerBase<${EntityName}Manager
     [HttpDelete("{id}")]
     public async Task<ActionResult<${EntityName}?>> DeleteAsync([FromRoute] Guid id)
     {
-        return await manager.DeleteAsync(id);
+        var entity = await manager.GetCurrent(id);
+        if (entity == null) return NotFound();
+        return await manager.DeleteAsync(entity);
     }
 }
