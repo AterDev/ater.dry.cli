@@ -2,9 +2,7 @@
 namespace ${Namespace}.Infrastructure;
 
 ${Comment}
-public class ${EntityName}${APISuffix} :
-    RestControllerBase<${EntityName}Manager>,
-    IRestController<${EntityName}, ${EntityName}AddDto, ${EntityName}UpdateDto, ${EntityName}FilterDto, ${EntityName}ItemDto>
+public class ${EntityName}${APISuffix} : RestControllerBase<${EntityName}Manager>
 {
     public ${EntityName}${APISuffix}(
         IUserContext user,
