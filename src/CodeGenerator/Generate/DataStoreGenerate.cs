@@ -184,7 +184,10 @@ public class DataStoreGenerate : GenerateBase
 
         // 获取所有data stores
         var storeDir = Path.Combine(StorePath, "DataStore");
-        var files = Directory.GetFiles(storeDir, "*DataStore.cs", SearchOption.TopDirectoryOnly);
+        string[] files = Array.Empty<string>();
+
+        if (Directory.Exists(storeDir))
+            files = Directory.GetFiles(storeDir, "*DataStore.cs", SearchOption.TopDirectoryOnly);
 
         var queryFiles = Directory.GetFiles(Path.Combine(StorePath,$"{Const.QUERY_STORE}"),$"*{Const.QUERY_STORE}.cs",SearchOption.TopDirectoryOnly);
         var commandFiles = Directory.GetFiles(Path.Combine(StorePath,$"{Const.COMMAND_STORE}"),$"*{Const.COMMAND_STORE}.cs",SearchOption.TopDirectoryOnly);

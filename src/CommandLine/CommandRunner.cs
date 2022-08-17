@@ -116,16 +116,24 @@ public class CommandRunner
     public static async Task GenerateApi(string path, string dtoPath = "",
             string servicePath = "", string apiPath = "", string suffix = "")
     {
-        Console.WriteLine("🔵 Generate dtos");
-        var dtoCmd = new DtoCommand(path, dtoPath);
-        await dtoCmd.RunAsync();
-        Console.WriteLine("🔵 Generate store");
-        var storeCmd = new StoreCommand(path, dtoPath, servicePath, suffix);
-        await storeCmd.RunAsync();
+        try
+        {
+            Console.WriteLine("🔵 Generate dtos");
+            var dtoCmd = new DtoCommand(path, dtoPath);
+            await dtoCmd.RunAsync();
+            Console.WriteLine("🔵 Generate store");
+            var storeCmd = new StoreCommand(path, dtoPath, servicePath, suffix);
+            await storeCmd.RunAsync();
 
-        Console.WriteLine("🔵 Generate rest api");
-        var apiCmd = new ApiCommand(path, dtoPath, servicePath, apiPath, suffix);
-        await apiCmd.RunAsync();
+            Console.WriteLine("🔵 Generate rest api");
+            var apiCmd = new ApiCommand(path, dtoPath, servicePath, apiPath, suffix);
+            await apiCmd.RunAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("异常:" + ex.Message + Environment.NewLine + ex.StackTrace);
+        }
+
     }
 
     /// <summary>
