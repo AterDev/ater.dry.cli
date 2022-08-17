@@ -3,7 +3,7 @@
 /// <summary>
 /// 仓储数据管理接口
 /// </summary>
-public interface IDomainManager<TEntity, TUpdate, TFilter，TItem>
+public interface IDomainManager<TEntity, TId, TUpdate, TFilter，TItem>
        where TEntity : EntityBase
        where TFilter : FilterBase
 {
@@ -17,18 +17,18 @@ public interface IDomainManager<TEntity, TUpdate, TFilter，TItem>
     /// <param name="id"></param>
     /// <param name="navigations">include </param>
     /// <returns></returns>
-    Task<TEntity?> GetCurrent(Guid id, params string[] navigations);
+    Task<TEntity?> GetCurrent(TId id, params string[] navigations);
     Task<TEntity> AddAsync(TEntity entity);
     Task<TEntity> UpdateAsync(TEntity entity, TUpdate dto);
     Task<TEntity?> DeleteAsync(TEntity entity);
-    Task<TEntity?> FindAsync(Guid id);
+    Task<TEntity?> FindAsync(TId id);
     /// <summary>
     /// 查询对象
     /// </summary>
     /// <typeparam name="TDto"></typeparam>
     /// <param name="id"></param>
     /// <returns></returns>
-    Task<TDto?> FindAsync<TDto>(Guid id) where TDto : class;
+    Task<TDto?> FindAsync<TDto>(TId id) where TDto : class;
 
     /// <summary>
     /// 分页查询
@@ -37,4 +37,10 @@ public interface IDomainManager<TEntity, TUpdate, TFilter，TItem>
     /// <param name="filter"></param>
     /// <returns></returns>
     Task<PageList<TItem>> FilterAsync(TFilter filter);
+}
+
+public interface IDomainManager<TEntity, TUpdate, TFilter, TItem> : IDomainManager<TEntity, Guid, TUpdate, TFilter, TItem>
+       where TEntity : EntityBase
+       where TFilter : FilterBase
+{
 }

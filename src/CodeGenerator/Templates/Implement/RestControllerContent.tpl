@@ -44,7 +44,7 @@ public class ${EntityName}${APISuffix} :
     /// <param name="form"></param>
     /// <returns></returns>
     [HttpPut("{id}")]
-    public async Task<ActionResult<${EntityName}?>> UpdateAsync([FromRoute] Guid id, ${EntityName}UpdateDto form)
+    public async Task<ActionResult<${EntityName}?>> UpdateAsync([FromRoute] ${IdType} id, ${EntityName}UpdateDto form)
     {
         var current = await manager.GetCurrent(id);
         if (current == null) return NotFound();
@@ -57,7 +57,7 @@ public class ${EntityName}${APISuffix} :
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpGet("{id}")]
-    public async Task<ActionResult<${EntityName}?>> GetDetailAsync([FromRoute] Guid id)
+    public async Task<ActionResult<${EntityName}?>> GetDetailAsync([FromRoute] ${IdType} id)
     {
         var res = await manager.FindAsync(id);
         return (res == null) ? NotFound() : res;
@@ -70,7 +70,7 @@ public class ${EntityName}${APISuffix} :
     /// <returns></returns>
     // [ApiExplorerSettings(IgnoreApi = true)]
     [HttpDelete("{id}")]
-    public async Task<ActionResult<${EntityName}?>> DeleteAsync([FromRoute] Guid id)
+    public async Task<ActionResult<${EntityName}?>> DeleteAsync([FromRoute] ${IdType} id)
     {
         var entity = await manager.GetCurrent(id);
         if (entity == null) return NotFound();

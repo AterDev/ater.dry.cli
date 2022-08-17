@@ -85,9 +85,8 @@ public class RestApiGenerate : GenerateBase
             $"global using {EntityNamespace}.Models;",
             $"// global using {EntityNamespace}.Identity;",
             $"global using {ShareNamespace}.Models;",
-            $"global using {ServiceNamespace};",
             $"global using {ServiceNamespace}.Interface;",
-            $"global using {ServiceNamespace}.DataStore;"
+            $"global using {ServiceNamespace}.IManager;",
         };
     }
 
@@ -106,6 +105,7 @@ public class RestApiGenerate : GenerateBase
             .Replace(TplConst.SHARE_NAMESPACE, ShareNamespace)
             .Replace(TplConst.ENTITY_NAME, entityName)
             .Replace(TplConst.API_SUFFIX, Suffix)
+            .Replace(TplConst.ID_TYPE, Config.IdType)
             .Replace(TplConst.COMMENT, EntityInfo?.Comment ?? "");
         //.Replace(TplConst.ADDITION_ACTION, actionContent ?? "")
         //.Replace(TplConst.ID_TYPE, Config.IdType);

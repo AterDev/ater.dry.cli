@@ -184,7 +184,6 @@ public class DataStoreGenerate : GenerateBase
 
         // 获取所有data stores
         var storeDir = Path.Combine(StorePath, "DataStore");
-        if (!Directory.Exists(storeDir)) return string.Empty;
         var files = Directory.GetFiles(storeDir, "*DataStore.cs", SearchOption.TopDirectoryOnly);
 
         var queryFiles = Directory.GetFiles(Path.Combine(StorePath,$"{Const.QUERY_STORE}"),$"*{Const.QUERY_STORE}.cs",SearchOption.TopDirectoryOnly);
@@ -206,6 +205,7 @@ public class DataStoreGenerate : GenerateBase
         var managerDir = Path.Combine(StorePath, "Manager");
         if (!Directory.Exists(managerDir)) return string.Empty;
         files = Directory.GetFiles(managerDir, "*Manager.cs", SearchOption.TopDirectoryOnly);
+
         if (files != null)
         {
             files.ToList().ForEach(file =>
