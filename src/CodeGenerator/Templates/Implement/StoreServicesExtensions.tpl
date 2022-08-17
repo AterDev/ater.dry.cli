@@ -1,7 +1,4 @@
-﻿using ${Namespace}.DataStore;
-using ${Namespace}.Manager;
-
-namespace ${Namespace}.Implement;
+﻿namespace ${Namespace}.Implement;
 
 public static class StoreServicesExtensions
 {
