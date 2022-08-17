@@ -70,7 +70,22 @@ public class DomainManagerBase<TEntity, TUpdate, TFilter> : IDomainManager<TEnti
         return await Query.FindAsync<TEntity>(q => q.Id == id);
     }
 
-    public virtual async Task<TDto?> FindAsync<TDto>(Guid id) where TDto : class
+    /// <summary>
+    /// 条件查询列表
+    /// </summary>
+    /// <typeparam name="TDto">返回类型</typeparam>
+    /// <param name="whereExp"></param>
+    /// <returns></returns>
+    public async Task<List<TDto>> ListAsync<TDto>(Expression<Func<TEntity, bool>>? whereExp) where TDto : class
+    {
+        return await Query.ListAsync<TDto>(whereExp);
+    }
+
+    /// <summary>
+    /// 获取当前查询构造对象
+    /// </summary>
+    /// <returns></returns>
+    public IQueryable<TEntity> GetQueryable()
     {
         return await Query.FindAsync<TDto>(id);
     }
@@ -78,7 +93,6 @@ public class DomainManagerBase<TEntity, TUpdate, TFilter> : IDomainManager<TEnti
     /// <summary>
     /// 分页筛选，重写该方法实现自己的查询逻辑
     /// </summary>
-    /// <typeparam name="TItem"></typeparam>
     /// <param name="filter"></param>
     /// <returns></returns>
     public virtual async Task<PageList<TItem>> FilterAsync<TItem>(TFilter filter)
