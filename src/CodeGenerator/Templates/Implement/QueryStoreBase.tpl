@@ -18,14 +18,16 @@ public class QueryStoreBase<TContext, TEntity> :
     public DbSet<TEntity> Db { get => _db; }
     public TContext Context { get => _context; }
     public IQueryable<TEntity> _query;
-
+    public bool EnableSoftDelete { get; set; } = true;
 
     public QueryStoreBase(TContext context, ILogger logger)
     {
         _context = context;
         _logger = logger;
         _db = _context.Set<TEntity>();
-        _query = _db.AsQueryable();
+        _query = EnableSoftDelete
+            ? _db.Where(d => !d.IsDeleted).AsQueryable()
+            : _db.AsQueryable();
     }
 
 
