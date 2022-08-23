@@ -2,7 +2,7 @@
 namespace ${Namespace}.Infrastructure;
 
 ${Comment}
-public class ${EntityName}${APISuffix} : RestControllerBase<${EntityName}Manager>
+public class ${EntityName}${APISuffix} : RestControllerBase<I${EntityName}Manager>
 {
     public ${EntityName}${APISuffix}(
         IUserContext user,
@@ -20,7 +20,7 @@ public class ${EntityName}${APISuffix} : RestControllerBase<${EntityName}Manager
     [HttpPost("filter")]
     public async Task<ActionResult<PageList<${EntityName}ItemDto>>> FilterAsync(${EntityName}FilterDto filter)
     {
-        return await manager.FilterAsync<${EntityName}ItemDto>(filter);
+        return await manager.FilterAsync(filter);
     }
 
     /// <summary>

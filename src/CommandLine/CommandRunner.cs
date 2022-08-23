@@ -1,4 +1,4 @@
-﻿namespace Droplet.CommandLine;
+namespace Droplet.CommandLine;
 
 public class CommandRunner
 {
