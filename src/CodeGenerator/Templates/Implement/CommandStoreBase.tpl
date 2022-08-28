@@ -12,6 +12,7 @@ public class CommandStoreBase<TContext, TEntity> : ICommandStore<TEntity>, IComm
     /// </summary>
     protected readonly DbSet<TEntity> _db;
     public DbSet<TEntity> Db => _db;
+    public DatabaseFacade Database { get; init; }
     public bool EnableSoftDelete { get; set; } = true;
 
     //public TEntity CurrentEntity { get; }
@@ -21,6 +22,7 @@ public class CommandStoreBase<TContext, TEntity> : ICommandStore<TEntity>, IComm
         _context = context;
         _logger = logger;
         _db = _context.Set<TEntity>();
+        Database = _context.Database;
     }
 
     public virtual async Task<int> SaveChangeAsync()

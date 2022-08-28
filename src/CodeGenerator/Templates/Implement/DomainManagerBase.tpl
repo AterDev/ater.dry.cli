@@ -12,12 +12,14 @@ public class DomainManagerBase<TEntity, TUpdate, TFilter> : IDomainManager<TEnti
     /// 是否自动保存(调用SaveChanges)
     /// </summary>
     public bool AutoSave { get; set; } = true;
+    public DatabaseFacade Database { get; init; }
     public DomainManagerBase(DataStoreContext storeContext)
     {
         Stores = storeContext;
         Query = Stores.QuerySet<TEntity>();
         Command = Stores.CommandSet<TEntity>();
         Queryable = Query._query;
+        Database = Command.Database;
     }
 
     public async Task<int> SaveChangesAsync()

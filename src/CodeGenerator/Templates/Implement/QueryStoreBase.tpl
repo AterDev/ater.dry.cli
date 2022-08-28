@@ -18,6 +18,7 @@ public class QueryStoreBase<TContext, TEntity> :
     public DbSet<TEntity> Db { get => _db; }
     public TContext Context { get => _context; }
     public IQueryable<TEntity> _query;
+    public DatabaseFacade Database { get; init; }
     public bool EnableSoftDelete { get; set; } = true;
 
     public QueryStoreBase(TContext context, ILogger logger)
@@ -28,6 +29,7 @@ public class QueryStoreBase<TContext, TEntity> :
         _query = EnableSoftDelete
             ? _db.Where(d => !d.IsDeleted).AsQueryable()
             : _db.AsQueryable();
+        Database = _context.Database;
     }
 
 
