@@ -1,4 +1,6 @@
 ﻿using System.CommandLine;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Droplet.CommandLine;
 
@@ -13,7 +15,7 @@ public class CommandBuilder
         {
             Name = "droplet"
         };
-        ConfigOptions = ConfigCommand.ReadConfigFile();
+        ConfigOptions = ConfigCommand.ReadConfigFile()!;
         Config.IdType = ConfigOptions.IdType;
         Config.CreatedTimeName = ConfigOptions.CreatedTimeName;
     }
@@ -38,13 +40,22 @@ public class CommandBuilder
     public void AddConfig()
     {
         var configCommand = new Command("config", "config management");
+
         var edit = new Command("edit", "edit config");
         var init = new Command("init", "init config");
+
         edit.SetHandler(() => ConfigCommand.EditConfigFile());
         init.SetHandler(() => ConfigCommand.InitConfigFileAsync());
-        configCommand.SetHandler(() => { });
+
         configCommand.AddCommand(edit);
         configCommand.AddCommand(init);
+        configCommand.SetHandler(() =>
+        {
+            var config = ConfigCommand.ReadConfigFile();
+            if (config != null)
+                Console.WriteLine(JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true }));
+        });
+
         RootCommand.Add(configCommand);
     }
     /// <summary>
@@ -52,7 +63,6 @@ public class CommandBuilder
     /// </summary>
     public void AddDto()
     {
-        var executor = new CommandRunner();
         // dto 生成命令
         var dtoCommand = new Command("dto", "generate entity dto files");
         var path = new Argument<string>("entity path", "The entity file path");
@@ -78,7 +88,6 @@ public class CommandBuilder
     /// </summary>
     public void AddRequest()
     {
-        var executor = new CommandRunner();
         var reqCommand = new Command("request", "generate request service and interface using openApi json");
         reqCommand.AddAlias("request");
         var url = new Argument<string>("OpenApi Url", "openApi json file url");
@@ -105,7 +114,6 @@ public class CommandBuilder
     /// </summary>
     public void AddManager()
     {
-        var executor = new CommandRunner();
         // api 生成命令
         var apiCommand = new Command("manager", "generate dtos, datastore, manager");
         apiCommand.AddAlias("manager");
@@ -136,7 +144,6 @@ public class CommandBuilder
     /// </summary>
     public void AddApi()
     {
-        var executor = new CommandRunner();
         // api 生成命令
         var apiCommand = new Command("webapi", "generate dtos, datastore, manager,api controllers");
         apiCommand.AddAlias("api");
@@ -178,7 +185,6 @@ public class CommandBuilder
     /// </summary>
     public void AddDoc()
     {
-        var executor = new CommandRunner();
         var docCommand = new Command("doc", "generate typescript interface using openApi json");
         docCommand.AddAlias("doc");
         var url = new Argument<string>("OpenApi Url", "openApi json file url");
@@ -198,7 +204,6 @@ public class CommandBuilder
     }
     public void AddNgService()
     {
-        var executor = new CommandRunner();
         var ngCommand = new Command("angular", "generate angular service and interface using openApi json");
         ngCommand.AddAlias("ng");
         var url = new Argument<string>("OpenApi Url", "openApi json file url");

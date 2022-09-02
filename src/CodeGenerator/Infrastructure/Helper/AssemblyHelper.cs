@@ -16,7 +16,6 @@ public class AssemblyHelper
         return root == null ? file : file == null && dir != root ? FindProjectFile(dir.Parent!, root) : file;
     }
 
-
     /// <summary>
     /// 在项目中寻找文件
     /// </summary>
@@ -83,5 +82,18 @@ public class AssemblyHelper
             }
         }
         return name;
+    }
+
+    /// <summary>
+    /// 查找文件
+    /// </summary>
+    /// <param name="dir"></param>
+    /// <param name="searchPattern"></param>
+    /// <param name="root"></param>
+    /// <returns></returns>
+    public static FileInfo? FindFile(DirectoryInfo dir, string searchPattern, DirectoryInfo? root = null)
+    {
+        var file = dir.GetFiles(searchPattern).FirstOrDefault();
+        return root == null ? file : file == null && dir != root ? FindFile(dir.Parent!, searchPattern, root) : file;
     }
 }

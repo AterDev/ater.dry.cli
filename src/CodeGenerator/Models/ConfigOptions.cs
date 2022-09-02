@@ -12,7 +12,7 @@ public class ConfigOptions
     public string DtoPath { get; set; } = "Share";
     public string EntityPath { get; set; } = "Core";
     public string DbContextPath { get; set; } = "Database/EntityFramework";
-    public string StorePath { get; set; } = "Http.Application";
+    public string StorePath { get; set; } = "Application";
     public string ApiPath { get; set; } = "Http.API";
 
     /// <summary>
