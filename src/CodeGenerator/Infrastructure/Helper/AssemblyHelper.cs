@@ -12,7 +12,7 @@ public class AssemblyHelper
     /// <returns></returns>
     public static FileInfo? FindProjectFile(DirectoryInfo dir, DirectoryInfo? root = null)
     {
-        var file = dir.GetFiles("*.csproj").FirstOrDefault();
+        var file = dir.GetFiles("*.csproj")?.FirstOrDefault();
         return root == null ? file : file == null && dir != root ? FindProjectFile(dir.Parent!, root) : file;
     }
 
@@ -93,7 +93,11 @@ public class AssemblyHelper
     /// <returns></returns>
     public static FileInfo? FindFile(DirectoryInfo dir, string searchPattern, DirectoryInfo? root = null)
     {
-        var file = dir.GetFiles(searchPattern).FirstOrDefault();
-        return root == null ? file : file == null && dir != root ? FindFile(dir.Parent!, searchPattern, root) : file;
+        var filePath =Path.Combine(dir.FullName,searchPattern);
+        if (File.Exists(filePath)) return new FileInfo(filePath);
+
+        var file = dir.GetFiles(searchPattern)?.FirstOrDefault();
+        return root == null ? file
+            : (file == null && dir != root) ? FindFile(dir.Parent!, searchPattern, root) : file;
     }
 }

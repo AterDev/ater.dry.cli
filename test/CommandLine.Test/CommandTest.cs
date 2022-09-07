@@ -1,4 +1,5 @@
 ﻿using CodeGenerator.Infrastructure;
+using CodeGenerator.Infrastructure.Helper;
 using CodeGenerator.Test.Hepler;
 using System.Threading.Tasks;
 
@@ -7,7 +8,7 @@ namespace CommandLine.Test;
 public class CommandTest
 {
 
-    static string ProjectPath = @"E:\codes\DevCenter\src\";
+    static string ProjectPath = @"D:\codes\DevCenter\src\";
     protected string EntityPath = ProjectPath + @"Core\Entities\ResourceAttributeDefine.cs";
     protected string DtoPath = ProjectPath + @"Share";
     protected string StorePath = ProjectPath + @"Http.Application";
@@ -78,5 +79,18 @@ public class CommandTest
         var url = "http://localhost:5002/swagger/v1/swagger.json";
         var cmd = new DocCommand(url,"./");
         await cmd.RunAsync();
+    }
+
+
+    [Fact]
+    public void Should_Config()
+    {
+        var currentDir = new DirectoryInfo(ProjectPath);
+
+        var solutionPath = AssemblyHelper.FindFile(currentDir, "*.sln", currentDir.Root);
+        var file = AssemblyHelper.FindFile(currentDir, "*.droplet-config.json", currentDir.Root);
+
+
+        System.Console.WriteLine("");
     }
 }
