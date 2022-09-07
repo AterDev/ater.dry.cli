@@ -11,8 +11,9 @@ public class ConfigCommand
     /// </summary>
     public static async Task InitConfigFileAsync()
     {
-        var file = AssemblyHelper.FindFile(new DirectoryInfo(Environment.CurrentDirectory), ".droplet-config.json");
-        var solutionPath = AssemblyHelper.FindFile(new DirectoryInfo(Environment.CurrentDirectory), "*.sln");
+        var currentDir = new DirectoryInfo(Environment.CurrentDirectory);
+        var file = AssemblyHelper.FindFile(currentDir, ".droplet-config.json", currentDir.Root);
+        var solutionPath = AssemblyHelper.FindFile(currentDir, "*.sln", currentDir.Root);
         if (solutionPath == null)
         {
             Console.WriteLine("can't find sln file");
@@ -37,7 +38,8 @@ public class ConfigCommand
     /// </summary>
     public static ConfigOptions? ReadConfigFile()
     {
-        var file = AssemblyHelper.FindFile(new DirectoryInfo(Environment.CurrentDirectory), ".droplet-config.json");
+        var currentDir = new DirectoryInfo(Environment.CurrentDirectory);
+        var file = AssemblyHelper.FindFile(currentDir, ".droplet-config.json", currentDir.Root);
         if (file == null)
         {
             Console.WriteLine($"config file not found , please run droplet confing init");
@@ -52,7 +54,8 @@ public class ConfigCommand
 
     public static void EditConfigFile()
     {
-        var file = AssemblyHelper.FindFile(new DirectoryInfo(Environment.CurrentDirectory), ".droplet-config.json");
+        var currentDir = new DirectoryInfo(Environment.CurrentDirectory);
+        var file = AssemblyHelper.FindFile(new DirectoryInfo(Environment.CurrentDirectory), ".droplet-config.json",currentDir.Root);
         if (file == null)
         {
             Console.WriteLine($"config file not found , please run droplet confing init");
