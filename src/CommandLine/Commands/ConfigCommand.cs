@@ -12,15 +12,16 @@ public class ConfigCommand
     public static async Task InitConfigFileAsync()
     {
         var currentDir = new DirectoryInfo(Environment.CurrentDirectory);
-        var file = AssemblyHelper.FindFile(currentDir, ".droplet-config.json", currentDir.Root);
-        var solutionPath = AssemblyHelper.FindFile(currentDir, "*.sln", currentDir.Root);
+        var solutionPath = AssemblyHelper.GetSlnFile(currentDir, "*.sln", currentDir.Root);
+
         if (solutionPath == null)
         {
             Console.WriteLine("can't find sln file");
             return;
         }
+        var file = new FileInfo(Path.Combine(solutionPath.Directory!.FullName,Config.ConfigFileName));
         var path = file == null
-            ? Path.Combine(solutionPath.DirectoryName!, Config.ConfigPath)
+            ? Path.Combine(solutionPath.DirectoryName!, Config.ConfigFileName)
             : file.FullName;
 
         if (File.Exists(path))
@@ -39,7 +40,13 @@ public class ConfigCommand
     public static ConfigOptions? ReadConfigFile()
     {
         var currentDir = new DirectoryInfo(Environment.CurrentDirectory);
-        var file = AssemblyHelper.FindFile(currentDir, ".droplet-config.json", currentDir.Root);
+        var solutionPath = AssemblyHelper.GetSlnFile(currentDir, "*.sln", currentDir.Root);
+        if (solutionPath == null)
+        {
+            Console.WriteLine("can't find sln file");
+            return default;
+        }
+        var file = new FileInfo(Path.Combine(solutionPath.Directory!.FullName,Config.ConfigFileName));
         if (file == null)
         {
             Console.WriteLine($"config file not found , please run droplet confing init");
@@ -55,7 +62,13 @@ public class ConfigCommand
     public static void EditConfigFile()
     {
         var currentDir = new DirectoryInfo(Environment.CurrentDirectory);
-        var file = AssemblyHelper.FindFile(new DirectoryInfo(Environment.CurrentDirectory), ".droplet-config.json",currentDir.Root);
+        var solutionPath = AssemblyHelper.GetSlnFile(currentDir, "*.sln", currentDir.Root);
+        if (solutionPath == null)
+        {
+            Console.WriteLine("can't find sln file");
+            return;
+        }
+        var file = new FileInfo(Path.Combine(solutionPath.Directory!.FullName,Config.ConfigFileName));
         if (file == null)
         {
             Console.WriteLine($"config file not found , please run droplet confing init");

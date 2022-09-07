@@ -85,19 +85,16 @@ public class AssemblyHelper
     }
 
     /// <summary>
-    /// 查找文件
+    /// 获取解决方案文件
     /// </summary>
     /// <param name="dir"></param>
     /// <param name="searchPattern"></param>
     /// <param name="root"></param>
     /// <returns></returns>
-    public static FileInfo? FindFile(DirectoryInfo dir, string searchPattern, DirectoryInfo? root = null)
+    public static FileInfo? GetSlnFile(DirectoryInfo dir, string searchPattern, DirectoryInfo? root = null)
     {
-        var filePath =Path.Combine(dir.FullName,searchPattern);
-        if (File.Exists(filePath)) return new FileInfo(filePath);
-
-        var file = dir.GetFiles(searchPattern)?.FirstOrDefault();
+        var file = dir.GetFiles("*.sln")?.FirstOrDefault();
         return root == null ? file
-            : (file == null && dir != root) ? FindFile(dir.Parent!, searchPattern, root) : file;
+            : (file == null && dir != root) ? GetSlnFile(dir.Parent!, searchPattern, root) : file;
     }
 }

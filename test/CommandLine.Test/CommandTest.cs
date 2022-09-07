@@ -8,7 +8,7 @@ namespace CommandLine.Test;
 public class CommandTest
 {
 
-    static string ProjectPath = @"D:\codes\DevCenter\src\";
+    static string ProjectPath = @"E:\codes\DevCenter\src\";
     protected string EntityPath = ProjectPath + @"Core\Entities\ResourceAttributeDefine.cs";
     protected string DtoPath = ProjectPath + @"Share";
     protected string StorePath = ProjectPath + @"Http.Application";
@@ -86,10 +86,7 @@ public class CommandTest
     public void Should_Config()
     {
         var currentDir = new DirectoryInfo(ProjectPath);
-
-        var solutionPath = AssemblyHelper.FindFile(currentDir, "*.sln", currentDir.Root);
-        var file = AssemblyHelper.FindFile(currentDir, "*.droplet-config.json", currentDir.Root);
-
+        var solutionPath = AssemblyHelper.GetSlnFile(currentDir, "*.sln", currentDir.Root);
 
         System.Console.WriteLine("");
     }
