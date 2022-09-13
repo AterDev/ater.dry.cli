@@ -72,7 +72,13 @@ public class DataStoreGenerate : GenerateBase
     {
         var fileInfo = new FileInfo(EntityPath);
         var projectFile = AssemblyHelper.FindProjectFile(fileInfo.Directory!, fileInfo.Directory!.Root);
-        var entityNamepapce = AssemblyHelper.GetNamespaceName(projectFile!.Directory!);
+        var entityProjectNamespace = AssemblyHelper.GetNamespaceName(projectFile!.Directory!);
+
+        var compilationHelper = new CompilationHelper(projectFile.Directory!.FullName);
+        var content = File.ReadAllText(fileInfo.FullName, Encoding.UTF8);
+        compilationHelper.AddSyntaxTree(content);
+        var  entityNamespace = compilationHelper.GetNamesapce();
+
         return new List<string>
         {
             "global using System;",
@@ -80,9 +86,10 @@ public class DataStoreGenerate : GenerateBase
             "global using EntityFramework;",
             "global using Microsoft.EntityFrameworkCore;",
             "global using Microsoft.Extensions.Logging;",
-            $"global using {entityNamepapce}.Utils;",
-            $"global using {entityNamepapce}.Entities;",
-            $"global using {entityNamepapce}.Models;",
+            $"global using {entityProjectNamespace}.Utils;",
+            $"global using {entityProjectNamespace}.Entities;",
+            $"global using {entityProjectNamespace}.Models;",
+            $"global using {entityNamespace};",
             $"global using {ShareNamespace}.Models;",
             $"global using {ServiceNamespace}.Interface;",
             $"global using {ServiceNamespace}.{Const.QUERY_STORE};",

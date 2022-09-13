@@ -1,4 +1,6 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeGenerator.Infrastructure.Helper;
 
@@ -49,6 +51,19 @@ public class CompilationHelper
     }
 
     /// <summary>
+    /// 获取命名空间
+    /// </summary>
+    /// <returns></returns>
+    public string? GetNamesapce()
+    {
+        var rootNodes = SyntaxTree?.GetCompilationUnitRoot().DescendantNodes();
+        var namespaceDeclarationSyntax = rootNodes!.OfType<NamespaceDeclarationSyntax>().FirstOrDefault();
+        var filescopeNamespaceDeclarationSyntax = rootNodes.OfType<FileScopedNamespaceDeclarationSyntax>().FirstOrDefault();
+        return namespaceDeclarationSyntax == null ?
+            filescopeNamespaceDeclarationSyntax?.Name.ToString() : namespaceDeclarationSyntax.Name.ToString();
+    }
+
+    /// <summary>
     /// 获取所有类型
     /// </summary>
     /// <returns></returns>
@@ -77,7 +92,6 @@ public class CompilationHelper
     {
         return GetAllClasses().Where(cls => cls.Name == name).FirstOrDefault();
     }
-
 
     /// <summary>
     /// 获取的指定基类的所有子类
@@ -112,7 +126,5 @@ public class CompilationHelper
 
         return classes;
     }
-
-
 
 }

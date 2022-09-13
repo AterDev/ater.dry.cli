@@ -74,8 +74,7 @@ public class EntityParseHelper
     {
         // 获取当前类名
         var classDeclarationSyntax = RootNodes.OfType<ClassDeclarationSyntax>().FirstOrDefault();
-        var namespaceDeclarationSyntax = RootNodes.OfType<NamespaceDeclarationSyntax>().FirstOrDefault();
-        NamespaceName = namespaceDeclarationSyntax?.Name.ToString();
+        NamespaceName = CompilationHelper.GetNamesapce();
         Name = classDeclarationSyntax?.Identifier.ToString();
         Comment = GetClassComment(classDeclarationSyntax);
         PropertyInfos = GetPropertyInfos();

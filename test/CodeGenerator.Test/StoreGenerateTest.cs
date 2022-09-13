@@ -1,4 +1,8 @@
 ﻿using CodeGenerator.Generate;
+using CodeGenerator.Infrastructure.Helper;
+using System.IO;
+using System.Reflection;
+using System.Text;
 
 namespace CodeGenerator.Test;
 
@@ -38,4 +42,20 @@ public class StoreGenerateTest
 
     }
 
+    [Fact]
+    public void Should_get_namespace()
+    {
+        var entityPath = PathHelper.GetProjectFilePath("Entity/Blog.cs");
+        var fileInfo = new FileInfo(entityPath);
+        var projectFile = AssemblyHelper.FindProjectFile(fileInfo.Directory!, fileInfo.Directory!.Root);
+
+        var compilationHelper = new CompilationHelper(projectFile.Directory!.FullName);
+        var content = File.ReadAllText(fileInfo.FullName, Encoding.UTF8);
+        compilationHelper.AddSyntaxTree(content);
+        var  entityNamespace = compilationHelper.GetNamesapce();
+
+        Assert.NotNull(entityNamespace);
+        
+
+    }
 }
