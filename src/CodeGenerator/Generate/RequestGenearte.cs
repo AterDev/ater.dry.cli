@@ -1,4 +1,4 @@
-﻿using Microsoft.OpenApi.Extensions;
+using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
 
 namespace CodeGenerator.Generate;
