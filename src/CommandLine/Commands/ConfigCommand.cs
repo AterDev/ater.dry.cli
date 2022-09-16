@@ -1,4 +1,4 @@
-﻿using CodeGenerator.Infrastructure.Helper;
+using CodeGenerator.Infrastructure.Helper;
 using System.Diagnostics;
 using System.Text.Json;
 

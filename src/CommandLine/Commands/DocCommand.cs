@@ -1,4 +1,4 @@
-﻿using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models;
 
 namespace Droplet.CommandLine.Commands;
 public class DocCommand : CommandBase

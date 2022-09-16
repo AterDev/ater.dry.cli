@@ -210,6 +210,7 @@ public class DtoCodeGenerate : GenerateBase
     {
         return @$"global using System.ComponentModel.DataAnnotations;
 global using {AssemblyName}.Models;
+global using {AssemblyName}.Entities;
 global using {EntityInfo!.AssemblyName}.Models;";
     }
     public string GetFilterBase()

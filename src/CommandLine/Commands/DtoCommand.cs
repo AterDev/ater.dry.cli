@@ -1,4 +1,4 @@
-﻿namespace Droplet.CommandLine.Commands;
+namespace Droplet.CommandLine.Commands;
 
 public class DtoCommand : CommandBase
 {

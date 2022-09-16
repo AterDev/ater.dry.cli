@@ -1,4 +1,4 @@
-﻿using CodeGenerator.Infrastructure;
+using CodeGenerator.Infrastructure;
 
 namespace Droplet.CommandLine.Commands;
 
