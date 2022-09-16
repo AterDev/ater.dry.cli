@@ -24,7 +24,8 @@ public class DtoInfo
         }
 
         var baseType    = string.IsNullOrEmpty(BaseType) ? "" : " : " + BaseType;
-        var tpl         = $@"namespace {projectName}.Models.{entityName}Dtos;
+        var tpl         = $@"using {NamespaceName};
+namespace {projectName}.Models.{entityName}Dtos;
 {Comment}
 public class {Name}{baseType}
 {{
