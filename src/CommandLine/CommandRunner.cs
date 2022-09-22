@@ -148,6 +148,12 @@ public class CommandRunner
         var viewCmd = new ViewCommand(name, dtoPath, output);
         await viewCmd.RunAsync();
     }
+
+    public static async Task SyncToAngularAsync()
+    {
+        var cmd = new AutoSyncNgCommand();
+        await cmd.RunAsync();
+    }
 }
 
 

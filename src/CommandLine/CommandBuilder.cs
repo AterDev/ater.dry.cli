@@ -1,6 +1,5 @@
 ﻿using System.CommandLine;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Droplet.CommandLine;
 
@@ -30,6 +29,7 @@ public class CommandBuilder
         AddRequest();
         AddView();
         AddDoc();
+        AutoSyncToNg();
         return RootCommand;
     }
 
@@ -206,8 +206,8 @@ public class CommandBuilder
     {
         var ngCommand = new Command("angular", "generate angular service and interface using openApi json");
         ngCommand.AddAlias("ng");
-        var url = new Argument<string>("OpenApi Url", "openApi json file url");
-        var  outputOption=new Option<string>(new[] { "--output", "-o" })
+        var url = new Argument<string>("OpenApi Json", "openApi json file url or local path");
+        var  outputOption = new Option<string>(new[] { "--output", "-o" })
         {
             IsRequired = true,
             Description = "angular project root path"
@@ -223,7 +223,6 @@ public class CommandBuilder
     }
     public void AddView()
     {
-        var executor = new CommandRunner();
         // view生成命令
         var viewCommand = new Command("view", "generate front view page, only support angular. ");
         viewCommand.AddAlias("view");
@@ -243,5 +242,18 @@ public class CommandBuilder
             await CommandRunner.GenerateNgPagesAsync(entity, dtoPath, output);
         }, entityArgument, dtoOption, outputOption);
         RootCommand.Add(viewCommand);
+    }
+
+    /// <summary>
+    /// 自动同步angular页面
+    /// </summary>
+    public void AutoSyncToNg()
+    {
+        var syncCommand = new Command("sync", "sync angular service & page from swagger.json to ClientApp, please use this in Http.API path");
+        syncCommand.SetHandler(async () =>
+        {
+            await CommandRunner.SyncToAngularAsync();
+        });
+        RootCommand.Add(syncCommand);
     }
 }

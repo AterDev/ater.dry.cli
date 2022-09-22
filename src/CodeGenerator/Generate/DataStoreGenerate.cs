@@ -305,7 +305,7 @@ public class DataStoreGenerate : GenerateBase
         if (classes != null)
         {
             // 获取所有继承 dbcontext的上下文
-            var allDbContexts = CompilationHelper.GetClassNameByBaseType(classes, "IdentityDbContext");
+            var allDbContexts = CompilationHelper.GetClassNameByBaseType(classes, baseTypeName: "IdentityDbContext");
             if (!allDbContexts.Any())
                 allDbContexts = CompilationHelper.GetClassNameByBaseType(classes, "DbContext");
 
@@ -340,6 +340,4 @@ public class DataStoreGenerate : GenerateBase
         tplContent = tplContent.Replace(TplConst.NAMESPACE, entityNamespace);
         return tplContent;
     }
-
-
 }
