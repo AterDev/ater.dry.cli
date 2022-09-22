@@ -279,6 +279,7 @@ public class NgPageGenerate : GenerateBase
         return tplContent;
 
     }
+
     public string GetRoutingModule()
     {
         var pathName = EntityName.ToHyphen();

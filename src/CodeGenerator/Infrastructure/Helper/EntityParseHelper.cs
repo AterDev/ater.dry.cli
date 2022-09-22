@@ -27,6 +27,14 @@ public class EntityParseHelper
     /// </summary>
     public string? Comment { get; set; }
     /// <summary>
+    /// 前端对应模块
+    /// </summary>
+    public string? NgModuleName { get; set; }
+    /// <summary>
+    /// 前端对应路由
+    /// </summary>
+    public string? NgRoute { get; set; }
+    /// <summary>
     /// 属性
     /// </summary>
     public List<PropertyInfo>? PropertyInfos { get; set; }
