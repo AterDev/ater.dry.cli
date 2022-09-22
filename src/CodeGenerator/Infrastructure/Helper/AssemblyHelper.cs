@@ -97,4 +97,37 @@ public class AssemblyHelper
         return root == null ? file
             : (file == null && dir != root) ? GetSlnFile(dir.Parent!, searchPattern, root) : file;
     }
+
+    /// <summary>
+    /// 获取当前项目下的 xml 注释中的members
+    /// </summary>
+    /// <returns></returns>
+    public static List<XmlCommentMember>? GetXmlMembers(DirectoryInfo dir)
+    {
+        var projectFile = dir.GetFiles("*.csproj")?.FirstOrDefault();
+        if (projectFile != null)
+        {
+            var assemblyName = GetAssemblyName(projectFile);
+            var  xmlFile = dir.GetFiles($"{assemblyName}.xml", SearchOption.AllDirectories).FirstOrDefault();
+            if (xmlFile != null)
+            {
+                var xml = XElement.Load(xmlFile.FullName);
+                var members = xml.Descendants("member")
+                    .Select(s=>new XmlCommentMember
+                    {
+                        FullName = s.Attribute("name")?.Value??"",
+                        Summary = s.Element("summary")?.Value
+
+                    }).ToList();
+                return members;
+            }
+        }
+        return null;
+    }
+
+    public class XmlCommentMember
+    {
+        public string FullName { get; set; } = string.Empty;
+        public string? Summary { get; set; }
+    }
 }

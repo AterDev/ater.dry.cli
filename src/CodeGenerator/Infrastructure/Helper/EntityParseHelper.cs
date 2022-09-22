@@ -23,9 +23,10 @@ public class EntityParseHelper
     public string AssemblyName { get; set; }
     public FileInfo ProjectFile { get; set; }
     /// <summary>
-    /// 类注释
+    /// 类原始注释
     /// </summary>
     public string? Comment { get; set; }
+    public string? CommentContent { get; set; }
     /// <summary>
     /// 前端对应模块
     /// </summary>
@@ -170,7 +171,6 @@ public class EntityParseHelper
         var trivia = syntax.GetLeadingTrivia();
         return trivia.ToString().TrimEnd(' ');
     }
-
 
     /// <summary>
     /// 获取属性特性文本内容
