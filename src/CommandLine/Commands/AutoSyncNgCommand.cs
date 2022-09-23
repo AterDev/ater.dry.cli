@@ -27,10 +27,40 @@ public class AutoSyncNgCommand : CommandBase
         await GenerateTsInterfacesAsync();
         await GenerateCommonFilesAsync();
         await GenerateNgServicesAsync();
-        Console.WriteLine("😀 Ng services generate completed!" + Environment.NewLine);
+        Console.WriteLine("😀 Ng services sync completed!" + Environment.NewLine);
         // 2 同步路由、页面
-
+        Console.WriteLine(Instructions[1]);
+        await GeneratePagesAsync();
+        Console.WriteLine("😀 Ng view sync completed!" + Environment.NewLine);
     }
+
+    /// <summary>
+    /// 同步生成页面
+    /// </summary>
+    /// <returns></returns>
+    public async Task GeneratePagesAsync()
+    {
+        // 获取所有实体，筛选出带有页面特性的类
+        var files = Directory.GetFiles(ConfigOptions.EntityPath,"*.cs",SearchOption.AllDirectories);
+        var fileInfos = new List<FileInfo>();
+        // 筛选出只包含特性文本的实体
+        foreach (var file in files)
+        {
+            var content = await File.ReadAllTextAsync(file);
+            if (content.Contains("[NgPage("))
+            {
+                fileInfos.Add(new FileInfo(file));
+            }
+        }
+        var ngPath = Path.Combine(ConfigOptions.ApiPath, "ClientApp");
+        var cmd = new ViewCommand(ConfigOptions.EntityPath, ConfigOptions.DtoPath, ngPath);
+        foreach (var entity in fileInfos)
+        {
+            cmd.EntityPath = entity.FullName;
+            await cmd.RunAsync();
+        }
+    }
+
     public async Task GenerateTsInterfacesAsync()
     {
         // 获取对应的ts模型类，生成文件

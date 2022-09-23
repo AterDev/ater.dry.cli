@@ -86,15 +86,17 @@ public class EntityParseHelper
         NamespaceName = CompilationHelper.GetNamesapce();
         Name = classDeclarationSyntax?.Identifier.ToString();
         Comment = GetClassComment(classDeclarationSyntax);
+        CommentContent = GetComment();
         PropertyInfos = GetPropertyInfos();
+        GetNgPageAttribute();
+        //CommentContent = 
     }
     public EntityInfo GetEntity()
     {
         var classDeclarationSyntax = RootNodes.OfType<ClassDeclarationSyntax>().FirstOrDefault();
         var name = classDeclarationSyntax!.Identifier.ToString();
         var comment = GetClassComment(classDeclarationSyntax);
-        var classSymbol = SemanticModel.GetDeclaredSymbol(classDeclarationSyntax);
-        var namespaceName = classSymbol?.ContainingNamespace.ToString();
+        var namespaceName =  CompilationHelper.GetNamesapce();
 
         return new EntityInfo(name)
         {
@@ -117,6 +119,45 @@ public class EntityParseHelper
             comment = "/// " + comment;
         }
         return comment;
+    }
+
+    /// <summary>
+    /// 获取 类的注释
+    /// </summary>
+    /// <returns></returns>
+    private string? GetComment()
+    {
+        var members = AssemblyHelper.GetXmlMembers(ProjectFile.Directory!);
+        if (members != null)
+            return members.Where(m => m.FullName.EndsWith(NamespaceName + "." + Name))
+                .Select(s => s.Summary)
+                .FirstOrDefault();
+        return null;
+    }
+
+    /// <summary>
+    /// 解析类特性，获取Ng需要的模块和路由内容
+    /// </summary>
+    private void GetNgPageAttribute()
+    {
+        var root = SyntaxTree.GetCompilationUnitRoot();
+        var syntax = root.DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
+        var attributesSyntax = syntax!.DescendantNodes().OfType<AttributeSyntax>().ToList();
+        if (attributesSyntax != null && attributesSyntax.Any())
+        {
+            var attributes = GetAttributeArguments(attributesSyntax, "NgPage")?.ToArray();
+            if (attributes != null)
+            {
+                NgModuleName = attributes[0]?.GetText()
+                    .ToString().Replace("\"", "")
+                    ?? Name?.ToHyphen();
+
+                NgRoute = attributes[0]?.GetText()
+                    .ToString().Replace("\"", "")
+                    ?? Name?.ToHyphen();
+                NgRoute = NgModuleName + "/" + NgRoute;
+            }
+        }
     }
 
     /// <summary>
