@@ -7,6 +7,8 @@ public class ViewCommand : CommandBase
     public string EntityName { get; set; } = default!;
     public string DtoPath { get; set; } = default!;
     public string OutputPath { get; set; } = default!;
+    public string? ModuleName { get; set; }
+    public string? Route { get; set; }
 
     public NgPageGenerate Gen { get; set; }
 
@@ -37,7 +39,6 @@ public class ViewCommand : CommandBase
 
     public static void GenerateMenu()
     {
-
     }
 
     public async Task GenerateModuleWithRoutingAsync()
@@ -50,7 +51,6 @@ public class ViewCommand : CommandBase
         var routingFilename = moduleName + "-routing.module.ts";
         await GenerateFileAsync(dir, moduleFilename, module);
         await GenerateFileAsync(dir, routingFilename, routing);
-
     }
 
     /// <summary>

@@ -155,7 +155,6 @@ public class EntityParseHelper
                 NgRoute = attributes[0]?.GetText()
                     .ToString().Replace("\"", "")
                     ?? Name?.ToHyphen();
-                NgRoute = NgModuleName + "/" + NgRoute;
             }
         }
     }

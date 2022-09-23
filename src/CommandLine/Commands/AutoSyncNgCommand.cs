@@ -1,4 +1,5 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using CodeGenerator.Infrastructure.Helper;
+using Microsoft.OpenApi.Models;
 
 namespace Droplet.CommandLine.Commands;
 public class AutoSyncNgCommand : CommandBase
@@ -56,7 +57,12 @@ public class AutoSyncNgCommand : CommandBase
         var cmd = new ViewCommand(ConfigOptions.EntityPath, ConfigOptions.DtoPath, ngPath);
         foreach (var entity in fileInfos)
         {
+            var entityParse = new EntityParseHelper(entity.FullName);
+            entityParse.Parse();
+
             cmd.EntityPath = entity.FullName;
+            cmd.Route = entityParse.NgRoute;
+            cmd.ModuleName = entityParse.NgModuleName;
             await cmd.RunAsync();
         }
     }
