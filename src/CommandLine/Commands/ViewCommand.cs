@@ -43,12 +43,13 @@ public class ViewCommand : CommandBase
 
     public async Task GenerateModuleWithRoutingAsync()
     {
-        var moduleName = EntityName.ToHyphen();
-        var dir = Path.Combine(OutputPath, "src", "app", "pages", moduleName);
+        var entityName = EntityName.ToHyphen();
+        var moduleName = ModuleName??EntityName;
+        var dir = Path.Combine(OutputPath, "src", "app", "pages", moduleName, Route??"");
         var module = Gen.GetModule();
         var routing = Gen.GetRoutingModule();
-        var moduleFilename = moduleName + ".module.ts";
-        var routingFilename = moduleName + "-routing.module.ts";
+        var moduleFilename = entityName + ".module.ts";
+        var routingFilename = entityName + "-routing.module.ts";
         await GenerateFileAsync(dir, moduleFilename, module);
         await GenerateFileAsync(dir, routingFilename, routing);
     }
@@ -59,8 +60,9 @@ public class ViewCommand : CommandBase
     /// <returns></returns>
     public async Task GeneratePagesAsync()
     {
-        var moduleName = EntityName.ToHyphen();
-        var dir = Path.Combine(OutputPath, "src", "app", "pages", moduleName);
+        var entityName = EntityName.ToHyphen();
+        var moduleName = entityName??EntityName;
+        var dir = Path.Combine(OutputPath, "src", "app", "pages", moduleName, Route??"");
 
         var addComponent = Gen.BuildAddPage();
         var editComponent = Gen.BuildEditPage();

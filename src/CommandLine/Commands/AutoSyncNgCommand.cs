@@ -42,7 +42,8 @@ public class AutoSyncNgCommand : CommandBase
     public async Task GeneratePagesAsync()
     {
         // 获取所有实体，筛选出带有页面特性的类
-        var files = Directory.GetFiles(ConfigOptions.EntityPath,"*.cs",SearchOption.AllDirectories);
+        var entityDir = Path.Combine("..", ConfigOptions.EntityPath);
+        var files = Directory.GetFiles(entityDir, "*.cs",SearchOption.AllDirectories);
         var fileInfos = new List<FileInfo>();
         // 筛选出只包含特性文本的实体
         foreach (var file in files)
