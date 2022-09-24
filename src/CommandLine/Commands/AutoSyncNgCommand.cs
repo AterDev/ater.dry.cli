@@ -54,14 +54,16 @@ public class AutoSyncNgCommand : CommandBase
                 fileInfos.Add(new FileInfo(file));
             }
         }
-        var ngPath = Path.Combine(ConfigOptions.ApiPath, "ClientApp");
-        var cmd = new ViewCommand(ConfigOptions.EntityPath, ConfigOptions.DtoPath, ngPath);
+
+        var ngPath = Path.Combine("ClientApp");
+        var dtoPath = Path.Combine("..", ConfigOptions.DtoPath);
+        var cmd = new ViewCommand(dtoPath, ngPath);
         foreach (var entity in fileInfos)
         {
             var entityParse = new EntityParseHelper(entity.FullName);
             entityParse.Parse();
 
-            cmd.EntityPath = entity.FullName;
+            cmd.SetEntityPath(entity.FullName);
             cmd.Route = entityParse.NgRoute;
             cmd.ModuleName = entityParse.NgModuleName;
             await cmd.RunAsync();

@@ -63,6 +63,7 @@ public class EntityParseHelper
         AssemblyName = GetAssemblyName();
         CompilationHelper = new CompilationHelper(ProjectFile.Directory!.FullName);
         var content = File.ReadAllText(filePath, Encoding.UTF8);
+
         CompilationHelper.AddSyntaxTree(content);
 
         SyntaxTree = CompilationHelper.SyntaxTree!;
@@ -152,9 +153,10 @@ public class EntityParseHelper
                     .ToString().Replace("\"", "")
                     ?? Name?.ToHyphen();
 
-                NgRoute = attributes[0]?.GetText()
+                NgRoute = attributes[1]?.GetText()
                     .ToString().Replace("\"", "")
                     ?? Name?.ToHyphen();
+
             }
         }
     }

@@ -12,6 +12,16 @@ public class ViewCommand : CommandBase
 
     public NgPageGenerate Gen { get; set; }
 
+    public ViewCommand(string dtoPath, string outputPath)
+    {
+        DtoPath = dtoPath;
+        OutputPath = outputPath;
+        Instructions.Add($"  🔹 generate module,routing and menu.");
+        Instructions.Add($"  🔹 generate pages.");
+        Gen = new NgPageGenerate(EntityName, dtoPath, outputPath);
+    }
+
+
     public ViewCommand(string entityPath, string dtoPath, string outputPath)
     {
         EntityPath = entityPath;
@@ -27,6 +37,20 @@ public class ViewCommand : CommandBase
         EntityName = Path.GetFileNameWithoutExtension(entityPath);
         Gen = new NgPageGenerate(EntityName, dtoPath, outputPath);
     }
+
+    public void SetEntityPath(string entityPath)
+    {
+        EntityPath = entityPath;
+
+        if (!File.Exists(entityPath))
+        {
+            throw new FileNotFoundException();
+        }
+        EntityName = Path.GetFileNameWithoutExtension(entityPath);
+        Console.WriteLine("SetEntityPath:" + EntityName);
+        Gen = new NgPageGenerate(EntityName, DtoPath, OutputPath);
+    }
+
     public async Task RunAsync()
     {
         Console.WriteLine(Instructions[0]);
@@ -45,7 +69,8 @@ public class ViewCommand : CommandBase
     {
         var entityName = EntityName.ToHyphen();
         var moduleName = ModuleName??EntityName;
-        var dir = Path.Combine(OutputPath, "src", "app", "pages", moduleName, Route??"");
+        var dir = Path.Combine(OutputPath, "src", "app", "pages", moduleName, Route?.ToHyphen()??"");
+
         var module = Gen.GetModule();
         var routing = Gen.GetRoutingModule();
         var moduleFilename = entityName + ".module.ts";
@@ -61,8 +86,8 @@ public class ViewCommand : CommandBase
     public async Task GeneratePagesAsync()
     {
         var entityName = EntityName.ToHyphen();
-        var moduleName = entityName??EntityName;
-        var dir = Path.Combine(OutputPath, "src", "app", "pages", moduleName, Route??"");
+        var moduleName = ModuleName??EntityName;
+        var dir = Path.Combine(OutputPath, "src", "app", "pages", moduleName, Route?.ToHyphen()??"");
 
         var addComponent = Gen.BuildAddPage();
         var editComponent = Gen.BuildEditPage();
