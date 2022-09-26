@@ -9,8 +9,22 @@ public class ViewCommand : CommandBase
     public string OutputPath { get; set; } = default!;
     public string? ModuleName { get; set; }
     public string? Route { get; set; }
+    /// <summary>
+    /// 模块与子模块路由map
+    /// </summary>
+    public List<KeyValuePair<string, string>> ModuleRouteMap { get; } = new();
 
     public NgPageGenerate Gen { get; set; }
+
+    public ViewCommand(string dtoPath, string outputPath)
+    {
+        DtoPath = dtoPath;
+        OutputPath = outputPath;
+        Instructions.Add($"  🔹 generate module,routing and menu.");
+        Instructions.Add($"  🔹 generate pages.");
+        Gen = new NgPageGenerate(EntityName, dtoPath, outputPath);
+    }
+
 
     public ViewCommand(string entityPath, string dtoPath, string outputPath)
     {
@@ -28,43 +42,69 @@ public class ViewCommand : CommandBase
         Gen = new NgPageGenerate(EntityName, dtoPath, outputPath);
     }
 
+    public void SetEntityPath(string entityPath)
+    {
+        EntityPath = entityPath;
+
+        if (!File.Exists(entityPath))
+        {
+            throw new FileNotFoundException();
+        }
+        EntityName = Path.GetFileNameWithoutExtension(entityPath);
+        Console.WriteLine("SetEntityPath:" + EntityName);
+        Gen = new NgPageGenerate(EntityName, DtoPath, OutputPath);
+    }
+
     public async Task RunAsync()
     {
         Console.WriteLine(Instructions[0]);
-        GenerateMenu();
         await GenerateModuleWithRoutingAsync();
         Console.WriteLine(Instructions[1]);
         await GeneratePagesAsync();
         Console.WriteLine("😀 View generate completed!" + Environment.NewLine);
     }
 
-    public void GenerateMenu()
+
+    /// <summary>
+    /// TODO:生成模块路由
+    /// </summary>
+    public void GenerateModuleRoute()
     {
+        // 按模块分组
+        var modules = ModuleRouteMap.GroupBy(g=>g.Key)
+            .Select(g=>new
+            {
+                module = g.Key,
+                route=g.ToList()
+            }).ToList();
 
     }
 
-    public async Task GenerateModuleWithRoutingAsync()
+    private async Task GenerateModuleWithRoutingAsync()
     {
         var entityName = EntityName.ToHyphen();
         var moduleName = ModuleName??EntityName;
-        var dir = Path.Combine(OutputPath, "src", "app", "pages", moduleName, Route??"");
+        var dir = Path.Combine(OutputPath, "src", "app", "pages", moduleName, Route?.ToHyphen()??"");
+
         var module = Gen.GetModule();
-        var routing = Gen.GetRoutingModule();
+        var routing = Gen.GetRoutingModule(moduleName);
         var moduleFilename = entityName + ".module.ts";
         var routingFilename = entityName + "-routing.module.ts";
         await GenerateFileAsync(dir, moduleFilename, module);
         await GenerateFileAsync(dir, routingFilename, routing);
+
+        ModuleRouteMap.Add(new KeyValuePair<string, string>(moduleName, Route?.ToHyphen() ?? ""));
     }
 
     /// <summary>
     /// 生成实体的列表、添加等页面
     /// </summary>
     /// <returns></returns>
-    public async Task GeneratePagesAsync()
+    private async Task GeneratePagesAsync()
     {
         var entityName = EntityName.ToHyphen();
-        var moduleName = entityName??EntityName;
-        var dir = Path.Combine(OutputPath, "src", "app", "pages", moduleName, Route??"");
+        var moduleName = ModuleName??EntityName;
+        var dir = Path.Combine(OutputPath, "src", "app", "pages", moduleName, Route?.ToHyphen()??"");
 
         var addComponent = Gen.BuildAddPage();
         var editComponent = Gen.BuildEditPage();
@@ -99,4 +139,6 @@ public class ViewCommand : CommandBase
         await GenerateFileAsync(path, info.Name + ".component.css", info.CssContent!);
         await GenerateFileAsync(path, info.Name + ".component.html", info.HtmlContent!);
     }
+
+
 }

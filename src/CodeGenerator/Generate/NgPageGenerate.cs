@@ -285,7 +285,7 @@ public class NgPageGenerate : GenerateBase
     /// </summary>
     /// <param name="modulePath">模块内容</param>
     /// <returns></returns>
-    public string GetRoutingModule(string? modulePath)
+    public string GetRoutingModule(string? modulePath = null)
     {
         var pathName = EntityName.ToHyphen();
         var tplContent = GetTplContent("angular.routing.module.ts");
