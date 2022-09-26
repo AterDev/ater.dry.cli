@@ -285,7 +285,7 @@ public class TSModelGenerate : GenerateBase
             tsProperties.AddRange(GetTsProperties(schema.AllOf[1]));
         if (schema.Properties.Count > 0)
         {
-            // TODO:泛型处理
+            // 泛型处理
             foreach (var prop in schema.Properties)
             {
                 var type = GetTsType(prop.Value);

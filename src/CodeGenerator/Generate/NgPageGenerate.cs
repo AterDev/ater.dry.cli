@@ -295,6 +295,44 @@ public class NgPageGenerate : GenerateBase
         return tplContent;
     }
 
+    /// <summary>
+    /// 组模块内容
+    /// </summary>
+    /// <param name="groupName">模块名称</param>
+    /// <param name="modules">子模块</param>
+    /// <returns></returns>
+    public static string GetGroupModule(string groupName, List<string> modules)
+    {
+        var tplContent = GetTplContent("angular.group.module.ts");
+        var pathName = groupName.ToHyphen();
+        tplContent = tplContent.Replace("{$ModuleName}", groupName)
+            .Replace("{$ModulePathName}", pathName);
+
+        // 导入的模块内容
+        var importModules = string.Join(",\n    ", modules);
+
+        var importString = modules.Select(s=>$@"import { s } from './{s.ToHyphen()}/{s.ToHyphen()}.module';")
+            .ToArray();
+        var importModulesPath = string.Join("\n",importString);
+        tplContent = tplContent.Replace("{$ImportModulesPath}", importModulesPath)
+            .Replace("{$ImportModules}", importModules);
+        return tplContent;
+    }
+
+    /// <summary>
+    /// 生成组模块routing内容
+    /// </summary>
+    /// <param name="groupName"></param>
+    /// <returns></returns>
+    public static string GetGroupRoutingModule(string groupName)
+    {
+        var tplContent = GetTplContent("angular.group.routing.module.ts");
+        tplContent = tplContent.Replace("{$ModuleName}", groupName)
+            .Replace("{$ModulePathName}", groupName.ToHyphen() ?? "");
+        return tplContent;
+    }
+
+
     public static string GetComponentModule()
     {
         return GetTplContent("angular.components.module.ts");

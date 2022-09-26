@@ -68,6 +68,8 @@ public class AutoSyncNgCommand : CommandBase
             cmd.ModuleName = entityParse.NgModuleName;
             await cmd.RunAsync();
         }
+        // 组模块
+        await cmd.GenerateModuleRouteAsync();
     }
 
     public async Task GenerateTsInterfacesAsync()

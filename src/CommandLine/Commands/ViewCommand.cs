@@ -66,24 +66,35 @@ public class ViewCommand : CommandBase
 
 
     /// <summary>
-    /// TODO:生成模块路由
+    /// 生成模块路由
     /// </summary>
-    public void GenerateModuleRoute()
+    public async Task GenerateModuleRouteAsync()
     {
         // 按模块分组
-        var modules = ModuleRouteMap.GroupBy(g=>g.Key)
+        var list = ModuleRouteMap.GroupBy(g=>g.Key)
             .Select(g=>new
             {
                 module = g.Key,
-                route=g.ToList()
+                route = g.Select(g=>g.Value).ToList()
             }).ToList();
+
+        foreach (var item in list)
+        {
+            var moduleContent = NgPageGenerate.GetGroupModule(item.module, item.route);
+            var moduleRoutingContent = NgPageGenerate.GetGroupRoutingModule(item.module);
+            var moduleFilename = item.module.ToHyphen() + ".module.ts";
+            var routingFilename = item.module.ToHyphen() + "-routing.module.ts";
+            var dir = Path.Combine(OutputPath, "src", "app", "pages", item.module.ToHyphen());
+            await GenerateFileAsync(dir, moduleFilename, moduleContent);
+            await GenerateFileAsync(dir, routingFilename, moduleRoutingContent);
+        }
 
     }
 
     private async Task GenerateModuleWithRoutingAsync()
     {
         var entityName = EntityName.ToHyphen();
-        var moduleName = ModuleName??EntityName;
+        var moduleName = ModuleName ?? EntityName;
         var dir = Path.Combine(OutputPath, "src", "app", "pages", moduleName, Route?.ToHyphen()??"");
 
         var module = Gen.GetModule();
@@ -93,7 +104,7 @@ public class ViewCommand : CommandBase
         await GenerateFileAsync(dir, moduleFilename, module);
         await GenerateFileAsync(dir, routingFilename, routing);
 
-        ModuleRouteMap.Add(new KeyValuePair<string, string>(moduleName, Route?.ToHyphen() ?? ""));
+        ModuleRouteMap.Add(new KeyValuePair<string, string>(moduleName, Route?.ToPascalCase() ?? ""));
     }
 
     /// <summary>
@@ -103,7 +114,7 @@ public class ViewCommand : CommandBase
     private async Task GeneratePagesAsync()
     {
         var entityName = EntityName.ToHyphen();
-        var moduleName = ModuleName??EntityName;
+        var moduleName = ModuleName ?? EntityName;
         var dir = Path.Combine(OutputPath, "src", "app", "pages", moduleName, Route?.ToHyphen()??"");
 
         var addComponent = Gen.BuildAddPage();
