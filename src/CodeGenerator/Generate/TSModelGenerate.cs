@@ -121,8 +121,7 @@ public class TSModelGenerate : GenerateBase
         // 文件名及内容
         var fileName = schemaKey.ToHyphen() + ".model.ts";
         string tsContent;
-        var path =  ModelDictionary.Keys.Where(k => k.StartsWith(schemaKey)).FirstOrDefault();
-
+        var path =  GetDirName(schemaKey);
         if (schema.Enum.Count > 0)
         {
             tsContent = ToEnumString(schema, schemaKey);
@@ -143,6 +142,18 @@ public class TSModelGenerate : GenerateBase
     }
 
     /// <summary>
+    /// 根据类型schema，找到对应所属的目录
+    /// </summary>
+    /// <param name="searchKey"></param>
+    /// <returns></returns>
+    private string? GetDirName(string searchKey)
+    {
+        return ModelDictionary.Where(m => m.Key.StartsWith(searchKey))
+            .Select(m => m.Value)
+            .FirstOrDefault();
+    }
+
+    /// <summary>
     /// 将 Schemas 转换成 ts 接口
     /// </summary>
     /// <param name="schema"></param>
@@ -158,11 +169,12 @@ public class TSModelGenerate : GenerateBase
         var importString = "";// 需要导入的关联接口
         var relatePath = "../";
 
-        // 不在tags里的默认的根目录
-        if (ModelDictionary.ContainsKey(name) && ModelDictionary[name] == null)
+        // 不在控制器中的类型，则在根目录生成，相对目录也从根目录开始
+        if (string.IsNullOrEmpty(GetDirName(name)))
         {
             relatePath = "./";
         }
+
         if (schema.AllOf.Count > 0)
         {
             var extend = schema.AllOf.First()?.Reference?.Id;
@@ -172,7 +184,7 @@ public class TSModelGenerate : GenerateBase
                 // 如果是自引用，不需要导入
                 if (extend != name)
                 {
-                    ModelDictionary.TryGetValue(extend, out var dirName);
+                    var dirName = GetDirName(name);
                     dirName = dirName.NotNull() ? dirName!.ToHyphen() + "/" : "";
                     importString += @$"import {{ {extend} }} from '{relatePath}{dirName}{extend.ToHyphen()}.model';"
                         + Environment.NewLine;
@@ -206,7 +218,7 @@ public class TSModelGenerate : GenerateBase
             // 引用的导入，自引用不需要导入
             if (ip.Reference != name)
             {
-                ModelDictionary.TryGetValue(ip.Reference, out var dirName);
+                var dirName = GetDirName(ip.Reference);
                 dirName = dirName.NotNull() ? dirName!.ToHyphen() + "/" : "";
                 if (ip.IsEnum) dirName = "enum/";
                 importString += @$"import {{ {ip.Reference} }} from '{relatePath}{dirName}{ip.Reference.ToHyphen()}.model';"
