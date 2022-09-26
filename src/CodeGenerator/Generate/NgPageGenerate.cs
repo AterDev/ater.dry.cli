@@ -350,8 +350,8 @@ public class NgPageGenerate : GenerateBase
         var declareStrings = "";
         foreach (var item in props)
         {
-            importStrings += @$"import {{ {item.Name} }} from 'src/app/share/models/enum/{item.Name.ToHyphen()}.model';" + Environment.NewLine;
-            declareStrings += @$"{item.Name} = {item.Name};" + Environment.NewLine;
+            importStrings += @$"import {{ {item.Type} }} from 'src/app/share/models/enum/{item.Type.ToHyphen()}.model';" + Environment.NewLine;
+            declareStrings += @$"{item.Type} = {item.Type};" + Environment.NewLine;
         }
         return content.Replace("[@Imports]", importStrings + "[@Imports]")
             .Replace("[@Declares]", declareStrings + "[@Declares]");
