@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
@@ -20,6 +20,8 @@
 		<None Remove="Templates\angular\edit\edit.component.css.tpl" />
 		<None Remove="Templates\angular\edit\edit.component.html.tpl" />
 		<None Remove="Templates\angular\edit\edit.component.ts" />
+		<None Remove="Templates\angular\group.module.ts" />
+		<None Remove="Templates\angular\group.routing.module.ts" />
 		<None Remove="Templates\angular\index\index.component.css.tpl" />
 		<None Remove="Templates\angular\index\index.component.html.tpl" />
 		<None Remove="Templates\angular\index\index.component.ts" />
@@ -59,12 +61,14 @@
 		<None Remove="Templates\RequestService\service.ts" />
 	</ItemGroup>
 	<ItemGroup>
-	  <EmbeddedResource Include="Templates\Implement\CommandStoreBase.tpl" />
-	  <EmbeddedResource Include="Templates\Implement\DataStoreContext.tpl" />
-	  <EmbeddedResource Include="Templates\Implement\DomainManagerBase.tpl" />
-	  <EmbeddedResource Include="Templates\Implement\Manager.tpl" />
-	  <EmbeddedResource Include="Templates\Implement\IManager.tpl" />
-	  <EmbeddedResource Include="Templates\Implement\QueryStoreBase.tpl" />
+		<EmbeddedResource Include="Templates\angular\group.module.ts" />
+		<EmbeddedResource Include="Templates\angular\group.routing.module.ts" />
+		<EmbeddedResource Include="Templates\Implement\CommandStoreBase.tpl" />
+		<EmbeddedResource Include="Templates\Implement\DataStoreContext.tpl" />
+		<EmbeddedResource Include="Templates\Implement\DomainManagerBase.tpl" />
+		<EmbeddedResource Include="Templates\Implement\Manager.tpl" />
+		<EmbeddedResource Include="Templates\Implement\IManager.tpl" />
+		<EmbeddedResource Include="Templates\Implement\QueryStoreBase.tpl" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="Templates\angular\add\add.component.css.tpl" />
@@ -117,8 +121,8 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.9">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.OpenApi.Readers" Version="1.4.1" />
 	</ItemGroup>

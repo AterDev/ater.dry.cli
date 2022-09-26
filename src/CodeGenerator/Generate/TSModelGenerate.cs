@@ -115,15 +115,13 @@ public class TSModelGenerate : GenerateBase
     /// <summary>
     /// 生成ts interface
     /// </summary>
-    /// <param name="dir">目录 ,apiTag</param>
-    /// <param name="typeRefName">ref对应的名称</param>
     /// <returns></returns>
     public GenFileInfo GenerateInterfaceFile(string schemaKey, OpenApiSchema schema)
     {
         // 文件名及内容
         var fileName = schemaKey.ToHyphen() + ".model.ts";
         string tsContent;
-        ModelDictionary.TryGetValue(schemaKey, out var path);
+        var path =  ModelDictionary.Keys.Where(k => k.StartsWith(schemaKey)).FirstOrDefault();
 
         if (schema.Enum.Count > 0)
         {
