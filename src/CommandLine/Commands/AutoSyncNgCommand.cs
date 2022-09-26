@@ -43,7 +43,7 @@ public class AutoSyncNgCommand : CommandBase
     {
         // 获取所有实体，筛选出带有页面特性的类
         var entityDir = Path.Combine("..", ConfigOptions.EntityPath);
-        var files = Directory.GetFiles(entityDir, "*.cs",SearchOption.AllDirectories);
+        var files = Directory.GetFiles(entityDir, "*.cs", SearchOption.AllDirectories);
         var fileInfos = new List<FileInfo>();
         // 筛选出只包含特性文本的实体
         foreach (var file in files)

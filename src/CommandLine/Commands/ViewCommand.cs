@@ -27,6 +27,7 @@ public class ViewCommand : CommandBase
         EntityName = Path.GetFileNameWithoutExtension(entityPath);
         Gen = new NgPageGenerate(EntityName, dtoPath, outputPath);
     }
+
     public async Task RunAsync()
     {
         Console.WriteLine(Instructions[0]);
@@ -37,8 +38,9 @@ public class ViewCommand : CommandBase
         Console.WriteLine("😀 View generate completed!" + Environment.NewLine);
     }
 
-    public static void GenerateMenu()
+    public void GenerateMenu()
     {
+
     }
 
     public async Task GenerateModuleWithRoutingAsync()
