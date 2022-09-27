@@ -97,7 +97,8 @@ public class ViewCommand : CommandBase
     /// </summary>
     public void UpdateMenus()
     {
-        // TODO:
+        // TODO:replace <!-- {Menus} -->
+
 
     }
 
