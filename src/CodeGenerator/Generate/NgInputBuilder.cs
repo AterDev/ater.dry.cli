@@ -126,10 +126,11 @@ public class NgInputBuilder
     public string BuildSelect()
     {
         var name = Name.ToCamelCase();
+        var list = IsEnum?Type.ToPascalCase():name;
         var html = @$"<mat-form-field>
   <mat-label>{Label}</mat-label>
   <mat-select formControlName=""{name}"">
-    <mat-option *ngFor=""let item of {name.ToPascalCase()} | toKeyValue"" [value]=""item.value"">
+    <mat-option *ngFor=""let item of {list} | toKeyValue"" [value]=""item.value"">
       {{{{item.key}}}}
     </mat-option>
   </mat-select>

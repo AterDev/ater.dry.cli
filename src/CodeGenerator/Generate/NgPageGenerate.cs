@@ -375,7 +375,7 @@ import { CKEditor5 } from '@ckeditor/ckeditor5-angular';
     this.editorConfig = {
       // placeholder: '请添加图文信息提供证据，也可以直接从Word文档中复制',
       simpleUpload: {
-        uploadUrl: environment.uploadEditorFileUrl,
+        uploadUrl: '',// set your api url like:environment.uploadEditorFileUrl,
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem(""accessToken"")
         }

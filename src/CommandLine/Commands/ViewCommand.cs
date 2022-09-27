@@ -79,8 +79,8 @@ public class ViewCommand : CommandBase
 
         foreach (var item in list)
         {
-            var moduleContent = NgPageGenerate.GetGroupModule(item.module, item.route);
-            var moduleRoutingContent = NgPageGenerate.GetGroupRoutingModule(item.module);
+            var moduleContent = NgPageGenerate.GetGroupModule(item.module.ToPascalCase(), item.route);
+            var moduleRoutingContent = NgPageGenerate.GetGroupRoutingModule(item.module.ToPascalCase());
 
             var moduleFilename = item.module.ToHyphen() + ".module.ts";
             var routingFilename = item.module.ToHyphen() + "-routing.module.ts";
