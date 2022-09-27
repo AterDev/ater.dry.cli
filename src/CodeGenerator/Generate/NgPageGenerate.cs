@@ -276,6 +276,11 @@ public class NgPageGenerate : GenerateBase
 
     }
 
+    public string GetNavigation()
+    {
+
+    }
+
     /// <summary>
     /// 路由模块
     /// </summary>
