@@ -29,6 +29,7 @@
 		<None Remove="Templates\angular\layout\layout.component.html.tpl" />
 		<None Remove="Templates\angular\layout\layout.component.ts" />
 		<None Remove="Templates\angular\module.ts" />
+		<None Remove="Templates\angular\navigation.html.tpl" />
 		<None Remove="Templates\angular\routing.module.ts" />
 		<None Remove="Templates\BatchUpdate.tpl" />
 		<None Remove="Templates\EntityBase.tpl" />
@@ -61,6 +62,7 @@
 		<None Remove="Templates\RequestService\service.ts" />
 	</ItemGroup>
 	<ItemGroup>
+		<EmbeddedResource Include="Templates\angular\navigation.html.tpl" />
 		<EmbeddedResource Include="Templates\angular\group.module.ts" />
 		<EmbeddedResource Include="Templates\angular\group.routing.module.ts" />
 		<EmbeddedResource Include="Templates\Implement\CommandStoreBase.tpl" />

@@ -66,6 +66,7 @@ public class AutoSyncNgCommand : CommandBase
             cmd.SetEntityPath(entity.FullName);
             cmd.Route = entityParse.NgRoute;
             cmd.ModuleName = entityParse.NgModuleName;
+            cmd.EntityComment = entityParse.Comment;
             await cmd.RunAsync();
         }
         // 组模块

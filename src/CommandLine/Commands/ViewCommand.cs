@@ -9,10 +9,12 @@ public class ViewCommand : CommandBase
     public string OutputPath { get; set; } = default!;
     public string? ModuleName { get; set; }
     public string? Route { get; set; }
+    public string? EntityComment { get; set; }
     /// <summary>
     /// 模块与子模块路由map
     /// </summary>
     public List<KeyValuePair<string, string>> ModuleRouteMap { get; } = new();
+    public List<KeyValuePair<string, string>> RouteNameMap { get; } = new();
 
     public NgPageGenerate Gen { get; set; }
 
@@ -90,6 +92,15 @@ public class ViewCommand : CommandBase
         }
 
     }
+    /// <summary>
+    /// 更新导航菜单
+    /// </summary>
+    public void UpdateMenus()
+    {
+        // TODO:
+
+    }
+
 
     private async Task GenerateModuleWithRoutingAsync()
     {
@@ -104,7 +115,11 @@ public class ViewCommand : CommandBase
         await GenerateFileAsync(dir, moduleFilename, module);
         await GenerateFileAsync(dir, routingFilename, routing);
 
-        ModuleRouteMap.Add(new KeyValuePair<string, string>(moduleName, Route?.ToPascalCase() ?? ""));
+        if (!string.IsNullOrWhiteSpace(Route))
+        {
+            ModuleRouteMap.Add(new KeyValuePair<string, string>(moduleName, Route.ToPascalCase()));
+            RouteNameMap.Add(new KeyValuePair<string, string>(Route.ToPascalCase(), EntityComment ?? ""));
+        }
     }
 
     /// <summary>
