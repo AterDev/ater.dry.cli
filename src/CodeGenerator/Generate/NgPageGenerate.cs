@@ -126,7 +126,6 @@ public class NgPageGenerate : GenerateBase
         };
         return component;
     }
-
     public NgComponentInfo BuildIndexPage()
     {
         var cssContent = GetTplContent("angular.index.index.component.css.tpl");
@@ -194,7 +193,6 @@ public class NgPageGenerate : GenerateBase
         };
         return component;
     }
-
     public NgComponentInfo BuildDetailPage()
     {
         var cssContent = GetTplContent("angular.detail.detail.component.css.tpl");
@@ -234,7 +232,6 @@ public class NgPageGenerate : GenerateBase
         };
         return component;
     }
-
     public NgComponentInfo BuildLayout()
     {
         var cssContent = GetTplContent("angular.layout.layout.component.css.tpl");
@@ -251,7 +248,6 @@ public class NgPageGenerate : GenerateBase
         return component;
 
     }
-
     public static NgComponentInfo BuildConfirmDialog()
     {
         var cssContent = GetTplContent("angular.confirmDialog.confirm-dialog.component.css.tpl");
@@ -309,13 +305,14 @@ public class NgPageGenerate : GenerateBase
             .Replace("{$ModulePathName}", pathName);
 
         // 导入的模块内容
-        var importModules = string.Join(",\n    ", modules);
+        var importModules = string.Join(",\n    ", modules.Select(m=>m+"Module").ToArray());
 
-        var importString = modules.Select(s=>$@"import { s } from './{s.ToHyphen()}/{s.ToHyphen()}.module';")
+        var importString = modules.Select(s=>$@"import {{ {s}Module }} from './{s.ToHyphen()}/{s.ToHyphen()}.module';")
             .ToArray();
         var importModulesPath = string.Join("\n",importString);
         tplContent = tplContent.Replace("{$ImportModulesPath}", importModulesPath)
             .Replace("{$ImportModules}", importModules);
+
         return tplContent;
     }
 
@@ -329,9 +326,9 @@ public class NgPageGenerate : GenerateBase
         var tplContent = GetTplContent("angular.group.routing.module.ts");
         tplContent = tplContent.Replace("{$ModuleName}", groupName)
             .Replace("{$ModulePathName}", groupName.ToHyphen() ?? "");
+
         return tplContent;
     }
-
 
     public static string GetComponentModule()
     {

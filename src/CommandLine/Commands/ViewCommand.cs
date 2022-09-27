@@ -64,7 +64,6 @@ public class ViewCommand : CommandBase
         Console.WriteLine("😀 View generate completed!" + Environment.NewLine);
     }
 
-
     /// <summary>
     /// 生成模块路由
     /// </summary>
@@ -82,11 +81,12 @@ public class ViewCommand : CommandBase
         {
             var moduleContent = NgPageGenerate.GetGroupModule(item.module, item.route);
             var moduleRoutingContent = NgPageGenerate.GetGroupRoutingModule(item.module);
+
             var moduleFilename = item.module.ToHyphen() + ".module.ts";
             var routingFilename = item.module.ToHyphen() + "-routing.module.ts";
             var dir = Path.Combine(OutputPath, "src", "app", "pages", item.module.ToHyphen());
-            await GenerateFileAsync(dir, moduleFilename, moduleContent);
-            await GenerateFileAsync(dir, routingFilename, moduleRoutingContent);
+            await GenerateFileAsync(dir, moduleFilename, moduleContent, true);
+            await GenerateFileAsync(dir, routingFilename, moduleRoutingContent, true);
         }
 
     }
@@ -95,7 +95,7 @@ public class ViewCommand : CommandBase
     {
         var entityName = EntityName.ToHyphen();
         var moduleName = ModuleName ?? EntityName;
-        var dir = Path.Combine(OutputPath, "src", "app", "pages", moduleName, Route?.ToHyphen()??"");
+        var dir = Path.Combine(OutputPath, "src", "app", "pages", moduleName, Route?.ToPascalCase().ToHyphen()??"");
 
         var module = Gen.GetModule();
         var routing = Gen.GetRoutingModule(moduleName);
@@ -113,9 +113,8 @@ public class ViewCommand : CommandBase
     /// <returns></returns>
     private async Task GeneratePagesAsync()
     {
-        var entityName = EntityName.ToHyphen();
         var moduleName = ModuleName ?? EntityName;
-        var dir = Path.Combine(OutputPath, "src", "app", "pages", moduleName, Route?.ToHyphen()??"");
+        var dir = Path.Combine(OutputPath, "src", "app", "pages", moduleName, Route?.ToPascalCase().ToHyphen()??"");
 
         var addComponent = Gen.BuildAddPage();
         var editComponent = Gen.BuildEditPage();
@@ -123,7 +122,6 @@ public class ViewCommand : CommandBase
         var detailComponent = Gen.BuildDetailPage();
         var layoutComponent = Gen.BuildLayout();
         var confirmDialogComponent = NgPageGenerate.BuildConfirmDialog();
-
         var componentsModule = NgPageGenerate.GetComponentModule();
 
         await GenerateComponentAsync(dir, addComponent);
