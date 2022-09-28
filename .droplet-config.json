@@ -1,0 +1,12 @@
+﻿{
+  "RootPath": "./",
+  "DtoPath": "Share",
+  "EntityPath": "Core",
+  "DbContextPath": "Database/EntityFramework",
+  "StorePath": "Application",
+  "ApiPath": "Http.API",
+  "IdStyle": "Id",
+  "IdType": "Guid",
+  "CreatedTimeName": "CreatedTime",
+  "UpdatedTimeName": "UpdatedTime"
+}
