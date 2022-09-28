@@ -291,7 +291,7 @@ public class NgPageGenerate : GenerateBase
             navListTmp += $@"
     <mat-nav-list>
       <a mat-list-item routerLink=""/{groupName.ToHyphen()}/{item.ToHyphen()}"" routerLinkActive=""active"">
-        <mat-icon>{item.ToHyphen()}</mat-icon>
+        <mat-icon>edit_note</mat-icon>
         <span *ngIf=""opened"">{map.Where(m => m.Key == item).FirstOrDefault().Value}</span>
       </a>
     </mat-nav-list>";
@@ -300,7 +300,7 @@ public class NgPageGenerate : GenerateBase
   <mat-expansion-panel hideToggle>
     <mat-expansion-panel-header>
       <mat-panel-title>
-        <mat-icon>{groupName.ToHyphen()}</mat-icon>
+        <mat-icon>view_list</mat-icon>
           <span *ngIf=""opened"">{groupName.ToHyphen()}</span>
       </mat-panel-title>
     </mat-expansion-panel-header>
