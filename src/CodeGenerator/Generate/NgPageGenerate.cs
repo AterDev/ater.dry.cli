@@ -276,9 +276,38 @@ public class NgPageGenerate : GenerateBase
 
     }
 
-    public string GetNavigation()
+    /// <summary>
+    /// 构造导航内容
+    /// </summary>
+    /// <param name="groupName"></param>
+    /// <param name="modules"></param>
+    /// <param name="map"></param>
+    /// <returns></returns>
+    public static string GetNavigation(string groupName, List<string> modules, List<KeyValuePair<string, string>> map)
     {
-
+        var navListTmp = "";
+        foreach (var item in modules)
+        {
+            navListTmp += $@"
+    <mat-nav-list>
+      <a mat-list-item routerLink=""/{groupName.ToHyphen()}/{item.ToHyphen()}"" routerLinkActive=""active"">
+        <mat-icon>{item.ToHyphen()}</mat-icon>
+        <span *ngIf=""opened"">{map.Where(m => m.Key == item).FirstOrDefault().Value}</span>
+      </a>
+    </mat-nav-list>";
+        }
+        var temp=@$"      
+  <mat-expansion-panel hideToggle>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <mat-icon>{groupName.ToHyphen()}</mat-icon>
+          <span *ngIf=""opened"">{groupName.ToHyphen()}</span>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+{navListTmp}
+  </mat-expansion-panel>
+";
+        return temp;
     }
 
     /// <summary>

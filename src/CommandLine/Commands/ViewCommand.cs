@@ -90,16 +90,41 @@ public class ViewCommand : CommandBase
             await GenerateFileAsync(dir, moduleFilename, moduleContent, true);
             await GenerateFileAsync(dir, routingFilename, moduleRoutingContent, true);
         }
-
     }
     /// <summary>
     /// 更新导航菜单
     /// </summary>
-    public void UpdateMenus()
+    public async Task UpdateMenus()
     {
-        // TODO:replace <!-- {Menus} -->
+        // replace <!-- {Menus} -->
+        var dir = Path.Combine(OutputPath, "src", "app", "components", "navigation");
+        var fileName = "navigation.component.html";
+        var content = await File.ReadAllTextAsync(Path.Combine(dir,fileName));
 
 
+        var list = ModuleRouteMap.GroupBy(g=>g.Key)
+            .Select(g=>new
+            {
+                module = g.Key,
+                route = g.Select(g=>g.Value).ToList(),
+            }).ToList();
+
+        var menusContent = "";
+        foreach (var item in list)
+        {
+            menusContent += NgPageGenerate.GetNavigation(item.module.ToPascalCase(), item.route, RouteNameMap);
+        }
+        // 插入的起始点
+        var startTmp = "<ng-template #automenu>";
+        var endTmp  = "</ng-template>";
+        var startIndex =  content.LastIndexOf(startTmp)+startTmp.Length;
+        var endIndex = content.LastIndexOf(endTmp);
+        var sb = new StringBuilder();
+        sb.Append(content.AsSpan(0, startIndex));
+        sb.AppendLine();
+        sb.Append(menusContent);
+        sb.Append(content.AsSpan(endIndex));
+        await GenerateFileAsync(dir, fileName, sb.ToString(), true);
     }
 
 

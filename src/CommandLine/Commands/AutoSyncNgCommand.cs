@@ -66,11 +66,13 @@ public class AutoSyncNgCommand : CommandBase
             cmd.SetEntityPath(entity.FullName);
             cmd.Route = entityParse.NgRoute;
             cmd.ModuleName = entityParse.NgModuleName;
-            cmd.EntityComment = entityParse.Comment;
+            cmd.EntityComment = entityParse.CommentContent;
             await cmd.RunAsync();
         }
         // 组模块
         await cmd.GenerateModuleRouteAsync();
+        // 更新菜单 navigation.html
+        await cmd.UpdateMenus();
     }
 
     public async Task GenerateTsInterfacesAsync()
