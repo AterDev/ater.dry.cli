@@ -53,7 +53,6 @@ public class ViewCommand : CommandBase
             throw new FileNotFoundException();
         }
         EntityName = Path.GetFileNameWithoutExtension(entityPath);
-        Console.WriteLine("SetEntityPath:" + EntityName);
         Gen = new NgPageGenerate(EntityName, DtoPath, OutputPath);
     }
 
@@ -132,12 +131,13 @@ public class ViewCommand : CommandBase
     {
         var entityName = EntityName.ToHyphen();
         var moduleName = ModuleName ?? EntityName;
-        var dir = Path.Combine(OutputPath, "src", "app", "pages", moduleName, Route?.ToPascalCase().ToHyphen()??"");
+        var routeName = Route?.ToPascalCase().ToHyphen();
+        var dir = Path.Combine(OutputPath, "src", "app", "pages", moduleName, routeName??"");
 
-        var module = Gen.GetModule();
-        var routing = Gen.GetRoutingModule(moduleName);
-        var moduleFilename = entityName + ".module.ts";
-        var routingFilename = entityName + "-routing.module.ts";
+        var module = Gen.GetModule(Route?.ToPascalCase());
+        var routing = Gen.GetRoutingModule(moduleName, Route?.ToPascalCase());
+        var moduleFilename =  routeName + ".module.ts";
+        var routingFilename = routeName + "-routing.module.ts";
         await GenerateFileAsync(dir, moduleFilename, module);
         await GenerateFileAsync(dir, routingFilename, routing);
 
