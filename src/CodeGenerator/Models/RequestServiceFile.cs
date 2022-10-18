@@ -110,7 +110,7 @@ public class RequestServiceFunction
         if (Params?.Count > 0)
         {
             paramsString = string.Join(", ",
-                Params.OrderBy(p => p.IsRequired)
+                Params.OrderByDescending(p => p.IsRequired)
                     .Select(p => p.IsRequired
                         ? (p.Name + ": " + p.Type)
                         : (p.Name + "?: " + p.Type))
