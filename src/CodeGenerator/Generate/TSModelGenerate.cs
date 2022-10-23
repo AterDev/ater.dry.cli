@@ -125,6 +125,7 @@ public class TSModelGenerate : GenerateBase
         if (schema.Enum.Count > 0)
         {
             tsContent = ToEnumString(schema, schemaKey);
+            Config.EnumModels.Add(schemaKey);
             path = "enum";
         }
         else

@@ -14,9 +14,9 @@ public class DtoGenerateTest
         var dir = new DirectoryInfo(Environment.CurrentDirectory);
         var root = dir.Root;
         var projectFile = AssemblyHelper.FindProjectFile(dir, root);
-        var name = AssemblyHelper.GetAssemblyName(projectFile);
+        var name = AssemblyHelper.GetAssemblyName(projectFile!);
 
-        Assert.Equal("CodeGenerator.Test.csproj", projectFile.Name);
+        Assert.Equal("CodeGenerator.Test.csproj", projectFile!.Name);
         Assert.Equal("CodeGenerator.Test", name);
     }
 
@@ -31,7 +31,7 @@ public class DtoGenerateTest
         var assembly = typeof(Blog).Assembly.ManifestModule.Name;
         Assert.Equal(assembly, entityHelper.AssemblyName + ".dll");
 
-        var props = entityHelper.PropertyInfos;
+        var props = entityHelper.PropertyInfos!;
         Assert.NotEmpty(props);
 
         var idProp = props!.Where(p => p.Name.Equals("Id")).FirstOrDefault();

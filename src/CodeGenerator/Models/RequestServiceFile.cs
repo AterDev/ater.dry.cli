@@ -8,7 +8,6 @@ public class RequestServiceFile
     public string? Description { get; set; }
     public List<RequestServiceFunction>? Functions { get; set; }
 
-
     /// <summary>
     /// 生成angluar http client service
     /// </summary>
@@ -45,9 +44,20 @@ public class RequestServiceFile
             refTypes = refTypes.GroupBy(t => t)
                 .Select(g => g.FirstOrDefault()!)
                 .ToList();
+
             refTypes.ForEach(t =>
             {
-                importModels += $"import {{ {t} }} from '../models/{Name.ToHyphen()}/{t.ToHyphen()}.model';{Environment.NewLine}";
+                Console.WriteLine("type:" + t);
+                Console.WriteLine(String.Join(';', Config.EnumModels));
+                if (Config.EnumModels.Contains(t))
+                {
+                    importModels += $"import {{ {t} }} from '../models/enum/{t.ToHyphen()}.model';{Environment.NewLine}";
+                }
+                else
+                {
+                    importModels += $"import {{ {t} }} from '../models/{Name.ToHyphen()}/{t.ToHyphen()}.model';{Environment.NewLine}";
+                }
+
             });
         }
         var result = $@"import {{ Injectable }} from '@angular/core';
