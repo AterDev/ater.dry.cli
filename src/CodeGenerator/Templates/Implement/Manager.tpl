@@ -19,7 +19,7 @@ public class ${EntityName}Manager : DomainManagerBase<${EntityName}, ${EntityNam
     {
         // TODO:根据实际业务构建筛选条件
         // if ... Queryable = ...
-        return await Query.FilterAsync<${EntityName}ItemDto>(Queryable);
+        return await Query.FilterAsync<${EntityName}ItemDto>(Queryable, filter.PageIndex, filter.PageSize);
     }
 
 }
