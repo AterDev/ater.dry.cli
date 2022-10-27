@@ -93,9 +93,16 @@ public class AssemblyHelper
     /// <returns></returns>
     public static FileInfo? GetSlnFile(DirectoryInfo dir, string searchPattern, DirectoryInfo? root = null)
     {
-        var file = dir.GetFiles("*.sln")?.FirstOrDefault();
-        return root == null ? file
-            : (file == null && dir != root) ? GetSlnFile(dir.Parent!, searchPattern, root) : file;
+        try
+        {
+            var file = dir.GetFiles("*.sln")?.FirstOrDefault();
+            return root == null ? file
+                : (file == null && dir != root) ? GetSlnFile(dir.Parent!, searchPattern, root) : file;
+        }
+        catch (Exception)
+        {
+            return default;
+        }
     }
 
     /// <summary>

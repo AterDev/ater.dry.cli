@@ -14,12 +14,17 @@ public class ConfigCommand
         var currentDir = new DirectoryInfo(Environment.CurrentDirectory);
         var solutionPath = AssemblyHelper.GetSlnFile(currentDir, "*.sln", currentDir.Root);
 
+        string configPath;
         if (solutionPath == null)
         {
-            Console.WriteLine("can't find sln file");
-            return;
+            Console.WriteLine("can't find sln file, use system user dir");
+            configPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
         }
-        var file = new FileInfo(Path.Combine(solutionPath.Directory!.FullName,Config.ConfigFileName));
+        else
+        {
+            configPath = solutionPath.FullName;
+        }
+        var file = new FileInfo(Path.Combine(configPath, Config.ConfigFileName));
         var path = file == null
             ? Path.Combine(solutionPath.DirectoryName!, Config.ConfigFileName)
             : file.FullName;
@@ -41,12 +46,17 @@ public class ConfigCommand
     {
         var currentDir = new DirectoryInfo(Environment.CurrentDirectory);
         var solutionPath = AssemblyHelper.GetSlnFile(currentDir, "*.sln", currentDir.Root);
+        string configPath;
         if (solutionPath == null)
         {
-            Console.WriteLine("can't find sln file");
-            return default;
+            Console.WriteLine("can't find sln file, use system user dir");
+            configPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
         }
-        var file = new FileInfo(Path.Combine(solutionPath.Directory!.FullName,Config.ConfigFileName));
+        else
+        {
+            configPath = solutionPath.FullName;
+        }
+        var file = new FileInfo(Path.Combine(configPath, Config.ConfigFileName));
         if (file == null)
         {
             Console.WriteLine($"config file not found , please run droplet confing init");
@@ -63,12 +73,17 @@ public class ConfigCommand
     {
         var currentDir = new DirectoryInfo(Environment.CurrentDirectory);
         var solutionPath = AssemblyHelper.GetSlnFile(currentDir, "*.sln", currentDir.Root);
+        string configPath;
         if (solutionPath == null)
         {
-            Console.WriteLine("can't find sln file");
-            return;
+            Console.WriteLine("can't find sln file, use system user dir");
+            configPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
         }
-        var file = new FileInfo(Path.Combine(solutionPath.Directory!.FullName,Config.ConfigFileName));
+        else
+        {
+            configPath = solutionPath.FullName;
+        }
+        var file = new FileInfo(Path.Combine(configPath,Config.ConfigFileName));
         if (file == null)
         {
             Console.WriteLine($"config file not found , please run droplet confing init");
