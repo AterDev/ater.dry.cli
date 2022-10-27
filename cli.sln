@@ -7,7 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommandLine", "src\CommandL
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deploy", "deploy", "{749452B4-5415-4ABE-A691-70718DDED23F}"
 	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
 		deploy\PublishToLocal.ps1 = deploy\PublishToLocal.ps1
 	EndProjectSection
 EndProject
@@ -21,7 +20,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{515B562C-5
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{CDCC6D66-4D37-4EAC-BCAA-BEB1993ABCD5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandLine.Test", "test\CommandLine.Test\CommandLine.Test.csproj", "{4AA618E1-7DDD-4004-8E28-4C4257973DC4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommandLine.Test", "test\CommandLine.Test\CommandLine.Test.csproj", "{4AA618E1-7DDD-4004-8E28-4C4257973DC4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
