@@ -240,11 +240,21 @@ public class EntityParseHelper
         var typeInfo = SemanticModel.GetTypeInfo(syntax.Type);
         var propertyInfo = new PropertyInfo(type, name);
 
-        // 是否为public
-        var modifier = syntax.Modifiers.FirstOrDefault().Text;
-        if (string.IsNullOrEmpty(modifier) || !modifier.ToLower().Equals("public"))
+        // //解析modifier，如public required ,private virtual 
+        var modifier1 = syntax.Modifiers.FirstOrDefault().Text;
+        string? modifier2 = null;
+        if (syntax.Modifiers.Count > 1)
+        {
+            modifier2 = syntax.Modifiers.LastOrDefault().Text;
+        }
+
+        if (string.IsNullOrEmpty(modifier1) || !modifier1.ToLower().Equals("public"))
         {
             propertyInfo.IsPublic = false;
+        }
+        if (!string.IsNullOrEmpty(modifier2) && modifier2.Equals("required"))
+        {
+            propertyInfo.IsRequired = true;
         }
         // 移除?，获取类型名
         if (type.EndsWith("?"))

@@ -11,7 +11,7 @@ public class Blog : BaseDB
     [StringLength(100)]
     [MinLength(10)]
     public string Name { get; set; } = string.Empty;
-    public string Title { get; set; } = string.Empty;
+    public required string Title { get; set; }
 
     #region region的内容
     public Blog? Parent { get; set; }
