@@ -45,5 +45,6 @@ internal class StudioCommand
             Console.WriteLine(line);
         }
         process.WaitForExit();
+        process.Close();
     }
 }
