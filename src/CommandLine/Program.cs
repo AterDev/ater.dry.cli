@@ -5,7 +5,10 @@ internal class Program
 {
     private static async Task<int> Main(string[] args)
     {
-        await ConfigCommand.InitConfigFileAsync();
+        if (!args.Contains("studio"))
+        {
+            await ConfigCommand.InitConfigFileAsync();
+        }
         var root = new CommandBuilder().Build();
         return await root.InvokeAsync(args);
     }

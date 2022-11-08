@@ -30,7 +30,22 @@ public class CommandBuilder
         AddView();
         AddDoc();
         AutoSyncToNg();
+        AddStudio();
         return RootCommand;
+    }
+
+
+    public void AddStudio()
+    {
+        var studioCommand = new Command("studio", "studio management");
+
+        studioCommand.SetHandler(() =>
+        {
+            StudioCommand.RunStudio();
+
+        });
+
+        RootCommand.Add(studioCommand);
     }
 
     /// <summary>
@@ -91,13 +106,13 @@ public class CommandBuilder
         var reqCommand = new Command("request", "generate request service and interface using openApi json");
         reqCommand.AddAlias("request");
         var url = new Argument<string>("OpenApi Url", "openApi json file url");
-        var outputOption=new Option<string>(new[] { "--output", "-o" })
+        var outputOption = new Option<string>(new[] { "--output", "-o" })
         {
             IsRequired = true,
             Description = "output path"
         };
 
-        var typeOption = new Option<RequestLibType>(new []{"--type","-t"},"request lib type:axios or NgHttp");
+        var typeOption = new Option<RequestLibType>(new[] { "--type", "-t" }, "request lib type:axios or NgHttp");
         reqCommand.AddArgument(url);
         reqCommand.AddOption(outputOption);
         reqCommand.AddOption(typeOption);
@@ -188,7 +203,7 @@ public class CommandBuilder
         var docCommand = new Command("doc", "generate typescript interface using openApi json");
         docCommand.AddAlias("doc");
         var url = new Argument<string>("OpenApi Url", "openApi json file url");
-        var  outputOption=new Option<string>(new[] { "--output", "-o" })
+        var outputOption = new Option<string>(new[] { "--output", "-o" })
         {
             IsRequired = true,
             Description = "generate markdown doc"
@@ -207,7 +222,7 @@ public class CommandBuilder
         var ngCommand = new Command("angular", "generate angular service and interface using openApi json");
         ngCommand.AddAlias("ng");
         var url = new Argument<string>("OpenApi Json", "openApi json file url or local path");
-        var  outputOption = new Option<string>(new[] { "--output", "-o" })
+        var outputOption = new Option<string>(new[] { "--output", "-o" })
         {
             IsRequired = true,
             Description = "angular project root path"
@@ -226,10 +241,10 @@ public class CommandBuilder
         // view生成命令
         var viewCommand = new Command("view", "generate front view page, only support angular. ");
         viewCommand.AddAlias("view");
-        var entityArgument = new Argument<string>("entity path","The entity file path, like path/xxx.cs");
-        var dtoOption = new Option<string>(new[] { "--dto", "-d" },"dto project directory");
+        var entityArgument = new Argument<string>("entity path", "The entity file path, like path/xxx.cs");
+        var dtoOption = new Option<string>(new[] { "--dto", "-d" }, "dto project directory");
         dtoOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.DtoPath));
-        var outputOption= new Option<string>(new[] { "--output", "-o" },"angular project root path")
+        var outputOption = new Option<string>(new[] { "--output", "-o" }, "angular project root path")
         {
             IsRequired = true,
         };
