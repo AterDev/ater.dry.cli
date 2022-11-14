@@ -49,13 +49,13 @@
                     </div>
                     <div class="col-12">
                         <label asp-for="ProjectForm.Path" class="form-label">项目路径</label>
-                        <input asp-for="ProjectForm.Path" class="form-control" placeholder="绝对路径" required>
+                        <input asp-for="ProjectForm.Path" class="form-control" placeholder="填写sln文件的完整路径" required>
                         <span asp-validation-for="ProjectForm.DisplayName" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                    <button type="button" onclick="submit()" class="btn btn-primary" id="addProject">确认</button>
+                    <button type="button" onclick="submit()" class="btn btn-primary">确认</button>
                 </div>
             </form>
 
@@ -71,10 +71,10 @@
 @section Scripts{
   <script>
       var modal = document.getElementById('projectModal');
-      var addBtn = document.getElementById('addProject');
       var form = document.getElementById('form');
 
       function submit(event) {
+        // TODO:验证
           form.submit();
           //modal.hide();
       }
