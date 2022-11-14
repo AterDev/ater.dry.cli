@@ -1,6 +1,9 @@
-﻿namespace Studio.Entity;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Studio.Entity;
 
 public class EntityBase
 {
-    public int Id { get; set; }
+  [Key]
+  public int Id { get; set; }
 }
