@@ -1,12 +1,27 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Studio.Entity;
 
 namespace Studio.Pages.Workspace
 {
-    public class IndexModel : PageModel
+  public class IndexModel : PageModel
+  {
+
+    private readonly ContextBase _context;
+    public int Id { get; set; }
+    public Project Project { get; set; } = default!;
+
+
+    public IndexModel(ContextBase context)
     {
-        public void OnGet()
-        {
-        }
+      _context = context;
     }
+
+    public async Task OnGet(int id)
+    {
+      Id = id;
+      Project = await _context.Projects.FindAsync(id);
+
+    }
+  }
 }
