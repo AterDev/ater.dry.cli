@@ -1,16 +1,15 @@
 ﻿@page "/"
 
-<PageTitle>Index</PageTitle>
+<PageTitle>我的项目</PageTitle>
 
 <div class="col">
     <div class="row">
         <div class="col">
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#projectModal">新增项目</button>
+            <Button Color="Color.Primary" Clicked="@ShowModal">新增项目</Button>
         </div>
     </div>
   @*项目列表*@
     <div class="row mt-3 g-1">
-
     @foreach (var item in Projects)
     {
           <div class="card" style="width: 18rem;">
@@ -31,40 +30,81 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="projectModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">新增项目</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form method="post" id="form">
-                <div class="modal-body">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <div class="form-group">
-                        <label asp-for="ProjectForm.DisplayName" class="form-label">项目名称</label>
-                        <input class="form-control" asp-for="ProjectForm.DisplayName" placeholder="为你的项目命名" required>
-                        <span asp-validation-for="ProjectForm.DisplayName" class="text-danger"></span>
-                    </div>
-                    <div class="col-12">
-                        <label asp-for="ProjectForm.Path" class="form-label">项目路径</label>
-                        <input asp-for="ProjectForm.Path" class="form-control" placeholder="填写sln文件的完整路径" required id="pathInput">
-                        <span asp-validation-for="ProjectForm.DisplayName" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                    <button type="button" onclick="submit()" class="btn btn-primary">确认</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+<Modal @bind-Visible="@modalVisible">
+    <ModalContent Centered>
+        <ModalHeader>
+            <ModalTitle>新增项目</ModalTitle>
+            <CloseButton />
+        </ModalHeader>
+        <ModalBody>
+            <EditForm Model="@ProjectForm" OnValidSubmit="@Submit">
+                <Validation Validator="ValidationRule.IsNotEmpty">
+                    <Field>
+                        <FieldLabel>项目名称</FieldLabel>
+                        <TextEdit Placeholder="为你的项目命名" @bind-Text="ProjectForm.DisplayName">
+                            <Feedback>
+                                <ValidationError>必填</ValidationError>
+                            </Feedback>
+                        </TextEdit>
+                    </Field>
+                </Validation>
+                <Validation Validator="ValidationRule.IsNotEmpty">
+                    <Field>
+                        <FieldLabel>项目路径</FieldLabel>
+                        <TextEdit Placeholder="Enter填写sln文件的完整路径" @bind-Text="ProjectForm.Path">
+                            <Feedback>
+                                <ValidationError>必填</ValidationError>
+                            </Feedback>
+                        </TextEdit>
+                    </Field>
+                </Validation>
 
-@code{
+            </EditForm>
+
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Secondary" Clicked="@HideModal">取消</Button>
+            <Button Color="Color.Primary" Type="ButtonType.Submit" Clicked="@Submit">确认</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+@code {
   public List<Project> Projects { get; set; } = new List<Project>();
-
   public AddProjectForm ProjectForm { get; set; }
 
+  private bool modalVisible = false;
 
+  public Index()
+  {
+    ProjectForm = new AddProjectForm
+      {
+        DisplayName = "",
+        Path = ""
+      };
+  }
+
+  protected override Task OnInitializedAsync()
+  {
+    return base.OnInitializedAsync();
+  }
+
+  private Task ShowModal()
+  {
+    modalVisible = true;
+
+    return Task.CompletedTask;
+  }
+
+  private Task HideModal()
+  {
+    modalVisible = false;
+
+    return Task.CompletedTask;
+  }
+
+  private void Submit()
+  {
+    Console.WriteLine("submit");
+  }
 }
