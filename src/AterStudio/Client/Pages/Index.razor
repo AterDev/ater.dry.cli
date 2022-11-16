@@ -1,8 +1,7 @@
-﻿@page
-@model IndexModel
-@{
-  ViewData["Title"] = "主页";
-}
+﻿@page "/"
+
+<PageTitle>Index</PageTitle>
+
 <div class="col">
     <div class="row">
         <div class="col">
@@ -12,7 +11,7 @@
   @*项目列表*@
     <div class="row mt-3 g-1">
 
-    @foreach (var item in Model.Projects)
+    @foreach (var item in Projects)
     {
           <div class="card" style="width: 18rem;">
               <div class="card-body">
@@ -62,19 +61,10 @@
     </div>
 </div>
 
-@section Scripts{
-  <script>
-      var modal = document.getElementById('projectModal');
-      var form = document.getElementById('form');
-      var pathInput = document.getElementById('pathInput');
+@code{
+  public List<Project> Projects { get; set; } = new List<Project>();
+
+  public AddProjectForm ProjectForm { get; set; }
 
 
-      function submit(event) {
-          // TODO:验证
-          if(pathInput.value){
-
-          }
-          form.submit();
-      }
-  </script>
 }
