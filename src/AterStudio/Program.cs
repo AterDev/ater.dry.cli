@@ -1,19 +1,68 @@
+using AterStudio;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.OpenApi.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddEndpointsApiExplorer();
+// corsÅäÖÃ 
+builder.Services.AddCors(options =>
+{
+  options.AddPolicy("default", builder =>
+  {
+    builder.AllowAnyOrigin();
+    builder.AllowAnyMethod();
+    builder.AllowAnyHeader();
+  });
+});
+builder.Services.AddSwaggerGen(c =>
+{
+
+  c.SwaggerDoc("v1", new OpenApiInfo
+  {
+    Title = "MyProjectName",
+    Description = "API ÎÄµµ",
+    Version = "v1"
+  });
+  string[] xmlFiles = Directory.GetFiles(AppContext.BaseDirectory, "*.xml", SearchOption.TopDirectoryOnly);
+  foreach (string item in xmlFiles)
+  {
+    try
+    {
+      c.IncludeXmlComments(item, includeControllerXmlComments: true);
+    }
+    catch (Exception) { }
+  }
+  c.DescribeAllParametersInCamelCase();
+  c.CustomOperationIds((z) =>
+  {
+    ControllerActionDescriptor descriptor = (ControllerActionDescriptor)z.ActionDescriptor;
+    return $"{descriptor.ControllerName}_{descriptor.ActionName}";
+  });
+  c.SchemaFilter<EnumSchemaFilter>();
+  c.MapType<DateOnly>(() => new OpenApiSchema
+  {
+    Type = "string",
+    Format = "date"
+  });
+});
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
 }
-
-app.UseHttpsRedirection();
+else
+{
+  //app.UseSwagger();
+  //app.UseSwaggerUI();
+}
+app.UseCors("default");
+//app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 

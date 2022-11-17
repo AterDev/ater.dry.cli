@@ -132,5 +132,8 @@
       }
     }
   },
-  "defaultProject": "AterStudio"
+  "defaultProject": "AterStudio",
+  "cli": {
+    "analytics": false
+  }
 }
