@@ -1,0 +1,28 @@
+<div class="page">
+  <mat-toolbar color="primary">
+    <a mat-button [routerLink]="['/index']" routerLinkActive="active">首页</a>
+    <span style="display:flex;flex:1 1 auto"></span>
+    <span *ngIf="isLogin">
+      <button [matMenuTriggerFor]="appMenu" mat-button>
+        {{username}}
+        <mat-icon>arrow_drop_down</mat-icon>
+      </button>
+      <mat-menu #appMenu="matMenu">
+        <span mat-menu-item>
+          你好,{{username}}
+        </span>
+        <button mat-menu-item routerLink="/account" disabled>
+          <mat-icon>assignment_ind</mat-icon>
+          <span>账号设置</span>
+        </button>
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>exit_to_app</mat-icon>
+          <span>登出</span>
+        </button>
+      </mat-menu>
+    </span>
+    <span *ngIf="!isLogin">
+      <button mat-button (click)="login()">登录</button>
+    </span>
+  </mat-toolbar>
+</div>
