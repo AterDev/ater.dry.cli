@@ -1,11 +1,17 @@
 using AterStudio;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+builder.Services.AddDbContext<ContextBase>(options =>
+{
+  var connectionString = builder.Configuration.GetConnectionString("default");
+  options.UseSqlite(connectionString);
+});
 builder.Services.AddControllersWithViews();
 builder.Services.AddEndpointsApiExplorer();
 // cors≈‰÷√ 

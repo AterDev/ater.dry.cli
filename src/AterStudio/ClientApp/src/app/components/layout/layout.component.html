@@ -1,6 +1,6 @@
 <div class="page">
   <mat-toolbar color="primary">
-    <a mat-button [routerLink]="['/index']" routerLinkActive="active">首页</a>
+    <a mat-button [routerLink]="['/index']" routerLinkActive="active">项目</a>
     <span style="display:flex;flex:1 1 auto"></span>
     <span *ngIf="isLogin">
       <button [matMenuTriggerFor]="appMenu" mat-button>
@@ -22,7 +22,7 @@
       </mat-menu>
     </span>
     <span *ngIf="!isLogin">
-      <button mat-button (click)="login()">登录</button>
+      <!-- <button mat-button (click)="login()">登录</button> -->
     </span>
   </mat-toolbar>
 </div>
