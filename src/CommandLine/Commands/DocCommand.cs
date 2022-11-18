@@ -17,10 +17,10 @@ public class DocCommand : CommandBase
 
     public async Task RunAsync()
     {
-        var openApiContent = "";
+        string openApiContent = "";
         if (DocUrl.StartsWith("http://") || DocUrl.StartsWith("https://"))
         {
-            using var http = new HttpClient();
+            using HttpClient http = new();
             openApiContent = await http.GetStringAsync(DocUrl);
         }
         else
@@ -38,13 +38,13 @@ public class DocCommand : CommandBase
 
     public async Task GenerateDocAsync(string title)
     {
-        var schemas = ApiDocument!.Components.Schemas;
-        var ngGen = new DocGenerate(schemas);
+        IDictionary<string, OpenApiSchema> schemas = ApiDocument!.Components.Schemas;
+        DocGenerate ngGen = new(schemas);
         if (ApiDocument!.Tags.Any())
         {
             ngGen.SetTags(ApiDocument!.Tags.ToList());
         }
-        var content = ngGen.GetMarkdownContent();
+        string content = ngGen.GetMarkdownContent();
         await GenerateFileAsync(OutputPath, title + ".md", content, true);
 
     }

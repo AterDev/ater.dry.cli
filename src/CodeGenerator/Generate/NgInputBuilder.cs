@@ -25,42 +25,31 @@ public class NgInputBuilder
     public string ToFormControl()
     {
         // 过滤常规字段
-        var filterNames = new string[] { "createdtime", "updatedtime", "createtime", "updatetime" };
+        string[] filterNames = new string[] { "createdtime", "updatedtime", "createtime", "updatetime" };
         if (filterNames.Contains(Name.ToLower()))
-            return string.Empty;
-        var str = "";
-        switch (Type)
         {
-            case "string":
-                str = BuildInputText();
-                break;
-            case "DateTimeOffset":
-            case "DateTime":
-                str = BuildInputDate();
-                break;
-            case "short":
-            case "int":
-            case "decimal":
-            case "double":
-            case "float":
-                str = BuildInputNumber();
-                break;
-            case "bool":
-                str = BuildSlide();
-                break;
-            default:
-                str = BuildInputText();
-                break;
+            return string.Empty;
         }
+        string str = Type switch
+        {
+            "string" => BuildInputText(),
+            "DateTimeOffset" or "DateTime" => BuildInputDate(),
+            "short" or "int" or "decimal" or "double" or "float" => BuildInputNumber(),
+            "bool" => BuildSlide(),
+            _ => BuildInputText(),
+        };
         if (IsEnum)
+        {
             str = BuildSelect();
+        }
+
         return str;
     }
 
     public string BuildInputText()
     {
-        var name = Name.ToCamelCase();
-        var html = "";
+        string name = Name.ToCamelCase();
+        string html = "";
         if (MaxLength < 200)
         {
             html = $@"  <mat-form-field>
@@ -97,9 +86,12 @@ public class NgInputBuilder
     {
         string step = "1", min = "0";
         if (IsDecimal)
+        {
             step = "0.01";
-        var name = Name.ToCamelCase();
-        var html = $@"  <mat-form-field>
+        }
+
+        string name = Name.ToCamelCase();
+        string html = $@"  <mat-form-field>
     <mat-label>{Label}</mat-label>
     <input matInput type=""number"" placeholder=""{Label}"" formControlName=""{name}"" {(IsRequired ? "required" : "")} step=""{step}"" min=""{min}"">
     <mat-error *ngIf=""{name}?.invalid"">
@@ -111,8 +103,8 @@ public class NgInputBuilder
     }
     public string BuildInputDate()
     {
-        var name = Name.ToCamelCase();
-        var html = $@"  <mat-form-field>
+        string name = Name.ToCamelCase();
+        string html = $@"  <mat-form-field>
     <mat-label>{Label}</mat-label>
     <input matInput [matDatepicker]=""{name}Picker"" placeholder=""{Label}"" formControlName=""{name}"">
     <mat-datepicker-toggle matSuffix [for]=""{name}Picker""></mat-datepicker-toggle>
@@ -125,9 +117,9 @@ public class NgInputBuilder
     }
     public string BuildSelect()
     {
-        var name = Name.ToCamelCase();
-        var list = IsEnum?Type.ToPascalCase():name;
-        var html = @$"<mat-form-field>
+        string name = Name.ToCamelCase();
+        string list = IsEnum ? Type.ToPascalCase() : name;
+        string html = @$"<mat-form-field>
   <mat-label>{Label}</mat-label>
   <mat-select formControlName=""{name}"">
     <mat-option *ngFor=""let item of {list} | toKeyValue"" [value]=""item.value"">
@@ -143,22 +135,22 @@ public class NgInputBuilder
 
     public string BuildCheckbox()
     {
-        var name = Name.ToCamelCase();
-        var html = @$"    <mat-checkbox color=""primary"" formControlName=""{name}"">{Label}</mat-checkbox>
+        string name = Name.ToCamelCase();
+        string html = @$"    <mat-checkbox color=""primary"" formControlName=""{name}"">{Label}</mat-checkbox>
 ";
         return html;
     }
     public string BuildSlide()
     {
-        var name = Name.ToCamelCase();
-        var html = @$"    <mat-slide-toggle color=""primary"" formControlName=""{name}"">{Label}</mat-slide-toggle>
+        string name = Name.ToCamelCase();
+        string html = @$"    <mat-slide-toggle color=""primary"" formControlName=""{name}"">{Label}</mat-slide-toggle>
 ";
         return html;
     }
     public string BuildRadioGroup()
     {
-        var name = Name.ToCamelCase();
-        var html = $@"<mat-radio-group color=""primary"" aria-label=""选择{Label}"" formControlName=""{name}"">
+        string name = Name.ToCamelCase();
+        string html = $@"<mat-radio-group color=""primary"" aria-label=""选择{Label}"" formControlName=""{name}"">
   <mat-radio-button [value]=""{name}"">选项1</mat-radio-button>
 </mat-radio-group>";
         return html;

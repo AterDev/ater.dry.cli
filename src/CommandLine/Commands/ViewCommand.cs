@@ -1,3 +1,6 @@
+using Core.Infrastructure.Utils;
+using Core.Models;
+
 namespace Droplet.CommandLine.Commands;
 
 public class ViewCommand : CommandBase
@@ -71,21 +74,21 @@ public class ViewCommand : CommandBase
     public async Task GenerateModuleRouteAsync()
     {
         // 按模块分组
-        var list = ModuleRouteMap.GroupBy(g=>g.Key)
-            .Select(g=>new
+        var list = ModuleRouteMap.GroupBy(g => g.Key)
+            .Select(g => new
             {
                 module = g.Key,
-                route = g.Select(g=>g.Value).ToList()
+                route = g.Select(g => g.Value).ToList()
             }).ToList();
 
         foreach (var item in list)
         {
-            var moduleContent = NgPageGenerate.GetGroupModule(item.module.ToPascalCase(), item.route);
-            var moduleRoutingContent = NgPageGenerate.GetGroupRoutingModule(item.module.ToPascalCase());
+            string moduleContent = NgPageGenerate.GetGroupModule(item.module.ToPascalCase(), item.route);
+            string moduleRoutingContent = NgPageGenerate.GetGroupRoutingModule(item.module.ToPascalCase());
 
-            var moduleFilename = item.module.ToHyphen() + ".module.ts";
-            var routingFilename = item.module.ToHyphen() + "-routing.module.ts";
-            var dir = Path.Combine(OutputPath, "src", "app", "pages", item.module.ToHyphen());
+            string moduleFilename = item.module.ToHyphen() + ".module.ts";
+            string routingFilename = item.module.ToHyphen() + "-routing.module.ts";
+            string dir = Path.Combine(OutputPath, "src", "app", "pages", item.module.ToHyphen());
             await GenerateFileAsync(dir, moduleFilename, moduleContent, true);
             await GenerateFileAsync(dir, routingFilename, moduleRoutingContent, true);
         }
@@ -96,48 +99,48 @@ public class ViewCommand : CommandBase
     public async Task UpdateMenus()
     {
         // replace <!-- {Menus} -->
-        var dir = Path.Combine(OutputPath, "src", "app", "components", "navigation");
-        var fileName = "navigation.component.html";
-        var content = await File.ReadAllTextAsync(Path.Combine(dir,fileName));
+        string dir = Path.Combine(OutputPath, "src", "app", "components", "navigation");
+        string fileName = "navigation.component.html";
+        string content = await File.ReadAllTextAsync(Path.Combine(dir, fileName));
 
 
-        var list = ModuleRouteMap.GroupBy(g=>g.Key)
-            .Select(g=>new
+        var list = ModuleRouteMap.GroupBy(g => g.Key)
+            .Select(g => new
             {
                 module = g.Key,
-                route = g.Select(g=>g.Value).ToList(),
+                route = g.Select(g => g.Value).ToList(),
             }).ToList();
 
-        var menusContent = "";
+        string menusContent = "";
         foreach (var item in list)
         {
             menusContent += NgPageGenerate.GetNavigation(item.module.ToPascalCase(), item.route, RouteNameMap);
         }
         // 插入的起始点
-        var startTmp = "<ng-template #automenu>";
-        var endTmp  = "</ng-template>";
-        var startIndex =  content.LastIndexOf(startTmp)+startTmp.Length;
-        var endIndex = content.LastIndexOf(endTmp);
-        var sb = new StringBuilder();
-        sb.Append(content.AsSpan(0, startIndex));
-        sb.AppendLine();
-        sb.Append(menusContent);
-        sb.Append(content.AsSpan(endIndex));
+        string startTmp = "<ng-template #automenu>";
+        string endTmp = "</ng-template>";
+        int startIndex = content.LastIndexOf(startTmp) + startTmp.Length;
+        int endIndex = content.LastIndexOf(endTmp);
+        StringBuilder sb = new();
+        _ = sb.Append(content.AsSpan(0, startIndex));
+        _ = sb.AppendLine();
+        _ = sb.Append(menusContent);
+        _ = sb.Append(content.AsSpan(endIndex));
         await GenerateFileAsync(dir, fileName, sb.ToString(), true);
     }
 
 
     private async Task GenerateModuleWithRoutingAsync()
     {
-        var entityName = EntityName.ToHyphen();
-        var moduleName = ModuleName ?? EntityName;
-        var routeName = Route?.ToPascalCase().ToHyphen();
-        var dir = Path.Combine(OutputPath, "src", "app", "pages", moduleName, routeName??"");
+        _ = EntityName.ToHyphen();
+        string moduleName = ModuleName ?? EntityName;
+        string? routeName = Route?.ToPascalCase().ToHyphen();
+        string dir = Path.Combine(OutputPath, "src", "app", "pages", moduleName, routeName ?? "");
 
-        var module = Gen.GetModule(Route?.ToPascalCase());
-        var routing = Gen.GetRoutingModule(moduleName, Route?.ToPascalCase());
-        var moduleFilename =  routeName + ".module.ts";
-        var routingFilename = routeName + "-routing.module.ts";
+        string module = Gen.GetModule(Route?.ToPascalCase());
+        string routing = Gen.GetRoutingModule(moduleName, Route?.ToPascalCase());
+        string moduleFilename = routeName + ".module.ts";
+        string routingFilename = routeName + "-routing.module.ts";
         await GenerateFileAsync(dir, moduleFilename, module);
         await GenerateFileAsync(dir, routingFilename, routing);
 
@@ -154,16 +157,16 @@ public class ViewCommand : CommandBase
     /// <returns></returns>
     private async Task GeneratePagesAsync()
     {
-        var moduleName = ModuleName ?? EntityName;
-        var dir = Path.Combine(OutputPath, "src", "app", "pages", moduleName, Route?.ToPascalCase().ToHyphen()??"");
+        string moduleName = ModuleName ?? EntityName;
+        string dir = Path.Combine(OutputPath, "src", "app", "pages", moduleName, Route?.ToPascalCase().ToHyphen() ?? "");
 
-        var addComponent = Gen.BuildAddPage();
-        var editComponent = Gen.BuildEditPage();
-        var indexComponent = Gen.BuildIndexPage();
-        var detailComponent = Gen.BuildDetailPage();
-        var layoutComponent = Gen.BuildLayout();
-        var confirmDialogComponent = NgPageGenerate.BuildConfirmDialog();
-        var componentsModule = NgPageGenerate.GetComponentModule();
+        NgComponentInfo addComponent = Gen.BuildAddPage();
+        NgComponentInfo editComponent = Gen.BuildEditPage();
+        NgComponentInfo indexComponent = Gen.BuildIndexPage();
+        NgComponentInfo detailComponent = Gen.BuildDetailPage();
+        NgComponentInfo layoutComponent = Gen.BuildLayout();
+        NgComponentInfo confirmDialogComponent = NgPageGenerate.BuildConfirmDialog();
+        string componentsModule = NgPageGenerate.GetComponentModule();
 
         await GenerateComponentAsync(dir, addComponent);
         await GenerateComponentAsync(dir, editComponent);
@@ -184,7 +187,7 @@ public class ViewCommand : CommandBase
     /// <returns></returns>
     public async Task GenerateComponentAsync(string dir, NgComponentInfo info)
     {
-        var path = Path.Combine(dir, info.Name);
+        string path = Path.Combine(dir, info.Name);
         await GenerateFileAsync(path, info.Name + ".component.ts", info.TsContent!);
         await GenerateFileAsync(path, info.Name + ".component.css", info.CssContent!);
         await GenerateFileAsync(path, info.Name + ".component.html", info.HtmlContent!);

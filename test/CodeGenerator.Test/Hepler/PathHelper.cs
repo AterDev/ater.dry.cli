@@ -7,7 +7,7 @@ public static class PathHelper
 
     public static string GetProjectPath()
     {
-        var currentDir = Environment.CurrentDirectory;
+        string currentDir = Environment.CurrentDirectory;
         if (currentDir.Contains("bin"))
         {
             currentDir = Path.Combine(currentDir, "../../..");
@@ -17,7 +17,7 @@ public static class PathHelper
 
     public static string GetProjectFilePath(string path)
     {
-        var rootPath = GetProjectPath();
+        string rootPath = GetProjectPath();
         return Path.Combine(rootPath, path);
     }
 }

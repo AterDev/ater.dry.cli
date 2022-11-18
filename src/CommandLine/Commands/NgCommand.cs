@@ -18,10 +18,10 @@ public class NgCommand : CommandBase
 
     public async Task RunAsync()
     {
-        var openApiContent = "";
+        string openApiContent = "";
         if (DocUrl.StartsWith("http://") || DocUrl.StartsWith("https://"))
         {
-            using var http = new HttpClient();
+            using HttpClient http = new();
             openApiContent = await http.GetStringAsync(DocUrl);
         }
         else
@@ -41,19 +41,19 @@ public class NgCommand : CommandBase
 
     public async Task GenerateCommonFilesAsync()
     {
-        var content = NgServiceGenerate.GetBaseService();
-        var dir = Path.Combine(SharePath,"services");
+        string content = NgServiceGenerate.GetBaseService();
+        string dir = Path.Combine(SharePath, "services");
         await GenerateFileAsync(dir, "base.service.ts", content, false);
     }
 
 
     public async Task GenerateNgServicesAsync()
     {
-        var ngGen = new NgServiceGenerate(ApiDocument!.Paths);
-        var services = ngGen.GetServices(ApiDocument!.Tags);
-        foreach (var service in services)
+        NgServiceGenerate ngGen = new(ApiDocument!.Paths);
+        List<Core.Models.GenFileInfo> services = ngGen.GetServices(ApiDocument!.Tags);
+        foreach (Core.Models.GenFileInfo service in services)
         {
-            var dir = Path.Combine(SharePath, "services");
+            string dir = Path.Combine(SharePath, "services");
             await GenerateFileAsync(dir, service.Name, service.Content, true);
         }
     }

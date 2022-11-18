@@ -4,6 +4,6 @@ namespace Studio.Entity;
 
 public class EntityBase
 {
-  [Key]
-  public int Id { get; set; }
+    [Key]
+    public int Id { get; set; }
 }

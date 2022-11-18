@@ -1,4 +1,4 @@
-﻿using PropertyInfo = CodeGenerator.Models.PropertyInfo;
+﻿using PropertyInfo = Core.Models.PropertyInfo;
 
 namespace CodeGenerator.Generate;
 
@@ -29,22 +29,24 @@ public class NgPageGenerate : GenerateBase
     public NgComponentInfo BuildAddPage()
     {
         // 生成.ts
-        var tplContent = GetTplContent("angular.add.add.component.ts");
+        string tplContent = GetTplContent("angular.add.add.component.ts");
         // 替换名称
         tplContent = tplContent.Replace("{$EntityName}", EntityName)
             .Replace("{$EntityPathName}", EntityName.ToHyphen());
         // 解析属性，并生成相应代码
-        var typeHelper = new EntityParseHelper(Path.Combine(DtoPath, "models", DtoDirName, EntityName + "AddDto.cs"));
+        EntityParseHelper typeHelper = new(Path.Combine(DtoPath, "models", DtoDirName, EntityName + "AddDto.cs"));
         typeHelper.Parse();
-        var props = typeHelper.PropertyInfos?
+        List<PropertyInfo>? props = typeHelper.PropertyInfos?
             .Where(p => !p.IsNavigation && !p.Type.StartsWith("Guid"))
             .ToList();
 
-        var definedProperties = "";
-        var definedFormControls = "";
-        var definedValidatorMessage = "";
+        string definedProperties = "";
+        string definedFormControls = "";
+        string definedValidatorMessage = "";
         if (props != null)
+        {
             GetFormControlAndValidate(props, false, ref definedProperties, ref definedFormControls, ref definedValidatorMessage);
+        }
 
         tplContent = tplContent.Replace("{$DefinedProperties}", definedProperties)
             .Replace("{$DefinedFormControls}", definedFormControls)
@@ -64,11 +66,11 @@ public class NgPageGenerate : GenerateBase
         tplContent = CleanTsTplVariables(tplContent);
 
         // 生成html
-        var formGen = new NgFormGenerate();
-        var htmlContent = NgFormGenerate.GenerateAddForm(props);
-        var cssContent = GetTplContent("angular.add.add.component.css.tpl");
+        NgFormGenerate formGen = new();
+        string htmlContent = NgFormGenerate.GenerateAddForm(props);
+        string cssContent = GetTplContent("angular.add.add.component.css.tpl");
 
-        var component = new NgComponentInfo("add")
+        NgComponentInfo component = new("add")
         {
             HtmlContent = htmlContent,
             TsContent = tplContent,
@@ -79,20 +81,20 @@ public class NgPageGenerate : GenerateBase
     public NgComponentInfo BuildEditPage()
     {
         // 生成.ts
-        var tplContent = GetTplContent("angular.edit.edit.component.ts");
+        string tplContent = GetTplContent("angular.edit.edit.component.ts");
         // 替换名称
         tplContent = tplContent.Replace("{$EntityName}", EntityName)
             .Replace("{$EntityPathName}", EntityName.ToHyphen());
         // 解析属性，并生成相应代码
-        var typeHelper = new EntityParseHelper(Path.Combine(DtoPath, "models", DtoDirName, EntityName + "UpdateDto.cs"));
+        EntityParseHelper typeHelper = new(Path.Combine(DtoPath, "models", DtoDirName, EntityName + "UpdateDto.cs"));
         typeHelper.Parse();
-        var props = typeHelper.PropertyInfos?
+        List<PropertyInfo>? props = typeHelper.PropertyInfos?
             .Where(p => !p.IsNavigation && !p.Type.StartsWith("Guid"))
             .ToList();
 
-        var definedProperties = "";
-        var definedFormControls = "";
-        var definedValidatorMessage = "";
+        string definedProperties = "";
+        string definedFormControls = "";
+        string definedValidatorMessage = "";
         if (props != null)
         {
             GetFormControlAndValidate(props, true, ref definedProperties, ref definedFormControls, ref definedValidatorMessage);
@@ -114,11 +116,11 @@ public class NgPageGenerate : GenerateBase
         tplContent = CleanTsTplVariables(tplContent);
 
         // 生成html
-        var formGen = new NgFormGenerate();
-        var htmlContent = NgFormGenerate.GenerateEditForm(props);
-        var cssContent = GetTplContent("angular.edit.edit.component.css.tpl");
+        NgFormGenerate formGen = new();
+        string htmlContent = NgFormGenerate.GenerateEditForm(props);
+        string cssContent = GetTplContent("angular.edit.edit.component.css.tpl");
 
-        var component = new NgComponentInfo("edit")
+        NgComponentInfo component = new("edit")
         {
             HtmlContent = htmlContent,
             TsContent = tplContent,
@@ -128,26 +130,26 @@ public class NgPageGenerate : GenerateBase
     }
     public NgComponentInfo BuildIndexPage()
     {
-        var cssContent = GetTplContent("angular.index.index.component.css.tpl");
-        var typeHelper = new EntityParseHelper(Path.Combine(DtoPath, "models", DtoDirName, EntityName + "ItemDto.cs"));
+        string cssContent = GetTplContent("angular.index.index.component.css.tpl");
+        EntityParseHelper typeHelper = new(Path.Combine(DtoPath, "models", DtoDirName, EntityName + "ItemDto.cs"));
         typeHelper.Parse();
         // 需要展示的列
-        var columns = typeHelper.PropertyInfos?.Where(p => !p.IsList && !p.IsNavigation)
-            .Where(p => p.Name.ToLower()!="id")
+        List<string>? columns = typeHelper.PropertyInfos?.Where(p => !p.IsList && !p.IsNavigation)
+            .Where(p => p.Name.ToLower() != "id")
             .Select(p => p.Name)
             .Skip(0).Take(5)
             .ToList();
 
-        var columnsDef = Array.Empty<string>();
+        string[] columnsDef = Array.Empty<string>();
         if (columns != null && columns.Any())
         {
             columnsDef = columns.Select(s =>
             {
-                var type = typeHelper.PropertyInfos?
+                string? type = typeHelper.PropertyInfos?
                     .Where(p => p.Name.Equals(s))
                     .Select(p => p.Type)
                     .FirstOrDefault();
-                var pipe = "";
+                string pipe = "";
                 if (type != null)
                 {
                     if (type.Equals("DateTime") || type.Equals("DateTimeOffset"))
@@ -166,7 +168,7 @@ public class NgPageGenerate : GenerateBase
             }).ToArray();
         }
 
-        var htmlContent = GetTplContent("angular.index.index.component.html.tpl");
+        string htmlContent = GetTplContent("angular.index.index.component.html.tpl");
         htmlContent = htmlContent.Replace("{$ColumnsDef}", string.Join("", columnsDef));
 
         // 解析属性，并生成相应ts代码
@@ -180,12 +182,12 @@ public class NgPageGenerate : GenerateBase
             }).ToArray();
         }
 
-        var tplContent = GetTplContent("angular.index.index.component.ts");
+        string tplContent = GetTplContent("angular.index.index.component.ts");
         tplContent = tplContent.Replace("{$EntityName}", EntityName)
             .Replace("{$EntityPathName}", EntityName.ToHyphen())
             .Replace("{$Columns}", string.Join(", ", columnsDef));
 
-        var component = new NgComponentInfo("index")
+        NgComponentInfo component = new("index")
         {
             HtmlContent = htmlContent,
             TsContent = tplContent,
@@ -195,20 +197,20 @@ public class NgPageGenerate : GenerateBase
     }
     public NgComponentInfo BuildDetailPage()
     {
-        var cssContent = GetTplContent("angular.detail.detail.component.css.tpl");
-        var typeHelper = new EntityParseHelper(Path.Combine(DtoPath, "models", DtoDirName, EntityName + "ShortDto.cs"));
+        string cssContent = GetTplContent("angular.detail.detail.component.css.tpl");
+        EntityParseHelper typeHelper = new(Path.Combine(DtoPath, "models", DtoDirName, EntityName + "ShortDto.cs"));
         typeHelper.Parse();
-        var props = typeHelper.PropertyInfos?.Where(p => !p.IsList && !p.IsNavigation)?.ToList();
+        List<PropertyInfo>? props = typeHelper.PropertyInfos?.Where(p => !p.IsList && !p.IsNavigation)?.ToList();
 
         // html
-        var htmlContent = GetTplContent("angular.detail.detail.component.html.tpl");
-        var content = Array.Empty<string>();
+        string htmlContent = GetTplContent("angular.detail.detail.component.html.tpl");
+        string[] content = Array.Empty<string>();
         if (props != null)
         {
             content = props.Select(p =>
             {
                 // 管道处理
-                var pipe = "";
+                string pipe = "";
                 if (p.Type.ToLower().Contains("datetime"))
                 {
                     pipe = "|date:'yyyy-MM-dd HH:mm:ss'";
@@ -220,11 +222,11 @@ public class NgPageGenerate : GenerateBase
         htmlContent = htmlContent.Replace("{$Content}", string.Join("", content));
 
         // ts
-        var tplContent = GetTplContent("angular.detail.detail.component.ts");
+        string tplContent = GetTplContent("angular.detail.detail.component.ts");
         tplContent = tplContent.Replace("{$EntityName}", EntityName)
             .Replace("{$EntityPathName}", EntityName.ToHyphen());
 
-        var component = new NgComponentInfo("detail")
+        NgComponentInfo component = new("detail")
         {
             HtmlContent = htmlContent,
             TsContent = tplContent,
@@ -234,12 +236,12 @@ public class NgPageGenerate : GenerateBase
     }
     public NgComponentInfo BuildLayout()
     {
-        var cssContent = GetTplContent("angular.layout.layout.component.css.tpl");
-        var htmlContent = GetTplContent("angular.layout.layout.component.html.tpl");
-        var tplContent = GetTplContent("angular.layout.layout.component.ts");
+        string cssContent = GetTplContent("angular.layout.layout.component.css.tpl");
+        string htmlContent = GetTplContent("angular.layout.layout.component.html.tpl");
+        string tplContent = GetTplContent("angular.layout.layout.component.ts");
         tplContent = tplContent.Replace("{$ModulePathName}", EntityName.ToHyphen());
 
-        var component = new NgComponentInfo("layout")
+        NgComponentInfo component = new("layout")
         {
             HtmlContent = htmlContent,
             TsContent = tplContent,
@@ -250,11 +252,11 @@ public class NgPageGenerate : GenerateBase
     }
     public static NgComponentInfo BuildConfirmDialog()
     {
-        var cssContent = GetTplContent("angular.confirmDialog.confirm-dialog.component.css.tpl");
-        var htmlContent = GetTplContent("angular.confirmDialog.confirm-dialog.component.html.tpl");
-        var tplContent = GetTplContent("angular.confirmDialog.confirm-dialog.component.ts");
+        string cssContent = GetTplContent("angular.confirmDialog.confirm-dialog.component.css.tpl");
+        string htmlContent = GetTplContent("angular.confirmDialog.confirm-dialog.component.html.tpl");
+        string tplContent = GetTplContent("angular.confirmDialog.confirm-dialog.component.ts");
 
-        var component = new NgComponentInfo("confirm-dialog")
+        NgComponentInfo component = new("confirm-dialog")
         {
             HtmlContent = htmlContent,
             TsContent = tplContent,
@@ -268,8 +270,8 @@ public class NgPageGenerate : GenerateBase
     /// </summary>
     public string GetModule(string? route = null)
     {
-        var tplContent = GetTplContent("angular.module.ts");
-        var pathName = route?.ToHyphen()??EntityName.ToHyphen();
+        string tplContent = GetTplContent("angular.module.ts");
+        string pathName = route?.ToHyphen() ?? EntityName.ToHyphen();
         tplContent = tplContent.Replace("{$ModuleName}", route ?? EntityName)
             .Replace("{$ModulePathName}", pathName);
         return tplContent;
@@ -285,8 +287,8 @@ public class NgPageGenerate : GenerateBase
     /// <returns></returns>
     public static string GetNavigation(string groupName, List<string> modules, List<KeyValuePair<string, string>> map)
     {
-        var navListTmp = "";
-        foreach (var item in modules)
+        string navListTmp = "";
+        foreach (string item in modules)
         {
             navListTmp += $@"
     <mat-nav-list>
@@ -296,7 +298,7 @@ public class NgPageGenerate : GenerateBase
       </a>
     </mat-nav-list>";
         }
-        var temp=@$"      
+        string temp = @$"      
   <mat-expansion-panel hideToggle>
     <mat-expansion-panel-header>
       <mat-panel-title>
@@ -317,8 +319,8 @@ public class NgPageGenerate : GenerateBase
     /// <returns></returns>
     public string GetRoutingModule(string? modulePath = null, string? route = null)
     {
-        var pathName = route?.ToHyphen()?? EntityName.ToHyphen();
-        var tplContent = GetTplContent("angular.routing.module.ts");
+        string pathName = route?.ToHyphen() ?? EntityName.ToHyphen();
+        string tplContent = GetTplContent("angular.routing.module.ts");
         tplContent = tplContent.Replace("{$ModuleName}", route ?? EntityName)
             .Replace("{$RoutePathName}", pathName)
             .Replace("{$ModulePathName}", modulePath ?? "");
@@ -333,17 +335,17 @@ public class NgPageGenerate : GenerateBase
     /// <returns></returns>
     public static string GetGroupModule(string groupName, List<string> modules)
     {
-        var tplContent = GetTplContent("angular.group.module.ts");
-        var pathName = groupName.ToHyphen();
+        string tplContent = GetTplContent("angular.group.module.ts");
+        string pathName = groupName.ToHyphen();
         tplContent = tplContent.Replace("{$ModuleName}", groupName)
             .Replace("{$ModulePathName}", pathName);
 
         // 导入的模块内容
-        var importModules = string.Join(",\n    ", modules.Select(m=>m+"Module").ToArray());
+        string importModules = string.Join(",\n    ", modules.Select(m => m + "Module").ToArray());
 
-        var importString = modules.Select(s=>$@"import {{ {s}Module }} from './{s.ToHyphen()}/{s.ToHyphen()}.module';")
+        string[] importString = modules.Select(s => $@"import {{ {s}Module }} from './{s.ToHyphen()}/{s.ToHyphen()}.module';")
             .ToArray();
-        var importModulesPath = string.Join("\n",importString);
+        string importModulesPath = string.Join("\n", importString);
         tplContent = tplContent.Replace("{$ImportModulesPath}", importModulesPath)
             .Replace("{$ImportModules}", importModules);
 
@@ -357,7 +359,7 @@ public class NgPageGenerate : GenerateBase
     /// <returns></returns>
     public static string GetGroupRoutingModule(string groupName)
     {
-        var tplContent = GetTplContent("angular.group.routing.module.ts");
+        string tplContent = GetTplContent("angular.group.routing.module.ts");
         tplContent = tplContent.Replace("{$ModuleName}", groupName)
             .Replace("{$ModulePathName}", groupName.ToHyphen() ?? "");
 
@@ -377,9 +379,9 @@ public class NgPageGenerate : GenerateBase
     /// <returns></returns>
     private static string InsertEnum(string content, List<PropertyInfo> props)
     {
-        var importStrings = "";
-        var declareStrings = "";
-        foreach (var item in props)
+        string importStrings = "";
+        string declareStrings = "";
+        foreach (PropertyInfo item in props)
         {
             importStrings += @$"import {{ {item.Type} }} from 'src/app/share/models/enum/{item.Type.ToHyphen()}.model';" + Environment.NewLine;
             declareStrings += @$"{item.Type} = {item.Type};" + Environment.NewLine;
@@ -432,7 +434,7 @@ import { CKEditor5 } from '@ckeditor/ckeditor5-angular';
     /// <returns></returns>
     private string CleanTsTplVariables(string tplContent)
     {
-        foreach (var item in TplVariables)
+        foreach (string item in TplVariables)
         {
             tplContent = tplContent.Replace(item, "");
         }
@@ -440,16 +442,28 @@ import { CKEditor5 } from '@ckeditor/ckeditor5-angular';
     }
     private static void GetFormControlAndValidate(List<PropertyInfo> props, bool isEdit, ref string definedProperties, ref string definedFormControls, ref string definedValidatorMessage)
     {
-        foreach (var property in props)
+        foreach (PropertyInfo property in props)
         {
-            var name = property.Name.ToCamelCase();
+            string name = property.Name.ToCamelCase();
             definedProperties += $@"    get {name}() {{ return this.formGroup.get('{name}'); }}
 ";
-            var validators = new List<string>();
-            if (property.IsRequired) validators.Add("Validators.required");
-            if (property.MinLength != null) validators.Add($"Validators.minLength({property.MinLength})");
-            if (property.MaxLength != null) validators.Add($"Validators.maxLength({property.MaxLength})");
-            var defaultValue = isEdit? $"this.data.{name}":"null";
+            List<string> validators = new();
+            if (property.IsRequired)
+            {
+                validators.Add("Validators.required");
+            }
+
+            if (property.MinLength != null)
+            {
+                validators.Add($"Validators.minLength({property.MinLength})");
+            }
+
+            if (property.MaxLength != null)
+            {
+                validators.Add($"Validators.maxLength({property.MaxLength})");
+            }
+
+            string defaultValue = isEdit ? $"this.data.{name}" : "null";
             definedFormControls += $@"      {name}: new FormControl({defaultValue}, [{string.Join(",", validators)}]),
 ";
             definedValidatorMessage += @$"      case '{name}':

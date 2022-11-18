@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace CodeGenerator.Infrastructure.Utils;
+namespace Core.Infrastructure.Utils;
 
 public static class Extenstions
 {
@@ -16,26 +16,26 @@ public static class Extenstions
             return string.Empty;
         }
 
-        var builder = new StringBuilder();
-        var upperNumber = 0;
-        for (var i = 0; i < str.Length; i++)
+        StringBuilder builder = new();
+        int upperNumber = 0;
+        for (int i = 0; i < str.Length; i++)
         {
-            var item = str[i];
+            char item = str[i];
             // 连续的大写只添加一个-
-            var pre = i >= 1 ? str[i - 1] : 'a';
+            char pre = i >= 1 ? str[i - 1] : 'a';
             if (char.IsUpper(item) && char.IsLower(pre))
             {
                 upperNumber++;
                 if (upperNumber > 1)
                 {
-                    builder.Append('-');
+                    _ = builder.Append('-');
                 }
             }
             else if (item is '_' or ' ')
             {
-                builder.Append('-');
+                _ = builder.Append('-');
             }
-            builder.Append(char.ToLower(item));
+            _ = builder.Append(char.ToLower(item));
         }
 
         return builder.ToString();
@@ -52,19 +52,12 @@ public static class Extenstions
         {
             return string.Empty;
         }
-        var resultBuilder = new StringBuilder();
-        foreach (var c in str)
+        StringBuilder resultBuilder = new();
+        foreach (char c in str)
         {
-            if (!char.IsLetterOrDigit(c))
-            {
-                resultBuilder.Append(' ');
-            }
-            else
-            {
-                resultBuilder.Append(c);
-            }
+            _ = !char.IsLetterOrDigit(c) ? resultBuilder.Append(' ') : resultBuilder.Append(c);
         }
-        var result = resultBuilder.ToString();
+        string result = resultBuilder.ToString();
         result = string.Join(string.Empty, result.Split(' ').Select(r => r.ToUpperFirst()).ToArray());
         return result;
     }
@@ -95,8 +88,12 @@ public static class Extenstions
 
     public static T? Copy<T>(this T origin)
     {
-        if (origin == null) return default;
-        var stream = new MemoryStream();
+        if (origin == null)
+        {
+            return default;
+        }
+
+        MemoryStream stream = new();
         JsonSerializer.Serialize(stream, origin);
         stream.Position = 0;
         return JsonSerializer.Deserialize<T>(stream);

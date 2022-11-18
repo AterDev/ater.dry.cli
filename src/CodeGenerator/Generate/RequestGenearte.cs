@@ -35,7 +35,7 @@ public class RequestGenearte : GenerateBase
 
     public static string GetBaseService(RequestLibType libType)
     {
-        var content = libType switch
+        string content = libType switch
         {
             RequestLibType.NgHttp => GetTplContent("angular.base.service.tpl"),
             RequestLibType.Axios => GetTplContent("RequestService.axios.service.tpl"),
@@ -51,13 +51,13 @@ public class RequestGenearte : GenerateBase
     /// <returns></returns>
     public List<RequestServiceFunction> GetAllRequestFunctions()
     {
-        var functions = new List<RequestServiceFunction>();
+        List<RequestServiceFunction> functions = new();
         // 处理所有方法
-        foreach (var path in PathsPairs)
+        foreach (KeyValuePair<string, OpenApiPathItem> path in PathsPairs)
         {
-            foreach (var operation in path.Value.Operations)
+            foreach (KeyValuePair<OperationType, OpenApiOperation> operation in path.Value.Operations)
             {
-                var function = new RequestServiceFunction
+                RequestServiceFunction function = new()
                 {
                     Description = operation.Value.Summary,
                     Method = operation.Key.ToString(),
@@ -71,9 +71,9 @@ public class RequestGenearte : GenerateBase
                     ?.Schema);
                 function.Params = operation.Value.Parameters?.Select(p =>
                 {
-                    var location = p.In?.GetDisplayName();
-                    var inpath = location?.ToLower()?.Equals("path");
-                    var (type, _) = GetParamType(p.Schema);
+                    string? location = p.In?.GetDisplayName();
+                    bool? inpath = location?.ToLower()?.Equals("path");
+                    (string type, string _) = GetParamType(p.Schema);
                     return new FunctionParams
                     {
                         Description = p.Description,
@@ -97,34 +97,33 @@ public class RequestGenearte : GenerateBase
     /// <returns></returns>
     public List<GenFileInfo> GetServices(IList<OpenApiTag> tags)
     {
-        var files = new List<GenFileInfo>();
-        var functions = GetAllRequestFunctions();
+        List<GenFileInfo> files = new();
+        List<RequestServiceFunction> functions = GetAllRequestFunctions();
 
         // 先以tag分组
-        var funcGroups = functions.GroupBy(f => f.Tag).ToList();
-        foreach (var group in funcGroups)
+        List<IGrouping<string?, RequestServiceFunction>> funcGroups = functions.GroupBy(f => f.Tag).ToList();
+        foreach (IGrouping<string?, RequestServiceFunction>? group in funcGroups)
         {
             // 查询该标签包含的所有方法
-            var tagFunctions = group.ToList();
-            var currentTag = tags.Where(t => t.Name == group.Key).FirstOrDefault();
-            if (currentTag == null)
-                currentTag = new OpenApiTag { Name = group.Key, Description = group.Key };
-            var serviceFile = new RequestServiceFile
+            List<RequestServiceFunction> tagFunctions = group.ToList();
+            OpenApiTag? currentTag = tags.Where(t => t.Name == group.Key).FirstOrDefault();
+            currentTag ??= new OpenApiTag { Name = group.Key, Description = group.Key };
+            RequestServiceFile serviceFile = new()
             {
                 Description = currentTag.Description,
                 Name = currentTag.Name!,
                 Functions = tagFunctions
             };
 
-            var content = LibType switch
+            string content = LibType switch
             {
                 RequestLibType.NgHttp => serviceFile.ToNgService(),
                 RequestLibType.Axios => ToAxiosRequestService(serviceFile),
                 _ => ""
             };
 
-            var fileName = currentTag.Name?.ToHyphen() + ".service.ts";
-            var file = new GenFileInfo(content)
+            string fileName = currentTag.Name?.ToHyphen() + ".service.ts";
+            GenFileInfo file = new(content)
             {
                 Name = fileName,
             };
@@ -135,9 +134,9 @@ public class RequestGenearte : GenerateBase
 
     public List<GenFileInfo> GetTSInterfaces()
     {
-        var tsGen = new TSModelGenerate(OpenApi);
-        var  files = new List<GenFileInfo>();
-        foreach (var item in Schemas)
+        TSModelGenerate tsGen = new(OpenApi);
+        List<GenFileInfo> files = new();
+        foreach (KeyValuePair<string, OpenApiSchema> item in Schemas)
         {
             files.Add(tsGen.GenerateInterfaceFile(item.Key, item.Value));
         }
@@ -149,12 +148,16 @@ public class RequestGenearte : GenerateBase
     public static (string? type, string? refType) GetParamType(OpenApiSchema? schema)
     {
         if (schema == null)
+        {
             return (string.Empty, string.Empty);
+        }
 
-        var type = "any";
-        var refType = schema.Reference?.Id;
+        string? type = "any";
+        string? refType = schema.Reference?.Id;
         if (schema.Reference != null)
+        {
             return (schema.Reference.Id, schema.Reference.Id);
+        }
         // 常规类型
         switch (schema.Type)
         {
@@ -207,11 +210,13 @@ public class RequestGenearte : GenerateBase
                 }
                 break;
             case "object":
-                var obj = schema.Properties.FirstOrDefault().Value;
+                OpenApiSchema obj = schema.Properties.FirstOrDefault().Value;
                 if (obj != null)
                 {
                     if (obj.Format == "binary")
+                    {
                         type = "FormData";
+                    }
                 }
                 break;
             default:
@@ -229,19 +234,19 @@ public class RequestGenearte : GenerateBase
 
     public string ToAxiosRequestService(RequestServiceFile serviceFile)
     {
-        var tplContent = GetTplContent("RequestService.service.ts");
-        var functionString = "";
-        var functions = serviceFile.Functions;
+        string tplContent = GetTplContent("RequestService.service.ts");
+        string functionString = "";
+        List<RequestServiceFunction>? functions = serviceFile.Functions;
         // import引用的models
-        var importModels = "";
+        string importModels = "";
         if (functions != null)
         {
             functionString = string.Join("\n",
-                functions.Select(f => ToAxiosFunction(f)).ToArray());
-            var refTypes = GetRefTyeps(functions);
+                functions.Select(ToAxiosFunction).ToArray());
+            List<string> refTypes = GetRefTyeps(functions);
             refTypes.ForEach(t =>
             {
-                var dirName = ModelDictionary.GetValueOrDefault(t);
+                string? dirName = ModelDictionary.GetValueOrDefault(t);
                 importModels += $"import {{ {t} }} from '../models/{dirName?.ToHyphen()}/{t.ToHyphen()}.model';{Environment.NewLine}";
             });
         }
@@ -259,19 +264,19 @@ public class RequestGenearte : GenerateBase
     /// <returns></returns>
     protected string ToAxiosFunction(RequestServiceFunction function)
     {
-        var Name = function.Name;
-        var Params = function.Params;
-        var RequestType = function.RequestType;
-        var ResponseType = function.ResponseType;
-        var Path = function.Path;
+        string Name = function.Name;
+        List<FunctionParams>? Params = function.Params;
+        string RequestType = function.RequestType;
+        string? ResponseType = function.ResponseType;
+        string Path = function.Path;
 
         // 函数名处理，去除tag前缀，然后格式化
         Name = Name.Replace(function.Tag + "_", "");
         Name = Name.ToCamelCase();
         // 处理参数
-        var paramsString = "";
-        var paramsComments = "";
-        var dataString = "";
+        string paramsString = "";
+        string paramsComments = "";
+        string dataString = "";
         if (Params?.Count > 0)
         {
             paramsString = string.Join(", ",
@@ -304,34 +309,35 @@ public class RequestGenearte : GenerateBase
         }
         paramsString += "extOptions?: ExtOptions";
         // 注释生成
-        var comments = $@"  /**
+        string comments = $@"  /**
    * {function.Description ?? Name}
 {paramsComments}   */";
 
         // 构造请求url
-        var paths = Params?.Where(p => p.InPath).Select(p => p.Name)?.ToList();
-        if (paths != null)
-        {
-            paths.ForEach(p =>
+        List<string?>? paths = Params?.Where(p => p.InPath).Select(p => p.Name)?.ToList();
+        paths?.ForEach(p =>
             {
-                var origin = $"{{{p}}}";
+                string origin = $"{{{p}}}";
                 Path = Path.Replace(origin, "$" + origin);
             });
-        }
         // 需要拼接的参数,特殊处理文件上传
-        var reqParams = Params?.Where(p => !p.InPath && p.Type != "FormData")
+        List<string?>? reqParams = Params?.Where(p => !p.InPath && p.Type != "FormData")
             .Select(p => p.Name)?.ToList();
         if (reqParams != null)
         {
-            var queryParams = "";
+            string queryParams = "";
             queryParams = string.Join("&", reqParams.Select(p => { return $"{p}=${{{p}}}"; }).ToArray());
             if (!string.IsNullOrEmpty(queryParams))
+            {
                 Path += "?" + queryParams;
+            }
         }
         // 上传文件时的名称
-        var file = Params?.Where(p => p.Type!.Equals("FormData")).FirstOrDefault();
+        FunctionParams? file = Params?.Where(p => p.Type!.Equals("FormData")).FirstOrDefault();
         if (file != null)
+        {
             dataString = $", {file.Name}";
+        }
 
         // 默认添加ext
         if (string.IsNullOrEmpty(dataString))
@@ -342,7 +348,7 @@ public class RequestGenearte : GenerateBase
         {
             dataString += ", extOptions";
         }
-        var functionString = @$"{comments}
+        string functionString = @$"{comments}
   {Name}({paramsString}): Promise<{ResponseType}> {{
     const url = `{Path}`;
     return this.request<{ResponseType}>('{function.Method.ToLower()}', url{dataString});
@@ -358,27 +364,38 @@ public class RequestGenearte : GenerateBase
     /// <returns></returns>
     protected List<string> GetRefTyeps(List<RequestServiceFunction> functions)
     {
-        var refTypes = new List<string>();
+        List<string> refTypes = new();
 
-        var baseTypes = new string[] { "string", "string[]", "number", "number[]", "boolean" };
+        string[] baseTypes = new string[] { "string", "string[]", "number", "number[]", "boolean" };
         // 获取请求和响应的类型，以便导入
-        var requestRefs = functions
+        List<string?> requestRefs = functions
                 .Where(f => !string.IsNullOrEmpty(f.RequestRefType)
                     && !baseTypes.Contains(f.RequestRefType))
                 .Select(f => f.RequestRefType).ToList();
-        var responseRefs = functions
+        List<string?> responseRefs = functions
                 .Where(f => !string.IsNullOrEmpty(f.ResponseRefType)
                     && !baseTypes.Contains(f.ResponseRefType))
                 .Select(f => f.ResponseRefType).ToList();
 
         // 参数中的类型
-        var paramsRefs = functions.SelectMany(f => f.Params!)
+        List<string?> paramsRefs = functions.SelectMany(f => f.Params!)
                 .Where(p => !baseTypes.Contains(p.Type))
                 .Select(p => p.Type)
                 .ToList();
-        if (requestRefs != null) refTypes.AddRange(requestRefs!);
-        if (responseRefs != null) refTypes.AddRange(responseRefs!);
-        if (paramsRefs != null) refTypes.AddRange(paramsRefs!);
+        if (requestRefs != null)
+        {
+            refTypes.AddRange(requestRefs!);
+        }
+
+        if (responseRefs != null)
+        {
+            refTypes.AddRange(responseRefs!);
+        }
+
+        if (paramsRefs != null)
+        {
+            refTypes.AddRange(paramsRefs!);
+        }
 
         refTypes = refTypes.GroupBy(t => t)
             .Select(g => g.FirstOrDefault()!)

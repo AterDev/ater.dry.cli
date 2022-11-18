@@ -1,4 +1,4 @@
-﻿namespace CodeGenerator.Models;
+﻿namespace Core.Models;
 
 public class PropertyInfo
 {
@@ -52,16 +52,16 @@ public class PropertyInfo
     /// <returns></returns>
     public string ToCsharpLine()
     {
-        var attributeText = AttributeText;
+        string? attributeText = AttributeText;
         if (!string.IsNullOrEmpty(attributeText))
         {
             attributeText = attributeText.Trim();
             attributeText = $@"    {attributeText.Replace(Environment.NewLine, Environment.NewLine + "    ")}"
                 + Environment.NewLine;
         }
-        var nullableMark = IsNullable ? "?" : "";
-        var requiredKeyword = IsRequired ? "required " : "";
-        var content = @$"    public {requiredKeyword}{Type}{nullableMark} {Name} {{ get; set; }}";
+        string nullableMark = IsNullable ? "?" : "";
+        string requiredKeyword = IsRequired ? "required " : "";
+        string content = @$"    public {requiredKeyword}{Type}{nullableMark} {Name} {{ get; set; }}";
         if (Name.ToLower().Contains("password"))
         {
             attributeText = attributeText?.Replace("    ", "    // ");
@@ -69,23 +69,5 @@ public class PropertyInfo
         }
         return $@"{Comments}{attributeText}{content}{SuffixContent}
 ";
-    }
-
-    /// <summary>
-    /// 转换成前端表单控件
-    /// </summary>
-    /// <returns></returns>
-    public string ToNgInputControl()
-    {
-        var input = new NgInputBuilder(Type, Name, DisplayName)
-        {
-            IsDecimal = IsDecimal,
-            IsRequired = IsRequired,
-            MaxLength = MaxLength,
-            MinLength = MinLength,
-            IsEnum = IsEnum,
-            IsList = IsList
-        };
-        return input.ToFormControl();
     }
 }

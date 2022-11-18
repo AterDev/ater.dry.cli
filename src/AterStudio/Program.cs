@@ -4,28 +4,29 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddDbContext<ContextBase>(options =>
 {
-    var connectionString = builder.Configuration.GetConnectionString("default");
-    options.UseSqlite(connectionString);
+    string? connectionString = builder.Configuration.GetConnectionString("default");
+    _ = options.UseSqlite(connectionString);
 });
 builder.Services.AddControllersWithViews();
 builder.Services.AddEndpointsApiExplorer();
 
 
 builder.Services.AddScoped<ProjectManager>();
+
 // corsÅäÖÃ 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("default", builder =>
     {
-        builder.AllowAnyOrigin();
-        builder.AllowAnyMethod();
-        builder.AllowAnyHeader();
+        _ = builder.AllowAnyOrigin();
+        _ = builder.AllowAnyMethod();
+        _ = builder.AllowAnyHeader();
     });
 });
 builder.Services.AddSwaggerGen(c =>
@@ -60,7 +61,7 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

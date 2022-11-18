@@ -16,7 +16,7 @@ public class EnumSchemaFilter : ISchemaFilter
         {
             //model.Enum.Clear();
             //model.Description = "desp";
-            var name = new OpenApiArray();
+            OpenApiArray name = new();
             Enum.GetNames(context.Type)
                 .ToList()
                 .ForEach(n =>

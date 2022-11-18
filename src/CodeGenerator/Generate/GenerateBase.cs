@@ -13,14 +13,14 @@ public class GenerateBase
     {
         tplPath = "CodeGenerator.Templates." + tplPath;
         // 读取模板文件
-        var assembly = Assembly.GetExecutingAssembly();
-        using var stream = assembly.GetManifestResourceStream(tplPath);
+        Assembly assembly = Assembly.GetExecutingAssembly();
+        using Stream? stream = assembly.GetManifestResourceStream(tplPath);
         if (stream == null)
         {
             Console.WriteLine("  ❌ can't find tpl file:" + tplPath);
             return "";
         }
-        using var reader = new StreamReader(stream);
+        using StreamReader reader = new(stream);
         return reader.ReadToEnd();
     }
 
@@ -33,7 +33,10 @@ public class GenerateBase
     protected static void SaveToFile(string path, string fileName, string content)
     {
         if (!Directory.Exists(path))
-            Directory.CreateDirectory(path);
+        {
+            _ = Directory.CreateDirectory(path);
+        }
+
         File.WriteAllText(Path.Combine(path, fileName), content);
         Console.WriteLine($"Created file {Path.Combine(path, fileName)}.");
     }

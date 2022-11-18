@@ -20,7 +20,7 @@ public class DtoCommand : CommandBase
         {
             AssemblyName = new DirectoryInfo(DtoPath).Name
         };
-        var entityName = Path.GetFileNameWithoutExtension(entityPath);
+        string entityName = Path.GetFileNameWithoutExtension(entityPath);
         Instructions.Add($"  🔹 generate {entityName} dtos.");
     }
 
@@ -76,8 +76,8 @@ public class DtoCommand : CommandBase
     public async Task SaveToFileAsync(string dtoType, string? content, bool cover = false)
     {
         // 以文件名为准
-        var entityName = Path.GetFileNameWithoutExtension(new FileInfo(EntityPath).Name);
-        var outputDir = Path.Combine(DtoPath, "Models", entityName + "Dtos");
+        string entityName = Path.GetFileNameWithoutExtension(new FileInfo(EntityPath).Name);
+        string outputDir = Path.Combine(DtoPath, "Models", entityName + "Dtos");
         await GenerateFileAsync(outputDir, $"{entityName}{dtoType}Dto.cs", content ?? "", cover);
     }
 }

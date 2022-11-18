@@ -1,6 +1,6 @@
 ﻿using System.Xml.Linq;
 
-namespace CodeGenerator.Infrastructure.Helper;
+namespace Core.Infrastructure.Helper;
 
 public class AssemblyHelper
 {
@@ -12,7 +12,7 @@ public class AssemblyHelper
     /// <returns></returns>
     public static FileInfo? FindProjectFile(DirectoryInfo dir, DirectoryInfo? root = null)
     {
-        var file = dir.GetFiles("*.csproj")?.FirstOrDefault();
+        FileInfo? file = dir.GetFiles("*.csproj")?.FirstOrDefault();
         return root == null ? file : file == null && dir != root ? FindProjectFile(dir.Parent!, root) : file;
     }
 
@@ -24,8 +24,8 @@ public class AssemblyHelper
     /// <returns>the search file path,return null if not found </returns>
     public static string? FindFileInProject(string projectFilePath, string searchFileName)
     {
-        var dir = new DirectoryInfo(Path.GetDirectoryName(projectFilePath));
-        var files = Directory.GetFiles(dir.FullName, searchFileName, SearchOption.AllDirectories);
+        DirectoryInfo dir = new(Path.GetDirectoryName(projectFilePath));
+        string[] files = Directory.GetFiles(dir.FullName, searchFileName, SearchOption.AllDirectories);
         return files.Any() ? files[0] : default;
     }
 
@@ -36,13 +36,13 @@ public class AssemblyHelper
     /// <returns></returns>
     public static string GetAssemblyName(FileInfo file)
     {
-        var xml = XElement.Load(file.FullName);
-        var node = xml.Descendants("PropertyGroup")
+        XElement xml = XElement.Load(file.FullName);
+        XElement? node = xml.Descendants("PropertyGroup")
             .SelectMany(pg => pg.Elements())
             .Where(el => el.Name.LocalName.Equals("AssemblyName"))
             .FirstOrDefault();
         // 默认名称
-        var name = Path.GetFileNameWithoutExtension(file.Name);
+        string name = Path.GetFileNameWithoutExtension(file.Name);
         if (node != null)
         {
             if (!node.Value.Contains("$(MSBuildProjectName)"))
@@ -55,7 +55,7 @@ public class AssemblyHelper
 
     public static string? GetAssemblyName(DirectoryInfo dir)
     {
-        var file = FindProjectFile(dir);
+        FileInfo? file = FindProjectFile(dir);
         return file == null ? null : GetAssemblyName(file);
     }
     /// <summary>
@@ -65,15 +65,19 @@ public class AssemblyHelper
     /// <returns></returns>
     public static string? GetNamespaceName(DirectoryInfo dir)
     {
-        var file = FindProjectFile(dir);
-        if (file == null) return null;
-        var xml = XElement.Load(file.FullName);
-        var node = xml.Descendants("PropertyGroup")
+        FileInfo? file = FindProjectFile(dir);
+        if (file == null)
+        {
+            return null;
+        }
+
+        XElement xml = XElement.Load(file.FullName);
+        XElement? node = xml.Descendants("PropertyGroup")
             .SelectMany(pg => pg.Elements())
             .Where(el => el.Name.LocalName.Equals("RootNamespace"))
             .FirstOrDefault();
         // 默认名称
-        var name = Path.GetFileNameWithoutExtension(file.Name);
+        string name = Path.GetFileNameWithoutExtension(file.Name);
         if (node != null)
         {
             if (!node.Value.Contains("MSBuildProjectName"))
@@ -95,9 +99,9 @@ public class AssemblyHelper
     {
         try
         {
-            var file = dir.GetFiles("*.sln")?.FirstOrDefault();
+            FileInfo? file = dir.GetFiles("*.sln")?.FirstOrDefault();
             return root == null ? file
-                : (file == null && dir != root) ? GetSlnFile(dir.Parent!, searchPattern, root) : file;
+                : file == null && dir != root ? GetSlnFile(dir.Parent!, searchPattern, root) : file;
         }
         catch (Exception)
         {
@@ -111,18 +115,18 @@ public class AssemblyHelper
     /// <returns></returns>
     public static List<XmlCommentMember>? GetXmlMembers(DirectoryInfo dir)
     {
-        var projectFile = dir.GetFiles("*.csproj")?.FirstOrDefault();
+        FileInfo? projectFile = dir.GetFiles("*.csproj")?.FirstOrDefault();
         if (projectFile != null)
         {
-            var assemblyName = GetAssemblyName(projectFile);
-            var  xmlFile = dir.GetFiles($"{assemblyName}.xml", SearchOption.AllDirectories).FirstOrDefault();
+            string assemblyName = GetAssemblyName(projectFile);
+            FileInfo? xmlFile = dir.GetFiles($"{assemblyName}.xml", SearchOption.AllDirectories).FirstOrDefault();
             if (xmlFile != null)
             {
-                var xml = XElement.Load(xmlFile.FullName);
-                var members = xml.Descendants("member")
-                    .Select(s=>new XmlCommentMember
+                XElement xml = XElement.Load(xmlFile.FullName);
+                List<XmlCommentMember> members = xml.Descendants("member")
+                    .Select(s => new XmlCommentMember
                     {
-                        FullName = s.Attribute("name")?.Value??"",
+                        FullName = s.Attribute("name")?.Value ?? "",
                         Summary = s.Element("summary")?.Value
 
                     }).ToList();

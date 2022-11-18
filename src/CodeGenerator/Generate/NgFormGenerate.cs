@@ -1,4 +1,6 @@
-﻿using PropertyInfo = CodeGenerator.Models.PropertyInfo;
+﻿using System.Xml.Linq;
+using System;
+using PropertyInfo = Core.Models.PropertyInfo;
 
 namespace CodeGenerator.Generate;
 
@@ -20,32 +22,50 @@ public class NgFormGenerate : GenerateBase
     /// </summary>
     public static string GenerateAddForm(List<PropertyInfo>? propertyInfos)
     {
-        var formControls = "";
+        string formControls = "";
         if (propertyInfos != null)
         {
-            foreach (var input in propertyInfos)
+            foreach (PropertyInfo input in propertyInfos)
             {
-                formControls += input.ToNgInputControl();
+                var inputBuilder = new NgInputBuilder(input.Type, input.Name, input.DisplayName)
+                {
+                    IsDecimal = input.IsDecimal,
+                    IsRequired = input.IsRequired,
+                    MaxLength = input.MaxLength,
+                    MinLength = input.MinLength,
+                    IsEnum = input.IsEnum,
+                    IsList = input.IsList
+                };
+                formControls += inputBuilder.ToFormControl();
             }
         }
 
-        var tplContent = GetTplContent("angular.add.add.component.html.tpl");
+        string tplContent = GetTplContent("angular.add.add.component.html.tpl");
         tplContent = tplContent.Replace("{$FormControls}", formControls);
         return tplContent;
     }
 
     public static string GenerateEditForm(List<PropertyInfo>? propertyInfos)
     {
-        var formControls = "";
+        string formControls = "";
         if (propertyInfos != null)
         {
-            foreach (var input in propertyInfos)
+            foreach (PropertyInfo input in propertyInfos)
             {
-                formControls += input.ToNgInputControl();
+                var inputBuilder = new NgInputBuilder(input.Type, input.Name, input.DisplayName)
+                {
+                    IsDecimal = input.IsDecimal,
+                    IsRequired = input.IsRequired,
+                    MaxLength = input.MaxLength,
+                    MinLength = input.MinLength,
+                    IsEnum = input.IsEnum,
+                    IsList = input.IsList
+                };
+                formControls += inputBuilder.ToFormControl();
             }
         }
 
-        var tplContent = GetTplContent("angular.edit.edit.component.html.tpl");
+        string tplContent = GetTplContent("angular.edit.edit.component.html.tpl");
         tplContent = tplContent.Replace("{$FormControls}", formControls);
         return tplContent;
     }

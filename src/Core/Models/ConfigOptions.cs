@@ -1,4 +1,4 @@
-﻿namespace CodeGenerator.Models;
+﻿namespace Core.Models;
 
 public class ConfigOptions
 {

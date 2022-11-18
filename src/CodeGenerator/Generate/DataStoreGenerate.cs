@@ -40,7 +40,7 @@ public class DataStoreGenerate : GenerateBase
     /// <returns></returns>
     public string GetInterfaceFile(string tplName)
     {
-        var content = GetTplContent($"Interface.{tplName}.tpl");
+        string content = GetTplContent($"Interface.{tplName}.tpl");
         content = content.Replace(TplConst.NAMESPACE, ServiceNamespace);
         return content;
     }
@@ -52,14 +52,14 @@ public class DataStoreGenerate : GenerateBase
     /// <returns></returns>
     public string GetImplementFile(string tplName)
     {
-        var content = GetTplContent($"Implement.{tplName}.tpl");
+        string content = GetTplContent($"Implement.{tplName}.tpl");
         content = content.Replace(TplConst.NAMESPACE, ServiceNamespace);
         return content;
     }
 
     public string GetUserContextClass()
     {
-        var content = GetTplContent("Implement.UserContext.tpl");
+        string content = GetTplContent("Implement.UserContext.tpl");
         content = content.Replace(TplConst.NAMESPACE, ServiceNamespace);
         return content;
     }
@@ -70,14 +70,14 @@ public class DataStoreGenerate : GenerateBase
     /// <returns></returns>
     public List<string> GetGlobalUsings()
     {
-        var fileInfo = new FileInfo(EntityPath);
-        var projectFile = AssemblyHelper.FindProjectFile(fileInfo.Directory!, fileInfo.Directory!.Root);
-        var entityProjectNamespace = AssemblyHelper.GetNamespaceName(projectFile!.Directory!);
+        FileInfo fileInfo = new(EntityPath);
+        FileInfo? projectFile = AssemblyHelper.FindProjectFile(fileInfo.Directory!, fileInfo.Directory!.Root);
+        string? entityProjectNamespace = AssemblyHelper.GetNamespaceName(projectFile!.Directory!);
 
-        var compilationHelper = new CompilationHelper(projectFile.Directory!.FullName);
-        var content = File.ReadAllText(fileInfo.FullName, Encoding.UTF8);
+        CompilationHelper compilationHelper = new(projectFile.Directory!.FullName);
+        string content = File.ReadAllText(fileInfo.FullName, Encoding.UTF8);
         compilationHelper.AddSyntaxTree(content);
-        var  entityNamespace = compilationHelper.GetNamesapce();
+        string? entityNamespace = compilationHelper.GetNamesapce();
 
         return new List<string>
         {
@@ -112,10 +112,10 @@ public class DataStoreGenerate : GenerateBase
         {
             throw new ArgumentException("不允许的参数");
         }
-        var contextName = queryOrCommand + "DbContext";
-        var entityName = Path.GetFileNameWithoutExtension(EntityPath);
+        string contextName = queryOrCommand + "DbContext";
+        string entityName = Path.GetFileNameWithoutExtension(EntityPath);
         // 生成基础仓储实现类，替换模板变量并写入文件
-        var tplContent = GetTplContent($"Implement.{queryOrCommand}StoreContent.tpl");
+        string tplContent = GetTplContent($"Implement.{queryOrCommand}StoreContent.tpl");
         tplContent = tplContent.Replace(TplConst.NAMESPACE, ServiceNamespace);
         //tplContent = tplContent.Replace(TplConst.SHARE_NAMESPACE, ShareNamespace);
         tplContent = tplContent.Replace(TplConst.DBCONTEXT_NAME, contextName);
@@ -136,31 +136,31 @@ public class DataStoreGenerate : GenerateBase
         //var commandStores = CompilationHelper.GetClassNameByBaseType(classes, "CommandSet");
         //var allDataStores = queryStores.Concat(commandStores);
 
-        var queryPath = Path.Combine(StorePath, $"{Const.QUERY_STORE}");
-        var queryFiles = Directory.GetFiles(queryPath,$"*{Const.QUERY_STORE}.cs",SearchOption.TopDirectoryOnly);
-        var commandPath = Path.Combine(StorePath, $"{Const.COMMAND_STORE}");
-        var commandFiles = Directory.GetFiles(commandPath,$"*{Const.COMMAND_STORE}.cs",SearchOption.TopDirectoryOnly);
-        var allDataStores = queryFiles.Concat(commandFiles);
+        string queryPath = Path.Combine(StorePath, $"{Const.QUERY_STORE}");
+        string[] queryFiles = Directory.GetFiles(queryPath, $"*{Const.QUERY_STORE}.cs", SearchOption.TopDirectoryOnly);
+        string commandPath = Path.Combine(StorePath, $"{Const.COMMAND_STORE}");
+        string[] commandFiles = Directory.GetFiles(commandPath, $"*{Const.COMMAND_STORE}.cs", SearchOption.TopDirectoryOnly);
+        IEnumerable<string> allDataStores = queryFiles.Concat(commandFiles);
 
-        var props = "";
-        var ctorParams = "";
-        var ctorAssign = "";
-        var oneTab = "    ";
-        var twoTab = "        ";
+        string props = "";
+        string ctorParams = "";
+        string ctorAssign = "";
+        string oneTab = "    ";
+        string twoTab = "        ";
         if (allDataStores.Any())
         {
             allDataStores.ToList().ForEach(filePath =>
             {
-                var fileName = Path.GetFileNameWithoutExtension(filePath);
+                string fileName = Path.GetFileNameWithoutExtension(filePath);
                 // 属性名
-                var propName = fileName.Replace("Store","");
+                string propName = fileName.Replace("Store", "");
                 // 属性类型
-                var propType = fileName.EndsWith($"{Const.QUERY_STORE}")?"QuerySet":"CommandSet";
+                string propType = fileName.EndsWith($"{Const.QUERY_STORE}") ? "QuerySet" : "CommandSet";
                 // 属性泛型
-                var propGeneric = fileName.Replace($"{Const.QUERY_STORE}","")
-                    .Replace($"{Const.COMMAND_STORE}","");
+                string propGeneric = fileName.Replace($"{Const.QUERY_STORE}", "")
+                    .Replace($"{Const.COMMAND_STORE}", "");
 
-                var row = $"{oneTab}public {propType}<{propGeneric}> {propName} {{ get; init; }}";
+                string row = $"{oneTab}public {propType}<{propGeneric}> {propName} {{ get; init; }}";
                 props += row + Environment.NewLine;
                 // 构造函数参数
                 row = $"{twoTab}{fileName} {propName.ToCamelCase()},";
@@ -172,7 +172,7 @@ public class DataStoreGenerate : GenerateBase
             });
         }
         // 构建服务
-        var content = GetTplContent("Implement.DataStoreContext.tpl");
+        string content = GetTplContent("Implement.DataStoreContext.tpl");
         content = content.Replace(TplConst.NAMESPACE, ServiceNamespace);
         content = content.Replace(TplConst.STORECONTEXT_PROPS, props);
         content = content.Replace(TplConst.STORECONTEXT_PARAMS, ctorParams);
@@ -186,48 +186,48 @@ public class DataStoreGenerate : GenerateBase
     /// <returns></returns>
     public string GetStoreService()
     {
-        var storeServiceContent = "";
-        var managerServiceContent = "";
+        string storeServiceContent = "";
+        string managerServiceContent = "";
 
         // 获取所有data stores
-        var storeDir = Path.Combine(StorePath, "DataStore");
+        string storeDir = Path.Combine(StorePath, "DataStore");
         string[] files = Array.Empty<string>();
 
         if (Directory.Exists(storeDir))
+        {
             files = Directory.GetFiles(storeDir, "*DataStore.cs", SearchOption.TopDirectoryOnly);
+        }
 
-        var queryFiles = Directory.GetFiles(Path.Combine(StorePath,$"{Const.QUERY_STORE}"),$"*{Const.QUERY_STORE}.cs",SearchOption.TopDirectoryOnly);
-        var commandFiles = Directory.GetFiles(Path.Combine(StorePath,$"{Const.COMMAND_STORE}"),$"*{Const.COMMAND_STORE}.cs",SearchOption.TopDirectoryOnly);
+        string[] queryFiles = Directory.GetFiles(Path.Combine(StorePath, $"{Const.QUERY_STORE}"), $"*{Const.QUERY_STORE}.cs", SearchOption.TopDirectoryOnly);
+        string[] commandFiles = Directory.GetFiles(Path.Combine(StorePath, $"{Const.COMMAND_STORE}"), $"*{Const.COMMAND_STORE}.cs", SearchOption.TopDirectoryOnly);
 
         files = files.Concat(queryFiles).Concat(commandFiles).ToArray();
 
-        if (files != null)
-        {
-            files.ToList().ForEach(file =>
+        files?.ToList().ForEach(file =>
             {
-                var name = Path.GetFileNameWithoutExtension(file);
-                var row = $"        services.AddScoped(typeof({name}));";
+                object name = Path.GetFileNameWithoutExtension(file);
+                string row = $"        services.AddScoped(typeof({name}));";
                 storeServiceContent += row + Environment.NewLine;
             });
-        }
 
         // 获取所有manager
-        var managerDir = Path.Combine(StorePath, "Manager");
-        if (!Directory.Exists(managerDir)) return string.Empty;
-        files = Directory.GetFiles(managerDir, "*Manager.cs", SearchOption.TopDirectoryOnly);
-
-        if (files != null)
+        string managerDir = Path.Combine(StorePath, "Manager");
+        if (!Directory.Exists(managerDir))
         {
-            files.ToList().ForEach(file =>
-            {
-                var name = Path.GetFileNameWithoutExtension(file);
-                var row = $"        services.AddScoped<I{name}, {name}>();";
-                managerServiceContent += row + Environment.NewLine;
-            });
+            return string.Empty;
         }
 
+        files = Directory.GetFiles(managerDir, "*Manager.cs", SearchOption.TopDirectoryOnly);
+
+        files?.ToList().ForEach(file =>
+            {
+                object name = Path.GetFileNameWithoutExtension(file);
+                string row = $"        services.AddScoped<I{name}, {name}>();";
+                managerServiceContent += row + Environment.NewLine;
+            });
+
         // 构建服务
-        var content = GetTplContent("Implement.StoreServicesExtensions.tpl");
+        string content = GetTplContent("Implement.StoreServicesExtensions.tpl");
         content = content.Replace(TplConst.NAMESPACE, ServiceNamespace);
         content = content.Replace(TplConst.SERVICE_STORES, storeServiceContent);
         content = content.Replace(TplConst.SERVICE_MANAGER, managerServiceContent);
@@ -240,8 +240,8 @@ public class DataStoreGenerate : GenerateBase
     /// <returns></returns>
     public string GetIManagerContent()
     {
-        var entityName = Path.GetFileNameWithoutExtension(EntityPath);
-        var tplContent = GetTplContent($"Implement.IManager.tpl");
+        string entityName = Path.GetFileNameWithoutExtension(EntityPath);
+        string tplContent = GetTplContent($"Implement.IManager.tpl");
         tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName);
         tplContent = tplContent.Replace(TplConst.NAMESPACE, ServiceNamespace);
         return tplContent;
@@ -253,8 +253,8 @@ public class DataStoreGenerate : GenerateBase
     /// <returns></returns>
     public string GetManagerContext()
     {
-        var entityName = Path.GetFileNameWithoutExtension(EntityPath);
-        var tplContent = GetTplContent($"Implement.Manager.tpl");
+        string entityName = Path.GetFileNameWithoutExtension(EntityPath);
+        string tplContent = GetTplContent($"Implement.Manager.tpl");
         tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName);
         tplContent = tplContent.Replace(TplConst.NAMESPACE, ServiceNamespace);
         return tplContent;
@@ -267,25 +267,25 @@ public class DataStoreGenerate : GenerateBase
     /// <returns></returns>
     public string GetStoreServiceAfterBuild()
     {
-        var storeServiceDIContent = "";
+        string storeServiceDIContent = "";
         // 获取所有继承了 DataStoreBase 的类
-        var assemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(StorePath));
-        var cpl = new CompilationHelper(StorePath, assemblyName);
-        var classes = cpl.GetAllClasses();
+        string? assemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(StorePath));
+        CompilationHelper cpl = new(StorePath, assemblyName);
+        IEnumerable<INamedTypeSymbol> classes = cpl.GetAllClasses();
         if (classes != null)
         {
-            var allDataStores = CompilationHelper.GetClassNameByBaseType(classes, "DataStoreBase");
+            IEnumerable<INamedTypeSymbol> allDataStores = CompilationHelper.GetClassNameByBaseType(classes, "DataStoreBase");
             if (allDataStores.Any())
             {
                 allDataStores.ToList().ForEach(dataStore =>
                 {
-                    var row = $"        services.AddScoped(typeof({dataStore.Name}));";
+                    string row = $"        services.AddScoped(typeof({dataStore.Name}));";
                     storeServiceDIContent += row + Environment.NewLine;
                 });
             }
         }
         // 构建服务
-        var content = GetTplContent("Implement.DataStoreExtensioins.tpl");
+        string content = GetTplContent("Implement.DataStoreExtensioins.tpl");
         content = content.Replace(TplConst.NAMESPACE, ServiceNamespace);
         content = content.Replace(TplConst.SERVICE_STORES, storeServiceDIContent);
         return content;
@@ -298,16 +298,18 @@ public class DataStoreGenerate : GenerateBase
     /// <returns></returns>
     public string GetContextName(string? contextName = null)
     {
-        var name = "ContextBase";
-        var assemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(StorePath));
-        var cpl = new CompilationHelper(StorePath, assemblyName);
-        var classes = cpl.GetAllClasses();
+        string name = "ContextBase";
+        string? assemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(StorePath));
+        CompilationHelper cpl = new(StorePath, assemblyName);
+        IEnumerable<INamedTypeSymbol> classes = cpl.GetAllClasses();
         if (classes != null)
         {
             // 获取所有继承 dbcontext的上下文
-            var allDbContexts = CompilationHelper.GetClassNameByBaseType(classes, baseTypeName: "IdentityDbContext");
+            IEnumerable<INamedTypeSymbol> allDbContexts = CompilationHelper.GetClassNameByBaseType(classes, baseTypeName: "IdentityDbContext");
             if (!allDbContexts.Any())
+            {
                 allDbContexts = CompilationHelper.GetClassNameByBaseType(classes, "DbContext");
+            }
 
             //Console.WriteLine("find dbcontext:" + allDbContexts.FirstOrDefault().Name);
             if (allDbContexts.Any())
@@ -333,10 +335,10 @@ public class DataStoreGenerate : GenerateBase
     /// <returns></returns>
     public string GetExtensions()
     {
-        var entityDir =  new FileInfo(EntityPath).Directory!;
-        var entityProjectFile = AssemblyHelper.FindProjectFile(entityDir, entityDir.Root);
-        var entityNamespace = AssemblyHelper.GetNamespaceName(entityProjectFile!.Directory!);
-        var tplContent = GetTplContent("Extensions.tpl");
+        DirectoryInfo entityDir = new FileInfo(EntityPath).Directory!;
+        FileInfo? entityProjectFile = AssemblyHelper.FindProjectFile(entityDir, entityDir.Root);
+        string? entityNamespace = AssemblyHelper.GetNamespaceName(entityProjectFile!.Directory!);
+        string tplContent = GetTplContent("Extensions.tpl");
         tplContent = tplContent.Replace(TplConst.NAMESPACE, entityNamespace);
         return tplContent;
     }

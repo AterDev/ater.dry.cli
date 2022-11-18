@@ -1,5 +1,6 @@
 ﻿using System.CommandLine;
 using System.Text.Json;
+using Core.Models;
 
 namespace Droplet.CommandLine;
 
@@ -37,13 +38,9 @@ public class CommandBuilder
 
     public void AddStudio()
     {
-        var studioCommand = new Command("studio", "studio management");
+        Command studioCommand = new("studio", "studio management");
 
-        studioCommand.SetHandler(() =>
-        {
-            StudioCommand.RunStudio();
-
-        });
+        studioCommand.SetHandler(StudioCommand.RunStudio);
 
         RootCommand.Add(studioCommand);
     }
@@ -54,21 +51,23 @@ public class CommandBuilder
     /// <returns></returns>
     public void AddConfig()
     {
-        var configCommand = new Command("config", "config management");
+        Command configCommand = new("config", "config management");
 
-        var edit = new Command("edit", "edit config");
-        var init = new Command("init", "init config");
+        Command edit = new("edit", "edit config");
+        Command init = new("init", "init config");
 
-        edit.SetHandler(() => ConfigCommand.EditConfigFile());
-        init.SetHandler(() => ConfigCommand.InitConfigFileAsync());
+        edit.SetHandler(ConfigCommand.EditConfigFile);
+        init.SetHandler(ConfigCommand.InitConfigFileAsync);
 
         configCommand.AddCommand(edit);
         configCommand.AddCommand(init);
         configCommand.SetHandler(() =>
         {
-            var config = ConfigCommand.ReadConfigFile();
+            ConfigOptions? config = ConfigCommand.ReadConfigFile();
             if (config != null)
+            {
                 Console.WriteLine(JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true }));
+            }
         });
 
         RootCommand.Add(configCommand);
@@ -79,22 +78,19 @@ public class CommandBuilder
     public void AddDto()
     {
         // dto 生成命令
-        var dtoCommand = new Command("dto", "generate entity dto files");
-        var path = new Argument<string>("entity path", "The entity file path");
-        var outputOption = new Option<string>(new[] { "--output", "-o" },
+        Command dtoCommand = new("dto", "generate entity dto files");
+        Argument<string> path = new("entity path", "The entity file path");
+        Option<string> outputOption = new(new[] { "--output", "-o" },
             "output project directory");
         outputOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.DtoPath));
-        var forceOption = new Option<bool>(new[] { "--force", "-f" },
+        Option<bool> forceOption = new(new[] { "--force", "-f" },
             "force overwrite file");
         forceOption.SetDefaultValue(false);
 
         dtoCommand.AddArgument(path);
         dtoCommand.AddOption(outputOption);
         dtoCommand.AddOption(forceOption);
-        dtoCommand.SetHandler(async (string entity, string output, bool force) =>
-        {
-            await CommandRunner.GenerateDtoAsync(entity, output, force);
-        }, path, outputOption, forceOption);
+        dtoCommand.SetHandler(CommandRunner.GenerateDtoAsync, path, outputOption, forceOption);
 
         RootCommand.Add(dtoCommand);
     }
@@ -103,23 +99,20 @@ public class CommandBuilder
     /// </summary>
     public void AddRequest()
     {
-        var reqCommand = new Command("request", "generate request service and interface using openApi json");
+        Command reqCommand = new("request", "generate request service and interface using openApi json");
         reqCommand.AddAlias("request");
-        var url = new Argument<string>("OpenApi Url", "openApi json file url");
-        var outputOption = new Option<string>(new[] { "--output", "-o" })
+        Argument<string> url = new("OpenApi Url", "openApi json file url");
+        Option<string> outputOption = new(new[] { "--output", "-o" })
         {
             IsRequired = true,
             Description = "output path"
         };
 
-        var typeOption = new Option<RequestLibType>(new[] { "--type", "-t" }, "request lib type:axios or NgHttp");
+        Option<RequestLibType> typeOption = new(new[] { "--type", "-t" }, "request lib type:axios or NgHttp");
         reqCommand.AddArgument(url);
         reqCommand.AddOption(outputOption);
         reqCommand.AddOption(typeOption);
-        reqCommand.SetHandler(async (string url, string output, RequestLibType libType) =>
-        {
-            await CommandRunner.GenerateRequestAsync(url, output, libType);
-        }, url, outputOption, typeOption);
+        reqCommand.SetHandler(CommandRunner.GenerateRequestAsync, url, outputOption, typeOption);
 
         RootCommand.Add(reqCommand);
     }
@@ -130,16 +123,16 @@ public class CommandBuilder
     public void AddManager()
     {
         // api 生成命令
-        var apiCommand = new Command("manager", "generate dtos, datastore, manager");
+        Command apiCommand = new("manager", "generate dtos, datastore, manager");
         apiCommand.AddAlias("manager");
-        var path = new Argument<string>("entity path", "The entity file path");
-        var dtoOption = new Option<string>(new[] { "--dto", "-d" },
+        Argument<string> path = new("entity path", "The entity file path");
+        Option<string> dtoOption = new(new[] { "--dto", "-d" },
             "dto project directory");
         dtoOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.DtoPath));
-        var storeOption = new Option<string>(new[] { "--manager", "-m" },
+        Option<string> storeOption = new(new[] { "--manager", "-m" },
             "application project directory");
         storeOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.StorePath));
-        var typeOption = new Option<string>(new[] { "--type", "-t" },
+        Option<string> typeOption = new(new[] { "--type", "-t" },
             "api type, valid values:rest/grpc/graph");
         typeOption.SetDefaultValue("rest");
         apiCommand.AddArgument(path);
@@ -147,10 +140,7 @@ public class CommandBuilder
         apiCommand.AddOption(storeOption);
 
         apiCommand.SetHandler(
-            async (string entity, string dto, string store) =>
-            {
-                await CommandRunner.GenerateManagerAsync(entity, dto, store);
-            }, path, dtoOption, storeOption);
+            CommandRunner.GenerateManagerAsync, path, dtoOption, storeOption);
 
         RootCommand.Add(apiCommand);
     }
@@ -160,25 +150,25 @@ public class CommandBuilder
     public void AddApi()
     {
         // api 生成命令
-        var apiCommand = new Command("webapi", "generate dtos, datastore, manager,api controllers");
+        Command apiCommand = new("webapi", "generate dtos, datastore, manager,api controllers");
         apiCommand.AddAlias("api");
-        var path = new Argument<string>("entity path", "The entity file path");
-        var dtoOption = new Option<string>(new[] { "--dto", "-d" },
+        Argument<string> path = new("entity path", "The entity file path");
+        Option<string> dtoOption = new(new[] { "--dto", "-d" },
             "dto project director");
         dtoOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.DtoPath));
 
-        var managerOption = new Option<string>(new[] { "--manager", "-m" },
+        Option<string> managerOption = new(new[] { "--manager", "-m" },
             "manager and datastore project directory");
         managerOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.StorePath));
 
-        var apiOption = new Option<string>(new[] { "--output", "-o" },
+        Option<string> apiOption = new(new[] { "--output", "-o" },
             "api controller project directory");
         apiOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.ApiPath));
 
-        var suffixOption = new Option<string>(new[] { "--suffix", "-s" },
+        Option<string> suffixOption = new(new[] { "--suffix", "-s" },
             "the controller suffix");
         suffixOption.SetDefaultValue("Controller");
-        var typeOption = new Option<string>(new[] { "--type", "-t" },
+        Option<string> typeOption = new(new[] { "--type", "-t" },
             "api type, valid values:rest/grpc/graph, just support rest");
         typeOption.SetDefaultValue("rest");
         apiCommand.AddArgument(path);
@@ -188,10 +178,7 @@ public class CommandBuilder
         apiCommand.AddOption(suffixOption);
 
         apiCommand.SetHandler(
-            async (string entity, string dto, string store, string output, string suffix) =>
-        {
-            await CommandRunner.GenerateApi(entity, dto, store, output, suffix);
-        }, path, dtoOption, managerOption, apiOption, suffixOption);
+            CommandRunner.GenerateApi, path, dtoOption, managerOption, apiOption, suffixOption);
 
         RootCommand.Add(apiCommand);
     }
@@ -200,51 +187,45 @@ public class CommandBuilder
     /// </summary>
     public void AddDoc()
     {
-        var docCommand = new Command("doc", "generate typescript interface using openApi json");
+        Command docCommand = new("doc", "generate typescript interface using openApi json");
         docCommand.AddAlias("doc");
-        var url = new Argument<string>("OpenApi Url", "openApi json file url");
-        var outputOption = new Option<string>(new[] { "--output", "-o" })
+        Argument<string> url = new("OpenApi Url", "openApi json file url");
+        Option<string> outputOption = new(new[] { "--output", "-o" })
         {
             IsRequired = true,
             Description = "generate markdown doc"
         };
         docCommand.AddArgument(url);
         docCommand.AddOption(outputOption);
-        docCommand.SetHandler(async (string url, string output) =>
-        {
-            await CommandRunner.GenerateDocAsync(url, output);
-        }, url, outputOption);
+        docCommand.SetHandler(CommandRunner.GenerateDocAsync, url, outputOption);
 
         RootCommand.Add(docCommand);
     }
     public void AddNgService()
     {
-        var ngCommand = new Command("angular", "generate angular service and interface using openApi json");
+        Command ngCommand = new("angular", "generate angular service and interface using openApi json");
         ngCommand.AddAlias("ng");
-        var url = new Argument<string>("OpenApi Json", "openApi json file url or local path");
-        var outputOption = new Option<string>(new[] { "--output", "-o" })
+        Argument<string> url = new("OpenApi Json", "openApi json file url or local path");
+        Option<string> outputOption = new(new[] { "--output", "-o" })
         {
             IsRequired = true,
             Description = "angular project root path"
         };
         ngCommand.AddArgument(url);
         ngCommand.AddOption(outputOption);
-        ngCommand.SetHandler(async (string url, string output) =>
-        {
-            await CommandRunner.GenerateNgAsync(url, output);
-        }, url, outputOption);
+        ngCommand.SetHandler(CommandRunner.GenerateNgAsync, url, outputOption);
 
         RootCommand.Add(ngCommand);
     }
     public void AddView()
     {
         // view生成命令
-        var viewCommand = new Command("view", "generate front view page, only support angular. ");
+        Command viewCommand = new("view", "generate front view page, only support angular. ");
         viewCommand.AddAlias("view");
-        var entityArgument = new Argument<string>("entity path", "The entity file path, like path/xxx.cs");
-        var dtoOption = new Option<string>(new[] { "--dto", "-d" }, "dto project directory");
+        Argument<string> entityArgument = new("entity path", "The entity file path, like path/xxx.cs");
+        Option<string> dtoOption = new(new[] { "--dto", "-d" }, "dto project directory");
         dtoOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.DtoPath));
-        var outputOption = new Option<string>(new[] { "--output", "-o" }, "angular project root path")
+        Option<string> outputOption = new(new[] { "--output", "-o" }, "angular project root path")
         {
             IsRequired = true,
         };
@@ -252,10 +233,7 @@ public class CommandBuilder
         viewCommand.AddArgument(entityArgument);
         viewCommand.AddOption(dtoOption);
         viewCommand.AddOption(outputOption);
-        viewCommand.SetHandler(async (string entity, string dtoPath, string output) =>
-        {
-            await CommandRunner.GenerateNgPagesAsync(entity, dtoPath, output);
-        }, entityArgument, dtoOption, outputOption);
+        viewCommand.SetHandler(CommandRunner.GenerateNgPagesAsync, entityArgument, dtoOption, outputOption);
         RootCommand.Add(viewCommand);
     }
 
@@ -264,11 +242,8 @@ public class CommandBuilder
     /// </summary>
     public void AutoSyncToNg()
     {
-        var syncCommand = new Command("sync", "sync angular service & page from swagger.json to ClientApp, please use this in Http.API path");
-        syncCommand.SetHandler(async () =>
-        {
-            await CommandRunner.SyncToAngularAsync();
-        });
+        Command syncCommand = new("sync", "sync angular service & page from swagger.json to ClientApp, please use this in Http.API path");
+        syncCommand.SetHandler(CommandRunner.SyncToAngularAsync);
         RootCommand.Add(syncCommand);
     }
 }

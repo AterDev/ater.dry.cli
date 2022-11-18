@@ -1,6 +1,6 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace CodeGenerator.Infrastructure.Helper;
+namespace Core.Infrastructure.Helper;
 
 public class CompilationHelper
 {
@@ -15,18 +15,18 @@ public class CompilationHelper
     }
     public CompilationHelper(string path, string? dllFilter = null)
     {
-        var suffix = DateTime.Now.ToString("HHmmss");
+        string suffix = DateTime.Now.ToString("HHmmss");
         Compilation = CSharpCompilation.Create("tmp" + suffix);
         AddDllReferences(path, dllFilter);
     }
     public void AddDllReferences(string path, string? dllFilter = null)
     {
-        var dlls = Directory.EnumerateFiles(path, "*.dll", SearchOption.AllDirectories)
+        List<string> dlls = Directory.EnumerateFiles(path, "*.dll", SearchOption.AllDirectories)
                   .Where(dll =>
                   {
                       if (!string.IsNullOrEmpty(dllFilter))
                       {
-                          var fileName = Path.GetFileName(dll);
+                          string fileName = Path.GetFileName(dll);
                           return fileName.ToLower().StartsWith(dllFilter.ToLower());
                       }
                       else
@@ -44,7 +44,7 @@ public class CompilationHelper
         SyntaxTree = CSharpSyntaxTree.ParseText(content);
         Compilation = Compilation.AddSyntaxTrees(SyntaxTree);
         SemanticModel = Compilation.GetSemanticModel(SyntaxTree);
-        var classNode = SyntaxTree.GetCompilationUnitRoot().DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
+        ClassDeclarationSyntax? classNode = SyntaxTree.GetCompilationUnitRoot().DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
         ClassSymbol = SemanticModel.GetDeclaredSymbol(classNode!);
     }
 
@@ -54,9 +54,9 @@ public class CompilationHelper
     /// <returns></returns>
     public string? GetNamesapce()
     {
-        var rootNodes = SyntaxTree?.GetCompilationUnitRoot().DescendantNodes();
-        var namespaceDeclarationSyntax = rootNodes!.OfType<NamespaceDeclarationSyntax>().FirstOrDefault();
-        var filescopeNamespaceDeclarationSyntax = rootNodes.OfType<FileScopedNamespaceDeclarationSyntax>().FirstOrDefault();
+        IEnumerable<SyntaxNode>? rootNodes = SyntaxTree?.GetCompilationUnitRoot().DescendantNodes();
+        NamespaceDeclarationSyntax? namespaceDeclarationSyntax = rootNodes!.OfType<NamespaceDeclarationSyntax>().FirstOrDefault();
+        FileScopedNamespaceDeclarationSyntax? filescopeNamespaceDeclarationSyntax = rootNodes.OfType<FileScopedNamespaceDeclarationSyntax>().FirstOrDefault();
         return namespaceDeclarationSyntax == null ?
             filescopeNamespaceDeclarationSyntax?.Name.ToString() : namespaceDeclarationSyntax.Name.ToString();
     }
@@ -67,7 +67,7 @@ public class CompilationHelper
     /// <returns></returns>
     public IEnumerable<INamedTypeSymbol> GetAllClasses()
     {
-        var namespaces = Compilation.GlobalNamespace.GetNamespaceMembers();
+        IEnumerable<INamespaceSymbol> namespaces = Compilation.GlobalNamespace.GetNamespaceMembers();
         return GetNamespacesClasses(namespaces);
     }
 
@@ -77,7 +77,7 @@ public class CompilationHelper
     /// <returns></returns>
     public List<string> GetAllEnumClasses()
     {
-        var all = GetAllClasses();
+        IEnumerable<INamedTypeSymbol> all = GetAllClasses();
         return GetAllClasses()
             .Where(c => c.BaseType != null
                 && c.BaseType.Name.Equals("Enum"))
@@ -112,12 +112,12 @@ public class CompilationHelper
     /// <returns></returns>
     protected IEnumerable<INamedTypeSymbol> GetNamespacesClasses(IEnumerable<INamespaceSymbol> namespaces)
     {
-        var classes = new List<INamedTypeSymbol>();
+        List<INamedTypeSymbol> classes = new();
         classes = namespaces.SelectMany(n => n.GetTypeMembers()).ToList();
-        var childNamespaces = namespaces.SelectMany(n => n.GetNamespaceMembers()).ToList();
+        List<INamespaceSymbol> childNamespaces = namespaces.SelectMany(n => n.GetNamespaceMembers()).ToList();
         if (childNamespaces.Count > 0)
         {
-            var childClasses = GetNamespacesClasses(childNamespaces);
+            IEnumerable<INamedTypeSymbol> childClasses = GetNamespacesClasses(childNamespaces);
             classes.AddRange(childClasses);
             return classes;
         }

@@ -1,8 +1,7 @@
-﻿using CodeGenerator.Generate;
-using CodeGenerator.Infrastructure.Helper;
-using System.IO;
-using System.Reflection;
+﻿using System.IO;
 using System.Text;
+using CodeGenerator.Generate;
+using Core.Infrastructure.Helper;
 
 namespace CodeGenerator.Test;
 
@@ -12,19 +11,19 @@ public class StoreGenerateTest
     [Fact]
     public void Should_get_dbcontext_name()
     {
-        var entityPath = PathHelper.GetProjectFilePath("Entity/Blog.cs");
-        var projectPath = PathHelper.GetProjectPath();
-        var gen = new DataStoreGenerate(entityPath, projectPath, projectPath);
-        var contextName = gen.GetContextName();
+        string entityPath = PathHelper.GetProjectFilePath("Entity/Blog.cs");
+        string projectPath = PathHelper.GetProjectPath();
+        DataStoreGenerate gen = new(entityPath, projectPath, projectPath);
+        string contextName = gen.GetContextName();
         Assert.Equal("TestDbContext", contextName);
     }
 
     [Fact]
     public void Should_generate_store_content()
     {
-        var entityPath = PathHelper.GetProjectFilePath("Entity/Blog.cs");
-        var projectPath = PathHelper.GetProjectPath();
-        var gen = new DataStoreGenerate(entityPath, projectPath, projectPath);
+        string entityPath = PathHelper.GetProjectFilePath("Entity/Blog.cs");
+        string projectPath = PathHelper.GetProjectPath();
+        _ = new(entityPath, projectPath, projectPath);
 
         //var storeInterface = gen.GetStoreInterface();
         //var storeBase = gen.GetStoreBase();
@@ -45,17 +44,17 @@ public class StoreGenerateTest
     [Fact]
     public void Should_get_namespace()
     {
-        var entityPath = PathHelper.GetProjectFilePath("Entity/Blog.cs");
-        var fileInfo = new FileInfo(entityPath);
-        var projectFile = AssemblyHelper.FindProjectFile(fileInfo.Directory!, fileInfo.Directory!.Root);
+        string entityPath = PathHelper.GetProjectFilePath("Entity/Blog.cs");
+        FileInfo fileInfo = new(entityPath);
+        FileInfo? projectFile = AssemblyHelper.FindProjectFile(fileInfo.Directory!, fileInfo.Directory!.Root);
 
-        var compilationHelper = new CompilationHelper(projectFile.Directory!.FullName);
-        var content = File.ReadAllText(fileInfo.FullName, Encoding.UTF8);
+        CompilationHelper compilationHelper = new(projectFile.Directory!.FullName);
+        string content = File.ReadAllText(fileInfo.FullName, Encoding.UTF8);
         compilationHelper.AddSyntaxTree(content);
-        var  entityNamespace = compilationHelper.GetNamesapce();
+        string? entityNamespace = compilationHelper.GetNamesapce();
 
         Assert.NotNull(entityNamespace);
-        
+
 
     }
 }

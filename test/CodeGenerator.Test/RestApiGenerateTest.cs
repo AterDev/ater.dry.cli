@@ -7,14 +7,14 @@ public class RestApiGenerateTest
     [Fact]
     public void Should_generate_rest_api_content()
     {
-        var entityPath = PathHelper.GetProjectFilePath("Entity/Blog.cs");
-        var projectPath = PathHelper.GetProjectPath();
-        var gen = new RestApiGenerate(entityPath, projectPath, projectPath,projectPath);
+        string entityPath = PathHelper.GetProjectFilePath("Entity/Blog.cs");
+        string projectPath = PathHelper.GetProjectPath();
+        RestApiGenerate gen = new(entityPath, projectPath, projectPath, projectPath);
 
-        var restInterface = gen.GetRestApiInterface();
-        var restBase = gen.GetRestApiBase();
-        var restContent = gen.GetRestApiContent();
-        var globalUsings = gen.GetGlobalUsings();
+        string restInterface = gen.GetRestApiInterface();
+        string restBase = gen.GetRestApiBase();
+        string restContent = gen.GetRestApiContent();
+        List<string> globalUsings = gen.GetGlobalUsings();
 
         Assert.NotNull(globalUsings);
         Assert.NotNull(restBase);

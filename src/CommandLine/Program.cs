@@ -9,7 +9,7 @@ internal class Program
         {
             await ConfigCommand.InitConfigFileAsync();
         }
-        var root = new CommandBuilder().Build();
+        RootCommand root = new CommandBuilder().Build();
         return await root.InvokeAsync(args);
     }
 }

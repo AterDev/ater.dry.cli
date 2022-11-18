@@ -1,8 +1,9 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿
 using System.Text.RegularExpressions;
-using PropertyInfo = CodeGenerator.Models.PropertyInfo;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using PropertyInfo = Core.Models.PropertyInfo;
 
-namespace CodeGenerator.Infrastructure.Helper;
+namespace Core.Infrastructure.Helper;
 
 /// <summary>
 /// 类型解析帮助类
@@ -49,20 +50,27 @@ public class EntityParseHelper
     /// <summary>
     /// 可复制的特性
     /// </summary>
-    public string [] ValidAttributes = new[] { "MaxLength", "MinLength", "StringLength" };
+    public string[] ValidAttributes = new[] { "MaxLength", "MinLength", "StringLength" };
 
     public EntityParseHelper(string filePath)
     {
-        if (!File.Exists(filePath)) throw new FileNotFoundException(filePath);
+        if (!File.Exists(filePath))
+        {
+            throw new FileNotFoundException(filePath);
+        }
 
-        var fileInfo = new FileInfo(filePath);
-        var projectFile = AssemblyHelper.FindProjectFile(fileInfo.Directory!, fileInfo.Directory!.Root);
+        FileInfo fileInfo = new(filePath);
+        FileInfo? projectFile = AssemblyHelper.FindProjectFile(fileInfo.Directory!, fileInfo.Directory!.Root);
 
-        if (projectFile == null) throw new ArgumentException("can't find project file");
+        if (projectFile == null)
+        {
+            throw new ArgumentException("can't find project file");
+        }
+
         ProjectFile = projectFile;
         AssemblyName = GetAssemblyName();
         CompilationHelper = new CompilationHelper(ProjectFile.Directory!.FullName);
-        var content = File.ReadAllText(filePath, Encoding.UTF8);
+        string content = File.ReadAllText(filePath, Encoding.UTF8);
 
         CompilationHelper.AddSyntaxTree(content);
 
@@ -83,7 +91,7 @@ public class EntityParseHelper
     public void Parse()
     {
         // 获取当前类名
-        var classDeclarationSyntax = RootNodes.OfType<ClassDeclarationSyntax>().FirstOrDefault();
+        ClassDeclarationSyntax? classDeclarationSyntax = RootNodes.OfType<ClassDeclarationSyntax>().FirstOrDefault();
         NamespaceName = CompilationHelper.GetNamesapce();
         Name = classDeclarationSyntax?.Identifier.ToString();
         Comment = GetClassComment(classDeclarationSyntax);
@@ -94,10 +102,10 @@ public class EntityParseHelper
     }
     public EntityInfo GetEntity()
     {
-        var classDeclarationSyntax = RootNodes.OfType<ClassDeclarationSyntax>().FirstOrDefault();
-        var name = classDeclarationSyntax!.Identifier.ToString();
-        var comment = GetClassComment(classDeclarationSyntax);
-        var namespaceName =  CompilationHelper.GetNamesapce();
+        ClassDeclarationSyntax? classDeclarationSyntax = RootNodes.OfType<ClassDeclarationSyntax>().FirstOrDefault();
+        string name = classDeclarationSyntax!.Identifier.ToString();
+        string comment = GetClassComment(classDeclarationSyntax);
+        string? namespaceName = CompilationHelper.GetNamesapce();
 
         return new EntityInfo(name)
         {
@@ -111,9 +119,13 @@ public class EntityParseHelper
 
     public static string GetClassComment(ClassDeclarationSyntax? syntax)
     {
-        if (syntax == null) return string.Empty;
-        var trivias = syntax.GetLeadingTrivia();
-        var comment = trivias.ToString().Trim();
+        if (syntax == null)
+        {
+            return string.Empty;
+        }
+
+        SyntaxTriviaList trivias = syntax.GetLeadingTrivia();
+        string comment = trivias.ToString().Trim();
         if (!string.IsNullOrWhiteSpace(comment)
             && !comment.StartsWith("///"))
         {
@@ -128,12 +140,10 @@ public class EntityParseHelper
     /// <returns></returns>
     private string? GetComment()
     {
-        var members = AssemblyHelper.GetXmlMembers(ProjectFile.Directory!);
-        if (members != null)
-            return members.Where(m => m.FullName.EndsWith(NamespaceName + "." + Name))
+        List<AssemblyHelper.XmlCommentMember>? members = AssemblyHelper.GetXmlMembers(ProjectFile.Directory!);
+        return members?.Where(m => m.FullName.EndsWith(NamespaceName + "." + Name))
                 .Select(s => s.Summary)
                 .FirstOrDefault();
-        return null;
     }
 
     /// <summary>
@@ -141,12 +151,12 @@ public class EntityParseHelper
     /// </summary>
     private void GetNgPageAttribute()
     {
-        var root = SyntaxTree.GetCompilationUnitRoot();
-        var syntax = root.DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
-        var attributesSyntax = syntax!.DescendantNodes().OfType<AttributeSyntax>().ToList();
+        CompilationUnitSyntax root = SyntaxTree.GetCompilationUnitRoot();
+        ClassDeclarationSyntax? syntax = root.DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
+        List<AttributeSyntax> attributesSyntax = syntax!.DescendantNodes().OfType<AttributeSyntax>().ToList();
         if (attributesSyntax != null && attributesSyntax.Any())
         {
-            var attributes = GetAttributeArguments(attributesSyntax, "NgPage")?.ToArray();
+            AttributeArgumentSyntax[]? attributes = GetAttributeArguments(attributesSyntax, "NgPage")?.ToArray();
             if (attributes != null)
             {
                 NgModuleName = attributes[0]?.GetText()
@@ -168,26 +178,26 @@ public class EntityParseHelper
     /// <returns></returns>
     public List<PropertyInfo>? GetPropertyInfos(string? parentClassName = null)
     {
-        var properties = new List<PropertyInfo>();
-        var root = SyntaxTree.GetCompilationUnitRoot();
-        var propertySyntax = root.DescendantNodes().OfType<PropertyDeclarationSyntax>();
+        List<PropertyInfo> properties = new();
+        CompilationUnitSyntax root = SyntaxTree.GetCompilationUnitRoot();
+        IEnumerable<PropertyDeclarationSyntax> propertySyntax = root.DescendantNodes().OfType<PropertyDeclarationSyntax>();
         // 如果指定父类名称
 
         parentClassName ??= GetParentClassName();
-        var parentProperties = new List<PropertyInfo>();
+        List<PropertyInfo>? parentProperties = new();
         if (parentClassName != null)
         {
-            var filePath = AssemblyHelper.FindFileInProject(ProjectFile!.FullName, parentClassName + ".cs");
+            string? filePath = AssemblyHelper.FindFileInProject(ProjectFile!.FullName, parentClassName + ".cs");
             if (filePath != null)
             {
-                var entity = new EntityParseHelper(filePath);
+                EntityParseHelper entity = new(filePath);
                 parentProperties = entity.GetPropertyInfos();
             }
         }
-        foreach (var prop in propertySyntax)
+        foreach (PropertyDeclarationSyntax prop in propertySyntax)
         {
             // type and name
-            var propertyInfo = ParsePropertyType(prop);
+            PropertyInfo propertyInfo = ParsePropertyType(prop);
             // attribute and comments text
             propertyInfo.AttributeText = GetAttributeText(prop);
             propertyInfo.Comments = GetComment(prop);
@@ -197,7 +207,9 @@ public class EntityParseHelper
         }
 
         if (parentProperties != null)
+        {
             properties.AddRange(parentProperties);
+        }
 
         return properties.GroupBy(p => p.Name)
              .Select(s => s.FirstOrDefault()!)
@@ -210,7 +222,7 @@ public class EntityParseHelper
     /// <returns></returns>
     protected static string GetComment(PropertyDeclarationSyntax syntax)
     {
-        var trivia = syntax.GetLeadingTrivia();
+        SyntaxTriviaList trivia = syntax.GetLeadingTrivia();
         return trivia.ToString().TrimEnd(' ');
     }
 
@@ -220,7 +232,7 @@ public class EntityParseHelper
     /// <returns></returns>
     protected string GetAttributeText(PropertyDeclarationSyntax syntax)
     {
-        var attributeListSyntax = syntax.AttributeLists
+        List<AttributeListSyntax> attributeListSyntax = syntax.AttributeLists
              .Where(a => a.Attributes.Any(attr => ValidAttributes.Contains(attr.Name.ToString())))
              .Where(a => ValidAttributes.Any(valid => a.ToString().Contains(valid)))
              .ToList();
@@ -234,14 +246,14 @@ public class EntityParseHelper
     /// <param name="propertyInfo"></param>
     protected PropertyInfo ParsePropertyType(PropertyDeclarationSyntax syntax)
     {
-        var listTypes = new[] { "IList", "List", "ICollection", "IEnumerable" };
-        var type = syntax.Type.ToString();
-        var name = syntax.Identifier.ToString();
-        var typeInfo = SemanticModel.GetTypeInfo(syntax.Type);
-        var propertyInfo = new PropertyInfo(type, name);
+        string[] listTypes = new[] { "IList", "List", "ICollection", "IEnumerable" };
+        string type = syntax.Type.ToString();
+        string name = syntax.Identifier.ToString();
+        Microsoft.CodeAnalysis.TypeInfo typeInfo = SemanticModel.GetTypeInfo(syntax.Type);
+        PropertyInfo propertyInfo = new(type, name);
 
         // //解析modifier，如public required ,private virtual 
-        var modifier1 = syntax.Modifiers.FirstOrDefault().Text;
+        string modifier1 = syntax.Modifiers.FirstOrDefault().Text;
         string? modifier2 = null;
         if (syntax.Modifiers.Count > 1)
         {
@@ -272,7 +284,7 @@ public class EntityParseHelper
             propertyInfo.IsDecimal = true;
         }
         // 判断是否为枚举类型(待改进)
-        var enums = CompilationHelper.GetAllEnumClasses();
+        List<string> enums = CompilationHelper.GetAllEnumClasses();
         if (typeInfo.Type.TypeKind == TypeKind.Enum
             || typeInfo.Type.BaseType?.Name == "Enum"
             || enums.Any(e => e == propertyInfo.Type))
@@ -285,8 +297,8 @@ public class EntityParseHelper
             propertyInfo.IsList = true;
         }
         // 正则匹配 \s+(\w+)<(\w+)>
-        var pattern = @"(?<Type>\w+)<(?<GenericType>\w+)>";
-        var match = Regex.Match(type, pattern);
+        string pattern = @"(?<Type>\w+)<(?<GenericType>\w+)>";
+        Match match = Regex.Match(type, pattern);
         if (match.Success)
         {
             if (listTypes.Contains(match.Groups["Type"]?.Value))
@@ -306,8 +318,8 @@ public class EntityParseHelper
     /// <param name="propertyInfo"></param>
     protected void ParseNavigation(INamedTypeSymbol type, PropertyInfo propertyInfo)
     {
-        var navigationType = type;
-        var hasMany = false;
+        INamedTypeSymbol? navigationType = type;
+        bool hasMany = false;
         // 可空的列表，取泛型类型
         if (propertyInfo.IsNullable && navigationType.TypeArguments.Any())
         {
@@ -339,17 +351,17 @@ public class EntityParseHelper
     /// <param name="property"></param>
     protected void ParsePropertyAttributes(PropertyDeclarationSyntax syntax, PropertyInfo propertyInfo)
     {
-        var attributes = syntax.DescendantNodes().OfType<AttributeSyntax>().ToList();
+        List<AttributeSyntax> attributes = syntax.DescendantNodes().OfType<AttributeSyntax>().ToList();
         if (attributes != null && attributes.Count > 0)
         {
-            var maxLength = GetAttributeArguments(attributes, "MaxLength")?
+            AttributeArgumentSyntax? maxLength = GetAttributeArguments(attributes, "MaxLength")?
                 .FirstOrDefault();
-            var minLength = GetAttributeArguments(attributes, "MinLength")?
+            AttributeArgumentSyntax? minLength = GetAttributeArguments(attributes, "MinLength")?
                 .FirstOrDefault();
-            var stringLength = GetAttributeArguments(attributes, "StringLength")?
+            AttributeArgumentSyntax? stringLength = GetAttributeArguments(attributes, "StringLength")?
                 .FirstOrDefault();
-            var required = GetAttributeArguments(attributes, "Required");
-            var key = GetAttributeArguments(attributes, "Key");
+            IEnumerable<AttributeArgumentSyntax>? required = GetAttributeArguments(attributes, "Required");
+            IEnumerable<AttributeArgumentSyntax>? key = GetAttributeArguments(attributes, "Key");
             if (key != null)
             {
                 KeyType = propertyInfo.Type.ToLower() switch
@@ -360,7 +372,11 @@ public class EntityParseHelper
                 };
             }
 
-            if (required != null) propertyInfo.IsRequired = true;
+            if (required != null)
+            {
+                propertyInfo.IsRequired = true;
+            }
+
             if (maxLength != null)
             {
                 propertyInfo.MaxLength = Convert.ToInt32(maxLength.ToString());
@@ -383,7 +399,7 @@ public class EntityParseHelper
     /// <returns></returns>
     protected static IEnumerable<AttributeArgumentSyntax>? GetAttributeArguments(List<AttributeSyntax> syntax, string attributeName)
     {
-        var theSyntax = syntax.Where(s => s.Name.ToString().ToLower().Equals(attributeName.ToLower()))
+        AttributeSyntax? theSyntax = syntax.Where(s => s.Name.ToString().ToLower().Equals(attributeName.ToLower()))
             .FirstOrDefault();
         return theSyntax != null
             ? theSyntax.ArgumentList?.Arguments ??
@@ -397,8 +413,8 @@ public class EntityParseHelper
     protected string? GetParentClassName()
     {
         // 获取当前类名
-        var classDeclarationSyntax = RootNodes.OfType<ClassDeclarationSyntax>().FirstOrDefault();
-        var classSymbol = SemanticModel.GetDeclaredSymbol(classDeclarationSyntax!);
+        ClassDeclarationSyntax? classDeclarationSyntax = RootNodes.OfType<ClassDeclarationSyntax>().FirstOrDefault();
+        INamedTypeSymbol? classSymbol = SemanticModel.GetDeclaredSymbol(classDeclarationSyntax!);
         return classSymbol?.BaseType?.Name;
     }
 

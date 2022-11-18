@@ -1,6 +1,5 @@
 ﻿using System.Text.RegularExpressions;
-
-using PropertyInfo = CodeGenerator.Models.PropertyInfo;
+using PropertyInfo = Core.Models.PropertyInfo;
 
 namespace CodeGenerator.Generate;
 /// <summary>
@@ -18,7 +17,7 @@ public class DtoCodeGenerate : GenerateBase
     {
         if (File.Exists(entityPath))
         {
-            var entityHelper = new EntityParseHelper(entityPath);
+            EntityParseHelper entityHelper = new(entityPath);
             EntityInfo = entityHelper.GetEntity();
             AssemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(dtoPath));
             KeyType = EntityInfo.KeyType switch
@@ -42,13 +41,17 @@ public class DtoCodeGenerate : GenerateBase
     /// <returns></returns>
     private string FormatComment(string? comment, string extendString = "")
     {
-        if (comment == null) return "";
-        var regex = new Regex(@"/// <summary>\r\n/// (?<comment>.*)\r\n/// </summary>");
-        var match = regex.Match(comment);
+        if (comment == null)
+        {
+            return "";
+        }
+
+        Regex regex = new(@"/// <summary>\r\n/// (?<comment>.*)\r\n/// </summary>");
+        Match match = regex.Match(comment);
         if (match.Success)
         {
-            var summary = match.Groups["comment"].Value;
-            var newComment = summary.Replace("表", "") + extendString;
+            string summary = match.Groups["comment"].Value;
+            string newComment = summary.Replace("表", "") + extendString;
             comment = comment.Replace(summary, newComment);
         }
         return comment;
@@ -56,12 +59,16 @@ public class DtoCodeGenerate : GenerateBase
 
     public string? GetShortDto()
     {
-        if (EntityInfo == null) return default;
-        var dto = new DtoInfo
+        if (EntityInfo == null)
+        {
+            return default;
+        }
+
+        DtoInfo dto = new()
         {
             Name = EntityInfo.Name + "ShortDto",
             NamespaceName = EntityInfo.NamespaceName,
-            Comment = FormatComment(EntityInfo.Comment,"概要"),
+            Comment = FormatComment(EntityInfo.Comment, "概要"),
             Tag = EntityInfo.Name,
             Properties = EntityInfo.PropertyInfos?
                 .Where(p => p.Name != "Content"
@@ -74,8 +81,12 @@ public class DtoCodeGenerate : GenerateBase
 
     public string? GetItemDto()
     {
-        if (EntityInfo == null) return default;
-        var dto = new DtoInfo
+        if (EntityInfo == null)
+        {
+            return default;
+        }
+
+        DtoInfo dto = new()
         {
             Name = EntityInfo.Name + "ItemDto",
             NamespaceName = EntityInfo.NamespaceName,
@@ -93,22 +104,26 @@ public class DtoCodeGenerate : GenerateBase
 
     public string? GetFilterDto()
     {
-        if (EntityInfo == null) return default;
-        var referenceProps = EntityInfo.PropertyInfos?
+        if (EntityInfo == null)
+        {
+            return default;
+        }
+
+        List<PropertyInfo>? referenceProps = EntityInfo.PropertyInfos?
             .Where(p => p.IsNavigation && !p.IsList)
             .Select(s => new PropertyInfo($"{KeyType}?", s.Name + "Id"))
             .ToList();
 
-        var filterFields = new string[] { "Id", "CreatedTime", "UpdatedTime", "IsDeleted", "Status" };
-        var dto = new DtoInfo
+        string[] filterFields = new string[] { "Id", "CreatedTime", "UpdatedTime", "IsDeleted", "Status" };
+        DtoInfo dto = new()
         {
             Name = EntityInfo.Name + "FilterDto",
             NamespaceName = EntityInfo.NamespaceName,
-            Comment = FormatComment(EntityInfo.Comment,"查询筛选"),
+            Comment = FormatComment(EntityInfo.Comment, "查询筛选"),
             Tag = EntityInfo.Name,
             BaseType = "FilterBase",
         };
-        var properties = EntityInfo.PropertyInfos?
+        List<PropertyInfo>? properties = EntityInfo.PropertyInfos?
                 .Where(p => p.IsRequired
                     || (!p.IsNullable
                         && !p.IsList
@@ -118,30 +133,36 @@ public class DtoCodeGenerate : GenerateBase
                 .ToList();
         dto.Properties = properties.Copy() ?? new List<PropertyInfo>();
         // 筛选条件调整为可空
-        foreach (var item in dto.Properties)
+        foreach (PropertyInfo item in dto.Properties)
         {
             item.IsNullable = true;
         }
         referenceProps?.ForEach(item =>
         {
             if (!dto.Properties.Any(p => p.Name.Equals(item.Name)))
+            {
                 dto.Properties.Add(item);
+            }
         });
         return dto.ToString(AssemblyName, EntityInfo.Name);
     }
 
     public string? GetAddDto()
     {
-        if (EntityInfo == null) return default;
-        var referenceProps = EntityInfo.PropertyInfos?
+        if (EntityInfo == null)
+        {
+            return default;
+        }
+
+        List<PropertyInfo>? referenceProps = EntityInfo.PropertyInfos?
             .Where(p => p.IsNavigation && !p.IsList)
             .Select(s => new PropertyInfo($"{KeyType}", s.Name + "Id"))
             .ToList();
-        var dto = new DtoInfo
+        DtoInfo dto = new()
         {
             Name = EntityInfo.Name + "AddDto",
             NamespaceName = EntityInfo.NamespaceName,
-            Comment = FormatComment(EntityInfo.Comment,"添加时请求结构"),
+            Comment = FormatComment(EntityInfo.Comment, "添加时请求结构"),
             Tag = EntityInfo.Name,
             Properties = EntityInfo.PropertyInfos?.Where(p => p.Name != "Id"
                 && p.Name != "CreatedTime"
@@ -150,12 +171,14 @@ public class DtoCodeGenerate : GenerateBase
                 && p.Name != "Status"
                 && !p.IsList
                 && !p.IsNavigation)
-            .ToList()?? new List<PropertyInfo>()
+            .ToList() ?? new List<PropertyInfo>()
         };
         referenceProps?.ForEach(item =>
         {
             if (!dto.Properties.Any(p => p.Name.Equals(item.Name)))
+            {
                 dto.Properties.Add(item);
+            }
         });
         return dto.ToString(AssemblyName, EntityInfo.Name);
     }
@@ -167,22 +190,25 @@ public class DtoCodeGenerate : GenerateBase
     /// <returns></returns>
     public string? GetUpdateDto()
     {
-        if (EntityInfo == null) return default;
+        if (EntityInfo == null)
+        {
+            return default;
+        }
         // 导航属性处理
-        var referenceProps = EntityInfo.PropertyInfos?
+        List<PropertyInfo>? referenceProps = EntityInfo.PropertyInfos?
             .Where(p => p.IsNavigation && !p.IsList && !p.IsNullable)
             .Select(s => new PropertyInfo($"{KeyType}", s.Name + "Id"))
             .ToList();
-        var dto = new DtoInfo
+        DtoInfo dto = new()
         {
             Name = EntityInfo.Name + "UpdateDto",
             NamespaceName = EntityInfo.NamespaceName,
-            Comment = FormatComment(EntityInfo.Comment,"更新时请求结构"),
+            Comment = FormatComment(EntityInfo.Comment, "更新时请求结构"),
             Tag = EntityInfo.Name,
 
         };
         // 处理非required的都设置为nullable
-        var properties = EntityInfo.PropertyInfos?.Where(p => p.Name != "Id"
+        List<PropertyInfo>? properties = EntityInfo.PropertyInfos?.Where(p => p.Name != "Id"
                 && p.Name != "CreatedTime"
                 && p.Name != "UpdatedTime"
                 && p.Name != "IsDeleted"
@@ -191,7 +217,7 @@ public class DtoCodeGenerate : GenerateBase
             .ToList();
 
         dto.Properties = properties?.Copy() ?? new List<PropertyInfo>();
-        foreach (var item in dto.Properties)
+        foreach (PropertyInfo item in dto.Properties)
         {
             if (!item.IsRequired)
             {
@@ -201,7 +227,9 @@ public class DtoCodeGenerate : GenerateBase
         referenceProps?.ForEach(item =>
         {
             if (!dto.Properties.Any(p => p.Name.Equals(item.Name)))
+            {
                 dto.Properties.Add(item);
+            }
         });
         return dto.ToString(AssemblyName, EntityInfo.Name);
     }
@@ -215,7 +243,7 @@ global using {EntityInfo!.AssemblyName}.Models;";
     }
     public string GetFilterBase()
     {
-        var content = GetTplContent("FilterBase.tpl");
+        string content = GetTplContent("FilterBase.tpl");
         if (content.NotNull())
         {
             content = content.Replace(TplConst.NAMESPACE, AssemblyName);
@@ -224,7 +252,7 @@ global using {EntityInfo!.AssemblyName}.Models;";
     }
     public string GetEntityBase()
     {
-        var content = GetTplContent("EntityBase.tpl");
+        string content = GetTplContent("EntityBase.tpl");
         if (content.NotNull())
         {
             content = content.Replace(TplConst.NAMESPACE, AssemblyName)
@@ -235,7 +263,7 @@ global using {EntityInfo!.AssemblyName}.Models;";
     }
     public string GetBatchUpdate()
     {
-        var content = GetTplContent("BatchUpdate.tpl");
+        string content = GetTplContent("BatchUpdate.tpl");
         if (content.NotNull())
         {
             content = content.Replace(TplConst.NAMESPACE, AssemblyName);
@@ -244,7 +272,7 @@ global using {EntityInfo!.AssemblyName}.Models;";
     }
     public string GetPageList()
     {
-        var content = GetTplContent("PageList.tpl");
+        string content = GetTplContent("PageList.tpl");
         if (content.NotNull())
         {
             content = content.Replace(TplConst.NAMESPACE, AssemblyName);
@@ -258,7 +286,7 @@ global using {EntityInfo!.AssemblyName}.Models;";
     /// <param name="entityName"></param>
     protected static void GenerateAutoMapperProfile(string entityName)
     {
-        var code =
+        string code =
     @$"            CreateMap<{entityName}AddDto, {entityName}>();
             CreateMap<{entityName}UpdateDto, {entityName}>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => NotNull(srcMember)));;
@@ -267,14 +295,14 @@ global using {EntityInfo!.AssemblyName}.Models;";
             CreateMap<{entityName}, {entityName}DetailDto>();        
 ";
         // 先判断是否存在配置文件
-        var path = Path.Combine("", "AutoMapper");
+        string path = Path.Combine("", "AutoMapper");
         if (!Directory.Exists(path))
         {
-            Directory.CreateDirectory(path);
+            _ = Directory.CreateDirectory(path);
         }
         const string AppendSign = "// {AppendMappers}";
         const string AlreadySign = "// {AlreadyMapedEntity}";
-        var mapperFilePath = Path.Combine(path, "AutoGenerateProfile.cs");
+        string mapperFilePath = Path.Combine(path, "AutoGenerateProfile.cs");
         string content;
         if (File.Exists(mapperFilePath))
         {

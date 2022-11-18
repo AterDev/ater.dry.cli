@@ -1,18 +1,17 @@
-﻿using CodeGenerator.Infrastructure;
-using CodeGenerator.Infrastructure.Helper;
+﻿using System.Threading.Tasks;
 using CodeGenerator.Test.Hepler;
-using System.Threading.Tasks;
+using Core.Infrastructure;
+using Core.Infrastructure.Helper;
 
 namespace CommandLine.Test;
 
 public class CommandTest
 {
-
-    static string ProjectPath = @"E:\codes\DevCenter\src\";
+    private static readonly string ProjectPath = @"E:\codes\DevCenter\src\";
     protected string EntityPath = ProjectPath + @"Core\Entities\ResourceAttributeDefine.cs";
     protected string DtoPath = ProjectPath + @"Share";
     protected string StorePath = ProjectPath + @"Http.Application";
-    protected string ApiPath = ProjectPath +@"Http.API";
+    protected string ApiPath = ProjectPath + @"Http.API";
 
 
     private void SetEnv()
@@ -26,11 +25,11 @@ public class CommandTest
     [Fact]
     public async Task Shoud_generate_dto_filesAsync()
     {
-        var cmd = new DtoCommand(EntityPath, DtoPath);
+        DtoCommand cmd = new(EntityPath, DtoPath);
         await cmd.RunAsync();
-        var entityName = Path.GetFileNameWithoutExtension(new FileInfo(EntityPath).Name);
-        var generateFile = Path.Combine(DtoPath, "Models", $"{entityName}Dtos", $"{entityName}UpdateDto.cs");
-        var usingFile = Path.Combine(DtoPath, $"GlobalUsings.cs");
+        string entityName = Path.GetFileNameWithoutExtension(new FileInfo(EntityPath).Name);
+        string generateFile = Path.Combine(DtoPath, "Models", $"{entityName}Dtos", $"{entityName}UpdateDto.cs");
+        string usingFile = Path.Combine(DtoPath, $"GlobalUsings.cs");
         Assert.True(File.Exists(generateFile));
         Assert.True(File.Exists(usingFile));
     }
@@ -38,15 +37,15 @@ public class CommandTest
     [Fact]
     public async Task Should_generate_store_filesAsync()
     {
-        var cmd = new StoreCommand(EntityPath, StorePath, StorePath,"DocsContext");
+        StoreCommand cmd = new(EntityPath, StorePath, StorePath, "DocsContext");
         await cmd.RunAsync();
-        var storeInterfaceFile = Path.Combine(StorePath, "Interface", "IDataStore.cs");
-        var userInterfaceFile = Path.Combine(StorePath, "Interface", "IUserContext.cs");
-        var storeBaseFile = Path.Combine(StorePath, "DataStore", "DataStoreBase.cs");
-        var storeFile = Path.Combine(StorePath, "DataStore", "BlogDataStore.cs");
-        var userFile = Path.Combine(StorePath, "UserContext.cs");
-        var serviceFile = Path.Combine(StorePath, "DataStore", "DataStoreExtensions.cs");
-        var globalFile = Path.Combine(StorePath, GenConst.GLOBAL_USING_NAME);
+        string storeInterfaceFile = Path.Combine(StorePath, "Interface", "IDataStore.cs");
+        string userInterfaceFile = Path.Combine(StorePath, "Interface", "IUserContext.cs");
+        string storeBaseFile = Path.Combine(StorePath, "DataStore", "DataStoreBase.cs");
+        string storeFile = Path.Combine(StorePath, "DataStore", "BlogDataStore.cs");
+        string userFile = Path.Combine(StorePath, "UserContext.cs");
+        string serviceFile = Path.Combine(StorePath, "DataStore", "DataStoreExtensions.cs");
+        string globalFile = Path.Combine(StorePath, GenConst.GLOBAL_USING_NAME);
 
         Assert.True(File.Exists(storeInterfaceFile));
         Assert.True(File.Exists(userInterfaceFile));
@@ -60,12 +59,12 @@ public class CommandTest
     [Fact]
     public async Task Should_generate_api_filesAsync()
     {
-        var cmd = new ApiCommand(EntityPath, DtoPath, StorePath, ApiPath);
+        ApiCommand cmd = new(EntityPath, DtoPath, StorePath, ApiPath);
         await cmd.RunAsync();
-        var apiInterfaceFile = Path.Combine(ApiPath, "Interface", GenConst.IRESTAPI_BASE_NAME);
-        var apiBaseFile = Path.Combine(ApiPath, "Controllers", GenConst.RESTAPI_BASE_NAME);
-        var apiFile = Path.Combine(ApiPath, "Controllers","BlogController");
-        var globalFile = Path.Combine(ApiPath, GenConst.GLOBAL_USING_NAME);
+        string apiInterfaceFile = Path.Combine(ApiPath, "Interface", GenConst.IRESTAPI_BASE_NAME);
+        string apiBaseFile = Path.Combine(ApiPath, "Controllers", GenConst.RESTAPI_BASE_NAME);
+        string apiFile = Path.Combine(ApiPath, "Controllers", "BlogController");
+        string globalFile = Path.Combine(ApiPath, GenConst.GLOBAL_USING_NAME);
 
         Assert.True(File.Exists(apiInterfaceFile));
         Assert.True(File.Exists(apiBaseFile));
@@ -76,8 +75,8 @@ public class CommandTest
     [Fact]
     public async Task Should_genearte_docAsync()
     {
-        var url = "http://localhost:5002/swagger/v1/swagger.json";
-        var cmd = new DocCommand(url,"./");
+        string url = "http://localhost:5002/swagger/v1/swagger.json";
+        DocCommand cmd = new(url, "./");
         await cmd.RunAsync();
     }
 
@@ -85,8 +84,8 @@ public class CommandTest
     [Fact]
     public void Should_Config()
     {
-        var currentDir = new DirectoryInfo(ProjectPath);
-        var solutionPath = AssemblyHelper.GetSlnFile(currentDir, "*.sln", currentDir.Root);
+        DirectoryInfo currentDir = new(ProjectPath);
+        _ = AssemblyHelper.GetSlnFile(currentDir, "*.sln", currentDir.Root);
 
         System.Console.WriteLine("");
     }

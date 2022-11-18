@@ -5,8 +5,8 @@ internal class StudioCommand
 {
     public static void RunStudio()
     {
-        var appPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        var file = new FileInfo(Path.Combine(appPath, "Studio", Config.StudioFileName));
+        string appPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        FileInfo? file = new(Path.Combine(appPath, "Studio", Config.StudioFileName));
         if (file == null)
         {
             // TODO:下载studio
@@ -14,8 +14,8 @@ internal class StudioCommand
         }
 
         // 运行
-        var path = file.FullName;
-        var shell = "dotnet";
+        string path = file.FullName;
+        string shell = "dotnet";
         //switch (Environment.OSVersion.Platform)
         //{
         //    case PlatformID.Unix:
@@ -24,7 +24,7 @@ internal class StudioCommand
         //    default:
         //        break;
         //}
-        var process = new Process()
+        Process process = new()
         {
             StartInfo = new ProcessStartInfo
             {
@@ -38,10 +38,10 @@ internal class StudioCommand
                 //StandardOutputEncoding = Encoding.UTF8,
             }
         };
-        process.Start();
+        _ = process.Start();
         while (!process.StandardOutput.EndOfStream)
         {
-            var line = process.StandardOutput.ReadLine();
+            string? line = process.StandardOutput.ReadLine();
             Console.WriteLine(line);
         }
         process.WaitForExit();

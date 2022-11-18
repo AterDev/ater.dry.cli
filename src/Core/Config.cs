@@ -1,4 +1,4 @@
-﻿namespace CodeGenerator;
+﻿namespace Core;
 
 public static class Config
 {
@@ -11,5 +11,5 @@ public static class Config
     /// <summary>
     /// 存储ts枚举类
     /// </summary>
-    public static List<string>  EnumModels = new();
+    public static List<string> EnumModels = new();
 }

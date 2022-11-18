@@ -15,20 +15,20 @@ public class NgServiceGenerate : GenerateBase
     }
     public static string GetBaseService()
     {
-        var content = GetTplContent("angular.base.service.tpl");
+        string content = GetTplContent("angular.base.service.tpl");
         return content;
     }
     public List<GenFileInfo> GetServices(IList<OpenApiTag> tags)
     {
-        var files = new List<GenFileInfo>();
+        List<GenFileInfo> files = new();
 
-        var functions = new List<RequestServiceFunction>();
+        List<RequestServiceFunction> functions = new();
         // 处理所有方法
-        foreach (var path in PathsPairs)
+        foreach (KeyValuePair<string, OpenApiPathItem> path in PathsPairs)
         {
-            foreach (var operation in path.Value.Operations)
+            foreach (KeyValuePair<OperationType, OpenApiOperation> operation in path.Value.Operations)
             {
-                var function = new RequestServiceFunction
+                RequestServiceFunction function = new()
                 {
                     Description = operation.Value.Summary,
                     Method = operation.Key.ToString(),
@@ -42,9 +42,9 @@ public class NgServiceGenerate : GenerateBase
                     ?.Schema);
                 function.Params = operation.Value.Parameters?.Select(p =>
                     {
-                        var location = p.In?.GetDisplayName();
-                        var inpath = location?.ToLower()?.Equals("path");
-                        var (type, _) = GetParamType(p.Schema);
+                        string? location = p.In?.GetDisplayName();
+                        bool? inpath = location?.ToLower()?.Equals("path");
+                        (string type, string _) = GetParamType(p.Schema);
                         return new FunctionParams
                         {
                             Description = p.Description,
@@ -58,26 +58,25 @@ public class NgServiceGenerate : GenerateBase
             }
         }
         // 生成文件
-        var ngServices = new List<RequestServiceFile>();
+        List<RequestServiceFile> ngServices = new();
         // 先以tag分组
-        var funcGroups = functions.GroupBy(f => f.Tag).ToList();
-        foreach (var group in funcGroups)
+        List<IGrouping<string?, RequestServiceFunction>> funcGroups = functions.GroupBy(f => f.Tag).ToList();
+        foreach (IGrouping<string?, RequestServiceFunction>? group in funcGroups)
         {
             // 查询该标签包含的所有方法
-            var tagFunctions = group.ToList();
-            var currentTag = tags.Where(t => t.Name == group.Key).FirstOrDefault();
-            if (currentTag == null)
-                currentTag = new OpenApiTag { Name = group.Key, Description = group.Key };
-            var ngServiceFile = new RequestServiceFile
+            List<RequestServiceFunction> tagFunctions = group.ToList();
+            OpenApiTag? currentTag = tags.Where(t => t.Name == group.Key).FirstOrDefault();
+            currentTag ??= new OpenApiTag { Name = group.Key, Description = group.Key };
+            RequestServiceFile ngServiceFile = new()
             {
                 Description = currentTag.Description,
                 Name = currentTag.Name!,
                 Functions = tagFunctions
             };
-            var content = ngServiceFile.ToNgService();
-            var fileName = currentTag.Name?.ToHyphen() + ".service.ts";
+            string content = ngServiceFile.ToNgService();
+            string fileName = currentTag.Name?.ToHyphen() + ".service.ts";
 
-            var file = new GenFileInfo(content)
+            GenFileInfo file = new(content)
             {
                 Name = fileName,
             };
@@ -89,12 +88,16 @@ public class NgServiceGenerate : GenerateBase
     private static (string? type, string? refType) GetParamType(OpenApiSchema? schema)
     {
         if (schema == null)
+        {
             return (string.Empty, string.Empty);
+        }
 
-        var type = "any";
-        var refType = schema.Reference?.Id;
+        string? type = "any";
+        string? refType = schema.Reference?.Id;
         if (schema.Reference != null)
+        {
             return (schema.Reference.Id, schema.Reference.Id);
+        }
         // 常规类型
         switch (schema.Type)
         {
@@ -147,11 +150,13 @@ public class NgServiceGenerate : GenerateBase
                 }
                 break;
             case "object":
-                var obj = schema.Properties.FirstOrDefault().Value;
+                OpenApiSchema obj = schema.Properties.FirstOrDefault().Value;
                 if (obj != null)
                 {
                     if (obj.Format == "binary")
+                    {
                         type = "FormData";
+                    }
                 }
                 break;
             default:

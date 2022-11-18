@@ -11,7 +11,7 @@ public class ProjectController : ControllerBase
 {
     private readonly ContextBase _context;
 
-    private ProjectManager _manager;
+    private readonly ProjectManager _manager;
     public ProjectController(ContextBase context, ProjectManager manager)
     {
         _context = context;
@@ -28,10 +28,6 @@ public class ProjectController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Project>> AddAsync(string name, string path)
     {
-        if (!System.IO.File.Exists(path))
-        {
-            return Problem("未找到该路径");
-        }
-        return await _manager.AddProjectAsync(name, path);
+        return !System.IO.File.Exists(path) ? (ActionResult<Project>)Problem("未找到该路径") : (ActionResult<Project>)await _manager.AddProjectAsync(name, path);
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace CodeGenerator.Models;
+﻿namespace Core.Models;
 /// <summary>
 /// 服务文件
 /// </summary>
@@ -14,32 +14,43 @@ public class RequestServiceFile
     /// <returns></returns>
     public string ToNgService()
     {
-        var functions = "";
+        string functions = "";
         // import引用的models
-        var importModels = "";
-        var refTypes = new List<string>();
+        string importModels = "";
+        List<string> refTypes = new();
         if (Functions != null)
         {
             functions = string.Join("\n", Functions.Select(f => f.ToFunction()).ToArray());
-            var baseTypes = new string[] { "string", "string[]", "number", "number[]", "boolean" };
+            string[] baseTypes = new string[] { "string", "string[]", "number", "number[]", "boolean" };
             // 获取请求和响应的类型，以便导入
-            var requestRefs = Functions
+            List<string?> requestRefs = Functions
                 .Where(f => !string.IsNullOrEmpty(f.RequestRefType)
                     && !baseTypes.Contains(f.RequestRefType))
                 .Select(f => f.RequestRefType).ToList();
-            var responseRefs = Functions
+            List<string?> responseRefs = Functions
                 .Where(f => !string.IsNullOrEmpty(f.ResponseRefType)
                     && !baseTypes.Contains(f.ResponseRefType))
                 .Select(f => f.ResponseRefType).ToList();
 
             // 参数中的类型
-            var paramsRefs = Functions.SelectMany(f => f.Params!)
+            List<string?> paramsRefs = Functions.SelectMany(f => f.Params!)
                 .Where(p => !baseTypes.Contains(p.Type))
                 .Select(p => p.Type)
                 .ToList();
-            if (requestRefs != null) refTypes.AddRange(requestRefs!);
-            if (responseRefs != null) refTypes.AddRange(responseRefs!);
-            if (paramsRefs != null) refTypes.AddRange(paramsRefs!);
+            if (requestRefs != null)
+            {
+                refTypes.AddRange(requestRefs!);
+            }
+
+            if (responseRefs != null)
+            {
+                refTypes.AddRange(responseRefs!);
+            }
+
+            if (paramsRefs != null)
+            {
+                refTypes.AddRange(paramsRefs!);
+            }
 
             refTypes = refTypes.GroupBy(t => t)
                 .Select(g => g.FirstOrDefault()!)
@@ -48,7 +59,7 @@ public class RequestServiceFile
             refTypes.ForEach(t =>
             {
                 Console.WriteLine("type:" + t);
-                Console.WriteLine(String.Join(';', Config.EnumModels));
+                Console.WriteLine(string.Join(';', Config.EnumModels));
                 if (Config.EnumModels.Contains(t))
                 {
                     importModels += $"import {{ {t} }} from '../models/enum/{t.ToHyphen()}.model';{Environment.NewLine}";
@@ -60,7 +71,7 @@ public class RequestServiceFile
 
             });
         }
-        var result = $@"import {{ Injectable }} from '@angular/core';
+        string result = $@"import {{ Injectable }} from '@angular/core';
 import {{ BaseService }} from './base.service';
 import {{ Observable }} from 'rxjs';
 {importModels}
@@ -114,16 +125,16 @@ public class RequestServiceFunction
         Name = Name.Replace(Tag + "_", "");
         Name = Name.ToCamelCase();
         // 处理参数
-        var paramsString = "";
-        var paramsComments = "";
-        var dataString = "";
+        string paramsString = "";
+        string paramsComments = "";
+        string dataString = "";
         if (Params?.Count > 0)
         {
             paramsString = string.Join(", ",
                 Params.OrderByDescending(p => p.IsRequired)
                     .Select(p => p.IsRequired
-                        ? (p.Name + ": " + p.Type)
-                        : (p.Name + "?: " + p.Type))
+                        ? p.Name + ": " + p.Type
+                        : p.Name + "?: " + p.Type)
                 .ToArray());
             Params.ForEach(p =>
             {
@@ -145,35 +156,36 @@ public class RequestServiceFunction
             paramsComments += $"   * @param data {RequestType}\n";
         }
         // 注释生成
-        var comments = $@"  /**
+        string comments = $@"  /**
    * {Description ?? Name}
 {paramsComments}   */";
 
         // 构造请求url
-        var paths = Params?.Where(p => p.InPath).Select(p => p.Name)?.ToList();
-        if (paths != null)
-        {
-            paths.ForEach(p =>
+        List<string?>? paths = Params?.Where(p => p.InPath).Select(p => p.Name)?.ToList();
+        paths?.ForEach(p =>
             {
-                var origin = $"{{{p}}}";
+                string origin = $"{{{p}}}";
                 Path = Path.Replace(origin, "$" + origin);
             });
-        }
         // 需要拼接的参数,特殊处理文件上传
-        var reqParams = Params?.Where(p => !p.InPath && p.Type != "FormData")
+        List<string?>? reqParams = Params?.Where(p => !p.InPath && p.Type != "FormData")
             .Select(p => p.Name)?.ToList();
         if (reqParams != null)
         {
-            var queryParams = "";
+            string queryParams = "";
             queryParams = string.Join("&", reqParams.Select(p => { return $"{p}=${{{p}}}"; }).ToArray());
             if (!string.IsNullOrEmpty(queryParams))
+            {
                 Path += "?" + queryParams;
+            }
         }
-        var file = Params?.Where(p => p.Type!.Equals("FormData")).FirstOrDefault();
+        FunctionParams? file = Params?.Where(p => p.Type!.Equals("FormData")).FirstOrDefault();
         if (file != null)
+        {
             dataString = $", {file.Name}";
+        }
 
-        var function = @$"{comments}
+        string function = @$"{comments}
   {Name}({paramsString}): Observable<{ResponseType}> {{
     const url = `{Path}`;
     return this.request<{ResponseType}>('{Method.ToLower()}', url{dataString});

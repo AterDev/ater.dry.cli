@@ -38,22 +38,25 @@ public class RestApiGenerate : GenerateBase
         StorePath = servicePath;
         ApiPath = apiPath;
         Suffix = suffix;
-        var entityDir =  new FileInfo(entityPath).Directory!;
-        var entityProjectFile = AssemblyHelper.FindProjectFile(entityDir, entityDir.Root);
-        if (entityProjectFile == null) throw new FileNotFoundException("project file not found!");
+        DirectoryInfo entityDir = new FileInfo(entityPath).Directory!;
+        FileInfo? entityProjectFile = AssemblyHelper.FindProjectFile(entityDir, entityDir.Root);
+        if (entityProjectFile == null)
+        {
+            throw new FileNotFoundException("project file not found!");
+        }
 
         EntityNamespace = AssemblyHelper.GetNamespaceName(entityProjectFile.Directory!);
         ShareNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(SharePath));
         ServiceNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(StorePath));
         ApiNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(ApiPath));
 
-        var entityHelper = new EntityParseHelper(entityPath);
+        EntityParseHelper entityHelper = new(entityPath);
         EntityInfo = entityHelper.GetEntity();
     }
 
     public string GetRestApiInterface()
     {
-        var content = GetTplContent("Interface.IRestController.tpl");
+        string content = GetTplContent("Interface.IRestController.tpl");
         content = content.Replace(TplConst.NAMESPACE, ApiNamespace);
         return content;
     }
@@ -65,8 +68,8 @@ public class RestApiGenerate : GenerateBase
     /// <returns></returns>
     public string GetRestApiBase()
     {
-        var dbContextName = GetContextName();
-        var content = GetTplContent("Implement.RestControllerBase.tpl");
+        string dbContextName = GetContextName();
+        string content = GetTplContent("Implement.RestControllerBase.tpl");
         content = content.Replace(TplConst.NAMESPACE, ApiNamespace)
             .Replace(TplConst.DBCONTEXT_NAME, dbContextName);
         return content;
@@ -95,8 +98,8 @@ public class RestApiGenerate : GenerateBase
     /// </summary>
     public string GetRestApiContent()
     {
-        var entityName = Path.GetFileNameWithoutExtension(EntityPath);
-        var tplContent = GetTplContent("Implement.RestControllerContent.tpl");
+        string entityName = Path.GetFileNameWithoutExtension(EntityPath);
+        string tplContent = GetTplContent("Implement.RestControllerContent.tpl");
 
         //var actionContent = GetAddApiContent();
         //actionContent += GetUpdateApiContent();
@@ -118,10 +121,14 @@ public class RestApiGenerate : GenerateBase
     /// <returns></returns>
     public string? GetAddApiContent()
     {
-        var entityName = EntityInfo.Name;
-        var navigationProp = EntityInfo.GetNavigation();
-        if (navigationProp == null) return null;
-        var content = $@"
+        string entityName = EntityInfo.Name;
+        Core.Models.PropertyInfo? navigationProp = EntityInfo.GetNavigation();
+        if (navigationProp == null)
+        {
+            return null;
+        }
+
+        string content = $@"
     /// <summary>
     /// 关联添加
     /// </summary>
@@ -160,14 +167,14 @@ public class RestApiGenerate : GenerateBase
     public void GenerateRepositoryServicesDI()
     {
         // 获取services中所有Repository仓储类
-        var dir = new DirectoryInfo(Path.Combine(StorePath, "Repositories"));
+        DirectoryInfo dir = new(Path.Combine(StorePath, "Repositories"));
         Console.WriteLine("搜索目录:" + dir.FullName);
-        var files = dir.GetFiles("*Repository.cs", SearchOption.TopDirectoryOnly);
-        var classes = files.Where(f => f.Name != "Repository.cs").ToList();
+        FileInfo[] files = dir.GetFiles("*Repository.cs", SearchOption.TopDirectoryOnly);
+        List<FileInfo> classes = files.Where(f => f.Name != "Repository.cs").ToList();
         Console.WriteLine("共找到" + classes.Count + "个仓储");
-        var content = string.Join(string.Empty, classes.Select(c => "            services.AddScoped(typeof(" + Path.GetFileNameWithoutExtension(c.FullName) + "));\r\n").ToArray());
+        string content = string.Join(string.Empty, classes.Select(c => "            services.AddScoped(typeof(" + Path.GetFileNameWithoutExtension(c.FullName) + "));\r\n").ToArray());
         // 替换模板文件并写入
-        var tplContent = GetTplContent("RepositoryServiceExtensions.tpl");
+        string tplContent = GetTplContent("RepositoryServiceExtensions.tpl");
         string replaceSign = "// {$TobeAddRepository}";
         tplContent = tplContent.Replace(replaceSign, content);
         File.WriteAllText(Path.Combine(ApiPath, "RepositoryServiceExtensions.cs"), tplContent);
@@ -182,16 +189,18 @@ public class RestApiGenerate : GenerateBase
     /// <returns></returns>
     public string GetContextName(string? contextName = null)
     {
-        var name = "ContextBase";
-        var assemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(StorePath));
-        var cpl = new CompilationHelper(StorePath, assemblyName);
-        var classes = cpl.GetAllClasses();
+        string name = "ContextBase";
+        string? assemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(StorePath));
+        CompilationHelper cpl = new(StorePath, assemblyName);
+        IEnumerable<INamedTypeSymbol> classes = cpl.GetAllClasses();
         if (classes != null)
         {
             // 获取所有继承 dbcontext的上下文
-            var allDbContexts = CompilationHelper.GetClassNameByBaseType(classes, "IdentityDbContext");
+            IEnumerable<INamedTypeSymbol> allDbContexts = CompilationHelper.GetClassNameByBaseType(classes, "IdentityDbContext");
             if (!allDbContexts.Any())
+            {
                 allDbContexts = CompilationHelper.GetClassNameByBaseType(classes, "DbContext");
+            }
 
             if (allDbContexts.Any())
             {

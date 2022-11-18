@@ -1,4 +1,4 @@
-﻿namespace CodeGenerator.Infrastructure;
+﻿namespace Core.Infrastructure;
 public class Const
 {
     public const string QUERY_STORE = "QueryStore";

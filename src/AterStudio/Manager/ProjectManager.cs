@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using System.Text.Json;
+﻿using System.Text.Json;
 using AterStudio.Entity;
 using AterStudio.Models;
 
@@ -8,7 +7,7 @@ namespace AterStudio.Manager;
 
 public class ProjectManager
 {
-    private ContextBase _context;
+    private readonly ContextBase _context;
 
     public ProjectManager(ContextBase context)
     {
@@ -18,20 +17,20 @@ public class ProjectManager
     public async Task<Project?> AddProjectAsync(string name, string path)
     {
         // TODO:获取并构造参数
-        var slnFile = new FileInfo(path);
-        var dir = slnFile.DirectoryName;
+        FileInfo slnFile = new(path);
+        string? dir = slnFile.DirectoryName;
 
-        var configFilePath = Path.Combine(dir, ".droplet-config.json");
+        string configFilePath = Path.Combine(dir, ".droplet-config.json");
         if (!File.Exists(configFilePath))
         {
             throw new FileNotFoundException("未找到配置文件:.droplet-config.json");
         }
 
-        var configJson = await File.ReadAllTextAsync(Path.Combine(dir, ".droplet-config.json"));
-        var config = JsonSerializer.Deserialize<ConfigOptions>(configJson);
+        string configJson = await File.ReadAllTextAsync(Path.Combine(dir, ".droplet-config.json"));
+        ConfigOptions? config = JsonSerializer.Deserialize<ConfigOptions>(configJson);
 
-        var projectName = Path.GetFileNameWithoutExtension(path);
-        var project = new Project
+        string projectName = Path.GetFileNameWithoutExtension(path);
+        Project project = new()
         {
             DisplayName = name,
             Path = path,
@@ -43,8 +42,8 @@ public class ProjectManager
             SharePath = config.DtoPath.ToFullPath("src", dir)
         };
 
-        await _context.AddAsync(project);
-        await _context.SaveChangesAsync();
+        _ = await _context.AddAsync(project);
+        _ = await _context.SaveChangesAsync();
         return project;
     }
 }

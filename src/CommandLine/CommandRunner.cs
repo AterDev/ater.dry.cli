@@ -11,7 +11,7 @@ public class CommandRunner
         try
         {
             Console.WriteLine("🔵 Generating markdown doc");
-            var cmd = new DocCommand(url, output);
+            DocCommand cmd = new(url, output);
             await cmd.RunAsync();
         }
         catch (WebException webExp)
@@ -36,7 +36,7 @@ public class CommandRunner
         try
         {
             Console.WriteLine("🔵 Generating ts models and ng services...");
-            var cmd = new NgCommand(url, output);
+            NgCommand cmd = new(url, output);
             await cmd.RunAsync();
         }
         catch (WebException webExp)
@@ -61,7 +61,7 @@ public class CommandRunner
         try
         {
             Console.WriteLine($"🔵 Generating ts models and {type} request services...");
-            var cmd = new RequestCommand(url, output, type);
+            RequestCommand cmd = new(url, output, type);
             await cmd.RunAsync();
         }
         catch (WebException webExp)
@@ -83,7 +83,7 @@ public class CommandRunner
     public static async Task GenerateDtoAsync(string entityPath, string output, bool force)
     {
         Console.WriteLine("🔵 Generating Dtos...");
-        var cmd = new DtoCommand(entityPath, output);
+        DtoCommand cmd = new(entityPath, output);
         await cmd.RunAsync(force);
     }
 
@@ -99,10 +99,10 @@ public class CommandRunner
             string servicePath = "")
     {
         Console.WriteLine("🔵 Generate dtos");
-        var dtoCmd = new DtoCommand(path, dtoPath);
+        DtoCommand dtoCmd = new(path, dtoPath);
         await dtoCmd.RunAsync();
         Console.WriteLine("🔵 Generate manager");
-        var storeCmd = new StoreCommand(path, dtoPath, servicePath);
+        StoreCommand storeCmd = new(path, dtoPath, servicePath);
         await storeCmd.RunAsync();
     }
 
@@ -119,14 +119,14 @@ public class CommandRunner
         try
         {
             Console.WriteLine("🔵 Generate dtos");
-            var dtoCmd = new DtoCommand(path, dtoPath);
+            DtoCommand dtoCmd = new(path, dtoPath);
             await dtoCmd.RunAsync();
             Console.WriteLine("🔵 Generate store");
-            var storeCmd = new StoreCommand(path, dtoPath, servicePath, suffix);
+            StoreCommand storeCmd = new(path, dtoPath, servicePath, suffix);
             await storeCmd.RunAsync();
 
             Console.WriteLine("🔵 Generate rest api");
-            var apiCmd = new ApiCommand(path, dtoPath, servicePath, apiPath, suffix);
+            ApiCommand apiCmd = new(path, dtoPath, servicePath, apiPath, suffix);
             await apiCmd.RunAsync();
         }
         catch (Exception ex)
@@ -145,13 +145,13 @@ public class CommandRunner
     public static async Task GenerateNgPagesAsync(string name, string dtoPath, string output = "")
     {
         Console.WriteLine("🔵 Generate view");
-        var viewCmd = new ViewCommand(name, dtoPath, output);
+        ViewCommand viewCmd = new(name, dtoPath, output);
         await viewCmd.RunAsync();
     }
 
     public static async Task SyncToAngularAsync()
     {
-        var cmd = new AutoSyncNgCommand();
+        AutoSyncNgCommand cmd = new();
         await cmd.RunAsync();
     }
 }

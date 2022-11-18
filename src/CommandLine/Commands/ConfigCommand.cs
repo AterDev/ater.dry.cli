@@ -1,6 +1,7 @@
-using CodeGenerator.Infrastructure.Helper;
 using System.Diagnostics;
 using System.Text.Json;
+using Core.Infrastructure.Helper;
+using Core.Models;
 
 namespace Droplet.CommandLine.Commands;
 
@@ -11,9 +12,9 @@ public class ConfigCommand
     /// </summary>
     public static async Task InitConfigFileAsync()
     {
-        var configPath = GetConfigPath();
+        string configPath = GetConfigPath();
 
-        var file = new FileInfo(Path.Combine(configPath, Config.ConfigFileName));
+        FileInfo file = new(Path.Combine(configPath, Config.ConfigFileName));
         var path = file == null
             ? Path.Combine(configPath, Config.ConfigFileName)
             : file.FullName;
@@ -22,8 +23,8 @@ public class ConfigCommand
         {
             return;
         }
-        var options = new ConfigOptions();
-        var content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
+        ConfigOptions options = new();
+        string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
         await File.WriteAllTextAsync(path, content, Encoding.UTF8);
         Console.WriteLine("Init config file success");
     }
@@ -33,30 +34,30 @@ public class ConfigCommand
     /// </summary>
     public static ConfigOptions? ReadConfigFile()
     {
-        var configPath = GetConfigPath();
-        var file = new FileInfo(Path.Combine(configPath, Config.ConfigFileName));
+        string configPath = GetConfigPath();
+        FileInfo file = new(Path.Combine(configPath, Config.ConfigFileName));
         if (file == null)
         {
             Console.WriteLine($"config file not found , please run droplet confing init");
             return default;
         }
-        var path = file.FullName;
-        var config = File.ReadAllText(path);
-        var options = JsonSerializer.Deserialize<ConfigOptions>(config);
+        string path = file.FullName;
+        string config = File.ReadAllText(path);
+        ConfigOptions? options = JsonSerializer.Deserialize<ConfigOptions>(config);
         return options ?? new ConfigOptions();
     }
 
     public static void EditConfigFile()
     {
-        var configPath = GetConfigPath();
-        var file = new FileInfo(Path.Combine(configPath, Config.ConfigFileName));
+        string configPath = GetConfigPath();
+        FileInfo file = new(Path.Combine(configPath, Config.ConfigFileName));
         if (file == null)
         {
             Console.WriteLine($"config file not found , please run droplet confing init");
             return;
         }
-        var path =  file.FullName;
-        var process = new Process()
+        string path = file.FullName;
+        Process process = new()
         {
             StartInfo = new ProcessStartInfo
             {
@@ -67,7 +68,7 @@ public class ConfigCommand
                 CreateNoWindow = true,
             }
         };
-        process.Start();
+        _ = process.Start();
         _ = process.StandardOutput.ReadToEnd();
         process.WaitForExit();
     }
@@ -78,8 +79,8 @@ public class ConfigCommand
     /// <returns></returns>
     private static string GetConfigPath()
     {
-        var currentDir = new DirectoryInfo(Environment.CurrentDirectory);
-        var solutionPath = AssemblyHelper.GetSlnFile(currentDir, "*.sln", currentDir.Root);
+        DirectoryInfo currentDir = new(Environment.CurrentDirectory);
+        FileInfo? solutionPath = AssemblyHelper.GetSlnFile(currentDir, "*.sln", currentDir.Root);
         string configPath;
         if (solutionPath == null)
         {

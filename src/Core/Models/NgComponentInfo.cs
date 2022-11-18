@@ -1,4 +1,4 @@
-﻿namespace CodeGenerator.Models;
+﻿namespace Core.Models;
 public class NgComponentInfo
 {
     public NgComponentInfo(string name)

@@ -1,3 +1,4 @@
+using Core.Infrastructure.Utils;
 using Microsoft.OpenApi.Models;
 
 namespace Droplet.CommandLine.Commands;
@@ -23,10 +24,10 @@ public class RequestCommand : CommandBase
 
     public async Task RunAsync()
     {
-        var openApiContent = "";
+        string openApiContent = "";
         if (DocUrl.StartsWith("http://") || DocUrl.StartsWith("https://"))
         {
-            using var http = new HttpClient();
+            using HttpClient http = new();
             openApiContent = await http.GetStringAsync(DocUrl);
         }
         else
@@ -45,30 +46,30 @@ public class RequestCommand : CommandBase
 
     public async Task GenerateCommonFilesAsync()
     {
-        var content = RequestGenearte.GetBaseService(LibType);
-        var dir = Path.Combine(OutputPath,"services");
+        string content = RequestGenearte.GetBaseService(LibType);
+        string dir = Path.Combine(OutputPath, "services");
         await GenerateFileAsync(dir, "base.service.ts", content, false);
     }
 
     public async Task GenerateRequestServicesAsync()
     {
-        var ngGen = new RequestGenearte(ApiDocument!)
+        RequestGenearte ngGen = new(ApiDocument!)
         {
             LibType = LibType
         };
         // 获取请求服务并生成文件
-        var services = ngGen.GetServices(ApiDocument!.Tags);
-        foreach (var service in services)
+        List<Core.Models.GenFileInfo> services = ngGen.GetServices(ApiDocument!.Tags);
+        foreach (Core.Models.GenFileInfo service in services)
         {
-            var dir = Path.Combine(OutputPath, "services");
+            string dir = Path.Combine(OutputPath, "services");
             await GenerateFileAsync(dir, service.Name, service.Content, true);
         }
         // 获取对应的ts模型类，生成文件
         Console.WriteLine(Instructions[1]);
-        var models = ngGen.GetTSInterfaces();
-        foreach (var model in models)
+        List<Core.Models.GenFileInfo> models = ngGen.GetTSInterfaces();
+        foreach (Core.Models.GenFileInfo model in models)
         {
-            var dir = Path.Combine(OutputPath, "models", model.Path.ToHyphen());
+            string dir = Path.Combine(OutputPath, "models", model.Path.ToHyphen());
             await GenerateFileAsync(dir, model.Name, model.Content, true);
         }
     }

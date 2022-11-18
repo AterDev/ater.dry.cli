@@ -1,8 +1,6 @@
-﻿using CodeGenerator.Generate;
-
+﻿using System.IO;
+using CodeGenerator.Generate;
 using Microsoft.OpenApi.Readers;
-
-using System.IO;
 
 namespace CodeGenerator.Test;
 
@@ -11,27 +9,27 @@ public class NgGenerateTest
     [Fact]
     public void should_generate_ts_models_from_openapiAsync()
     {
-        var projectPath = PathHelper.GetProjectPath();
-        var file = Path.Combine(projectPath,"Data/openapi.json");
-        var ApiDocument = new OpenApiStringReader().Read(File.ReadAllText(file), out var context);
-        var ngGen = new RequestGenearte(ApiDocument)
+        string projectPath = PathHelper.GetProjectPath();
+        string file = Path.Combine(projectPath, "Data/openapi.json");
+        Microsoft.OpenApi.Models.OpenApiDocument ApiDocument = new OpenApiStringReader().Read(File.ReadAllText(file), out _);
+        RequestGenearte ngGen = new(ApiDocument)
         {
             LibType = RequestLibType.Axios
         };
         // 获取对应的ts模型类，生成文件
-        var models = ngGen.GetTSInterfaces();
+        List<Core.Models.GenFileInfo> models = ngGen.GetTSInterfaces();
         Console.WriteLine(models.Count);
     }
 
     [Fact]
     public void should_generate_ng_services()
     {
-        var projectPath = PathHelper.GetProjectPath();
-        var file = Path.Combine(projectPath,"Data/openapi.json");
-        var openApiDoc = new OpenApiStringReader().Read(File.ReadAllText(file), out _);
+        string projectPath = PathHelper.GetProjectPath();
+        string file = Path.Combine(projectPath, "Data/openapi.json");
+        Microsoft.OpenApi.Models.OpenApiDocument openApiDoc = new OpenApiStringReader().Read(File.ReadAllText(file), out _);
 
-        var serviceGen = new NgServiceGenerate(openApiDoc.Paths);
-        var services = serviceGen.GetServices(openApiDoc.Tags);
+        NgServiceGenerate serviceGen = new(openApiDoc.Paths);
+        List<Core.Models.GenFileInfo> services = serviceGen.GetServices(openApiDoc.Tags);
 
         Assert.NotNull(services);
     }
@@ -39,15 +37,15 @@ public class NgGenerateTest
     [Fact]
     public void should_generate_axios_services()
     {
-        var projectPath = PathHelper.GetProjectPath();
-        var file = Path.Combine(projectPath,"Data/openapi.json");
-        var openApiDoc = new OpenApiStringReader().Read(File.ReadAllText(file), out _);
+        string projectPath = PathHelper.GetProjectPath();
+        string file = Path.Combine(projectPath, "Data/openapi.json");
+        Microsoft.OpenApi.Models.OpenApiDocument openApiDoc = new OpenApiStringReader().Read(File.ReadAllText(file), out _);
 
-        var serviceGen = new RequestGenearte(openApiDoc)
+        RequestGenearte serviceGen = new(openApiDoc)
         {
             LibType = RequestLibType.Axios
         };
-        var services = serviceGen.GetServices(openApiDoc.Tags);
+        List<Core.Models.GenFileInfo> services = serviceGen.GetServices(openApiDoc.Tags);
 
         Assert.NotNull(services);
     }
@@ -56,13 +54,13 @@ public class NgGenerateTest
     [Fact]
     public void should_generate_ng_component()
     {
-        var entityName = "BlogCatalog";
-        var dtoPath = @"D:\codes\DevCenter\src\Share";
-        var output=@"D:\codes\DevCenter\src\Webapp\Admin";
-        var gen = new NgPageGenerate(entityName,dtoPath,output);
+        string entityName = "BlogCatalog";
+        string dtoPath = @"D:\codes\DevCenter\src\Share";
+        string output = @"D:\codes\DevCenter\src\Webapp\Admin";
+        NgPageGenerate gen = new(entityName, dtoPath, output);
 
-        var dialog = NgPageGenerate.BuildConfirmDialog();
-        var component = gen.BuildAddPage();
+        Core.Models.NgComponentInfo dialog = NgPageGenerate.BuildConfirmDialog();
+        Core.Models.NgComponentInfo component = gen.BuildAddPage();
         Assert.Equal("add", component.Name);
         Assert.NotNull(dialog);
     }

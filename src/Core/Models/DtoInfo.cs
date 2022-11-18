@@ -1,4 +1,4 @@
-﻿namespace CodeGenerator.Models;
+﻿namespace Core.Models;
 
 public class DtoInfo
 {
@@ -11,20 +11,20 @@ public class DtoInfo
 
     public string ToString(string? projectName = "Share", string entityName = "")
     {
-        var props = Properties?.Select(p => p.ToCsharpLine()).ToArray()
+        string[] props = Properties?.Select(p => p.ToCsharpLine()).ToArray()
             ?? Array.Empty<string>();
-        var propStrings = string.Join(string.Empty, props);
+        string propStrings = string.Join(string.Empty, props);
 
         // 对region进行处理
-        var regionCount = propStrings.Split("#region").Length - 1;
-        var endregionCount = propStrings.Split("#endregion").Length - 1;
+        int regionCount = propStrings.Split("#region").Length - 1;
+        int endregionCount = propStrings.Split("#endregion").Length - 1;
         if (endregionCount < regionCount)
         {
             propStrings += Environment.NewLine + "\t#endregion";
         }
 
-        var baseType    = string.IsNullOrEmpty(BaseType) ? "" : " : " + BaseType;
-        var tpl         = $@"using {NamespaceName};
+        string baseType = string.IsNullOrEmpty(BaseType) ? "" : " : " + BaseType;
+        string tpl = $@"using {NamespaceName};
 namespace {projectName}.Models.{entityName}Dtos;
 {Comment}
 public class {Name}{baseType}
@@ -36,12 +36,12 @@ public class {Name}{baseType}
     }
     public void Save(string dir, bool cover)
     {
-        var path = Path.Combine(dir, Tag??"");
+        string path = Path.Combine(dir, Tag ?? "");
         if (!Directory.Exists(path))
         {
-            Directory.CreateDirectory(path);
+            _ = Directory.CreateDirectory(path);
         }
-        var fileName = Path.Combine(path, Name + ".cs");
+        string fileName = Path.Combine(path, Name + ".cs");
         // 不覆盖
         if (!cover && File.Exists(fileName))
         {
