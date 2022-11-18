@@ -1,1 +1,84 @@
-<p>index works!</p>
+<div class="container">
+  <h3>实体列表</h3>
+  <table mat-table [dataSource]="dataSource" style="width: 100%;">
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>类名</th>
+      <td mat-cell *matCellDef="let element">
+        {{element.name}}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="path">
+      <th mat-header-cell *matHeaderCellDef>路径</th>
+      <td mat-cell *matCellDef="let element">
+        {{element.path}}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>操作</th>
+      <td mat-cell *matCellDef="let element">
+
+        <button mat-icon-button color="primary" (click)="edit(element.path)" matTooltip="编辑">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-button color="primary" [matMenuTriggerFor]="menu">代码生成</button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item matTooltip="生成dto,不会覆盖原内容">生成Dto</button>
+          <button mat-menu-item matTooltip="生成dto/dataStore/manager,不会覆盖原内容">生成Manager</button>
+          <button mat-menu-item matTooltip="生成dto/dataStore/manager/api,不会覆盖原内容">生成APIControler</button>
+          <button mat-menu-item (click)="openRequestDialog()" matTooltip="生成前端请求服务">生成请求</button>
+          <button mat-menu-item (click)="openSyncDialog()" matTooltip="生成前端请求及基础页面">一键同步前端</button>
+        </mat-menu>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columns"></tr>
+    <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+  </table>
+</div>
+
+<ng-template #requestDialog>
+  <h2 mat-dialog-title>生成请求</h2>
+  <mat-dialog-content>
+    <form [formGroup]="requestForm" class="d-flex flex-column">
+      <mat-form-field>
+        <mat-label>swagger地址</mat-label>
+        <input matInput placeholder="支持url或本地路径，默认为HttpAPI/swagger.json" formControlName="swagger">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>请求库类型</mat-label>
+        <mat-select placeholder="Placeholder" formControlName="type">
+          <mat-option value="NgHttp">
+            Angular HttpClient
+          </mat-option>
+          <mat-option value="Axios">
+            Axios
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>前端路径</mat-label>
+        <input matInput placeholder="前端代码目录绝对路径" formControlName="path">
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button mat-dialog-close>取消</button>
+    <button mat-button (click)="generateRequest()" color="primary">生成</button>
+  </mat-dialog-actions>
+</ng-template>
+
+<ng-template #syncDialog>
+  <h2 mat-dialog-title>一键同步</h2>
+  <mat-dialog-content>
+    <p>一键同步仅用于集成angular的项目，会将相关代码生成到
+      <strong>Http.API</strong>
+      目录下的
+      <strong>ClientApp</strong>
+      中
+    </p>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button mat-dialog-close>取消</button>
+    <button mat-button (click)="generateRequest()" color="primary">生成</button>
+  </mat-dialog-actions>
+</ng-template>

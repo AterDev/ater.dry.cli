@@ -8,6 +8,8 @@ import { HomeModule } from './pages/home/home.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/snack-bar';
 import { CustomerHttpInterceptor } from './share/customer-http.interceptor';
+import { WorkspaceModule } from './pages/workspace/workspace.module';
+import { ShareModule } from './share/share.module';
 
 @NgModule({
   declarations: [
@@ -19,7 +21,8 @@ import { CustomerHttpInterceptor } from './share/customer-http.interceptor';
     HttpClientModule,
     AppRoutingModule,
     ComponentsModule,
-    HomeModule
+    HomeModule,
+    WorkspaceModule
   ],
   providers: [
     { provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: { duration: 2500 } },

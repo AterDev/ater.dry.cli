@@ -6,6 +6,57 @@
     "version": "v1"
   },
   "paths": {
+    "/api/Entity/{id}": {
+      "get": {
+        "tags": [
+          "Entity"
+        ],
+        "operationId": "Entity_List",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EntityFile"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EntityFile"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EntityFile"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Project": {
       "get": {
         "tags": [
@@ -53,6 +104,7 @@
           {
             "name": "name",
             "in": "query",
+            "style": "form",
             "schema": {
               "type": "string"
             }
@@ -60,6 +112,7 @@
           {
             "name": "path",
             "in": "query",
+            "style": "form",
             "schema": {
               "type": "string"
             }
@@ -92,6 +145,24 @@
   },
   "components": {
     "schemas": {
+      "EntityFile": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "path": {
+            "type": "string",
+            "nullable": true
+          },
+          "content": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "Project": {
         "type": "object",
         "properties": {

@@ -23,7 +23,6 @@ public class StoreGenerateTest
     {
         string entityPath = PathHelper.GetProjectFilePath("Entity/Blog.cs");
         string projectPath = PathHelper.GetProjectPath();
-        _ = new(entityPath, projectPath, projectPath);
 
         //var storeInterface = gen.GetStoreInterface();
         //var storeBase = gen.GetStoreBase();

@@ -24,10 +24,9 @@ public class ProjectController : ControllerBase
         return await _context.Projects.ToListAsync();
     }
 
-
     [HttpPost]
-    public async Task<ActionResult<Project>> AddAsync(string name, string path)
+    public async Task<ActionResult<Project?>> AddAsync(string name, string path)
     {
-        return !System.IO.File.Exists(path) ? (ActionResult<Project>)Problem("未找到该路径") : (ActionResult<Project>)await _manager.AddProjectAsync(name, path);
+        return !System.IO.File.Exists(path) ? Problem("未找到该路径") : await _manager.AddProjectAsync(name, path);
     }
 }

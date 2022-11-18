@@ -69,7 +69,7 @@ export class IndexComponent implements OnInit {
     }
   }
   goToWorkspace(id: number): void {
-    this.router.navigate(['/workspace', id]);
+    this.router.navigate(['/workspace/index', id]);
   }
   getProjects(): void {
     this.service.list()

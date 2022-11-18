@@ -1,5 +1,4 @@
 using Core.Infrastructure;
-using Core.Infrastructure.Helper;
 
 namespace Droplet.CommandLine.Commands;
 

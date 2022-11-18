@@ -4,7 +4,6 @@ using AterStudio.Models;
 
 namespace AterStudio.Manager;
 
-
 public class ProjectManager
 {
     private readonly ContextBase _context;

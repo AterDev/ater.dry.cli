@@ -1,7 +1,5 @@
 using System.Diagnostics;
 using System.Text.Json;
-using Core.Infrastructure.Helper;
-using Core.Models;
 
 namespace Droplet.CommandLine.Commands;
 
@@ -15,7 +13,7 @@ public class ConfigCommand
         string configPath = GetConfigPath();
 
         FileInfo file = new(Path.Combine(configPath, Config.ConfigFileName));
-        var path = file == null
+        string path = file == null
             ? Path.Combine(configPath, Config.ConfigFileName)
             : file.FullName;
 

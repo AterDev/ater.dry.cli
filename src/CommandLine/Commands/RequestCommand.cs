@@ -1,4 +1,3 @@
-using Core.Infrastructure.Utils;
 using Microsoft.OpenApi.Models;
 
 namespace Droplet.CommandLine.Commands;

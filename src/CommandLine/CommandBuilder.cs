@@ -1,6 +1,5 @@
 ﻿using System.CommandLine;
 using System.Text.Json;
-using Core.Models;
 
 namespace Droplet.CommandLine;
 

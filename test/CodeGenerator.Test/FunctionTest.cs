@@ -1,4 +1,6 @@
-﻿namespace CodeGenerator.Test;
+﻿using Core.Infrastructure.Helper;
+
+namespace CodeGenerator.Test;
 public class FunctionTest
 {
     [Fact]

@@ -1,5 +1,4 @@
-﻿using Core.Infrastructure.Utils;
-using Core.Models;
+﻿
 using Microsoft.OpenApi.Models;
 
 namespace Droplet.CommandLine.Commands;
@@ -67,7 +66,7 @@ public class AutoSyncNgCommand : CommandBase
         ViewCommand cmd = new(dtoPath, ngPath);
         foreach (FileInfo entity in fileInfos)
         {
-            var entityParse = new EntityParseHelper(entity.FullName);
+            EntityParseHelper entityParse = new(entity.FullName);
             entityParse.Parse();
 
             cmd.SetEntityPath(entity.FullName);

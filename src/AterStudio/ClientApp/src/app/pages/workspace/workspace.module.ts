@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 
 import { WorkspaceRoutingModule } from './workspace-routing.module';
 import { IndexComponent } from './index/index.component';
+import { ComponentsModule } from 'src/app/components/components.module';
+import { ShareModule } from 'src/app/share/share.module';
 
 
 @NgModule({
@@ -10,7 +12,8 @@ import { IndexComponent } from './index/index.component';
     IndexComponent
   ],
   imports: [
-    CommonModule,
+    ComponentsModule,
+    ShareModule,
     WorkspaceRoutingModule
   ]
 })

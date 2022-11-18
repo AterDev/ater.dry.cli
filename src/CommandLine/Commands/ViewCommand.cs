@@ -1,6 +1,3 @@
-using Core.Infrastructure.Utils;
-using Core.Models;
-
 namespace Droplet.CommandLine.Commands;
 
 public class ViewCommand : CommandBase

@@ -18,6 +18,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 
 builder.Services.AddScoped<ProjectManager>();
+builder.Services.AddScoped<EntityManager>();
 
 // corsÅäÖÃ 
 builder.Services.AddCors(options =>

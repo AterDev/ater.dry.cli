@@ -1,6 +1,4 @@
-﻿using System.Xml.Linq;
-using System;
-using PropertyInfo = Core.Models.PropertyInfo;
+﻿using PropertyInfo = Core.Models.PropertyInfo;
 
 namespace CodeGenerator.Generate;
 
@@ -27,7 +25,7 @@ public class NgFormGenerate : GenerateBase
         {
             foreach (PropertyInfo input in propertyInfos)
             {
-                var inputBuilder = new NgInputBuilder(input.Type, input.Name, input.DisplayName)
+                NgInputBuilder inputBuilder = new(input.Type, input.Name, input.DisplayName)
                 {
                     IsDecimal = input.IsDecimal,
                     IsRequired = input.IsRequired,
@@ -52,7 +50,7 @@ public class NgFormGenerate : GenerateBase
         {
             foreach (PropertyInfo input in propertyInfos)
             {
-                var inputBuilder = new NgInputBuilder(input.Type, input.Name, input.DisplayName)
+                NgInputBuilder inputBuilder = new(input.Type, input.Name, input.DisplayName)
                 {
                     IsDecimal = input.IsDecimal,
                     IsRequired = input.IsRequired,
