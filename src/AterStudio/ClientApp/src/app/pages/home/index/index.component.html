@@ -1,18 +1,43 @@
 <!-- project -->
-<div class="container">
-    <button mat-raised-button>添加项目</button>
-
-
-    <mat-card *ngFor="let item of projects">
-        <mat-card-header>
-            <mat-card-title>title</mat-card-title>
-            <mat-card-subtitle>subtitle</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-        
-        </mat-card-content>
-        <mat-card-actions>
-            <button mat-button>Ok</button>
-        </mat-card-actions>
-    </mat-card>
+<div class="container p-2">
+  <button mat-raised-button (click)="addProjectDialog()" color="primary">添加项目</button>
+  <mat-divider class="mt-2">
+  </mat-divider>
+  <mat-card *ngFor="let item of projects">
+    <mat-card-header>
+      <mat-card-title>
+        {{item.displayName}}
+      </mat-card-title>
+      <mat-card-subtitle>
+        {{item.name}}
+      </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      路径:
+      {{item.path}}
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-button (click)="goToWorkspace(item.id)" color="primary">进入工作台</button>
+    </mat-card-actions>
+  </mat-card>
 </div>
+
+<ng-template #addDialog>
+  <h2 mat-dialog-title>添加项目</h2>
+  <mat-dialog-content>
+    <form [formGroup]="addForm" class="d-flex flex-column">
+      <mat-form-field>
+        <mat-label>项目名称</mat-label>
+        <input matInput placeholder="3-20字符" formControlName="displayName">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>项目路径</mat-label>
+        <input matInput placeholder="请输入sln项目文件的完整目录" formControlName="path">
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button mat-dialog-close>取消</button>
+    <button mat-button (click)="addProject()" color="primary">确认添加</button>
+  </mat-dialog-actions>
+</ng-template>

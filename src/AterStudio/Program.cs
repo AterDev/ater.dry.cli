@@ -1,4 +1,5 @@
 using AterStudio;
+using AterStudio.Manager;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -9,51 +10,54 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<ContextBase>(options =>
 {
-  var connectionString = builder.Configuration.GetConnectionString("default");
-  options.UseSqlite(connectionString);
+    var connectionString = builder.Configuration.GetConnectionString("default");
+    options.UseSqlite(connectionString);
 });
 builder.Services.AddControllersWithViews();
 builder.Services.AddEndpointsApiExplorer();
+
+
+builder.Services.AddScoped<ProjectManager>();
 // corsÅäÖÃ 
 builder.Services.AddCors(options =>
 {
-  options.AddPolicy("default", builder =>
-  {
-    builder.AllowAnyOrigin();
-    builder.AllowAnyMethod();
-    builder.AllowAnyHeader();
-  });
+    options.AddPolicy("default", builder =>
+    {
+        builder.AllowAnyOrigin();
+        builder.AllowAnyMethod();
+        builder.AllowAnyHeader();
+    });
 });
 builder.Services.AddSwaggerGen(c =>
 {
 
-  c.SwaggerDoc("v1", new OpenApiInfo
-  {
-    Title = "MyProjectName",
-    Description = "API ÎÄµµ",
-    Version = "v1"
-  });
-  string[] xmlFiles = Directory.GetFiles(AppContext.BaseDirectory, "*.xml", SearchOption.TopDirectoryOnly);
-  foreach (string item in xmlFiles)
-  {
-    try
+    c.SwaggerDoc("v1", new OpenApiInfo
     {
-      c.IncludeXmlComments(item, includeControllerXmlComments: true);
+        Title = "MyProjectName",
+        Description = "API ÎÄµµ",
+        Version = "v1"
+    });
+    string[] xmlFiles = Directory.GetFiles(AppContext.BaseDirectory, "*.xml", SearchOption.TopDirectoryOnly);
+    foreach (string item in xmlFiles)
+    {
+        try
+        {
+            c.IncludeXmlComments(item, includeControllerXmlComments: true);
+        }
+        catch (Exception) { }
     }
-    catch (Exception) { }
-  }
-  c.DescribeAllParametersInCamelCase();
-  c.CustomOperationIds((z) =>
-  {
-    ControllerActionDescriptor descriptor = (ControllerActionDescriptor)z.ActionDescriptor;
-    return $"{descriptor.ControllerName}_{descriptor.ActionName}";
-  });
-  c.SchemaFilter<EnumSchemaFilter>();
-  c.MapType<DateOnly>(() => new OpenApiSchema
-  {
-    Type = "string",
-    Format = "date"
-  });
+    c.DescribeAllParametersInCamelCase();
+    c.CustomOperationIds((z) =>
+    {
+        ControllerActionDescriptor descriptor = (ControllerActionDescriptor)z.ActionDescriptor;
+        return $"{descriptor.ControllerName}_{descriptor.ActionName}";
+    });
+    c.SchemaFilter<EnumSchemaFilter>();
+    c.MapType<DateOnly>(() => new OpenApiSchema
+    {
+        Type = "string",
+        Format = "date"
+    });
 });
 
 var app = builder.Build();
@@ -64,8 +68,8 @@ if (!app.Environment.IsDevelopment())
 }
 else
 {
-  //app.UseSwagger();
-  //app.UseSwaggerUI();
+    //app.UseSwagger();
+    //app.UseSwaggerUI();
 }
 app.UseCors("default");
 //app.UseHttpsRedirection();
