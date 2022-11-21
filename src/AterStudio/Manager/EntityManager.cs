@@ -57,7 +57,7 @@ public class EntityManager
                 await CommandRunner.GenerateManagerAsync(dto.EntityPath, project.SharePath, project.ApplicationPath);
                 break;
             case CommandType.API:
-                await CommandRunner.GenerateApiAsync(dto.EntityPath, project.SharePath, project.ApplicationPath);
+                await CommandRunner.GenerateApiAsync(dto.EntityPath, project.SharePath, project.ApplicationPath, project.HttpPath,"Controller");
                 break;
             default:
                 break;
