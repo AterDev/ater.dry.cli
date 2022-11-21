@@ -1,6 +1,5 @@
 ﻿using System.CommandLine;
 using System.Text.Json;
-
 namespace Droplet.CommandLine;
 
 public class CommandBuilder
@@ -37,7 +36,7 @@ public class CommandBuilder
 
     public void AddStudio()
     {
-        Command studioCommand = new("studio", "studio management");
+        System.CommandLine.Command studioCommand = new("studio", "studio management");
 
         studioCommand.SetHandler(StudioCommand.RunStudio);
 
@@ -50,10 +49,10 @@ public class CommandBuilder
     /// <returns></returns>
     public void AddConfig()
     {
-        Command configCommand = new("config", "config management");
+        System.CommandLine.Command configCommand = new("config", "config management");
 
-        Command edit = new("edit", "edit config");
-        Command init = new("init", "init config");
+        System.CommandLine.Command edit = new("edit", "edit config");
+        System.CommandLine.Command init = new("init", "init config");
 
         edit.SetHandler(ConfigCommand.EditConfigFile);
         init.SetHandler(ConfigCommand.InitConfigFileAsync);
@@ -77,7 +76,7 @@ public class CommandBuilder
     public void AddDto()
     {
         // dto 生成命令
-        Command dtoCommand = new("dto", "generate entity dto files");
+        System.CommandLine.Command dtoCommand = new("dto", "generate entity dto files");
         Argument<string> path = new("entity path", "The entity file path");
         Option<string> outputOption = new(new[] { "--output", "-o" },
             "output project directory");
@@ -98,7 +97,7 @@ public class CommandBuilder
     /// </summary>
     public void AddRequest()
     {
-        Command reqCommand = new("request", "generate request service and interface using openApi json");
+        System.CommandLine.Command reqCommand = new("request", "generate request service and interface using openApi json");
         reqCommand.AddAlias("request");
         Argument<string> url = new("OpenApi Url", "openApi json file url");
         Option<string> outputOption = new(new[] { "--output", "-o" })
@@ -122,7 +121,7 @@ public class CommandBuilder
     public void AddManager()
     {
         // api 生成命令
-        Command apiCommand = new("manager", "generate dtos, datastore, manager");
+        System.CommandLine.Command apiCommand = new("manager", "generate dtos, datastore, manager");
         apiCommand.AddAlias("manager");
         Argument<string> path = new("entity path", "The entity file path");
         Option<string> dtoOption = new(new[] { "--dto", "-d" },
@@ -149,7 +148,7 @@ public class CommandBuilder
     public void AddApi()
     {
         // api 生成命令
-        Command apiCommand = new("webapi", "generate dtos, datastore, manager,api controllers");
+        System.CommandLine.Command apiCommand = new("webapi", "generate dtos, datastore, manager,api controllers");
         apiCommand.AddAlias("api");
         Argument<string> path = new("entity path", "The entity file path");
         Option<string> dtoOption = new(new[] { "--dto", "-d" },
@@ -186,7 +185,7 @@ public class CommandBuilder
     /// </summary>
     public void AddDoc()
     {
-        Command docCommand = new("doc", "generate typescript interface using openApi json");
+        System.CommandLine.Command docCommand = new("doc", "generate typescript interface using openApi json");
         docCommand.AddAlias("doc");
         Argument<string> url = new("OpenApi Url", "openApi json file url");
         Option<string> outputOption = new(new[] { "--output", "-o" })
@@ -202,7 +201,7 @@ public class CommandBuilder
     }
     public void AddNgService()
     {
-        Command ngCommand = new("angular", "generate angular service and interface using openApi json");
+        System.CommandLine.Command ngCommand = new("angular", "generate angular service and interface using openApi json");
         ngCommand.AddAlias("ng");
         Argument<string> url = new("OpenApi Json", "openApi json file url or local path");
         Option<string> outputOption = new(new[] { "--output", "-o" })
@@ -219,7 +218,7 @@ public class CommandBuilder
     public void AddView()
     {
         // view生成命令
-        Command viewCommand = new("view", "generate front view page, only support angular. ");
+        System.CommandLine.Command viewCommand = new("view", "generate front view page, only support angular. ");
         viewCommand.AddAlias("view");
         Argument<string> entityArgument = new("entity path", "The entity file path, like path/xxx.cs");
         Option<string> dtoOption = new(new[] { "--dto", "-d" }, "dto project directory");
@@ -241,7 +240,7 @@ public class CommandBuilder
     /// </summary>
     public void AutoSyncToNg()
     {
-        Command syncCommand = new("sync", "sync angular service & page from swagger.json to ClientApp, please use this in Http.API path");
+        System.CommandLine.Command syncCommand = new("sync", "sync angular service & page from swagger.json to ClientApp, please use this in Http.API path");
         syncCommand.SetHandler(CommandRunner.SyncToAngularAsync);
         RootCommand.Add(syncCommand);
     }

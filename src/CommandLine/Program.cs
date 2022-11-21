@@ -1,4 +1,6 @@
 ﻿using System.CommandLine;
+using System.Reflection;
+
 namespace Droplet.CommandLine;
 
 internal class Program

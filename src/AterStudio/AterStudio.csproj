@@ -27,7 +27,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\CommandLine\CommandLine.csproj" />
+	  <ProjectReference Include="..\Command.Share\Command.Share.csproj" />
 	</ItemGroup>
 
 	<!--生成swagger.json-->

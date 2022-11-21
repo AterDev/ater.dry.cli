@@ -24,6 +24,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AterStudio", "src\AterStudi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "src\Core\Core.csproj", "{CD29FE80-48D1-4A5D-87B4-A32520A5A6DB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Command.Share", "src\Command.Share\Command.Share.csproj", "{23B17DCD-E90F-49E2-90B3-88E3076B74C7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,6 +56,10 @@ Global
 		{CD29FE80-48D1-4A5D-87B4-A32520A5A6DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD29FE80-48D1-4A5D-87B4-A32520A5A6DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD29FE80-48D1-4A5D-87B4-A32520A5A6DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23B17DCD-E90F-49E2-90B3-88E3076B74C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23B17DCD-E90F-49E2-90B3-88E3076B74C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23B17DCD-E90F-49E2-90B3-88E3076B74C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23B17DCD-E90F-49E2-90B3-88E3076B74C7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -65,6 +71,7 @@ Global
 		{4AA618E1-7DDD-4004-8E28-4C4257973DC4} = {515B562C-50CC-47AA-AF1C-B6B7439F3AA2}
 		{43AFAB1F-9034-4D0B-838E-ADA5787DB9F2} = {CDCC6D66-4D37-4EAC-BCAA-BEB1993ABCD5}
 		{CD29FE80-48D1-4A5D-87B4-A32520A5A6DB} = {CDCC6D66-4D37-4EAC-BCAA-BEB1993ABCD5}
+		{23B17DCD-E90F-49E2-90B3-88E3076B74C7} = {CDCC6D66-4D37-4EAC-BCAA-BEB1993ABCD5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DCD2B5A8-1636-4B1E-91B1-DF55905DBA0D}

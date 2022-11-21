@@ -15,7 +15,7 @@
 		<Copyright>Atersoft</Copyright>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageProjectUrl>https://github.com/AterDev/cli</PackageProjectUrl>
-		<RepositoryType>git</RepositoryType> 
+		<RepositoryType>git</RepositoryType>
 		<RepositoryUrl>https://github.com/AterDev/cli.git</RepositoryUrl>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<PackageReleaseNotes>适配.NET7和C#11</PackageReleaseNotes>
@@ -25,7 +25,7 @@
 		<AssemblyName>$(MSBuildProjectName)</AssemblyName>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<PackageTags>cli;atersoft;code generate</PackageTags>
+		<PackageTags>ater;cli;code generate;angular;webapi;asp.net core</PackageTags>
 		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
@@ -40,6 +40,12 @@
 
 	<ItemGroup>
 		<EmbeddedResource Include="Templates\**\*.*" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="studio.zip">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -59,11 +65,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\CodeGenerator\CodeGenerator.csproj" />
-		<ProjectReference Include="..\Core\Core.csproj" />
+	  <ProjectReference Include="..\Command.Share\Command.Share.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-	</ItemGroup>
 </Project>
