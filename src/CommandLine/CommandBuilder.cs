@@ -177,7 +177,7 @@ public class CommandBuilder
         apiCommand.AddOption(suffixOption);
 
         apiCommand.SetHandler(
-            CommandRunner.GenerateApi, path, dtoOption, managerOption, apiOption, suffixOption);
+            CommandRunner.GenerateApiAsync, path, dtoOption, managerOption, apiOption, suffixOption);
 
         RootCommand.Add(apiCommand);
     }

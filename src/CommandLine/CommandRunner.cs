@@ -91,7 +91,7 @@ public class CommandRunner
     /// <summary>
     /// manager代码生成
     /// </summary>
-    /// <param name="path"></param>
+    /// <param name="path">entity path</param>
     /// <param name="dtoPath"></param>
     /// <param name="servicePath"></param>
     /// <returns></returns>
@@ -113,7 +113,7 @@ public class CommandRunner
     /// <param name="servicePath">service目录</param>
     /// <param name="apiPath">网站目录</param>
     /// <param name="suffix">控制器后缀名</param>
-    public static async Task GenerateApi(string path, string dtoPath = "",
+    public static async Task GenerateApiAsync(string path, string dtoPath = "",
             string servicePath = "", string apiPath = "", string suffix = "")
     {
         try

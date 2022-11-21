@@ -30,4 +30,20 @@ public class EntityController : ControllerBase
 
         return await _manager.GetEntityFilesAsync(id);
     }
+
+
+
+    [HttpPost("generate")]
+    public async Task<ActionResult<bool>> GenerateAsync(GenerateDto dto)
+    {
+        var project = await _context.Projects.FindAsync(dto.ProjectId);
+        if (project == null)
+        {
+            return NotFound("项目不存在");
+        }
+
+        await _manager.GenerateAsync(project, dto);
+        return true;
+    }
+
 }

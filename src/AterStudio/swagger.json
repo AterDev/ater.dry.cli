@@ -57,6 +57,55 @@
         }
       }
     },
+    "/api/Entity/generate": {
+      "post": {
+        "tags": [
+          "Entity"
+        ],
+        "operationId": "Entity_Generate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Project": {
       "get": {
         "tags": [
@@ -145,6 +194,24 @@
   },
   "components": {
     "schemas": {
+      "CommandType": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "type": "integer",
+        "format": "int32",
+        "x-enumNames": [
+          "Dto",
+          "Manager",
+          "API",
+          "Request",
+          "Sync"
+        ]
+      },
       "EntityFile": {
         "type": "object",
         "properties": {
@@ -159,6 +226,19 @@
           "content": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GenerateDto": {
+        "type": "object",
+        "properties": {
+          "entityPath": {
+            "type": "string",
+            "nullable": true
+          },
+          "commandType": {
+            "$ref": "#/components/schemas/CommandType"
           }
         },
         "additionalProperties": false
