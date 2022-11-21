@@ -51,13 +51,13 @@ public class EntityManager
         switch (dto.CommandType)
         {
             case CommandType.Dto:
-                await CommandRunner.GenerateDtoAsync(project.EntityPath, project.SharePath, false);
+                await CommandRunner.GenerateDtoAsync(dto.EntityPath, project.SharePath, false);
                 break;
             case CommandType.Manager:
-                await CommandRunner.GenerateManagerAsync(project.EntityPath, project.SharePath, project.ApplicationPath);
+                await CommandRunner.GenerateManagerAsync(dto.EntityPath, project.SharePath, project.ApplicationPath);
                 break;
             case CommandType.API:
-                await CommandRunner.GenerateApiAsync(project.EntityPath, project.SharePath, project.ApplicationPath);
+                await CommandRunner.GenerateApiAsync(dto.EntityPath, project.SharePath, project.ApplicationPath);
                 break;
             default:
                 break;

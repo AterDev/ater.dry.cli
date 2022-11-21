@@ -198,18 +198,14 @@
         "enum": [
           0,
           1,
-          2,
-          3,
-          4
+          2
         ],
         "type": "integer",
         "format": "int32",
         "x-enumNames": [
           "Dto",
           "Manager",
-          "API",
-          "Request",
-          "Sync"
+          "API"
         ]
       },
       "EntityFile": {
@@ -233,6 +229,10 @@
       "GenerateDto": {
         "type": "object",
         "properties": {
+          "projectId": {
+            "type": "integer",
+            "format": "int32"
+          },
           "entityPath": {
             "type": "string",
             "nullable": true

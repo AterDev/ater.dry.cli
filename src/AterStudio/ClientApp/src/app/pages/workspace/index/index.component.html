@@ -32,9 +32,12 @@
         </button>
         <button mat-button color="primary" [matMenuTriggerFor]="menu">代码生成</button>
         <mat-menu #menu="matMenu">
-          <button mat-menu-item matTooltip="生成dto,不会覆盖原内容">生成Dto</button>
-          <button mat-menu-item matTooltip="生成dto/dataStore/manager,不会覆盖原内容">生成Manager</button>
-          <button mat-menu-item matTooltip="生成dto/dataStore/manager/api,不会覆盖原内容">生成APIControler</button>
+          <button mat-menu-item (click)="generate(element.path,CommandType.Dto)"
+            matTooltip="生成dto,不会覆盖原内容">生成Dto</button>
+          <button mat-menu-item (click)="generate(element.path,CommandType.Manager)"
+            matTooltip="生成dto/dataStore/manager,不会覆盖原内容">生成Manager</button>
+          <button mat-menu-item (click)="generate(element.path,CommandType.API)"
+            matTooltip="生成dto/dataStore/manager/api,不会覆盖原内容">生成APIControler</button>
         </mat-menu>
       </td>
     </ng-container>
@@ -87,6 +90,6 @@
   </mat-dialog-content>
   <mat-dialog-actions>
     <button mat-button mat-dialog-close>取消</button>
-    <button mat-button (click)="generateRequest()" color="primary">生成</button>
+    <button mat-button (click)="generateSync()" color="primary">生成</button>
   </mat-dialog-actions>
 </ng-template>

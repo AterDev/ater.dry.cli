@@ -1,9 +1,12 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityFile } from 'src/app/share/models/entity/entity-file.model';
+import { GenerateDto } from 'src/app/share/models/entity/generate-dto.model';
+import { CommandType } from 'src/app/share/models/enum/command-type.model';
 import { EntityService } from 'src/app/share/services/entity.service';
 @Component({
   selector: 'app-index',
@@ -11,6 +14,7 @@ import { EntityService } from 'src/app/share/services/entity.service';
   styleUrls: ['./index.component.css']
 })
 export class IndexComponent implements OnInit {
+  CommandType = CommandType;
   projectId: string | null = null;
   entityFiles = [] as EntityFile[];
   columns: string[] = ['name', 'path', 'actions'];
@@ -28,6 +32,7 @@ export class IndexComponent implements OnInit {
     public router: Router,
     public service: EntityService,
     public dialog: MatDialog,
+    public snb: MatSnackBar
   ) {
     this.route.paramMap.subscribe(res => {
       this.projectId = res.get('id');
@@ -71,9 +76,26 @@ export class IndexComponent implements OnInit {
       minWidth: 300
     });
   }
+
+  generate(path: string, type: CommandType): void {
+    const dto: GenerateDto = {
+      projectId: parseInt(this.projectId!),
+      entityPath: path,
+      commandType: type
+    };
+    this.service.generate(dto)
+      .subscribe(res => {
+        if (res) {
+          this.snb.open('生成成功');
+        }
+      })
+  }
+
   generateRequest(): void {
 
   }
+  generateSync(): void {
 
+  }
 
 }

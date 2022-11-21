@@ -32,7 +32,6 @@ public class EntityController : ControllerBase
     }
 
 
-
     [HttpPost("generate")]
     public async Task<ActionResult<bool>> GenerateAsync(GenerateDto dto)
     {
