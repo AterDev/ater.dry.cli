@@ -76,12 +76,15 @@ public class StudioCommand
             {
                 Process.Start(url);
             }
-            catch
+            catch (Exception ex)
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
                     url = url.Replace("&", "^&");
-                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
+                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}")
+                    {
+                        CreateNoWindow = true
+                    });
                 }
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 {
@@ -93,7 +96,7 @@ public class StudioCommand
                 }
                 else
                 {
-                    throw;
+                    Console.WriteLine("start browserr failed:" + ex.Message);
                 }
             }
         }
