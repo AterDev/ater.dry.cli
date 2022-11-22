@@ -1,6 +1,8 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO.Compression;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace Command.Share.Commands;
 public class StudioCommand
@@ -48,31 +50,70 @@ public class StudioCommand
         //        break;
         //}
 
+        var url = "http://localhost:9160";
         Process process = new()
         {
             StartInfo = new ProcessStartInfo
             {
                 FileName = shell,
-                Arguments = $"./{Config.StudioFileName}",
-                UseShellExecute = false,
+                Arguments = $"./{Config.StudioFileName} --urls \"{url}\"",
+                UseShellExecute = true,
                 CreateNoWindow = true,
-                RedirectStandardOutput = true,
+                //RedirectStandardOutput = true,
                 WorkingDirectory = studioPath
                 //RedirectStandardError = true,
                 //StandardErrorEncoding = Encoding.UTF8,
                 //StandardOutputEncoding = Encoding.UTF8,
             }
         };
-        _ = process.Start();
-        while (!process.StandardOutput.EndOfStream)
+
+        var startStudio = process.Start();
+        Thread.Sleep(3000);
+        // 启动浏览器
+        if (startStudio)
         {
-            string? line = process.StandardOutput.ReadLine();
-            Console.WriteLine(line);
+            try
+            {
+                Process.Start(url);
+            }
+            catch
+            {
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    url = url.Replace("&", "^&");
+                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    Process.Start("xdg-open", url);
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    Process.Start("open", url);
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
+
+
+        //Console.CancelKeyPress += (object? sender, ConsoleCancelEventArgs e) =>
+        //{
+        //    var isCtrlC = e.SpecialKey == ConsoleSpecialKey.ControlC;
+        //    var isCtrlBreak = e.SpecialKey == ConsoleSpecialKey.ControlBreak;
+
+        //    if (isCtrlBreak || isCtrlC)
+        //    {
+        //        process.Close();
+        //        process.Dispose();
+        //    }
+        //};
         process.WaitForExit();
-        process.Close();
-        process.Dispose();
     }
+
+
 
     public static void Update()
     {
