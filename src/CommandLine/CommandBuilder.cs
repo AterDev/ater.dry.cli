@@ -37,9 +37,11 @@ public class CommandBuilder
     public void AddStudio()
     {
         System.CommandLine.Command studioCommand = new("studio", "studio management");
-
+        var update = new System.CommandLine.Command("update", "update studio");
+        update.SetHandler(StudioCommand.Update);
         studioCommand.SetHandler(StudioCommand.RunStudio);
 
+        studioCommand.AddCommand(update);
         RootCommand.Add(studioCommand);
     }
 

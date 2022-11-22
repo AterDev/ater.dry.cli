@@ -40,7 +40,7 @@ public class ProjectManager
             HttpPath = config.ApiPath.ToFullPath("src", dir),
             SharePath = config.DtoPath.ToFullPath("src", dir)
         };
-
+            
         _ = await _context.AddAsync(project);
         _ = await _context.SaveChangesAsync();
         return project;

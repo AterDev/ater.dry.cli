@@ -27,6 +27,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Remove="swagger.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="swagger.json" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <ProjectReference Include="..\Command.Share\Command.Share.csproj" />
 	</ItemGroup>
 

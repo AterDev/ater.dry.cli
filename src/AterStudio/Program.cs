@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
+
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -64,9 +65,15 @@ builder.Services.AddSwaggerGen(c =>
 
 WebApplication app = builder.Build();
 
+// ≥ı ºªØ
+var scope = app.Services.CreateScope();
+var context = scope.ServiceProvider.GetRequiredService<ContextBase>();
+await context.Database.MigrateAsync();
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
+
 }
 else
 {
@@ -77,7 +84,6 @@ app.UseCors("default");
 //app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-
 
 app.MapControllerRoute(
     name: "default",

@@ -1,13 +1,21 @@
+[CmdletBinding()]
+param (
+    [Parameter()]
+    [System.Boolean]
+    $withStudio = $false
+)
 $location  = Get-Location
 try {
-    # build web project
-    # cd ../src/AterStudio
-    # dotnet publish -c release -o ./publish
-    # Compress-Archive -Path .\publish\*  -DestinationPath "../CommandLine/studio.zip" -CompressionLevel Optimal -Force
-    # rm .\publish\ -R -Force
+    if ($withStudio -eq $true) {
+        # build web project
+        Set-Location ../src/AterStudio
+        Remove-Item .\publish\ -R -Force
+        dotnet publish -c release -o ./publish
+        Compress-Archive -Path .\publish\*  -DestinationPath "../CommandLine/studio.zip" -CompressionLevel Optimal -Force
+    }
 
-    cd $location
-    cd ../src/CommandLine
+    Set-Location $location
+    Set-Location ../src/CommandLine
     # get package name and version
     $VersionNode = Select-Xml -Path ./CommandLine.csproj -XPath '/Project//PropertyGroup/Version'
     $PackageNode = Select-Xml -Path ./CommandLine.csproj -XPath '/Project//PropertyGroup/PackageId'
@@ -24,7 +32,7 @@ try {
     Write-Host 'install new version'
     dotnet tool install -g --add-source ./nupkg $PackageId --version $Version
 
-    cd $PSScriptRoot
+    Set-Location $location
 }
 catch {
     Write-Host $_.Exception.Message
