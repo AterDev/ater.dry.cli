@@ -35,4 +35,30 @@
 </mat-sidenav-container>
 <!-- 自动生成菜单内容,如果不需要或自定义，请移除下面的ng-template -->
 <ng-template #automenu>
+      
+  <mat-expansion-panel hideToggle>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <mat-icon>view_list</mat-icon>
+          <span *ngIf="opened">system</span>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <mat-nav-list>
+      <a mat-list-item routerLink="/system/role" routerLinkActive="active">
+        <mat-icon>edit_note</mat-icon>
+        <span *ngIf="opened">
+            角色表
+            </span>
+      </a>
+    </mat-nav-list>
+    <mat-nav-list>
+      <a mat-list-item routerLink="/system/user" routerLinkActive="active">
+        <mat-icon>edit_note</mat-icon>
+        <span *ngIf="opened">
+            系统用户
+            </span>
+      </a>
+    </mat-nav-list>
+  </mat-expansion-panel>
 </ng-template>

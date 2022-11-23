@@ -1,9 +1,9 @@
 using AterStudio;
 using AterStudio.Manager;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +31,7 @@ builder.Services.AddCors(options =>
         _ = builder.AllowAnyHeader();
     });
 });
+#if DEBUG
 builder.Services.AddSwaggerGen(c =>
 {
 
@@ -62,24 +63,34 @@ builder.Services.AddSwaggerGen(c =>
         Format = "date"
     });
 });
+#endif
 
 WebApplication app = builder.Build();
+
+// 异常统一处理
+app.UseExceptionHandler(handler =>
+{
+    handler.Run(async context =>
+    {
+        context.Response.StatusCode = 500;
+        Exception? exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
+        var result = new
+        {
+            Title = "程序内部错误:" + exception?.Message,
+            Detail = exception?.Source,
+            Status = 500,
+            TraceId = context.TraceIdentifier
+        };
+        await context.Response.WriteAsJsonAsync(result);
+    });
+});
 
 // 初始化
 var scope = app.Services.CreateScope();
 var context = scope.ServiceProvider.GetRequiredService<ContextBase>();
 await context.Database.MigrateAsync();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
 
-}
-else
-{
-    //app.UseSwagger();
-    //app.UseSwaggerUI();
-}
 app.UseCors("default");
 //app.UseHttpsRedirection();
 app.UseStaticFiles();

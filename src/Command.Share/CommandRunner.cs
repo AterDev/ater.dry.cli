@@ -149,11 +149,12 @@ public class CommandRunner
         await viewCmd.RunAsync();
     }
 
-    public static async Task SyncToAngularAsync()
+    public static async Task SyncToAngularAsync(string swaggerPath, string entityPath, string dtoPath, string httpPath)
     {
-        AutoSyncNgCommand cmd = new();
+        AutoSyncNgCommand cmd = new(swaggerPath, entityPath, dtoPath, httpPath);
         await cmd.RunAsync();
     }
+
 }
 
 

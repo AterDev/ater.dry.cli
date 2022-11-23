@@ -1,0 +1,93 @@
+<mat-toolbar fxLayoutGap="4px">
+  <button color="basic" mat-icon-button matTooltip="返回" (click)="back()">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+    添加
+</mat-toolbar>
+<form class="d-flex" *ngIf="!isLoading" [formGroup]="formGroup" (ngSubmit)="add()">
+  <div class="d-flex flex-column w-100">
+  <mat-form-field>
+    <mat-label>UserName</mat-label>
+    <input matInput placeholder="UserName" formControlName="userName"  minlength="" maxlength="30">
+    <mat-error *ngIf="userName?.invalid">
+    {{getValidatorMessage('userName')}}
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>RealName</mat-label>
+    <input matInput placeholder="RealName" formControlName="realName"  minlength="" maxlength="30">
+    <mat-error *ngIf="realName?.invalid">
+    {{getValidatorMessage('realName')}}
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Email</mat-label>
+    <input matInput placeholder="Email" formControlName="email"  minlength="" maxlength="100">
+    <mat-error *ngIf="email?.invalid">
+    {{getValidatorMessage('email')}}
+    </mat-error>
+  </mat-form-field>
+    <mat-slide-toggle color="primary" formControlName="emailConfirmed">EmailConfirmed</mat-slide-toggle>
+  <mat-form-field>
+    <mat-label>PhoneNumber</mat-label>
+    <input matInput placeholder="PhoneNumber" formControlName="phoneNumber"  minlength="" maxlength="20">
+    <mat-error *ngIf="phoneNumber?.invalid">
+    {{getValidatorMessage('phoneNumber')}}
+    </mat-error>
+  </mat-form-field>
+    <mat-slide-toggle color="primary" formControlName="phoneNumberConfirmed">PhoneNumberConfirmed</mat-slide-toggle>
+    <mat-slide-toggle color="primary" formControlName="twoFactorEnabled">TwoFactorEnabled</mat-slide-toggle>
+  <mat-form-field>
+    <mat-label>LockoutEnd</mat-label>
+    <input matInput [matDatepicker]="lockoutEndPicker" placeholder="LockoutEnd" formControlName="lockoutEnd">
+    <mat-datepicker-toggle matSuffix [for]="lockoutEndPicker"></mat-datepicker-toggle>
+    <mat-datepicker #lockoutEndPicker startView="multi-year"></mat-datepicker>
+    <mat-error *ngIf="lockoutEnd?.invalid">
+    {{getValidatorMessage('lockoutEnd')}}
+    </mat-error>
+  </mat-form-field>    <mat-slide-toggle color="primary" formControlName="lockoutEnabled">LockoutEnabled</mat-slide-toggle>
+  <mat-form-field>
+    <mat-label>AccessFailedCount</mat-label>
+    <input matInput type="number" placeholder="AccessFailedCount" formControlName="accessFailedCount"  step="1" min="0">
+    <mat-error *ngIf="accessFailedCount?.invalid">
+    {{getValidatorMessage('accessFailedCount')}}
+    </mat-error>
+  </mat-form-field>  <mat-form-field>
+    <mat-label>LastLoginTime</mat-label>
+    <input matInput [matDatepicker]="lastLoginTimePicker" placeholder="LastLoginTime" formControlName="lastLoginTime">
+    <mat-datepicker-toggle matSuffix [for]="lastLoginTimePicker"></mat-datepicker-toggle>
+    <mat-datepicker #lastLoginTimePicker startView="multi-year"></mat-datepicker>
+    <mat-error *ngIf="lastLoginTime?.invalid">
+    {{getValidatorMessage('lastLoginTime')}}
+    </mat-error>
+  </mat-form-field>  <mat-form-field>
+    <mat-label>RetryCount</mat-label>
+    <input matInput type="number" placeholder="RetryCount" formControlName="retryCount"  step="1" min="0">
+    <mat-error *ngIf="retryCount?.invalid">
+    {{getValidatorMessage('retryCount')}}
+    </mat-error>
+  </mat-form-field>  <mat-form-field>
+    <mat-label>Avatar</mat-label>
+    <textarea matInput placeholder="Avatar" formControlName="avatar"  minlength="" maxlength="200"
+      cols="5"></textarea>
+    <mat-error *ngIf="avatar?.invalid">
+    {{getValidatorMessage('avatar')}}
+    </mat-error>
+  </mat-form-field>
+<mat-form-field>
+  <mat-label>Sex</mat-label>
+  <mat-select formControlName="sex">
+    <mat-option *ngFor="let item of Sex | toKeyValue" [value]="item.value">
+      {{item.key}}
+    </mat-option>
+  </mat-select>
+  <mat-error *ngIf="sex?.invalid">
+    {{getValidatorMessage('sex')}}
+  </mat-error>
+</mat-form-field>
+    <div class="d-flex mt-1">
+      <button class="d-flex flex-column" mat-flat-button color="primary" type="submit">保存</button>
+    </div>
+  </div>
+</form>
+

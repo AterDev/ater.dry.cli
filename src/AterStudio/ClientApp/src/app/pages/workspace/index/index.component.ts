@@ -7,6 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { EntityFile } from 'src/app/share/models/entity/entity-file.model';
 import { GenerateDto } from 'src/app/share/models/entity/generate-dto.model';
 import { CommandType } from 'src/app/share/models/enum/command-type.model';
+import { RequestLibType } from 'src/app/share/models/enum/request-lib-type.model';
 import { EntityService } from 'src/app/share/services/entity.service';
 @Component({
   selector: 'app-index',
@@ -14,6 +15,7 @@ import { EntityService } from 'src/app/share/services/entity.service';
   styleUrls: ['./index.component.css']
 })
 export class IndexComponent implements OnInit {
+  RequestLibType = RequestLibType;
   CommandType = CommandType;
   projectId: string | null = null;
   entityFiles = [] as EntityFile[];
@@ -46,7 +48,7 @@ export class IndexComponent implements OnInit {
   initForm(): void {
     this.requestForm = new FormGroup({
       swagger: new FormControl<string | null>(null, []),
-      type: new FormControl<string | null>('NgHttp', []),
+      type: new FormControl<RequestLibType>(RequestLibType.NgHttp, []),
       path: new FormControl<string | null>(null, [Validators.required])
     });
   }
@@ -92,10 +94,23 @@ export class IndexComponent implements OnInit {
   }
 
   generateRequest(): void {
-
+    const type = this.requestForm.get('type')?.value as number;
+    const path = this.requestForm.get('path')?.value as string;
+    this.service.generateRequest(parseInt(this.projectId!), path, type)
+      .subscribe(res => {
+        if (res) {
+          this.snb.open('生成成功');
+        }
+      })
   }
-  generateSync(): void {
 
+  generateSync(): void {
+    this.service.generateSync(parseInt(this.projectId!))
+      .subscribe(res => {
+        if (res) {
+          this.snb.open('同步前端成功');
+        }
+      })
   }
 
 }

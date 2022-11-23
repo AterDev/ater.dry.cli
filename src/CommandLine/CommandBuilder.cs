@@ -243,7 +243,14 @@ public class CommandBuilder
     public void AutoSyncToNg()
     {
         System.CommandLine.Command syncCommand = new("sync", "sync angular service & page from swagger.json to ClientApp, please use this in Http.API path");
-        syncCommand.SetHandler(CommandRunner.SyncToAngularAsync);
+
+        syncCommand.SetHandler(
+            async () =>
+            {
+                await CommandRunner.SyncToAngularAsync(
+                    "./swagger.json", ConfigOptions.EntityPath, ConfigOptions.DtoPath, ConfigOptions.ApiPath);
+            }
+            );
         RootCommand.Add(syncCommand);
     }
 }

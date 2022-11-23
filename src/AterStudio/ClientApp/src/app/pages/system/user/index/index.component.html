@@ -1,0 +1,67 @@
+<div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
+  <mat-toolbar color="">
+    <mat-toolbar-row style="font-size:16px">
+      <div class="d-flex">
+        <!-- 筛选 -->
+      </div>
+      <div class="d-flex flex-grow-1"></div>
+      <button mat-flat-button color="primary" matTooltipPosition="right" [routerLink]="['../add']">
+        <mat-icon>add</mat-icon>
+        添加
+      </button>
+    </mat-toolbar-row>
+  </mat-toolbar>
+</div>
+<table mat-table [dataSource]="dataSource" style="width: 100%;">
+  <ng-container matColumnDef="userName">
+    <th mat-header-cell *matHeaderCellDef>UserName</th>
+    <td mat-cell *matCellDef="let element">
+      {{element.userName}}
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="realName">
+    <th mat-header-cell *matHeaderCellDef>RealName</th>
+    <td mat-cell *matCellDef="let element">
+      {{element.realName}}
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="email">
+    <th mat-header-cell *matHeaderCellDef>Email</th>
+    <td mat-cell *matCellDef="let element">
+      {{element.email}}
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="emailConfirmed">
+    <th mat-header-cell *matHeaderCellDef>EmailConfirmed</th>
+    <td mat-cell *matCellDef="let element">
+      {{element.emailConfirmed}}
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="phoneNumber">
+    <th mat-header-cell *matHeaderCellDef>PhoneNumber</th>
+    <td mat-cell *matCellDef="let element">
+      {{element.phoneNumber}}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef>操作</th>
+    <td mat-cell *matCellDef="let element">
+      <button mat-icon-button color="link" [routerLink]="['../detail',element.id]" matTooltip="查看">
+        <mat-icon>pages</mat-icon>
+      </button>
+      <button mat-icon-button color="primary" (click)="edit(element.id)" matTooltip="编辑">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-icon-button color="warn" matTooltip="删除">
+        <mat-icon (click)="deleteConfirm(element)">delete_forever</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="columns"></tr>
+  <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+</table>
+<mat-paginator [pageSizeOptions]="pageSizeOption"
+[pageIndex]="filter.pageIndex!-1" [pageSize]="filter.pageSize"
+  [length]="total" (page)="getList($event)"showFirstLastButtons></mat-paginator>

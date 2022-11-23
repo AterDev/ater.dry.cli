@@ -53,15 +53,15 @@
     <form [formGroup]="requestForm" class="d-flex flex-column">
       <mat-form-field>
         <mat-label>swagger地址</mat-label>
-        <input matInput placeholder="支持url或本地路径，默认为HttpAPI/swagger.json" formControlName="swagger">
+        <input matInput placeholder="HttpAPI/swagger.json" formControlName="swagger" readonly>
       </mat-form-field>
       <mat-form-field>
         <mat-label>请求库类型</mat-label>
         <mat-select placeholder="Placeholder" formControlName="type">
-          <mat-option value="NgHttp">
+          <mat-option [value]="RequestLibType.NgHttp">
             Angular HttpClient
           </mat-option>
-          <mat-option value="Axios">
+          <mat-option [value]="RequestLibType.Axios">
             Axios
           </mat-option>
         </mat-select>

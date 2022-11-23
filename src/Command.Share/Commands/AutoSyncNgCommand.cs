@@ -3,13 +3,21 @@
 namespace Command.Share.Commands;
 public class AutoSyncNgCommand : CommandBase
 {
-    public ConfigOptions ConfigOptions { get; init; }
     public OpenApiDocument? ApiDocument { get; set; }
     public string SharePath { get; set; }
-    public AutoSyncNgCommand()
+    public string EntityPath { get; set; }
+    public string HttpPath { get; set; }
+    public string DtoPath { get; set; }
+    public string SwagerPath { get; set; } = "./swagger.json";
+
+
+    public AutoSyncNgCommand(string swaggerPath, string entityPath, string dtoPath, string httpPath)
     {
-        ConfigOptions = ConfigCommand.ReadConfigFile()!;
-        SharePath = Path.Combine("ClientApp", "src", "app", "share");
+        SwagerPath = swaggerPath;
+        SharePath = Path.Combine(httpPath, "ClientApp", "src", "app", "share");
+        HttpPath = httpPath;
+        EntityPath = entityPath;
+        DtoPath = dtoPath;
     }
 
     public async Task RunAsync()
@@ -18,8 +26,7 @@ public class AutoSyncNgCommand : CommandBase
         Instructions.Add($"  🔹 sync ng services.");
         Instructions.Add($"  🔹 sync ng pages.");
 
-        string swaggerPath = "./swagger.json";
-        string openApiContent = File.ReadAllText(swaggerPath);
+        string openApiContent = File.ReadAllText(SwagerPath);
         ApiDocument = new OpenApiStringReader()
            .Read(openApiContent, out _);
 
@@ -41,7 +48,7 @@ public class AutoSyncNgCommand : CommandBase
     public async Task GeneratePagesAsync()
     {
         // 获取所有实体，筛选出带有页面特性的类
-        string entityDir = Path.Combine("..", ConfigOptions.EntityPath);
+        string entityDir = Path.Combine("..", EntityPath);
         if (!Directory.Exists(entityDir))
         {
             Console.WriteLine(entityDir + "不存在，跳过");
@@ -61,8 +68,8 @@ public class AutoSyncNgCommand : CommandBase
         }
 
         string ngPath = Path.Combine("ClientApp");
-        string dtoPath = Path.Combine("..", ConfigOptions.DtoPath);
-        ViewCommand cmd = new(dtoPath, ngPath);
+
+        ViewCommand cmd = new(DtoPath, ngPath);
         foreach (FileInfo entity in fileInfos)
         {
             EntityParseHelper entityParse = new(entity.FullName);

@@ -62,6 +62,7 @@ export class IndexComponent implements OnInit {
           if (res) {
             this.snb.open('添加成功');
             this.dialogRef.close();
+            this.getProjects();
           }
         })
     } else {

@@ -57,11 +57,22 @@ public class EntityManager
                 await CommandRunner.GenerateManagerAsync(dto.EntityPath, project.SharePath, project.ApplicationPath);
                 break;
             case CommandType.API:
-                await CommandRunner.GenerateApiAsync(dto.EntityPath, project.SharePath, project.ApplicationPath, project.HttpPath,"Controller");
+                await CommandRunner.GenerateApiAsync(dto.EntityPath, project.SharePath, project.ApplicationPath, project.HttpPath, "Controller");
                 break;
             default:
                 break;
         }
+    }
 
+    public async Task GenerateRequestAsync(Project project, string webPath, RequestLibType type)
+    {
+        var swaggerPath = Path.Combine(project.HttpPath, "swagger.json");
+        await CommandRunner.GenerateRequestAsync(swaggerPath, webPath, type);
+    }
+
+    public async Task GenerateSyncAsync(Project project)
+    {
+        var swaggerPath = Path.Combine(project.HttpPath, "swagger.json");
+        await CommandRunner.SyncToAngularAsync(swaggerPath, project.EntityPath, project.SharePath, project.HttpPath);
     }
 }

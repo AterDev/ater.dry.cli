@@ -58,8 +58,6 @@ public class RequestServiceFile
 
             refTypes.ForEach(t =>
             {
-                Console.WriteLine("type:" + t);
-                Console.WriteLine(string.Join(';', Config.EnumModels));
                 if (Config.EnumModels.Contains(t))
                 {
                     importModels += $"import {{ {t} }} from '../models/enum/{t.ToHyphen()}.model';{Environment.NewLine}";

@@ -45,4 +45,42 @@ public class EntityController : ControllerBase
         return true;
     }
 
+
+    /// <summary>
+    /// 生成前端请求
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="webPath"></param>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    [HttpGet("generateRequest/{id}")]
+    public async Task<ActionResult<bool>> GenerateRequest([FromRoute] int id, string webPath, RequestLibType type)
+    {
+        var project = await _context.Projects.FindAsync(id);
+        if (project == null)
+        {
+            return NotFound("项目不存在");
+        }
+        await _manager.GenerateRequestAsync(project, webPath, type);
+        return true;
+    }
+
+    /// <summary>
+    /// 同步ng页面
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpPost("generateSync/{id}")]
+    public async Task<ActionResult<bool>> GenerateSync([FromRoute] int id)
+    {
+        var project = await _context.Projects.FindAsync(id);
+        if (project == null)
+        {
+            return NotFound("项目不存在");
+        }
+        await _manager.GenerateSyncAsync(project);
+        return true;
+    }
+
+
 }
