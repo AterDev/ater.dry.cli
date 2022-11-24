@@ -124,7 +124,7 @@ public class DtoCodeGenerate : GenerateBase
             BaseType = "FilterBase",
         };
         List<PropertyInfo>? properties = EntityInfo.PropertyInfos?
-                .Where(p => p.IsRequired
+                .Where(p => (p.IsRequired && !p.IsNavigation)
                     || (!p.IsNullable
                         && !p.IsList
                         && !p.IsNavigation
