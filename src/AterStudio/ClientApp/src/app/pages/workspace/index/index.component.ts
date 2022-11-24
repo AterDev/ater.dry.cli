@@ -100,6 +100,7 @@ export class IndexComponent implements OnInit {
       .subscribe(res => {
         if (res) {
           this.snb.open('生成成功');
+          this.dialogRef.close();
         }
       })
   }
@@ -109,6 +110,7 @@ export class IndexComponent implements OnInit {
       .subscribe(res => {
         if (res) {
           this.snb.open('同步前端成功');
+          this.dialogRef.close();
         }
       })
   }
