@@ -247,8 +247,12 @@ public class CommandBuilder
         syncCommand.SetHandler(
             async () =>
             {
+                // 默认会在HttpAPI目录下执行同步
+                var defaultEntityPath = Path.Combine("..", ConfigOptions.EntityPath);
+                var defaultDtoPath = Path.Combine("..", ConfigOptions.DtoPath);
+                var defaultApiPath = Path.Combine("..", ConfigOptions.ApiPath);
                 await CommandRunner.SyncToAngularAsync(
-                    "./swagger.json", ConfigOptions.EntityPath, ConfigOptions.DtoPath, ConfigOptions.ApiPath);
+                    "./swagger.json", defaultEntityPath, defaultDtoPath, defaultApiPath);
             }
             );
         RootCommand.Add(syncCommand);

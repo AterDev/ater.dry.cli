@@ -48,14 +48,13 @@ public class AutoSyncNgCommand : CommandBase
     public async Task GeneratePagesAsync()
     {
         // 获取所有实体，筛选出带有页面特性的类
-        string entityDir = Path.Combine("..", EntityPath);
-        if (!Directory.Exists(entityDir))
+        if (!Directory.Exists(EntityPath))
         {
-            Console.WriteLine(entityDir + "不存在，跳过");
+            Console.WriteLine(EntityPath + "不存在，跳过");
             return;
 
         }
-        string[] files = Directory.GetFiles(entityDir, "*.cs", SearchOption.AllDirectories);
+        string[] files = Directory.GetFiles(EntityPath, "*.cs", SearchOption.AllDirectories);
         List<FileInfo> fileInfos = new();
         // 筛选出只包含特性文本的实体
         foreach (string file in files)
@@ -67,7 +66,7 @@ public class AutoSyncNgCommand : CommandBase
             }
         }
 
-        string ngPath = Path.Combine("ClientApp");
+        string ngPath = Path.Combine(HttpPath, "ClientApp");
 
         ViewCommand cmd = new(DtoPath, ngPath);
         foreach (FileInfo entity in fileInfos)
