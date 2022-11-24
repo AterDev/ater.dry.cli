@@ -136,6 +136,7 @@ public class DtoCodeGenerate : GenerateBase
         foreach (PropertyInfo item in dto.Properties)
         {
             item.IsNullable = true;
+            item.IsRequired = false;
         }
         referenceProps?.ForEach(item =>
         {
