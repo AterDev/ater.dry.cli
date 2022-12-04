@@ -5,8 +5,11 @@ namespace ${Namespace}.Manager;
 
 public class ${EntityName}Manager : DomainManagerBase<${EntityName}, ${EntityName}UpdateDto, ${EntityName}FilterDto, ${EntityName}ItemDto>, I${EntityName}Manager
 {
-    public ${EntityName}Manager(DataStoreContext storeContext) : base(storeContext)
+
+    private readonly IUserContext _userContext;
+    public ${EntityName}Manager(DataStoreContext storeContext, IUserContext userContext) : base(storeContext)
     {
+        _userContext = userContext;
     }
 
     public override async Task<${EntityName}> UpdateAsync(${EntityName} entity, ${EntityName}UpdateDto dto)
@@ -22,4 +25,20 @@ public class ${EntityName}Manager : DomainManagerBase<${EntityName}, ${EntityNam
         return await Query.FilterAsync<${EntityName}ItemDto>(Queryable, filter.PageIndex, filter.PageSize);
     }
 
+    /// <summary>
+    /// 当前用户所拥有的对象
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public async Task<${EntityName}?> GetOwnedAsync(Guid id)
+    {
+        Queryable = Queryable.Where(q => q.Id == id);
+        if (!_userContext.IsAdmin)
+        {
+            // TODO:属于当前角色的对象
+            // Queryable = Queryable.Where(q => q.User.Id == _userContext.UserId);
+        }
+        return await Queryable.FirstOrDefaultAsync();
+
+    }
 }

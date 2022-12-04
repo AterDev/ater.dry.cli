@@ -41,7 +41,7 @@ public class DomainManagerBase<TEntity, TUpdate, TFilter> : IDomainManager<TEnti
     /// <param name="id"></param>
     /// <param name="navigations">include navigations</param>
     /// <returns></returns>
-    public virtual async Task<TEntity?> GetCurrent(Guid id, params string[]? navigations)
+    public virtual async Task<TEntity?> GetCurrentAsync(Guid id, params string[]? navigations)
     {
         return await Command.FindAsync(e => e.Id == id, navigations);
     }

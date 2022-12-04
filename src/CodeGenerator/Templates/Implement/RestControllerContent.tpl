@@ -44,7 +44,7 @@ public class ${EntityName}${APISuffix} : RestControllerBase<I${EntityName}Manage
     [HttpPut("{id}")]
     public async Task<ActionResult<${EntityName}?>> UpdateAsync([FromRoute] ${IdType} id, ${EntityName}UpdateDto form)
     {
-        var current = await manager.GetCurrent(id);
+        var current = await manager.GetOwnedAsync(id);
         if (current == null) return NotFound();
         return await manager.UpdateAsync(current, form);
     }
@@ -70,7 +70,7 @@ public class ${EntityName}${APISuffix} : RestControllerBase<I${EntityName}Manage
     [HttpDelete("{id}")]
     public async Task<ActionResult<${EntityName}?>> DeleteAsync([FromRoute] ${IdType} id)
     {
-        var entity = await manager.GetCurrent(id);
+        var entity = await manager.GetOwnedAsync(id);
         if (entity == null) return NotFound();
         return await manager.DeleteAsync(entity);
     }
