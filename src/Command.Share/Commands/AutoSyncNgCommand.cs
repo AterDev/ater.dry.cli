@@ -92,6 +92,7 @@ public class AutoSyncNgCommand : CommandBase
         RequestGenearte ngGen = new(ApiDocument!);
         Console.WriteLine(Instructions[1]);
         List<GenFileInfo> models = ngGen.GetTSInterfaces();
+
         foreach (GenFileInfo model in models)
         {
             string dir = Path.Combine(SharePath, "models", model.Path.ToHyphen());

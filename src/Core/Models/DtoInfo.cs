@@ -8,6 +8,10 @@ public class DtoInfo
     public string? Tag { get; set; }
     public string? NamespaceName { get; set; }
     public string? Comment { get; set; }
+    /// <summary>
+    /// 原始实体的命名空间完整名称
+    /// </summary>
+    public required string EntityNamespace { get; set; }
 
     public string ToString(string? projectName = "Share", string entityName = "")
     {
@@ -27,6 +31,7 @@ public class DtoInfo
         string tpl = $@"using {NamespaceName};
 namespace {projectName}.Models.{entityName}Dtos;
 {Comment}
+/// <inheritdoc cref=""{EntityNamespace}""/>
 public class {Name}{baseType}
 {{
 {propStrings}    

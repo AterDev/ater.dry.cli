@@ -66,6 +66,7 @@ public class DtoCodeGenerate : GenerateBase
 
         DtoInfo dto = new()
         {
+            EntityNamespace = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
             Name = EntityInfo.Name + "ShortDto",
             NamespaceName = EntityInfo.NamespaceName,
             Comment = FormatComment(EntityInfo.Comment, "概要"),
@@ -74,7 +75,7 @@ public class DtoCodeGenerate : GenerateBase
                 .Where(p => p.Name != "Content"
                     && (p.MaxLength < 2000 || p.MaxLength == null)
                     && !(p.IsList && p.IsNavigation))
-                .ToList()
+                .ToList()            
         };
         return dto.ToString(AssemblyName, EntityInfo.Name);
     }
@@ -88,6 +89,7 @@ public class DtoCodeGenerate : GenerateBase
 
         DtoInfo dto = new()
         {
+            EntityNamespace = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
             Name = EntityInfo.Name + "ItemDto",
             NamespaceName = EntityInfo.NamespaceName,
             Comment = FormatComment(EntityInfo.Comment, "列表元素"),
@@ -117,6 +119,7 @@ public class DtoCodeGenerate : GenerateBase
         string[] filterFields = new string[] { "Id", "CreatedTime", "UpdatedTime", "IsDeleted", "Status" };
         DtoInfo dto = new()
         {
+            EntityNamespace = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
             Name = EntityInfo.Name + "FilterDto",
             NamespaceName = EntityInfo.NamespaceName,
             Comment = FormatComment(EntityInfo.Comment, "查询筛选"),
@@ -161,6 +164,7 @@ public class DtoCodeGenerate : GenerateBase
             .ToList();
         DtoInfo dto = new()
         {
+            EntityNamespace = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
             Name = EntityInfo.Name + "AddDto",
             NamespaceName = EntityInfo.NamespaceName,
             Comment = FormatComment(EntityInfo.Comment, "添加时请求结构"),
@@ -202,6 +206,7 @@ public class DtoCodeGenerate : GenerateBase
             .ToList();
         DtoInfo dto = new()
         {
+            EntityNamespace = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
             Name = EntityInfo.Name + "UpdateDto",
             NamespaceName = EntityInfo.NamespaceName,
             Comment = FormatComment(EntityInfo.Comment, "更新时请求结构"),
