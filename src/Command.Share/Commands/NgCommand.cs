@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.OpenApi.Models;
 
 namespace Command.Share.Commands;
@@ -13,6 +14,7 @@ public class NgCommand : CommandBase
     {
         DocUrl = docUrl;
         SharePath = Path.Combine(output, "src", "app", "share");
+        Instructions.Add($"  🔹 generate ts model interfaces.");
         Instructions.Add($"  🔹 generate ng services.");
     }
 
@@ -33,6 +35,9 @@ public class NgCommand : CommandBase
             .Read(openApiContent, out _);
 
         Console.WriteLine(Instructions[0]);
+        await GetTSInterfacesAsync(ApiDocument);
+
+        Console.WriteLine(Instructions[1]);
         await GenerateCommonFilesAsync();
         await GenerateNgServicesAsync();
         Console.WriteLine("😀 Ng services generate completed!" + Environment.NewLine);
@@ -46,6 +51,23 @@ public class NgCommand : CommandBase
         await GenerateFileAsync(dir, "base.service.ts", content, false);
     }
 
+
+    public async Task GetTSInterfacesAsync(OpenApiDocument apiDocument)
+    {
+        TSModelGenerate tsGen = new(apiDocument);
+        var Schemas = apiDocument.Components.Schemas;
+        List<GenFileInfo> files = new();
+        foreach (KeyValuePair<string, OpenApiSchema> item in Schemas)
+        {
+            files.Add(tsGen.GenerateInterfaceFile(item.Key, item.Value));
+        }
+
+        foreach (GenFileInfo model in files)
+        {
+            string dir = Path.Combine(SharePath, "models", model.Path.ToHyphen());
+            await GenerateFileAsync(dir, model.Name, model.Content, true);
+        }
+    }
 
     public async Task GenerateNgServicesAsync()
     {

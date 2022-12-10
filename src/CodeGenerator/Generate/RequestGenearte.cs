@@ -140,9 +140,7 @@ public class RequestGenearte : GenerateBase
         {
             files.Add(tsGen.GenerateInterfaceFile(item.Key, item.Value));
         }
-
         return files;
-
     }
 
     public static (string? type, string? refType) GetParamType(OpenApiSchema? schema)

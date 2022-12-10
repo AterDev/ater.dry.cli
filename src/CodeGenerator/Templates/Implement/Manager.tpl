@@ -39,6 +39,5 @@ public class ${EntityName}Manager : DomainManagerBase<${EntityName}, ${EntityNam
             // Queryable = Queryable.Where(q => q.User.Id == _userContext.UserId);
         }
         return await Queryable.FirstOrDefaultAsync();
-
     }
 }
