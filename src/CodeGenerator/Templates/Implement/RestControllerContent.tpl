@@ -1,5 +1,5 @@
 ﻿using ${ShareNamespace}.Models.${EntityName}Dtos;
-namespace ${Namespace}.Infrastructure;
+namespace ${Namespace}.Controllers;
 
 ${Comment}
 public class ${EntityName}${APISuffix} : RestControllerBase<I${EntityName}Manager>
