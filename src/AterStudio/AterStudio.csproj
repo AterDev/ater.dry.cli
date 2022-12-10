@@ -19,6 +19,13 @@
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
 	</ItemGroup>
 
+	<!--生成swagger.json-->
+	<Target Name="SwaggerPostBuildTarget" AfterTargets="Build" Condition="'$(Configuration)' == 'Debug'">
+		<Exec Command="dotnet tool restore" UseUtf8Encoding="Always" />
+		<Exec Command="dotnet swagger tofile --output ./swagger.json .\bin\Debug\net7.0\AterStudio.dll v1" UseUtf8Encoding="Always" />
+		<Exec Command="droplet request .\swagger.json -o .\ClientApp\src\app\share" UseUtf8Encoding="Always" />
+	</Target>
+
 	<ItemGroup>
 		<!-- Don't publish the SPA source files, but do show them in the project files list -->
 		<Content Remove="$(SpaRoot)**" />
@@ -29,13 +36,6 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\Command.Share\Command.Share.csproj" />
 	</ItemGroup>
-
-	<!--生成swagger.json-->
-	<Target Name="SwaggerPostBuildTarget" AfterTargets="Build" Condition="'$(Configuration)' == 'Debug'">
-		<Exec Command="dotnet tool restore" UseUtf8Encoding="Always" />
-		<Exec Command="dotnet swagger tofile --output ./swagger.json .\bin\Debug\net7.0\AterStudio.dll v1" UseUtf8Encoding="Always" />
-		<Exec Command="droplet sync" UseUtf8Encoding="Always" />
-	</Target>
 
 	<Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
 		<!-- As part of publishing, ensure the JS resources are freshly built in production mode -->

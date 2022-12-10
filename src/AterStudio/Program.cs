@@ -37,7 +37,7 @@ builder.Services.AddSwaggerGen(c =>
 
     c.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "MyProjectName",
+        Title = "Ater Studio",
         Description = "API ÎÄµµ",
         Version = "v1"
     });

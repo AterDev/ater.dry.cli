@@ -13,7 +13,13 @@ public class EntityManager
     }
 
 
-    public async Task<List<EntityFile>> GetEntityFilesAsync(int projectId)
+    /// <summary>
+    /// 获取实体列表
+    /// </summary>
+    /// <param name="projectId"></param>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    public async Task<List<EntityFile>> GetEntityFilesAsync(int projectId, string? name)
     {
         var entityFiles = new List<EntityFile>();
         var project = await _context.Projects.FindAsync(projectId);
@@ -36,12 +42,17 @@ public class EntityManager
                 var item = new EntityFile
                 {
                     Name = file.Name,
-                    Path = file.FullName,
+                    BaseDirPath = entityPath,
+                    Path = file.FullName.Replace(entityPath, ""),
                     Content = File.ReadAllText(path)
                 };
 
                 entityFiles.Add(item);
             }
+        }
+        if (!string.IsNullOrWhiteSpace(name))
+        {
+            entityFiles = entityFiles.Where(f => f.Name.ToLower().Contains(name.ToLower())).ToList();
         }
         return entityFiles;
     }
@@ -63,6 +74,41 @@ public class EntityManager
                 break;
         }
     }
+
+    /// <summary>
+    /// 批量生成
+    /// </summary>
+    /// <param name="project"></param>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    public async Task BatchGenerateAsync(Project project, BatchGenerateDto dto)
+    {
+        switch (dto.CommandType)
+        {
+            case CommandType.Dto:
+                foreach (var item in dto.EntityPaths)
+                {
+                    await CommandRunner.GenerateDtoAsync(item, project.SharePath, false);
+                }
+                break;
+            case CommandType.Manager:
+                foreach (var item in dto.EntityPaths)
+                {
+                    await CommandRunner.GenerateManagerAsync(item, project.SharePath, project.ApplicationPath);
+                }
+
+                break;
+            case CommandType.API:
+                foreach (var item in dto.EntityPaths)
+                {
+                    await CommandRunner.GenerateApiAsync(item, project.SharePath, project.ApplicationPath, project.HttpPath, "Controller");
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
 
     public async Task GenerateRequestAsync(Project project, string webPath, RequestLibType type)
     {

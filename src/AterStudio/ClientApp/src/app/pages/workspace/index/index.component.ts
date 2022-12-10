@@ -1,3 +1,4 @@
+import { SelectionModel } from '@angular/cdk/collections';
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -19,16 +20,19 @@ export class IndexComponent implements OnInit {
   CommandType = CommandType;
   projectId: string | null = null;
   entityFiles = [] as EntityFile[];
-  columns: string[] = ['name', 'path', 'actions'];
+  baseEntityPath = '';
+  columns: string[] = ['select', 'name', 'path', 'actions'];
   dataSource!: MatTableDataSource<EntityFile>;
   isLoading = true;
   requestForm!: FormGroup;
   dialogRef!: MatDialogRef<{}, any>;
+  searchKey = '';
   @ViewChild("requestDialog", { static: true })
   requestTmpRef!: TemplateRef<{}>;
   @ViewChild("syncDialog", { static: true })
   syncTmpRef!: TemplateRef<{}>;
 
+  selection = new SelectionModel<EntityFile>(true, []);
   constructor(
     public route: ActivatedRoute,
     public router: Router,
@@ -45,6 +49,22 @@ export class IndexComponent implements OnInit {
     this.getEntity();
   }
 
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  toggleAllRows() {
+    if (this.isAllSelected()) {
+      this.selection.clear();
+      return;
+    }
+
+    this.selection.select(...this.dataSource.data);
+  }
   initForm(): void {
     this.requestForm = new FormGroup({
       swagger: new FormControl<string | null>(null, []),
@@ -54,10 +74,11 @@ export class IndexComponent implements OnInit {
   }
 
   getEntity(): void {
-    this.service.list(parseInt(this.projectId!))
+    this.service.list(parseInt(this.projectId!), this.searchKey)
       .subscribe(res => {
         if (res) {
           this.entityFiles = res;
+          this.baseEntityPath = res[0].baseDirPath ?? '';
           this.dataSource = new MatTableDataSource<EntityFile>(this.entityFiles);
         }
         this.isLoading = false;
@@ -82,7 +103,7 @@ export class IndexComponent implements OnInit {
   generate(path: string, type: CommandType): void {
     const dto: GenerateDto = {
       projectId: parseInt(this.projectId!),
-      entityPath: path,
+      entityPath: this.baseEntityPath + path,
       commandType: type
     };
     this.service.generate(dto)
@@ -91,6 +112,26 @@ export class IndexComponent implements OnInit {
           this.snb.open('生成成功');
         }
       })
+  }
+
+
+  batch(type: CommandType): void {
+    const selected = this.selection.selected;
+    console.log(selected);
+
+    if (selected.length > 0) {
+      this.service.batchGenerate({
+        projectId: parseInt(this.projectId!),
+        entityPaths: selected.map(s => this.baseEntityPath + s.path),
+        commandType: type
+      }).subscribe(res => {
+        if (res) {
+          this.snb.open('生成成功');
+        }
+      })
+    } else {
+      this.snb.open('未选择任何实体');
+    }
   }
 
   generateRequest(): void {

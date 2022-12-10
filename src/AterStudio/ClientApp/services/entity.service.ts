@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { BaseService } from './base.service';
 import { Observable } from 'rxjs';
 import { GenerateDto } from '../models/entity/generate-dto.model';
-import { BatchGenerateDto } from '../models/entity/batch-generate-dto.model';
 import { EntityFile } from '../models/entity/entity-file.model';
 import { RequestLibType } from '../models/enum/request-lib-type.model';
 
@@ -14,10 +13,9 @@ export class EntityService extends BaseService {
   /**
    * list
    * @param id number
-   * @param name string
    */
-  list(id: number, name?: string): Observable<EntityFile[]> {
-    const url = `/api/Entity/${id}?name=${name}`;
+  list(id: number): Observable<EntityFile[]> {
+    const url = `/api/Entity/${id}`;
     return this.request<EntityFile[]>('get', url);
   }
 
@@ -27,15 +25,6 @@ export class EntityService extends BaseService {
    */
   generate(data: GenerateDto): Observable<boolean> {
     const url = `/api/Entity/generate`;
-    return this.request<boolean>('post', url, data);
-  }
-
-  /**
-   * batchGenerate
-   * @param data BatchGenerateDto
-   */
-  batchGenerate(data: BatchGenerateDto): Observable<boolean> {
-    const url = `/api/Entity/batch-generate`;
     return this.request<boolean>('post', url, data);
   }
 

@@ -1,5 +1,7 @@
 ﻿namespace AterStudio.Entity;
-
+/// <summary>
+/// 项目
+/// </summary>
 public class Project : EntityBase
 {
     public required string Name { get; set; }

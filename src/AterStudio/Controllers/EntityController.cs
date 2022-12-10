@@ -21,14 +21,14 @@ public class EntityController : ControllerBase
 
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<List<EntityFile>>> ListAsync([FromRoute] int id)
+    public async Task<ActionResult<List<EntityFile>>> ListAsync([FromRoute] int id, string? name)
     {
         if (!_context.Projects.Any(p => p.Id == id))
         {
             return NotFound("不存在的项目");
         }
 
-        return await _manager.GetEntityFilesAsync(id);
+        return await _manager.GetEntityFilesAsync(id, name);
     }
 
 
@@ -40,8 +40,25 @@ public class EntityController : ControllerBase
         {
             return NotFound("项目不存在");
         }
-
         await _manager.GenerateAsync(project, dto);
+        return true;
+    }
+
+
+    /// <summary>
+    /// 批量生成
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    [HttpPost("batch-generate")]
+    public async Task<ActionResult<bool>> BatchGenerateAsync(BatchGenerateDto dto)
+    {
+        var project = await _context.Projects.FindAsync(dto.ProjectId);
+        if (project == null)
+        {
+            return NotFound("项目不存在");
+        }
+        await _manager.BatchGenerateAsync(project, dto);
         return true;
     }
 
