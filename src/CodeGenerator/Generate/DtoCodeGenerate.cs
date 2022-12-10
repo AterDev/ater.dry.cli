@@ -94,8 +94,8 @@ public class DtoCodeGenerate : GenerateBase
             Tag = EntityInfo.Name,
             Properties = EntityInfo.PropertyInfos?
                 .Where(p => !p.IsList
-                    && p.Name != "Content"
-                    && (p.MaxLength < 1000 || p.MaxLength == null)
+                    && p.Name != "IsDeleted"
+                    && (p.MaxLength <= 1000 || p.MaxLength == null)
                     && !p.IsNavigation)
                 .ToList()
         };
