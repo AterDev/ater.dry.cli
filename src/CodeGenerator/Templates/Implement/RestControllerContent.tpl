@@ -31,7 +31,7 @@ public class ${EntityName}${APISuffix} : RestControllerBase<I${EntityName}Manage
     [HttpPost]
     public async Task<ActionResult<${EntityName}>> AddAsync(${EntityName}AddDto form)
     {
-        var entity = form.MapTo<${EntityName}AddDto, ${EntityName}>();
+        var entity = await manager.CreateNewEntityAsync(form);
         return await manager.AddAsync(entity);
     }
 

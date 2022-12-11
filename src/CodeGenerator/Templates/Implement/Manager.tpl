@@ -12,6 +12,17 @@ public class ${EntityName}Manager : DomainManagerBase<${EntityName}, ${EntityNam
         _userContext = userContext;
     }
 
+
+    /// <summary>
+    /// 创建待添加实体
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    public Task<${EntityName}> CreateNewEntityAsync(${EntityName}AddDto dto)
+    {
+        return Task.FromResult(dto.MapTo<${EntityName}AddDto, ${EntityName}>());
+    }
+
     public override async Task<${EntityName}> UpdateAsync(${EntityName} entity, ${EntityName}UpdateDto dto)
     {
         // TODO:根据实际业务更新

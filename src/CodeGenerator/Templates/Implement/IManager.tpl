@@ -12,5 +12,12 @@ public interface I${EntityName}Manager : IDomainManager<${EntityName}, ${EntityN
     /// <param name="id"></param>
     /// <returns></returns>
     Task<${EntityName}?> GetOwnedAsync(Guid id);
+
+    /// <summary>
+    /// 创建待添加实体
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    Task<${EntityName}> CreateNewEntityAsync(${EntityName}AddDto dto);
 	// TODO: 定义业务方法
 }
