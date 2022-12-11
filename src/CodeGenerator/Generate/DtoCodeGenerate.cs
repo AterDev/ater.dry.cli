@@ -1,4 +1,6 @@
 ﻿using System.Text.RegularExpressions;
+using Datastore;
+using Microsoft.EntityFrameworkCore;
 using PropertyInfo = Core.Models.PropertyInfo;
 
 namespace CodeGenerator.Generate;
@@ -13,10 +15,12 @@ public class DtoCodeGenerate : GenerateBase
     /// dto 输出的 程序集名称
     /// </summary>
     public string? AssemblyName { get; set; } = "Share";
+    public ContextBase _context { get; init; }
     public DtoCodeGenerate(string entityPath, string dtoPath)
     {
         if (File.Exists(entityPath))
         {
+            _context = new ContextBase();
             EntityParseHelper entityHelper = new(entityPath);
             EntityInfo = entityHelper.GetEntity();
             AssemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(dtoPath));
@@ -31,6 +35,19 @@ public class DtoCodeGenerate : GenerateBase
         {
             _ = new FileNotFoundException();
         }
+    }
+
+    /// <summary>
+    /// TODO:实体对比，获取要更新的内容
+    /// </summary>
+    public async void CompareEntity()
+    {
+        var currentEntity = await _context.EntityInfos.Where(e => e.Name == EntityInfo.Name && e.NamespaceName == EntityInfo.NamespaceName)
+            .Include(e => e.PropertyInfos)
+            .FirstOrDefaultAsync();
+
+        if (currentEntity != null) { }
+
     }
 
     /// <summary>
@@ -75,7 +92,7 @@ public class DtoCodeGenerate : GenerateBase
                 .Where(p => p.Name != "Content"
                     && (p.MaxLength < 2000 || p.MaxLength == null)
                     && !(p.IsList && p.IsNavigation))
-                .ToList()            
+                .ToList()
         };
         return dto.ToString(AssemblyName, EntityInfo.Name);
     }

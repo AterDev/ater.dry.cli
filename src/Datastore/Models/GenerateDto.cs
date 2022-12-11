@@ -1,4 +1,4 @@
-﻿namespace Manager.Models;
+﻿namespace Datastore.Models;
 
 public class GenerateDto
 {

@@ -1,5 +1,6 @@
 using AterStudio;
-using Manager;
+using AterStudio.Manager;
+using Datastore;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.EntityFrameworkCore;
@@ -9,14 +10,9 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddDbContext<ContextBase>(options =>
-{
-    string? connectionString = builder.Configuration.GetConnectionString("default");
-    _ = options.UseSqlite(connectionString);
-});
+builder.Services.AddDbContext<ContextBase>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddEndpointsApiExplorer();
-
 
 builder.Services.AddScoped<ProjectManager>();
 builder.Services.AddScoped<EntityManager>();
@@ -86,8 +82,8 @@ app.UseExceptionHandler(handler =>
 });
 
 // ≥ı ºªØ
-var scope = app.Services.CreateScope();
-var context = scope.ServiceProvider.GetRequiredService<ContextBase>();
+IServiceScope scope = app.Services.CreateScope();
+ContextBase context = scope.ServiceProvider.GetRequiredService<ContextBase>();
 await context.Database.MigrateAsync();
 
 

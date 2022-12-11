@@ -1,9 +1,9 @@
-﻿using CodeGenerator.Generate;
-using Command.Share;
-using Manager.Entity;
-using Manager.Models;
+﻿using Command.Share;
+using Datastore;
+using Datastore.Entity;
+using Datastore.Models;
 
-namespace Manager;
+namespace AterStudio.Manager;
 
 public class EntityManager
 {
@@ -22,11 +22,11 @@ public class EntityManager
     /// <returns></returns>
     public async Task<List<EntityFile>> GetEntityFilesAsync(int projectId, string? name)
     {
-        var entityFiles = new List<EntityFile>();
-        var project = await _context.Projects.FindAsync(projectId);
-        var entityPath = Path.Combine(project.EntityPath, "Entities");
+        List<EntityFile> entityFiles = new();
+        Project? project = await _context.Projects.FindAsync(projectId);
+        string entityPath = Path.Combine(project.EntityPath, "Entities");
         // get files in directory
-        var filePaths = Directory.GetFiles(entityPath, "*.cs", SearchOption.AllDirectories).ToList();
+        List<string> filePaths = Directory.GetFiles(entityPath, "*.cs", SearchOption.AllDirectories).ToList();
 
         if (filePaths.Any())
         {
@@ -37,10 +37,10 @@ public class EntityManager
                 )
                 .ToList();
 
-            foreach (var path in filePaths)
+            foreach (string? path in filePaths)
             {
-                var file = new FileInfo(path);
-                var item = new EntityFile
+                FileInfo file = new(path);
+                EntityFile item = new()
                 {
                     Name = file.Name,
                     BaseDirPath = entityPath,
@@ -87,20 +87,20 @@ public class EntityManager
         switch (dto.CommandType)
         {
             case CommandType.Dto:
-                foreach (var item in dto.EntityPaths)
+                foreach (string item in dto.EntityPaths)
                 {
                     await CommandRunner.GenerateDtoAsync(item, project.SharePath, false);
                 }
                 break;
             case CommandType.Manager:
-                foreach (var item in dto.EntityPaths)
+                foreach (string item in dto.EntityPaths)
                 {
                     await CommandRunner.GenerateManagerAsync(item, project.SharePath, project.ApplicationPath);
                 }
 
                 break;
             case CommandType.API:
-                foreach (var item in dto.EntityPaths)
+                foreach (string item in dto.EntityPaths)
                 {
                     await CommandRunner.GenerateApiAsync(item, project.SharePath, project.ApplicationPath, project.HttpPath, "Controller");
                 }
@@ -113,13 +113,13 @@ public class EntityManager
 
     public async Task GenerateRequestAsync(Project project, string webPath, RequestLibType type)
     {
-        var swaggerPath = Path.Combine(project.HttpPath, "swagger.json");
+        string swaggerPath = Path.Combine(project.HttpPath, "swagger.json");
         await CommandRunner.GenerateRequestAsync(swaggerPath, webPath, type);
     }
 
     public async Task GenerateSyncAsync(Project project)
     {
-        var swaggerPath = Path.Combine(project.HttpPath, "swagger.json");
+        string swaggerPath = Path.Combine(project.HttpPath, "swagger.json");
         await CommandRunner.SyncToAngularAsync(swaggerPath, project.EntityPath, project.SharePath, project.HttpPath);
     }
 }

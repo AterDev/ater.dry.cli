@@ -46,6 +46,7 @@ public class PropertyInfo
         Name = name;
     }
 
+    public EntityInfo? EntityInfo { get; set; }
     /// <summary>
     /// 转换成C#属性
     /// </summary>

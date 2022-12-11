@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Manager.Entity;
+namespace Datastore.Entity;
 
 public class EntityBase
 {

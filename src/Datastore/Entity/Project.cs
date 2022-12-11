@@ -1,4 +1,4 @@
-﻿namespace Manager.Entity;
+﻿namespace Datastore.Entity;
 /// <summary>
 /// 项目
 /// </summary>

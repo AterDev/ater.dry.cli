@@ -1,6 +1,7 @@
-﻿using System.Text.Json;
+﻿using Datastore;
+using Datastore.Entity;
 
-namespace Manager;
+namespace AterStudio.Manager;
 
 public class ProjectManager
 {

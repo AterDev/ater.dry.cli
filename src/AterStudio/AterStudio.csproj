@@ -35,7 +35,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Command.Share\Command.Share.csproj" />
-	  <ProjectReference Include="..\Manager\Manager.csproj" />
+	  <ProjectReference Include="..\Datastore\Datastore.csproj" />
 	</ItemGroup>
 
 	<Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">

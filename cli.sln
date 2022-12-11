@@ -26,7 +26,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "src\Core\Core.cspro
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Command.Share", "src\Command.Share\Command.Share.csproj", "{23B17DCD-E90F-49E2-90B3-88E3076B74C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Manager", "src\Manager\Manager.csproj", "{9BCEBC46-BB98-4759-9ADA-FA748E6139B5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Datastore", "src\Datastore\Datastore.csproj", "{9BCEBC46-BB98-4759-9ADA-FA748E6139B5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

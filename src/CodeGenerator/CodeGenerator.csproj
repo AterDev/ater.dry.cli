@@ -127,6 +127,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Core\Core.csproj" />
+	  <ProjectReference Include="..\Datastore\Datastore.csproj" />
 	</ItemGroup>
 
 

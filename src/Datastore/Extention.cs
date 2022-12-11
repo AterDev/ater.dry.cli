@@ -1,4 +1,4 @@
-﻿namespace Manager;
+﻿namespace Datastore;
 
 public static class Extention
 {

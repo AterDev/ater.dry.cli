@@ -75,7 +75,7 @@ public class ConfigCommand
     /// 获取config目录路径，优先为sln解决方案目录，如果没有保存到LocalApplicationData
     /// </summary>
     /// <returns></returns>
-    private static string GetConfigPath()
+    public static string GetConfigPath()
     {
         DirectoryInfo currentDir = new(Environment.CurrentDirectory);
         FileInfo? solutionPath = AssemblyHelper.GetSlnFile(currentDir, "*.sln", currentDir.Root);
