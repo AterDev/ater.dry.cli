@@ -1,4 +1,4 @@
-﻿namespace AterStudio;
+﻿namespace Manager;
 
 public static class Extention
 {

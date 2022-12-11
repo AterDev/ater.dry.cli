@@ -1,4 +1,4 @@
-﻿namespace AterStudio.Models;
+﻿namespace Manager.Models;
 
 public class GenerateDto
 {

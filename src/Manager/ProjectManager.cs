@@ -1,8 +1,6 @@
 ﻿using System.Text.Json;
-using AterStudio.Entity;
-using AterStudio.Models;
 
-namespace AterStudio.Manager;
+namespace Manager;
 
 public class ProjectManager
 {
@@ -40,7 +38,7 @@ public class ProjectManager
             HttpPath = config.ApiPath.ToFullPath("src", dir),
             SharePath = config.DtoPath.ToFullPath("src", dir)
         };
-            
+
         _ = await _context.AddAsync(project);
         _ = await _context.SaveChangesAsync();
         return project;

@@ -9,8 +9,6 @@ global using Core;
 global using Core.Infrastructure.Helper;
 global using Core.Infrastructure.Utils;
 global using Core.Models;
-global using Microsoft.OpenApi.Readers;
 global using Command.Share.Commands;
-
-global using Manager;
-global using Manager.Models;
+global using Manager.Entity;
+global using Microsoft.EntityFrameworkCore;

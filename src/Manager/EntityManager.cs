@@ -1,8 +1,9 @@
-﻿using AterStudio.Entity;
-using AterStudio.Models;
+﻿using CodeGenerator.Generate;
 using Command.Share;
+using Manager.Entity;
+using Manager.Models;
 
-namespace AterStudio.Manager;
+namespace Manager;
 
 public class EntityManager
 {

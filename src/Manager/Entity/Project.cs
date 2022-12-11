@@ -1,4 +1,4 @@
-﻿namespace AterStudio.Entity;
+﻿namespace Manager.Entity;
 /// <summary>
 /// 项目
 /// </summary>

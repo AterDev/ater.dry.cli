@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace AterStudio.Entity;
+namespace Manager.Entity;
 
 public class EntityBase
 {

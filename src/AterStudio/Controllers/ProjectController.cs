@@ -1,5 +1,5 @@
-﻿using AterStudio.Entity;
-using AterStudio.Manager;
+﻿using Manager;
+using Manager.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 

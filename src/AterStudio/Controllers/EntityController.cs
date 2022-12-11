@@ -1,7 +1,4 @@
-﻿using AterStudio.Entity;
-using AterStudio.Manager;
-using AterStudio.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace AterStudio.Controllers;

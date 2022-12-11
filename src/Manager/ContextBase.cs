@@ -1,7 +1,4 @@
-﻿using AterStudio.Entity;
-using Microsoft.EntityFrameworkCore;
-
-namespace AterStudio;
+﻿namespace Manager;
 
 public class ContextBase : DbContext
 {
