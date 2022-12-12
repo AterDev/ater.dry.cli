@@ -68,6 +68,10 @@ public class CommandBuilder
             {
                 Console.WriteLine(JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true }));
             }
+            else
+            {
+                Console.WriteLine("no config file, please use config init command");
+            }
         });
 
         RootCommand.Add(configCommand);

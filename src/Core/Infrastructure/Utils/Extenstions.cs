@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Core.Infrastructure.Utils;
 
@@ -94,8 +95,14 @@ public static class Extenstions
         }
 
         MemoryStream stream = new();
-        JsonSerializer.Serialize(stream, origin);
+        JsonSerializer.Serialize(stream, origin, new JsonSerializerOptions
+        {
+            ReferenceHandler = ReferenceHandler.IgnoreCycles
+        });
         stream.Position = 0;
-        return JsonSerializer.Deserialize<T>(stream);
+        return JsonSerializer.Deserialize<T>(stream, new JsonSerializerOptions
+        {
+            ReferenceHandler = ReferenceHandler.IgnoreCycles
+        });
     }
 }

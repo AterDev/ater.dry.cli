@@ -92,6 +92,11 @@ public class DtoCodeGenerate : GenerateBase
         }
         await _context.AddAsync(EntityInfo);
         await _context.SaveChangesAsync();
+
+        PropertyChanges.ForEach(p =>
+        {
+            Console.WriteLine(p.Type.ToString() + " : " + p.Name);
+        });
     }
 
     /// <summary>
@@ -107,14 +112,15 @@ public class DtoCodeGenerate : GenerateBase
         var entityInfo = entityHelper.GetEntity();
         var props = entityInfo.PropertyInfos;
 
-        // 移除
+        // 要更新的属性
         var updatePropNames = PropertyChanges.Where(c => c.Type != ChangeType.Delete)
             .Select(c => c.Name).ToList();
-
         var updateProps = EntityInfo.PropertyInfos.Where(p => updatePropNames.Contains(p.Name)).ToList();
-        props = props.Where(p => !updatePropNames.Contains(p.Name)).ToList();
-        props.Concat(updateProps);
 
+        // 移除所有有变化的
+        var changePropNames = PropertyChanges.Select(c => c.Name).ToList();
+        props = props.Where(p => !changePropNames.Contains(p.Name)).ToList();
+        props.AddRange(updateProps);
         return props;
     }
 
@@ -212,7 +218,7 @@ public class DtoCodeGenerate : GenerateBase
             })
             .ToList();
 
-        string[] filterFields = new string[] { "Id", "CreatedTime", "UpdatedTime", "IsDeleted", "Status" };
+        string[] filterFields = new string[] { "Id", "CreatedTime", "UpdatedTime", "IsDeleted", "Status", "PageSize", "PageIndex" };
 
         var dtoFileName = EntityInfo.Name + Const.FilterDto + ".cs";
         var dtoFilePath = Path.Combine(DtoPath, "Models", EntityInfo.Name + "Dtos", dtoFileName);
@@ -233,9 +239,9 @@ public class DtoCodeGenerate : GenerateBase
                     || (!p.IsNullable
                         && !p.IsList
                         && !p.IsNavigation
-                        && p.MaxLength < 1000
                         && !filterFields.Contains(p.Name))
                     )
+                .Where(p => p.MaxLength is not (not null and >= 1000))
                 .ToList();
         dto.Properties = properties.Copy() ?? new List<PropertyInfo>();
         // 筛选条件调整为可空
@@ -315,7 +321,7 @@ public class DtoCodeGenerate : GenerateBase
             .Where(p => p.IsNavigation && !p.IsList && !p.IsNullable)
             .Select(s => new PropertyInfo($"{KeyType}", s.Name + "Id")
             {
-                 ProjectId = Const.PROJECT_ID 
+                ProjectId = Const.PROJECT_ID
             })
             .ToList();
 

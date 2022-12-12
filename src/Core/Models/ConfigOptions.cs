@@ -7,7 +7,7 @@ public class ConfigOptions
     /// </summary>
     public string RootPath { get; set; } = "./";
 
-    public string ProjectId { get; set; } = Guid.NewGuid().ToString();
+    public string ProjectId { get; set; }
     /// <summary>
     /// dto项目目录
     /// </summary>

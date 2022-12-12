@@ -25,7 +25,7 @@ public class ConfigCommand
             Const.PROJECT_ID = options.ProjectId;
             string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
             await File.WriteAllTextAsync(path, content, Encoding.UTF8);
-            Console.WriteLine("Init config file success");
+            Console.WriteLine("Init config file success:" + path);
         }
         else
         {
@@ -65,7 +65,7 @@ public class ConfigCommand
         string path = file.FullName;
         string config = File.ReadAllText(path);
         ConfigOptions? options = JsonSerializer.Deserialize<ConfigOptions>(config);
-        return options ?? new ConfigOptions();
+        return options;
     }
 
     public static void EditConfigFile()
