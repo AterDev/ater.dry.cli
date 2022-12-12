@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text.Json;
+using Core.Infrastructure;
 
 namespace Command.Share.Commands;
 
@@ -17,14 +18,36 @@ public class ConfigCommand
             ? Path.Combine(configPath, Config.ConfigFileName)
             : file.FullName;
 
-        if (File.Exists(path))
+        if (!File.Exists(path))
         {
-            return;
+            ConfigOptions options = new();
+
+            Const.PROJECT_ID = options.ProjectId;
+            string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
+            await File.WriteAllTextAsync(path, content, Encoding.UTF8);
+            Console.WriteLine("Init config file success");
         }
-        ConfigOptions options = new();
-        string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
-        await File.WriteAllTextAsync(path, content, Encoding.UTF8);
-        Console.WriteLine("Init config file success");
+        else
+        {
+            // 如果配置格式变了，需要更新
+            string config = File.ReadAllText(path);
+            var options = JsonSerializer.Deserialize<ConfigOptions>(config);
+            if (options != null)
+            {
+                Const.PROJECT_ID = options.ProjectId;
+                if (string.IsNullOrWhiteSpace(options!.ProjectId))
+                {
+                    options.ProjectId = Guid.NewGuid().ToString();
+                    string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
+                    await File.WriteAllTextAsync(path, content, Encoding.UTF8);
+                    Console.WriteLine("Init config file success");
+                }
+            }
+            else
+            {
+                Console.WriteLine("config file parsing error! : " + path);
+            }
+        }
     }
 
     /// <summary>
@@ -87,7 +110,7 @@ public class ConfigCommand
         }
         else
         {
-            configPath = solutionPath.Directory.FullName;
+            configPath = solutionPath.Directory!.FullName;
         }
         return configPath;
     }

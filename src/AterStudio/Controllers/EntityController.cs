@@ -29,7 +29,7 @@ public class EntityController : ControllerBase
     [HttpPost("generate")]
     public async Task<ActionResult<bool>> GenerateAsync(GenerateDto dto)
     {
-        Datastore.Entity.Project? project = await _context.Projects.FindAsync(dto.ProjectId);
+        Project? project = await _context.Projects.FindAsync(dto.ProjectId);
         if (project == null)
         {
             return NotFound("项目不存在");
@@ -47,7 +47,7 @@ public class EntityController : ControllerBase
     [HttpPost("batch-generate")]
     public async Task<ActionResult<bool>> BatchGenerateAsync(BatchGenerateDto dto)
     {
-        Datastore.Entity.Project? project = await _context.Projects.FindAsync(dto.ProjectId);
+        Project? project = await _context.Projects.FindAsync(dto.ProjectId);
         if (project == null)
         {
             return NotFound("项目不存在");
@@ -67,7 +67,7 @@ public class EntityController : ControllerBase
     [HttpGet("generateRequest/{id}")]
     public async Task<ActionResult<bool>> GenerateRequest([FromRoute] int id, string webPath, RequestLibType type)
     {
-        Datastore.Entity.Project? project = await _context.Projects.FindAsync(id);
+        Project? project = await _context.Projects.FindAsync(id);
         if (project == null)
         {
             return NotFound("项目不存在");
@@ -84,7 +84,7 @@ public class EntityController : ControllerBase
     [HttpPost("generateSync/{id}")]
     public async Task<ActionResult<bool>> GenerateSync([FromRoute] int id)
     {
-        Datastore.Entity.Project? project = await _context.Projects.FindAsync(id);
+        Project? project = await _context.Projects.FindAsync(id);
         if (project == null)
         {
             return NotFound("项目不存在");

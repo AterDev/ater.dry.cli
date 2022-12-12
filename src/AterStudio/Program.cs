@@ -10,7 +10,10 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddDbContext<ContextBase>();
+builder.Services.AddDbContext<ContextBase>(options =>
+{
+    options.UseSqlite("", a => a.MigrationsAssembly("Datastore"));
+});
 builder.Services.AddControllersWithViews();
 builder.Services.AddEndpointsApiExplorer();
 

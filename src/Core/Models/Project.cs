@@ -1,4 +1,4 @@
-﻿namespace Datastore.Entity;
+﻿namespace Core.Models;
 /// <summary>
 /// 项目
 /// </summary>

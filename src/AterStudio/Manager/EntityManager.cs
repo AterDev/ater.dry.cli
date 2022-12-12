@@ -1,6 +1,5 @@
 ﻿using Command.Share;
 using Datastore;
-using Datastore.Entity;
 using Datastore.Models;
 
 namespace AterStudio.Manager;
@@ -63,7 +62,7 @@ public class EntityManager
         switch (dto.CommandType)
         {
             case CommandType.Dto:
-                await CommandRunner.GenerateDtoAsync(dto.EntityPath, project.SharePath, false);
+                await CommandRunner.GenerateDtoAsync(dto.EntityPath, project.SharePath, true);
                 break;
             case CommandType.Manager:
                 await CommandRunner.GenerateManagerAsync(dto.EntityPath, project.SharePath, project.ApplicationPath);
@@ -89,7 +88,7 @@ public class EntityManager
             case CommandType.Dto:
                 foreach (string item in dto.EntityPaths)
                 {
-                    await CommandRunner.GenerateDtoAsync(item, project.SharePath, false);
+                    await CommandRunner.GenerateDtoAsync(item, project.SharePath, true);
                 }
                 break;
             case CommandType.Manager:

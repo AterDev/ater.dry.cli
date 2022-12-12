@@ -2,7 +2,7 @@
 /// <summary>
 /// defined entity model 
 /// </summary>
-public class EntityInfo
+public class EntityInfo : EntityBase
 {
     /// <summary>
     /// 类名
@@ -24,7 +24,7 @@ public class EntityInfo
     /// <summary>
     /// 属性
     /// </summary>
-    public List<PropertyInfo>? PropertyInfos { get; set; }
+    public List<PropertyInfo> PropertyInfos { get; set; } = new List<PropertyInfo>();
 
     public EntityInfo(string name)
     {

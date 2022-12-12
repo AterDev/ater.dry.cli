@@ -85,7 +85,7 @@ public class CommandBuilder
         outputOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.DtoPath));
         Option<bool> forceOption = new(new[] { "--force", "-f" },
             "force overwrite file");
-        forceOption.SetDefaultValue(false);
+        forceOption.SetDefaultValue(true);
 
         dtoCommand.AddArgument(path);
         dtoCommand.AddOption(outputOption);

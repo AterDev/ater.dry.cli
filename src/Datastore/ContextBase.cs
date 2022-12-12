@@ -1,6 +1,4 @@
-﻿using Datastore.Entity;
-
-namespace Datastore;
+﻿namespace Datastore;
 
 public class ContextBase : DbContext
 {
@@ -22,12 +20,27 @@ public class ContextBase : DbContext
         //var connectionString = $"Data Source={Path.Combine(path, "AterStudio", "studio.db")}";
 
         string connectionString = $"Data Source={Path.Combine(path, "studio.db")}";
-        _ = optionsBuilder.UseSqlite(connectionString);
+
+        _ = optionsBuilder.UseSqlite(connectionString, a => a.MigrationsAssembly("Datastore"));
         base.OnConfiguring(optionsBuilder);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+
+        modelBuilder.Entity<EntityInfo>(e =>
+        {
+            e.HasIndex(p => p.Name);
+            e.HasIndex(p => p.NamespaceName);
+            e.HasIndex(p => p.ProjectId);
+        });
+
+        modelBuilder.Entity<PropertyInfo>(e =>
+        {
+            e.HasIndex(p => p.Name);
+            e.HasIndex(p => p.Type);
+            e.HasIndex(p => p.ProjectId);
+        });
         base.OnModelCreating(modelBuilder);
     }
 }

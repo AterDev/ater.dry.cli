@@ -1,6 +1,6 @@
 ﻿namespace Core.Models;
 
-public class PropertyInfo
+public class PropertyInfo : EntityBase
 {
     public string Type { get; set; }
     public string Name { get; set; }

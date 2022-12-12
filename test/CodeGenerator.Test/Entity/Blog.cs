@@ -7,26 +7,19 @@ namespace CodeGenerator.Test.Entity;
 /// </summary>
 public class Blog : BaseDB
 {
-    [Required]
     [StringLength(100)]
     [MinLength(10)]
-    public string Name { get; set; } = string.Empty;
+    public required string Name { get; set; } 
     public required string Title { get; set; }
-
-    #region region的内容
-    public Blog? Parent { get; set; }
+    [MaxLength(200)]
+    public string? Summary { get; set; }
     public Comments? Comment { get; set; }
-
-    #endregion
-
-    #region test
 
     /// <summary>
     /// 内容
     /// </summary>
+    [MaxLength(2000)]
     public string? Content { get; set; }
     public List<Comments>? Comments { get; set; }
     public DateOnly DateOnly { get; set; }
-    #endregion
-
 }

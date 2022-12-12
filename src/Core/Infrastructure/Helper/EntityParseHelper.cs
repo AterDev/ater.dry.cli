@@ -109,6 +109,7 @@ public class EntityParseHelper
 
         return new EntityInfo(name)
         {
+            ProjectId = Const.PROJECT_ID,
             AssemblyName = AssemblyName,
             NamespaceName = namespaceName,
             Comment = comment,
@@ -176,7 +177,7 @@ public class EntityParseHelper
     /// </summary>
     /// <param name="filePath"></param>
     /// <returns></returns>
-    public List<PropertyInfo>? GetPropertyInfos(string? parentClassName = null)
+    public List<PropertyInfo> GetPropertyInfos(string? parentClassName = null)
     {
         List<PropertyInfo> properties = new();
         CompilationUnitSyntax root = SyntaxTree.GetCompilationUnitRoot();
@@ -250,7 +251,10 @@ public class EntityParseHelper
         string type = syntax.Type.ToString();
         string name = syntax.Identifier.ToString();
         Microsoft.CodeAnalysis.TypeInfo typeInfo = SemanticModel.GetTypeInfo(syntax.Type);
-        PropertyInfo propertyInfo = new(type, name);
+        PropertyInfo propertyInfo = new(type, name)
+        {
+            ProjectId = Const.PROJECT_ID
+        };
 
         // //解析modifier，如public required ,private virtual 
         string modifier1 = syntax.Modifiers.FirstOrDefault().Text;

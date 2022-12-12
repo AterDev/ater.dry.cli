@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using Datastore;
+using Datastore.Models;
 using Microsoft.EntityFrameworkCore;
 using PropertyInfo = Core.Models.PropertyInfo;
 
@@ -9,45 +10,112 @@ namespace CodeGenerator.Generate;
 /// </summary>
 public class DtoCodeGenerate : GenerateBase
 {
-    public readonly EntityInfo? EntityInfo;
+    public EntityInfo EntityInfo { get; init; }
     public string KeyType { get; set; } = "Guid";
     /// <summary>
     /// dto 输出的 程序集名称
     /// </summary>
     public string? AssemblyName { get; set; } = "Share";
+    public string DtoPath { get; init; }
     public ContextBase _context { get; init; }
+
+    public List<PropertyChange> PropertyChanges = new List<PropertyChange>();
+
     public DtoCodeGenerate(string entityPath, string dtoPath)
     {
-        if (File.Exists(entityPath))
+        _context = new ContextBase();
+        DtoPath = dtoPath;
+        if (!File.Exists(entityPath))
         {
-            _context = new ContextBase();
-            EntityParseHelper entityHelper = new(entityPath);
-            EntityInfo = entityHelper.GetEntity();
-            AssemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(dtoPath));
-            KeyType = EntityInfo.KeyType switch
-            {
-                EntityKeyType.Int => "Int",
-                EntityKeyType.String => "String",
-                _ => "Guid"
-            };
+            throw new FileNotFoundException();
         }
-        else
+
+        var entityHelper = new EntityParseHelper(entityPath);
+        EntityInfo = entityHelper.GetEntity();
+        AssemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(DtoPath));
+        KeyType = EntityInfo.KeyType switch
         {
-            _ = new FileNotFoundException();
-        }
+            EntityKeyType.Int => "Int",
+            EntityKeyType.String => "String",
+            _ => "Guid"
+        };
+        GetChangedPropertiesAsync().Wait();
     }
 
     /// <summary>
-    /// TODO:实体对比，获取要更新的内容
+    /// 获取变更的实体属性内容
     /// </summary>
-    public async void CompareEntity()
+    public async Task GetChangedPropertiesAsync()
     {
-        var currentEntity = await _context.EntityInfos.Where(e => e.Name == EntityInfo.Name && e.NamespaceName == EntityInfo.NamespaceName)
+        var currentEntity = await _context.EntityInfos.Where(
+            e => e.Name == EntityInfo.Name
+            && e.NamespaceName == EntityInfo.NamespaceName)
             .Include(e => e.PropertyInfos)
             .FirstOrDefaultAsync();
 
-        if (currentEntity != null) { }
+        if (currentEntity != null)
+        {
+            // 新的属性名称
+            var propNames = EntityInfo.PropertyInfos.Select(p => p.Name).ToList();
 
+            // 变动的属性
+            var updateProps = EntityInfo.PropertyInfos
+                .Except(currentEntity.PropertyInfos, new PropertyEquality())
+                .ToList(); // C
+
+            // 待删除的属性
+            var removeProps = currentEntity.PropertyInfos
+                .Where(p => !propNames.Contains(p.Name))
+                .ToList();
+
+            updateProps.ForEach(p =>
+            {
+                var prop = new PropertyChange
+                {
+                    Name = p.Name,
+                    Type = ChangeType.Update
+                };
+                PropertyChanges.Add(prop);
+            });
+
+            removeProps.ForEach(p =>
+            {
+                var prop = new PropertyChange
+                {
+                    Name = p.Name,
+                    Type = ChangeType.Delete
+                };
+                PropertyChanges.Add(prop);
+            });
+            _context.RemoveRange(currentEntity.PropertyInfos);
+            _context.Remove(currentEntity);
+        }
+        await _context.AddAsync(EntityInfo);
+        await _context.SaveChangesAsync();
+    }
+
+    /// <summary>
+    /// 合并更新后的属性
+    /// </summary>
+    /// <param name="dtoPath">dto文件的完整路径</param>
+    /// <returns></returns>
+    public List<PropertyInfo> MergeProperties(string dtoPath)
+    {
+        if (!File.Exists(dtoPath)) return EntityInfo.PropertyInfos;
+
+        var entityHelper = new EntityParseHelper(dtoPath);
+        var entityInfo = entityHelper.GetEntity();
+        var props = entityInfo.PropertyInfos;
+
+        // 移除
+        var updatePropNames = PropertyChanges.Where(c => c.Type != ChangeType.Delete)
+            .Select(c => c.Name).ToList();
+
+        var updateProps = EntityInfo.PropertyInfos.Where(p => updatePropNames.Contains(p.Name)).ToList();
+        props = props.Where(p => !updatePropNames.Contains(p.Name)).ToList();
+        props.Concat(updateProps);
+
+        return props;
     }
 
     /// <summary>
@@ -81,14 +149,18 @@ public class DtoCodeGenerate : GenerateBase
             return default;
         }
 
+        var dtoFileName = EntityInfo.Name + Const.ShortDto + ".cs";
+        var dtoFilePath = Path.Combine(DtoPath, "Models", EntityInfo.Name + "Dtos", dtoFileName);
+        var props = MergeProperties(dtoFilePath);
+
         DtoInfo dto = new()
         {
             EntityNamespace = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
-            Name = EntityInfo.Name + "ShortDto",
+            Name = EntityInfo.Name + Const.ShortDto,
             NamespaceName = EntityInfo.NamespaceName,
             Comment = FormatComment(EntityInfo.Comment, "概要"),
             Tag = EntityInfo.Name,
-            Properties = EntityInfo.PropertyInfos?
+            Properties = props?
                 .Where(p => p.Name != "Content"
                     && (p.MaxLength < 2000 || p.MaxLength == null)
                     && !(p.IsList && p.IsNavigation))
@@ -104,14 +176,18 @@ public class DtoCodeGenerate : GenerateBase
             return default;
         }
 
+        var dtoFileName = EntityInfo.Name + Const.ItemDto + ".cs";
+        var dtoFilePath = Path.Combine(DtoPath, "Models", EntityInfo.Name + "Dtos", dtoFileName);
+        var props = MergeProperties(dtoFilePath);
+
         DtoInfo dto = new()
         {
             EntityNamespace = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
-            Name = EntityInfo.Name + "ItemDto",
+            Name = EntityInfo.Name + Const.ItemDto,
             NamespaceName = EntityInfo.NamespaceName,
             Comment = FormatComment(EntityInfo.Comment, "列表元素"),
             Tag = EntityInfo.Name,
-            Properties = EntityInfo.PropertyInfos?
+            Properties = props?
                 .Where(p => !p.IsList
                     && p.Name != "IsDeleted"
                     && (p.MaxLength <= 1000 || p.MaxLength == null)
@@ -130,24 +206,34 @@ public class DtoCodeGenerate : GenerateBase
 
         List<PropertyInfo>? referenceProps = EntityInfo.PropertyInfos?
             .Where(p => p.IsNavigation && !p.IsList)
-            .Select(s => new PropertyInfo($"{KeyType}?", s.Name + "Id"))
+            .Select(s => new PropertyInfo($"{KeyType}?", s.Name + "Id")
+            {
+                ProjectId = Const.PROJECT_ID
+            })
             .ToList();
 
         string[] filterFields = new string[] { "Id", "CreatedTime", "UpdatedTime", "IsDeleted", "Status" };
+
+        var dtoFileName = EntityInfo.Name + Const.FilterDto + ".cs";
+        var dtoFilePath = Path.Combine(DtoPath, "Models", EntityInfo.Name + "Dtos", dtoFileName);
+        var props = MergeProperties(dtoFilePath);
+
         DtoInfo dto = new()
         {
             EntityNamespace = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
-            Name = EntityInfo.Name + "FilterDto",
+            Name = EntityInfo.Name + Const.FilterDto,
             NamespaceName = EntityInfo.NamespaceName,
             Comment = FormatComment(EntityInfo.Comment, "查询筛选"),
             Tag = EntityInfo.Name,
             BaseType = "FilterBase",
         };
-        List<PropertyInfo>? properties = EntityInfo.PropertyInfos?
+
+        List<PropertyInfo>? properties = props?
                 .Where(p => (p.IsRequired && !p.IsNavigation)
                     || (!p.IsNullable
                         && !p.IsList
                         && !p.IsNavigation
+                        && p.MaxLength < 1000
                         && !filterFields.Contains(p.Name))
                     )
                 .ToList();
@@ -177,16 +263,24 @@ public class DtoCodeGenerate : GenerateBase
 
         List<PropertyInfo>? referenceProps = EntityInfo.PropertyInfos?
             .Where(p => p.IsNavigation && !p.IsList)
-            .Select(s => new PropertyInfo($"{KeyType}", s.Name + "Id"))
+            .Select(s => new PropertyInfo($"{KeyType}", s.Name + "Id")
+            {
+                ProjectId = Const.PROJECT_ID
+            })
             .ToList();
+
+        var dtoFileName = EntityInfo.Name + Const.AddDto + ".cs";
+        var dtoFilePath = Path.Combine(DtoPath, "Models", EntityInfo.Name + "Dtos", dtoFileName);
+        var props = MergeProperties(dtoFilePath);
+
         DtoInfo dto = new()
         {
             EntityNamespace = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
-            Name = EntityInfo.Name + "AddDto",
+            Name = EntityInfo.Name + Const.AddDto,
             NamespaceName = EntityInfo.NamespaceName,
             Comment = FormatComment(EntityInfo.Comment, "添加时请求结构"),
             Tag = EntityInfo.Name,
-            Properties = EntityInfo.PropertyInfos?.Where(p => p.Name != "Id"
+            Properties = props?.Where(p => p.Name != "Id"
                 && p.Name != "CreatedTime"
                 && p.Name != "UpdatedTime"
                 && p.Name != "IsDeleted"
@@ -207,7 +301,7 @@ public class DtoCodeGenerate : GenerateBase
 
     /// <summary>
     /// 更新dto
-    /// 导航属性Name+Id,过滤列表属性
+    /// 导航属性 Name+Id,过滤列表属性
     /// </summary>
     /// <returns></returns>
     public string? GetUpdateDto()
@@ -219,19 +313,27 @@ public class DtoCodeGenerate : GenerateBase
         // 导航属性处理
         List<PropertyInfo>? referenceProps = EntityInfo.PropertyInfos?
             .Where(p => p.IsNavigation && !p.IsList && !p.IsNullable)
-            .Select(s => new PropertyInfo($"{KeyType}", s.Name + "Id"))
+            .Select(s => new PropertyInfo($"{KeyType}", s.Name + "Id")
+            {
+                 ProjectId = Const.PROJECT_ID 
+            })
             .ToList();
+
+        var dtoFileName = EntityInfo.Name + Const.UpdateDto + ".cs";
+        var dtoFilePath = Path.Combine(DtoPath, "Models", EntityInfo.Name + "Dtos", dtoFileName);
+        var props = MergeProperties(dtoFilePath);
+
         DtoInfo dto = new()
         {
             EntityNamespace = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
-            Name = EntityInfo.Name + "UpdateDto",
+            Name = EntityInfo.Name + Const.UpdateDto,
             NamespaceName = EntityInfo.NamespaceName,
             Comment = FormatComment(EntityInfo.Comment, "更新时请求结构"),
             Tag = EntityInfo.Name,
 
         };
         // 处理非required的都设置为nullable
-        List<PropertyInfo>? properties = EntityInfo.PropertyInfos?.Where(p => p.Name != "Id"
+        List<PropertyInfo>? properties = props?.Where(p => p.Name != "Id"
                 && p.Name != "CreatedTime"
                 && p.Name != "UpdatedTime"
                 && p.Name != "IsDeleted"

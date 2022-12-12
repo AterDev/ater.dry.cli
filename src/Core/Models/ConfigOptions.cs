@@ -6,6 +6,8 @@ public class ConfigOptions
     /// 项目根目录 
     /// </summary>
     public string RootPath { get; set; } = "./";
+
+    public string ProjectId { get; set; } = Guid.NewGuid().ToString();
     /// <summary>
     /// dto项目目录
     /// </summary>
