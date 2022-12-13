@@ -6,8 +6,8 @@ public class FunctionTest
     [Fact]
     public void Should_parse_entity_attribute()
     {
-        string entityPath = @"D:\codes\dusi.dev\src\Core\Entities\EntityDesign\EntityLibrary.cs";
-        var helper = new EntityParseHelper(entityPath);
+        string filePath = PathHelper.GetProjectFilePath(@"Entity\Blog.cs");
+        var helper = new EntityParseHelper(filePath);
         helper.Parse();
         Console.WriteLine();
     }

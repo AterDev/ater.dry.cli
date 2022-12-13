@@ -112,15 +112,28 @@ public class DtoCodeGenerate : GenerateBase
         var entityInfo = entityHelper.GetEntity();
         var props = entityInfo.PropertyInfos;
 
-        // 要更新的属性
+        // 1 移除删除的内容
+        var deletePropNames = PropertyChanges.Where(c => c.Type == ChangeType.Delete)
+            .Select(c => c.Name).ToList();
+        props = props.Where(p => !deletePropNames.Contains(p.Name)).ToList();
+
+        // 2 要更新的属性
         var updatePropNames = PropertyChanges.Where(c => c.Type != ChangeType.Delete)
             .Select(c => c.Name).ToList();
-        var updateProps = EntityInfo.PropertyInfos.Where(p => updatePropNames.Contains(p.Name)).ToList();
 
-        // 移除所有有变化的
-        var changePropNames = PropertyChanges.Select(c => c.Name).ToList();
-        props = props.Where(p => !changePropNames.Contains(p.Name)).ToList();
-        props.AddRange(updateProps);
+        var updateProps = EntityInfo.PropertyInfos.Where(p => updatePropNames.Contains(p.Name)).ToList();
+        updateProps.ForEach(p =>
+        {
+            var index = props.FindIndex(item => item.Name == p.Name);
+            if (index > -1)
+            {
+                props[index] = p;
+            }
+            else
+            {
+                props.Add(p);
+            }
+        });
         return props;
     }
 

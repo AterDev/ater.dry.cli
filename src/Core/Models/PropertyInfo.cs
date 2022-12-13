@@ -24,7 +24,14 @@ public class PropertyInfo : EntityBase
     public bool? HasMany { get; set; }
     public bool IsEnum { get; set; } = false;
     public string? AttributeText { get; set; }
-    public string? Comments { get; set; }
+    /// <summary>
+    /// xml comment
+    /// </summary>
+    public string? CommentXml { get; set; }
+    /// <summary>
+    /// comment summary
+    /// </summary>
+    public string? CommentSummary { get; set; }
     /// <summary>
     /// 是否必须
     /// </summary>
@@ -68,7 +75,7 @@ public class PropertyInfo : EntityBase
             attributeText = attributeText?.Replace("    ", "    // ");
             content = @$"    // public {Type}{nullableMark} {Name} {{ get; set; }}";
         }
-        return $@"{Comments}{attributeText}{content}{SuffixContent}
+        return $@"{CommentXml}{attributeText}{content}{SuffixContent}
 ";
     }
 }

@@ -7,6 +7,10 @@ namespace CodeGenerator.Test.Entity;
 /// </summary>
 public class Blog : BaseDB
 {
+    /// <summary>
+    /// 名称
+    /// 博客
+    /// </summary>
     [StringLength(100)]
     [MinLength(10)]
     public required string Name { get; set; } 

@@ -100,6 +100,7 @@ public class EntityParseHelper
         GetNgPageAttribute();
         //CommentContent = 
     }
+
     public EntityInfo GetEntity()
     {
         ClassDeclarationSyntax? classDeclarationSyntax = RootNodes.OfType<ClassDeclarationSyntax>().FirstOrDefault();
@@ -201,7 +202,8 @@ public class EntityParseHelper
             PropertyInfo propertyInfo = ParsePropertyType(prop);
             // attribute and comments text
             propertyInfo.AttributeText = GetAttributeText(prop);
-            propertyInfo.Comments = GetComment(prop);
+            propertyInfo.CommentXml = GetCommentXml(prop);
+            propertyInfo.CommentSummary = GetCommentSummary(prop);
             // attributes
             ParsePropertyAttributes(prop, propertyInfo);
             properties.Add(propertyInfo);
@@ -218,14 +220,40 @@ public class EntityParseHelper
     }
 
     /// <summary>
-    /// 获取属性注释内容
+    /// 获取属性注释xml内容
     /// </summary>
     /// <returns></returns>
-    protected static string GetComment(PropertyDeclarationSyntax syntax)
+    protected static string GetCommentXml(PropertyDeclarationSyntax syntax)
     {
-        SyntaxTriviaList trivia = syntax.GetLeadingTrivia();
-        return trivia.ToString().TrimEnd(' ');
+        /// TODO:缩进空格
+        var trivia = syntax.GetLeadingTrivia()
+            .Select(x => x.GetStructure()).OfType<DocumentationCommentTriviaSyntax>()
+            .FirstOrDefault();
+        return trivia == null ? string.Empty : "///" + trivia.Content.ToString();
     }
+
+    /// <summary>
+    /// 获取summary comment
+    /// </summary>
+    /// <param name="syntax"></param>
+    /// <returns></returns>
+    protected static string GetCommentSummary(PropertyDeclarationSyntax syntax)
+    {
+        var trivia = syntax.GetLeadingTrivia()
+            .Select(x => x.GetStructure()).OfType<DocumentationCommentTriviaSyntax>()
+            .FirstOrDefault();
+        if (trivia == null)
+        {
+            return string.Empty;
+        }
+        var summary = trivia.Content.OfType<XmlElementSyntax>().Where(e => e.StartTag.Name.ToString() == "summary").FirstOrDefault();
+
+        if (summary == null) return string.Empty;
+
+        var contentNode = summary?.ChildNodes().OfType<XmlTextSyntax>().FirstOrDefault();
+        return string.Join(' ', contentNode.TextTokens.Where(x => x.IsKind(SyntaxKind.XmlTextLiteralToken)).Select(x => x.Text.Trim()).Where(x => !IsNullOrWhiteSpace(x)).ToList());
+    }
+
 
     /// <summary>
     /// 获取属性特性文本内容
