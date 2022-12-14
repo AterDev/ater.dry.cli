@@ -22,9 +22,10 @@ public class EntityController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<List<EntityFile>>> ListAsync([FromRoute] int id, string? name)
     {
-        return !_context.Projects.Any(p => p.Id == id) ? (ActionResult<List<EntityFile>>)NotFound("不存在的项目") : (ActionResult<List<EntityFile>>)await _manager.GetEntityFilesAsync(id, name);
+        return !_context.Projects.Any(p => p.Id == id)
+            ? NotFound("不存在的项目")
+            : await _manager.GetEntityFilesAsync(id, name);
     }
-
 
     [HttpPost("generate")]
     public async Task<ActionResult<bool>> GenerateAsync(GenerateDto dto)

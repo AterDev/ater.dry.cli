@@ -24,7 +24,7 @@ public class AssemblyHelper
     /// <returns>the search file path,return null if not found </returns>
     public static string? FindFileInProject(string projectFilePath, string searchFileName)
     {
-        DirectoryInfo dir = new(Path.GetDirectoryName(projectFilePath));
+        DirectoryInfo dir = new(Path.GetDirectoryName(projectFilePath)!);
         string[] files = Directory.GetFiles(dir.FullName, searchFileName, SearchOption.AllDirectories);
         return files.Any() ? files[0] : default;
     }

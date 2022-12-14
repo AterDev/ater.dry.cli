@@ -57,7 +57,10 @@ public class CommandBuilder
         System.CommandLine.Command init = new("init", "init config");
 
         edit.SetHandler(ConfigCommand.EditConfigFile);
-        init.SetHandler(ConfigCommand.InitConfigFileAsync);
+        init.SetHandler(async () =>
+        {
+            await ConfigCommand.InitConfigFileAsync();
+        });
 
         configCommand.AddCommand(edit);
         configCommand.AddCommand(init);

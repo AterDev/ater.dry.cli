@@ -8,8 +8,11 @@ public class ContextBase : DbContext
 
     public DbSet<PropertyInfo> PropertyInfos { get; set; }
 
-
     public ContextBase()
+    {
+    }
+
+    public ContextBase(DbContextOptions<ContextBase> options) : base(options)
     {
     }
 
@@ -17,9 +20,14 @@ public class ContextBase : DbContext
     {
         string path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
-        //var connectionString = $"Data Source={Path.Combine(path, "AterStudio", "studio.db")}";
+        var localDir = Path.Combine(path, "AterStudio");
+        if (!Directory.Exists(localDir))
+        {
+            Directory.CreateDirectory(localDir);
+        }
 
-        string connectionString = $"Data Source={Path.Combine(path, "studio.db")}";
+        var connectionString = $"Data Source={Path.Combine(localDir, "studio.db")}";
+        //string connectionString = $"Data Source={Path.Combine(path, "studio.db")}";
 
         _ = optionsBuilder.UseSqlite(connectionString, a => a.MigrationsAssembly("Datastore"));
         base.OnConfiguring(optionsBuilder);

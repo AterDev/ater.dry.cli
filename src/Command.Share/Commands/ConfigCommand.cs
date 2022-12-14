@@ -9,10 +9,9 @@ public class ConfigCommand
     /// <summary>
     /// 初始化配置文件
     /// </summary>
-    public static async Task InitConfigFileAsync()
+    public static async Task InitConfigFileAsync(string? configPath = null)
     {
-        string configPath = GetConfigPath();
-
+        configPath ??= GetConfigPath();
         FileInfo file = new(Path.Combine(configPath, Config.ConfigFileName));
         string path = file == null
             ? Path.Combine(configPath, Config.ConfigFileName)
@@ -20,9 +19,12 @@ public class ConfigCommand
 
         if (!File.Exists(path))
         {
-            ConfigOptions options = new();
-
+            ConfigOptions options = new()
+            {
+                ProjectId = Guid.NewGuid().ToString()
+            };
             Const.PROJECT_ID = options.ProjectId;
+
             string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
             await File.WriteAllTextAsync(path, content, Encoding.UTF8);
             Console.WriteLine("Init config file success:" + path);
@@ -34,10 +36,10 @@ public class ConfigCommand
             var options = JsonSerializer.Deserialize<ConfigOptions>(config);
             if (options != null)
             {
-                Const.PROJECT_ID = options.ProjectId;
                 if (string.IsNullOrWhiteSpace(options!.ProjectId))
                 {
                     options.ProjectId = Guid.NewGuid().ToString();
+                    Const.PROJECT_ID = options.ProjectId;
                     string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
                     await File.WriteAllTextAsync(path, content, Encoding.UTF8);
                     Console.WriteLine("Init config file success");

@@ -1,4 +1,7 @@
-﻿using Datastore;
+﻿using Command.Share.Commands;
+using Core;
+using Core.Infrastructure;
+using Datastore;
 
 namespace AterStudio.Manager;
 
@@ -13,22 +16,25 @@ public class ProjectManager
 
     public async Task<Project?> AddProjectAsync(string name, string path)
     {
-        // TODO:获取并构造参数
+        // 获取并构造参数
         FileInfo slnFile = new(path);
-        string? dir = slnFile.DirectoryName;
+        string dir = slnFile.DirectoryName!;
+        string configFilePath = Path.Combine(dir!, Config.ConfigFileName);
 
-        string configFilePath = Path.Combine(dir, ".droplet-config.json");
         if (!File.Exists(configFilePath))
         {
-            throw new FileNotFoundException("未找到配置文件:.droplet-config.json");
+            Console.WriteLine("未找到配置文件，初始化配置文件");
+            await ConfigCommand.InitConfigFileAsync(dir);
+            //throw new FileNotFoundException("未找到配置文件:.droplet-config.json");
         }
 
-        string configJson = await File.ReadAllTextAsync(Path.Combine(dir, ".droplet-config.json"));
-        ConfigOptions? config = JsonSerializer.Deserialize<ConfigOptions>(configJson);
+        string configJson = await File.ReadAllTextAsync(configFilePath);
 
+        ConfigOptions? config = JsonSerializer.Deserialize<ConfigOptions>(configJson);
         string projectName = Path.GetFileNameWithoutExtension(path);
         Project project = new()
         {
+            ProjectId = config!.ProjectId,
             DisplayName = name,
             Path = path,
             Name = projectName,

@@ -56,7 +56,9 @@ public class CompilationHelper
     {
         IEnumerable<SyntaxNode>? rootNodes = SyntaxTree?.GetCompilationUnitRoot().DescendantNodes();
         NamespaceDeclarationSyntax? namespaceDeclarationSyntax = rootNodes!.OfType<NamespaceDeclarationSyntax>().FirstOrDefault();
-        FileScopedNamespaceDeclarationSyntax? filescopeNamespaceDeclarationSyntax = rootNodes.OfType<FileScopedNamespaceDeclarationSyntax>().FirstOrDefault();
+
+        FileScopedNamespaceDeclarationSyntax? filescopeNamespaceDeclarationSyntax = rootNodes!.OfType<FileScopedNamespaceDeclarationSyntax>().FirstOrDefault();
+
         return namespaceDeclarationSyntax == null ?
             filescopeNamespaceDeclarationSyntax?.Name.ToString() : namespaceDeclarationSyntax.Name.ToString();
     }

@@ -85,14 +85,14 @@ public class NgServiceGenerate : GenerateBase
         return files;
     }
 
-    private static (string? type, string? refType) GetParamType(OpenApiSchema? schema)
+    private static (string type, string? refType) GetParamType(OpenApiSchema? schema)
     {
         if (schema == null)
         {
             return (string.Empty, string.Empty);
         }
 
-        string? type = "any";
+        string type = "any";
         string? refType = schema.Reference?.Id;
         if (schema.Reference != null)
         {
@@ -166,7 +166,7 @@ public class NgServiceGenerate : GenerateBase
         if (schema.OneOf.Count > 0)
         {
             // 获取引用对象名称
-            type = schema.OneOf.First()?.Reference.Id;
+            type = schema.OneOf.First()?.Reference.Id ?? type;
             refType = schema.OneOf.First()?.Reference.Id;
         }
         return (type, refType);

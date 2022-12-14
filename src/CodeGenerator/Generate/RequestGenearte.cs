@@ -65,7 +65,7 @@ public class RequestGenearte : GenerateBase
                     Path = path.Key,
                     Tag = operation.Value.Tags.FirstOrDefault()?.Name,
                 };
-                (function.RequestType, function.RequestRefType) = GetParamType(operation.Value.RequestBody?.Content.Values.FirstOrDefault().Schema);
+                (function.RequestType, function.RequestRefType) = GetParamType(operation.Value.RequestBody?.Content.Values.FirstOrDefault()?.Schema);
                 (function.ResponseType, function.ResponseRefType) = GetParamType(operation.Value.Responses.FirstOrDefault().Value
                     ?.Content.FirstOrDefault().Value
                     ?.Schema);
@@ -143,7 +143,7 @@ public class RequestGenearte : GenerateBase
         return files;
     }
 
-    public static (string? type, string? refType) GetParamType(OpenApiSchema? schema)
+    public static (string type, string? refType) GetParamType(OpenApiSchema? schema)
     {
         if (schema == null)
         {
@@ -224,7 +224,7 @@ public class RequestGenearte : GenerateBase
         if (schema.OneOf.Count > 0)
         {
             // 获取引用对象名称
-            type = schema.OneOf.First()?.Reference.Id;
+            type = schema.OneOf.First()?.Reference.Id ?? type;
             refType = schema.OneOf.First()?.Reference.Id;
         }
         return (type, refType);

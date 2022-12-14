@@ -12,7 +12,6 @@ public class EntityManager
         _context = context;
     }
 
-
     /// <summary>
     /// 获取实体列表
     /// </summary>
@@ -22,8 +21,9 @@ public class EntityManager
     public async Task<List<EntityFile>> GetEntityFilesAsync(int projectId, string? name)
     {
         List<EntityFile> entityFiles = new();
-        Project? project = await _context.Projects.FindAsync(projectId);
-        string entityPath = Path.Combine(project.EntityPath, "Entities");
+        var project = await _context.Projects.FindAsync(projectId);
+
+        string entityPath = Path.Combine(project!.EntityPath, "Entities");
         // get files in directory
         List<string> filePaths = Directory.GetFiles(entityPath, "*.cs", SearchOption.AllDirectories).ToList();
 

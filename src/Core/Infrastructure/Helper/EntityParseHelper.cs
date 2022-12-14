@@ -98,7 +98,6 @@ public class EntityParseHelper
         CommentContent = GetComment();
         PropertyInfos = GetPropertyInfos();
         GetNgPageAttribute();
-        //CommentContent = 
     }
 
     public EntityInfo GetEntity()
@@ -183,8 +182,8 @@ public class EntityParseHelper
         List<PropertyInfo> properties = new();
         CompilationUnitSyntax root = SyntaxTree.GetCompilationUnitRoot();
         IEnumerable<PropertyDeclarationSyntax> propertySyntax = root.DescendantNodes().OfType<PropertyDeclarationSyntax>();
-        // 如果指定父类名称
 
+        // 如果指定父类名称
         parentClassName ??= GetParentClassName();
         List<PropertyInfo>? parentProperties = new();
         if (parentClassName != null)
@@ -251,9 +250,11 @@ public class EntityParseHelper
         if (summary == null) return string.Empty;
 
         var contentNode = summary?.ChildNodes().OfType<XmlTextSyntax>().FirstOrDefault();
-        return string.Join(' ', contentNode.TextTokens.Where(x => x.IsKind(SyntaxKind.XmlTextLiteralToken)).Select(x => x.Text.Trim()).Where(x => !IsNullOrWhiteSpace(x)).ToList());
+        if (contentNode != null)
+            return string.Join(' ', contentNode.TextTokens.Where(x => x.IsKind(SyntaxKind.XmlTextLiteralToken))
+                .Select(x => x.Text.Trim()).Where(x => !string.IsNullOrWhiteSpace(x)).ToList());
+        return string.Empty;
     }
-
 
     /// <summary>
     /// 获取属性特性文本内容

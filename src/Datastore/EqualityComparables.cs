@@ -15,8 +15,8 @@ public class PropertyEquality : IEqualityComparer<PropertyInfo>
 {
     public bool Equals(PropertyInfo? x, PropertyInfo? y)
     {
-        return x.Name == y.Name && x.Type == y.Type && x.IsRequired == y.IsRequired &&
-            x.CommentXml == y.CommentXml && x.AttributeText == y.AttributeText;
+        return x?.Name == y?.Name && x?.Type == y?.Type && x?.IsRequired == y?.IsRequired &&
+            x?.CommentXml == y?.CommentXml && x?.AttributeText == y?.AttributeText;
     }
 
     public int GetHashCode([DisallowNull] PropertyInfo obj)
