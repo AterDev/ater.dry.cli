@@ -1,4 +1,5 @@
-﻿using Command.Share.Commands;
+﻿using Command.Share;
+using Command.Share.Commands;
 using Core;
 using Core.Infrastructure;
 using Datastore;
@@ -48,5 +49,20 @@ public class ProjectManager
         _ = await _context.AddAsync(project);
         _ = await _context.SaveChangesAsync();
         return project;
+    }
+
+
+    /// <summary>
+    /// 开启监控
+    /// </summary>
+    /// <param name="project"></param>
+    public void StartWatcher(Project project)
+    {
+        WatcherManager.StartWatcher(project.Id.ToString(), project.EntityPath, project.SharePath, project.ApplicationPath);
+    }
+
+    public void StopWatcher(Project project)
+    {
+        WatcherManager.StopWatcher(project.Id.ToString());
     }
 }

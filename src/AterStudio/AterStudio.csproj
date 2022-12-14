@@ -22,8 +22,8 @@
 	<!--生成swagger.json-->
 	<Target Name="SwaggerPostBuildTarget" AfterTargets="Build" Condition="'$(Configuration)' == 'Debug'">
 		<Exec Command="dotnet tool restore" UseUtf8Encoding="Always" />
-		<Exec Command="dotnet swagger tofile --output ./swagger.json .\bin\Debug\net7.0\AterStudio.dll v1" UseUtf8Encoding="Always" />
-		<Exec Command="droplet ng .\swagger.json -o .\ClientApp" UseUtf8Encoding="Always" />
+		
+		<!--<Exec Command="droplet ng .\swagger.json -o .\ClientApp" UseUtf8Encoding="Always" />-->
 	</Target>
 
 	<ItemGroup>

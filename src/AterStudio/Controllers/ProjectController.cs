@@ -1,5 +1,7 @@
 ﻿using AterStudio.Manager;
+using Command.Share;
 using Datastore;
+using Datastore.Migrations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,5 +30,40 @@ public class ProjectController : ControllerBase
     public async Task<ActionResult<Project?>> AddAsync(string name, string path)
     {
         return !System.IO.File.Exists(path) ? Problem("未找到该路径") : await _manager.AddProjectAsync(name, path);
+    }
+
+
+    /// <summary>
+    /// 开户监测
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpPost("watcher/{id}")]
+    public async Task<ActionResult<bool>> StartWatcherAsync([FromRoute] int id)
+    {
+        var project = await _context.Projects.FindAsync(id);
+        if (project == null)
+        {
+            return NotFound("不存在该项目");
+        }
+        _manager.StartWatcher(project);
+        return true;
+    }
+
+    /// <summary>
+    /// 停止监测
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpDelete("watcher/{id}")]
+    public async Task<ActionResult<bool>> StopWatcherAsync([FromRoute] int id)
+    {
+        var project = await _context.Projects.FindAsync(id);
+        if (project == null)
+        {
+            return NotFound("不存在该项目");
+        }
+        _manager.StopWatcher(project);
+        return true;
     }
 }

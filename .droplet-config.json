@@ -1,5 +1,6 @@
 ﻿{
   "RootPath": "./",
+  "ProjectId": "7d3141bc-1cf8-4735-8125-0cbf7b3bf49a",
   "DtoPath": "Share",
   "EntityPath": "Core",
   "DbContextPath": "Database/EntityFramework",

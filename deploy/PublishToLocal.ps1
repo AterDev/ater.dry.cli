@@ -9,7 +9,11 @@ try {
     if ($withStudio -eq $true) {
         # build web project
         Set-Location ../src/AterStudio
-        Remove-Item .\publish\ -R -Force
+        if ([System.IO.File]::Exists(".\publish")) {
+            <# Action to perform if the condition is true #>
+            Remove-Item .\publish\ -R -Force
+        }
+        
         dotnet publish -c release -o ./publish
         Compress-Archive -Path .\publish\*  -DestinationPath "../CommandLine/studio.zip" -CompressionLevel Optimal -Force
     }

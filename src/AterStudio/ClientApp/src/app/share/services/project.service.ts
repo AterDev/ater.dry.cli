@@ -26,4 +26,22 @@ export class ProjectService extends BaseService {
     return this.request<Project>('post', url);
   }
 
+  /**
+   * startWatcher
+   * @param id number
+   */
+  startWatcher(id: number): Observable<boolean> {
+    const url = `/api/Project/watcher/${id}`;
+    return this.request<boolean>('post', url);
+  }
+
+  /**
+   * stopWatcher
+   * @param id number
+   */
+  stopWatcher(id: number): Observable<boolean> {
+    const url = `/api/Project/watcher/${id}`;
+    return this.request<boolean>('delete', url);
+  }
+
 }

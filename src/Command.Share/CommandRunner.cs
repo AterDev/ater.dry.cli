@@ -87,7 +87,6 @@ public class CommandRunner
         await cmd.RunAsync(force);
     }
 
-
     /// <summary>
     /// manager代码生成
     /// </summary>

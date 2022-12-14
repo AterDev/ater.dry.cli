@@ -1,5 +1,6 @@
 export interface Project {
   id: number;
+  projectId?: string | null;
   name?: string | null;
   displayName?: string | null;
   path?: string | null;

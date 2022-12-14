@@ -443,12 +443,11 @@ public class EntityParseHelper
     /// 获取父类名称
     /// </summary>
     /// <returns></returns>
-    protected string? GetParentClassName()
+    public string? GetParentClassName()
     {
         // 获取当前类名
         ClassDeclarationSyntax? classDeclarationSyntax = RootNodes.OfType<ClassDeclarationSyntax>().FirstOrDefault();
         INamedTypeSymbol? classSymbol = SemanticModel.GetDeclaredSymbol(classDeclarationSyntax!);
         return classSymbol?.BaseType?.Name;
     }
-
 }

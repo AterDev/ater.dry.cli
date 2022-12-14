@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Core.Models;
+using Datastore;
 
 namespace Command.Share;
 /// <summary>
@@ -14,7 +16,8 @@ public class FileWatcher
     public FileSystemWatcher? DtoWatcher { get; private set; }
     public string EntityPath { get; }
     public string DtoPath { get; }
-    public string AppPath { get; }
+    public string ApplicationPath { get; }
+    public ContextBase Context { get; }
 
     /// <summary>
     /// 
@@ -26,10 +29,17 @@ public class FileWatcher
     {
         EntityPath = entityPath;
         DtoPath = dtoPath;
-        AppPath = appPath;
+        ApplicationPath = appPath;
+        Context = new ContextBase();
     }
 
-    public void StopWathers()
+    public void StartWatchers()
+    {
+        WatchEntity();
+        WatchDto();
+    }
+
+    public void StopWatchers()
     {
         if (EntityWatcher != null)
         {
@@ -51,57 +61,99 @@ public class FileWatcher
 
     public void WatchEntity()
     {
-        EntityWatcher = new FileSystemWatcher(EntityPath)
+        EntityWatcher = new FileSystemWatcher(Path.Combine(EntityPath, "Entities"))
         {
             IncludeSubdirectories = true,
-            NotifyFilter = NotifyFilters.FileName
-                            | NotifyFilters.LastWrite
-                            | NotifyFilters.Security
-                            | NotifyFilters.Size,
-            Filter = "*.cs"
+            NotifyFilter = NotifyFilters.LastWrite & NotifyFilters.Size,
+            Filter = "*.cs",
+            EnableRaisingEvents = true
         };
-
         EntityWatcher.IncludeSubdirectories = true;
-        EntityWatcher.Created += OnFileCreated;
+
+        EntityWatcher.Created += OnFileCreatedAsync;
         EntityWatcher.Changed += OnFileChanged;
-        EntityWatcher.Deleted += OnFileChanged;
+        EntityWatcher.Deleted += OnFileDeleted;
         EntityWatcher.Renamed += OnFileRenamed;
+        EntityWatcher.Error += OnError;
     }
-    public void WatchDto(string path)
+    public void WatchDto()
     {
-        DtoWatcher = new FileSystemWatcher(path)
+        DtoWatcher = new FileSystemWatcher(Path.Combine(DtoPath, "Models"))
         {
             IncludeSubdirectories = true,
-            NotifyFilter = NotifyFilters.FileName
-                            | NotifyFilters.LastWrite
-                            | NotifyFilters.Security
-                            | NotifyFilters.Size,
-            Filter = "*.cs"
+            NotifyFilter = NotifyFilters.LastWrite & NotifyFilters.Size,
+            Filter = "*.cs",
+            EnableRaisingEvents = true
         };
         DtoWatcher.IncludeSubdirectories = true;
+
         DtoWatcher.Changed += OnDtoFileChanged;
+        DtoWatcher.Error += OnError;
     }
 
-    private void OnFileCreated(object sender, FileSystemEventArgs e)
+    private async void OnFileCreatedAsync(object sender, FileSystemEventArgs e)
     {
-        string value = $"Created: {e.FullPath}";
+        // 解析
+        var entityparseHelper = new EntityParseHelper(e.FullPath);
+        var baseType = entityparseHelper.GetParentClassName() ?? "";
 
+        // 判断是否为实体
+        if (baseType.Equals("EntityBase"))
+        {
+            // 添加入库
+            var entityInfo = entityparseHelper.GetEntity();
+            await Context.AddAsync(entityInfo);
+            await Context.SaveChangesAsync();
+
+            // 生成
+            await CommandRunner.GenerateManagerAsync(e.FullPath, DtoPath, ApplicationPath);
+        }
     }
+
+    private static void OnFileDeleted(object sender, FileSystemEventArgs e) =>
+        Console.WriteLine($"Deleted: {e.FullPath}");
 
     private void OnFileRenamed(object sender, RenamedEventArgs e)
     {
-        throw new NotImplementedException();
-    }
-    private void OnFileChanged(object sender, FileSystemEventArgs e)
-    {
-        if (e.ChangeType != WatcherChangeTypes.Changed)
+        if (e.ChangeType == WatcherChangeTypes.Renamed)
         {
-            return;
+            Console.WriteLine($"Renamed:");
+            Console.WriteLine($"    Old: {e.OldFullPath}");
+            Console.WriteLine($"    New: {e.FullPath}");
+        }
+        else
+        {
+            Console.WriteLine(e.ChangeType.ToString());
+        }
+    }
+    private async void OnFileChanged(object sender, FileSystemEventArgs e)
+    {
+        Console.WriteLine("on file changed:" + e.ChangeType + e.FullPath);
+        if (e.ChangeType == WatcherChangeTypes.Changed)
+        {
+            await CommandRunner.GenerateManagerAsync(e.FullPath, DtoPath, ApplicationPath);
         }
     }
 
     private void OnDtoFileChanged(object sender, FileSystemEventArgs e)
     {
         string value = $"Created: {e.FullPath}";
+        Console.WriteLine("dto file change:" + e.FullPath);
+    }
+
+
+    private static void OnError(object sender, ErrorEventArgs e) =>
+            PrintException(e.GetException());
+
+    private static void PrintException(Exception? ex)
+    {
+        if (ex != null)
+        {
+            Console.WriteLine($"Message: {ex.Message}");
+            Console.WriteLine("Stacktrace:");
+            Console.WriteLine(ex.StackTrace);
+            Console.WriteLine();
+            PrintException(ex.InnerException);
+        }
     }
 }
