@@ -58,12 +58,12 @@ public class ProjectManager
     /// <param name="project"></param>
     public void StartWatcher(Project project)
     {
-        WatcherManager.StartWatcher(project.Id.ToString(), project.EntityPath, project.SharePath, project.ApplicationPath);
+        WatcherManager.StartWatcher(project.ProjectId, project.EntityPath, project.SharePath, project.ApplicationPath);
     }
 
 
     public void StopWatcher(Project project)
     {
-        WatcherManager.StopWatcher(project.Id.ToString());
+        WatcherManager.StopWatcher(project.ProjectId);
     }
 }

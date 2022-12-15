@@ -18,6 +18,7 @@ public class FileWatcher
     public string EntityPath { get; }
     public string DtoPath { get; }
     public string ApplicationPath { get; }
+    public required string ProjectId { get; init; }
     public ContextBase Context { get; }
 
     /// <summary>

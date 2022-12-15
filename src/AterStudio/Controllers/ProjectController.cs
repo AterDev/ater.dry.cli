@@ -1,5 +1,6 @@
 ﻿using AterStudio.Manager;
 using Command.Share;
+using Core.Infrastructure;
 using Datastore;
 using Datastore.Migrations;
 using Microsoft.AspNetCore.Mvc;
@@ -32,7 +33,6 @@ public class ProjectController : ControllerBase
         return !System.IO.File.Exists(path) ? Problem("未找到该路径") : await _manager.AddProjectAsync(name, path);
     }
 
-
     /// <summary>
     /// 开户监测
     /// </summary>
@@ -46,6 +46,8 @@ public class ProjectController : ControllerBase
         {
             return NotFound("不存在该项目");
         }
+
+        Const.PROJECT_ID = project.ProjectId;
         _manager.StartWatcher(project);
         return true;
     }
@@ -63,6 +65,7 @@ public class ProjectController : ControllerBase
         {
             return NotFound("不存在该项目");
         }
+        Const.PROJECT_ID = project.ProjectId;
         _manager.StopWatcher(project);
         return true;
     }

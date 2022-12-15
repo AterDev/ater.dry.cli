@@ -17,7 +17,7 @@ public class WatcherManager
         }
         else
         {
-            var watcher = new FileWatcher(entityPath, dtoPath, appPath);
+            var watcher = new FileWatcher(entityPath, dtoPath, appPath) { ProjectId = name };
             Console.WriteLine("start new watcher:" + name);
             watcher.StartWatchers();
             WatcherList.Add(name, watcher);
@@ -35,3 +35,6 @@ public class WatcherManager
         }
     }
 }
+// 0 config file projectId 
+// 1 studio  add  project  db
+// 2  

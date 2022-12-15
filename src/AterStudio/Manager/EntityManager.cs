@@ -1,4 +1,5 @@
 ﻿using Command.Share;
+using Core.Infrastructure;
 using Datastore;
 using Datastore.Models;
 
@@ -56,9 +57,11 @@ public class EntityManager
         }
         return entityFiles;
     }
-
+    
     public async Task GenerateAsync(Project project, GenerateDto dto)
     {
+
+        Const.PROJECT_ID = project.ProjectId;
         switch (dto.CommandType)
         {
             case CommandType.Dto:
@@ -83,6 +86,7 @@ public class EntityManager
     /// <returns></returns>
     public async Task BatchGenerateAsync(Project project, BatchGenerateDto dto)
     {
+        Const.PROJECT_ID = project.ProjectId;
         switch (dto.CommandType)
         {
             case CommandType.Dto:
@@ -109,15 +113,16 @@ public class EntityManager
         }
     }
 
-
     public async Task GenerateRequestAsync(Project project, string webPath, RequestLibType type)
     {
+        Const.PROJECT_ID = project.ProjectId;
         string swaggerPath = Path.Combine(project.HttpPath, "swagger.json");
         await CommandRunner.GenerateRequestAsync(swaggerPath, webPath, type);
     }
 
     public async Task GenerateSyncAsync(Project project)
     {
+        Const.PROJECT_ID = project.ProjectId;
         string swaggerPath = Path.Combine(project.HttpPath, "swagger.json");
         await CommandRunner.SyncToAngularAsync(swaggerPath, project.EntityPath, project.SharePath, project.HttpPath);
     }

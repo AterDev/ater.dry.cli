@@ -42,8 +42,8 @@ public class EntityParseHelper
     public List<PropertyInfo>? PropertyInfos { get; set; }
     public CSharpCompilation Compilation { get; set; }
     public SemanticModel? SemanticModel { get; set; }
-    protected SyntaxTree SyntaxTree { get; set; }
-    public IEnumerable<SyntaxNode> RootNodes { get; set; }
+    protected SyntaxTree? SyntaxTree { get; set; }
+    public IEnumerable<SyntaxNode>? RootNodes { get; set; }
     public CompilationHelper CompilationHelper { get; set; }
     public EntityKeyType KeyType { get; set; } = EntityKeyType.Guid;
     public string[] SpecialTypes = new[] { "DateTime", "DateTimeOffset", "DateOnly", "TimeOnly", "Guid" };
@@ -78,7 +78,7 @@ public class EntityParseHelper
             var content = reader.ReadToEnd();
 
             CompilationHelper.AddSyntaxTree(content);
-            SyntaxTree = CompilationHelper.SyntaxTree!;
+            SyntaxTree = CompilationHelper.SyntaxTree;
             Compilation = CompilationHelper.Compilation;
             SemanticModel = CompilationHelper.SemanticModel;
             RootNodes = SyntaxTree.GetCompilationUnitRoot().DescendantNodes();
@@ -100,7 +100,7 @@ public class EntityParseHelper
     public void Parse()
     {
         // 获取当前类名
-        ClassDeclarationSyntax? classDeclarationSyntax = RootNodes.OfType<ClassDeclarationSyntax>().FirstOrDefault();
+        ClassDeclarationSyntax? classDeclarationSyntax = RootNodes?.OfType<ClassDeclarationSyntax>().FirstOrDefault();
         NamespaceName = CompilationHelper.GetNamesapce();
         Name = classDeclarationSyntax?.Identifier.ToString();
         Comment = GetClassComment(classDeclarationSyntax);
@@ -111,7 +111,7 @@ public class EntityParseHelper
 
     public EntityInfo GetEntity()
     {
-        ClassDeclarationSyntax? classDeclarationSyntax = RootNodes.OfType<ClassDeclarationSyntax>().FirstOrDefault();
+        ClassDeclarationSyntax? classDeclarationSyntax = RootNodes?.OfType<ClassDeclarationSyntax>().FirstOrDefault();
         string name = classDeclarationSyntax!.Identifier.ToString();
         string comment = GetClassComment(classDeclarationSyntax);
         string? namespaceName = CompilationHelper.GetNamesapce();
@@ -313,7 +313,7 @@ public class EntityParseHelper
         {
             propertyInfo.IsPublic = false;
         }
-        if (!string.IsNullOrEmpty(modifier2) && modifier2.Equals("required"))
+        if (!string.IsNullOrEmpty(modifier2) && modifier2.Trim().ToLower().Equals("required"))
         {
             propertyInfo.IsRequired = true;
         }

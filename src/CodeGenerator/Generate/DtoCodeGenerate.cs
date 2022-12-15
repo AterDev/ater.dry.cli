@@ -47,9 +47,10 @@ public class DtoCodeGenerate : GenerateBase
     /// </summary>
     public async Task GetChangedPropertiesAsync()
     {
-        var currentEntity = await _context.EntityInfos.Where(
-            e => e.Name == EntityInfo.Name
-            && e.NamespaceName == EntityInfo.NamespaceName)
+        var currentEntity = await _context.EntityInfos
+            .Where(e => e.Name == EntityInfo.Name
+                && e.NamespaceName == EntityInfo.NamespaceName
+                && e.ProjectId == Const.PROJECT_ID)
             .Include(e => e.PropertyInfos)
             .FirstOrDefaultAsync();
 
@@ -112,15 +113,20 @@ public class DtoCodeGenerate : GenerateBase
         var entityInfo = entityHelper.GetEntity();
         var props = entityInfo.PropertyInfos;
 
+        Console.WriteLine("before change:", string.Join(",", props.SelectMany(p => p.Name).ToArray()));
+
         // 1 移除删除的内容
         var deletePropNames = PropertyChanges.Where(c => c.Type == ChangeType.Delete)
             .Select(c => c.Name).ToList();
         props = props.Where(p => !deletePropNames.Contains(p.Name)).ToList();
 
+        Console.WriteLine("remove props:", string.Join(",", deletePropNames));
+
         // 2 要更新的属性
         var updatePropNames = PropertyChanges.Where(c => c.Type != ChangeType.Delete)
             .Select(c => c.Name).ToList();
 
+        Console.WriteLine("update props:", string.Join(",", updatePropNames));
         var updateProps = EntityInfo.PropertyInfos.Where(p => updatePropNames.Contains(p.Name)).ToList();
         updateProps.ForEach(p =>
         {
@@ -134,6 +140,8 @@ public class DtoCodeGenerate : GenerateBase
                 props.Add(p);
             }
         });
+
+        Console.WriteLine("after change:", string.Join(",", props.SelectMany(p => p.Name).ToArray()));
         return props;
     }
 
@@ -181,6 +189,7 @@ public class DtoCodeGenerate : GenerateBase
             Tag = EntityInfo.Name,
             Properties = props?
                 .Where(p => p.Name != "Content"
+                    && p.Name != "IsDeleted"
                     && (p.MaxLength < 2000 || p.MaxLength == null)
                     && !(p.IsList && p.IsNavigation))
                 .ToList()
