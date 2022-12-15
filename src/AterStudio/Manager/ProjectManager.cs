@@ -61,6 +61,7 @@ public class ProjectManager
         WatcherManager.StartWatcher(project.Id.ToString(), project.EntityPath, project.SharePath, project.ApplicationPath);
     }
 
+
     public void StopWatcher(Project project)
     {
         WatcherManager.StopWatcher(project.Id.ToString());

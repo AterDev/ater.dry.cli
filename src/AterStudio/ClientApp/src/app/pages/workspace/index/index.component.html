@@ -2,6 +2,14 @@
   <mat-toolbar>
     <span>实体</span>
     <span class="example-spacer"></span>
+    <button mat-icon-button matTooltip="开启监听实体，会自动更新dto" color="primary" [disabled]="isListening"
+    (click)="startWatch()">
+      <mat-icon>play_arrow</mat-icon>
+    </button>
+    <button mat-icon-button matTooltip="停止监听实体" color="primary" [disabled]="!isListening"
+    (click)="stopWatch()">
+      <mat-icon>stop_circle</mat-icon>
+    </button>
     <button mat-button color="primary" (click)="openRequestDialog()">
       生成请求服务
     </button>

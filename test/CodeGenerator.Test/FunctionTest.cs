@@ -1,4 +1,5 @@
-﻿using Core.Infrastructure.Helper;
+﻿using System.IO;
+using Core.Infrastructure.Helper;
 
 namespace CodeGenerator.Test;
 public class FunctionTest
@@ -11,4 +12,5 @@ public class FunctionTest
         helper.Parse();
         Console.WriteLine();
     }
+
 }

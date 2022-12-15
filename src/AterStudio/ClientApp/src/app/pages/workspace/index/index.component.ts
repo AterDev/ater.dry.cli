@@ -10,6 +10,7 @@ import { GenerateDto } from 'src/app/share/models/entity/generate-dto.model';
 import { CommandType } from 'src/app/share/models/enum/command-type.model';
 import { RequestLibType } from 'src/app/share/models/enum/request-lib-type.model';
 import { EntityService } from 'src/app/share/services/entity.service';
+import { ProjectService } from 'src/app/share/services/project.service';
 @Component({
   selector: 'app-index',
   templateUrl: './index.component.html',
@@ -18,7 +19,7 @@ import { EntityService } from 'src/app/share/services/entity.service';
 export class IndexComponent implements OnInit {
   RequestLibType = RequestLibType;
   CommandType = CommandType;
-  projectId: string | null = null;
+  projectId: number;
   entityFiles = [] as EntityFile[];
   baseEntityPath = '';
   columns: string[] = ['select', 'name', 'path', 'actions'];
@@ -27,6 +28,7 @@ export class IndexComponent implements OnInit {
   requestForm!: FormGroup;
   dialogRef!: MatDialogRef<{}, any>;
   searchKey = '';
+  isListening = false;
   @ViewChild("requestDialog", { static: true })
   requestTmpRef!: TemplateRef<{}>;
   @ViewChild("syncDialog", { static: true })
@@ -37,11 +39,14 @@ export class IndexComponent implements OnInit {
     public route: ActivatedRoute,
     public router: Router,
     public service: EntityService,
+    public projectSrv: ProjectService,
     public dialog: MatDialog,
     public snb: MatSnackBar
   ) {
+
+    this.projectId = 0;
     this.route.paramMap.subscribe(res => {
-      this.projectId = res.get('id');
+      this.projectId = parseInt(res.get('id') ?? '0');
     })
   }
   ngOnInit(): void {
@@ -74,7 +79,7 @@ export class IndexComponent implements OnInit {
   }
 
   getEntity(): void {
-    this.service.list(parseInt(this.projectId!), this.searchKey)
+    this.service.list(this.projectId!, this.searchKey)
       .subscribe(res => {
         if (res) {
           this.entityFiles = res;
@@ -102,7 +107,7 @@ export class IndexComponent implements OnInit {
 
   generate(path: string, type: CommandType): void {
     const dto: GenerateDto = {
-      projectId: parseInt(this.projectId!),
+      projectId: this.projectId!,
       entityPath: this.baseEntityPath + path,
       commandType: type
     };
@@ -114,14 +119,13 @@ export class IndexComponent implements OnInit {
       })
   }
 
-
   batch(type: CommandType): void {
     const selected = this.selection.selected;
     console.log(selected);
 
     if (selected.length > 0) {
       this.service.batchGenerate({
-        projectId: parseInt(this.projectId!),
+        projectId: this.projectId!,
         entityPaths: selected.map(s => this.baseEntityPath + s.path),
         commandType: type
       }).subscribe(res => {
@@ -137,7 +141,7 @@ export class IndexComponent implements OnInit {
   generateRequest(): void {
     const type = this.requestForm.get('type')?.value as number;
     const path = this.requestForm.get('path')?.value as string;
-    this.service.generateRequest(parseInt(this.projectId!), path, type)
+    this.service.generateRequest(this.projectId!, path, type)
       .subscribe(res => {
         if (res) {
           this.snb.open('生成成功');
@@ -147,11 +151,31 @@ export class IndexComponent implements OnInit {
   }
 
   generateSync(): void {
-    this.service.generateSync(parseInt(this.projectId!))
+    this.service.generateSync(this.projectId!)
       .subscribe(res => {
         if (res) {
           this.snb.open('同步前端成功');
           this.dialogRef.close();
+        }
+      })
+  }
+
+  startWatch(): void {
+    this.projectSrv.startWatcher(this.projectId)
+      .subscribe(res => {
+        if (res) {
+          this.isListening = true;
+          this.snb.open('已开始监听');
+        }
+      })
+  }
+
+  stopWatch(): void {
+    this.projectSrv.stopWatcher(this.projectId)
+      .subscribe(res => {
+        if (res) {
+          this.isListening = false;
+          this.snb.open('已停止监听');
         }
       })
   }

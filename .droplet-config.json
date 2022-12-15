@@ -5,7 +5,7 @@
   "EntityPath": "Core",
   "DbContextPath": "Database/EntityFramework",
   "StorePath": "Application",
-  "ApiPath": "Http.API",
+  "ApiPath": "AterStudio",
   "IdStyle": "Id",
   "IdType": "Guid",
   "CreatedTimeName": "CreatedTime",

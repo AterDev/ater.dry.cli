@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Core.Infrastructure.Helper;
 using Core.Models;
 using Datastore;
 
@@ -64,7 +65,7 @@ public class FileWatcher
         EntityWatcher = new FileSystemWatcher(Path.Combine(EntityPath, "Entities"))
         {
             IncludeSubdirectories = true,
-            NotifyFilter = NotifyFilters.LastWrite & NotifyFilters.Size,
+            NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.FileName,
             Filter = "*.cs",
             EnableRaisingEvents = true
         };
@@ -81,7 +82,7 @@ public class FileWatcher
         DtoWatcher = new FileSystemWatcher(Path.Combine(DtoPath, "Models"))
         {
             IncludeSubdirectories = true,
-            NotifyFilter = NotifyFilters.LastWrite & NotifyFilters.Size,
+            NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.FileName,
             Filter = "*.cs",
             EnableRaisingEvents = true
         };
@@ -91,17 +92,33 @@ public class FileWatcher
         DtoWatcher.Error += OnError;
     }
 
+    /// <summary>
+    ///  判断文件是否为实体
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    private bool IsEntityFile(string path, out EntityParseHelper? entityParseHelper)
+    {
+        var file = new FileInfo(path);
+        entityParseHelper = null;
+        if (file.Length <= 10)
+        {
+            return false;
+        }
+        // 解析
+        entityParseHelper = new EntityParseHelper(path);
+        var baseType = entityParseHelper.GetParentClassName() ?? "";
+        // 判断是否为实体
+        return baseType.Equals("EntityBase");
+    }
+
     private async void OnFileCreatedAsync(object sender, FileSystemEventArgs e)
     {
-        // 解析
-        var entityparseHelper = new EntityParseHelper(e.FullPath);
-        var baseType = entityparseHelper.GetParentClassName() ?? "";
-
         // 判断是否为实体
-        if (baseType.Equals("EntityBase"))
+        if (IsEntityFile(e.FullPath, out var entityParseHelper))
         {
             // 添加入库
-            var entityInfo = entityparseHelper.GetEntity();
+            var entityInfo = entityParseHelper!.GetEntity();
             await Context.AddAsync(entityInfo);
             await Context.SaveChangesAsync();
 
@@ -110,37 +127,41 @@ public class FileWatcher
         }
     }
 
-    private static void OnFileDeleted(object sender, FileSystemEventArgs e) =>
-        Console.WriteLine($"Deleted: {e.FullPath}");
-
-    private void OnFileRenamed(object sender, RenamedEventArgs e)
+    private static void OnFileDeleted(object sender, FileSystemEventArgs e)
     {
-        if (e.ChangeType == WatcherChangeTypes.Renamed)
+    }
+
+    private async void OnFileRenamed(object sender, RenamedEventArgs e)
+    {
+        // 只有重命名为.cs文件后
+        if (e.ChangeType == WatcherChangeTypes.Renamed && e.FullPath.EndsWith(".cs"))
         {
-            Console.WriteLine($"Renamed:");
-            Console.WriteLine($"    Old: {e.OldFullPath}");
-            Console.WriteLine($"    New: {e.FullPath}");
-        }
-        else
-        {
-            Console.WriteLine(e.ChangeType.ToString());
+            Console.WriteLine($"{e.Name} update!");
+
+            if (IsEntityFile(e.FullPath, out var entityParseHelper))
+            {
+                await CommandRunner.GenerateDtoAsync(e.FullPath, DtoPath, true);
+            }
         }
     }
     private async void OnFileChanged(object sender, FileSystemEventArgs e)
     {
-        Console.WriteLine("on file changed:" + e.ChangeType + e.FullPath);
-        if (e.ChangeType == WatcherChangeTypes.Changed)
+        var file = new FileInfo(e.FullPath);
+        if (file.Length > 0 && e.ChangeType == WatcherChangeTypes.Changed)
         {
-            await CommandRunner.GenerateManagerAsync(e.FullPath, DtoPath, ApplicationPath);
+            Console.WriteLine($"{e.Name} update!");
+
+            if (IsEntityFile(e.FullPath, out var entityParseHelper))
+            {
+                await CommandRunner.GenerateDtoAsync(e.FullPath, DtoPath, true);
+            }
         }
     }
 
     private void OnDtoFileChanged(object sender, FileSystemEventArgs e)
     {
-        string value = $"Created: {e.FullPath}";
-        Console.WriteLine("dto file change:" + e.FullPath);
+        //Console.WriteLine("dto file change:" + e.Name);
     }
-
 
     private static void OnError(object sender, ErrorEventArgs e) =>
             PrintException(e.GetException());

@@ -45,7 +45,7 @@ public class CompilationHelper
         Compilation = Compilation.AddSyntaxTrees(SyntaxTree);
         SemanticModel = Compilation.GetSemanticModel(SyntaxTree);
         ClassDeclarationSyntax? classNode = SyntaxTree.GetCompilationUnitRoot().DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
-        ClassSymbol = SemanticModel.GetDeclaredSymbol(classNode!);
+        ClassSymbol = classNode == null ? null : SemanticModel.GetDeclaredSymbol(classNode);
     }
 
     /// <summary>

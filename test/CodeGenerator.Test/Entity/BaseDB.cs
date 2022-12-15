@@ -8,6 +8,9 @@ namespace CodeGenerator.Test.Entity;
 /// <inheritdoc/>
 public class BaseDB
 {
+    /// <summary>
+    /// 主键
+    /// </summary>
     [Key]
     public Guid Id { get; set; } = Guid.NewGuid();
     /// <summary>

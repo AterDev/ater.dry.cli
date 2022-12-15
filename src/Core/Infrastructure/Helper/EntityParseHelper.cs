@@ -70,14 +70,23 @@ public class EntityParseHelper
         ProjectFile = projectFile;
         AssemblyName = GetAssemblyName();
         CompilationHelper = new CompilationHelper(ProjectFile.Directory!.FullName);
-        string content = File.ReadAllText(filePath, Encoding.UTF8);
 
-        CompilationHelper.AddSyntaxTree(content);
+        try
+        {
+            using FileStream stream = fileInfo.Open(FileMode.Open, FileAccess.Read, FileShare.None);
+            var reader = new StreamReader(stream, Encoding.UTF8);
+            var content = reader.ReadToEnd();
 
-        SyntaxTree = CompilationHelper.SyntaxTree!;
-        Compilation = CompilationHelper.Compilation;
-        SemanticModel = CompilationHelper.SemanticModel;
-        RootNodes = SyntaxTree.GetCompilationUnitRoot().DescendantNodes();
+            CompilationHelper.AddSyntaxTree(content);
+            SyntaxTree = CompilationHelper.SyntaxTree!;
+            Compilation = CompilationHelper.Compilation;
+            SemanticModel = CompilationHelper.SemanticModel;
+            RootNodes = SyntaxTree.GetCompilationUnitRoot().DescendantNodes();
+        }
+        catch (IOException ex)
+        {
+            Console.WriteLine("文件无法读取" + ex.Message);
+        }
     }
 
     /// <summary>
@@ -224,11 +233,18 @@ public class EntityParseHelper
     /// <returns></returns>
     protected static string GetCommentXml(PropertyDeclarationSyntax syntax)
     {
-        /// TODO:缩进空格
+
         var trivia = syntax.GetLeadingTrivia()
             .Select(x => x.GetStructure()).OfType<DocumentationCommentTriviaSyntax>()
             .FirstOrDefault();
-        return trivia == null ? string.Empty : "///" + trivia.Content.ToString();
+
+        /// 缩进空格
+        var whiteTrivia = syntax.GetLeadingTrivia()
+            .Where(x => x.IsKind(SyntaxKind.WhitespaceTrivia))
+            .FirstOrDefault();
+        return trivia == null
+            ? string.Empty
+            : whiteTrivia.ToString() + "///" + trivia.Content.ToString();
     }
 
     /// <summary>
