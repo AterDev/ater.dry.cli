@@ -12,10 +12,7 @@ internal class Program
         var context = new ContextBase();
         await context.Database.MigrateAsync();
 
-        if (!args.Contains("studio"))
-        {
-            await ConfigCommand.InitConfigFileAsync();
-        }
+        await ConfigCommand.InitConfigFileAsync();
         RootCommand root = new CommandBuilder().Build();
         return await root.InvokeAsync(args);
     }

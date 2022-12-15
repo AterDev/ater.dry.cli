@@ -62,7 +62,7 @@ public class DtoCodeGenerate : GenerateBase
             // 变动的属性
             var updateProps = EntityInfo.PropertyInfos
                 .Except(currentEntity.PropertyInfos, new PropertyEquality())
-                .ToList(); // C
+                .ToList();
 
             // 待删除的属性
             var removeProps = currentEntity.PropertyInfos
@@ -117,7 +117,7 @@ public class DtoCodeGenerate : GenerateBase
         var entityInfo = entityHelper.GetEntity();
         var props = entityInfo.PropertyInfos;
 
-        Console.WriteLine("before change:" + string.Join(",", props.Select(p => p.Name).ToArray()));
+        //Console.WriteLine("before change:" + string.Join(",", props.Select(p => p.Name).ToArray()));
 
         // 1 移除删除的内容
         var deletePropNames = PropertyChanges.Where(c => c.Type == ChangeType.Delete)
@@ -145,7 +145,7 @@ public class DtoCodeGenerate : GenerateBase
             }
         });
 
-        Console.WriteLine("after change:" + string.Join(",", props.Select(p => p.Name).ToArray()));
+        //Console.WriteLine("after change:" + string.Join(",", props.Select(p => p.Name).ToArray()));
         return props;
     }
 
@@ -347,7 +347,8 @@ public class DtoCodeGenerate : GenerateBase
             .Where(p => p.IsNavigation && !p.IsList && !p.IsNullable)
             .Select(s => new PropertyInfo($"{KeyType}", s.Name + "Id")
             {
-                ProjectId = Const.PROJECT_ID
+                ProjectId = Const.PROJECT_ID,
+                IsRequired = s.IsRequired
             })
             .ToList();
 

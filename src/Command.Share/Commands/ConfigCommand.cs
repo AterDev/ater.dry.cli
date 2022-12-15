@@ -42,7 +42,7 @@ public class ConfigCommand
                     Const.PROJECT_ID = options.ProjectId;
                     string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
                     await File.WriteAllTextAsync(path, content, Encoding.UTF8);
-                    Console.WriteLine("Init config file success");
+                    Console.WriteLine("Update config file success");
                 }
             }
             else
@@ -59,7 +59,7 @@ public class ConfigCommand
     {
         string configPath = GetConfigPath();
         FileInfo file = new(Path.Combine(configPath, Config.ConfigFileName));
-        if (file == null)
+        if (!file.Exists)
         {
             Console.WriteLine($"config file not found , please run droplet confing init");
             return default;

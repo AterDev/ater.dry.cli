@@ -5,7 +5,7 @@ namespace Droplet.CommandLine;
 public class CommandBuilder
 {
     public RootCommand RootCommand { get; set; }
-    public ConfigOptions ConfigOptions { get; set; }
+    public ConfigOptions? ConfigOptions { get; set; }
 
     public CommandBuilder()
     {
@@ -13,13 +13,18 @@ public class CommandBuilder
         {
             Name = "droplet"
         };
-        ConfigOptions = ConfigCommand.ReadConfigFile()!;
-        Config.IdType = ConfigOptions.IdType;
-        Config.CreatedTimeName = ConfigOptions.CreatedTimeName;
+        ConfigOptions = ConfigCommand.ReadConfigFile();
+        if (ConfigOptions != null)
+        {
+            Config.IdType = ConfigOptions.IdType;
+            Config.CreatedTimeName = ConfigOptions.CreatedTimeName;
+        }
     }
 
     public RootCommand Build()
     {
+
+
         AddConfig();
         AddDto();
         AddManager();

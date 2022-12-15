@@ -22,16 +22,12 @@ public class ProjectManager
         string dir = slnFile.DirectoryName!;
         string configFilePath = Path.Combine(dir!, Config.ConfigFileName);
 
-        if (!File.Exists(configFilePath))
-        {
-            Console.WriteLine("未找到配置文件，初始化配置文件");
-            await ConfigCommand.InitConfigFileAsync(dir);
-            //throw new FileNotFoundException("未找到配置文件:.droplet-config.json");
-        }
 
+        await ConfigCommand.InitConfigFileAsync(dir);
         string configJson = await File.ReadAllTextAsync(configFilePath);
 
         ConfigOptions? config = JsonSerializer.Deserialize<ConfigOptions>(configJson);
+
         string projectName = Path.GetFileNameWithoutExtension(path);
         Project project = new()
         {
