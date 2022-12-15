@@ -107,26 +107,30 @@ public class DtoCodeGenerate : GenerateBase
     /// <returns></returns>
     public List<PropertyInfo> MergeProperties(string dtoPath)
     {
-        if (!File.Exists(dtoPath)) return EntityInfo.PropertyInfos;
+        if (!File.Exists(dtoPath))
+        {
+            Console.WriteLine("not found:" + dtoPath);
+            return EntityInfo.PropertyInfos;
+        }
 
         var entityHelper = new EntityParseHelper(dtoPath);
         var entityInfo = entityHelper.GetEntity();
         var props = entityInfo.PropertyInfos;
 
-        Console.WriteLine("before change:", string.Join(",", props.SelectMany(p => p.Name).ToArray()));
+        Console.WriteLine("before change:" + string.Join(",", props.Select(p => p.Name).ToArray()));
 
         // 1 移除删除的内容
         var deletePropNames = PropertyChanges.Where(c => c.Type == ChangeType.Delete)
             .Select(c => c.Name).ToList();
         props = props.Where(p => !deletePropNames.Contains(p.Name)).ToList();
 
-        Console.WriteLine("remove props:", string.Join(",", deletePropNames));
+        Console.WriteLine("remove props:" + string.Join(",", deletePropNames));
 
         // 2 要更新的属性
         var updatePropNames = PropertyChanges.Where(c => c.Type != ChangeType.Delete)
             .Select(c => c.Name).ToList();
 
-        Console.WriteLine("update props:", string.Join(",", updatePropNames));
+        Console.WriteLine("update props:" + string.Join(",", updatePropNames));
         var updateProps = EntityInfo.PropertyInfos.Where(p => updatePropNames.Contains(p.Name)).ToList();
         updateProps.ForEach(p =>
         {
@@ -141,7 +145,7 @@ public class DtoCodeGenerate : GenerateBase
             }
         });
 
-        Console.WriteLine("after change:", string.Join(",", props.SelectMany(p => p.Name).ToArray()));
+        Console.WriteLine("after change:" + string.Join(",", props.Select(p => p.Name).ToArray()));
         return props;
     }
 
@@ -258,16 +262,16 @@ public class DtoCodeGenerate : GenerateBase
 
         List<PropertyInfo>? properties = props?
                 .Where(p => (p.IsRequired && !p.IsNavigation)
-                    || (!p.IsNullable
-                        && !p.IsList
+                    || (!p.IsList
                         && !p.IsNavigation
-                        && !filterFields.Contains(p.Name))
+                        && !filterFields.Contains(p.Name)
+                     || p.IsEnum)
                     )
                 .Where(p => p.MaxLength is not (not null and >= 1000))
                 .ToList();
         dto.Properties = properties.Copy() ?? new List<PropertyInfo>();
         // 筛选条件调整为可空
-        foreach (PropertyInfo item in dto.Properties)
+        foreach (var item in dto.Properties)
         {
             item.IsNullable = true;
             item.IsRequired = false;

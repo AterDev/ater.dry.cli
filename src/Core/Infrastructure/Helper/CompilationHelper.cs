@@ -79,6 +79,7 @@ public class CompilationHelper
     /// <returns></returns>
     public List<string> GetAllEnumClasses()
     {
+        // TODO:枚举可以存储，不用每次获取 
         IEnumerable<INamedTypeSymbol> all = GetAllClasses();
         return GetAllClasses()
             .Where(c => c.BaseType != null
