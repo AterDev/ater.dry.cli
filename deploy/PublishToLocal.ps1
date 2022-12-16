@@ -15,6 +15,20 @@ try {
         }
         
         dotnet publish -c release -o ./publish
+        # 移除部分 dll文件，减少体积
+        Remove-Item .\publish\Microsoft.CodeAnalysis.CSharp.dll
+        Remove-Item .\publish\Swashbuckle.AspNetCore.SwaggerUI.dll
+        Remove-Item .\publish\Microsoft.CodeAnalysis.dll
+        Remove-Item .\publish\Microsoft.EntityFrameworkCore.dll
+        Remove-Item .\publish\Microsoft.EntityFrameworkCore.Relational.dll
+        Remove-Item .\publish\Microsoft.OpenApi.dll
+        Remove-Item .\publish\Microsoft.EntityFrameworkCore.Sqlite.dll
+        Remove-Item .\publish\CodeGenerator.dll
+        Remove-Item .\publish\Microsoft.Data.Sqlite.dll
+        Remove-Item .\publish\Microsoft.OpenApi.Readers.dll
+        Remove-Item .\publish\Microsoft.Extensions.DependencyModel.dll
+        Remove-Item .\publish\Command.Share.dll
+        Remove-Item .\publish\runtimes -R -Force
         Compress-Archive -Path .\publish\*  -DestinationPath "../CommandLine/studio.zip" -CompressionLevel Optimal -Force
     }
 
