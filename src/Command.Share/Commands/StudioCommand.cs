@@ -101,7 +101,6 @@ public class StudioCommand
             }
         }
 
-
         //Console.CancelKeyPress += (object? sender, ConsoleCancelEventArgs e) =>
         //{
         //    var isCtrlC = e.SpecialKey == ConsoleSpecialKey.ControlC;

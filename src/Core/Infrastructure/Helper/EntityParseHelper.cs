@@ -411,6 +411,7 @@ public class EntityParseHelper
                 .FirstOrDefault();
             IEnumerable<AttributeArgumentSyntax>? required = GetAttributeArguments(attributes, "Required");
             IEnumerable<AttributeArgumentSyntax>? key = GetAttributeArguments(attributes, "Key");
+
             if (key != null)
             {
                 KeyType = propertyInfo.Type.ToLower() switch
