@@ -34,11 +34,16 @@ export class DetailComponent implements OnInit {
   }
   getDetail(): void {
     this.service.getDetail(this.id)
-      .subscribe(res => {
-        this.data = res;
-        this.isLoading = false;
-      }, error => {
-        this.snb.open(error);
+      .subscribe({
+        next: (res) => {
+          if(res) {
+            this.data = res;
+              this.isLoading = false;
+            }
+        },
+        error:() => {
+          this.snb.open(error);
+        }
       })
   }
   back(): void {

@@ -5,6 +5,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
+import { error } from 'console';
 import { EntityFile } from 'src/app/share/models/entity/entity-file.model';
 import { GenerateDto } from 'src/app/share/models/entity/generate-dto.model';
 import { CommandType } from 'src/app/share/models/enum/command-type.model';
@@ -28,6 +29,7 @@ export class IndexComponent implements OnInit {
   requestForm!: FormGroup;
   dialogRef!: MatDialogRef<{}, any>;
   searchKey = '';
+  isSync = false;
   isListening = false;
   @ViewChild("requestDialog", { static: true })
   requestTmpRef!: TemplateRef<{}>;
@@ -151,11 +153,18 @@ export class IndexComponent implements OnInit {
   }
 
   generateSync(): void {
+    this.isSync = true;
     this.service.generateSync(this.projectId!)
-      .subscribe(res => {
-        if (res) {
-          this.snb.open('同步前端成功');
-          this.dialogRef.close();
+      .subscribe({
+        next: (res) => {
+          if (res) {
+            this.snb.open('同步前端成功');
+            this.dialogRef.close();
+          }
+          this.isSync = false;
+        },
+        error: () => {
+          this.isSync = false;
         }
       })
   }
