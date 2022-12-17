@@ -1,19 +1,14 @@
 using AterStudio;
 using AterStudio.Manager;
-using Datastore;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc.Controllers;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddDbContext<ContextBase>(options =>
-{
-    options.UseSqlite("", a => a.MigrationsAssembly("Datastore"));
-});
+builder.Services.AddScoped<Datastore.DbContext>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddEndpointsApiExplorer();
 
@@ -86,9 +81,6 @@ app.UseExceptionHandler(handler =>
 
 // ≥ı ºªØ
 IServiceScope scope = app.Services.CreateScope();
-ContextBase context = scope.ServiceProvider.GetRequiredService<ContextBase>();
-await context.Database.MigrateAsync();
-
 
 app.UseCors("default");
 //app.UseHttpsRedirection();

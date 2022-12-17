@@ -1,7 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using Datastore;
 using Datastore.Models;
-using Microsoft.EntityFrameworkCore;
 using PropertyInfo = Core.Models.PropertyInfo;
 
 namespace CodeGenerator.Generate;
@@ -17,13 +16,11 @@ public class DtoCodeGenerate : GenerateBase
     /// </summary>
     public string? AssemblyName { get; set; } = "Share";
     public string DtoPath { get; init; }
-    public ContextBase _context { get; init; }
 
     public List<PropertyChange> PropertyChanges = new List<PropertyChange>();
 
     public DtoCodeGenerate(string entityPath, string dtoPath)
     {
-        _context = new ContextBase();
         DtoPath = dtoPath;
         if (!File.Exists(entityPath))
         {
@@ -39,20 +36,22 @@ public class DtoCodeGenerate : GenerateBase
             EntityKeyType.String => "String",
             _ => "Guid"
         };
-        GetChangedPropertiesAsync().Wait();
+        GetChangedProperties();
     }
 
     /// <summary>
     /// 获取变更的实体属性内容
     /// </summary>
-    public async Task GetChangedPropertiesAsync()
+    public void GetChangedProperties()
     {
-        var currentEntity = await _context.EntityInfos
+        using var context = new Datastore.DbContext();
+        var currentEntity = context.EntityInfos.Query()
             .Where(e => e.Name == EntityInfo.Name
                 && e.NamespaceName == EntityInfo.NamespaceName
                 && e.ProjectId == Const.PROJECT_ID)
             .Include(e => e.PropertyInfos)
-            .FirstOrDefaultAsync();
+            .FirstOrDefault();
+
 
         if (currentEntity != null)
         {
@@ -88,12 +87,11 @@ public class DtoCodeGenerate : GenerateBase
                 };
                 PropertyChanges.Add(prop);
             });
-            _context.RemoveRange(currentEntity.PropertyInfos);
-            _context.Remove(currentEntity);
+            context.PropertyInfos.DeleteMany(p => p.EntityInfo.Id == currentEntity.Id);
+            context.EntityInfos.Delete(currentEntity.Id);
         }
-        await _context.AddAsync(EntityInfo);
-        await _context.SaveChangesAsync();
-
+        context.EntityInfos.EnsureIndex(e => e.Name);
+        context.EntityInfos.Insert(EntityInfo);
         PropertyChanges.ForEach(p =>
         {
             Console.WriteLine(p.Type.ToString() + " : " + p.Name);

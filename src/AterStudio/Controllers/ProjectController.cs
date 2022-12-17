@@ -1,10 +1,7 @@
 ﻿using AterStudio.Manager;
-using Command.Share;
 using Core.Infrastructure;
 using Datastore;
-using Datastore.Migrations;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace AterStudio.Controllers;
 
@@ -12,19 +9,19 @@ namespace AterStudio.Controllers;
 [Route("api/[controller]")]
 public class ProjectController : ControllerBase
 {
-    private readonly ContextBase _context;
+    private readonly DbContext _context;
 
     private readonly ProjectManager _manager;
-    public ProjectController(ContextBase context, ProjectManager manager)
+    public ProjectController(DbContext context, ProjectManager manager)
     {
         _context = context;
         _manager = manager;
     }
 
     [HttpGet]
-    public async Task<List<Project>> ListAsync()
+    public List<Project> List()
     {
-        return await _context.Projects.ToListAsync();
+        return _context.Projects.FindAll().ToList();
     }
 
     [HttpPost]
@@ -39,9 +36,9 @@ public class ProjectController : ControllerBase
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpPost("watcher/{id}")]
-    public async Task<ActionResult<bool>> StartWatcherAsync([FromRoute] int id)
+    public ActionResult<bool> StartWatcher([FromRoute] string id)
     {
-        var project = await _context.Projects.FindAsync(id);
+        var project = _context.Projects.FindById(id);
         if (project == null)
         {
             return NotFound("不存在该项目");
@@ -58,9 +55,9 @@ public class ProjectController : ControllerBase
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpDelete("watcher/{id}")]
-    public async Task<ActionResult<bool>> StopWatcherAsync([FromRoute] int id)
+    public ActionResult<bool> StopWatcher([FromRoute] string id)
     {
-        var project = await _context.Projects.FindAsync(id);
+        var project = _context.Projects.FindById(id);
         if (project == null)
         {
             return NotFound("不存在该项目");

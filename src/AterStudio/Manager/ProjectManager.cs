@@ -1,18 +1,17 @@
 ﻿using Command.Share;
 using Command.Share.Commands;
 using Core;
-using Core.Infrastructure;
 using Datastore;
 
 namespace AterStudio.Manager;
 
 public class ProjectManager
 {
-    private readonly ContextBase _context;
+    private readonly DbContext _dbContext;
 
-    public ProjectManager(ContextBase context)
+    public ProjectManager(DbContext dbContext)
     {
-        _context = context;
+        _dbContext = dbContext;
     }
 
     public async Task<Project?> AddProjectAsync(string name, string path)
@@ -42,11 +41,12 @@ public class ProjectManager
             SharePath = config.DtoPath.ToFullPath("src", dir)
         };
 
-        _ = await _context.AddAsync(project);
-        _ = await _context.SaveChangesAsync();
+        _dbContext.Projects.EnsureIndex(p => p.ProjectId);
+        _dbContext.Projects.Insert(project);
+        //_ = await _context.AddAsync(project);
+        //_ = await _context.SaveChangesAsync();
         return project;
     }
-
 
     /// <summary>
     /// 开启监控

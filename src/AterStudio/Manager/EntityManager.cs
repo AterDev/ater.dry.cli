@@ -1,5 +1,6 @@
 ﻿using Command.Share;
 using Core.Infrastructure;
+using Core.Models;
 using Datastore;
 using Datastore.Models;
 
@@ -7,22 +8,24 @@ namespace AterStudio.Manager;
 
 public class EntityManager
 {
-    private readonly ContextBase _context;
-    public EntityManager(ContextBase context)
+
+    private readonly DbContext _dbContext;
+    public EntityManager(DbContext dbContext)
     {
-        _context = context;
+        _dbContext = dbContext;
     }
 
     /// <summary>
     /// 获取实体列表
     /// </summary>
-    /// <param name="projectId"></param>
+    /// <param name="id"></param>
     /// <param name="name"></param>
     /// <returns></returns>
-    public async Task<List<EntityFile>> GetEntityFilesAsync(int projectId, string? name)
+    public List<EntityFile> GetEntityFiles(string id, string? name)
     {
         List<EntityFile> entityFiles = new();
-        var project = await _context.Projects.FindAsync(projectId);
+        //var project = await _context.Projects.FindAsync(projectId);
+        var project = _dbContext.Projects.FindById(id);
 
         string entityPath = Path.Combine(project!.EntityPath, "Entities");
         // get files in directory
@@ -57,7 +60,17 @@ public class EntityManager
         }
         return entityFiles;
     }
-    
+
+    public Project? Find(string id)
+    {
+        return _dbContext.Projects.FindById(id);
+    }
+
+    public bool IsExist(string id)
+    {
+        return _dbContext.Projects.FindById(id) != null;
+    }
+
     public async Task GenerateAsync(Project project, GenerateDto dto)
     {
 

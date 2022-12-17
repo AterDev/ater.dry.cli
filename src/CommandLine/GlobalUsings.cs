@@ -1,12 +1,8 @@
 ﻿global using System;
 global using System.IO;
-global using System.Linq;
 global using System.Threading.Tasks;
 global using CodeGenerator.Generate;
-global using Core;
-global using Core.Infrastructure.Helper;
-global using Core.Infrastructure.Utils;
-global using Core.Models;
-global using Command.Share.Commands;
-global using Microsoft.OpenApi.Readers;
 global using Command.Share;
+global using Command.Share.Commands;
+global using Core;
+global using Core.Models;

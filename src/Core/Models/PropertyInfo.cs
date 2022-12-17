@@ -1,4 +1,6 @@
-﻿namespace Core.Models;
+﻿using LiteDB;
+
+namespace Core.Models;
 
 public class PropertyInfo : EntityBase
 {
@@ -53,7 +55,8 @@ public class PropertyInfo : EntityBase
         Name = name;
     }
 
-    public EntityInfo? EntityInfo { get; set; }
+    [BsonRef]
+    public EntityInfo EntityInfo { get; set; } = default!;
     /// <summary>
     /// 转换成C#属性
     /// </summary>

@@ -1,5 +1,4 @@
 ﻿using AterStudio.Manager;
-using Datastore;
 using Datastore.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,28 +8,24 @@ namespace AterStudio.Controllers;
 [Route("api/[controller]")]
 public class EntityController : ControllerBase
 {
-    private readonly ContextBase _context;
-
     private readonly EntityManager _manager;
-    public EntityController(ContextBase context, EntityManager manager)
+    public EntityController(EntityManager manager)
     {
-        _context = context;
         _manager = manager;
     }
 
-
     [HttpGet("{id}")]
-    public async Task<ActionResult<List<EntityFile>>> ListAsync([FromRoute] int id, string? name)
+    public ActionResult<List<EntityFile>> List([FromRoute] string id, string? name)
     {
-        return !_context.Projects.Any(p => p.Id == id)
+        return !_manager.IsExist(id)
             ? NotFound("不存在的项目")
-            : await _manager.GetEntityFilesAsync(id, name);
+            : _manager.GetEntityFiles(id, name);
     }
 
     [HttpPost("generate")]
     public async Task<ActionResult<bool>> GenerateAsync(GenerateDto dto)
     {
-        Project? project = await _context.Projects.FindAsync(dto.ProjectId);
+        Project? project = _manager.Find(dto.ProjectId);
         if (project == null)
         {
             return NotFound("项目不存在");
@@ -48,7 +43,7 @@ public class EntityController : ControllerBase
     [HttpPost("batch-generate")]
     public async Task<ActionResult<bool>> BatchGenerateAsync(BatchGenerateDto dto)
     {
-        Project? project = await _context.Projects.FindAsync(dto.ProjectId);
+        Project? project = _manager.Find(dto.ProjectId);
         if (project == null)
         {
             return NotFound("项目不存在");
@@ -66,9 +61,9 @@ public class EntityController : ControllerBase
     /// <param name="type"></param>
     /// <returns></returns>
     [HttpGet("generateRequest/{id}")]
-    public async Task<ActionResult<bool>> GenerateRequest([FromRoute] int id, string webPath, RequestLibType type)
+    public async Task<ActionResult<bool>> GenerateRequest([FromRoute] string id, string webPath, RequestLibType type)
     {
-        Project? project = await _context.Projects.FindAsync(id);
+        Project? project = _manager.Find(id);
         if (project == null)
         {
             return NotFound("项目不存在");
@@ -83,9 +78,9 @@ public class EntityController : ControllerBase
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpPost("generateSync/{id}")]
-    public async Task<ActionResult<bool>> GenerateSync([FromRoute] int id)
+    public async Task<ActionResult<bool>> GenerateSync([FromRoute] string id)
     {
-        Project? project = await _context.Projects.FindAsync(id);
+        Project? project = _manager.Find(id);
         if (project == null)
         {
             return NotFound("项目不存在");
@@ -93,6 +88,4 @@ public class EntityController : ControllerBase
         await _manager.GenerateSyncAsync(project);
         return true;
     }
-
-
 }

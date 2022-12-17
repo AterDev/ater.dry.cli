@@ -116,8 +116,9 @@ public class EntityParseHelper
         string comment = GetClassComment(classDeclarationSyntax);
         string? namespaceName = CompilationHelper.GetNamesapce();
 
-        return new EntityInfo(name)
+        return new EntityInfo()
         {
+            Name = name,
             ProjectId = Const.PROJECT_ID,
             AssemblyName = AssemblyName,
             NamespaceName = namespaceName,

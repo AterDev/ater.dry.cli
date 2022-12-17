@@ -1,11 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using LiteDB;
 
 namespace Core.Models;
 
 public class EntityBase
 {
-    [Key]
-    public int Id { get; set; }
+    [BsonId]
+    public ObjectId Id { get; set; } = ObjectId.NewObjectId();
 
     [MaxLength(60)]
     public required string ProjectId { get; set; }

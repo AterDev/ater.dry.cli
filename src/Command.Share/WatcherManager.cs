@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Command.Share;
+﻿namespace Command.Share;
 public class WatcherManager
 {
     public static Dictionary<string, FileWatcher> WatcherList { get; set; } = new();

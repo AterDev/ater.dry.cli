@@ -13,7 +13,7 @@ public class Blog : BaseDB
     /// </summary>
     [StringLength(100)]
     [MinLength(10)]
-    public required string Name { get; set; } 
+    public required string Name { get; set; }
     public required string Title { get; set; }
     [MaxLength(200)]
     public string? Summary { get; set; }

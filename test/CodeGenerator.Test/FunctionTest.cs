@@ -1,5 +1,4 @@
-﻿using System.IO;
-using Core.Infrastructure.Helper;
+﻿using Core.Infrastructure.Helper;
 
 namespace CodeGenerator.Test;
 public class FunctionTest

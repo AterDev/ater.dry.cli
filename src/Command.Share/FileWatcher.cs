@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Core.Infrastructure.Helper;
-using Core.Models;
-using Datastore;
+﻿using Datastore;
 
 namespace Command.Share;
 /// <summary>
@@ -19,7 +12,6 @@ public class FileWatcher
     public string DtoPath { get; }
     public string ApplicationPath { get; }
     public required string ProjectId { get; init; }
-    public ContextBase Context { get; }
 
     /// <summary>
     /// 
@@ -32,7 +24,6 @@ public class FileWatcher
         EntityPath = entityPath;
         DtoPath = dtoPath;
         ApplicationPath = appPath;
-        Context = new ContextBase();
     }
 
     public void StartWatchers()
@@ -120,8 +111,10 @@ public class FileWatcher
         {
             // 添加入库
             var entityInfo = entityParseHelper!.GetEntity();
-            await Context.AddAsync(entityInfo);
-            await Context.SaveChangesAsync();
+            using var Context = new DbContext();
+
+            Context.EntityInfos.EnsureIndex(e => e.Name);
+            Context.EntityInfos.Insert(entityInfo);
 
             // 生成
             await CommandRunner.GenerateManagerAsync(e.FullPath, DtoPath, ApplicationPath);

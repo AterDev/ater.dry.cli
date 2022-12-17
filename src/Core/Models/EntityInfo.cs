@@ -1,4 +1,6 @@
-﻿namespace Core.Models;
+﻿using LiteDB;
+
+namespace Core.Models;
 /// <summary>
 /// defined entity model 
 /// </summary>
@@ -21,15 +23,12 @@ public class EntityInfo : EntityBase
     /// </summary>
     public string? Comment { get; set; }
     public EntityKeyType KeyType { get; set; } = EntityKeyType.Guid;
+
     /// <summary>
     /// 属性
     /// </summary>
+    [BsonRef]
     public List<PropertyInfo> PropertyInfos { get; set; } = new List<PropertyInfo>();
-
-    public EntityInfo(string name)
-    {
-        Name = name;
-    }
 
     /// <summary>
     /// 获取导航属性
