@@ -6,8 +6,7 @@ namespace Core.Models;
 public class EntityBase
 {
     [BsonId]
-    public ObjectId Id { get; set; } = ObjectId.NewObjectId();
+    public Guid Id { get; set; } = Guid.NewGuid();
 
-    [MaxLength(60)]
-    public required string ProjectId { get; set; }
+    public required Guid ProjectId { get; set; }
 }

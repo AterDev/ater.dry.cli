@@ -448,7 +448,7 @@ public class TsProperty
     public string ToProperty()
     {
         // 引用的类型可空
-        string name = Name + (IsNullable ? "?: " : ": ");
+        string name = Name + ": ";
         if (!string.IsNullOrEmpty(Reference))
         {
             name = Name + "?: ";

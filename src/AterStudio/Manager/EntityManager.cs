@@ -8,11 +8,10 @@ namespace AterStudio.Manager;
 
 public class EntityManager
 {
-
     private readonly DbContext _dbContext;
-    public EntityManager(DbContext dbContext)
+    public EntityManager()
     {
-        _dbContext = dbContext;
+        _dbContext = new DbContext();
     }
 
     /// <summary>
@@ -21,7 +20,7 @@ public class EntityManager
     /// <param name="id"></param>
     /// <param name="name"></param>
     /// <returns></returns>
-    public List<EntityFile> GetEntityFiles(string id, string? name)
+    public List<EntityFile> GetEntityFiles(Guid id, string? name)
     {
         List<EntityFile> entityFiles = new();
         //var project = await _context.Projects.FindAsync(projectId);
@@ -61,12 +60,12 @@ public class EntityManager
         return entityFiles;
     }
 
-    public Project? Find(string id)
+    public Project? Find(Guid id)
     {
         return _dbContext.Projects.FindById(id);
     }
 
-    public bool IsExist(string id)
+    public bool IsExist(Guid id)
     {
         return _dbContext.Projects.FindById(id) != null;
     }

@@ -8,10 +8,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddScoped<Datastore.DbContext>();
 builder.Services.AddControllersWithViews();
-builder.Services.AddEndpointsApiExplorer();
-
 builder.Services.AddScoped<ProjectManager>();
 builder.Services.AddScoped<EntityManager>();
 

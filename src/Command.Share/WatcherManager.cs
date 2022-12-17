@@ -1,9 +1,9 @@
 ﻿namespace Command.Share;
 public class WatcherManager
 {
-    public static Dictionary<string, FileWatcher> WatcherList { get; set; } = new();
+    public static Dictionary<Guid, FileWatcher> WatcherList { get; set; } = new();
 
-    public static FileWatcher StartWatcher(string name, string entityPath, string dtoPath, string appPath)
+    public static FileWatcher StartWatcher(Guid name, string entityPath, string dtoPath, string appPath)
     {
         if (WatcherList.ContainsKey(name))
         {
@@ -19,7 +19,7 @@ public class WatcherManager
         }
     }
 
-    public static void StopWatcher(string name)
+    public static void StopWatcher(Guid name)
     {
         if (WatcherList.TryGetValue(name, out var watcher))
         {

@@ -4,8 +4,8 @@ namespace Core.Models;
 
 public class PropertyInfo : EntityBase
 {
-    public string Type { get; set; }
-    public string Name { get; set; }
+    public required string Type { get; set; }
+    public required string Name { get; set; }
     public string? DisplayName { get; set; }
     /// <summary>
     /// 是否是数组
@@ -49,13 +49,7 @@ public class PropertyInfo : EntityBase
     /// 尾缀，如#endregion
     /// </summary>
     public string? SuffixContent { get; set; }
-    public PropertyInfo(string type, string name)
-    {
-        Type = type;
-        Name = name;
-    }
 
-    [BsonRef]
     public EntityInfo EntityInfo { get; set; } = default!;
     /// <summary>
     /// 转换成C#属性

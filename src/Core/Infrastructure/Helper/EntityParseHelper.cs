@@ -297,8 +297,10 @@ public class EntityParseHelper
         string type = syntax.Type.ToString();
         string name = syntax.Identifier.ToString();
         Microsoft.CodeAnalysis.TypeInfo typeInfo = SemanticModel.GetTypeInfo(syntax.Type);
-        PropertyInfo propertyInfo = new(type, name)
+        PropertyInfo propertyInfo = new()
         {
+            Name = name,
+            Type = type,
             ProjectId = Const.PROJECT_ID
         };
 

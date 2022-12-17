@@ -9,7 +9,7 @@ public class EntityInfo : EntityBase
     /// <summary>
     /// 类名
     /// </summary>
-    public string Name { get; set; }
+    public required string Name { get; set; }
     /// <summary>
     /// 命名空间
     /// </summary>
@@ -27,7 +27,6 @@ public class EntityInfo : EntityBase
     /// <summary>
     /// 属性
     /// </summary>
-    [BsonRef]
     public List<PropertyInfo> PropertyInfos { get; set; } = new List<PropertyInfo>();
 
     /// <summary>

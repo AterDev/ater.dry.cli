@@ -15,7 +15,7 @@ public class EntityController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public ActionResult<List<EntityFile>> List([FromRoute] string id, string? name)
+    public ActionResult<List<EntityFile>> List([FromRoute] Guid id, string? name)
     {
         return !_manager.IsExist(id)
             ? NotFound("不存在的项目")
@@ -61,7 +61,7 @@ public class EntityController : ControllerBase
     /// <param name="type"></param>
     /// <returns></returns>
     [HttpGet("generateRequest/{id}")]
-    public async Task<ActionResult<bool>> GenerateRequest([FromRoute] string id, string webPath, RequestLibType type)
+    public async Task<ActionResult<bool>> GenerateRequest([FromRoute] Guid id, string webPath, RequestLibType type)
     {
         Project? project = _manager.Find(id);
         if (project == null)
@@ -78,7 +78,7 @@ public class EntityController : ControllerBase
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpPost("generateSync/{id}")]
-    public async Task<ActionResult<bool>> GenerateSync([FromRoute] string id)
+    public async Task<ActionResult<bool>> GenerateSync([FromRoute] Guid id)
     {
         Project? project = _manager.Find(id);
         if (project == null)

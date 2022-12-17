@@ -1,7 +1,7 @@
 import { CommandType } from '../enum/command-type.model';
 export interface BatchGenerateDto {
-  projectId: number;
-  entityPaths?: string[] | null;
+  projectId: string;
+  entityPaths: string[] | null;
   commandType?: CommandType | null;
 
 }

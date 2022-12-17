@@ -5,7 +5,6 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
-import { error } from 'console';
 import { EntityFile } from 'src/app/share/models/entity/entity-file.model';
 import { GenerateDto } from 'src/app/share/models/entity/generate-dto.model';
 import { CommandType } from 'src/app/share/models/enum/command-type.model';
@@ -20,7 +19,7 @@ import { ProjectService } from 'src/app/share/services/project.service';
 export class IndexComponent implements OnInit {
   RequestLibType = RequestLibType;
   CommandType = CommandType;
-  projectId: number;
+  projectId: string;
   entityFiles = [] as EntityFile[];
   baseEntityPath = '';
   columns: string[] = ['select', 'name', 'path', 'actions'];
@@ -46,9 +45,9 @@ export class IndexComponent implements OnInit {
     public snb: MatSnackBar
   ) {
 
-    this.projectId = 0;
+    this.projectId = '';
     this.route.paramMap.subscribe(res => {
-      this.projectId = parseInt(res.get('id') ?? '0');
+      this.projectId = res.get('id') ?? '';
     })
   }
   ngOnInit(): void {

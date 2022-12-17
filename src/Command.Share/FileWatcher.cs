@@ -11,7 +11,7 @@ public class FileWatcher
     public string EntityPath { get; }
     public string DtoPath { get; }
     public string ApplicationPath { get; }
-    public required string ProjectId { get; init; }
+    public required Guid ProjectId { get; init; }
 
     /// <summary>
     /// 

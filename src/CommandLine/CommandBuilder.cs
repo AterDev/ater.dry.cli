@@ -23,8 +23,6 @@ public class CommandBuilder
 
     public RootCommand Build()
     {
-
-
         AddConfig();
         AddDto();
         AddManager();
@@ -94,7 +92,7 @@ public class CommandBuilder
         Argument<string> path = new("entity path", "The entity file path");
         Option<string> outputOption = new(new[] { "--output", "-o" },
             "output project directory");
-        outputOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.DtoPath));
+        outputOption.SetDefaultValue(Path.Combine(ConfigOptions!.RootPath, ConfigOptions.DtoPath));
         Option<bool> forceOption = new(new[] { "--force", "-f" },
             "force overwrite file");
         forceOption.SetDefaultValue(true);
@@ -140,7 +138,7 @@ public class CommandBuilder
         Argument<string> path = new("entity path", "The entity file path");
         Option<string> dtoOption = new(new[] { "--dto", "-d" },
             "dto project directory");
-        dtoOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.DtoPath));
+        dtoOption.SetDefaultValue(Path.Combine(ConfigOptions!.RootPath, ConfigOptions.DtoPath));
         Option<string> storeOption = new(new[] { "--manager", "-m" },
             "application project directory");
         storeOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.StorePath));
@@ -167,7 +165,7 @@ public class CommandBuilder
         Argument<string> path = new("entity path", "The entity file path");
         Option<string> dtoOption = new(new[] { "--dto", "-d" },
             "dto project director");
-        dtoOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.DtoPath));
+        dtoOption.SetDefaultValue(Path.Combine(ConfigOptions!.RootPath, ConfigOptions.DtoPath));
 
         Option<string> managerOption = new(new[] { "--manager", "-m" },
             "manager and datastore project directory");
@@ -236,7 +234,7 @@ public class CommandBuilder
         viewCommand.AddAlias("view");
         Argument<string> entityArgument = new("entity path", "The entity file path, like path/xxx.cs");
         Option<string> dtoOption = new(new[] { "--dto", "-d" }, "dto project directory");
-        dtoOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.DtoPath));
+        dtoOption.SetDefaultValue(Path.Combine(ConfigOptions!.RootPath, ConfigOptions.DtoPath));
         Option<string> outputOption = new(new[] { "--output", "-o" }, "angular project root path")
         {
             IsRequired = true,
@@ -260,7 +258,7 @@ public class CommandBuilder
             async () =>
             {
                 // 默认会在HttpAPI目录下执行同步
-                var defaultEntityPath = Path.Combine("..", ConfigOptions.EntityPath);
+                var defaultEntityPath = Path.Combine("..", ConfigOptions!.EntityPath);
                 var defaultDtoPath = Path.Combine("..", ConfigOptions.DtoPath);
                 var defaultApiPath = Path.Combine("..", ConfigOptions.ApiPath);
                 await CommandRunner.SyncToAngularAsync(

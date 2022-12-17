@@ -19,12 +19,8 @@ try {
         Remove-Item .\publish\Microsoft.CodeAnalysis.CSharp.dll
         Remove-Item .\publish\Swashbuckle.AspNetCore.SwaggerUI.dll
         Remove-Item .\publish\Microsoft.CodeAnalysis.dll
-        Remove-Item .\publish\Microsoft.EntityFrameworkCore.dll
-        Remove-Item .\publish\Microsoft.EntityFrameworkCore.Relational.dll
         Remove-Item .\publish\Microsoft.OpenApi.dll
-        Remove-Item .\publish\Microsoft.EntityFrameworkCore.Sqlite.dll
         Remove-Item .\publish\CodeGenerator.dll
-        Remove-Item .\publish\Microsoft.Data.Sqlite.dll
         Remove-Item .\publish\Microsoft.OpenApi.Readers.dll
         Remove-Item .\publish\Microsoft.Extensions.DependencyModel.dll
         Remove-Item .\publish\Command.Share.dll

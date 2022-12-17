@@ -69,7 +69,7 @@ export class IndexComponent implements OnInit {
       this.snb.open('输入有误，请查检');
     }
   }
-  goToWorkspace(id: number): void {
+  goToWorkspace(id: string): void {
     this.router.navigate(['/workspace/index', id]);
   }
   getProjects(): void {

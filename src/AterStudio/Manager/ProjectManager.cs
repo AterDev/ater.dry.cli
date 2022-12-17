@@ -9,9 +9,14 @@ public class ProjectManager
 {
     private readonly DbContext _dbContext;
 
-    public ProjectManager(DbContext dbContext)
+    public ProjectManager()
     {
-        _dbContext = dbContext;
+        _dbContext = new DbContext();
+    }
+
+    public List<Project> GetProjects()
+    {
+        return _dbContext.Projects.FindAll().ToList();
     }
 
     public async Task<Project?> AddProjectAsync(string name, string path)
@@ -48,6 +53,12 @@ public class ProjectManager
         return project;
     }
 
+
+
+    public Project GetProject(Guid id)
+    {
+        return _dbContext.Projects.FindById(id);
+    }
     /// <summary>
     /// 开启监控
     /// </summary>

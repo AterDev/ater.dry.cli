@@ -44,14 +44,12 @@ public class DtoCodeGenerate : GenerateBase
     /// </summary>
     public void GetChangedProperties()
     {
-        using var context = new Datastore.DbContext();
+        using var context = new DbContext();
         var currentEntity = context.EntityInfos.Query()
             .Where(e => e.Name == EntityInfo.Name
                 && e.NamespaceName == EntityInfo.NamespaceName
                 && e.ProjectId == Const.PROJECT_ID)
-            .Include(e => e.PropertyInfos)
             .FirstOrDefault();
-
 
         if (currentEntity != null)
         {
@@ -87,7 +85,6 @@ public class DtoCodeGenerate : GenerateBase
                 };
                 PropertyChanges.Add(prop);
             });
-            context.PropertyInfos.DeleteMany(p => p.EntityInfo.Id == currentEntity.Id);
             context.EntityInfos.Delete(currentEntity.Id);
         }
         context.EntityInfos.EnsureIndex(e => e.Name);
@@ -236,8 +233,10 @@ public class DtoCodeGenerate : GenerateBase
 
         List<PropertyInfo>? referenceProps = EntityInfo.PropertyInfos?
             .Where(p => p.IsNavigation && !p.IsList)
-            .Select(s => new PropertyInfo($"{KeyType}?", s.Name + "Id")
+            .Select(s => new PropertyInfo()
             {
+                Name = s.Name + "Id",
+                Type = KeyType + "?",
                 ProjectId = Const.PROJECT_ID
             })
             .ToList();
@@ -293,8 +292,10 @@ public class DtoCodeGenerate : GenerateBase
 
         List<PropertyInfo>? referenceProps = EntityInfo.PropertyInfos?
             .Where(p => p.IsNavigation && !p.IsList)
-            .Select(s => new PropertyInfo($"{KeyType}", s.Name + "Id")
+            .Select(s => new PropertyInfo()
             {
+                Name = s.Name + "Id",
+                Type = KeyType,
                 ProjectId = Const.PROJECT_ID
             })
             .ToList();
@@ -343,8 +344,10 @@ public class DtoCodeGenerate : GenerateBase
         // 导航属性处理
         List<PropertyInfo>? referenceProps = EntityInfo.PropertyInfos?
             .Where(p => p.IsNavigation && !p.IsList && !p.IsNullable)
-            .Select(s => new PropertyInfo($"{KeyType}", s.Name + "Id")
+            .Select(s => new PropertyInfo()
             {
+                Name = s.Name + "Id",
+                Type = KeyType,
                 ProjectId = Const.PROJECT_ID,
                 IsRequired = s.IsRequired
             })

@@ -28,18 +28,18 @@ export class ProjectService extends BaseService {
 
   /**
    * startWatcher
-   * @param id number
+   * @param id string
    */
-  startWatcher(id: number): Observable<boolean> {
+  startWatcher(id: string): Observable<boolean> {
     const url = `/api/Project/watcher/${id}`;
     return this.request<boolean>('post', url);
   }
 
   /**
    * stopWatcher
-   * @param id number
+   * @param id string
    */
-  stopWatcher(id: number): Observable<boolean> {
+  stopWatcher(id: string): Observable<boolean> {
     const url = `/api/Project/watcher/${id}`;
     return this.request<boolean>('delete', url);
   }

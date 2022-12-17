@@ -10,5 +10,5 @@ public class Const
     public const string AddDto = "AddDto";
     public const string UpdateDto = "UpdateDto";
 
-    public static string PROJECT_ID = string.Empty;
+    public static Guid PROJECT_ID;
 }

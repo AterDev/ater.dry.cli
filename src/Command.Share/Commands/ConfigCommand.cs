@@ -21,10 +21,9 @@ public class ConfigCommand
         {
             ConfigOptions options = new()
             {
-                ProjectId = Guid.NewGuid().ToString()
+                ProjectId = Guid.NewGuid()
             };
             Const.PROJECT_ID = options.ProjectId;
-
             string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
             await File.WriteAllTextAsync(path, content, Encoding.UTF8);
             Console.WriteLine("Init config file success:" + path);
@@ -36,9 +35,10 @@ public class ConfigCommand
             var options = JsonSerializer.Deserialize<ConfigOptions>(config);
             if (options != null)
             {
-                if (string.IsNullOrWhiteSpace(options!.ProjectId))
+                Const.PROJECT_ID = options.ProjectId;
+                if (options.ProjectId == Guid.Empty)
                 {
-                    options.ProjectId = Guid.NewGuid().ToString();
+                    options.ProjectId = Guid.NewGuid();
                     Const.PROJECT_ID = options.ProjectId;
                     string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
                     await File.WriteAllTextAsync(path, content, Encoding.UTF8);
