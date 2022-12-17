@@ -122,7 +122,7 @@ public class StudioCommand
     {
         Console.WriteLine($"updating studio...");
 
-        var copyFiles = new string[] { "Microsoft.CodeAnalysis.CSharp", "Microsoft.CodeAnalysis", "Microsoft.EntityFrameworkCore", "Microsoft.EntityFrameworkCore.Relational", "Microsoft.OpenApi", "Microsoft.EntityFrameworkCore.Sqlite", "CodeGenerator", "Microsoft.Data.Sqlite", "Microsoft.OpenApi.Readers", "Microsoft.Extensions.DependencyModel", "Command.Share" };
+        var copyFiles = new string[] { "Microsoft.CodeAnalysis.CSharp", "Microsoft.CodeAnalysis", "LiteDB", "SharpYaml", "Microsoft.OpenApi", "CodeGenerator", "Microsoft.OpenApi.Readers", "Core", "Command.Share", "Datastore" };
 
         string appPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
         string userPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
@@ -152,7 +152,7 @@ public class StudioCommand
             }
         });
 
-        CopyDirectory(Path.Combine(toolRootPath, "runtimes"), Path.Combine(appPath, "AterStudio", "runtimes"), true);
+        //CopyDirectory(Path.Combine(toolRootPath, "runtimes"), Path.Combine(appPath, "AterStudio", "runtimes"), true);
 
         Console.WriteLine("update complete!");
     }

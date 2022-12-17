@@ -21,7 +21,8 @@
 		<PackageReleaseNotes>
 		1. dto生成改进
 		2. 添加实体监听功能
-		3. 缩减打包大小</PackageReleaseNotes>
+		3. 打包大小优化
+		4. 使用LiteDb替代SQLite，进一步减少打包大小</PackageReleaseNotes>
 		<PackageIcon>logo.jpg</PackageIcon>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<RootNamespace>Droplet.$(MSBuildProjectName.Replace("cli", "CLI"))</RootNamespace>

@@ -19,12 +19,16 @@ try {
         Remove-Item .\publish\Microsoft.CodeAnalysis.CSharp.dll
         Remove-Item .\publish\Swashbuckle.AspNetCore.SwaggerUI.dll
         Remove-Item .\publish\Microsoft.CodeAnalysis.dll
-        Remove-Item .\publish\Microsoft.OpenApi.dll
-        Remove-Item .\publish\CodeGenerator.dll
+        Remove-Item .\publish\LiteDB.dll
         Remove-Item .\publish\Microsoft.OpenApi.Readers.dll
-        Remove-Item .\publish\Microsoft.Extensions.DependencyModel.dll
+        Remove-Item .\publish\Swashbuckle.AspNetCore.SwaggerGen.dll
+        Remove-Item .\publish\SharpYaml.dll
+
+        Remove-Item .\publish\CodeGenerator.dll
         Remove-Item .\publish\Command.Share.dll
-        Remove-Item .\publish\runtimes -R -Force
+        Remove-Item .\publish\Core.dll
+        Remove-Item .\publish\Datastore.dll
+        Remove-Item .\publish\swagger.json
         Compress-Archive -Path .\publish\*  -DestinationPath "../CommandLine/studio.zip" -CompressionLevel Optimal -Force
     }
 
