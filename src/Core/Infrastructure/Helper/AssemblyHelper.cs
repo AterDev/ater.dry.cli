@@ -110,6 +110,26 @@ public class AssemblyHelper
     }
 
     /// <summary>
+    /// 获取git根目录
+    /// </summary>
+    /// <param name="dir">搜索目录，从该目录向上递归搜索</param>
+    /// <returns></returns>
+    public static DirectoryInfo? GetGitRoot(DirectoryInfo dir)
+    {
+        try
+        {
+            DirectoryInfo? directory = dir.GetDirectories(".git").FirstOrDefault();
+            return directory != null
+                ? directory.Parent
+                : directory == null && dir.Root != dir && dir.Parent != null ? GetGitRoot(dir.Parent) : default;
+        }
+        catch (Exception)
+        {
+            return default;
+        }
+    }
+
+    /// <summary>
     /// 获取当前项目下的 xml 注释中的members
     /// </summary>
     /// <returns></returns>

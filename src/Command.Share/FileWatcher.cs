@@ -12,9 +12,13 @@ public class FileWatcher
     public string DtoPath { get; }
     public string ApplicationPath { get; }
     public required Guid ProjectId { get; init; }
+    /// <summary>
+    /// TODO:.git\logs\HEAD 变动时间
+    /// </summary>
+    public DateTimeOffset GitChangeTime { get; private set; } = DateTimeOffset.MinValue;
 
     /// <summary>
-    /// 
+    /// 创建file watcher
     /// </summary>
     /// <param name="entityPath">实体目录</param>
     /// <param name="dtoPath">dto目录</param>
@@ -24,6 +28,7 @@ public class FileWatcher
         EntityPath = entityPath;
         DtoPath = dtoPath;
         ApplicationPath = appPath;
+        GitChangeTime = GetGitLogLastWriteTime();
     }
 
     public void StartWatchers()
@@ -91,7 +96,7 @@ public class FileWatcher
     /// <returns></returns>
     private bool IsEntityFile(string path, out EntityParseHelper? entityParseHelper)
     {
-        var file = new FileInfo(path);
+        FileInfo file = new(path);
         entityParseHelper = null;
         if (file.Length <= 10)
         {
@@ -99,7 +104,7 @@ public class FileWatcher
         }
         // 解析
         entityParseHelper = new EntityParseHelper(path);
-        var baseType = entityParseHelper.GetParentClassName() ?? "";
+        string baseType = entityParseHelper.GetParentClassName() ?? "";
         // 判断是否为实体
         return baseType.Equals("EntityBase");
     }
@@ -107,45 +112,42 @@ public class FileWatcher
     private async void OnFileCreatedAsync(object sender, FileSystemEventArgs e)
     {
         // 判断是否为实体
-        if (IsEntityFile(e.FullPath, out var entityParseHelper))
+        if (!IsGitChange()
+            && e.FullPath.EndsWith(".cs"))
         {
-            // 添加入库
-            var entityInfo = entityParseHelper!.GetEntity();
-            using var Context = new DbContext();
-
-            Context.EntityInfos.EnsureIndex(e => e.Name);
-            Context.EntityInfos.Insert(entityInfo);
-
-            // 生成
-            await CommandRunner.GenerateManagerAsync(e.FullPath, DtoPath, ApplicationPath);
+            Console.WriteLine($"{e.Name} create!");
+            if (IsEntityFile(e.FullPath, out _))
+            {
+                // 生成
+                await CommandRunner.GenerateManagerAsync(e.FullPath, DtoPath, ApplicationPath);
+            }
         }
-    }
-
-    private static void OnFileDeleted(object sender, FileSystemEventArgs e)
-    {
     }
 
     private async void OnFileRenamed(object sender, RenamedEventArgs e)
     {
         // 只有重命名为.cs文件后
-        if (e.ChangeType == WatcherChangeTypes.Renamed && e.FullPath.EndsWith(".cs"))
+        if (!IsGitChange()
+            && e.ChangeType == WatcherChangeTypes.Renamed
+            && e.FullPath.EndsWith(".cs"))
         {
             Console.WriteLine($"{e.Name} update!");
-
-            if (IsEntityFile(e.FullPath, out var entityParseHelper))
+            if (IsEntityFile(e.FullPath, out _))
             {
                 await CommandRunner.GenerateDtoAsync(e.FullPath, DtoPath, true);
             }
         }
     }
+
     private async void OnFileChanged(object sender, FileSystemEventArgs e)
     {
-        var file = new FileInfo(e.FullPath);
-        if (file.Length > 0 && e.ChangeType == WatcherChangeTypes.Changed)
+        FileInfo file = new(e.FullPath);
+        if (!IsGitChange()
+            && file.Length > 0
+            && e.ChangeType == WatcherChangeTypes.Changed)
         {
             Console.WriteLine($"{e.Name} update!");
-
-            if (IsEntityFile(e.FullPath, out var entityParseHelper))
+            if (IsEntityFile(e.FullPath, out _))
             {
                 await CommandRunner.GenerateDtoAsync(e.FullPath, DtoPath, true);
             }
@@ -157,8 +159,14 @@ public class FileWatcher
         //Console.WriteLine("dto file change:" + e.Name);
     }
 
-    private static void OnError(object sender, ErrorEventArgs e) =>
-            PrintException(e.GetException());
+    private static void OnFileDeleted(object sender, FileSystemEventArgs e)
+    {
+    }
+
+    private static void OnError(object sender, ErrorEventArgs e)
+    {
+        PrintException(e.GetException());
+    }
 
     private static void PrintException(Exception? ex)
     {
@@ -169,6 +177,36 @@ public class FileWatcher
             Console.WriteLine(ex.StackTrace);
             Console.WriteLine();
             PrintException(ex.InnerException);
+        }
+    }
+
+    /// <summary>
+    /// 获取git log 最后写入时间
+    /// </summary>
+    /// <returns></returns>
+    private DateTimeOffset GetGitLogLastWriteTime()
+    {
+        DirectoryInfo? root = AssemblyHelper.GetGitRoot(new DirectoryInfo(EntityPath));
+        if (root == null)
+        {
+            return DateTimeOffset.MinValue;
+        }
+        string filePath = Path.Combine(root.FullName, ".git", "logs", "HEAD");
+        return new FileInfo(filePath).LastWriteTime;
+    }
+
+    private bool IsGitChange()
+    {
+        DateTimeOffset lastTime = GetGitLogLastWriteTime();
+        if (lastTime == GitChangeTime)
+        {
+            return false;
+        }
+        else
+        {
+            Console.WriteLine("git change");
+            GitChangeTime = lastTime;
+            return true;
         }
     }
 }
