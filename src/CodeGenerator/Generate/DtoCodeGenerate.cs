@@ -315,9 +315,7 @@ public class DtoCodeGenerate : GenerateBase
                 && p.Name != "CreatedTime"
                 && p.Name != "UpdatedTime"
                 && p.Name != "IsDeleted"
-                && p.Name != "Status"
-                && !p.IsList
-                && !p.IsNavigation)
+                && p.Name != "Status")
             .ToList() ?? new List<PropertyInfo>()
         };
         referenceProps?.ForEach(item =>
@@ -370,9 +368,7 @@ public class DtoCodeGenerate : GenerateBase
         List<PropertyInfo>? properties = props?.Where(p => p.Name != "Id"
                 && p.Name != "CreatedTime"
                 && p.Name != "UpdatedTime"
-                && p.Name != "IsDeleted"
-                && !p.IsList
-                && !p.IsNavigation)
+                && p.Name != "IsDeleted")
             .ToList();
 
         dto.Properties = properties?.Copy() ?? new List<PropertyInfo>();

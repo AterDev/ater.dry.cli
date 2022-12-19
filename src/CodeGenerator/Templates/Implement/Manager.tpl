@@ -20,7 +20,9 @@ public class ${EntityName}Manager : DomainManagerBase<${EntityName}, ${EntityNam
     /// <returns></returns>
     public Task<${EntityName}> CreateNewEntityAsync(${EntityName}AddDto dto)
     {
-        return Task.FromResult(dto.MapTo<${EntityName}AddDto, ${EntityName}>());
+        var entity = dto.MapTo<${EntityName}AddDto, ${EntityName}>();
+        // TODO:构建实体
+        return Task.FromResult(entity);
     }
 
     public override async Task<${EntityName}> UpdateAsync(${EntityName} entity, ${EntityName}UpdateDto dto)
