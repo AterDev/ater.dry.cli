@@ -84,6 +84,7 @@ public class RestApiGenerate : GenerateBase
             "global using Microsoft.AspNetCore.Authorization;",
             "global using System.Text.Json.Serialization;",
             "global using Microsoft.EntityFrameworkCore;",
+            "global using Http.API.Infrastructure;",
             $"global using {EntityInfo.NamespaceName};",
             $"global using {EntityNamespace}.Utils;",
             $"global using {EntityNamespace}.Models;",
