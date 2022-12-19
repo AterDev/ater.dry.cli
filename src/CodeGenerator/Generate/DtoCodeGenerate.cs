@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Linq;
+using System.Text.RegularExpressions;
 using Datastore;
 using Datastore.Models;
 using PropertyInfo = Core.Models.PropertyInfo;
@@ -187,12 +188,20 @@ public class DtoCodeGenerate : GenerateBase
             Comment = FormatComment(EntityInfo.Comment, "概要"),
             Tag = EntityInfo.Name,
             Properties = props?
-                .Where(p => p.Name != "Content"
+                .Where(p => p.Name != "IsDeleted")
+                .ToList()
+        };
+        // 初次创建
+        if (props == EntityInfo.PropertyInfos)
+        {
+            dto.Properties = dto.Properties?.Where(
+                (p => p.Name != "Content"
                     && p.Name != "IsDeleted"
                     && (p.MaxLength < 2000 || p.MaxLength == null)
                     && !(p.IsList && p.IsNavigation))
-                .ToList()
-        };
+                )
+                .ToList();
+        }
         return dto.ToString(AssemblyName, EntityInfo.Name);
     }
 
@@ -215,12 +224,16 @@ public class DtoCodeGenerate : GenerateBase
             Comment = FormatComment(EntityInfo.Comment, "列表元素"),
             Tag = EntityInfo.Name,
             Properties = props?
-                .Where(p => !p.IsList
-                    && p.Name != "IsDeleted"
-                    && (p.MaxLength <= 1000 || p.MaxLength == null)
-                    && !p.IsNavigation)
+                .Where(p => p.Name != "IsDeleted")
                 .ToList()
         };
+        // 初次创建
+        if (props == EntityInfo.PropertyInfos)
+        {
+            dto.Properties = dto.Properties?.Where(p => !p.IsList
+            && (p.MaxLength <= 1000 || p.MaxLength == null)
+                    && !p.IsNavigation).ToList();
+        }
         return dto.ToString(AssemblyName, EntityInfo.Name);
     }
 
@@ -267,19 +280,24 @@ public class DtoCodeGenerate : GenerateBase
                 .Where(p => p.MaxLength is not (not null and >= 1000))
                 .ToList();
         dto.Properties = properties.Copy() ?? new List<PropertyInfo>();
-        // 筛选条件调整为可空
-        foreach (var item in dto.Properties)
+
+        // 初次创建
+        if (props == EntityInfo.PropertyInfos)
         {
-            item.IsNullable = true;
-            item.IsRequired = false;
-        }
-        referenceProps?.ForEach(item =>
-        {
-            if (!dto.Properties.Any(p => p.Name.Equals(item.Name)))
+            // 筛选条件调整为可空
+            foreach (var item in dto.Properties)
             {
-                dto.Properties.Add(item);
+                item.IsNullable = true;
+                item.IsRequired = false;
             }
-        });
+            referenceProps?.ForEach(item =>
+            {
+                if (!dto.Properties.Any(p => p.Name.Equals(item.Name)))
+                {
+                    dto.Properties.Add(item);
+                }
+            });
+        }
         return dto.ToString(AssemblyName, EntityInfo.Name);
     }
 
@@ -318,13 +336,19 @@ public class DtoCodeGenerate : GenerateBase
                 && p.Name != "Status")
             .ToList() ?? new List<PropertyInfo>()
         };
-        referenceProps?.ForEach(item =>
+
+        // 初次创建
+        if (props == EntityInfo.PropertyInfos)
         {
-            if (!dto.Properties.Any(p => p.Name.Equals(item.Name)))
+            referenceProps?.ForEach(item =>
             {
-                dto.Properties.Add(item);
-            }
-        });
+                if (!dto.Properties.Any(p => p.Name.Equals(item.Name)))
+                {
+                    dto.Properties.Add(item);
+                }
+            });
+        }
+
         return dto.ToString(AssemblyName, EntityInfo.Name);
     }
 
@@ -372,20 +396,25 @@ public class DtoCodeGenerate : GenerateBase
             .ToList();
 
         dto.Properties = properties?.Copy() ?? new List<PropertyInfo>();
-        foreach (PropertyInfo item in dto.Properties)
+
+        // 初次创建
+        if (props == EntityInfo.PropertyInfos)
         {
-            if (!item.IsRequired)
+            foreach (PropertyInfo item in dto.Properties)
             {
-                item.IsNullable = true;
+                if (!item.IsRequired)
+                {
+                    item.IsNullable = true;
+                }
             }
+            referenceProps?.ForEach(item =>
+            {
+                if (!dto.Properties.Any(p => p.Name.Equals(item.Name)))
+                {
+                    dto.Properties.Add(item);
+                }
+            });
         }
-        referenceProps?.ForEach(item =>
-        {
-            if (!dto.Properties.Any(p => p.Name.Equals(item.Name)))
-            {
-                dto.Properties.Add(item);
-            }
-        });
         return dto.ToString(AssemblyName, EntityInfo.Name);
     }
 
