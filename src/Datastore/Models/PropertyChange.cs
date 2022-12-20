@@ -10,6 +10,9 @@ public class PropertyChange
     /// </summary>
     public required string Name { get; set; }
     public required ChangeType Type { get; set; }
+
+    public string? Origin { get; set; }
+    public string? Current { get; set; }
 }
 
 public enum ChangeType

@@ -13,6 +13,7 @@ public class DbContext : IDisposable
         var localDir = Path.Combine(path, "AterStudio");
         var connectionString = $"Filename={Path.Combine(localDir, "droplet.db")};Upgrade=true;Connection=shared;initialSize=5MB";
         Db = new LiteDatabase(connectionString);
+        Db.Mapper.EmptyStringToNull = false;
 
         Projects = Db.GetCollection<Project>();
         EntityInfos = Db.GetCollection<EntityInfo>();

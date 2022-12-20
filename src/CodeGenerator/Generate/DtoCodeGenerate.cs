@@ -72,7 +72,8 @@ public class DtoCodeGenerate : GenerateBase
                 var prop = new PropertyChange
                 {
                     Name = p.Name,
-                    Type = ChangeType.Update
+                    Type = ChangeType.Update,
+                    Origin = p.ToCsharpLine(),
                 };
                 PropertyChanges.Add(prop);
             });
@@ -254,7 +255,7 @@ public class DtoCodeGenerate : GenerateBase
             })
             .ToList();
 
-        string[] filterFields = new string[] { "Id", "CreatedTime", "UpdatedTime", "IsDeleted", "Status", "PageSize", "PageIndex" };
+        string[] filterFields = new string[] { "Id", "CreatedTime", "UpdatedTime", "IsDeleted", "PageSize", "PageIndex" };
 
         var dtoFileName = EntityInfo.Name + Const.FilterDto + ".cs";
         var dtoFilePath = Path.Combine(DtoPath, "Models", EntityInfo.Name + "Dtos", dtoFileName);
@@ -332,8 +333,7 @@ public class DtoCodeGenerate : GenerateBase
             Properties = props?.Where(p => p.Name != "Id"
                 && p.Name != "CreatedTime"
                 && p.Name != "UpdatedTime"
-                && p.Name != "IsDeleted"
-                && p.Name != "Status")
+                && p.Name != "IsDeleted")
             .ToList() ?? new List<PropertyInfo>()
         };
 

@@ -12,4 +12,17 @@ public class FunctionTest
         Console.WriteLine();
     }
 
+    [Fact]
+
+    public void TestString()
+    {
+        string? a = string.Empty;
+        string? b = string.Empty;
+
+
+        var c = a == b;
+
+        Assert.True(c);
+
+    }
 }

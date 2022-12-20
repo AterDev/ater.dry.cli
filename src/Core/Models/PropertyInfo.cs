@@ -58,6 +58,12 @@ public class PropertyInfo : EntityBase
     public string ToCsharpLine()
     {
         string? attributeText = AttributeText;
+        // 默认值
+        var defaultValue = string.Empty;
+        if (IsList && !IsNullable)
+        {
+            defaultValue = " = new();";
+        }
         if (!string.IsNullOrEmpty(attributeText))
         {
             attributeText = attributeText.Trim();
@@ -70,7 +76,7 @@ public class PropertyInfo : EntityBase
         if (Name.ToLower().Contains("password"))
         {
             attributeText = attributeText?.Replace("    ", "    // ");
-            content = @$"    // public {Type}{nullableMark} {Name} {{ get; set; }}";
+            content = @$"    // public {Type}{nullableMark} {Name} {{ get; set; }}{defaultValue}";
         }
         return $@"{CommentXml}{attributeText}{content}{SuffixContent}
 ";
