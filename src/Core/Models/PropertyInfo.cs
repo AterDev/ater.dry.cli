@@ -39,7 +39,7 @@ public class PropertyInfo : EntityBase
     /// </summary>
     public bool IsRequired { get; set; } = false;
     /// <summary>
-    /// 可空？
+    /// 可空?
     /// </summary>
     public bool IsNullable { get; set; } = false;
     public int? MinLength { get; set; }
@@ -72,7 +72,7 @@ public class PropertyInfo : EntityBase
         }
         string nullableMark = IsNullable ? "?" : "";
         string requiredKeyword = IsRequired ? "required " : "";
-        string content = @$"    public {requiredKeyword}{Type}{nullableMark} {Name} {{ get; set; }}";
+        string content = @$"    public {requiredKeyword}{Type}{nullableMark} {Name} {{ get; set; }}{defaultValue}";
         if (Name.ToLower().Contains("password"))
         {
             attributeText = attributeText?.Replace("    ", "    // ");

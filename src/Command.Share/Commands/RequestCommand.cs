@@ -33,8 +33,12 @@ public class RequestCommand : CommandBase
         {
             openApiContent = File.ReadAllText(DocUrl);
         }
+        openApiContent = openApiContent
+            .Replace("«", "")
+            .Replace("»", "");
         ApiDocument = new OpenApiStringReader()
             .Read(openApiContent, out _);
+
 
         Console.WriteLine(Instructions[0]);
         await GenerateCommonFilesAsync();

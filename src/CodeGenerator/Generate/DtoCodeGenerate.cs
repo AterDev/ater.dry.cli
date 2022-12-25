@@ -415,6 +415,13 @@ public class DtoCodeGenerate : GenerateBase
                 }
             });
         }
+        foreach (PropertyInfo item in dto.Properties)
+        {
+            if (!item.IsRequired)
+            {
+                item.IsNullable = true;
+            }
+        }
         return dto.ToString(AssemblyName, EntityInfo.Name);
     }
 

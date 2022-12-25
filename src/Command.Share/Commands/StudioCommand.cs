@@ -67,7 +67,7 @@ public class StudioCommand
         };
 
         var startStudio = process.Start();
-        Thread.Sleep(3000);
+        Thread.Sleep(2000);
         // 启动浏览器
         if (startStudio)
         {

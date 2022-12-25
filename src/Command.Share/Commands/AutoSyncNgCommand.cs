@@ -27,6 +27,11 @@ public class AutoSyncNgCommand : CommandBase
         Instructions.Add($"  🔹 sync ng pages.");
 
         string openApiContent = File.ReadAllText(SwagerPath);
+        // 过滤特殊符号
+        openApiContent = openApiContent
+            .Replace("«", "")
+            .Replace("»", "");
+
         ApiDocument = new OpenApiStringReader()
            .Read(openApiContent, out _);
 
