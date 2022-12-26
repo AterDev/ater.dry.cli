@@ -24,13 +24,10 @@
       <button mat-menu-item (click)="batch(CommandType.API)"
         matTooltip="生成dto/dataStore/manager/api,不会覆盖原内容">生成APIControler</button>
     </mat-menu>
-
-
   </mat-toolbar>
   <mat-form-field class="w-100 mt-2">
     <input matInput placeholder="搜索实体类" [(ngModel)]="searchKey" (keyup.enter)="getEntity()">
   </mat-form-field>
-
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" style="width: 100%;">
     <!-- Checkbox Column -->
     <ng-container matColumnDef="select">

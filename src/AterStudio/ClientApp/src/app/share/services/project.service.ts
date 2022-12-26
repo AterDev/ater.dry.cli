@@ -27,6 +27,15 @@ export class ProjectService extends BaseService {
   }
 
   /**
+   * getWatcherStatus
+   * @param id string
+   */
+  getWatcherStatus(id: string): Observable<boolean> {
+    const url = `/api/Project/watcher/${id}`;
+    return this.request<boolean>('get', url);
+  }
+
+  /**
    * startWatcher
    * @param id string
    */

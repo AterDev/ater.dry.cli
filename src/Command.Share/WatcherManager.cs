@@ -5,9 +5,9 @@ public class WatcherManager
 
     public static FileWatcher StartWatcher(Guid name, string entityPath, string dtoPath, string appPath)
     {
-        if (WatcherList.ContainsKey(name))
+        if (WatcherList.TryGetValue(name, out FileWatcher? value))
         {
-            return WatcherList[name];
+            return value;
         }
         else
         {
@@ -29,6 +29,3 @@ public class WatcherManager
         }
     }
 }
-// 0 config file projectId 
-// 1 studio  add  project  db
-// 2  

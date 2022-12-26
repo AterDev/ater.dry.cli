@@ -1,4 +1,6 @@
-﻿using Datastore;
+﻿using System.Diagnostics;
+using System;
+using Datastore;
 
 namespace Command.Share;
 /// <summary>
@@ -7,7 +9,7 @@ namespace Command.Share;
 public class FileWatcher
 {
     public FileSystemWatcher? EntityWatcher { get; private set; }
-    public FileSystemWatcher? DtoWatcher { get; private set; }
+    public FileSystemWatcher? APIWatcher { get; private set; }
     public string EntityPath { get; }
     public string DtoPath { get; }
     public string ApplicationPath { get; }
@@ -34,7 +36,7 @@ public class FileWatcher
     public void StartWatchers()
     {
         WatchEntity();
-        WatchDto();
+        WatchController();
     }
 
     public void StopWatchers()
@@ -49,11 +51,11 @@ public class FileWatcher
             EntityWatcher = null;
         }
 
-        if (DtoWatcher != null)
+        if (APIWatcher != null)
         {
-            DtoWatcher.Changed -= OnDtoFileChanged;
-            DtoWatcher.Dispose();
-            DtoWatcher = null;
+            APIWatcher.Changed -= OnAPIFileChanged;
+            APIWatcher.Dispose();
+            APIWatcher = null;
         }
     }
 
@@ -74,19 +76,20 @@ public class FileWatcher
         EntityWatcher.Renamed += OnFileRenamed;
         EntityWatcher.Error += OnError;
     }
-    public void WatchDto()
+    public void WatchController()
     {
-        DtoWatcher = new FileSystemWatcher(Path.Combine(DtoPath, "Models"))
+        APIWatcher = new FileSystemWatcher(Path.Combine(ApplicationPath, "..", "Http.API", "Controllers"))
         {
             IncludeSubdirectories = true,
             NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.FileName,
-            Filter = "*.cs",
+            Filter = "*Controller.cs",
             EnableRaisingEvents = true
         };
-        DtoWatcher.IncludeSubdirectories = true;
+        APIWatcher.IncludeSubdirectories = true;
 
-        DtoWatcher.Changed += OnDtoFileChanged;
-        DtoWatcher.Error += OnError;
+        APIWatcher.Changed += OnAPIFileChanged;
+        APIWatcher.Renamed += OnAPIFileChanged;
+        APIWatcher.Error += OnError;
     }
 
     /// <summary>
@@ -154,9 +157,29 @@ public class FileWatcher
         }
     }
 
-    private void OnDtoFileChanged(object sender, FileSystemEventArgs e)
+    private void OnAPIFileChanged(object sender, FileSystemEventArgs e)
     {
-        //Console.WriteLine("dto file change:" + e.Name);
+        Console.WriteLine("api file change:" + e.Name);
+
+        var path = Path.Combine(ApplicationPath, "..", "Http.API");
+        Process process = new()
+        {
+            StartInfo = new ProcessStartInfo
+            {
+                FileName = "dotnet",
+                Arguments = @"swagger tofile --output ./swagger.json .\bin\Debug\net7.0\Http.API.dll v1",
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                //RedirectStandardOutput = true,
+                WorkingDirectory = path
+                //RedirectStandardError = true,
+                //StandardErrorEncoding = Encoding.UTF8,
+                //StandardOutputEncoding = Encoding.UTF8,
+            }
+        };
+        process.Start();
+        process.WaitForExit(5000);
+
     }
 
     private static void OnFileDeleted(object sender, FileSystemEventArgs e)

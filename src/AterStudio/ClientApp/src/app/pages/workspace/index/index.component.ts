@@ -34,7 +34,6 @@ export class IndexComponent implements OnInit {
   requestTmpRef!: TemplateRef<{}>;
   @ViewChild("syncDialog", { static: true })
   syncTmpRef!: TemplateRef<{}>;
-
   selection = new SelectionModel<EntityFile>(true, []);
   constructor(
     public route: ActivatedRoute,
@@ -53,6 +52,7 @@ export class IndexComponent implements OnInit {
   ngOnInit(): void {
     this.initForm();
     this.getEntity();
+    this.getWatchStatus();
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
@@ -68,8 +68,18 @@ export class IndexComponent implements OnInit {
       this.selection.clear();
       return;
     }
-
     this.selection.select(...this.dataSource.data);
+  }
+
+  getWatchStatus(): void {
+    this.projectSrv.getWatcherStatus(this.projectId)
+      .subscribe(res => {
+        if (res) {
+          this.isListening = true;
+        } else {
+          this.isListening = false;
+        }
+      })
   }
   initForm(): void {
     this.requestForm = new FormGroup({

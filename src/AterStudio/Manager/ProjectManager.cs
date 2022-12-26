@@ -53,12 +53,21 @@ public class ProjectManager
         return project;
     }
 
-
-
     public Project GetProject(Guid id)
     {
         return _dbContext.Projects.FindById(id);
     }
+
+    /// <summary>
+    /// 是否在监视中
+    /// </summary>
+    /// <param name="project"></param>
+    /// <returns></returns>
+    public bool GetWatcherStatus(Project project)
+    {
+        return WatcherManager.WatcherList.TryGetValue(project.ProjectId, out _);
+    }
+
     /// <summary>
     /// 开启监控
     /// </summary>
@@ -67,8 +76,10 @@ public class ProjectManager
     {
         WatcherManager.StartWatcher(project.ProjectId, project.EntityPath, project.SharePath, project.ApplicationPath);
     }
-
-
+    /// <summary>
+    /// 关闭监测
+    /// </summary>
+    /// <param name="project"></param>
     public void StopWatcher(Project project)
     {
         WatcherManager.StopWatcher(project.ProjectId);

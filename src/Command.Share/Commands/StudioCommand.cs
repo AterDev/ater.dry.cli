@@ -69,34 +69,31 @@ public class StudioCommand
         var startStudio = process.Start();
         Thread.Sleep(2000);
         // 启动浏览器
-        if (startStudio)
+        try
         {
-            try
+            Process.Start(url);
+        }
+        catch (Exception ex)
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                Process.Start(url);
+                url = url.Replace("&", "^&");
+                Process.Start(new ProcessStartInfo("cmd", $"/c start {url}")
+                {
+                    CreateNoWindow = true
+                });
             }
-            catch (Exception ex)
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    url = url.Replace("&", "^&");
-                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}")
-                    {
-                        CreateNoWindow = true
-                    });
-                }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                {
-                    Process.Start("xdg-open", url);
-                }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                {
-                    Process.Start("open", url);
-                }
-                else
-                {
-                    Console.WriteLine("start browserr failed:" + ex.Message);
-                }
+                Process.Start("xdg-open", url);
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                Process.Start("open", url);
+            }
+            else
+            {
+                Console.WriteLine("start browserr failed:" + ex.Message);
             }
         }
 

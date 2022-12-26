@@ -27,6 +27,22 @@ public class ProjectController : ControllerBase
         return !System.IO.File.Exists(path) ? Problem("未找到该路径") : await _manager.AddProjectAsync(name, path);
     }
 
+
+    /// <summary>
+    /// 获取监听状态
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("watcher/{id}")]
+    public ActionResult<bool> GetWatcherStatus([FromRoute] Guid id)
+    {
+        var project = _manager.GetProject(id);
+        if (project == null)
+        {
+            return NotFound("不存在该项目");
+        }
+        return _manager.GetWatcherStatus(project);
+    }
+
     /// <summary>
     /// 开启监测
     /// </summary>
