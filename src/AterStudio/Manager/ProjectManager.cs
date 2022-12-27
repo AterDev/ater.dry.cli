@@ -43,13 +43,14 @@ public class ProjectManager
             EntityFrameworkPath = config.DbContextPath.ToFullPath("src", dir),
             EntityPath = config.EntityPath.ToFullPath("src", dir),
             HttpPath = config.ApiPath.ToFullPath("src", dir),
-            SharePath = config.DtoPath.ToFullPath("src", dir)
+            SharePath = config.DtoPath.ToFullPath("src", dir),
+            SwaggerPath = config.SwaggerPath,
+            WebAppPath = config.WebAppPath
         };
 
         _dbContext.Projects.EnsureIndex(p => p.ProjectId);
         _dbContext.Projects.Insert(project);
-        //_ = await _context.AddAsync(project);
-        //_ = await _context.SaveChangesAsync();
+
         return project;
     }
 

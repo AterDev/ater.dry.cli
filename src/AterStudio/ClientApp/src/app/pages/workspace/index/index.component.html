@@ -1,13 +1,12 @@
-<div class="container">
+<div class="container" *ngIf="!isLoading">
   <mat-toolbar>
-    <span>实体</span>
+    <span>{{project.displayName}}</span>
     <span class="example-spacer"></span>
     <button mat-icon-button matTooltip="开启监听实体，会自动更新dto" color="primary" [disabled]="isListening"
-    (click)="startWatch()">
+      (click)="startWatch()">
       <mat-icon>play_arrow</mat-icon>
     </button>
-    <button mat-icon-button matTooltip="停止监听实体" color="primary" [disabled]="!isListening"
-    (click)="stopWatch()">
+    <button mat-icon-button matTooltip="停止监听实体" color="primary" [disabled]="!isListening" (click)="stopWatch()">
       <mat-icon>stop_circle</mat-icon>
     </button>
     <button mat-button color="primary" (click)="openRequestDialog()">
@@ -84,7 +83,7 @@
     <form [formGroup]="requestForm" class="d-flex flex-column">
       <mat-form-field>
         <mat-label>swagger地址</mat-label>
-        <input matInput placeholder="HttpAPI/swagger.json" formControlName="swagger" readonly>
+        <input matInput placeholder="HttpAPI/swagger.json" formControlName="swagger">
       </mat-form-field>
       <mat-form-field>
         <mat-label>请求库类型</mat-label>
@@ -105,7 +104,7 @@
   </mat-dialog-content>
   <mat-dialog-actions>
     <button mat-button mat-dialog-close>取消</button>
-    <button mat-button (click)="generateRequest()" color="primary">生成</button>
+    <button mat-button (click)="generateRequest()" color="primary" [disabled]="isSync">生成</button>
   </mat-dialog-actions>
 </ng-template>
 
@@ -121,6 +120,6 @@
   </mat-dialog-content>
   <mat-dialog-actions>
     <button mat-button mat-dialog-close>取消</button>
-    <button mat-button (click)="generateSync()" color="primary">生成</button>
+    <button mat-button (click)="generateSync()" color="primary" [disabled]="isSync">生成</button>
   </mat-dialog-actions>
 </ng-template>

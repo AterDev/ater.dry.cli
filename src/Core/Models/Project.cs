@@ -13,4 +13,12 @@ public class Project : EntityBase
     public string HttpPath { get; set; } = "./Http.API";
     public string EntityFrameworkPath { get; set; } = "./Database/EntityFramework";
 
+    /// <summary>
+    /// swagger地址
+    /// </summary>
+    public string? SwaggerPath { get; set; }
+    /// <summary>
+    /// 前端路径
+    /// </summary>
+    public string? WebAppPath { get; set; }
 }

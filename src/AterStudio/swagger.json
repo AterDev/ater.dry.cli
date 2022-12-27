@@ -195,6 +195,14 @@
             "schema": {
               "$ref": "#/components/schemas/RequestLibType"
             }
+          },
+          {
+            "name": "swaggerPath",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -321,6 +329,48 @@
             "style": "form",
             "schema": {
               "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Project/{id}": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "Project_Project",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
@@ -590,6 +640,14 @@
             "nullable": true
           },
           "entityFrameworkPath": {
+            "type": "string",
+            "nullable": true
+          },
+          "swaggerPath": {
+            "type": "string",
+            "nullable": true
+          },
+          "webAppPath": {
             "type": "string",
             "nullable": true
           }

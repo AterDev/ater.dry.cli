@@ -21,10 +21,23 @@ public class ProjectController : ControllerBase
         return _manager.GetProjects();
     }
 
+    /// <summary>
+    /// 详情
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpGet("{id}")]
+    public Project? Project([FromRoute] Guid id)
+    {
+        return _manager.GetProject(id);
+    }
+
     [HttpPost]
     public async Task<ActionResult<Project?>> AddAsync(string name, string path)
     {
-        return !System.IO.File.Exists(path) ? Problem("未找到该路径") : await _manager.AddProjectAsync(name, path);
+        return (!System.IO.File.Exists(path) && !Directory.Exists(path))
+            ? Problem("未找到该路径")
+            : await _manager.AddProjectAsync(name, path);
     }
 
     /// <summary>

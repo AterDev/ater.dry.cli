@@ -25,38 +25,45 @@ public class EntityManager
         List<EntityFile> entityFiles = new();
         //var project = await _context.Projects.FindAsync(projectId);
         var project = _dbContext.Projects.FindById(id);
-
-        string entityPath = Path.Combine(project!.EntityPath, "Entities");
-        // get files in directory
-        List<string> filePaths = Directory.GetFiles(entityPath, "*.cs", SearchOption.AllDirectories).ToList();
-
-        if (filePaths.Any())
+        try
         {
-            filePaths = filePaths.Where(f => !f.EndsWith(".g.cs")
-                && !f.EndsWith(".AssemblyAttributes.cs")
-                && !f.EndsWith(".AssemblyInfo.cs")
-                && !f.EndsWith("EntityBase.cs")
-                )
-                .ToList();
+            string entityPath = Path.Combine(project!.EntityPath, "Entities");
+            // get files in directory
+            List<string> filePaths = Directory.GetFiles(entityPath, "*.cs", SearchOption.AllDirectories).ToList();
 
-            foreach (string? path in filePaths)
+            if (filePaths.Any())
             {
-                FileInfo file = new(path);
-                EntityFile item = new()
-                {
-                    Name = file.Name,
-                    BaseDirPath = entityPath,
-                    Path = file.FullName.Replace(entityPath, ""),
-                    Content = File.ReadAllText(path)
-                };
+                filePaths = filePaths.Where(f => !f.EndsWith(".g.cs")
+                    && !f.EndsWith(".AssemblyAttributes.cs")
+                    && !f.EndsWith(".AssemblyInfo.cs")
+                    && !f.EndsWith("EntityBase.cs")
+                    )
+                    .ToList();
 
-                entityFiles.Add(item);
+                foreach (string? path in filePaths)
+                {
+                    FileInfo file = new(path);
+                    EntityFile item = new()
+                    {
+                        Name = file.Name,
+                        BaseDirPath = entityPath,
+                        Path = file.FullName.Replace(entityPath, ""),
+                        Content = File.ReadAllText(path)
+                    };
+
+                    entityFiles.Add(item);
+                }
+            }
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                entityFiles = entityFiles.Where(f => f.Name.ToLower().Contains(name.ToLower())).ToList();
             }
         }
-        if (!string.IsNullOrWhiteSpace(name))
+        catch (Exception)
         {
-            entityFiles = entityFiles.Where(f => f.Name.ToLower().Contains(name.ToLower())).ToList();
+            return entityFiles;
         }
+
         return entityFiles;
     }
 
@@ -125,10 +132,14 @@ public class EntityManager
         }
     }
 
-    public async Task GenerateRequestAsync(Project project, string webPath, RequestLibType type)
+    public async Task GenerateRequestAsync(Project project, string webPath, RequestLibType type, string? swaggerPath = null)
     {
         Const.PROJECT_ID = project.ProjectId;
-        string swaggerPath = Path.Combine(project.HttpPath, "swagger.json");
+        // 更新选项
+        project.WebAppPath = webPath;
+        project.SwaggerPath = swaggerPath;
+        _dbContext.Projects.Update(project);
+        swaggerPath ??= Path.Combine(project.HttpPath, "swagger.json");
         await CommandRunner.GenerateRequestAsync(swaggerPath, webPath, type);
     }
 

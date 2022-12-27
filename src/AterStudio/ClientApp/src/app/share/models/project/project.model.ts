@@ -9,5 +9,7 @@ export interface Project {
   applicationPath?: string | null;
   httpPath?: string | null;
   entityFrameworkPath?: string | null;
+  swaggerPath?: string | null;
+  webAppPath?: string | null;
 
 }

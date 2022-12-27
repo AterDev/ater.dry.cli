@@ -44,9 +44,10 @@ export class EntityService extends BaseService {
    * @param id string
    * @param webPath string
    * @param type RequestLibType
+   * @param swaggerPath string
    */
-  generateRequest(id: string, webPath?: string, type?: RequestLibType): Observable<boolean> {
-    const url = `/api/Entity/generateRequest/${id}?webPath=${webPath}&type=${type}`;
+  generateRequest(id: string, webPath?: string, type?: RequestLibType, swaggerPath?: string): Observable<boolean> {
+    const url = `/api/Entity/generateRequest/${id}?webPath=${webPath}&type=${type}&swaggerPath=${swaggerPath}`;
     return this.request<boolean>('get', url);
   }
 

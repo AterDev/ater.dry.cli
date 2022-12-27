@@ -9,6 +9,7 @@ import { EntityFile } from 'src/app/share/models/entity/entity-file.model';
 import { GenerateDto } from 'src/app/share/models/entity/generate-dto.model';
 import { CommandType } from 'src/app/share/models/enum/command-type.model';
 import { RequestLibType } from 'src/app/share/models/enum/request-lib-type.model';
+import { Project } from 'src/app/share/models/project/project.model';
 import { EntityService } from 'src/app/share/services/entity.service';
 import { ProjectService } from 'src/app/share/services/project.service';
 @Component({
@@ -19,6 +20,7 @@ import { ProjectService } from 'src/app/share/services/project.service';
 export class IndexComponent implements OnInit {
   RequestLibType = RequestLibType;
   CommandType = CommandType;
+  project = {} as Project;
   projectId: string;
   entityFiles = [] as EntityFile[];
   baseEntityPath = '';
@@ -51,6 +53,7 @@ export class IndexComponent implements OnInit {
   }
   ngOnInit(): void {
     this.initForm();
+    this.getProjectInfo();
     this.getEntity();
     this.getWatchStatus();
   }
@@ -71,6 +74,16 @@ export class IndexComponent implements OnInit {
     this.selection.select(...this.dataSource.data);
   }
 
+  getProjectInfo(): void {
+    this.projectSrv.project(this.projectId)
+      .subscribe(res => {
+        if (res) {
+          this.project = res;
+          this.requestForm.get('swagger')?.setValue(res.swaggerPath);
+          this.requestForm.get('path')?.setValue(res.webAppPath);
+        }
+      });
+  }
   getWatchStatus(): void {
     this.projectSrv.getWatcherStatus(this.projectId)
       .subscribe(res => {
@@ -83,7 +96,7 @@ export class IndexComponent implements OnInit {
   }
   initForm(): void {
     this.requestForm = new FormGroup({
-      swagger: new FormControl<string | null>(null, []),
+      swagger: new FormControl<string | null>('./swagger.json', []),
       type: new FormControl<RequestLibType>(RequestLibType.NgHttp, []),
       path: new FormControl<string | null>(null, [Validators.required])
     });
@@ -92,13 +105,12 @@ export class IndexComponent implements OnInit {
   getEntity(): void {
     this.service.list(this.projectId!, this.searchKey)
       .subscribe(res => {
-        if (res) {
+        if (res.length > 0) {
           this.entityFiles = res;
           this.baseEntityPath = res[0].baseDirPath ?? '';
           this.dataSource = new MatTableDataSource<EntityFile>(this.entityFiles);
         }
         this.isLoading = false;
-
       })
   }
 
@@ -150,13 +162,21 @@ export class IndexComponent implements OnInit {
   }
 
   generateRequest(): void {
+    this.isSync = true;
+    const swagger = this.requestForm.get('swagger')?.value as string;
     const type = this.requestForm.get('type')?.value as number;
     const path = this.requestForm.get('path')?.value as string;
-    this.service.generateRequest(this.projectId!, path, type)
-      .subscribe(res => {
-        if (res) {
-          this.snb.open('生成成功');
-          this.dialogRef.close();
+    this.service.generateRequest(this.projectId!, path, type, swagger)
+      .subscribe({
+        next: res => {
+          if (res) {
+            this.snb.open('生成成功');
+            this.dialogRef.close();
+          }
+          this.isSync = false;
+        },
+        error:()=>{
+          this.isSync = false;
         }
       })
   }

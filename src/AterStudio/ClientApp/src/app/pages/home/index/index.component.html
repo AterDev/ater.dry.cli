@@ -4,7 +4,7 @@
   <mat-divider class="mt-2">
   </mat-divider>
   <div class="d-flex gap-1">
-    <mat-card *ngFor="let item of projects" class="col-md-3 col-sm-3">
+    <mat-card *ngFor="let item of projects" class="col-lg-3 col-md-4 col-sm-4 col-3">
       <mat-card-header>
         <mat-card-title>
           {{item.displayName}}
@@ -13,9 +13,11 @@
           {{item.name}}
         </mat-card-subtitle>
       </mat-card-header>
-      <mat-card-content>
-        路径:
-        {{item.path}}
+      <mat-card-content style="word-break: break-all;">
+        <p>本地路径</p>
+        <span>
+          {{item.path}}
+        </span>
       </mat-card-content>
       <mat-card-actions>
         <button mat-button (click)="goToWorkspace(item.id)" color="primary">进入工作台</button>

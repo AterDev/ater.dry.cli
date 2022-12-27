@@ -34,7 +34,6 @@ public class EntityController : ControllerBase
         return true;
     }
 
-
     /// <summary>
     /// 批量生成
     /// </summary>
@@ -52,7 +51,6 @@ public class EntityController : ControllerBase
         return true;
     }
 
-
     /// <summary>
     /// 生成前端请求
     /// </summary>
@@ -61,14 +59,14 @@ public class EntityController : ControllerBase
     /// <param name="type"></param>
     /// <returns></returns>
     [HttpGet("generateRequest/{id}")]
-    public async Task<ActionResult<bool>> GenerateRequest([FromRoute] Guid id, string webPath, RequestLibType type)
+    public async Task<ActionResult<bool>> GenerateRequest([FromRoute] Guid id, string webPath, RequestLibType type, string? swaggerPath = null)
     {
         Project? project = _manager.Find(id);
         if (project == null)
         {
             return NotFound("项目不存在");
         }
-        await _manager.GenerateRequestAsync(project, webPath, type);
+        await _manager.GenerateRequestAsync(project, webPath, type, swaggerPath);
         return true;
     }
 

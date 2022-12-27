@@ -54,8 +54,7 @@ export class IndexComponent implements OnInit {
       const name = this.addForm.get('displayName')?.value as string;
       const path = this.addForm.get('path')?.value as string;
       if (!path.endsWith('.sln')) {
-        this.snb.open('未选择有效的sln文件');
-        return;
+        this.snb.open('路径不是有效的sln文件');
       }
       this.service.add(name, path)
         .subscribe(res => {

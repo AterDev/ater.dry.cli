@@ -24,4 +24,13 @@ public class ConfigOptions
     public string IdType { get; set; } = "Guid";
     public string CreatedTimeName { get; set; } = "CreatedTime";
     public string UpdatedTimeName { get; set; } = "UpdatedTime";
+
+    /// <summary>
+    /// swagger地址
+    /// </summary>
+    public string? SwaggerPath { get; set; }
+    /// <summary>
+    /// 前端路径
+    /// </summary>
+    public string? WebAppPath { get; set; }
 }
