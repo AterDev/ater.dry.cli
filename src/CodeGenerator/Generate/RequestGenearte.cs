@@ -147,7 +147,7 @@ public class RequestGenearte : GenerateBase
     {
         if (schema == null)
         {
-            return (string.Empty, string.Empty);
+            return ("any", "any");
         }
 
         string? type = "any";
