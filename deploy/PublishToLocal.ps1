@@ -21,7 +21,6 @@ try {
         Remove-Item .\publish\Microsoft.CodeAnalysis.dll
         Remove-Item .\publish\LiteDB.dll
         Remove-Item .\publish\Microsoft.OpenApi.Readers.dll
-        Remove-Item .\publish\Swashbuckle.AspNetCore.SwaggerGen.dll
         Remove-Item .\publish\SharpYaml.dll
 
         Remove-Item .\publish\CodeGenerator.dll

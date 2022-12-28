@@ -10,15 +10,6 @@ public class StudioCommand
     {
         Console.WriteLine("welcome ater studio!");
         string appPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        string userPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-
-        string version = Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
-
-        string targetFramework = "net7.0";
-        string packageId = "ater.droplet.cli";
-
-        string zipPath = Path.Combine(userPath, ".dotnet/tools/.store", packageId, version, packageId, version, "tools", targetFramework, "any", "studio.zip");
-
 
         var studioPath = Path.Combine(appPath, "AterStudio");
         var file = new FileInfo(Path.Combine(studioPath, Config.StudioFileName));
@@ -27,13 +18,7 @@ public class StudioCommand
         {
             // 初始化，解压内容
             Console.WriteLine($"init studio...");
-            if (!File.Exists(zipPath))
-            {
-                Console.WriteLine("not found studio.zip");
-                return;
-            }
-            ZipFile.ExtractToDirectory(zipPath, studioPath, true);
-            file = new(Path.Combine(studioPath, Config.StudioFileName));
+            Update();
         }
 
         Console.WriteLine("start studio...");
@@ -65,8 +50,7 @@ public class StudioCommand
                 //StandardOutputEncoding = Encoding.UTF8,
             }
         };
-
-        var startStudio = process.Start();
+        _ = process.Start();
         Thread.Sleep(2000);
         // 启动浏览器
         try
@@ -96,18 +80,6 @@ public class StudioCommand
                 Console.WriteLine("start browserr failed:" + ex.Message);
             }
         }
-
-        //Console.CancelKeyPress += (object? sender, ConsoleCancelEventArgs e) =>
-        //{
-        //    var isCtrlC = e.SpecialKey == ConsoleSpecialKey.ControlC;
-        //    var isCtrlBreak = e.SpecialKey == ConsoleSpecialKey.ControlBreak;
-
-        //    if (isCtrlBreak || isCtrlC)
-        //    {
-        //        process.Close();
-        //        process.Dispose();
-        //    }
-        //};
         process.WaitForExit();
     }
 
@@ -148,9 +120,6 @@ public class StudioCommand
                 File.Copy(sourceFile, Path.Combine(appPath, "AterStudio", file + ".dll"), true);
             }
         });
-
-        //CopyDirectory(Path.Combine(toolRootPath, "runtimes"), Path.Combine(appPath, "AterStudio", "runtimes"), true);
-
         Console.WriteLine("update complete!");
     }
 
