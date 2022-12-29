@@ -7,9 +7,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DocsComponent implements OnInit {
 
+  isRefresh = false;
   constructor() { }
 
   ngOnInit(): void {
   }
 
+
+
+  refresh(): void { }
 }
