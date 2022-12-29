@@ -1,13 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { DocsComponent } from './docs/docs.component';
 import { IndexComponent } from './index/index.component';
+import { NavigationComponent } from './navigation/navigation.component';
 
 const routes: Routes = [
   {
     path: 'workspace',
+    component: NavigationComponent,
     children: [
-      { path: ':id', pathMatch: 'full', redirectTo: 'index/:id' },
-      { path: 'index/:id', component: IndexComponent }
+      { path: 'code', component: IndexComponent },
+      { path: 'docs', component: DocsComponent }
     ]
   },
 

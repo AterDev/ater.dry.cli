@@ -5,6 +5,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Route, Router } from '@angular/router';
 import { Project } from 'src/app/share/models/project/project.model';
+import { ProjectStateService } from 'src/app/share/project-state.service';
 import { ProjectService } from 'src/app/share/services/project.service';
 
 @Component({
@@ -21,6 +22,7 @@ export class IndexComponent implements OnInit {
   addForm!: FormGroup;
   constructor(
     private service: ProjectService,
+    private projectState: ProjectStateService,
     public dialog: MatDialog,
     public snb: MatSnackBar,
     public router: Router,
@@ -68,8 +70,17 @@ export class IndexComponent implements OnInit {
       this.snb.open('输入有误，请查检');
     }
   }
-  goToWorkspace(id: string): void {
-    this.router.navigate(['/workspace/index', id]);
+  selectProject(id: string): void {
+    const project = this.projects.find(p => p.id == id);
+    console.log(project);
+    if (project) {
+      {
+        this.projectState.setProject(project);
+        this.router.navigateByUrl('/workspace/code');
+      }
+    } else {
+      this.snb.open('无效的项目');
+    }
   }
   getProjects(): void {
     this.service.list()

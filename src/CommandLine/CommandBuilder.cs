@@ -197,7 +197,7 @@ public class CommandBuilder
     /// </summary>
     public void AddDoc()
     {
-        System.CommandLine.Command docCommand = new("doc", "generate typescript interface using openApi json");
+        System.CommandLine.Command docCommand = new("doc", "generate models doc using openApi json");
         docCommand.AddAlias("doc");
         Argument<string> url = new("OpenApi Url", "openApi json file url");
         Option<string> outputOption = new(new[] { "--output", "-o" })

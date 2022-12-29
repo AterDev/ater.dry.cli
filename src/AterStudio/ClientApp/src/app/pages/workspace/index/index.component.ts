@@ -10,6 +10,7 @@ import { GenerateDto } from 'src/app/share/models/entity/generate-dto.model';
 import { CommandType } from 'src/app/share/models/enum/command-type.model';
 import { RequestLibType } from 'src/app/share/models/enum/request-lib-type.model';
 import { Project } from 'src/app/share/models/project/project.model';
+import { ProjectStateService } from 'src/app/share/project-state.service';
 import { EntityService } from 'src/app/share/services/entity.service';
 import { ProjectService } from 'src/app/share/services/project.service';
 @Component({
@@ -42,14 +43,17 @@ export class IndexComponent implements OnInit {
     public router: Router,
     public service: EntityService,
     public projectSrv: ProjectService,
+    public projectState: ProjectStateService,
     public dialog: MatDialog,
     public snb: MatSnackBar
   ) {
-
-    this.projectId = '';
-    this.route.paramMap.subscribe(res => {
-      this.projectId = res.get('id') ?? '';
-    })
+    if (projectState.project) {
+      this.projectId = projectState.project?.id;
+    } else {
+      // TODO:
+      this.projectId = '';
+      this.router.navigateByUrl('/');
+    }
   }
   ngOnInit(): void {
     this.initForm();
@@ -175,7 +179,7 @@ export class IndexComponent implements OnInit {
           }
           this.isSync = false;
         },
-        error:()=>{
+        error: () => {
           this.isSync = false;
         }
       })
