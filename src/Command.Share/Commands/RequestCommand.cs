@@ -49,14 +49,14 @@ public class RequestCommand : CommandBase
 
     public async Task GenerateCommonFilesAsync()
     {
-        string content = RequestGenearte.GetBaseService(LibType);
+        string content = RequestGenerate.GetBaseService(LibType);
         string dir = Path.Combine(OutputPath, "services");
         await GenerateFileAsync(dir, "base.service.ts", content, false);
     }
 
     public async Task GenerateRequestServicesAsync()
     {
-        RequestGenearte ngGen = new(ApiDocument!)
+        RequestGenerate ngGen = new(ApiDocument!)
         {
             LibType = LibType
         };

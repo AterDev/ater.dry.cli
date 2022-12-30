@@ -94,7 +94,7 @@ public class AutoSyncNgCommand : CommandBase
     public async Task GenerateTsInterfacesAsync()
     {
         // 获取对应的ts模型类，生成文件
-        RequestGenearte ngGen = new(ApiDocument!);
+        RequestGenerate ngGen = new(ApiDocument!);
         Console.WriteLine(Instructions[1]);
         List<GenFileInfo> models = ngGen.GetTSInterfaces();
 
@@ -107,14 +107,14 @@ public class AutoSyncNgCommand : CommandBase
 
     public async Task GenerateCommonFilesAsync()
     {
-        string content = RequestGenearte.GetBaseService(RequestLibType.NgHttp);
+        string content = RequestGenerate.GetBaseService(RequestLibType.NgHttp);
         string dir = Path.Combine(SharePath, "services");
         await GenerateFileAsync(dir, "base.service.ts", content, false);
     }
 
     public async Task GenerateNgServicesAsync()
     {
-        RequestGenearte ngGen = new(ApiDocument!);
+        RequestGenerate ngGen = new(ApiDocument!);
         List<GenFileInfo> services = ngGen.GetServices(ApiDocument!.Tags);
         foreach (GenFileInfo service in services)
         {

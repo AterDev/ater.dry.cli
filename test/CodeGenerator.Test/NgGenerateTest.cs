@@ -12,7 +12,7 @@ public class NgGenerateTest
         string projectPath = PathHelper.GetProjectPath();
         string file = Path.Combine(projectPath, "Data/openapi.json");
         Microsoft.OpenApi.Models.OpenApiDocument ApiDocument = new OpenApiStringReader().Read(File.ReadAllText(file), out _);
-        RequestGenearte ngGen = new(ApiDocument)
+        RequestGenerate ngGen = new(ApiDocument)
         {
             LibType = RequestLibType.Axios
         };
@@ -41,7 +41,7 @@ public class NgGenerateTest
         string file = Path.Combine(projectPath, "Data/openapi.json");
         Microsoft.OpenApi.Models.OpenApiDocument openApiDoc = new OpenApiStringReader().Read(File.ReadAllText(file), out _);
 
-        RequestGenearte serviceGen = new(openApiDoc)
+        RequestGenerate serviceGen = new(openApiDoc)
         {
             LibType = RequestLibType.Axios
         };

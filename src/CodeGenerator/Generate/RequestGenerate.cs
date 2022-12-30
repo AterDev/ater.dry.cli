@@ -5,7 +5,7 @@ namespace CodeGenerator.Generate;
 /// <summary>
 /// 请求生成
 /// </summary>
-public class RequestGenearte : GenerateBase
+public class RequestGenerate : GenerateBase
 {
     protected OpenApiPaths PathsPairs { get; }
     protected List<OpenApiTag> ApiTags { get; }
@@ -18,7 +18,7 @@ public class RequestGenearte : GenerateBase
     public Dictionary<string, string?> ModelDictionary { get; set; } = new();
     public RequestLibType LibType { get; set; } = RequestLibType.NgHttp;
 
-    public RequestGenearte(OpenApiDocument openApi)
+    public RequestGenerate(OpenApiDocument openApi)
     {
         OpenApi = openApi;
         PathsPairs = openApi.Paths;

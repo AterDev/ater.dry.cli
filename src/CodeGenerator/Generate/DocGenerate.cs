@@ -14,7 +14,6 @@ public class DocGenerate : GenerateBase
         ApiTags = apiTags;
     }
 
-
     public string GetMarkdownContent()
     {
         string docContent = "";
@@ -61,8 +60,6 @@ public class DocGenerate : GenerateBase
         docContent = tocContent + itemContent;
         return docContent;
     }
-
-
 
     public static string FormatProperty(TsProperty property)
     {
