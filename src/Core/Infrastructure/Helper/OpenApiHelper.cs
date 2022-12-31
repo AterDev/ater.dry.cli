@@ -74,7 +74,24 @@ public class OpenApiHelper
                        .FirstOrDefault().Value?.Schema);
                     // 关联的类型
                     var model = ModelInfos.FirstOrDefault(m => m.Name == ResponseRefType);
-                    apiInfo.RequestInfo = model;
+
+                    // 返回内容没有对应类型
+                    if (model == null)
+                    {
+                        var schema = responseBody.FirstOrDefault().Value?.Content
+                            .FirstOrDefault().Value?.Schema;
+
+                        apiInfo.ResponseInfo = new EntityInfo
+                        {
+                            Name = schema?.Type ?? "unknown",
+                            ProjectId = Const.PROJECT_ID,
+                        };
+                    }
+                    else
+                    {
+                        apiInfo.ResponseInfo = model;
+                    }
+
                 }
                 // 请求的参数
                 if (requestParameters != null)

@@ -38,8 +38,7 @@ public class FunctionTest
         var apiDocument = new OpenApiStringReader().Read(openApiContent, out _);
         var helper = new OpenApiHelper(apiDocument);
 
-
-        var enumtype = helper.ModelInfos.Where(m => m.Name == "CommandType").FirstOrDefault();
+        var apis = helper.RestApiInfos;
        Assert.NotNull(helper.RestApiInfos);
 
     }
