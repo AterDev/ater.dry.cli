@@ -12,9 +12,9 @@ public class ApiDocManager
 {
     private readonly DbContext _dbContext;
 
-    public ApiDocManager(DbContext dbContext)
+    public ApiDocManager()
     {
-        _dbContext = dbContext;
+        _dbContext = new DbContext();
     }
 
     public ApiDocInfo? Find(Guid id)
@@ -25,7 +25,7 @@ public class ApiDocManager
     public List<ApiDocInfo> FindAll(Project project)
     {
         return _dbContext.ApiDocInfos.Query()
-            .Where(d => d.ProjectId == project.ProjectId)
+            .Where(d => d.ProjectId == project.Id)
             .ToList();
     }
 
@@ -72,7 +72,6 @@ public class ApiDocManager
     /// <returns></returns>
     public ApiDocInfo AddApiDoc(ApiDocInfo apiDocInfo)
     {
-        apiDocInfo.ProjectId = Const.PROJECT_ID;
         _dbContext.ApiDocInfos.Insert(apiDocInfo);
         return apiDocInfo;
     }

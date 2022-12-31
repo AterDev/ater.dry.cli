@@ -3,6 +3,7 @@ import { BaseService } from './base.service';
 import { Observable } from 'rxjs';
 
         import { ApiDocInfo } from '../models/api-doc/api-doc-info.model';
+import { ApiDocContent } from '../models/api-doc/api-doc-content.model';
 
 /**
  * api文档
@@ -22,9 +23,9 @@ export class ApiDocService extends BaseService {
    * 获取某个文档信息
    * @param id 
    */
-  getApiDocContent(id: string): Observable<ApiDocInfo> {
+  getApiDocContent(id: string): Observable<ApiDocContent> {
     const url = `/api/ApiDoc/${id}`;
-    return this.request<ApiDocInfo>('get', url);
+    return this.request<ApiDocContent>('get', url);
   }
 
   /**

@@ -1,3 +1,6 @@
+using System.Text.Encodings.Web;
+using System.Text.Json.Serialization;
+using System.Text.Unicode;
 using AterStudio;
 using AterStudio.Manager;
 using Microsoft.AspNetCore.Diagnostics;
@@ -7,10 +10,9 @@ using Microsoft.OpenApi.Models;
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
-builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<ProjectManager>();
 builder.Services.AddScoped<EntityManager>();
+builder.Services.AddScoped<ApiDocManager>();
 
 // cors配置 
 builder.Services.AddCors(options =>
@@ -56,7 +58,12 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 #endif
-
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
+    });
 WebApplication app = builder.Build();
 
 // 异常统一处理

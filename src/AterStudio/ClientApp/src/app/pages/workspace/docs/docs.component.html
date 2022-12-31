@@ -1,27 +1,68 @@
-<mat-toolbar>
-  <span>接口文档</span>
-  <span class="example-spacer"></span>
-  <!-- 手动更新 -->
-  <button mat-icon-button matTooltip="刷新文档" color="primary" [disabled]="!isRefresh" (click)="refresh()">
-    <mat-icon>refresh</mat-icon>
-  </button>
+<div *ngIf="!isLoading">
+  <mat-toolbar>
+    <mat-form-field appearance="fill">
+      <mat-select placeholder="选择接口" [(ngModel)]="currentDoc" (selectionChange)="getDocContent()">
+        <mat-option *ngFor="let item of docs" [value]="item">
+          {{item.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <span>
+      <button mat-icon-button matTooltip="添加文档" color="primary" (click)="openAddDocDialog()">
+        <mat-icon>note_add</mat-icon>
+      </button>
+      <button *ngIf="docs.length>0" mat-icon-button matTooltip="删除文档" color="warn" (click)="delete()">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </span>
 
-  <!-- authorize配置, header头及值 -->
-</mat-toolbar>
+    <span class="example-spacer"></span>
+    <!-- 手动更新 -->
+    <button mat-icon-button matTooltip="刷新文档" color="primary" [disabled]="!isRefresh" (click)="refresh()">
+      <mat-icon>refresh</mat-icon>
+    </button>
 
-<!-- 左边接口树型列表 -->
-<!-- 搜索 -->
-<!-- 优先描述 -->
+    <!-- authorize配置, header头及值 -->
+  </mat-toolbar>
+
+  <div>
+
+
+  </div>
+  <!-- 左边接口树型列表 -->
+  <!-- 搜索 -->
+  <!-- 优先描述 -->
   <!-- 控制器名(Tag)/描述 -->
-    <!-- [请求方法] 描述(Route) -->
+  <!-- [请求方法] 描述(Route) -->
 
 
-<!-- 右边内容 -->
-<!-- 请求方法
+  <!-- 右边内容 -->
+  <!-- 请求方法
 路由地址
 描述
 
-
-
 -->
-
+</div>
+<ng-template #addDocDialog>
+  <h2 mat-dialog-title>添加 swagger 接口文档</h2>
+  <mat-dialog-content>
+    <form [formGroup]="addForm" class="d-flex flex-column">
+      <mat-form-field>
+        <mat-label>名称</mat-label>
+        <input matInput placeholder="文档名称" formControlName="name" required>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>描述</mat-label>
+        <input matInput placeholder="描述" formControlName="description">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>路径</mat-label>
+        <input matInput placeholder="swagger.json地址，支持url及本地路径" formControlName="path" required>
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button mat-dialog-close>取消</button>
+    <button mat-button (click)="addDoc()" color="primary" [disabled]="isOccupying">添加</button>
+  </mat-dialog-actions>
+</ng-template>

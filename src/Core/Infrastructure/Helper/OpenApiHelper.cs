@@ -1,6 +1,4 @@
-﻿using System.Runtime;
-using System.Security.Principal;
-using Microsoft.OpenApi.Any;
+﻿using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
 using PropertyInfo = Core.Models.PropertyInfo;
@@ -23,12 +21,18 @@ public class OpenApiHelper
     /// <summary>
     /// tag信息
     /// </summary>
-    public List<OpenApiTag> OpenApiTags { get; set; }
+    public List<ApiDocTag> OpenApiTags { get; set; }
 
     public OpenApiHelper(OpenApiDocument openApi)
     {
         OpenApi = openApi;
-        OpenApiTags = openApi.Tags.ToList();
+        OpenApiTags = openApi.Tags
+            .Select(s => new ApiDocTag
+            {
+                Name = s.Name,
+                Description = s.Description
+            })
+            .ToList();
         ModelInfos = GetEntityInfos();
         RestApiInfos = GetRestApiInfos();
     }
@@ -152,7 +156,6 @@ public class OpenApiHelper
         }
         return models;
     }
-
 
     /// <summary>
     /// 解析枚举类属性

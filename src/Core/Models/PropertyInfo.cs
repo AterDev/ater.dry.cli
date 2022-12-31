@@ -49,7 +49,6 @@ public class PropertyInfo : EntityBase
     /// 尾缀，如#endregion
     /// </summary>
     public string? SuffixContent { get; set; }
-
     public EntityInfo EntityInfo { get; set; } = default!;
     /// <summary>
     /// 转换成C#属性

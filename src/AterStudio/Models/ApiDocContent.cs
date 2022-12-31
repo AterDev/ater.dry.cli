@@ -1,6 +1,4 @@
-﻿using Microsoft.OpenApi.Models;
-
-namespace AterStudio.Models;
+﻿namespace AterStudio.Models;
 
 /// <summary>
 /// 接口返回模型
@@ -18,5 +16,5 @@ public class ApiDocContent
     /// <summary>
     /// tag信息
     /// </summary>
-    public List<OpenApiTag> OpenApiTags { get; set; } = new List<OpenApiTag>();
+    public List<ApiDocTag> OpenApiTags { get; set; } = new List<ApiDocTag>();
 }

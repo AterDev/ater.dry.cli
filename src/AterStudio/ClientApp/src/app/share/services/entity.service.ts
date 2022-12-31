@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BaseService } from './base.service';
 import { Observable } from 'rxjs';
-
-        import { GenerateDto } from '../models/entity/generate-dto.model';
+import { GenerateDto } from '../models/entity/generate-dto.model';
 import { BatchGenerateDto } from '../models/entity/batch-generate-dto.model';
 import { EntityFile } from '../models/entity/entity-file.model';
 import { RequestLibType } from '../models/enum/request-lib-type.model';

@@ -85,17 +85,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiDocInfo"
+                  "$ref": "#/components/schemas/ApiDocContent"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiDocInfo"
+                  "$ref": "#/components/schemas/ApiDocContent"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiDocInfo"
+                  "$ref": "#/components/schemas/ApiDocContent"
                 }
               }
             }
@@ -728,6 +728,37 @@
   },
   "components": {
     "schemas": {
+      "ApiDocContent": {
+        "type": "object",
+        "properties": {
+          "restApiInfos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RestApiInfo"
+            },
+            "description": "接口信息",
+            "nullable": true
+          },
+          "modelInfos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EntityInfo"
+            },
+            "description": "所有请求及返回类型信息",
+            "nullable": true
+          },
+          "openApiTags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApiDocTag"
+            },
+            "description": "tag信息",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "接口返回模型"
+      },
       "ApiDocInfo": {
         "type": "object",
         "properties": {
@@ -748,6 +779,20 @@
             "nullable": true
           },
           "path": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ApiDocTag": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
             "type": "string",
             "nullable": true
           }
@@ -814,6 +859,64 @@
         },
         "additionalProperties": false
       },
+      "EntityInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "namespaceName": {
+            "type": "string",
+            "nullable": true
+          },
+          "assemblyName": {
+            "type": "string",
+            "nullable": true
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true
+          },
+          "keyType": {
+            "$ref": "#/components/schemas/EntityKeyType"
+          },
+          "isEnum": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "propertyInfos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PropertyInfo"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EntityKeyType": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32",
+        "x-enumNames": [
+          "Guid",
+          "Int",
+          "String"
+        ]
+      },
       "GenerateDto": {
         "type": "object",
         "properties": {
@@ -830,6 +933,30 @@
           }
         },
         "additionalProperties": false
+      },
+      "OperationType": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "type": "integer",
+        "format": "int32",
+        "x-enumNames": [
+          "Get",
+          "Put",
+          "Post",
+          "Delete",
+          "Options",
+          "Head",
+          "Patch",
+          "Trace"
+        ]
       },
       "Project": {
         "type": "object",
@@ -885,6 +1012,90 @@
         },
         "additionalProperties": false
       },
+      "PropertyInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "displayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "isList": {
+            "type": "boolean"
+          },
+          "isPublic": {
+            "type": "boolean"
+          },
+          "isNavigation": {
+            "type": "boolean"
+          },
+          "navigationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "hasMany": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "isEnum": {
+            "type": "boolean"
+          },
+          "attributeText": {
+            "type": "string",
+            "nullable": true
+          },
+          "commentXml": {
+            "type": "string",
+            "nullable": true
+          },
+          "commentSummary": {
+            "type": "string",
+            "nullable": true
+          },
+          "isRequired": {
+            "type": "boolean"
+          },
+          "isNullable": {
+            "type": "boolean"
+          },
+          "minLength": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "maxLength": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "isDecimal": {
+            "type": "boolean"
+          },
+          "suffixContent": {
+            "type": "string",
+            "nullable": true
+          },
+          "entityInfo": {
+            "$ref": "#/components/schemas/EntityInfo"
+          }
+        },
+        "additionalProperties": false
+      },
       "RequestLibType": {
         "enum": [
           0,
@@ -896,6 +1107,44 @@
           "NgHttp",
           "Axios"
         ]
+      },
+      "RestApiInfo": {
+        "type": "object",
+        "properties": {
+          "operationType": {
+            "$ref": "#/components/schemas/OperationType"
+          },
+          "router": {
+            "type": "string",
+            "nullable": true
+          },
+          "summary": {
+            "type": "string",
+            "nullable": true
+          },
+          "tag": {
+            "type": "string",
+            "nullable": true
+          },
+          "operationId": {
+            "type": "string",
+            "nullable": true
+          },
+          "queryParameters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PropertyInfo"
+            },
+            "nullable": true
+          },
+          "requestInfo": {
+            "$ref": "#/components/schemas/EntityInfo"
+          },
+          "responseInfo": {
+            "$ref": "#/components/schemas/EntityInfo"
+          }
+        },
+        "additionalProperties": false
       }
     }
   },

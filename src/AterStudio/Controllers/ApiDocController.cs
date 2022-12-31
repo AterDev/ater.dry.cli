@@ -1,4 +1,5 @@
 ﻿using AterStudio.Manager;
+using AterStudio.Models;
 using Datastore.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -40,10 +41,9 @@ public class ApiDocController : ControllerBase
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpGet("{id}")]
-    public ActionResult<ApiDocInfo?> GetApiDocContent([FromRoute] Guid id)
+    public async Task<ActionResult<ApiDocContent?>> GetApiDocContentAsync([FromRoute] Guid id)
     {
-        // TODO:
-        return _manager.Find(id);
+        return await _manager.GetContentAsync(id);
     }
 
 
