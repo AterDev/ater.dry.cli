@@ -1,11 +1,12 @@
 ﻿using LiteDB;
 
 namespace Datastore;
-public class DbContext : IDisposable
+public class DbContext
 {
     public LiteDatabase Db { get; init; }
     public ILiteCollection<Project> Projects { get; set; }
     public ILiteCollection<EntityInfo> EntityInfos { get; set; }
+    public ILiteCollection<ApiDocInfo> ApiDocInfos { get; set; }
 
     public DbContext()
     {
@@ -17,10 +18,7 @@ public class DbContext : IDisposable
 
         Projects = Db.GetCollection<Project>();
         EntityInfos = Db.GetCollection<EntityInfo>();
+        ApiDocInfos = Db.GetCollection<ApiDocInfo>();
     }
-
-    public void Dispose()
-    {
-        Db.Dispose();
-    }
+    ~DbContext() => Db.Dispose();
 }

@@ -45,7 +45,7 @@ public class DtoCodeGenerate : GenerateBase
     /// </summary>
     public void GetChangedProperties()
     {
-        using var context = new DbContext();
+        var context = new DbContext();
         var currentEntity = context.EntityInfos.Query()
             .Where(e => e.Name == EntityInfo.Name
                 && e.NamespaceName == EntityInfo.NamespaceName
