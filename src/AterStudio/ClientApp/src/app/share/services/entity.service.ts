@@ -8,7 +8,7 @@ import { EntityFile } from '../models/entity/entity-file.model';
 import { RequestLibType } from '../models/enum/request-lib-type.model';
 
 /**
- * Entity
+ * 实体
  */
 @Injectable({ providedIn: 'root' })
 export class EntityService extends BaseService {
@@ -32,7 +32,7 @@ export class EntityService extends BaseService {
   }
 
   /**
-   * batchGenerate
+   * 批量生成
    * @param data BatchGenerateDto
    */
   batchGenerate(data: BatchGenerateDto): Observable<boolean> {
@@ -41,10 +41,10 @@ export class EntityService extends BaseService {
   }
 
   /**
-   * generateRequest
-   * @param id string
-   * @param webPath string
-   * @param type RequestLibType
+   * 生成前端请求
+   * @param id 
+   * @param webPath 
+   * @param type 
    * @param swaggerPath string
    */
   generateRequest(id: string, webPath?: string, type?: RequestLibType, swaggerPath?: string): Observable<boolean> {
@@ -53,8 +53,8 @@ export class EntityService extends BaseService {
   }
 
   /**
-   * generateSync
-   * @param id string
+   * 同步ng页面
+   * @param id 
    */
   generateSync(id: string): Observable<boolean> {
     const url = `/api/Entity/generateSync/${id}`;

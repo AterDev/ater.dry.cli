@@ -47,6 +47,7 @@ builder.Services.AddSwaggerGen(c =>
         ControllerActionDescriptor descriptor = (ControllerActionDescriptor)z.ActionDescriptor;
         return $"{descriptor.ControllerName}_{descriptor.ActionName}";
     });
+
     c.SchemaFilter<EnumSchemaFilter>();
     c.MapType<DateOnly>(() => new OpenApiSchema
     {
@@ -83,6 +84,9 @@ app.UseCors("default");
 //app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.MapControllerRoute(
     name: "default",

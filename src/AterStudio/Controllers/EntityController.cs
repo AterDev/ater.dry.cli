@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AterStudio.Controllers;
 
+/// <summary>
+///  实体
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class EntityController : ControllerBase

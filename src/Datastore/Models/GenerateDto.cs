@@ -7,9 +7,21 @@ public class GenerateDto
     public CommandType CommandType { get; set; }
 }
 
+/// <summary>
+/// 命令类型
+/// </summary>
 public enum CommandType
 {
+    /// <summary>
+    /// dto
+    /// </summary>
     Dto,
+    /// <summary>
+    /// manager
+    /// </summary>
     Manager,
+    /// <summary>
+    /// api
+    /// </summary>
     API
 }

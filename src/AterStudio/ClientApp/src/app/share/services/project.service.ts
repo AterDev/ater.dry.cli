@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
         import { Project } from '../models/project/project.model';
 
 /**
- * Project
+ * 项目
  */
 @Injectable({ providedIn: 'root' })
 export class ProjectService extends BaseService {
@@ -28,8 +28,8 @@ export class ProjectService extends BaseService {
   }
 
   /**
-   * project
-   * @param id string
+   * 详情
+   * @param id 
    */
   project(id: string): Observable<Project> {
     const url = `/api/Project/${id}`;
@@ -37,7 +37,7 @@ export class ProjectService extends BaseService {
   }
 
   /**
-   * getWatcherStatus
+   * 获取监听状态
    * @param id string
    */
   getWatcherStatus(id: string): Observable<boolean> {
@@ -46,8 +46,8 @@ export class ProjectService extends BaseService {
   }
 
   /**
-   * startWatcher
-   * @param id string
+   * 开启监测
+   * @param id 
    */
   startWatcher(id: string): Observable<boolean> {
     const url = `/api/Project/watcher/${id}`;
@@ -55,8 +55,8 @@ export class ProjectService extends BaseService {
   }
 
   /**
-   * stopWatcher
-   * @param id string
+   * 停止监测
+   * @param id 
    */
   stopWatcher(id: string): Observable<boolean> {
     const url = `/api/Project/watcher/${id}`;

@@ -119,8 +119,10 @@
         "tags": [
           "Entity"
         ],
+        "summary": "批量生成",
         "operationId": "Entity_BatchGenerate",
         "requestBody": {
+          "description": "",
           "content": {
             "application/json": {
               "schema": {
@@ -168,11 +170,13 @@
         "tags": [
           "Entity"
         ],
+        "summary": "生成前端请求",
         "operationId": "Entity_GenerateRequest",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "",
             "required": true,
             "style": "simple",
             "schema": {
@@ -183,6 +187,7 @@
           {
             "name": "webPath",
             "in": "query",
+            "description": "",
             "style": "form",
             "schema": {
               "type": "string"
@@ -191,6 +196,7 @@
           {
             "name": "type",
             "in": "query",
+            "description": "",
             "style": "form",
             "schema": {
               "$ref": "#/components/schemas/RequestLibType"
@@ -234,11 +240,13 @@
         "tags": [
           "Entity"
         ],
+        "summary": "同步ng页面",
         "operationId": "Entity_GenerateSync",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "",
             "required": true,
             "style": "simple",
             "schema": {
@@ -361,11 +369,13 @@
         "tags": [
           "Project"
         ],
+        "summary": "详情",
         "operationId": "Project_Project",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "",
             "required": true,
             "style": "simple",
             "schema": {
@@ -403,6 +413,7 @@
         "tags": [
           "Project"
         ],
+        "summary": "获取监听状态",
         "operationId": "Project_GetWatcherStatus",
         "parameters": [
           {
@@ -443,11 +454,13 @@
         "tags": [
           "Project"
         ],
+        "summary": "开启监测",
         "operationId": "Project_StartWatcher",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "",
             "required": true,
             "style": "simple",
             "schema": {
@@ -483,11 +496,13 @@
         "tags": [
           "Project"
         ],
+        "summary": "停止监测",
         "operationId": "Project_StopWatcher",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "",
             "required": true,
             "style": "simple",
             "schema": {
@@ -667,5 +682,15 @@
         ]
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "Entity",
+      "description": "实体"
+    },
+    {
+      "name": "Project",
+      "description": "项目"
+    }
+  ]
 }

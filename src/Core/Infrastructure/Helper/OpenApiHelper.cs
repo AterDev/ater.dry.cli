@@ -1,4 +1,6 @@
-﻿using System.Security.Principal;
+﻿using System.Runtime;
+using System.Security.Principal;
+using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
 using PropertyInfo = Core.Models.PropertyInfo;
@@ -17,7 +19,7 @@ public class OpenApiHelper
     /// <summary>
     /// 所有请求及返回类型信息
     /// </summary>
-    public List<EntityInfo> EntityInfos { get; set; }
+    public List<EntityInfo> ModelInfos { get; set; }
     /// <summary>
     /// tag信息
     /// </summary>
@@ -27,9 +29,14 @@ public class OpenApiHelper
     {
         OpenApi = openApi;
         OpenApiTags = openApi.Tags.ToList();
-
+        ModelInfos = GetEntityInfos();
+        RestApiInfos = GetRestApiInfos();
     }
 
+    /// <summary>
+    /// 接口信息
+    /// </summary>
+    /// <returns></returns>
     public List<RestApiInfo> GetRestApiInfos()
     {
         var apiInfos = new List<RestApiInfo>();
@@ -55,17 +62,21 @@ public class OpenApiHelper
                 if (requestBody != null)
                 {
                     var (RequestType, RequestRefType) = GetParamType(requestBody.Content.Values.FirstOrDefault()?.Schema);
-                    // TODO:关联的类型
+                    // 关联的类型
+                    var model = ModelInfos.FirstOrDefault(m => m.Name == RequestRefType);
+                    apiInfo.RequestInfo = model;
                 }
+                // 响应类型
                 if (responseBody != null)
                 {
                     var (ResponseType, ResponseRefType) = GetParamType(responseBody
                        .FirstOrDefault().Value?.Content
                        .FirstOrDefault().Value?.Schema);
-
-                    // TODO:关联的类型
-
+                    // 关联的类型
+                    var model = ModelInfos.FirstOrDefault(m => m.Name == ResponseRefType);
+                    apiInfo.RequestInfo = model;
                 }
+                // 请求的参数
                 if (requestParameters != null)
                 {
                     var parammeters = requestParameters?.Select(p =>
@@ -87,7 +98,6 @@ public class OpenApiHelper
                 apiInfos.Add(apiInfo);
             }
         }
-
         return apiInfos;
     }
 
@@ -101,20 +111,66 @@ public class OpenApiHelper
 
         foreach (KeyValuePair<string, OpenApiSchema> schema in OpenApi.Components.Schemas)
         {
+            string name = schema.Key;
             string description = schema.Value.AllOf.LastOrDefault()?.Description
                 ?? schema.Value.Description;
-
             description = description?.Replace("\n", " ") ?? "";
-            if (!string.IsNullOrEmpty(description))
-            {
-                description = $"({description})".Replace(" = ", "=");
-            }
+            List<PropertyInfo> props = GetTsProperties(schema.Value);
 
-            //List<TsProperty> props = TSModelGenerate.GetTsProperties(schema.Value);
+            var model = new EntityInfo
+            {
+                Name = name,
+                ProjectId = Const.PROJECT_ID,
+                PropertyInfos = props,
+                Comment = description,
+            };
+            // 判断是否为枚举类
+            var enumNode = schema.Value.Enum;
+            if (enumNode.Any())
+            {
+                model.IsEnum = true;
+                model.PropertyInfos = GetEnumProperties(schema.Value);
+            }
+            models.Add(model);
         }
         return models;
     }
 
+
+    /// <summary>
+    /// 解析枚举类属性
+    /// </summary>
+    /// <param name="schema"></param>
+    /// <returns></returns>
+    public static List<PropertyInfo> GetEnumProperties(OpenApiSchema schema)
+    {
+        var props = new List<PropertyInfo>();
+        var enums = schema.Enum.ToList();
+        var extEnum = schema.Extensions.Where(e => e.Key == "x-enumNames").FirstOrDefault();
+        if (enums != null)
+        {
+            for (int i = 0; i < enums.Count; i++)
+            {
+                var prop = new PropertyInfo
+                {
+                    Name = enums[i].ToString() ?? i.ToString(),
+                    ProjectId = Const.PROJECT_ID,
+                    Type = "Enum:int",
+                    IsEnum = true,
+                };
+                if (extEnum.Value is OpenApiArray values)
+                {
+                    prop.CommentSummary = (values[i] as OpenApiString)!.Value;
+                }
+                else
+                {
+                    prop.CommentSummary = enums[i].ToString();
+                }
+                props.Add(prop);
+            }
+        }
+        return props;
+    }
 
     /// <summary>
     /// 获取所有属性
@@ -149,7 +205,6 @@ public class OpenApiHelper
                 };
                 if (!string.IsNullOrEmpty(prop.Value.Description))
                 {
-
                     property.CommentSummary = prop.Value.Description;
                 }
 
@@ -192,6 +247,7 @@ public class OpenApiHelper
             .Select(s => s.FirstOrDefault()).ToList();
         return res!;
     }
+
     /// <summary>
     /// 获取转换成ts的类型
     /// </summary>
@@ -256,6 +312,11 @@ public class OpenApiHelper
         return type ?? "string";
     }
 
+    /// <summary>
+    /// 解析schema类型
+    /// </summary>
+    /// <param name="schema"></param>
+    /// <returns></returns>
     public static (string type, string? refType) GetParamType(OpenApiSchema? schema)
     {
         if (schema == null)

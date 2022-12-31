@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AterStudio.Controllers;
 
+/// <summary>
+/// 项目
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class ProjectController : ControllerBase

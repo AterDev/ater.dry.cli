@@ -25,6 +25,11 @@ public class EntityInfo : EntityBase
     public EntityKeyType KeyType { get; set; } = EntityKeyType.Guid;
 
     /// <summary>
+    /// 是否为枚举类
+    /// </summary>
+    public bool? IsEnum { get; set; } = false;
+
+    /// <summary>
     /// 属性
     /// </summary>
     public List<PropertyInfo> PropertyInfos { get; set; } = new List<PropertyInfo>();
