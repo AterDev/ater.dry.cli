@@ -1,5 +1,7 @@
+using System.Xml.Linq;
 using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CodeGenerator.Generate;
 /// <summary>
@@ -12,23 +14,14 @@ public class RequestGenerate : GenerateBase
     public IDictionary<string, OpenApiSchema> Schemas { get; set; }
     public OpenApiDocument OpenApi { get; set; }
 
-    /// <summary>
-    /// 模型类字典
-    /// </summary>
-    public Dictionary<string, string?> ModelDictionary { get; set; } = new();
     public RequestLibType LibType { get; set; } = RequestLibType.NgHttp;
+
+    public List<GenFileInfo>? TsModelFiles { get; set; }
 
     public RequestGenerate(OpenApiDocument openApi)
     {
         OpenApi = openApi;
         PathsPairs = openApi.Paths;
-        // 构建模型名及对应Tag目录的字典
-        openApi.Components.Schemas.Keys.ToList()
-            .ForEach(k =>
-            {
-                ModelDictionary[k] = null;
-            });
-
         Schemas = openApi.Components.Schemas;
         ApiTags = openApi.Tags.ToList();
     }
@@ -97,6 +90,10 @@ public class RequestGenerate : GenerateBase
     /// <returns></returns>
     public List<GenFileInfo> GetServices(IList<OpenApiTag> tags)
     {
+        if (TsModelFiles == null)
+        {
+            GetTSInterfaces();
+        }
         List<GenFileInfo> files = new();
         List<RequestServiceFunction> functions = GetAllRequestFunctions();
 
@@ -117,7 +114,7 @@ public class RequestGenerate : GenerateBase
 
             string content = LibType switch
             {
-                RequestLibType.NgHttp => serviceFile.ToNgService(),
+                RequestLibType.NgHttp => ToNgRequestService(serviceFile),
                 RequestLibType.Axios => ToAxiosRequestService(serviceFile),
                 _ => ""
             };
@@ -132,6 +129,10 @@ public class RequestGenerate : GenerateBase
         return files;
     }
 
+    /// <summary>
+    /// ts interface files
+    /// </summary>
+    /// <returns></returns>
     public List<GenFileInfo> GetTSInterfaces()
     {
         TSModelGenerate tsGen = new(OpenApi);
@@ -140,6 +141,7 @@ public class RequestGenerate : GenerateBase
         {
             files.Add(tsGen.GenerateInterfaceFile(item.Key, item.Value));
         }
+        TsModelFiles = files;
         return files;
     }
 
@@ -147,7 +149,7 @@ public class RequestGenerate : GenerateBase
     {
         if (schema == null)
         {
-            return ("any", "any");
+            return (string.Empty, string.Empty);
         }
 
         string? type = "any";
@@ -244,7 +246,7 @@ public class RequestGenerate : GenerateBase
             List<string> refTypes = GetRefTyeps(functions);
             refTypes.ForEach(t =>
             {
-                string? dirName = ModelDictionary.GetValueOrDefault(t);
+                string? dirName = TsModelFiles?.Where(f => f.ModelName == t).Select(f => f.Path).FirstOrDefault();
                 importModels += $"import {{ {t} }} from '../models/{dirName?.ToHyphen()}/{t.ToHyphen()}.model';{Environment.NewLine}";
             });
         }
@@ -252,7 +254,81 @@ public class RequestGenerate : GenerateBase
             .Replace("[@ServiceName]", serviceFile.Name)
             .Replace("[@Functions]", functionString);
         return tplContent;
+    }
 
+    public string ToNgRequestService(RequestServiceFile serviceFile)
+    {
+        var functions = serviceFile.Functions;
+        string functionstr = "";
+        // import引用的models
+        string importModels = "";
+        List<string> refTypes = new();
+        if (functions != null)
+        {
+            functionstr = string.Join("\n", functions.Select(f => f.ToFunction()).ToArray());
+            string[] baseTypes = new string[] { "string", "string[]", "number", "number[]", "boolean" };
+            // 获取请求和响应的类型，以便导入
+            List<string?> requestRefs = functions
+                .Where(f => !string.IsNullOrEmpty(f.RequestRefType)
+                    && !baseTypes.Contains(f.RequestRefType))
+                .Select(f => f.RequestRefType).ToList();
+            List<string?> responseRefs = functions
+                .Where(f => !string.IsNullOrEmpty(f.ResponseRefType)
+                    && !baseTypes.Contains(f.ResponseRefType))
+                .Select(f => f.ResponseRefType).ToList();
+
+            // 参数中的类型
+            List<string?> paramsRefs = functions.SelectMany(f => f.Params!)
+                .Where(p => !baseTypes.Contains(p.Type))
+                .Select(p => p.Type)
+                .ToList();
+            if (requestRefs != null)
+            {
+                refTypes.AddRange(requestRefs!);
+            }
+
+            if (responseRefs != null)
+            {
+                refTypes.AddRange(responseRefs!);
+            }
+
+            if (paramsRefs != null)
+            {
+                refTypes.AddRange(paramsRefs!);
+            }
+
+            refTypes = refTypes.GroupBy(t => t)
+                .Select(g => g.FirstOrDefault()!)
+                .ToList();
+
+            refTypes.ForEach(t =>
+            {
+                if (Config.EnumModels.Contains(t))
+                {
+                    importModels += $"import {{ {t} }} from '../models/enum/{t.ToHyphen()}.model';{Environment.NewLine}";
+                }
+                else
+                {
+                    string? dirName = TsModelFiles?.Where(f => f.ModelName == t).Select(f => f.Path).FirstOrDefault();
+                    importModels += $"import {{ {t} }} from '../models/{dirName?.ToHyphen()}/{t.ToHyphen()}.model';{Environment.NewLine}";
+                }
+
+            });
+        }
+        string result = $@"import {{ Injectable }} from '@angular/core';
+import {{ BaseService }} from './base.service';
+import {{ Observable }} from 'rxjs';
+
+        {importModels}
+/**
+ * {serviceFile.Description}
+ */
+@Injectable({{ providedIn: 'root' }})
+export class {serviceFile.Name}Service extends BaseService {{
+{functionstr}
+}}
+";
+        return result;
     }
 
     /// <summary>

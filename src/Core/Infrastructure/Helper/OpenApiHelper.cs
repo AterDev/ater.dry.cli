@@ -260,7 +260,7 @@ public class OpenApiHelper
     {
         if (schema == null)
         {
-            return ("any", "any");
+            return (string.Empty, string.Empty);
         }
 
         string? type = "any";

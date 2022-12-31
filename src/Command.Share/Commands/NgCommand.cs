@@ -45,7 +45,7 @@ public class NgCommand : CommandBase
 
     public async Task GenerateCommonFilesAsync()
     {
-        string content = NgServiceGenerate.GetBaseService();
+        string content = RequestGenerate.GetBaseService(RequestLibType.NgHttp);
         string dir = Path.Combine(SharePath, "services");
         await GenerateFileAsync(dir, "base.service.ts", content, false);
     }
@@ -70,7 +70,10 @@ public class NgCommand : CommandBase
 
     public async Task GenerateNgServicesAsync()
     {
-        NgServiceGenerate ngGen = new(ApiDocument!.Paths);
+        var ngGen = new RequestGenerate(ApiDocument!)
+        {
+            LibType = RequestLibType.NgHttp
+        };
         List<Core.Models.GenFileInfo> services = ngGen.GetServices(ApiDocument!.Tags);
         foreach (Core.Models.GenFileInfo service in services)
         {

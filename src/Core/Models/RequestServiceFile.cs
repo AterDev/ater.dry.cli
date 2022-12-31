@@ -119,6 +119,7 @@ public class RequestServiceFunction
 
     public string ToFunction()
     {
+        ResponseType = string.IsNullOrWhiteSpace(ResponseType) ? "any" : ResponseType;
         // 函数名处理，去除tag前缀，然后格式化
         Name = Name.Replace(Tag + "_", "");
         Name = Name.ToCamelCase();

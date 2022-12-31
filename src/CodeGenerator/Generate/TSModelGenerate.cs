@@ -140,8 +140,8 @@ public class TSModelGenerate : GenerateBase
         {
             Name = fileName,
             Path = path ?? "",
-            Content = tsContent
-
+            Content = tsContent,
+            ModelName = schemaKey
         };
         return file;
     }

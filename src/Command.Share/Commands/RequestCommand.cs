@@ -17,8 +17,8 @@ public class RequestCommand : CommandBase
         OutputPath = Path.Combine(output);
         LibType = libType;
 
-        Instructions.Add($"  🔹 generate request services.");
         Instructions.Add($"  🔹 generate ts interfaces.");
+        Instructions.Add($"  🔹 generate request services.");
     }
 
     public async Task RunAsync()
@@ -60,20 +60,22 @@ public class RequestCommand : CommandBase
         {
             LibType = LibType
         };
-        // 获取请求服务并生成文件
-        List<Core.Models.GenFileInfo> services = ngGen.GetServices(ApiDocument!.Tags);
-        foreach (Core.Models.GenFileInfo service in services)
-        {
-            string dir = Path.Combine(OutputPath, "services");
-            await GenerateFileAsync(dir, service.Name, service.Content, true);
-        }
+
         // 获取对应的ts模型类，生成文件
-        Console.WriteLine(Instructions[1]);
-        List<Core.Models.GenFileInfo> models = ngGen.GetTSInterfaces();
-        foreach (Core.Models.GenFileInfo model in models)
+        List<GenFileInfo> models = ngGen.GetTSInterfaces();
+        foreach (GenFileInfo model in models)
         {
             string dir = Path.Combine(OutputPath, "models", model.Path.ToHyphen());
             await GenerateFileAsync(dir, model.Name, model.Content, true);
         }
+
+        // 获取请求服务并生成文件
+        List<GenFileInfo> services = ngGen.GetServices(ApiDocument!.Tags);
+        foreach (GenFileInfo service in services)
+        {
+            string dir = Path.Combine(OutputPath, "services");
+            await GenerateFileAsync(dir, service.Name, service.Content, true);
+        }
+
     }
 }

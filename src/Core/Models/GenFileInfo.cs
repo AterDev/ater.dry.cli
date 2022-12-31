@@ -5,9 +5,19 @@
 /// </summary>
 public class GenFileInfo
 {
+    /// <summary>
+    /// 文件名
+    /// </summary>
     public string Name { get; set; } = default!;
     public string Content { get; set; }
+    /// <summary>
+    /// 相对文件夹名称
+    /// </summary>
     public string Path { get; set; } = string.Empty;
+    /// <summary>
+    /// 模型名称
+    /// </summary>
+    public string ModelName { get; set; }
 
     public GenFileInfo(string content)
     {
