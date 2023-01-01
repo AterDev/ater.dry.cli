@@ -49,15 +49,7 @@
 
 }
 
-th {
-    background-color: #96D4D4;
-    font-weight: bold;
-
-}
-
-table,
-th,
-td {
-    border: 1px solid #666;
-    border-collapse: collapse;
+table {
+    min-width: 480px;
+    width: fit-content;
 }

@@ -76,41 +76,52 @@
         <legend>请求参数</legend>
         <!-- query -->
         <div *ngIf="currentApi.queryParameters!.length > 0">
-          <table>
-            <thead>
-              <th>名称</th>
-              <th>类型</th>
-              <th>必须</th>
-              <th>说明</th>
-            </thead>
-            <tbody>
-              <tr *ngFor="let item of currentApi.queryParameters">
-                <td>{{item.name}}</td>
-                <td>{{item.type}}</td>
-                <td>{{item.isRequired}}</td>
-                <td>{{item.commentSummary}}</td>
-              </tr>
-            </tbody>
+          <table mat-table #table [dataSource]="currentApi.queryParameters!">
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef> 名称 </th>
+              <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+            </ng-container>
+            <ng-container matColumnDef="type">
+              <th mat-header-cell *matHeaderCellDef> 类型 </th>
+              <td mat-cell *matCellDef="let row"> {{row.type}} </td>
+            </ng-container>
+            <ng-container matColumnDef="requried">
+              <th mat-header-cell *matHeaderCellDef> 必须 </th>
+              <td mat-cell *matCellDef="let row"> {{row.isRequired}} </td>
+            </ng-container>
+            <ng-container matColumnDef="description">
+              <th mat-header-cell *matHeaderCellDef> 说明 </th>
+              <td mat-cell *matCellDef="let row"> {{row.commentSummary}} </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="tableColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: tableColumns"></tr>
           </table>
+
         </div>
         <!-- body -->
         <div *ngIf="currentApi.requestInfo">
           <div *ngIf="currentApi.requestInfo.propertyInfos!.length>0">
-            <table>
-              <thead>
-                <th>名称</th>
-                <th>类型</th>
-                <th>必须</th>
-                <th>说明</th>
-              </thead>
-              <tbody>
-                <tr *ngFor=" let item of currentApi.requestInfo.propertyInfos">
-            <td>{{item.name}}</td>
-            <td>{{item.type}}</td>
-            <td>{{item.isRequired}}</td>
-            <td>{{item.commentSummary}}</td>
-            </tr>
-            </tbody>
+            <table mat-table #table [dataSource]="currentApi.requestInfo.propertyInfos!">
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef> 名称 </th>
+                <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+              </ng-container>
+              <ng-container matColumnDef="type">
+                <th mat-header-cell *matHeaderCellDef> 类型 </th>
+                <td mat-cell *matCellDef="let row"> {{row.type}} </td>
+              </ng-container>
+              <ng-container matColumnDef="requried">
+                <th mat-header-cell *matHeaderCellDef> 必须 </th>
+                <td mat-cell *matCellDef="let row"> {{row.isRequired}} </td>
+              </ng-container>
+              <ng-container matColumnDef="description">
+                <th mat-header-cell *matHeaderCellDef> 说明 </th>
+                <td mat-cell *matCellDef="let row"> {{row.commentSummary}} </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="tableColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: tableColumns"></tr>
             </table>
           </div>
         </div>
@@ -122,21 +133,26 @@
           <!--  -->
           <div *ngIf="currentApi.responseInfo.propertyInfos!.length>0">
             <!-- 渲染内容 -->
-            <table>
-              <thead>
-                <th>名称</th>
-                <th>类型</th>
-                <th>必须</th>
-                <th>说明</th>
-              </thead>
-              <tbody>
-                <tr *ngFor="let item of currentApi.responseInfo.propertyInfos">
-                  <td>{{item.name}}</td>
-                  <td>{{item.type}}</td>
-                  <td>{{item.isRequired}}</td>
-                  <td>{{item.commentSummary}}</td>
-                </tr>
-              </tbody>
+            <table mat-table #table [dataSource]="currentApi.responseInfo.propertyInfos!">
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef> 名称 </th>
+                <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+              </ng-container>
+              <ng-container matColumnDef="type">
+                <th mat-header-cell *matHeaderCellDef> 类型 </th>
+                <td mat-cell *matCellDef="let row"> {{row.type}} </td>
+              </ng-container>
+              <ng-container matColumnDef="requried">
+                <th mat-header-cell *matHeaderCellDef> 必须 </th>
+                <td mat-cell *matCellDef="let row"> {{row.isRequired}} </td>
+              </ng-container>
+              <ng-container matColumnDef="description">
+                <th mat-header-cell *matHeaderCellDef> 说明 </th>
+                <td mat-cell *matCellDef="let row"> {{row.commentSummary}} </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="tableColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: tableColumns"></tr>
             </table>
           </div>
         </div>

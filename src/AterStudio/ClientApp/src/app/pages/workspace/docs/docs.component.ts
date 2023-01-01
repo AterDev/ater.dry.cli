@@ -26,7 +26,7 @@ export class DocsComponent implements OnInit {
   isRefresh = false;
   isLoading = true;
   isOccupying = false;
-  currentApi = {} as RestApiInfo;
+  currentApi: RestApiInfo | null = null;
   /**
    * 文档列表
    */
@@ -37,10 +37,10 @@ export class DocsComponent implements OnInit {
   dialogRef!: MatDialogRef<{}, any>;
   @ViewChild("addDocDialog", { static: true })
   requestTmpRef!: TemplateRef<{}>;
-
   restApiGroups = [] as RestApiGroup[];
   modelInfos = [] as EntityInfo[];
   tags = [] as ApiDocTag[];
+  tableColumns = ['name', 'type', 'requried', 'description'];
 
   constructor(
     public projectSrv: ProjectService,
