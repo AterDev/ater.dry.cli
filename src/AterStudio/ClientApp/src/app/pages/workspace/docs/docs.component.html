@@ -22,10 +22,9 @@
       <mat-icon>refresh</mat-icon>
     </button>
 
-    <!-- authorize配置, header头及值 -->
   </mat-toolbar>
   <!-- 左边接口树型列表 -->
-  <!-- 搜索 -->
+  <!-- TODO:搜索 -->
   <!-- 优先描述 -->
   <div class="d-flex">
     <div class="col col-auto">
@@ -39,7 +38,7 @@
           </mat-expansion-panel-header>
           <mat-nav-list *ngFor="let api of group.apiInfos" style="margin:0;padding:0">
             <!-- [请求方法] 描述(Route) -->
-            <a mat-list-item class="api-item d-flex" [matTooltip]="getApiTip(api)">
+            <a mat-list-item class="api-item d-flex" [matTooltip]="getApiTip(api)" (click)="selectApi(api)">
               <div class="request-type" [style.color]="getApiTypeColor(api.operationType!)">
                 {{OperationType[api.operationType!].substring(0,1)}}
               </div>
@@ -52,21 +51,98 @@
         </mat-expansion-panel>
       </mat-accordion>
     </div>
-    <div class=" col">
+    <!-- 右边内容 -->
+    <!-- 请求方法
+    路由地址
+    描述
+    -->
+    <div class="col p-2" *ngIf="currentApi">
+      <div class="section-block">
+        <legend>接口信息</legend>
+        <p>
+          请求类型:
+          {{ OperationType[currentApi.operationType!] }}
+        </p>
+        <p>
+          路由:
+          {{currentApi.router}}
+        </p>
+        <p>
+          说明:
+          {{currentApi.summary}}
+        </p>
+      </div>
+      <div class="section-block">
+        <legend>请求参数</legend>
+        <!-- query -->
+        <div *ngIf="currentApi.queryParameters!.length > 0">
+          <table>
+            <thead>
+              <th>名称</th>
+              <th>类型</th>
+              <th>必须</th>
+              <th>说明</th>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of currentApi.queryParameters">
+                <td>{{item.name}}</td>
+                <td>{{item.type}}</td>
+                <td>{{item.isRequired}}</td>
+                <td>{{item.commentSummary}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- body -->
+        <div *ngIf="currentApi.requestInfo">
+          <div *ngIf="currentApi.requestInfo.propertyInfos!.length>0">
+            <table>
+              <thead>
+                <th>名称</th>
+                <th>类型</th>
+                <th>必须</th>
+                <th>说明</th>
+              </thead>
+              <tbody>
+                <tr *ngFor=" let item of currentApi.requestInfo.propertyInfos">
+            <td>{{item.name}}</td>
+            <td>{{item.type}}</td>
+            <td>{{item.isRequired}}</td>
+            <td>{{item.commentSummary}}</td>
+            </tr>
+            </tbody>
+            </table>
+          </div>
+        </div>
 
-
+      </div>
+      <div class="section-block">
+        <legend>返回类型</legend>
+        <div *ngIf="currentApi.responseInfo">
+          <!--  -->
+          <div *ngIf="currentApi.responseInfo.propertyInfos!.length>0">
+            <!-- 渲染内容 -->
+            <table>
+              <thead>
+                <th>名称</th>
+                <th>类型</th>
+                <th>必须</th>
+                <th>说明</th>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of currentApi.responseInfo.propertyInfos">
+                  <td>{{item.name}}</td>
+                  <td>{{item.type}}</td>
+                  <td>{{item.isRequired}}</td>
+                  <td>{{item.commentSummary}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
-
   </div>
-
-
-
-  <!-- 右边内容 -->
-  <!-- 请求方法
-路由地址
-描述
-
--->
 </div>
 <ng-template #addDocDialog>
   <h2 mat-dialog-title>添加 swagger 接口文档</h2>

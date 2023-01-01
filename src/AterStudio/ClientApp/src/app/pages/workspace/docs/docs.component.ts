@@ -26,7 +26,7 @@ export class DocsComponent implements OnInit {
   isRefresh = false;
   isLoading = true;
   isOccupying = false;
-
+  currentApi = {} as RestApiInfo;
   /**
    * 文档列表
    */
@@ -134,6 +134,11 @@ export class DocsComponent implements OnInit {
         })
     }
   }
+
+  selectApi(api: RestApiInfo): void {
+    this.currentApi = api;
+  }
+
   getApiTip(api: RestApiInfo): string {
     return `[${OperationType[api.operationType!]}] ${api.router}`;
   }

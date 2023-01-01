@@ -17,7 +17,7 @@
 }
 
 .mat-expansion-panel-header {
-    padding-left:12px;
+    padding-left: 12px;
     background-color: rgb(250, 250, 250);
     height: 48px
 }
@@ -41,4 +41,23 @@
 .api-item {
     height: 40px;
     font-size: 0.9rem;
+}
+
+.section-block {
+    padding: 4px;
+    margin: 8px 0;
+
+}
+
+th {
+    background-color: #96D4D4;
+    font-weight: bold;
+
+}
+
+table,
+th,
+td {
+    border: 1px solid #666;
+    border-collapse: collapse;
 }
