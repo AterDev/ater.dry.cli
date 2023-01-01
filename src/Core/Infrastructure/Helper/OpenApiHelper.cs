@@ -338,7 +338,7 @@ public class OpenApiHelper
 
         if (prop.Nullable || prop.Reference != null)
         {
-            type += " | null";
+            //type += " | null";
         }
 
         return type ?? "string";
