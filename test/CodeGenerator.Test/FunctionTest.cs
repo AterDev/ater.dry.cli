@@ -38,8 +38,8 @@ public class FunctionTest
         var apiDocument = new OpenApiStringReader().Read(openApiContent, out _);
         var helper = new OpenApiHelper(apiDocument);
 
-        var apis = helper.RestApiInfos;
-       Assert.NotNull(helper.RestApiInfos);
+        var apis = helper.RestApiGroups;
+       Assert.NotNull(helper.RestApiGroups);
 
     }
 }

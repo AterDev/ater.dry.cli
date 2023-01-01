@@ -1,4 +1,4 @@
-import { RestApiInfo } from '../rest-api-info.model';
+import { RestApiGroup } from '../rest-api-group.model';
 import { EntityInfo } from '../entity-info.model';
 import { ApiDocTag } from '../api-doc-tag.model';
 /**
@@ -8,7 +8,7 @@ export interface ApiDocContent {
   /**
    * 接口信息
    */
-  restApiInfos?: RestApiInfo[] | null;
+  restApiGroups?: RestApiGroup[] | null;
   /**
    * 所有请求及返回类型信息
    */

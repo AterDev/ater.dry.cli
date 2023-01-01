@@ -731,10 +731,10 @@
       "ApiDocContent": {
         "type": "object",
         "properties": {
-          "restApiInfos": {
+          "restApiGroups": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/RestApiInfo"
+              "$ref": "#/components/schemas/RestApiGroup"
             },
             "description": "接口信息",
             "nullable": true
@@ -1107,6 +1107,27 @@
           "NgHttp",
           "Axios"
         ]
+      },
+      "RestApiGroup": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "apiInfos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RestApiInfo"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "RestApiInfo": {
         "type": "object",

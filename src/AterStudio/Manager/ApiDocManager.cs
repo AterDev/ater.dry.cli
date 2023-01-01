@@ -61,7 +61,7 @@ public class ApiDocManager
         {
             ModelInfos = helper.ModelInfos,
             OpenApiTags = helper.OpenApiTags,
-            RestApiInfos = helper.RestApiInfos,
+            RestApiGroups = helper.RestApiGroups
         };
     }
 

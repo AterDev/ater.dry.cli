@@ -8,7 +8,7 @@ public class ApiDocContent
     /// <summary>
     /// 接口信息
     /// </summary>
-    public List<RestApiInfo> RestApiInfos { get; set; } = new List<RestApiInfo>();
+    public List<RestApiGroup> RestApiGroups { get; set; } = new List<RestApiGroup>();
     /// <summary>
     /// 所有请求及返回类型信息
     /// </summary>

@@ -6,7 +6,9 @@ import { Router } from '@angular/router';
 import { ApiDocTag } from 'src/app/share/models/api-doc-tag.model';
 import { ApiDocInfo } from 'src/app/share/models/api-doc/api-doc-info.model';
 import { EntityInfo } from 'src/app/share/models/entity-info.model';
+import { OperationType } from 'src/app/share/models/enum/operation-type.model';
 import { Project } from 'src/app/share/models/project/project.model';
+import { RestApiGroup } from 'src/app/share/models/rest-api-group.model';
 import { RestApiInfo } from 'src/app/share/models/rest-api-info.model';
 import { ProjectStateService } from 'src/app/share/project-state.service';
 import { ApiDocService } from 'src/app/share/services/api-doc.service';
@@ -18,6 +20,7 @@ import { ProjectService } from 'src/app/share/services/project.service';
   styleUrls: ['./docs.component.css']
 })
 export class DocsComponent implements OnInit {
+  OperationType = OperationType;
   project = {} as Project;
   projectId: string;
   isRefresh = false;
@@ -35,7 +38,7 @@ export class DocsComponent implements OnInit {
   @ViewChild("addDocDialog", { static: true })
   requestTmpRef!: TemplateRef<{}>;
 
-  restApiInfos = [] as RestApiInfo[];
+  restApiGroups = [] as RestApiGroup[];
   modelInfos = [] as EntityInfo[];
   tags = [] as ApiDocTag[];
 
@@ -77,7 +80,7 @@ export class DocsComponent implements OnInit {
             this.getDocContent();
           }
         }
-        this.isLoading = false;
+
       });
   }
 
@@ -123,11 +126,33 @@ export class DocsComponent implements OnInit {
       this.service.getApiDocContent(id)
         .subscribe(res => {
           if (res) {
-            this.restApiInfos = res.restApiInfos!;
+            this.restApiGroups = res.restApiGroups!;
             this.modelInfos = res.modelInfos!;
             this.tags = res.openApiTags!;
           }
+          this.isLoading = false;
         })
+    }
+  }
+  getApiTip(api: RestApiInfo): string {
+    return `[${OperationType[api.operationType!]}] ${api.router}`;
+  }
+
+  getApiTypeColor(type: OperationType): string {
+    switch (type) {
+      case OperationType.Get:
+        return '#61affe';
+
+      case OperationType.Post:
+        return '#49cc90';
+
+      case OperationType.Put:
+        return '#fca130';
+
+      case OperationType.Delete:
+        return '#f93e3e';
+      default:
+        return '#222222';
     }
   }
 

@@ -13,7 +13,7 @@ public class OpenApiHelper
     /// <summary>
     /// 接口信息
     /// </summary>
-    public List<RestApiInfo> RestApiInfos { get; set; }
+    public List<RestApiGroup> RestApiGroups { get; set; }
     /// <summary>
     /// 所有请求及返回类型信息
     /// </summary>
@@ -34,14 +34,14 @@ public class OpenApiHelper
             })
             .ToList();
         ModelInfos = GetEntityInfos();
-        RestApiInfos = GetRestApiInfos();
+        RestApiGroups = GetRestApiGroups();
     }
 
     /// <summary>
     /// 接口信息
     /// </summary>
     /// <returns></returns>
-    public List<RestApiInfo> GetRestApiInfos()
+    public List<RestApiGroup> GetRestApiGroups()
     {
         var apiInfos = new List<RestApiInfo>();
         foreach (KeyValuePair<string, OpenApiPathItem> path in OpenApi.Paths)
@@ -119,7 +119,19 @@ public class OpenApiHelper
                 apiInfos.Add(apiInfo);
             }
         }
-        return apiInfos;
+        var apiGroups = new List<RestApiGroup>();
+        OpenApiTags.ForEach(tag =>
+        {
+            var group = new RestApiGroup
+            {
+                Name = tag.Name,
+                Description = tag.Description,
+                ApiInfos = apiInfos.Where(a => a.Tag == tag.Name).ToList()
+            };
+
+            apiGroups.Add(group);
+        });
+        return apiGroups;
     }
 
     /// <summary>

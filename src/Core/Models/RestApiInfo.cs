@@ -34,3 +34,14 @@ public class RestApiInfo
     /// </summary>
     public EntityInfo? ResponseInfo { get; set; }
 }
+
+/// <summary>
+/// 接口分组信息
+/// </summary>
+public class RestApiGroup
+{
+    public required string Name { get; set; }
+    public string? Description { get; set; }
+
+    public List<RestApiInfo> ApiInfos { get; set; } = new();
+}

@@ -24,16 +24,41 @@
 
     <!-- authorize配置, header头及值 -->
   </mat-toolbar>
-
-  <div>
-
-
-  </div>
   <!-- 左边接口树型列表 -->
   <!-- 搜索 -->
   <!-- 优先描述 -->
-  <!-- 控制器名(Tag)/描述 -->
-  <!-- [请求方法] 描述(Route) -->
+  <div class="d-flex">
+    <div class="col col-auto">
+      <mat-accordion class="example-headers-align" multi>
+        <mat-expansion-panel hideToggle [expanded]="true" *ngFor="let group of restApiGroups">
+          <mat-expansion-panel-header>
+            <!-- 控制器名(Tag)/描述 -->
+            <mat-panel-title>
+              <span>{{group.name}} {{group.description}}</span>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <mat-nav-list *ngFor="let api of group.apiInfos" style="margin:0;padding:0">
+            <!-- [请求方法] 描述(Route) -->
+            <a mat-list-item class="api-item d-flex" [matTooltip]="getApiTip(api)">
+              <div class="request-type" [style.color]="getApiTypeColor(api.operationType!)">
+                {{OperationType[api.operationType!].substring(0,1)}}
+              </div>
+              <div class="d-flex flex-column">
+                <span>{{api.summary??api.router}}</span>
+              </div>
+
+            </a>
+          </mat-nav-list>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+    <div class=" col">
+
+
+    </div>
+
+  </div>
+
 
 
   <!-- 右边内容 -->
