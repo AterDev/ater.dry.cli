@@ -74,10 +74,10 @@ export class IndexComponent implements OnInit {
     const project = this.projects.find(p => p.id == id);
     console.log(project);
     if (project) {
-      {
-        this.projectState.setProject(project);
-        this.router.navigateByUrl('/workspace/code');
-      }
+
+      this.projectState.setProject(project);
+      this.router.navigateByUrl('/workspace/code');
+
     } else {
       this.snb.open('无效的项目');
     }

@@ -37,7 +37,7 @@
           </mat-expansion-panel-header>
           <mat-nav-list *ngFor="let api of group.apiInfos" style="margin:0;padding:0">
             <!-- [请求方法] 描述(Route) -->
-            <a mat-list-item class="api-item d-flex" [matTooltip]="getApiTip(api)" (click)="selectApi(api)">
+            <a mat-list-item class="api-item d-flex" (click)="selectApi(api)">
               <div class="request-type" [style.color]="getApiTypeColor(api.operationType!)">
                 {{OperationType[api.operationType!].substring(0,1)}}
               </div>
