@@ -101,6 +101,7 @@
         <div *ngIf="currentApi.requestInfo">
           <mat-chip-list>
             <mat-chip color="primary">application/json</mat-chip>
+            <mat-chip color="primary" selected matTooltip="请求类型">{{currentApi.requestInfo.name}}</mat-chip>
           </mat-chip-list>
           <div *ngIf="currentApi.requestInfo.propertyInfos!.length>0">
             <table mat-table #table [dataSource]="currentApi.requestInfo.propertyInfos!" class="mt-2">
@@ -132,9 +133,10 @@
         <legend>返回内容</legend>
         <div *ngIf="currentApi.responseInfo">
           <!--  -->
-          <div *ngIf="currentApi.responseInfo.propertyInfos!.length>0">
+          <ng-container *ngIf="currentApi.responseInfo.propertyInfos!.length>0;else responseElse">
             <mat-chip-list>
               <mat-chip color="primary">application/json</mat-chip>
+              <mat-chip color="primary" selected matTooltip="返回类型">{{currentApi.responseInfo.name}}</mat-chip>
             </mat-chip-list>
             <!-- 渲染内容 -->
             <table mat-table #table [dataSource]="currentApi.responseInfo.propertyInfos!" class="mt-2">
@@ -158,32 +160,38 @@
               <tr mat-header-row *matHeaderRowDef="tableColumns"></tr>
               <tr mat-row *matRowDef="let row; columns: tableColumns"></tr>
             </table>
-          </div>
+          </ng-container>
+          <ng-template #responseElse>
+            <mat-chip-list>
+              <mat-chip color="primary">application/json</mat-chip>
+              <mat-chip color="primary" selected matTooltip="返回类型">{{currentApi.responseInfo.name}}</mat-chip>
+            </mat-chip-list>
+          </ng-template>
         </div>
       </div>
     </div>
-
   </div>
-  <ng-template #addDocDialog>
-    <h2 mat-dialog-title>添加 swagger 接口文档</h2>
-    <mat-dialog-content>
-      <form [formGroup]="addForm" class="d-flex flex-column">
-        <mat-form-field>
-          <mat-label>名称</mat-label>
-          <input matInput placeholder="文档名称" formControlName="name" required>
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>描述</mat-label>
-          <input matInput placeholder="描述" formControlName="description">
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>路径</mat-label>
-          <input matInput placeholder="swagger.json地址，支持url及本地路径" formControlName="path" required>
-        </mat-form-field>
-      </form>
-    </mat-dialog-content>
-    <mat-dialog-actions>
-      <button mat-button mat-dialog-close>取消</button>
-      <button mat-button (click)="addDoc()" color="primary" [disabled]="isOccupying">添加</button>
-    </mat-dialog-actions>
-  </ng-template>
+</div>
+<ng-template #addDocDialog>
+  <h2 mat-dialog-title>添加 swagger 接口文档</h2>
+  <mat-dialog-content>
+    <form [formGroup]="addForm" class="d-flex flex-column">
+      <mat-form-field>
+        <mat-label>名称</mat-label>
+        <input matInput placeholder="文档名称" formControlName="name" required>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>描述</mat-label>
+        <input matInput placeholder="描述" formControlName="description">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>路径</mat-label>
+        <input matInput placeholder="swagger.json地址，支持url及本地路径" formControlName="path" required>
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button mat-dialog-close>取消</button>
+    <button mat-button (click)="addDoc()" color="primary" [disabled]="isOccupying">添加</button>
+  </mat-dialog-actions>
+</ng-template>

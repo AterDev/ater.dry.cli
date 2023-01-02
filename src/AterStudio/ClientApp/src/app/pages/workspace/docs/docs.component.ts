@@ -59,8 +59,8 @@ export class DocsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getDocs();
     this.initForm();
+    this.getDocs();
   }
 
   initForm(): void {
@@ -78,9 +78,10 @@ export class DocsComponent implements OnInit {
           if (res.length > 0) {
             this.currentDoc = res[0];
             this.getDocContent();
+          } else {
+            this.isLoading = false;
           }
         }
-
       });
   }
 
