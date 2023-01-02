@@ -35,8 +35,10 @@ export class DocsComponent implements OnInit {
   newDoc = {} as ApiDocInfo;
   addForm!: FormGroup;
   dialogRef!: MatDialogRef<{}, any>;
+
   @ViewChild("addDocDialog", { static: true })
   requestTmpRef!: TemplateRef<{}>;
+  
   restApiGroups = [] as RestApiGroup[];
   modelInfos = [] as EntityInfo[];
   tags = [] as ApiDocTag[];

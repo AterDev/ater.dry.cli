@@ -4,7 +4,7 @@
 }
 
 .example-headers-align {
-    margin-left: 8px;
+    margin-left: 6px;
 }
 
 .mat-expansion-panel-spacing {
@@ -13,11 +13,11 @@
 }
 
 ::ng-deep .mat-expansion-panel-body {
-    padding: 0 4px 16px !important;
+    padding: 0 4px 12px !important;
 }
 
 .mat-expansion-panel-header {
-    padding-left: 12px;
+    padding-left: 8px;
     background-color: rgb(250, 250, 250);
     height: 48px
 }
@@ -50,6 +50,12 @@
     flex-direction: column;
     background-color: #fefefe;
     text-shadow: 0 1px 3px 3px #eee;
+}
+
+.api-list {
+    max-width: 260px;
+    height: calc(100vh - 112px);
+    overflow-y: auto;
 }
 
 .api-summary {
