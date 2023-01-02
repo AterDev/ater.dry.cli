@@ -185,11 +185,12 @@ public class OpenApiHelper
             {
                 var prop = new PropertyInfo
                 {
-                    Name = enums[i].ToString() ?? i.ToString(),
+                    Name = (enums[i] as OpenApiInteger)?.Value.ToString() ?? i.ToString(),
                     ProjectId = Const.PROJECT_ID,
                     Type = "Enum:int",
                     IsEnum = true,
                 };
+           
                 if (extEnum.Value is OpenApiArray values)
                 {
                     prop.CommentSummary = (values[i] as OpenApiString)!.Value;
