@@ -30,6 +30,7 @@ export class DocsComponent implements OnInit {
   isOccupying = false;
   currentApi: RestApiInfo | null = null;
   selectedModel: EntityInfo | null = null;
+  searchKey: string | null = null;
   /**
    * 文档列表
    */
@@ -45,6 +46,7 @@ export class DocsComponent implements OnInit {
   @ViewChild("modelInfo", { static: true })
   modelTmpRef!: TemplateRef<{}>;
   restApiGroups = [] as RestApiGroup[];
+  filterApiGroups = [] as RestApiGroup[];
   modelInfos = [] as EntityInfo[];
   tags = [] as ApiDocTag[];
   tableColumns = ['name', 'type', 'requried', 'description'];
@@ -135,11 +137,40 @@ export class DocsComponent implements OnInit {
         .subscribe(res => {
           if (res) {
             this.restApiGroups = res.restApiGroups!;
+            this.filterApiGroups = this.restApiGroups;
             this.modelInfos = res.modelInfos!;
             this.tags = res.openApiTags!;
           }
           this.isLoading = false;
         })
+    }
+  }
+
+  filterApis(): void {
+    if (this.searchKey && this.searchKey != null) {
+      const searchKey = this.searchKey.toLowerCase();
+      this.filterApiGroups = this.restApiGroups.filter((val) => {
+        return val.name?.toLowerCase().includes(searchKey)
+          || val.apiInfos!.findIndex((api) => {
+            return api.router?.toLowerCase().includes(searchKey)
+              || api.summary?.toLowerCase().includes(searchKey)
+              || api.tag?.toLowerCase().includes(searchKey)
+          }) > -1
+      });
+
+      console.log(this.filterApiGroups);
+
+      for (let index = 0; index < this.filterApiGroups.length; index++) {
+        const group = this.filterApiGroups[index];
+        this.filterApiGroups[index].apiInfos = group.apiInfos!
+          .filter((api) => {
+            return api.router?.toLowerCase().includes(searchKey)
+              || api.summary?.toLowerCase().includes(searchKey)
+              || api.tag?.toLowerCase().includes(searchKey)
+          })
+      }
+    } else {
+      this.filterApiGroups = this.restApiGroups;
     }
   }
 
@@ -182,5 +213,9 @@ export class DocsComponent implements OnInit {
     }
   }
 
-  refresh(): void { }
+  refresh(): void {
+    this.isRefresh = true;
+    this.getDocContent();
+
+  }
 }

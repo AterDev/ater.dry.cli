@@ -18,17 +18,20 @@
 
     <span class="example-spacer"></span>
     <!-- 手动更新 -->
-    <button mat-icon-button matTooltip="刷新文档" color="primary" [disabled]="!isRefresh" (click)="refresh()">
+    <button mat-icon-button matTooltip="刷新文档" color="primary" [disabled]="isLoading" (click)="refresh()">
       <mat-icon>refresh</mat-icon>
     </button>
   </mat-toolbar>
   <!-- 左边接口树型列表 -->
-  <!-- TODO:搜索 -->
   <!-- 优先描述 -->
   <div class="d-flex">
     <div class="col col-auto api-list">
+      <!-- 搜索 -->
+      <mat-form-field class="w-100 mt-2">
+        <input matInput placeholder="搜索接口" [(ngModel)]="searchKey" (keyup.enter)="filterApis()">
+      </mat-form-field>
       <mat-accordion class="example-headers-align" multi>
-        <mat-expansion-panel hideToggle [expanded]="true" *ngFor="let group of restApiGroups">
+        <mat-expansion-panel hideToggle [expanded]="true" *ngFor="let group of filterApiGroups">
           <mat-expansion-panel-header>
             <!-- 控制器名(Tag)/描述 -->
             <mat-panel-title>
