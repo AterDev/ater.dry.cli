@@ -30,7 +30,7 @@ public class RestApiInfo
     /// </summary>
     public EntityInfo? RequestInfo { get; set; }
     /// <summary>
-    /// 返回类型内容
+    /// 返回类型内容p
     /// </summary>
     public EntityInfo? ResponseInfo { get; set; }
 }

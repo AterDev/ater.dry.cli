@@ -146,10 +146,10 @@ export class DocsComponent implements OnInit {
   getApiTypeColor(type: OperationType): string {
     switch (type) {
       case OperationType.Get:
-        return '#61affe';
+        return '#318deb';
 
       case OperationType.Post:
-        return '#49cc90';
+        return '#14cc78';
 
       case OperationType.Put:
         return '#fca130';
