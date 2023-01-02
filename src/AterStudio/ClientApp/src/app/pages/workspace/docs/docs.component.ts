@@ -1,3 +1,4 @@
+import { trigger, state, style, transition, animate } from '@angular/animations';
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -8,6 +9,7 @@ import { ApiDocInfo } from 'src/app/share/models/api-doc/api-doc-info.model';
 import { EntityInfo } from 'src/app/share/models/entity-info.model';
 import { OperationType } from 'src/app/share/models/enum/operation-type.model';
 import { Project } from 'src/app/share/models/project/project.model';
+import { PropertyInfo } from 'src/app/share/models/property-info.model';
 import { RestApiGroup } from 'src/app/share/models/rest-api-group.model';
 import { RestApiInfo } from 'src/app/share/models/rest-api-info.model';
 import { ProjectStateService } from 'src/app/share/project-state.service';
@@ -17,7 +19,7 @@ import { ProjectService } from 'src/app/share/services/project.service';
 @Component({
   selector: 'app-docs',
   templateUrl: './docs.component.html',
-  styleUrls: ['./docs.component.css']
+  styleUrls: ['./docs.component.css'],
 })
 export class DocsComponent implements OnInit {
   OperationType = OperationType;
@@ -27,6 +29,7 @@ export class DocsComponent implements OnInit {
   isLoading = true;
   isOccupying = false;
   currentApi: RestApiInfo | null = null;
+  selectedModel: EntityInfo | null = null;
   /**
    * 文档列表
    */
@@ -38,7 +41,9 @@ export class DocsComponent implements OnInit {
 
   @ViewChild("addDocDialog", { static: true })
   requestTmpRef!: TemplateRef<{}>;
-  
+
+  @ViewChild("modelInfo", { static: true })
+  modelTmpRef!: TemplateRef<{}>;
   restApiGroups = [] as RestApiGroup[];
   modelInfos = [] as EntityInfo[];
   tags = [] as ApiDocTag[];
@@ -140,6 +145,19 @@ export class DocsComponent implements OnInit {
 
   selectApi(api: RestApiInfo): void {
     this.currentApi = api;
+  }
+
+  showModel(prop: PropertyInfo): void {
+    if (prop.isNavigation) {
+      this.selectedModel = this.modelInfos.find(m => m.name == prop.navigationName) ?? null;
+      console.log(this.selectedModel);
+      if (this.selectedModel) {
+        this.dialog.closeAll();
+        this.dialog.open(this.modelTmpRef, {
+          minWidth: 400
+        });
+      }
+    }
   }
 
   getApiTip(api: RestApiInfo): string {
