@@ -44,12 +44,29 @@
 }
 
 .section-block {
-    padding: 4px;
+    padding: 12px;
     margin: 8px 0;
+    display: flex;
+    flex-direction: column;
+    background-color: #fefefe;
+    text-shadow: 0 1px 3px 3px #eee;
+}
 
+.api-summary {
+    font-size: 16px;
+    margin-top: 4px;
+    font-weight: bold;
+}
+
+.api-router {
+    color: #444;
+    padding: 2px;
+    margin-left: 4px;
 }
 
 table {
     min-width: 480px;
     width: fit-content;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
 }
