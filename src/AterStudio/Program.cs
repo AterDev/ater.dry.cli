@@ -14,7 +14,7 @@ builder.Services.AddScoped<ProjectManager>();
 builder.Services.AddScoped<EntityManager>();
 builder.Services.AddScoped<ApiDocManager>();
 
-// cors≈‰÷√ 
+// corsÈÖçÁΩÆ 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("default", builder =>
@@ -31,7 +31,7 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "Ater Studio",
-        Description = "API Œƒµµ",
+        Description = "API ÊñáÊ°£",
         Version = "v1"
     });
     string[] xmlFiles = Directory.GetFiles(AppContext.BaseDirectory, "*.xml", SearchOption.TopDirectoryOnly);
@@ -66,7 +66,7 @@ builder.Services.AddControllers()
     });
 WebApplication app = builder.Build();
 
-// “Ï≥£Õ≥“ª¥¶¿Ì
+// ÂºÇÂ∏∏Áªü‰∏ÄÂ§ÑÁêÜ
 app.UseExceptionHandler(handler =>
 {
     handler.Run(async context =>
@@ -75,7 +75,7 @@ app.UseExceptionHandler(handler =>
         Exception? exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
         var result = new
         {
-            Title = "≥Ã–Úƒ⁄≤ø¥ÌŒÛ:" + exception?.Message,
+            Title = "Á®ãÂ∫èÂÜÖÈÉ®ÈîôËØØ:" + exception?.Message,
             Detail = exception?.Source,
             Status = 500,
             TraceId = context.TraceIdentifier
@@ -84,16 +84,13 @@ app.UseExceptionHandler(handler =>
     });
 });
 
-// ≥ı ºªØ
+// ÂàùÂßãÂåñ
 IServiceScope scope = app.Services.CreateScope();
 
 app.UseCors("default");
 //app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-
-app.UseSwagger();
-app.UseSwaggerUI();
 
 app.MapControllerRoute(
     name: "default",
