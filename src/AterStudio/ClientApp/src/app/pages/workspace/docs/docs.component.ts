@@ -1,4 +1,3 @@
-import { trigger, state, style, transition, animate } from '@angular/animations';
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -35,7 +34,7 @@ export class DocsComponent implements OnInit {
    * 文档列表
    */
   docs = [] as ApiDocInfo[];
-  currentDoc = {} as ApiDocInfo;
+  currentDoc: ApiDocInfo | null = null;
   newDoc = {} as ApiDocInfo;
   addForm!: FormGroup;
   dialogRef!: MatDialogRef<{}, any>;
@@ -118,7 +117,7 @@ export class DocsComponent implements OnInit {
     }
   }
   delete(): void {
-    const id = this.currentDoc.id;
+    const id = this.currentDoc!.id;
     if (id) {
       this.service.delete(id)
         .subscribe(res => {
@@ -131,7 +130,7 @@ export class DocsComponent implements OnInit {
   }
 
   getDocContent(): void {
-    const id = this.currentDoc.id;
+    const id = this.currentDoc!.id;
     if (id) {
       this.service.getApiDocContent(id)
         .subscribe(res => {
@@ -140,6 +139,19 @@ export class DocsComponent implements OnInit {
             this.filterApiGroups = this.restApiGroups;
             this.modelInfos = res.modelInfos!;
             this.tags = res.openApiTags!;
+            // 更新当前展示的内容
+            if (this.currentApi != null) {
+              const updateContent = this.filterApiGroups
+                .map(g => g.apiInfos!)
+                .flat(1)
+                .find((a) => a?.router == this.currentApi?.router);
+
+              console.log(updateContent);
+
+              if (updateContent) {
+                this.currentApi = updateContent;
+              }
+            }
           }
           this.isLoading = false;
         })
@@ -214,8 +226,6 @@ export class DocsComponent implements OnInit {
   }
 
   refresh(): void {
-    this.isRefresh = true;
     this.getDocContent();
-
   }
 }

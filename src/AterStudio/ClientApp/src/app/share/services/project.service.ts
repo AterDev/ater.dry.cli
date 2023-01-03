@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BaseService } from './base.service';
 import { Observable } from 'rxjs';
 
-        import { Project } from '../models/project/project.model';
+import { Project } from '../models/project/project.model';
 
 /**
  * 项目

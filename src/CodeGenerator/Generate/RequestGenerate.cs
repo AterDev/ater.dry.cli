@@ -318,8 +318,7 @@ public class RequestGenerate : GenerateBase
         string result = $@"import {{ Injectable }} from '@angular/core';
 import {{ BaseService }} from './base.service';
 import {{ Observable }} from 'rxjs';
-
-        {importModels}
+{importModels}
 /**
  * {serviceFile.Description}
  */

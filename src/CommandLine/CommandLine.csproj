@@ -8,7 +8,7 @@
 		<AssemblyVersion>0.1.0.0</AssemblyVersion>
 		<FileVersion>0.1.0.0</FileVersion>
 		<PackageId>ater.droplet.cli</PackageId>
-		<Version>7.0.4-beta</Version>
+		<Version>7.0.4-beta2</Version>
 		<Description> ater.web 框架代码生成器</Description>
 		<Authors>NilTor</Authors>
 		<Company>Atersoft</Company>
@@ -19,7 +19,8 @@
 		<RepositoryUrl>https://github.com/AterDev/cli.git</RepositoryUrl>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<PackageReleaseNotes>
-		1. 改进studio使用体验</PackageReleaseNotes>
+		1. 改进studio使用体验
+2. 添加接口文档展示</PackageReleaseNotes>
 		<PackageIcon>logo.jpg</PackageIcon>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<RootNamespace>Droplet.$(MSBuildProjectName.Replace("cli", "CLI"))</RootNamespace>

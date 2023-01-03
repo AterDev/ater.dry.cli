@@ -22,10 +22,9 @@
       <mat-icon>refresh</mat-icon>
     </button>
   </mat-toolbar>
-  <!-- 左边接口树型列表 -->
-  <!-- 优先描述 -->
   <div class="d-flex">
-    <div class="col col-auto api-list">
+    <!-- 左边接口树型列表 -->
+    <div class="col col-auto api-list" *ngIf="currentDoc!=null">
       <!-- 搜索 -->
       <mat-form-field class="w-100 mt-2">
         <input matInput placeholder="搜索接口" [(ngModel)]="searchKey" (keyup.enter)="filterApis()">
