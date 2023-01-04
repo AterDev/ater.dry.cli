@@ -9,9 +9,9 @@ try {
     if ($withStudio -eq $true) {
         # build web project
         Set-Location ../src/AterStudio
-        if ([System.IO.File]::Exists(".\publish")) {
+        if ([System.IO.File]::Exists("./publish")) {
             <# Action to perform if the condition is true #>
-            Remove-Item .\publish\ -R -Force
+            Remove-Item .\publish -R -Force
         }
         
         dotnet publish -c release -o ./publish
