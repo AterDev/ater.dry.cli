@@ -340,7 +340,8 @@ export class {serviceFile.Name}Service extends BaseService {{
         string Name = function.Name;
         List<FunctionParams>? Params = function.Params;
         string RequestType = function.RequestType;
-        string? ResponseType = function.ResponseType;
+        string ResponseType = string.IsNullOrWhiteSpace(function.ResponseType) ? "any" : function.ResponseRefType!;
+
         string Path = function.Path;
 
         // 函数名处理，去除tag前缀，然后格式化
@@ -353,8 +354,10 @@ export class {serviceFile.Name}Service extends BaseService {{
         if (Params?.Count > 0)
         {
             paramsString = string.Join(", ",
-                Params.OrderBy(p => p.IsRequired)
-                    .Select(p => p.Name + ": " + p.Type)
+                Params.OrderByDescending(p => p.IsRequired)
+                    .Select(p => p.IsRequired
+                        ? p.Name + ": " + p.Type
+                        : p.Name + "?: " + p.Type)
                 .ToArray());
             Params.ForEach(p =>
             {
