@@ -1,3 +1,5 @@
+using Datastore;
+
 namespace Command.Share.Commands;
 
 public class DtoCommand : CommandBase
@@ -16,7 +18,8 @@ public class DtoCommand : CommandBase
     {
         EntityPath = entityPath;
         DtoPath = dtoPath;
-        CodeGen = new DtoCodeGenerate(EntityPath, DtoPath)
+
+        CodeGen = new DtoCodeGenerate(EntityPath, DtoPath, CommandRunner.dbContext)
         {
             AssemblyName = new DirectoryInfo(DtoPath).Name
         };

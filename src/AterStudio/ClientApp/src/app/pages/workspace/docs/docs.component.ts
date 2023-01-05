@@ -226,6 +226,7 @@ export class DocsComponent implements OnInit {
   }
 
   refresh(): void {
+    this.isLoading = true;
     this.getDocContent();
   }
 }

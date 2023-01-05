@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using System.Text.Unicode;
 using AterStudio;
 using AterStudio.Manager;
+using Datastore;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Models;
@@ -10,6 +11,8 @@ using Microsoft.OpenApi.Models;
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+builder.Services.AddSingleton<DbContext>();
 builder.Services.AddScoped<ProjectManager>();
 builder.Services.AddScoped<EntityManager>();
 builder.Services.AddScoped<ApiDocManager>();

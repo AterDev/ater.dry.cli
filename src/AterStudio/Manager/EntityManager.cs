@@ -9,9 +9,9 @@ namespace AterStudio.Manager;
 public class EntityManager
 {
     private readonly DbContext _dbContext;
-    public EntityManager()
+    public EntityManager(DbContext dbContext)
     {
-        _dbContext = new DbContext();
+        _dbContext = dbContext;
     }
 
     /// <summary>
@@ -79,8 +79,8 @@ public class EntityManager
 
     public async Task GenerateAsync(Project project, GenerateDto dto)
     {
-
         Const.PROJECT_ID = project.ProjectId;
+        CommandRunner.dbContext = _dbContext;
         switch (dto.CommandType)
         {
             case CommandType.Dto:

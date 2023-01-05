@@ -9,9 +9,9 @@ public class ProjectManager
 {
     private readonly DbContext _dbContext;
 
-    public ProjectManager()
+    public ProjectManager(DbContext dbContext)
     {
-        _dbContext = new DbContext();
+        _dbContext = dbContext;
     }
 
     public List<Project> GetProjects()

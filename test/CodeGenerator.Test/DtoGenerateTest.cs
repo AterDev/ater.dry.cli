@@ -74,7 +74,7 @@ public class DtoGenerateTest
         string filePath = PathHelper.GetProjectFilePath(@"Entity\Blog.cs");
         //var filePath = PathHelper.GetProjectFilePath(@"D:\codes\DevPlatform\src\Microservice\DocAPI\Models\DocsCatalog.cs");
         string dtoPath = PathHelper.GetProjectPath();
-        DtoCodeGenerate gen = new(filePath, dtoPath);
+        DtoCodeGenerate gen = new(filePath, dtoPath, new Datastore.DbContext());
         string? shortDto = gen.GetShortDto();
         string? filterDto = gen.GetFilterDto();
         string? updateDto = gen.GetUpdateDto();

@@ -17,12 +17,12 @@ public class DtoCodeGenerate : GenerateBase
     /// </summary>
     public string? AssemblyName { get; set; } = "Share";
     public string DtoPath { get; init; }
-
     public List<PropertyChange> PropertyChanges = new List<PropertyChange>();
-
-    public DtoCodeGenerate(string entityPath, string dtoPath)
+    public readonly DbContext dbContext;
+    public DtoCodeGenerate(string entityPath, string dtoPath, DbContext dbContext)
     {
         DtoPath = dtoPath;
+        this.dbContext = dbContext;
         if (!File.Exists(entityPath))
         {
             throw new FileNotFoundException();
@@ -45,8 +45,7 @@ public class DtoCodeGenerate : GenerateBase
     /// </summary>
     public void GetChangedProperties()
     {
-        var context = new DbContext();
-        var currentEntity = context.EntityInfos.Query()
+        var currentEntity = dbContext.EntityInfos.Query()
             .Where(e => e.Name == EntityInfo.Name
                 && e.NamespaceName == EntityInfo.NamespaceName
                 && e.ProjectId == Const.PROJECT_ID)
@@ -87,10 +86,10 @@ public class DtoCodeGenerate : GenerateBase
                 };
                 PropertyChanges.Add(prop);
             });
-            context.EntityInfos.Delete(currentEntity.Id);
+            dbContext.EntityInfos.Delete(currentEntity.Id);
         }
-        context.EntityInfos.EnsureIndex(e => e.Name);
-        context.EntityInfos.Insert(EntityInfo);
+        dbContext.EntityInfos.EnsureIndex(e => e.Name);
+        dbContext.EntityInfos.Insert(EntityInfo);
         PropertyChanges.ForEach(p =>
         {
             Console.WriteLine(p.Type.ToString() + " : " + p.Name);

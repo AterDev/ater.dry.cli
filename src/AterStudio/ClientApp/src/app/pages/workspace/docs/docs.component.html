@@ -1,3 +1,8 @@
+<div *ngIf="isLoading" class="loading">
+  <mat-spinner [value]="100">
+  </mat-spinner>
+</div>
+
 <div *ngIf="!isLoading">
   <mat-toolbar>
     <mat-form-field appearance="fill">

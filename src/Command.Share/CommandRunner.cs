@@ -1,10 +1,13 @@
+using Datastore;
+
 namespace Command.Share;
 
-public class CommandRunner
+public static class CommandRunner
 {
-    public CommandRunner()
-    {
-    }
+    /// <summary>
+    /// 全局静态唯一
+    /// </summary>
+    public static DbContext dbContext = new DbContext();
 
     public static async Task GenerateDocAsync(string url = "", string output = "")
     {

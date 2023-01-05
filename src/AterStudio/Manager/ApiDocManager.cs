@@ -12,9 +12,9 @@ public class ApiDocManager
 {
     private readonly DbContext _dbContext;
 
-    public ApiDocManager()
+    public ApiDocManager(DbContext dbContext)
     {
-        _dbContext = new DbContext();
+        _dbContext = dbContext;
     }
 
     public ApiDocInfo? Find(Guid id)
