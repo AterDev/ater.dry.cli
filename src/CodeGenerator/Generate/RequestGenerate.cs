@@ -340,7 +340,7 @@ export class {serviceFile.Name}Service extends BaseService {{
         string Name = function.Name;
         List<FunctionParams>? Params = function.Params;
         string RequestType = function.RequestType;
-        string ResponseType = string.IsNullOrWhiteSpace(function.ResponseType) ? "any" : function.ResponseRefType!;
+        string ResponseType = string.IsNullOrWhiteSpace(function.ResponseType) ? "any" : function.ResponseType!;
 
         string Path = function.Path;
 
@@ -357,7 +357,7 @@ export class {serviceFile.Name}Service extends BaseService {{
                 Params.OrderByDescending(p => p.IsRequired)
                     .Select(p => p.IsRequired
                         ? p.Name + ": " + p.Type
-                        : p.Name + "?: " + p.Type)
+                        : p.Name + ": " + p.Type + " = ''")
                 .ToArray());
             Params.ForEach(p =>
             {

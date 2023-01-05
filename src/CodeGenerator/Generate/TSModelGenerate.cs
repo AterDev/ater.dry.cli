@@ -378,7 +378,7 @@ public class TSModelGenerate : GenerateBase
     /// <returns></returns>
     public static string GetTsType(OpenApiSchema prop)
     {
-        string? type = "string";
+        string? type = "any";
         // 常规类型
         switch (prop.Type)
         {
@@ -417,7 +417,7 @@ public class TSModelGenerate : GenerateBase
                     : GetTsType(prop.Items) + "[]";
                 break;
             default:
-                type = prop.Reference?.Id;
+                type = prop.Reference?.Id ?? "any";
                 break;
         }
         // 引用对象
@@ -432,7 +432,7 @@ public class TSModelGenerate : GenerateBase
             type += " | null";
         }
 
-        return type ?? "string";
+        return type ?? "any";
     }
 }
 
