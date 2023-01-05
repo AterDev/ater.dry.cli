@@ -45,12 +45,12 @@ public class ${EntityName}Manager : DomainManagerBase<${EntityName}, ${EntityNam
     /// <returns></returns>
     public async Task<${EntityName}?> GetOwnedAsync(Guid id)
     {
-        Queryable = Queryable.Where(q => q.Id == id);
+        var query = Command.Db.Where(q => q.Id == id);
         if (!_userContext.IsAdmin)
         {
             // TODO:属于当前角色的对象
-            // Queryable = Queryable.Where(q => q.User.Id == _userContext.UserId);
+            // query = query.Where(q => q.User.Id == _userContext.UserId);
         }
-        return await Queryable.FirstOrDefaultAsync();
+        return await query.FirstOrDefaultAsync();
     }
 }
