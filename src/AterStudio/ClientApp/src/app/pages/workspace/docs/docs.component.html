@@ -153,7 +153,8 @@
           <ng-container *ngIf="currentApi.responseInfo.propertyInfos!.length>0;else responseElse">
             <mat-chip-list>
               <mat-chip color="primary">application/json</mat-chip>
-              <mat-chip color="primary" selected matTooltip="返回类型">{{currentApi.responseInfo.name}}</mat-chip>
+              <mat-chip color="primary" selected matTooltip="返回类型"
+                *ngIf="currentApi.responseInfo.name">{{currentApi.responseInfo.name}}</mat-chip>
             </mat-chip-list>
             <!-- 渲染内容 -->
             <table mat-table [dataSource]="currentApi.responseInfo.propertyInfos!" class="my-2">
