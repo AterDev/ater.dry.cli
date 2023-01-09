@@ -188,6 +188,8 @@ export class DocsComponent implements OnInit {
 
   selectApi(api: RestApiInfo): void {
     this.currentApi = api;
+    console.log(this.currentApi);
+    
   }
 
   showModel(prop: PropertyInfo): void {

@@ -68,7 +68,32 @@ public class OpenApiHelper
                     var (RequestType, RequestRefType) = GetParamType(requestBody.Content.Values.FirstOrDefault()?.Schema);
                     // 关联的类型
                     var model = ModelInfos.FirstOrDefault(m => m.Name == RequestRefType);
-                    apiInfo.RequestInfo = model;
+
+                    if (model == null)
+                    {
+                        apiInfo.RequestInfo = new EntityInfo
+                        {
+                            Name = RequestType,
+                            ProjectId = Const.PROJECT_ID,
+                        };
+
+                        if (!string.IsNullOrWhiteSpace(RequestType))
+                        {
+                            apiInfo.RequestInfo.PropertyInfos = new List<PropertyInfo>
+                            {
+                                new PropertyInfo
+                                {
+                                    Name = RequestType,
+                                    ProjectId = Const.PROJECT_ID,
+                                    Type = RequestRefType ?? "any",
+                                }
+                            };
+                        }
+                    }
+                    else
+                    {
+                        apiInfo.RequestInfo = model;
+                    }
                 }
                 // 响应类型
                 if (responseBody != null)
@@ -82,20 +107,28 @@ public class OpenApiHelper
                     // 返回内容没有对应类型
                     if (model == null)
                     {
-                        var schema = responseBody.FirstOrDefault().Value?.Content
-                            .FirstOrDefault().Value?.Schema;
-
                         apiInfo.ResponseInfo = new EntityInfo
                         {
-                            Name = schema?.Type ?? "unknown",
+                            Name = ResponseType,
                             ProjectId = Const.PROJECT_ID,
                         };
+                        if (!string.IsNullOrWhiteSpace(ResponseType))
+                        {
+                            apiInfo.ResponseInfo.PropertyInfos = new List<PropertyInfo>
+                            {
+                                new PropertyInfo
+                                {
+                                    Name = ResponseType,
+                                    ProjectId = Const.PROJECT_ID,
+                                    Type = ResponseRefType ?? "any",
+                                }
+                            };
+                        }
                     }
                     else
                     {
                         apiInfo.ResponseInfo = model;
                     }
-
                 }
                 // 请求的参数
                 if (requestParameters != null)
@@ -190,7 +223,7 @@ public class OpenApiHelper
                     Type = "Enum:int",
                     IsEnum = true,
                 };
-           
+
                 if (extEnum.Value is OpenApiArray values)
                 {
                     prop.CommentSummary = (values[i] as OpenApiString)!.Value;
