@@ -55,7 +55,7 @@ public class ApiDocController : ControllerBase
     [HttpPost]
     public ActionResult<ApiDocInfo> Add(ApiDocInfo apiDocInfo)
     {
-        return _manager.AddApiDoc(apiDocInfo);
+        return _manager.AddApiDoc(apiDocInfo); 
     }
 
     /// <summary>

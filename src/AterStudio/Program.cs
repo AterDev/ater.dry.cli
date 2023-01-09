@@ -79,7 +79,7 @@ app.UseExceptionHandler(handler =>
         var result = new
         {
             Title = "程序内部错误:" + exception?.Message,
-            Detail = exception?.Source,
+            Detail = exception?.Message,
             Status = 500,
             TraceId = context.TraceIdentifier
         };

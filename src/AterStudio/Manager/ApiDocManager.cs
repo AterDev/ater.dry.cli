@@ -40,29 +40,35 @@ public class ApiDocManager
         var path = apiDocInfo.Path;
 
         string openApiContent = "";
-
-        if (path.StartsWith("http://") || path.StartsWith("https://"))
+        try
         {
-            using HttpClient http = new();
-            openApiContent = await http.GetStringAsync(path);
+            if (path.StartsWith("http://") || path.StartsWith("https://"))
+            {
+                using HttpClient http = new();
+                openApiContent = await http.GetStringAsync(path);
+            }
+            else
+            {
+                openApiContent = File.ReadAllText(path);
+            }
+            openApiContent = openApiContent
+                .Replace("«", "")
+                .Replace("»", "");
+
+            var apiDocument = new OpenApiStringReader().Read(openApiContent, out _);
+            var helper = new OpenApiHelper(apiDocument);
+
+            return new ApiDocContent
+            {
+                ModelInfos = helper.ModelInfos,
+                OpenApiTags = helper.OpenApiTags,
+                RestApiGroups = helper.RestApiGroups
+            };
         }
-        else
+        catch (Exception)
         {
-            openApiContent = File.ReadAllText(path);
+            throw new Exception($"{path} 请求失败！");
         }
-        openApiContent = openApiContent
-            .Replace("«", "")
-            .Replace("»", "");
-
-        var apiDocument = new OpenApiStringReader().Read(openApiContent, out _);
-        var helper = new OpenApiHelper(apiDocument);
-
-        return new ApiDocContent
-        {
-            ModelInfos = helper.ModelInfos,
-            OpenApiTags = helper.OpenApiTags,
-            RestApiGroups = helper.RestApiGroups
-        };
     }
 
     /// <summary>

@@ -80,15 +80,22 @@ export class DocsComponent implements OnInit {
   }
   getDocs(): void {
     this.service.list(this.projectId)
-      .subscribe(res => {
-        if (res) {
-          this.docs = res;
-          if (res.length > 0) {
-            this.currentDoc = res[0];
-            this.getDocContent();
-          } else {
-            this.isLoading = false;
+      .subscribe({
+        next: (res) => {
+          if (res) {
+            this.docs = res;
+            if (res.length > 0) {
+              this.currentDoc = res[0];
+              this.getDocContent();
+            } else {
+              this.isLoading = false;
+            }
           }
+
+        },
+        error: error => {
+          this.isLoading = false;
+          this.snb.open(error);
         }
       });
   }
@@ -133,28 +140,34 @@ export class DocsComponent implements OnInit {
     const id = this.currentDoc!.id;
     if (id) {
       this.service.getApiDocContent(id)
-        .subscribe(res => {
-          if (res) {
-            this.restApiGroups = res.restApiGroups!;
-            this.filterApiGroups = this.restApiGroups;
-            this.modelInfos = res.modelInfos!;
-            this.tags = res.openApiTags!;
-            // 更新当前展示的内容
-            if (this.currentApi != null) {
-              const updateContent = this.filterApiGroups
-                .map(g => g.apiInfos!)
-                .flat(1)
-                .find((a) => a?.router == this.currentApi?.router);
+        .subscribe(
+          {
+            next: res => {
+              if (res) {
+                this.restApiGroups = res.restApiGroups!;
+                this.filterApiGroups = this.restApiGroups;
+                this.modelInfos = res.modelInfos!;
+                this.tags = res.openApiTags!;
+                // 更新当前展示的内容
+                if (this.currentApi != null) {
+                  const updateContent = this.filterApiGroups
+                    .map(g => g.apiInfos!)
+                    .flat(1)
+                    .find((a) => a?.router == this.currentApi?.router);
 
-              console.log(updateContent);
+                  console.log(updateContent);
 
-              if (updateContent) {
-                this.currentApi = updateContent;
+                  if (updateContent) {
+                    this.currentApi = updateContent;
+                  }
+                }
               }
+              this.isLoading = false;
+            },
+            error: error => {
+              this.isLoading = false;
             }
-          }
-          this.isLoading = false;
-        })
+          })
     }
   }
 
@@ -189,7 +202,7 @@ export class DocsComponent implements OnInit {
   selectApi(api: RestApiInfo): void {
     this.currentApi = api;
     console.log(this.currentApi);
-    
+
   }
 
   showModel(prop: PropertyInfo): void {
