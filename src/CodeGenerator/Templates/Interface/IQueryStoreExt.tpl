@@ -14,5 +14,5 @@ public interface IQueryStoreExt<TEntity>
     /// <param name="pageIndex"></param>
     /// <param name="pageSize"></param>
     /// <returns></returns>
-    Task<PageList<TItem>> FilterAsync<TItem>(IQueryable<TEntity> query, Dictionary<string, bool>? order, int pageIndex = 1, int pageSize = 12);
+    Task<PageList<TItem>> FilterAsync<TItem>(IQueryable<TEntity> query, int pageIndex = 1, int pageSize = 12, Dictionary<string, bool>? order = null);
 }

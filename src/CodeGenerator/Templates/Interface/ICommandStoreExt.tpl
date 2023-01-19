@@ -20,15 +20,6 @@ public interface ICommandStoreExt<TId, TEntity>
     Task<int> UpdateRangeAsync<TUpdate>(Expression<Func<TEntity, bool>> whereExp, TUpdate dto);
 
     /// <summary>
-    /// 批量更新
-    /// </summary>
-    /// <typeparam name="TUpdate"></typeparam>
-    /// <param name="ids"></param>
-    /// <param name="dto"></param>
-    /// <returns></returns>
-    Task<int> EditRangeAsync<TUpdate>(List<TId> ids, TUpdate dto);
-
-    /// <summary>
     /// 批量删除
     /// </summary>
     /// <param name="ids"></param>
@@ -41,3 +32,4 @@ public interface ICommandStoreExt<TId, TEntity>
 public interface ICommandStoreExt<TEntity> : ICommandStoreExt<Guid, TEntity>
      where TEntity : EntityBase
 { }
+

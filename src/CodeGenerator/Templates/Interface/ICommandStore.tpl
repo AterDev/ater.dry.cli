@@ -27,3 +27,4 @@ public interface ICommandStore<TEntity>
     /// <returns></returns>
     TEntity? Remove(TEntity entity);
 }
+

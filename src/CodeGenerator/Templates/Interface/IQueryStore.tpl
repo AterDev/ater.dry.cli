@@ -2,9 +2,6 @@
 /// <summary>
 /// 基础查询接口
 /// </summary>
-/// <summary>
-/// 基础查询接口
-/// </summary>
 public interface IQueryStore<TId, TEntity>
     where TEntity : EntityBase
 {

@@ -1,17 +1,17 @@
-﻿using EFCore.BulkExtensions;
+﻿using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace ${Namespace}.Implement;
 public class CommandStoreBase<TContext, TEntity> : ICommandStore<TEntity>, ICommandStoreExt<TEntity>
     where TContext : DbContext
     where TEntity : EntityBase
 {
-    private readonly TContext _context;
     protected readonly ILogger _logger;
     /// <summary>
     /// 当前实体DbSet
     /// </summary>
     protected readonly DbSet<TEntity> _db;
     public DbSet<TEntity> Db => _db;
+    public TContext Context { get; }
     public DatabaseFacade Database { get; init; }
     public bool EnableSoftDelete { get; set; } = true;
 
@@ -19,25 +19,25 @@ public class CommandStoreBase<TContext, TEntity> : ICommandStore<TEntity>, IComm
 
     public CommandStoreBase(TContext context, ILogger logger)
     {
-        _context = context;
+        Context = context;
         _logger = logger;
-        _db = _context.Set<TEntity>();
-        Database = _context.Database;
+        _db = Context.Set<TEntity>();
+        Database = Context.Database;
     }
 
     public virtual async Task<int> SaveChangeAsync()
     {
-        return await _context.SaveChangesAsync();
+        return await Context.SaveChangesAsync();
     }
 
     public virtual async Task<TEntity?> FindAsync(Expression<Func<TEntity, bool>>? whereExp, string[]? navigations = null)
     {
         Expression<Func<TEntity, bool>> exp = e => true;
         whereExp ??= exp;
-        var _query = _db.Where(whereExp).AsQueryable();
+        IQueryable<TEntity> _query = _db.Where(whereExp).AsQueryable();
         if (navigations != null)
         {
-            foreach (var item in navigations)
+            foreach (string item in navigations)
             {
                 _query = _query.Include(item);
             }
@@ -54,7 +54,7 @@ public class CommandStoreBase<TContext, TEntity> : ICommandStore<TEntity>, IComm
     {
         Expression<Func<TEntity, bool>> exp = e => true;
         whereExp ??= exp;
-        var res = await _db.Where(whereExp)
+        List<TEntity> res = await _db.Where(whereExp)
             .ToListAsync();
         return res;
     }
@@ -66,7 +66,7 @@ public class CommandStoreBase<TContext, TEntity> : ICommandStore<TEntity>, IComm
     /// <returns></returns>
     public virtual async Task<TEntity> CreateAsync(TEntity entity)
     {
-        await _db.AddAsync(entity);
+        _ = await _db.AddAsync(entity);
         return entity;
     }
 
@@ -77,7 +77,7 @@ public class CommandStoreBase<TContext, TEntity> : ICommandStore<TEntity>, IComm
     /// <returns></returns>
     public virtual TEntity Update(TEntity entity)
     {
-        _db.Update(entity);
+        _ = _db.Update(entity);
         return entity;
     }
 
@@ -94,32 +94,34 @@ public class CommandStoreBase<TContext, TEntity> : ICommandStore<TEntity>, IComm
         }
         else
         {
-            _db.Remove(entity!);
+            _ = _db.Remove(entity!);
         }
         return entity;
     }
+
 
     /// <summary>
     /// 批量创建
     /// </summary>
     /// <param name="entities"></param>
-    /// <param name="chunk"></param>
+    /// <param name="chunk">每个批次的最大数量</param>
     /// <returns></returns>
     public virtual async Task<List<TEntity>> CreateRangeAsync(List<TEntity> entities, int? chunk = 50)
     {
         if (chunk != null && entities.Count > chunk)
         {
-            entities.Chunk(chunk.Value).ToList()
+
+            entities.Chunk(entities.Count / chunk.Value + 1).ToList()
                 .ForEach(block =>
                 {
                     _db.AddRange(block);
-                    _context.SaveChanges();
+                    _ = Context.SaveChanges();
                 });
         }
         else
         {
             await _db.AddRangeAsync(entities);
-            await SaveChangeAsync();
+            _ = await SaveChangeAsync();
         }
         return entities;
     }
@@ -131,21 +133,11 @@ public class CommandStoreBase<TContext, TEntity> : ICommandStore<TEntity>, IComm
     /// <param name="whereExp"></param>
     /// <param name="dto"></param>
     /// <returns></returns>
-    public virtual async Task<int> UpdateRangeAsync<TUpdate>(Expression<Func<TEntity, bool>> whereExp, TUpdate dto)
+    [Obsolete("Not Implement")]
+    public virtual Task<int> UpdateRangeAsync<TUpdate>(Expression<Func<TEntity, bool>> whereExp, TUpdate dto)
     {
-        return await _db.Where(whereExp).BatchUpdateAsync(dto!);
-    }
-
-    /// <summary>
-    /// 批量编辑
-    /// </summary>
-    /// <typeparam name="TUpdate"></typeparam>
-    /// <param name="ids"></param>
-    /// <param name="dto"></param>
-    /// <returns></returns>
-    public virtual async Task<int> EditRangeAsync<TUpdate>(List<Guid> ids, TUpdate dto)
-    {
-        return await _db.Where(d => ids.Contains(d.Id)).BatchUpdateAsync(dto!);
+        //return await _db.Where(whereExp).ExecuteUpdateAsync(d => d.SetProperty(d => d.Id, d => Guid.NewGuid()));
+        throw new NotImplementedException();
     }
 
     /// <summary>
@@ -155,7 +147,7 @@ public class CommandStoreBase<TContext, TEntity> : ICommandStore<TEntity>, IComm
     /// <returns></returns>
     public virtual async Task<int> DeleteRangeAsync(List<Guid> ids)
     {
-        return await _db.Where(d => ids.Contains(d.Id)).BatchDeleteAsync();
+        return await _db.Where(d => ids.Contains(d.Id)).ExecuteDeleteAsync();
     }
 
     /// <summary>
@@ -165,7 +157,7 @@ public class CommandStoreBase<TContext, TEntity> : ICommandStore<TEntity>, IComm
     /// <returns></returns>
     public virtual async Task<int> DeleteRangeAsync(Expression<Func<TEntity, bool>> whereExp)
     {
-        return await _db.Where(whereExp).BatchDeleteAsync();
+        return await _db.Where(whereExp).ExecuteDeleteAsync();
     }
 }
 public class CommandSet<TEntity> : CommandStoreBase<CommandDbContext, TEntity>
