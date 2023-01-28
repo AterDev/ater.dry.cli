@@ -55,7 +55,7 @@ export class AddComponent implements OnInit {
 
   add(): void {
     if(this.formGroup.valid) {
-    const data = this.formGroup.value as { $EntityName }AddDto;
+    const data = this.formGroup.value as {$EntityName}AddDto;
     this.data = { ...data, ...this.data };
     this.service.add(this.data)
       .subscribe({

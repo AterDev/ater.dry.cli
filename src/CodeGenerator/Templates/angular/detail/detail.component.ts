@@ -41,7 +41,7 @@ export class DetailComponent implements OnInit {
               this.isLoading = false;
             }
         },
-        error:() => {
+        error:(error) => {
           this.snb.open(error);
         }
       })
