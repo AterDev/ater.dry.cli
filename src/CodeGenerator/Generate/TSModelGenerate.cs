@@ -211,7 +211,7 @@ public class TSModelGenerate : GenerateBase
         });
         // 去重
         var importsProps = props.Where(p => !string.IsNullOrEmpty(p.Reference))
-            .GroupBy(p => p.Type)
+            .GroupBy(p => p.Reference)
             .Select(g => new
             {
                 g.First().IsEnum,
