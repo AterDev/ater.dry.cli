@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO.Compression;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -6,6 +7,8 @@ using System.Runtime.InteropServices;
 namespace Command.Share.Commands;
 public class StudioCommand
 {
+
+
     public static void RunStudio()
     {
         Console.WriteLine("welcome ater studio!");
@@ -14,16 +17,11 @@ public class StudioCommand
         var studioPath = Path.Combine(appPath, "AterStudio");
         var file = new FileInfo(Path.Combine(studioPath, Config.StudioFileName));
 
-        if (!file.Exists)
-        {
-            // 初始化，解压内容
-            Console.WriteLine($"init studio...");
-            Update();
-        }
+        // 检查并更新
+        Update();
 
         Console.WriteLine("start studio...");
         // 运行
-        string path = file.FullName;
         string shell = "dotnet";
         //switch (Environment.OSVersion.Platform)
         //{
@@ -35,27 +33,30 @@ public class StudioCommand
         //}
 
         var url = "http://localhost:9160";
+
         Process process = new()
         {
             StartInfo = new ProcessStartInfo
             {
                 FileName = shell,
                 Arguments = $"./{Config.StudioFileName} --urls \"{url}\"",
-                UseShellExecute = true,
-                CreateNoWindow = true,
+                UseShellExecute = false,
+                CreateNoWindow = false,
                 //RedirectStandardOutput = true,
-                WorkingDirectory = studioPath
+                WorkingDirectory = studioPath,
                 //RedirectStandardError = true,
                 //StandardErrorEncoding = Encoding.UTF8,
                 //StandardOutputEncoding = Encoding.UTF8,
-            }
+            },
         };
-        _ = process.Start();
+        process.Start();
+
         Thread.Sleep(2000);
         // 启动浏览器
         try
         {
-            Process.Start(url);
+            var pr = Process.Start(url);
+            pr.Close();
         }
         catch (Exception ex)
         {
@@ -83,13 +84,12 @@ public class StudioCommand
         process.WaitForExit();
     }
 
-
     /// <summary>
     /// 升级studio
     /// </summary>
     public static void Update()
     {
-        Console.WriteLine($"updating studio...");
+        Console.WriteLine($"check&update studio...");
 
         var copyFiles = new string[] { "Microsoft.CodeAnalysis.CSharp", "Microsoft.CodeAnalysis", "LiteDB", "SharpYaml", "Microsoft.OpenApi", "CodeGenerator", "Microsoft.OpenApi.Readers", "Core", "Command.Share", "Datastore" };
 

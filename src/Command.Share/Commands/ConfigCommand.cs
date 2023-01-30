@@ -12,6 +12,8 @@ public class ConfigCommand
     public static async Task InitConfigFileAsync(string? configPath = null)
     {
         configPath ??= GetConfigPath();
+        Console.WriteLine("use config path:" + configPath);
+
         FileInfo file = new(Path.Combine(configPath, Config.ConfigFileName));
         string path = file == null
             ? Path.Combine(configPath, Config.ConfigFileName)
@@ -107,7 +109,6 @@ public class ConfigCommand
         string configPath;
         if (solutionPath == null)
         {
-            Console.WriteLine("can't find sln file, use system user dir");
             configPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
         }
         else

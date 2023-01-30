@@ -9,8 +9,6 @@ internal class Program
     {
         await ConfigCommand.InitConfigFileAsync();
         RootCommand root = new CommandBuilder().Build();
-
-        Console.WriteLine("projectId:" + Const.PROJECT_ID);
         return await root.InvokeAsync(args);
     }
 }
