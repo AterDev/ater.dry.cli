@@ -17,6 +17,11 @@ public class Blog : BaseDB
     public required string Title { get; set; }
     [MaxLength(200)]
     public string? Summary { get; set; }
+
+    public string DefaultValue { get; set; } = "default";
+
+    public virtual Status Status1 { get; set; } = Status.Default;
+
     public Comments? Comment { get; set; }
 
     /// <summary>

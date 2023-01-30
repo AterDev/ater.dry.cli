@@ -49,20 +49,23 @@ public class PropertyInfo : EntityBase
     /// 尾缀，如#endregion
     /// </summary>
     public string? SuffixContent { get; set; }
+    /// <summary>
+    /// 默认值
+    /// </summary>
+    public string DefaultValue { get; set; } = string.Empty;
     public EntityInfo EntityInfo { get; set; } = default!;
+
     /// <summary>
     /// 转换成C#属性
     /// </summary>
+    /// <param name="isInput">是否作为输入属性</param>
     /// <returns></returns>
-    public string ToCsharpLine()
+    public string ToCsharpLine(bool isInput = false)
     {
         string? attributeText = AttributeText;
         // 默认值
-        var defaultValue = string.Empty;
-        if (IsList && !IsNullable)
-        {
-            defaultValue = " = new();";
-        }
+        var defaultValue = DefaultValue;
+
         if (!string.IsNullOrEmpty(attributeText))
         {
             attributeText = attributeText.Trim();
@@ -71,6 +74,20 @@ public class PropertyInfo : EntityBase
         }
         string nullableMark = IsNullable ? "?" : "";
         string requiredKeyword = IsRequired ? "required " : "";
+
+        // 非输入的ViewModel
+        if (!isInput)
+        {
+            requiredKeyword = "";
+            if (IsRequired) { defaultValue = "default!"; }
+        }
+        // 可空移除默认值
+        if (IsNullable) { defaultValue = string.Empty; }
+
+        if (!string.IsNullOrWhiteSpace(defaultValue))
+        {
+            defaultValue = $" = {defaultValue};";
+        }
         string content = @$"    public {requiredKeyword}{Type}{nullableMark} {Name} {{ get; set; }}{defaultValue}";
         if (Name.ToLower().Contains("password"))
         {

@@ -307,6 +307,7 @@ public class EntityParseHelper
         // //解析modifier，如public required ,private virtual 
         string modifier1 = syntax.Modifiers.FirstOrDefault().Text;
         string? modifier2 = null;
+
         if (syntax.Modifiers.Count > 1)
         {
             modifier2 = syntax.Modifiers.LastOrDefault().Text;
@@ -326,7 +327,7 @@ public class EntityParseHelper
             propertyInfo.Type = type[..^1];
             propertyInfo.IsNullable = true;
         }
-
+        // 是否可空
         if (typeInfo.Type!.Name.Equals("Nullable"))
         {
             propertyInfo.IsNullable = true;
@@ -358,6 +359,12 @@ public class EntityParseHelper
                 propertyInfo.IsList = true;
             }
         }
+        // 默认值
+        if (syntax.Initializer != null)
+        {
+            propertyInfo.DefaultValue = syntax.Initializer.Value.ToFullString();
+        }
+
         // 导航属性判断
         ParseNavigation((INamedTypeSymbol)typeInfo.Type!, propertyInfo);
         return propertyInfo;

@@ -45,7 +45,7 @@ public class DtoCodeGenerate : GenerateBase
     /// </summary>
     public void GetChangedProperties()
     {
-        var currentEntity = dbContext.EntityInfos.Query()
+        var currentEntity = dbContext.EntityInfos?.Query()
             .Where(e => e.Name == EntityInfo.Name
                 && e.NamespaceName == EntityInfo.NamespaceName
                 && e.ProjectId == Const.PROJECT_ID)
@@ -72,7 +72,7 @@ public class DtoCodeGenerate : GenerateBase
                 {
                     Name = p.Name,
                     Type = ChangeType.Update,
-                    Origin = p.ToCsharpLine(),
+                    Origin = p.ToCsharpLine(true),
                 };
                 PropertyChanges.Add(prop);
             });
@@ -86,10 +86,10 @@ public class DtoCodeGenerate : GenerateBase
                 };
                 PropertyChanges.Add(prop);
             });
-            dbContext.EntityInfos.Delete(currentEntity.Id);
+            dbContext.EntityInfos?.Delete(currentEntity.Id);
         }
-        dbContext.EntityInfos.EnsureIndex(e => e.Name);
-        dbContext.EntityInfos.Insert(EntityInfo);
+        dbContext.EntityInfos?.EnsureIndex(e => e.Name);
+        dbContext.EntityInfos?.Insert(EntityInfo);
         PropertyChanges.ForEach(p =>
         {
             Console.WriteLine(p.Type.ToString() + " : " + p.Name);
@@ -202,7 +202,7 @@ public class DtoCodeGenerate : GenerateBase
                 )
                 .ToList();
         }
-        return dto.ToString(AssemblyName, EntityInfo.Name);
+        return dto.ToDtoContent(AssemblyName, EntityInfo.Name);
     }
 
     public string? GetItemDto()
@@ -234,7 +234,7 @@ public class DtoCodeGenerate : GenerateBase
             && (p.MaxLength <= 1000 || p.MaxLength == null)
                     && !p.IsNavigation).ToList();
         }
-        return dto.ToString(AssemblyName, EntityInfo.Name);
+        return dto.ToDtoContent(AssemblyName, EntityInfo.Name);
     }
 
     public string? GetFilterDto()
@@ -298,7 +298,7 @@ public class DtoCodeGenerate : GenerateBase
                 }
             });
         }
-        return dto.ToString(AssemblyName, EntityInfo.Name);
+        return dto.ToDtoContent(AssemblyName, EntityInfo.Name);
     }
 
     public string? GetAddDto()
@@ -348,7 +348,7 @@ public class DtoCodeGenerate : GenerateBase
             });
         }
 
-        return dto.ToString(AssemblyName, EntityInfo.Name);
+        return dto.ToDtoContent(AssemblyName, EntityInfo.Name, true);
     }
 
     /// <summary>
@@ -421,7 +421,7 @@ public class DtoCodeGenerate : GenerateBase
                 item.IsNullable = true;
             }
         }
-        return dto.ToString(AssemblyName, EntityInfo.Name);
+        return dto.ToDtoContent(AssemblyName, EntityInfo.Name);
     }
 
     public string GetDtoUsings()

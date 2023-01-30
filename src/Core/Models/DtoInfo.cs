@@ -13,9 +13,16 @@ public class DtoInfo
     /// </summary>
     public required string EntityNamespace { get; set; }
 
-    public string ToString(string? projectName = "Share", string entityName = "")
+    /// <summary>
+    /// dto class content
+    /// </summary>
+    /// <param name="projectName"></param>
+    /// <param name="entityName"></param>
+    /// <param name="isInput"></param>
+    /// <returns></returns>
+    public string ToDtoContent(string? projectName = "Share", string entityName = "", bool isInput = false)
     {
-        string[] props = Properties?.Select(p => p.ToCsharpLine()).ToArray()
+        string[] props = Properties?.Select(p => p.ToCsharpLine(isInput)).ToArray()
             ?? Array.Empty<string>();
         string propStrings = string.Join(string.Empty, props);
 
@@ -53,7 +60,7 @@ public class {Name}{baseType}
             Console.WriteLine("skip dto file:" + fileName);
             return;
         }
-        File.WriteAllText(fileName, ToString());
+        File.WriteAllText(fileName, ToDtoContent());
         Console.WriteLine("Created dto file:" + fileName);
     }
 }

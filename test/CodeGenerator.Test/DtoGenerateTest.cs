@@ -75,10 +75,12 @@ public class DtoGenerateTest
         //var filePath = PathHelper.GetProjectFilePath(@"D:\codes\DevPlatform\src\Microservice\DocAPI\Models\DocsCatalog.cs");
         string dtoPath = PathHelper.GetProjectPath();
         DtoCodeGenerate gen = new(filePath, dtoPath, new Datastore.DbContext());
+        string? addDto = gen.GetAddDto();
         string? shortDto = gen.GetShortDto();
         string? filterDto = gen.GetFilterDto();
         string? updateDto = gen.GetUpdateDto();
         string? itemDto = gen.GetItemDto();
+        Assert.NotNull(addDto);
         Assert.NotNull(shortDto);
         Assert.NotNull(filterDto);
         Assert.NotNull(updateDto);
