@@ -119,7 +119,7 @@
 		<EmbeddedResource Include="Templates\RequestService\axios.service.tpl" />
 		<EmbeddedResource Include="Templates\RequestService\service.ts" />
 	</ItemGroup>
-
+	
 	<ItemGroup>
 	  <ProjectReference Include="..\Core\Core.csproj" />
 	  <ProjectReference Include="..\Datastore\Datastore.csproj" />

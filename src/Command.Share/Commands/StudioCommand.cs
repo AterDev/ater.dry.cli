@@ -7,8 +7,6 @@ using System.Runtime.InteropServices;
 namespace Command.Share.Commands;
 public class StudioCommand
 {
-
-
     public static void RunStudio()
     {
         Console.WriteLine("welcome ater studio!");
