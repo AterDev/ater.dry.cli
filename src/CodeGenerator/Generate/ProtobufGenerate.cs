@@ -1,9 +1,11 @@
 ﻿namespace CodeGenerator.Generate;
-internal class ProtobufGenerate
+internal class ProtobufGenerate : GenerateBase
 {
-    public ProtobufGenerate()
+    public EntityInfo EntityInfo { get; init; }
+    public ProtobufGenerate(string entityPath, string dtoPath)
     {
-
+        var entityHelper = new EntityParseHelper(entityPath);
+        EntityInfo = entityHelper.GetEntity();
     }
 
     public string GenerateProtobuf()
