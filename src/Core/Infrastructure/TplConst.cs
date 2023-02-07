@@ -37,6 +37,10 @@ public static class TplConst
     /// </summary>
     public const string STORECONTEXT_ASSIGN = @"${CtorAssign}";
 
+    // protobuf
+    public const string PROTOBUF_SERVICES = @"${Services}";
+    public const string PROTOBUF_MESSAGES = @"${Messages}";
+    public const string PROTOBUF_NAMESPACE = @"${Namespace}";
 
     // tpl names
 }
