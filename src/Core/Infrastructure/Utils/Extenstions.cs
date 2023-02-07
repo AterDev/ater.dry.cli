@@ -9,8 +9,9 @@ public static class Extenstions
     /// to hyphen style: HelloWord->hellow-word
     /// </summary>
     /// <param name="str"></param>
+    /// <param name="separator">分隔符</param>
     /// <returns></returns>
-    public static string ToHyphen(this string str)
+    public static string ToHyphen(this string str, char separator = '-')
     {
         if (string.IsNullOrWhiteSpace(str))
         {
@@ -29,16 +30,15 @@ public static class Extenstions
                 upperNumber++;
                 if (upperNumber > 1)
                 {
-                    _ = builder.Append('-');
+                    _ = builder.Append(separator);
                 }
             }
             else if (item is '_' or ' ')
             {
-                _ = builder.Append('-');
+                _ = builder.Append(separator);
             }
             _ = builder.Append(char.ToLower(item));
         }
-
         return builder.ToString();
     }
 
