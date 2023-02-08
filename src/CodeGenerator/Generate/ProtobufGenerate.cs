@@ -1,13 +1,14 @@
 ﻿using PropertyInfo = Core.Models.PropertyInfo;
 
 namespace CodeGenerator.Generate;
-internal class ProtobufGenerate : GenerateBase
+public class ProtobufGenerate : GenerateBase
 {
     public EntityInfo EntityInfo { get; init; }
-    public ProtobufGenerate(string entityPath, string dtoPath)
+    public EntityParseHelper EntityHelper { get; init; }
+    public ProtobufGenerate(string entityPath)
     {
-        var entityHelper = new EntityParseHelper(entityPath);
-        EntityInfo = entityHelper.GetEntity();
+        EntityHelper = new EntityParseHelper(entityPath);
+        EntityInfo = EntityHelper.GetEntity();
     }
 
     public string GenerateProtobuf()
@@ -28,20 +29,26 @@ internal class ProtobufGenerate : GenerateBase
     {
         var content = $@"
 service {EntityInfo.Name} {{
-  rpc Filter (FilterDto) returns (PageDto);
-  rpc Add (AddDto) returns ({EntityInfo.Name});
-  rpc Update (UpdateDto) returns ({EntityInfo.Name});
-  rpc Delete (IdDto) returns ({EntityInfo.Name});
-  rpc Detail (IdDto) returns ({EntityInfo.Name});
+  rpc Filter (FilterRequest) returns (PageReply);
+  rpc Add (AddRequest) returns ({EntityInfo.Name}Reply);
+  rpc Update (UpdateRequest) returns ({EntityInfo.Name}Reply);
+  rpc Delete (IdRequest) returns ({EntityInfo.Name}Reply);
+  rpc Detail (IdRequest) returns ({EntityInfo.Name}Reply);
 }}
 ";
         return content;
     }
 
-    public static string GenerateMessages()
+    public string GenerateMessages()
     {
         var content = "";
-
+        content += GenerateEntityMessage();
+        content += GenerateFilterMessage();
+        content += GenerateAddMessage();
+        content += GenerateUpdateMessage();
+        content += GenerateIdMessage();
+        content += GeneratePageMessage();
+        content += GenerateEnumMessage();
         return content;
     }
 
@@ -54,12 +61,6 @@ service {EntityInfo.Name} {{
     internal static string ToProtobufField(PropertyInfo property, int sort)
     {
         // TODO:未处理字典情况
-        // TODO:枚举类型
-        if (property.IsEnum)
-        {
-
-        }
-
         if (ProtobufHelper.TypeMap.TryGetValue(property.Type, out var value))
         {
             if (property.IsList)
@@ -98,6 +99,52 @@ service {EntityInfo.Name} {{
         sb.Append(fields);
         sb.Append('}');
         return sb.ToString();
+    }
+
+    /// <summary>
+    /// 构建 enum message
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="fields"></param>
+    /// <returns></returns>
+    internal static string BuildEnumMessage(string name, List<IFieldSymbol?> fields)
+    {
+        var sb = new StringBuilder();
+        sb.Append("message ").Append(name);
+        sb.Append(Environment.NewLine);
+        sb.Append('{');
+        sb.Append(Environment.NewLine);
+        var content = "";
+        fields.ForEach(f =>
+        {
+            if (f != null)
+                content += $"    {f.Name} = {f.ConstantValue};{Environment.NewLine}";
+
+        });
+        sb.Append(content);
+        sb.Append('}');
+        return sb.ToString();
+    }
+
+    /// <summary>
+    /// 生成枚举相关的message
+    /// </summary>
+    /// <returns></returns>
+    public string GenerateEnumMessage()
+    {
+        var content = "";
+        for (int i = 0; i < EntityInfo.PropertyInfos.Count; i++)
+        {
+            var prop = EntityInfo.PropertyInfos[i];
+            // 枚举类型
+            if (prop.IsEnum)
+            {
+                var members = EntityHelper.GetEnumMembers(prop.Name);
+                if (members != null)
+                    content = BuildEnumMessage(prop.Name, members);
+            }
+        }
+        return content;
     }
 
     /// <summary>
@@ -182,7 +229,6 @@ service {EntityInfo.Name} {{
         return BuildMessage("IdDto", fields);
 
     }
-
     public string GeneratePageMessage()
     {
         //        public int Count { get; set; } = 0;

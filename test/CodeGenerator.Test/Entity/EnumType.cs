@@ -10,7 +10,16 @@ namespace CodeGenerator.Test.Entity;
 /// </summary>
 public enum EnumType
 {
-    Default,
-    Second,
-    Done
+    /// <summary>
+    /// 默认
+    /// </summary>
+    Default = 0,
+    /// <summary>
+    /// 二
+    /// </summary>
+    Second = 2,
+    /// <summary>
+    /// 完成
+    /// </summary>
+    Done = 4
 }

@@ -128,10 +128,19 @@ public class EntityParseHelper
         };
     }
 
-    public void GetEnumMembers(string name)
+    /// <summary>
+    /// 获取枚举members
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    public List<IFieldSymbol?>? GetEnumMembers(string name)
     {
-        // TODO:获取指定枚举类字段内容
-
+        // 获取指定枚举类字段内容
+        var enumSymbol = CompilationHelper.GetEnum(name);
+        return enumSymbol?.GetMembers()
+            .Where(m => m.Name is not "value__")
+            .Select(m => m as IFieldSymbol)
+            .ToList();
     }
 
     public static string GetClassComment(ClassDeclarationSyntax? syntax)
