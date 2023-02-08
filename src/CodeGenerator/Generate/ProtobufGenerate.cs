@@ -5,6 +5,8 @@ public class ProtobufGenerate : GenerateBase
 {
     public EntityInfo EntityInfo { get; init; }
     public EntityParseHelper EntityHelper { get; init; }
+    public List<string> EnumList { get; set; } = new List<string>();
+
     public ProtobufGenerate(string entityPath)
     {
         EntityHelper = new EntityParseHelper(entityPath);
@@ -75,7 +77,7 @@ service {EntityInfo.Name} {{
             {
                 return $@"    repeated {EntityParseHelper.GetTypeFromList(property.Type)} {property.Name.ToHyphen('_')} = {sort};{Environment.NewLine}";
             }
-            if (property.IsNavigation)
+            if (property.IsEnum || property.IsNavigation)
             {
                 return $@"    {property.Type} {property.Name.ToHyphen('_')} = {sort};{Environment.NewLine}";
             }
@@ -142,9 +144,15 @@ service {EntityInfo.Name} {{
             // 枚举类型
             if (prop.IsEnum)
             {
-                var members = EntityHelper.GetEnumMembers(prop.Name);
-                if (members != null)
-                    content = BuildEnumMessage(prop.Name, members);
+                if (!EnumList.Any(e => e == prop.Type))
+                {
+                    var members = EntityHelper.GetEnumMembers(prop.Type);
+                    if (members != null)
+                    {
+                        EnumList.Add(prop.Type);
+                        content += BuildEnumMessage(prop.Type, members);
+                    }
+                }
             }
         }
         return content;
@@ -187,7 +195,7 @@ service {EntityInfo.Name} {{
             var prop = properties[i];
             fields += ToProtobufField(prop, i + 3);
         }
-        return BuildMessage("FilterReply", fields);
+        return BuildMessage("FilterRequest", fields);
     }
 
     public string GenerateAddMessage()
@@ -204,7 +212,7 @@ service {EntityInfo.Name} {{
             var prop = properties[i];
             fields += ToProtobufField(prop, i + 1);
         }
-        return BuildMessage("AddDto", fields);
+        return BuildMessage("AddRequest", fields);
     }
 
     public string GenerateUpdateMessage()
@@ -222,14 +230,14 @@ service {EntityInfo.Name} {{
             prop.IsNullable = true;
             fields += ToProtobufField(prop, i + 1);
         }
-        return BuildMessage("AddReply", fields);
+        return BuildMessage("UpdateRequest", fields);
 
     }
 
     public static string GenerateIdMessage()
     {
         var fields = "    string id = 1;" + Environment.NewLine;
-        return BuildMessage("IdReply", fields);
+        return BuildMessage("IdRequest", fields);
 
     }
     public string GeneratePageMessage()
