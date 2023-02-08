@@ -244,6 +244,22 @@ public class EntityParseHelper
     }
 
     /// <summary>
+    /// 获取原始类型
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    public static string? GetTypeFromList(string type)
+    {
+        string pattern = @"\w+?<(?<Type>\w+)>";
+        Match match = Regex.Match(type, pattern);
+        if (match.Success)
+        {
+            return match.Groups["Type"]?.Value;
+        }
+        return null;
+    }
+
+    /// <summary>
     /// 获取属性注释xml内容
     /// </summary>
     /// <returns></returns>

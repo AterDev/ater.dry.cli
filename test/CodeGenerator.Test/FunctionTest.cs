@@ -13,6 +13,7 @@ public class FunctionTest
         string filePath = PathHelper.GetProjectFilePath(@"Entity\Blog.cs");
         var helper = new EntityParseHelper(filePath);
         helper.Parse();
+        var props = helper.PropertyInfos;
         Console.WriteLine();
     }
 
@@ -61,7 +62,17 @@ public class FunctionTest
         string filePath = PathHelper.GetProjectFilePath(@"Entity\Blog.cs");
         var gen = new ProtobufGenerate(filePath);
         var proto = gen.GenerateProtobuf();
-
         Console.WriteLine(proto);
+    }
+
+    [Theory]
+    [InlineData("IList<abc>")]
+    [InlineData("List<abc>")]
+    [InlineData("ICollection<abc>")]
+    [InlineData("IEnumerable<abc>")]
+    public void Should_regex_listType(string type)
+    {
+        var originType = EntityParseHelper.GetTypeFromList(type);
+        Assert.Equal("abc", originType);
     }
 }

@@ -73,7 +73,7 @@ service {EntityInfo.Name} {{
         {
             if (property.IsList)
             {
-                return $@"    repeated {property.Type} {property.Name.ToHyphen('_')} = {sort};{Environment.NewLine}";
+                return $@"    repeated {EntityParseHelper.GetTypeFromList(property.Type)} {property.Name.ToHyphen('_')} = {sort};{Environment.NewLine}";
             }
             if (property.IsNavigation)
             {
@@ -98,6 +98,8 @@ service {EntityInfo.Name} {{
         sb.Append(Environment.NewLine);
         sb.Append(fields);
         sb.Append('}');
+        sb.Append(Environment.NewLine);
+        sb.Append(Environment.NewLine);
         return sb.ToString();
     }
 
@@ -110,7 +112,7 @@ service {EntityInfo.Name} {{
     internal static string BuildEnumMessage(string name, List<IFieldSymbol?> fields)
     {
         var sb = new StringBuilder();
-        sb.Append("message ").Append(name);
+        sb.Append("enum ").Append(name);
         sb.Append(Environment.NewLine);
         sb.Append('{');
         sb.Append(Environment.NewLine);
@@ -123,6 +125,7 @@ service {EntityInfo.Name} {{
         });
         sb.Append(content);
         sb.Append('}');
+        sb.Append(Environment.NewLine);
         return sb.ToString();
     }
 
@@ -160,13 +163,13 @@ service {EntityInfo.Name} {{
             var prop = EntityInfo.PropertyInfos[i];
             fields += ToProtobufField(prop, i + 1);
         }
-        return BuildMessage(EntityInfo.Name, fields);
+        return BuildMessage(EntityInfo.Name + "Reply", fields);
     }
 
     public string GenerateFilterMessage()
     {
-        var fields = @"
-    int32 page_size = 1;
+        var fields =
+@"    int32 page_size = 1;
     int32 page_index = 2;
 ";
         string[] filterFields = new string[] { "Id", "CreatedTime", "UpdatedTime", "IsDeleted", "PageSize", "PageIndex" };
@@ -184,7 +187,7 @@ service {EntityInfo.Name} {{
             var prop = properties[i];
             fields += ToProtobufField(prop, i + 3);
         }
-        return BuildMessage("FilterDto", fields);
+        return BuildMessage("FilterReply", fields);
     }
 
     public string GenerateAddMessage()
@@ -219,14 +222,14 @@ service {EntityInfo.Name} {{
             prop.IsNullable = true;
             fields += ToProtobufField(prop, i + 1);
         }
-        return BuildMessage("AddDto", fields);
+        return BuildMessage("AddReply", fields);
 
     }
 
     public static string GenerateIdMessage()
     {
-        var fields = "    string id = 1;";
-        return BuildMessage("IdDto", fields);
+        var fields = "    string id = 1;" + Environment.NewLine;
+        return BuildMessage("IdReply", fields);
 
     }
     public string GeneratePageMessage()
@@ -237,7 +240,8 @@ service {EntityInfo.Name} {{
         var fields = $@"
     int32 count = 1;
     repeated {EntityInfo.Name} data = 2;
-    int32 page_index = 3;";
-        return BuildMessage("PageDto", fields);
+    int32 page_index = 3;
+";
+        return BuildMessage("PageReply", fields);
     }
 }
