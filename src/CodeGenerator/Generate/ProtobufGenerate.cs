@@ -38,6 +38,13 @@ service {EntityInfo.Name} {{
         return content;
     }
 
+    public static string GenerateMessages()
+    {
+        var content = "";
+
+        return content;
+    }
+
     /// <summary>
     /// C#属性转proto字段
     /// </summary>
@@ -46,11 +53,33 @@ service {EntityInfo.Name} {{
     /// <returns></returns>
     internal static string ToProtobufField(PropertyInfo property, int sort)
     {
+        // TODO:未处理字典情况
+        // TODO:枚举类型
+        if (property.IsEnum)
+        {
+
+        }
+
         if (ProtobufHelper.TypeMap.TryGetValue(property.Type, out var value))
         {
+            if (property.IsList)
+            {
+                return $@"    repeated {value} {property.Name.ToHyphen('_')} = {sort};{Environment.NewLine}";
+            }
             return $@"    {value} {property.Name.ToHyphen('_')} = {sort};{Environment.NewLine}";
         }
-        return string.Empty;
+        else
+        {
+            if (property.IsList)
+            {
+                return $@"    repeated {property.Type} {property.Name.ToHyphen('_')} = {sort};{Environment.NewLine}";
+            }
+            if (property.IsNavigation)
+            {
+                return $@"    {property.Type} {property.Name.ToHyphen('_')} = {sort};{Environment.NewLine}";
+            }
+            return $@"    google.protobuf.Value {property.Name.ToHyphen('_')} = {sort};{Environment.NewLine}";
+        }
     }
 
     /// <summary>
@@ -89,7 +118,10 @@ service {EntityInfo.Name} {{
 
     public string GenerateFilterMessage()
     {
-        var fields = "";
+        var fields = @"
+    int32 page_size = 1;
+    int32 page_index = 2;
+";
         string[] filterFields = new string[] { "Id", "CreatedTime", "UpdatedTime", "IsDeleted", "PageSize", "PageIndex" };
         var properties = EntityInfo.PropertyInfos?
             .Where(p => (p.IsRequired && !p.IsNavigation)
@@ -103,7 +135,7 @@ service {EntityInfo.Name} {{
         for (int i = 0; i < properties?.Count; i++)
         {
             var prop = properties[i];
-            fields += ToProtobufField(prop, i + 1);
+            fields += ToProtobufField(prop, i + 3);
         }
         return BuildMessage("FilterDto", fields);
     }
@@ -144,21 +176,22 @@ service {EntityInfo.Name} {{
 
     }
 
-    public string GenerateIdMessage()
+    public static string GenerateIdMessage()
     {
-        return string.Empty;
+        var fields = "    string id = 1;";
+        return BuildMessage("IdDto", fields);
 
     }
 
     public string GeneratePageMessage()
     {
-        return string.Empty;
-
-    }
-
-    public string GenerateListMessage()
-    {
-        return string.Empty;
-
+        //        public int Count { get; set; } = 0;
+        //public List<T> Data { get; set; } = new List<T>();
+        //public int PageIndex { get; set; } = 1;
+        var fields = $@"
+    int32 count = 1;
+    repeated {EntityInfo.Name} data = 2;
+    int32 page_index = 3;";
+        return BuildMessage("PageDto", fields);
     }
 }

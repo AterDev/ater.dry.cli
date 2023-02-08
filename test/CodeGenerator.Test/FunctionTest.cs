@@ -39,7 +39,17 @@ public class FunctionTest
         var helper = new OpenApiHelper(apiDocument);
 
         var apis = helper.RestApiGroups;
-       Assert.NotNull(helper.RestApiGroups);
+        Assert.NotNull(helper.RestApiGroups);
+    }
 
+    [Fact]
+    public void Should_parse_enum()
+    {
+        string filePath = PathHelper.GetProjectFilePath(@"Entity\Blog.cs");
+        var helper = new EntityParseHelper(filePath);
+        helper.Parse();
+        var enumSatus = helper.CompilationHelper.GetEnum("EnumType");
+
+        Console.WriteLine();
     }
 }

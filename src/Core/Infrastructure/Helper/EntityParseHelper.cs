@@ -128,6 +128,12 @@ public class EntityParseHelper
         };
     }
 
+    public void GetEnumMembers(string name)
+    {
+        // TODO:获取指定枚举类字段内容
+
+    }
+
     public static string GetClassComment(ClassDeclarationSyntax? syntax)
     {
         if (syntax == null)
