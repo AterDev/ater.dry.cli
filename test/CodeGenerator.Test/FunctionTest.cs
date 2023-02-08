@@ -75,4 +75,17 @@ public class FunctionTest
         var originType = EntityParseHelper.GetTypeFromList(type);
         Assert.Equal("abc", originType);
     }
+
+
+
+    [Fact]
+    public void Should_get_projectType()
+    {
+        var current = PathHelper.GetProjectPath();
+
+        var projectFile = Path.Combine(current, "CodeGenerator.Test.csproj");
+
+        var type =  AssemblyHelper.GetProjectType(new FileInfo(projectFile));
+        Assert.Equal("console", type);
+    }
 }

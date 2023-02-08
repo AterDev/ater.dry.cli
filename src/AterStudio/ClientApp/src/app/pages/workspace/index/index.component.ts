@@ -148,8 +148,6 @@ export class IndexComponent implements OnInit {
 
   batch(type: CommandType): void {
     const selected = this.selection.selected;
-    console.log(selected);
-
     if (selected.length > 0) {
       this.service.batchGenerate({
         projectId: this.projectId!,

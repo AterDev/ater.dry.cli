@@ -823,14 +823,16 @@
         "enum": [
           0,
           1,
-          2
+          2,
+          3
         ],
         "type": "integer",
         "format": "int32",
         "x-enumNames": [
           "Dto",
           "Manager",
-          "API"
+          "API",
+          "Protobuf"
         ]
       },
       "EntityFile": {
@@ -1087,6 +1089,10 @@
             "type": "boolean"
           },
           "suffixContent": {
+            "type": "string",
+            "nullable": true
+          },
+          "defaultValue": {
             "type": "string",
             "nullable": true
           },

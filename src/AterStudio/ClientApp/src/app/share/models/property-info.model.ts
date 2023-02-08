@@ -20,6 +20,7 @@ export interface PropertyInfo {
   maxLength?: number | null;
   isDecimal: boolean;
   suffixContent?: string | null;
+  defaultValue?: string | null;
   entityInfo?: EntityInfo | null;
 
 }
