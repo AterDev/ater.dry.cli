@@ -137,6 +137,6 @@
   </mat-dialog-content>
   <mat-dialog-actions>
     <button mat-button mat-dialog-close>取消</button>
-    <button mat-button (click)="generateProto()" color="primary" [disabled]="isSync">生成</button>
+    <button mat-button (click)="batch(CommandType.Protobuf)" color="primary" [disabled]="isSync">生成</button>
   </mat-dialog-actions>
 </ng-template>

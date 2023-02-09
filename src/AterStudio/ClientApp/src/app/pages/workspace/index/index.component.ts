@@ -6,6 +6,7 @@ import { MatSelectionListChange } from '@angular/material/list';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
+import { BatchGenerateDto } from 'src/app/share/models/entity/batch-generate-dto.model';
 import { EntityFile } from 'src/app/share/models/entity/entity-file.model';
 import { GenerateDto } from 'src/app/share/models/entity/generate-dto.model';
 import { CommandType } from 'src/app/share/models/enum/command-type.model';
@@ -177,15 +178,21 @@ export class IndexComponent implements OnInit {
   batch(type: CommandType): void {
     const selected = this.selection.selected;
     if (selected.length > 0) {
-      this.service.batchGenerate({
+      let data: BatchGenerateDto = {
         projectId: this.projectId!,
         entityPaths: selected.map(s => this.baseEntityPath + s.path),
-        commandType: type
-      }).subscribe(res => {
-        if (res) {
-          this.snb.open('生成成功');
-        }
-      })
+        commandType: type,
+      };
+      // protobuf参数
+      if (this.selectedWebProjectIds.length > 0 && type == CommandType.Protobuf) {
+        data.projectPath = this.selectedWebProjectIds;
+      }
+      this.service.batchGenerate(data)
+        .subscribe(res => {
+          if (res) {
+            this.snb.open('生成成功');
+          }
+        })
     } else {
       this.snb.open('未选择任何实体');
     }
@@ -195,9 +202,10 @@ export class IndexComponent implements OnInit {
     var data = event.source.selectedOptions.selected;
     this.selectedWebProjectIds = data.map<string>(d => d.value);
   }
+
   generateProto(): void {
     if (this.selectedWebProjectIds.length > 0) {
-
+      this.service
     } else {
       this.snb.open('未选择任何项目');
       return;

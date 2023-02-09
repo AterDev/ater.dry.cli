@@ -26,7 +26,7 @@ public class ProtoCommand : CommandBase
         CodeGen = new ProtobufGenerate(entityPath);
     }
 
-    public void Run(bool cover = false)
+    public async void Run(bool cover = false)
     {
         if (!File.Exists(EntityPath))
         {
@@ -50,6 +50,7 @@ public class ProtoCommand : CommandBase
 
             var content = CodeGen.GenerateProtobuf();
 
+            await SaveToFileAsync(content, cover);
             Console.WriteLine("😀 Protobuf generate completed!" + Environment.NewLine);
         }
     }

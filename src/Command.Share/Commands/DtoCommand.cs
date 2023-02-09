@@ -36,7 +36,7 @@ public class DtoCommand : CommandBase
         }
         if (!Directory.Exists(DtoPath))
         {
-            Console.WriteLine("🛑Dto project not exist!");
+            Console.WriteLine("🛑 Dto project not exist!");
             return;
         }
 
