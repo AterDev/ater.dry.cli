@@ -2,6 +2,7 @@
 using Command.Share;
 using Command.Share.Commands;
 using Core;
+using Core.Infrastructure.Helper;
 using Datastore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
@@ -61,7 +62,7 @@ public class ProjectManager
         return _dbContext.Projects.FindById(id);
     }
 
-    public List<SubProjectInfo>? GetProjects(Guid id)
+    public List<SubProjectInfo>? GetAllProjects(Guid id)
     {
         var project = GetProject(id);
         var pathString = Path.Combine(project.Path, "../");
@@ -75,16 +76,21 @@ public class ProjectManager
                 subProjectFiles.ForEach(f =>
                 {
                     // 判断类型
-                    var type = ProjectType.Web;
-
+                    var type = AssemblyHelper.GetProjectType(f);
                     res.Add(new SubProjectInfo
                     {
                         Name = f.Name,
                         Path = f.FullName,
-                        ProjectType = type
-                    }); ;
+                        ProjectType = type switch
+                        {
+                            "web" => ProjectType.Web,
+                            "console" => ProjectType.Console,
+                            _ => ProjectType.Lib
+                        }
+                    });
                 });
             }
+            return res;
         }
         catch (Exception)
         {

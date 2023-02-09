@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BaseService } from './base.service';
 import { Observable } from 'rxjs';
 import { Project } from '../models/project/project.model';
+import { SubProjectInfo } from '../models/project/sub-project-info.model';
 
 /**
  * 项目
@@ -33,6 +34,15 @@ export class ProjectService extends BaseService {
   project(id: string): Observable<Project> {
     const url = `/api/Project/${id}`;
     return this.request<Project>('get', url);
+  }
+
+  /**
+   * getAllProjectInfos
+   * @param id string
+   */
+  getAllProjectInfos(id: string): Observable<SubProjectInfo[]> {
+    const url = `/api/Project/sub/${id}`;
+    return this.request<SubProjectInfo[]>('get', url);
   }
 
   /**

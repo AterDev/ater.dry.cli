@@ -157,6 +157,10 @@ public static class CommandRunner
         await cmd.RunAsync();
     }
 
+    public static Task GenerateProtobufAsync(string item, string projectPath)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 

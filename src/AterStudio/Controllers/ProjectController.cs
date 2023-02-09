@@ -1,4 +1,5 @@
 ﻿using AterStudio.Manager;
+using AterStudio.Models;
 using Core.Infrastructure;
 using Datastore;
 using Microsoft.AspNetCore.Mvc;
@@ -33,6 +34,12 @@ public class ProjectController : ControllerBase
     public Project? Project([FromRoute] Guid id)
     {
         return _manager.GetProject(id);
+    }
+
+    [HttpGet("sub/{id}")]
+    public List<SubProjectInfo>? GetAllProjectInfos([FromRoute] Guid id)
+    {
+        return _manager.GetAllProjects(id);
     }
 
     [HttpPost]

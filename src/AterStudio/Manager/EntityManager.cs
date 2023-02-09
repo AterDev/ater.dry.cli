@@ -127,6 +127,16 @@ public class EntityManager
                     await CommandRunner.GenerateApiAsync(item, project.SharePath, project.ApplicationPath, project.HttpPath, "Controller");
                 }
                 break;
+            case CommandType.Protobuf:
+                foreach (string item in dto.EntityPaths)
+                {
+                    dto.ProjectPath?.ForEach(async p =>
+                    {
+                        await CommandRunner.GenerateProtobufAsync(item, p);
+                    });
+                }
+
+                break;
             default:
                 break;
         }

@@ -598,6 +598,57 @@
         }
       }
     },
+    "/api/Project/sub/{id}": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "operationId": "Project_GetAllProjectInfos",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SubProjectInfo"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SubProjectInfo"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SubProjectInfo"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Project/watcher/{id}": {
       "get": {
         "tags": [
@@ -1014,6 +1065,20 @@
         },
         "additionalProperties": false
       },
+      "ProjectType": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32",
+        "x-enumNames": [
+          "Web",
+          "Console",
+          "Lib"
+        ]
+      },
       "PropertyInfo": {
         "type": "object",
         "properties": {
@@ -1172,6 +1237,24 @@
           }
         },
         "additionalProperties": false
+      },
+      "SubProjectInfo": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "path": {
+            "type": "string",
+            "nullable": true
+          },
+          "projectType": {
+            "$ref": "#/components/schemas/ProjectType"
+          }
+        },
+        "additionalProperties": false,
+        "description": "项目信息"
       }
     }
   },
