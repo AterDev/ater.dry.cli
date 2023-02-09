@@ -135,7 +135,6 @@ public class EntityManager
                         await CommandRunner.GenerateProtobufAsync(item, p);
                     });
                 }
-
                 break;
             default:
                 break;

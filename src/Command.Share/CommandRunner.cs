@@ -157,7 +157,13 @@ public static class CommandRunner
         await cmd.RunAsync();
     }
 
-    public static Task GenerateProtobufAsync(string item, string projectPath)
+    /// <summary>
+    /// 生成protobuf
+    /// </summary>
+    /// <param name="entityPath"></param>
+    /// <param name="projectPath"></param>
+    /// <returns></returns>
+    public static Task GenerateProtobufAsync(string entityPath, string projectPath)
     {
         throw new NotImplementedException();
     }
