@@ -164,15 +164,17 @@ export class IndexComponent implements OnInit {
               return p.projectType == ProjectType.Web &&
                 !p.name?.endsWith('Test.csproj')
             });
+            this.dialogRef = this.dialog.open(this.protobufTmpRef, {
+              minWidth: 300
+            });
+          } else {
+            this.snb.open('没有有效的项目');
           }
         },
         error: (error) => {
-
+          this.snb.open(error);
         }
       });
-    this.dialogRef = this.dialog.open(this.protobufTmpRef, {
-      minWidth: 300
-    });
   }
 
   batch(type: CommandType): void {
@@ -191,6 +193,9 @@ export class IndexComponent implements OnInit {
         .subscribe(res => {
           if (res) {
             this.snb.open('生成成功');
+            if (type == CommandType.Protobuf) {
+              this.dialogRef.close();
+            }
           }
         })
     } else {

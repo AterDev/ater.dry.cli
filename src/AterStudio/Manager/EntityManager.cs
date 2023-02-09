@@ -130,9 +130,9 @@ public class EntityManager
             case CommandType.Protobuf:
                 foreach (string item in dto.EntityPaths)
                 {
-                    dto.ProjectPath?.ForEach(async p =>
+                    dto.ProjectPath?.ForEach(p =>
                     {
-                        await CommandRunner.GenerateProtobufAsync(item, p);
+                        _ = CommandRunner.GenerateProtobufAsync(item, p).Result;
                     });
                 }
                 break;

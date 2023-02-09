@@ -163,9 +163,11 @@ public static class CommandRunner
     /// <param name="entityPath"></param>
     /// <param name="projectPath"></param>
     /// <returns></returns>
-    public static Task GenerateProtobufAsync(string entityPath, string projectPath)
+    public static async Task<string?> GenerateProtobufAsync(string entityPath, string projectPath)
     {
-        throw new NotImplementedException();
+        var cmd = new ProtoCommand(entityPath, projectPath);
+        await cmd.RunAsync();
+        return cmd.ErrorMessage;
     }
 }
 
