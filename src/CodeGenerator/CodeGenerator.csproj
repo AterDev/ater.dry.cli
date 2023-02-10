@@ -59,6 +59,7 @@
 		<None Remove="Templates\Interface\RestControllerBase.tpl" />
 		<None Remove="Templates\PageList.tpl" />
 		<None Remove="Templates\protobuf.tpl" />
+		<None Remove="Templates\ProtoService.tpl" />
 		<None Remove="Templates\RequestService\axios.service.tpl" />
 		<None Remove="Templates\RequestService\service.ts" />
 	</ItemGroup>
@@ -117,7 +118,8 @@
 		<EmbeddedResource Include="Templates\Interface\IUserContext.tpl" />
 		<EmbeddedResource Include="Templates\BatchUpdate.tpl" />
 		<EmbeddedResource Include="Templates\PageList.tpl" />
-		<EmbeddedResource Include="Templates\protobuf.tpl" />
+		<EmbeddedResource Include="Templates\Protobuf.tpl" />
+		<EmbeddedResource Include="Templates\ProtoService.tpl" />
 		<EmbeddedResource Include="Templates\RequestService\axios.service.tpl" />
 		<EmbeddedResource Include="Templates\RequestService\service.ts" />
 	</ItemGroup>
