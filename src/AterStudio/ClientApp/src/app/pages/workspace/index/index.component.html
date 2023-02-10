@@ -23,7 +23,7 @@
       <button mat-menu-item (click)="batch(CommandType.API)"
         matTooltip="生成dto/dataStore/manager/api,不会覆盖原内容">生成APIControler</button>
       <button mat-menu-item (click)="openProtobufDialog()"
-        matTooltip="生成dto/dataStore/manager/api,不会覆盖原内容">生成Protobuf</button>
+        matTooltip="生成proto协议文件">生成Protobuf</button>
     </mat-menu>
   </mat-toolbar>
   <mat-form-field class="w-100 mt-2">
@@ -67,6 +67,8 @@
             matTooltip="生成dto/dataStore/manager,不会覆盖原内容">生成Manager</button>
           <button mat-menu-item (click)="generate(element.path,CommandType.API)"
             matTooltip="生成dto/dataStore/manager/api,不会覆盖原内容">生成APIControler</button>
+          <button mat-menu-item (click)="openProtobufDialog(element)"
+            matTooltip="生成proto协议文件">生成Protobuf</button>
         </mat-menu>
       </td>
     </ng-container>

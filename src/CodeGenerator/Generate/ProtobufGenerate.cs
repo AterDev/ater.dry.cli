@@ -247,7 +247,7 @@ service {EntityInfo.Name} {{
         //public int PageIndex { get; set; } = 1;
         var fields = $@"
     int32 count = 1;
-    repeated {EntityInfo.Name} data = 2;
+    repeated {EntityInfo.Name}Reply data = 2;
     int32 page_index = 3;
 ";
         return BuildMessage("PageReply", fields);

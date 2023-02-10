@@ -155,7 +155,11 @@ export class IndexComponent implements OnInit {
   }
 
 
-  openProtobufDialog(): void {
+  openProtobufDialog(element?: any): void {
+    if (element) {
+      this.selection.select(element);
+    }
+
     this.projectSrv.getAllProjectInfos(this.projectId)
       .subscribe({
         next: (res) => {
