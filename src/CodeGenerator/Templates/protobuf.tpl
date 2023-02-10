@@ -1,6 +1,8 @@
 ﻿syntax = "proto3";
 
-option csharp_namespace = "${ProjectName}.GrpcService";
+option csharp_namespace = "Grpc.${Namespace}Service";
+
+package ${Namespace}
 
 import "google/protobuf/duration.proto";  
 import "google/protobuf/timestamp.proto";

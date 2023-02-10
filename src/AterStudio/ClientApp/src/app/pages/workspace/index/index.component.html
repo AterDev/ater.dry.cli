@@ -128,13 +128,12 @@
 <ng-template #protobufDialog>
   <h2 mat-dialog-title>生成protobuf文件</h2>
   <mat-dialog-content>
-    <p>请选择要同步的项目</p>
+    <p>请选择要执行的项目</p>
     <mat-selection-list (selectionChange)="selectProject($event)">
       <mat-list-option *ngFor="let project of webProjects" [value]="project.path">
         {{project.name}}
       </mat-list-option>
     </mat-selection-list>
-
   </mat-dialog-content>
   <mat-dialog-actions>
     <button mat-button mat-dialog-close>取消</button>

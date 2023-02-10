@@ -15,7 +15,7 @@ public class ProtobufGenerate : GenerateBase
 
     public string GenerateProtobuf()
     {
-        var tpl = GetTplContent("protobuf.tpl");
+        var tpl = GetTplContent("Protobuf.tpl");
 
         var services = GenerateServices();
         var messages = GenerateMessages();
