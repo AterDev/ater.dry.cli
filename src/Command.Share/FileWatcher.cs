@@ -107,6 +107,7 @@ public class FileWatcher
         }
         // 解析
         entityParseHelper = new EntityParseHelper(path);
+        // TODO:如果是多层继承，判断不准确
         string baseType = entityParseHelper.GetParentClassName() ?? "";
         // 判断是否为实体
         return baseType.Equals("EntityBase");
