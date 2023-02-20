@@ -508,4 +508,19 @@ public class EntityParseHelper
         INamedTypeSymbol? classSymbol = SemanticModel.GetDeclaredSymbol(classDeclarationSyntax!);
         return classSymbol?.BaseType?.Name;
     }
+
+    /// <summary>
+    /// 获取最初始基类
+    /// </summary>
+    /// <returns></returns>
+    public string? GetBaseType(INamedTypeSymbol? baseType)
+    {
+        if (baseType == null) return null;
+
+        if (baseType.BaseType != null)
+        {
+            return GetBaseType(baseType.BaseType);
+        }
+        return baseType.Name;
+    }
 }

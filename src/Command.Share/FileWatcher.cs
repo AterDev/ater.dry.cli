@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
-using System;
-using Datastore;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Command.Share;
 /// <summary>
@@ -107,10 +108,12 @@ public class FileWatcher
         }
         // 解析
         entityParseHelper = new EntityParseHelper(path);
-        // TODO:如果是多层继承，判断不准确
-        string baseType = entityParseHelper.GetParentClassName() ?? "";
+        var classDeclarationSyntax = entityParseHelper.RootNodes!.OfType<ClassDeclarationSyntax>().FirstOrDefault();
+        INamedTypeSymbol? classSymbol = entityParseHelper.SemanticModel?.GetDeclaredSymbol(classDeclarationSyntax!);
+        // 获取根父类名称
+        var baseType = entityParseHelper.GetBaseType(classSymbol?.BaseType);
         // 判断是否为实体
-        return baseType.Equals("EntityBase");
+        return baseType == "EntityBase";
     }
 
     private async void OnFileCreatedAsync(object sender, FileSystemEventArgs e)
