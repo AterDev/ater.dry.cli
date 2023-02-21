@@ -22,6 +22,8 @@
         matTooltip="生成dto/dataStore/manager,不会覆盖原内容">生成Manager</button>
       <button mat-menu-item (click)="batch(CommandType.API)"
         matTooltip="生成dto/dataStore/manager/api,不会覆盖原内容">生成APIControler</button>
+      <button mat-menu-item (click)="openProtobufDialog()"
+        matTooltip="生成proto协议文件">生成Protobuf</button>
     </mat-menu>
   </mat-toolbar>
   <mat-form-field class="w-100 mt-2">
@@ -65,10 +67,9 @@
             matTooltip="生成dto/dataStore/manager,不会覆盖原内容">生成Manager</button>
           <button mat-menu-item (click)="generate(element.path,CommandType.API)"
             matTooltip="生成dto/dataStore/manager/api,不会覆盖原内容">生成APIControler</button>
+          <button mat-menu-item (click)="openProtobufDialog(element)"
+            matTooltip="生成proto协议文件">生成Protobuf</button>
         </mat-menu>
-        <button mat-icon-button color="primary" (click)="edit(element.path)" matTooltip="编辑" disabled>
-          <mat-icon>edit</mat-icon>
-        </button>
       </td>
     </ng-container>
 
@@ -121,5 +122,21 @@
   <mat-dialog-actions>
     <button mat-button mat-dialog-close>取消</button>
     <button mat-button (click)="generateSync()" color="primary" [disabled]="isSync">生成</button>
+  </mat-dialog-actions>
+</ng-template>
+
+<ng-template #protobufDialog>
+  <h2 mat-dialog-title>生成protobuf文件</h2>
+  <mat-dialog-content>
+    <p>请选择要执行的项目</p>
+    <mat-selection-list (selectionChange)="selectProject($event)">
+      <mat-list-option *ngFor="let project of webProjects" [value]="project.path">
+        {{project.name}}
+      </mat-list-option>
+    </mat-selection-list>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button mat-dialog-close>取消</button>
+    <button mat-button (click)="batch(CommandType.Protobuf)" color="primary" [disabled]="isSync">生成</button>
   </mat-dialog-actions>
 </ng-template>

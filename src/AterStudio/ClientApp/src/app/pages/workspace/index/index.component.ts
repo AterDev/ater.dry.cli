@@ -2,14 +2,18 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatSelectionListChange } from '@angular/material/list';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
+import { BatchGenerateDto } from 'src/app/share/models/entity/batch-generate-dto.model';
 import { EntityFile } from 'src/app/share/models/entity/entity-file.model';
 import { GenerateDto } from 'src/app/share/models/entity/generate-dto.model';
 import { CommandType } from 'src/app/share/models/enum/command-type.model';
+import { ProjectType } from 'src/app/share/models/enum/project-type.model';
 import { RequestLibType } from 'src/app/share/models/enum/request-lib-type.model';
 import { Project } from 'src/app/share/models/project/project.model';
+import { SubProjectInfo } from 'src/app/share/models/project/sub-project-info.model';
 import { ProjectStateService } from 'src/app/share/project-state.service';
 import { EntityService } from 'src/app/share/services/entity.service';
 import { ProjectService } from 'src/app/share/services/project.service';
@@ -37,7 +41,14 @@ export class IndexComponent implements OnInit {
   requestTmpRef!: TemplateRef<{}>;
   @ViewChild("syncDialog", { static: true })
   syncTmpRef!: TemplateRef<{}>;
+
+  @ViewChild("protobufDialog", { static: true })
+  protobufTmpRef!: TemplateRef<{}>;
   selection = new SelectionModel<EntityFile>(true, []);
+
+  selectedWebProjectIds: string[] = [];
+  webProjects: SubProjectInfo[] = [];
+
   constructor(
     public route: ActivatedRoute,
     public router: Router,
@@ -118,9 +129,6 @@ export class IndexComponent implements OnInit {
       })
   }
 
-  edit(path: string): void {
-
-  }
   openRequestDialog(): void {
     this.dialogRef = this.dialog.open(this.requestTmpRef, {
       minWidth: 400
@@ -146,24 +154,73 @@ export class IndexComponent implements OnInit {
       })
   }
 
+
+  openProtobufDialog(element?: any): void {
+    if (element) {
+      this.selection.select(element);
+    }
+
+    this.projectSrv.getAllProjectInfos(this.projectId)
+      .subscribe({
+        next: (res) => {
+          if (res) {
+            this.webProjects = res.filter(p => {
+              return p.projectType == ProjectType.Web &&
+                !p.name?.endsWith('Test.csproj')
+            });
+            this.dialogRef = this.dialog.open(this.protobufTmpRef, {
+              minWidth: 300
+            });
+          } else {
+            this.snb.open('没有有效的项目');
+          }
+        },
+        error: (error) => {
+          this.snb.open(error);
+        }
+      });
+  }
+
   batch(type: CommandType): void {
     const selected = this.selection.selected;
-    console.log(selected);
-
     if (selected.length > 0) {
-      this.service.batchGenerate({
+      let data: BatchGenerateDto = {
         projectId: this.projectId!,
         entityPaths: selected.map(s => this.baseEntityPath + s.path),
-        commandType: type
-      }).subscribe(res => {
-        if (res) {
-          this.snb.open('生成成功');
-        }
-      })
+        commandType: type,
+      };
+      // protobuf参数
+      if (this.selectedWebProjectIds.length > 0 && type == CommandType.Protobuf) {
+        data.projectPath = this.selectedWebProjectIds;
+      }
+      this.service.batchGenerate(data)
+        .subscribe(res => {
+          if (res) {
+            this.snb.open('生成成功');
+            if (type == CommandType.Protobuf) {
+              this.dialogRef.close();
+            }
+          }
+        })
     } else {
       this.snb.open('未选择任何实体');
     }
   }
+
+  selectProject(event: MatSelectionListChange) {
+    var data = event.source.selectedOptions.selected;
+    this.selectedWebProjectIds = data.map<string>(d => d.value);
+  }
+
+  generateProto(): void {
+    if (this.selectedWebProjectIds.length > 0) {
+      this.service
+    } else {
+      this.snb.open('未选择任何项目');
+      return;
+    }
+  }
+
 
   generateRequest(): void {
     this.isSync = true;

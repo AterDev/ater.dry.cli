@@ -1,18 +1,21 @@
 ﻿using PropertyInfo = Core.Models.PropertyInfo;
 
 namespace CodeGenerator.Generate;
-internal class ProtobufGenerate : GenerateBase
+public class ProtobufGenerate : GenerateBase
 {
     public EntityInfo EntityInfo { get; init; }
-    public ProtobufGenerate(string entityPath, string dtoPath)
+    public EntityParseHelper EntityHelper { get; init; }
+    public List<string> EnumList { get; set; } = new List<string>();
+
+    public ProtobufGenerate(string entityPath)
     {
-        var entityHelper = new EntityParseHelper(entityPath);
-        EntityInfo = entityHelper.GetEntity();
+        EntityHelper = new EntityParseHelper(entityPath);
+        EntityInfo = EntityHelper.GetEntity();
     }
 
     public string GenerateProtobuf()
     {
-        var tpl = GetTplContent("protobuf.tpl");
+        var tpl = GetTplContent("Protobuf.tpl");
 
         var services = GenerateServices();
         var messages = GenerateMessages();
@@ -28,13 +31,26 @@ internal class ProtobufGenerate : GenerateBase
     {
         var content = $@"
 service {EntityInfo.Name} {{
-  rpc Filter (FilterDto) returns (PageDto);
-  rpc Add (AddDto) returns ({EntityInfo.Name});
-  rpc Update (UpdateDto) returns ({EntityInfo.Name});
-  rpc Delete (IdDto) returns ({EntityInfo.Name});
-  rpc Detail (IdDto) returns ({EntityInfo.Name});
+  rpc Filter (FilterRequest) returns (PageReply);
+  rpc Add (AddRequest) returns ({EntityInfo.Name}Reply);
+  rpc Update (UpdateRequest) returns ({EntityInfo.Name}Reply);
+  rpc Delete (IdRequest) returns ({EntityInfo.Name}Reply);
+  rpc Detail (IdRequest) returns ({EntityInfo.Name}Reply);
 }}
 ";
+        return content;
+    }
+
+    public string GenerateMessages()
+    {
+        var content = "";
+        content += GenerateEntityMessage();
+        content += GenerateFilterMessage();
+        content += GenerateAddMessage();
+        content += GenerateUpdateMessage();
+        content += GenerateIdMessage();
+        content += GeneratePageMessage();
+        content += GenerateEnumMessage();
         return content;
     }
 
@@ -46,11 +62,27 @@ service {EntityInfo.Name} {{
     /// <returns></returns>
     internal static string ToProtobufField(PropertyInfo property, int sort)
     {
+        // TODO:未处理字典情况
         if (ProtobufHelper.TypeMap.TryGetValue(property.Type, out var value))
         {
+            if (property.IsList)
+            {
+                return $@"    repeated {value} {property.Name.ToHyphen('_')} = {sort};{Environment.NewLine}";
+            }
             return $@"    {value} {property.Name.ToHyphen('_')} = {sort};{Environment.NewLine}";
         }
-        return string.Empty;
+        else
+        {
+            if (property.IsList)
+            {
+                return $@"    repeated {EntityParseHelper.GetTypeFromList(property.Type)} {property.Name.ToHyphen('_')} = {sort};{Environment.NewLine}";
+            }
+            if (property.IsEnum || property.IsNavigation)
+            {
+                return $@"    {property.Type} {property.Name.ToHyphen('_')} = {sort};{Environment.NewLine}";
+            }
+            return $@"    google.protobuf.Value {property.Name.ToHyphen('_')} = {sort};{Environment.NewLine}";
+        }
     }
 
     /// <summary>
@@ -68,7 +100,62 @@ service {EntityInfo.Name} {{
         sb.Append(Environment.NewLine);
         sb.Append(fields);
         sb.Append('}');
+        sb.Append(Environment.NewLine);
+        sb.Append(Environment.NewLine);
         return sb.ToString();
+    }
+
+    /// <summary>
+    /// 构建 enum message
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="fields"></param>
+    /// <returns></returns>
+    internal static string BuildEnumMessage(string name, List<IFieldSymbol?> fields)
+    {
+        var sb = new StringBuilder();
+        sb.Append("enum ").Append(name);
+        sb.Append(Environment.NewLine);
+        sb.Append('{');
+        sb.Append(Environment.NewLine);
+        var content = "";
+        fields.ForEach(f =>
+        {
+            if (f != null)
+                content += $"    {f.Name} = {f.ConstantValue};{Environment.NewLine}";
+
+        });
+        sb.Append(content);
+        sb.Append('}');
+        sb.Append(Environment.NewLine);
+        return sb.ToString();
+    }
+
+    /// <summary>
+    /// 生成枚举相关的message
+    /// </summary>
+    /// <returns></returns>
+    public string GenerateEnumMessage()
+    {
+        var content = "";
+        for (int i = 0; i < EntityInfo.PropertyInfos.Count; i++)
+        {
+            var prop = EntityInfo.PropertyInfos[i];
+            // 枚举类型
+            if (prop.IsEnum)
+            {
+                if (!EnumList.Any(e => e == prop.Type))
+                {
+                    var members = EntityHelper.GetEnumMembers(prop.Type);
+                    if (members != null)
+                    {
+                        EnumList.Add(prop.Type);
+                        content += BuildEnumMessage(prop.Type, members);
+                    }
+                }
+            }
+        }
+        return content;
     }
 
     /// <summary>
@@ -84,12 +171,15 @@ service {EntityInfo.Name} {{
             var prop = EntityInfo.PropertyInfos[i];
             fields += ToProtobufField(prop, i + 1);
         }
-        return BuildMessage(EntityInfo.Name, fields);
+        return BuildMessage(EntityInfo.Name + "Reply", fields);
     }
 
     public string GenerateFilterMessage()
     {
-        var fields = "";
+        var fields =
+@"    int32 page_size = 1;
+    int32 page_index = 2;
+";
         string[] filterFields = new string[] { "Id", "CreatedTime", "UpdatedTime", "IsDeleted", "PageSize", "PageIndex" };
         var properties = EntityInfo.PropertyInfos?
             .Where(p => (p.IsRequired && !p.IsNavigation)
@@ -103,9 +193,9 @@ service {EntityInfo.Name} {{
         for (int i = 0; i < properties?.Count; i++)
         {
             var prop = properties[i];
-            fields += ToProtobufField(prop, i + 1);
+            fields += ToProtobufField(prop, i + 3);
         }
-        return BuildMessage("FilterDto", fields);
+        return BuildMessage("FilterRequest", fields);
     }
 
     public string GenerateAddMessage()
@@ -122,7 +212,7 @@ service {EntityInfo.Name} {{
             var prop = properties[i];
             fields += ToProtobufField(prop, i + 1);
         }
-        return BuildMessage("AddDto", fields);
+        return BuildMessage("AddRequest", fields);
     }
 
     public string GenerateUpdateMessage()
@@ -140,25 +230,26 @@ service {EntityInfo.Name} {{
             prop.IsNullable = true;
             fields += ToProtobufField(prop, i + 1);
         }
-        return BuildMessage("AddDto", fields);
+        return BuildMessage("UpdateRequest", fields);
 
     }
 
-    public string GenerateIdMessage()
+    public static string GenerateIdMessage()
     {
-        return string.Empty;
+        var fields = "    string id = 1;" + Environment.NewLine;
+        return BuildMessage("IdRequest", fields);
 
     }
-
     public string GeneratePageMessage()
     {
-        return string.Empty;
-
-    }
-
-    public string GenerateListMessage()
-    {
-        return string.Empty;
-
+        //        public int Count { get; set; } = 0;
+        //public List<T> Data { get; set; } = new List<T>();
+        //public int PageIndex { get; set; } = 1;
+        var fields = $@"
+    int32 count = 1;
+    repeated {EntityInfo.Name}Reply data = 2;
+    int32 page_index = 3;
+";
+        return BuildMessage("PageReply", fields);
     }
 }

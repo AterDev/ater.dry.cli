@@ -157,6 +157,18 @@ public static class CommandRunner
         await cmd.RunAsync();
     }
 
+    /// <summary>
+    /// 生成protobuf
+    /// </summary>
+    /// <param name="entityPath"></param>
+    /// <param name="projectPath"></param>
+    /// <returns></returns>
+    public static async Task<string?> GenerateProtobufAsync(string entityPath, string projectPath)
+    {
+        var cmd = new ProtoCommand(entityPath, projectPath);
+        await cmd.RunAsync();
+        return cmd.ErrorMessage;
+    }
 }
 
 

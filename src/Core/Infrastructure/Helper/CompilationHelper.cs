@@ -81,12 +81,19 @@ public class CompilationHelper
     {
         // TODO:枚举可以存储，不用每次获取 
         IEnumerable<INamedTypeSymbol> all = GetAllClasses();
-        return GetAllClasses()
-            .Where(c => c.BaseType != null
+        return all.Where(c => c.BaseType != null
                 && c.BaseType.Name.Equals("Enum"))
             .Select(c => c.Name)
             .Distinct()
             .ToList();
+    }
+
+    public INamedTypeSymbol? GetEnum(string name)
+    {
+        return GetAllClasses().Where(c => c.Name == name)
+            .Where(c => c.BaseType != null
+                && c.BaseType.Name.Equals("Enum"))
+            .FirstOrDefault();
     }
 
     public INamedTypeSymbol? GetClass(string name)

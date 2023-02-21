@@ -128,6 +128,21 @@ public class EntityParseHelper
         };
     }
 
+    /// <summary>
+    /// 获取枚举members
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    public List<IFieldSymbol?>? GetEnumMembers(string name)
+    {
+        // 获取指定枚举类字段内容
+        var enumSymbol = CompilationHelper.GetEnum(name);
+        return enumSymbol?.GetMembers()
+            .Where(m => m.Name is not "value__")
+            .Select(m => m as IFieldSymbol)
+            .ToList();
+    }
+
     public static string GetClassComment(ClassDeclarationSyntax? syntax)
     {
         if (syntax == null)
@@ -226,6 +241,22 @@ public class EntityParseHelper
         return properties.GroupBy(p => p.Name)
              .Select(s => s.FirstOrDefault()!)
              .ToList();
+    }
+
+    /// <summary>
+    /// 获取原始类型
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    public static string? GetTypeFromList(string type)
+    {
+        string pattern = @"\w+?<(?<Type>\w+)>";
+        Match match = Regex.Match(type, pattern);
+        if (match.Success)
+        {
+            return match.Groups["Type"]?.Value;
+        }
+        return null;
     }
 
     /// <summary>
@@ -474,7 +505,22 @@ public class EntityParseHelper
     {
         // 获取当前类名
         ClassDeclarationSyntax? classDeclarationSyntax = RootNodes.OfType<ClassDeclarationSyntax>().FirstOrDefault();
-        INamedTypeSymbol? classSymbol = SemanticModel.GetDeclaredSymbol(classDeclarationSyntax!);
+        var classSymbol = SemanticModel.GetDeclaredSymbol(classDeclarationSyntax!);
         return classSymbol?.BaseType?.Name;
+    }
+
+    /// <summary>
+    /// 获取最初始基类
+    /// </summary>
+    /// <returns></returns>
+    public bool HasBaseType(INamedTypeSymbol? baseType, string baseName)
+    {
+        if (baseType == null) return false;
+        if (baseType.Name == baseName) return true;
+        if (baseType.BaseType != null)
+        {
+            return HasBaseType(baseType.BaseType, baseName);
+        }
+        return false;
     }
 }

@@ -22,6 +22,8 @@ public class Blog : BaseDB
 
     public virtual Status Status1 { get; set; } = Status.Default;
 
+    public EnumType EnumType { get; set; }
+
     public Comments? Comment { get; set; }
 
     /// <summary>

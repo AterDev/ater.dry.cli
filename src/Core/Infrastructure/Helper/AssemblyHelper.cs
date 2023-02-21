@@ -53,11 +53,29 @@ public class AssemblyHelper
         return name;
     }
 
+
+    /// <summary>
+    /// 获取项目类型
+    /// </summary>
+    /// <param name="file"></param>
+    /// <returns>oneOf: null/web/console</returns>
+    public static string? GetProjectType(FileInfo file)
+    {
+        XElement xml = XElement.Load(file.FullName);
+        var sdk = xml.Attribute("Sdk")?.Value;
+        // TODO:仅判断是否为web
+        return sdk == null ? null :
+            sdk.EndsWith("Sdk.Web")
+            ? "web"
+            : "console";
+    }
+
     public static string? GetAssemblyName(DirectoryInfo dir)
     {
         FileInfo? file = FindProjectFile(dir);
         return file == null ? null : GetAssemblyName(file);
     }
+
     /// <summary>
     /// 获取命名空间名称， 不支持MSBuildProjectName表达式
     /// </summary>

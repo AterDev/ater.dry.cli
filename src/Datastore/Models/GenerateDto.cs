@@ -23,5 +23,9 @@ public enum CommandType
     /// <summary>
     /// api
     /// </summary>
-    API
+    API,
+    /// <summary>
+    /// protobuf
+    /// </summary>
+    Protobuf
 }

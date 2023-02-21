@@ -1,7 +1,10 @@
-﻿using Command.Share;
+﻿using AterStudio.Models;
+using Command.Share;
 using Command.Share.Commands;
 using Core;
+using Core.Infrastructure.Helper;
 using Datastore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace AterStudio.Manager;
 
@@ -57,6 +60,43 @@ public class ProjectManager
     public Project GetProject(Guid id)
     {
         return _dbContext.Projects.FindById(id);
+    }
+
+    public List<SubProjectInfo>? GetAllProjects(Guid id)
+    {
+        var project = GetProject(id);
+        var pathString = Path.Combine(project.Path, "../");
+        var res = new List<SubProjectInfo>();
+        try
+        {
+            var subProjectFiles = new DirectoryInfo(pathString).GetFiles("*.csproj", SearchOption.AllDirectories).ToList();
+
+            if (subProjectFiles.Any())
+            {
+                subProjectFiles.ForEach(f =>
+                {
+                    // 判断类型
+                    var type = AssemblyHelper.GetProjectType(f);
+                    res.Add(new SubProjectInfo
+                    {
+                        Name = f.Name,
+                        Path = f.FullName,
+                        ProjectType = type switch
+                        {
+                            "web" => ProjectType.Web,
+                            "console" => ProjectType.Console,
+                            _ => ProjectType.Lib
+                        }
+                    });
+                });
+            }
+            return res;
+        }
+        catch (Exception)
+        {
+            return default;
+        }
+        return default;
     }
 
     /// <summary>
