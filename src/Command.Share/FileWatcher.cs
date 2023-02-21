@@ -110,10 +110,8 @@ public class FileWatcher
         entityParseHelper = new EntityParseHelper(path);
         var classDeclarationSyntax = entityParseHelper.RootNodes!.OfType<ClassDeclarationSyntax>().FirstOrDefault();
         INamedTypeSymbol? classSymbol = entityParseHelper.SemanticModel?.GetDeclaredSymbol(classDeclarationSyntax!);
-        // 获取根父类名称
-        var baseType = entityParseHelper.GetBaseType(classSymbol?.BaseType);
-        // 判断是否为实体
-        return baseType == "EntityBase";
+
+        return entityParseHelper.HasBaseType(classSymbol?.BaseType, "EntityBase");
     }
 
     private async void OnFileCreatedAsync(object sender, FileSystemEventArgs e)

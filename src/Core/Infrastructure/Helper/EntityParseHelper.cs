@@ -513,14 +513,14 @@ public class EntityParseHelper
     /// 获取最初始基类
     /// </summary>
     /// <returns></returns>
-    public string? GetBaseType(INamedTypeSymbol? baseType)
+    public bool HasBaseType(INamedTypeSymbol? baseType, string baseName)
     {
-        if (baseType == null) return null;
-
+        if (baseType == null) return false;
+        if (baseType.Name == baseName) return true;
         if (baseType.BaseType != null)
         {
-            return GetBaseType(baseType.BaseType);
+            return HasBaseType(baseType.BaseType, baseName);
         }
-        return baseType.Name;
+        return false;
     }
 }
