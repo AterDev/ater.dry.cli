@@ -20,6 +20,7 @@ export class IndexComponent implements OnInit {
   dialogRef!: MatDialogRef<{}, any>;
   projects = [] as Project[];
   addForm!: FormGroup;
+  type: string | null = null;
   constructor(
     private service: ProjectService,
     private projectState: ProjectStateService,
@@ -28,7 +29,7 @@ export class IndexComponent implements OnInit {
     public router: Router,
     public route: ActivatedRoute
   ) {
-
+    this.type = localStorage.getItem('type');
   }
 
   ngOnInit(): void {

@@ -2,7 +2,7 @@
   <mat-toolbar color="primary">
     <button mat-button [routerLink]="['/index']" routerLinkActive="active">项目</button>
     <span style="display:flex;flex:1 1 auto"></span>
-    <span *ngIf="isLogin">
+    <!-- <span *ngIf="isLogin">
       <button [matMenuTriggerFor]="appMenu" mat-button>
         {{username}}
         <mat-icon>arrow_drop_down</mat-icon>
@@ -20,7 +20,7 @@
           <span>登出</span>
         </button>
       </mat-menu>
-    </span>
+    </span> -->
     <span *ngIf="!isLogin">
       <!-- <button mat-button (click)="login()">登录</button> -->
     </span>
