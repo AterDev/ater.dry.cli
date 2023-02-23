@@ -1,4 +1,4 @@
-<div class="page">
+<div class="page" *ngIf="this.type!='desktop'">
   <mat-toolbar color="primary">
     <button mat-button [routerLink]="['/index']" routerLinkActive="active">项目</button>
     <span style="display:flex;flex:1 1 auto"></span>

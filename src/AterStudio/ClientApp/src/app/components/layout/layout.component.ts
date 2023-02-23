@@ -11,6 +11,7 @@ export class LayoutComponent implements OnInit {
   isLogin = false;
   isAdmin = false;
   username?: string | null = null;
+  type: string | null = null;
   constructor(
     private auth: LoginService,
     private router: Router,
@@ -27,8 +28,9 @@ export class LayoutComponent implements OnInit {
     });
     this.route.queryParamMap.subscribe((query) => {
       var type = query.get('type');
-      if (type === 'app') {
-        localStorage.setItem('type', 'app');
+      if (type === 'desktop') {
+        localStorage.setItem('type', 'desktop');
+        this.type = 'desktop'
       }
     });
 
