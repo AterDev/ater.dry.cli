@@ -37,6 +37,15 @@ export class ProjectService extends BaseService {
   }
 
   /**
+   * 删除项目
+   * @param id 
+   */
+  delete(id: string): Observable<boolean> {
+    const url = `/api/Project/${id}`;
+    return this.request<boolean>('delete', url);
+  }
+
+  /**
    * getAllProjectInfos
    * @param id string
    */

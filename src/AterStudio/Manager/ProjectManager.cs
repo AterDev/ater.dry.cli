@@ -57,6 +57,11 @@ public class ProjectManager
         return project;
     }
 
+    public bool DeleteProject(Guid id)
+    {
+        return _dbContext.Projects.Delete(id);
+    }
+
     public Project GetProject(Guid id)
     {
         return _dbContext.Projects.FindById(id);

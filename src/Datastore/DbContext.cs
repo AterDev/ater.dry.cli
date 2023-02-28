@@ -13,22 +13,21 @@ public class DbContext
         string path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
         var localDir = Path.Combine(path, "AterStudio");
         var connectionString = $"Filename={Path.Combine(localDir, "droplet.db")};Upgrade=true;initialSize=5MB";
-
-        if (Db == null)
+        try
         {
-            try
+            if (Db == null)
             {
                 Db = new LiteDatabase(connectionString);
                 Db.Mapper.EmptyStringToNull = false;
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message + "请尝试结束studio后再执行命令");
-                return;
-            }
+            Projects = Db.GetCollection<Project>();
+            EntityInfos = Db.GetCollection<EntityInfo>();
+            ApiDocInfos = Db.GetCollection<ApiDocInfo>();
         }
-        Projects = Db.GetCollection<Project>();
-        EntityInfos = Db.GetCollection<EntityInfo>();
-        ApiDocInfos = Db.GetCollection<ApiDocInfo>();
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message + ",请尝试结束studio后再执行命令");
+            return;
+        }
     }
 }

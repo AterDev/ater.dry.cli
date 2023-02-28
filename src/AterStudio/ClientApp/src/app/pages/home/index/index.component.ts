@@ -71,6 +71,26 @@ export class IndexComponent implements OnInit {
       this.snb.open('输入有误，请查检');
     }
   }
+
+
+  delete(id: string): void {
+    if (id) {
+      this.service.delete(id)
+        .subscribe({
+          next: (res) => {
+            if (res) {
+              this.snb.open('删除成功');
+              this.getProjects();
+            } else {
+              this.snb.open('删除失败');
+            }
+          },
+          error: (error) => {
+            this.snb.open(error.detail);
+          }
+        })
+    }
+  }
   selectProject(id: string): void {
     const project = this.projects.find(p => p.id == id);
     console.log(project);

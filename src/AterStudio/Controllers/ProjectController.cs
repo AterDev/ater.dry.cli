@@ -51,6 +51,17 @@ public class ProjectController : ControllerBase
     }
 
     /// <summary>
+    /// 删除项目
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpDelete("{id}")]
+    public ActionResult<bool> Delete([FromRoute] Guid id)
+    {
+        return _manager.DeleteProject(id);
+    }
+
+    /// <summary>
     /// 获取监听状态
     /// </summary>
     /// <returns></returns>
