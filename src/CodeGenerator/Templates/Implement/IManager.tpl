@@ -19,5 +19,4 @@ public interface I${EntityName}Manager : IDomainManager<${EntityName}, ${EntityN
     /// <param name="dto"></param>
     /// <returns></returns>
     Task<${EntityName}> CreateNewEntityAsync(${EntityName}AddDto dto);
-	// TODO: 定义业务方法
 }
