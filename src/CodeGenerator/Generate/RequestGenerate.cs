@@ -266,7 +266,7 @@ public class RequestGenerate : GenerateBase
         if (functions != null)
         {
             functionstr = string.Join("\n", functions.Select(f => f.ToFunction()).ToArray());
-            string[] baseTypes = new string[] { "string", "string[]", "number", "number[]", "boolean" };
+            string[] baseTypes = new string[] { "string", "string[]", "number", "number[]", "boolean", "integer" };
             // 获取请求和响应的类型，以便导入
             List<string?> requestRefs = functions
                 .Where(f => !string.IsNullOrEmpty(f.RequestRefType)
@@ -442,7 +442,7 @@ export class {serviceFile.Name}Service extends BaseService {{
     {
         List<string> refTypes = new();
 
-        string[] baseTypes = new string[] { "string", "string[]", "number", "number[]", "boolean" };
+        string[] baseTypes = new string[] { "string", "string[]", "number", "number[]", "boolean", "integer" };
         // 获取请求和响应的类型，以便导入
         List<string?> requestRefs = functions
                 .Where(f => !string.IsNullOrEmpty(f.RequestRefType)
