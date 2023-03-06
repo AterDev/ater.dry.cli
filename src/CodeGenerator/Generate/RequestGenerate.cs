@@ -199,8 +199,13 @@ public class RequestGenerate : GenerateBase
                 }
                 else if (schema.Items.Type != null)
                 {
-                    // 基础类型?
+                    // 基础类型处理
                     refType = schema.Items.Type;
+                    refType = refType switch
+                    {
+                        "integer" => "number",
+                        _ => refType
+                    };
                     type = refType + "[]";
                 }
                 else if (schema.Items.OneOf?.FirstOrDefault()?.Reference != null)
