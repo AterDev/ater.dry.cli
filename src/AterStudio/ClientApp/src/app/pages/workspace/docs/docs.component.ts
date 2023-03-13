@@ -7,12 +7,14 @@ import { ApiDocTag } from 'src/app/share/models/api-doc-tag.model';
 import { ApiDocInfo } from 'src/app/share/models/api-doc/api-doc-info.model';
 import { EntityInfo } from 'src/app/share/models/entity-info.model';
 import { OperationType } from 'src/app/share/models/enum/operation-type.model';
+import { RequestLibType } from 'src/app/share/models/enum/request-lib-type.model';
 import { Project } from 'src/app/share/models/project/project.model';
 import { PropertyInfo } from 'src/app/share/models/property-info.model';
 import { RestApiGroup } from 'src/app/share/models/rest-api-group.model';
 import { RestApiInfo } from 'src/app/share/models/rest-api-info.model';
 import { ProjectStateService } from 'src/app/share/project-state.service';
 import { ApiDocService } from 'src/app/share/services/api-doc.service';
+import { EntityService } from 'src/app/share/services/entity.service';
 import { ProjectService } from 'src/app/share/services/project.service';
 
 @Component({
@@ -22,9 +24,11 @@ import { ProjectService } from 'src/app/share/services/project.service';
 })
 export class DocsComponent implements OnInit {
   OperationType = OperationType;
+  RequestLibType = RequestLibType;
   project = {} as Project;
   projectId: string;
   isRefresh = false;
+  isSync = false;
   isLoading = true;
   isOccupying = false;
   currentApi: RestApiInfo | null = null;
@@ -38,12 +42,17 @@ export class DocsComponent implements OnInit {
   newDoc = {} as ApiDocInfo;
   addForm!: FormGroup;
   dialogRef!: MatDialogRef<{}, any>;
+  requestForm!: FormGroup;
 
   @ViewChild("addDocDialog", { static: true })
-  requestTmpRef!: TemplateRef<{}>;
+  addTmpRef!: TemplateRef<{}>;
 
   @ViewChild("modelInfo", { static: true })
   modelTmpRef!: TemplateRef<{}>;
+
+  @ViewChild("requestDialog", { static: true })
+  requestTmpRef!: TemplateRef<{}>;
+
   restApiGroups = [] as RestApiGroup[];
   filterApiGroups = [] as RestApiGroup[];
   modelInfos = [] as EntityInfo[];
@@ -54,6 +63,7 @@ export class DocsComponent implements OnInit {
     public projectSrv: ProjectService,
     public projectState: ProjectStateService,
     public service: ApiDocService,
+    public entitySrv: EntityService,
     public router: Router,
     public dialog: MatDialog,
     public snb: MatSnackBar
@@ -76,6 +86,12 @@ export class DocsComponent implements OnInit {
       name: new FormControl<string | null>(null, [Validators.required, Validators.maxLength(20)]),
       description: new FormControl<string | null>(null, [Validators.maxLength(100)]),
       path: new FormControl<string | null>(null, [Validators.required, Validators.maxLength(200)]),
+    });
+
+    this.requestForm = new FormGroup({
+      swagger: new FormControl<string | null>('./swagger.json', []),
+      type: new FormControl<RequestLibType>(RequestLibType.NgHttp, []),
+      path: new FormControl<string | null>(this.projectState.project?.httpPath!+'\\ClientApp\\src\\app\\share', [Validators.required])
     });
   }
   getDocs(): void {
@@ -101,7 +117,7 @@ export class DocsComponent implements OnInit {
   }
 
   openAddDocDialog(): void {
-    this.dialogRef = this.dialog.open(this.requestTmpRef, {
+    this.dialogRef = this.dialog.open(this.addTmpRef, {
       minWidth: 400
     });
   }
@@ -123,6 +139,12 @@ export class DocsComponent implements OnInit {
         });
     }
   }
+  openRequestDialog(): void {
+    this.requestForm.get('swagger')?.setValue(this.currentDoc?.path);
+    this.dialogRef = this.dialog.open(this.requestTmpRef, {
+      minWidth: 400
+    });
+  }
   delete(): void {
     const id = this.currentDoc!.id;
     if (id) {
@@ -134,6 +156,30 @@ export class DocsComponent implements OnInit {
           }
         })
     }
+  }
+
+  edit(): void {
+
+  }
+
+  generateRequest(): void {
+    this.isSync = true;
+    const swagger = this.requestForm.get('swagger')?.value as string;
+    const type = this.requestForm.get('type')?.value as number;
+    const path = this.requestForm.get('path')?.value as string;
+    this.entitySrv.generateRequest(this.projectId!, path, type, swagger)
+      .subscribe({
+        next: res => {
+          if (res) {
+            this.snb.open('生成成功');
+            this.dialogRef.close();
+          }
+          this.isSync = false;
+        },
+        error: () => {
+          this.isSync = false;
+        }
+      })
   }
 
   getDocContent(): void {

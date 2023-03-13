@@ -9,6 +9,7 @@ namespace Http.API.Infrastructure;
 /// </summary>
 [Route("api/admin/[controller]")]
 [Authorize(Const.AdminUser)]
+[ApiExplorerSettings(GroupName = "admin")]
 public class RestControllerBase<TManager> : RestControllerBase
      where TManager : class
 {
@@ -45,6 +46,7 @@ public class RestControllerBase<TManager> : RestControllerBase
 /// </summary>
 /// <typeparam name="TManager"></typeparam>
 [Authorize(Const.User)]
+[ApiExplorerSettings(GroupName = "client")]
 public class ClientControllerBase<TManager> : RestControllerBase
      where TManager : class
 {

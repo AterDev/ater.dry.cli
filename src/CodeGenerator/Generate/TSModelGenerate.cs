@@ -203,7 +203,6 @@ public class TSModelGenerate : GenerateBase
  */
 ";
         }
-
         List<TsProperty> props = GetTsProperties(schema);
         props.ForEach(p =>
         {
