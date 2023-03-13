@@ -9,9 +9,6 @@
     <button mat-icon-button matTooltip="停止监听实体" color="primary" [disabled]="!isListening" (click)="stopWatch()">
       <mat-icon>stop_circle</mat-icon>
     </button>
-    <button mat-button color="primary" (click)="openRequestDialog()">
-      生成请求服务
-    </button>
     <button mat-button color="primary" (click)="openSyncDialog()">
       同步前端
     </button>
@@ -22,8 +19,7 @@
         matTooltip="生成dto/dataStore/manager,不会覆盖原内容">生成Manager</button>
       <button mat-menu-item (click)="batch(CommandType.API)"
         matTooltip="生成dto/dataStore/manager/api,不会覆盖原内容">生成APIControler</button>
-      <button mat-menu-item (click)="openProtobufDialog()"
-        matTooltip="生成proto协议文件">生成Protobuf</button>
+      <button mat-menu-item (click)="openProtobufDialog()" matTooltip="生成proto协议文件">生成Protobuf</button>
     </mat-menu>
   </mat-toolbar>
   <mat-form-field class="w-100 mt-2">
@@ -67,8 +63,7 @@
             matTooltip="生成dto/dataStore/manager,不会覆盖原内容">生成Manager</button>
           <button mat-menu-item (click)="generate(element.path,CommandType.API)"
             matTooltip="生成dto/dataStore/manager/api,不会覆盖原内容">生成APIControler</button>
-          <button mat-menu-item (click)="openProtobufDialog(element)"
-            matTooltip="生成proto协议文件">生成Protobuf</button>
+          <button mat-menu-item (click)="openProtobufDialog(element)" matTooltip="生成proto协议文件">生成Protobuf</button>
         </mat-menu>
       </td>
     </ng-container>
@@ -112,11 +107,17 @@
 <ng-template #syncDialog>
   <h2 mat-dialog-title>一键同步</h2>
   <mat-dialog-content>
-    <p>一键同步仅用于集成angular的项目，会将相关代码生成到
+    <p>一键同步仅用于使用了
+      <strong>Ater.web.template</strong>
+      模板的项目，会生成
+      <strong>Angular</strong>项目所需要的代码。
+    </p>
+    <p>
+      相关代码生成到
       <strong>Http.API</strong>
       目录下的
       <strong>ClientApp</strong>
-      中
+      中。
     </p>
   </mat-dialog-content>
   <mat-dialog-actions>

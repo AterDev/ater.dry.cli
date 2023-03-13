@@ -1,7 +1,6 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 
-namespace ${Namespace}.Implement;
+namespace Application.Implement;
 
 public class UserContext : IUserContext
 {
@@ -18,31 +17,50 @@ public class UserContext : IUserContext
     public UserContext(IHttpContextAccessor httpContextAccessor, CommandDbContext context)
     {
         _httpContextAccessor = httpContextAccessor;
-        if (Guid.TryParse(FindClaim(ClaimTypes.NameIdentifier)?.Value, out var userId) && userId != Guid.Empty)
+        if (Guid.TryParse(FindClaim(ClaimTypes.NameIdentifier)?.Value, out Guid userId) && userId != Guid.Empty)
         {
             UserId = userId;
         }
-        if (Guid.TryParse(FindClaim(ClaimTypes.GroupSid)?.Value, out var groupSid) && groupSid != Guid.Empty)
+        if (Guid.TryParse(FindClaim(ClaimTypes.GroupSid)?.Value, out Guid groupSid) && groupSid != Guid.Empty)
         {
             GroupId = groupSid;
         }
         Username = FindClaim(ClaimTypes.Name)?.Value;
         Email = FindClaim(ClaimTypes.Email)?.Value;
+
         CurrentRole = FindClaim(ClaimTypes.Role)?.Value;
-        if (CurrentRole != null && CurrentRole.ToLower() == "admin")
+
+        Roles = _httpContextAccessor.HttpContext?.User?.FindAll(ClaimTypes.Role)
+            .Select(c => c.Value).ToList();
+        if (Roles != null)
         {
-            IsAdmin = true;
-        }
-        else
-        {
-            IsAdmin = false;
+            IsAdmin = Roles.Any(r => r.ToLower().Equals("admin"));
         }
         _context = context;
     }
 
-    public Claim? FindClaim(string claimType) => _httpContextAccessor?.HttpContext?.User?.FindFirst(claimType);
+    public Claim? FindClaim(string claimType)
+    {
+        return _httpContextAccessor?.HttpContext?.User?.FindFirst(claimType);
+    }
+
+    /// <summary>
+    /// 判断当前角色
+    /// </summary>
+    /// <param name="roleName"></param>
+    /// <returns></returns>
+    public bool IsRole(string roleName)
+    {
+        return Roles != null && Roles.Any(r => r.ToLower() == roleName);
+    }
+
     public async Task<User?> GetUserAsync()
     {
         return await _context.Users.FindAsync(UserId);
+    }
+
+    public async Task<SystemUser?> GetSystemUserAsync()
+    {
+        return await _context.SystemUsers.FindAsync(UserId);
     }
 }

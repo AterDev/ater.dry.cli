@@ -120,10 +120,8 @@ public class RequestGenerate : GenerateBase
             };
 
             string fileName = currentTag.Name?.ToHyphen() + ".service.ts";
-            GenFileInfo file = new(content)
-            {
-                Name = fileName,
-            };
+            GenFileInfo file = new(fileName, content);
+
             files.Add(file);
         }
         return files;
@@ -199,8 +197,13 @@ public class RequestGenerate : GenerateBase
                 }
                 else if (schema.Items.Type != null)
                 {
-                    // 基础类型?
+                    // 基础类型处理
                     refType = schema.Items.Type;
+                    refType = refType switch
+                    {
+                        "integer" => "number",
+                        _ => refType
+                    };
                     type = refType + "[]";
                 }
                 else if (schema.Items.OneOf?.FirstOrDefault()?.Reference != null)
@@ -266,7 +269,7 @@ public class RequestGenerate : GenerateBase
         if (functions != null)
         {
             functionstr = string.Join("\n", functions.Select(f => f.ToFunction()).ToArray());
-            string[] baseTypes = new string[] { "string", "string[]", "number", "number[]", "boolean" };
+            string[] baseTypes = new string[] { "string", "string[]", "number", "number[]", "boolean", "integer" };
             // 获取请求和响应的类型，以便导入
             List<string?> requestRefs = functions
                 .Where(f => !string.IsNullOrEmpty(f.RequestRefType)
@@ -442,7 +445,7 @@ export class {serviceFile.Name}Service extends BaseService {{
     {
         List<string> refTypes = new();
 
-        string[] baseTypes = new string[] { "string", "string[]", "number", "number[]", "boolean" };
+        string[] baseTypes = new string[] { "string", "string[]", "number", "number[]", "boolean", "integer" };
         // 获取请求和响应的类型，以便导入
         List<string?> requestRefs = functions
                 .Where(f => !string.IsNullOrEmpty(f.RequestRefType)

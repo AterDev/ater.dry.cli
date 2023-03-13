@@ -1,10 +1,10 @@
 <!-- project -->
 <div class="container p-2">
-  <button mat-raised-button (click)="addProjectDialog()" color="primary">添加项目</button>
+  <button *ngIf="type!='desktop'" mat-raised-button (click)="addProjectDialog()" color="primary">添加项目</button>
   <mat-divider class="mt-2">
   </mat-divider>
   <div class="d-flex gap-1">
-    <mat-card *ngFor="let item of projects" class="col-lg-3 col-md-4 col-sm-4 col-3">
+    <mat-card *ngFor="let item of projects" class="col-lg-3 col-md-4 col-sm-4 col-3 card">
       <mat-card-header>
         <mat-card-title>
           {{item.displayName}}
@@ -21,6 +21,9 @@
       </mat-card-content>
       <mat-card-actions>
         <button mat-button (click)="selectProject(item.id)" color="primary">进入工作台</button>
+        <button mat-icon-button matTooltip="删除项目" class="delete-action" (click)="delete(item.id)">
+          <mat-icon color="warn">delete</mat-icon>
+        </button>
       </mat-card-actions>
     </mat-card>
   </div>

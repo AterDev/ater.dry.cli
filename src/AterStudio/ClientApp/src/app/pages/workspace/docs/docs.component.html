@@ -16,13 +16,21 @@
       <button mat-icon-button matTooltip="添加文档" color="primary" (click)="openAddDocDialog()">
         <mat-icon>note_add</mat-icon>
       </button>
-      <button *ngIf="docs.length>0" mat-icon-button matTooltip="删除文档" color="warn" (click)="delete()">
+
+      <button *ngIf="docs.length > 0" mat-icon-button matTooltip="删除文档" color="warn" (click)="delete()">
         <mat-icon>delete</mat-icon>
+      </button>
+
+      <button *ngIf="docs.length>0" mat-icon-button matTooltip="编辑文档" color="primary" (click)="edit()">
+        <mat-icon>edit</mat-icon>
       </button>
     </span>
 
     <span class="example-spacer"></span>
     <!-- 手动更新 -->
+    <button mat-icon-button matTooltip="生成请求服务" color="primary" [disabled]="isLoading" (click)="openRequestDialog()">
+      <mat-icon>code</mat-icon>
+    </button>
     <button mat-icon-button matTooltip="刷新文档" color="primary" [disabled]="isLoading" (click)="refresh()">
       <mat-icon>refresh</mat-icon>
     </button>
@@ -260,5 +268,37 @@
   </mat-dialog-content>
   <mat-dialog-actions>
     <button mat-button mat-dialog-close>关闭</button>
+  </mat-dialog-actions>
+</ng-template>
+
+
+<ng-template #requestDialog>
+  <h2 mat-dialog-title>生成请求服务</h2>
+  <mat-dialog-content>
+    <form [formGroup]="requestForm" class="d-flex flex-column">
+      <mat-form-field>
+        <mat-label>swagger地址</mat-label>
+        <input matInput placeholder="HttpAPI/swagger.json" formControlName="swagger">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>请求库类型</mat-label>
+        <mat-select placeholder="Placeholder" formControlName="type">
+          <mat-option [value]="RequestLibType.NgHttp">
+            Angular HttpClient
+          </mat-option>
+          <mat-option [value]="RequestLibType.Axios">
+            Axios
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>前端路径</mat-label>
+        <input matInput placeholder="前端代码目录绝对路径" formControlName="path">
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button mat-dialog-close>取消</button>
+    <button mat-button (click)="generateRequest()" color="primary" [disabled]="isSync">生成</button>
   </mat-dialog-actions>
 </ng-template>

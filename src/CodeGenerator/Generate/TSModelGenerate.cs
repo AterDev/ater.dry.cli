@@ -136,9 +136,8 @@ public class TSModelGenerate : GenerateBase
         {
             tsContent = ToInterfaceString(schema, schemaKey);
         }
-        GenFileInfo file = new(tsContent)
+        GenFileInfo file = new(fileName,tsContent)
         {
-            Name = fileName,
             Path = path ?? "",
             Content = tsContent,
             ModelName = schemaKey
@@ -203,7 +202,6 @@ public class TSModelGenerate : GenerateBase
  */
 ";
         }
-
         List<TsProperty> props = GetTsProperties(schema);
         props.ForEach(p =>
         {
@@ -241,7 +239,6 @@ public class TSModelGenerate : GenerateBase
 ";
         return res;
     }
-
 
     /// <summary>
     /// 生成enum

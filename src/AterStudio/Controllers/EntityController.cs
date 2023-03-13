@@ -60,6 +60,7 @@ public class EntityController : ControllerBase
     /// <param name="id"></param>
     /// <param name="webPath"></param>
     /// <param name="type"></param>
+    /// <param name="swaggerPath"></param>
     /// <returns></returns>
     [HttpGet("generateRequest/{id}")]
     public async Task<ActionResult<bool>> GenerateRequest([FromRoute] Guid id, string webPath, RequestLibType type, string? swaggerPath = null)

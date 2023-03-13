@@ -80,9 +80,19 @@ public class ApiCommand : CommandBase
     private async Task GenerateRestApiAsync()
     {
         string apiDir = Path.Combine(ApiPath, "Controllers");
+        string clientDir = Path.Combine(ApiPath, "Controllers", "ClientControllers");
+        if (!Directory.Exists(clientDir))
+        {
+            Directory.CreateDirectory(clientDir);
+        }
+
         string entityName = Path.GetFileNameWithoutExtension(EntityPath);
         string apiContent = CodeGen.GetRestApiContent();
+
+        string clientContent = apiContent.Replace("RestControllerBase", "ClientControllerBase");
+
         await GenerateFileAsync(apiDir, $"{entityName}{Suffix}.cs", apiContent);
+        await GenerateFileAsync(clientDir, $"{entityName}{Suffix}.cs", clientContent);
     }
 
     private async Task GenerateCommonFilesAsync()

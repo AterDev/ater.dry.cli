@@ -1,10 +1,20 @@
 using Microsoft.OpenApi.Models;
-
 namespace Command.Share.Commands;
 
+/// <summary>
+/// 请求生成命令
+/// </summary>
 public class RequestCommand : CommandBase
 {
-    public string DocUrl { get; set; } = default!;
+    /// <summary>
+    /// swagger文档链接
+    /// </summary>
+    public string DocUrl { get; set; }
+    /// <summary>
+    /// 文档名称 swagger/{documentName}/swagger.json
+    /// </summary>
+    public string DocName { get; set; }
+
     public OpenApiDocument? ApiDocument { get; set; }
 
     public RequestLibType LibType { get; set; } = RequestLibType.NgHttp;
@@ -14,7 +24,11 @@ public class RequestCommand : CommandBase
     public RequestCommand(string docUrl, string output, RequestLibType libType)
     {
         DocUrl = docUrl;
-        OutputPath = Path.Combine(output);
+        DocName = docUrl.Split('/').Reverse().Skip(1).First();
+
+        // 兼容过去没有分组的生成
+        if (DocName == "v1") DocName = string.Empty;
+        OutputPath = Path.Combine(output, DocName);
         LibType = libType;
 
         Instructions.Add($"  🔹 generate ts interfaces.");

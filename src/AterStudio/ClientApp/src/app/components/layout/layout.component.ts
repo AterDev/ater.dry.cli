@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavigationStart, Router } from '@angular/router';
+import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { LoginService } from 'src/app/auth/login.service';
 
 @Component({
@@ -11,9 +11,11 @@ export class LayoutComponent implements OnInit {
   isLogin = false;
   isAdmin = false;
   username?: string | null = null;
+  type: string | null = null;
   constructor(
     private auth: LoginService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     // this layout is out of router-outlet, so we need to listen router event and change isLogin status
     router.events.subscribe((event) => {
@@ -22,6 +24,13 @@ export class LayoutComponent implements OnInit {
         this.isLogin = this.auth.isLogin;
         this.isAdmin = this.auth.isAdmin;
         this.username = this.auth.userName;
+      }
+    });
+    this.route.queryParamMap.subscribe((query) => {
+      var type = query.get('type');
+      if (type === 'desktop') {
+        localStorage.setItem('type', 'desktop');
+        this.type = 'desktop'
       }
     });
 

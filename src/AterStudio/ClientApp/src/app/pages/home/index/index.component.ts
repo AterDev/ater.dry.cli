@@ -20,6 +20,7 @@ export class IndexComponent implements OnInit {
   dialogRef!: MatDialogRef<{}, any>;
   projects = [] as Project[];
   addForm!: FormGroup;
+  type: string | null = null;
   constructor(
     private service: ProjectService,
     private projectState: ProjectStateService,
@@ -28,7 +29,7 @@ export class IndexComponent implements OnInit {
     public router: Router,
     public route: ActivatedRoute
   ) {
-
+    this.type = localStorage.getItem('type');
   }
 
   ngOnInit(): void {
@@ -68,6 +69,26 @@ export class IndexComponent implements OnInit {
         })
     } else {
       this.snb.open('输入有误，请查检');
+    }
+  }
+
+
+  delete(id: string): void {
+    if (id) {
+      this.service.delete(id)
+        .subscribe({
+          next: (res) => {
+            if (res) {
+              this.snb.open('删除成功');
+              this.getProjects();
+            } else {
+              this.snb.open('删除失败');
+            }
+          },
+          error: (error) => {
+            this.snb.open(error.detail);
+          }
+        })
     }
   }
   selectProject(id: string): void {
