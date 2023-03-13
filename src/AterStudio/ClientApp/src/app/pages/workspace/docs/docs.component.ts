@@ -41,11 +41,15 @@ export class DocsComponent implements OnInit {
   currentDoc: ApiDocInfo | null = null;
   newDoc = {} as ApiDocInfo;
   addForm!: FormGroup;
+  editForm!: FormGroup;
   dialogRef!: MatDialogRef<{}, any>;
   requestForm!: FormGroup;
 
   @ViewChild("addDocDialog", { static: true })
   addTmpRef!: TemplateRef<{}>;
+
+  @ViewChild("editDocDialog", { static: true })
+  editTmpRef!: TemplateRef<{}>;
 
   @ViewChild("modelInfo", { static: true })
   modelTmpRef!: TemplateRef<{}>;
@@ -84,6 +88,13 @@ export class DocsComponent implements OnInit {
   initForm(): void {
     // 添加表单
     this.addForm = new FormGroup({
+      name: new FormControl<string | null>(null, [Validators.required, Validators.maxLength(20)]),
+      description: new FormControl<string | null>(null, [Validators.maxLength(100)]),
+      path: new FormControl<string | null>('http://localhost:5002/swagger/name/swagger.json', [Validators.required, Validators.maxLength(200)]),
+    });
+
+    // 更新表单
+    this.editForm = new FormGroup({
       name: new FormControl<string | null>(null, [Validators.required, Validators.maxLength(20)]),
       description: new FormControl<string | null>(null, [Validators.maxLength(100)]),
       path: new FormControl<string | null>('http://localhost:5002/swagger/name/swagger.json', [Validators.required, Validators.maxLength(200)]),
@@ -132,6 +143,14 @@ export class DocsComponent implements OnInit {
     });
   }
 
+  openEditDocDialog(): void {
+    this.editForm.get('name')?.setValue(this.currentDoc?.name);
+    this.editForm.get('description')?.setValue(this.currentDoc?.description);
+    this.editForm.get('path')?.setValue(this.currentDoc?.path);
+    this.dialogRef = this.dialog.open(this.editTmpRef, {
+      minWidth: 400
+    });
+  }
 
   addDoc(): void {
     if (this.addForm.valid) {
@@ -168,8 +187,25 @@ export class DocsComponent implements OnInit {
     }
   }
 
-  edit(): void {
+  editDoc(): void {
+    if (this.editForm.valid) {
+      const data = this.editForm.value as ApiDocInfo;
+      data.projectId = this.projectId;
+      if (this.currentDoc?.id) {
+        this.service.update(this.currentDoc?.id, data)
+          .subscribe(res => {
+            if (res) {
+              this.snb.open('更新成功');
+              this.getDocs();
+              this.editForm.reset();
+              this.dialogRef.close();
+            }
+          });
+      }else{
+        this.snb.open('未选择接口文档');
+      }
 
+    }
   }
 
   generateRequest(): void {

@@ -28,6 +28,16 @@ export class ApiDocService extends BaseService {
   }
 
   /**
+   * 更新
+   * @param id 
+   * @param data ApiDocInfo
+   */
+  update(id: string, data: ApiDocInfo): Observable<ApiDocInfo> {
+    const url = `/api/ApiDoc/${id}`;
+    return this.request<ApiDocInfo>('put', url, data);
+  }
+
+  /**
    * 删除
    * @param id 
    */

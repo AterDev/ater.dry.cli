@@ -82,6 +82,26 @@ public class ApiDocManager
         return apiDocInfo;
     }
 
+
+    /// <summary>
+    /// 更新
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="apiDocInfo"></param>
+    /// <returns></returns>
+    public ApiDocInfo? UpdateApiDoc(Guid id, ApiDocInfo apiDocInfo)
+    {
+        var doc = _dbContext.ApiDocInfos.FindById(id);
+        if (doc != null)
+        {
+            doc.Description = apiDocInfo.Description;
+            doc.Path = apiDocInfo.Path;
+            doc.Name = apiDocInfo.Name;
+            _dbContext.ApiDocInfos.Update(doc);
+        }
+        return doc;
+    }
+
     /// <summary>
     /// 删除
     /// </summary>

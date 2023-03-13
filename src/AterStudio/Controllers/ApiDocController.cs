@@ -55,8 +55,26 @@ public class ApiDocController : ControllerBase
     [HttpPost]
     public ActionResult<ApiDocInfo> Add(ApiDocInfo apiDocInfo)
     {
-        return _manager.AddApiDoc(apiDocInfo); 
+        return _manager.AddApiDoc(apiDocInfo);
     }
+
+    /// <summary>
+    ///  更新
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="apiDocInfo"></param>
+    /// <returns></returns>
+    [HttpPut("{id}")]
+    public ActionResult<ApiDocInfo> Update([FromRoute] Guid id, ApiDocInfo apiDocInfo)
+    {
+        var res = _manager.UpdateApiDoc(id, apiDocInfo);
+        if (res == null)
+        {
+            return NotFound("未找到该对象");
+        }
+        return res;
+    }
+
 
     /// <summary>
     /// 删除
@@ -68,6 +86,4 @@ public class ApiDocController : ControllerBase
     {
         return _manager.Delete(id);
     }
-
-
 }

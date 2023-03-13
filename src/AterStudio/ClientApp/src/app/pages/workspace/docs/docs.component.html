@@ -21,7 +21,7 @@
         <mat-icon>delete</mat-icon>
       </button>
 
-      <button *ngIf="docs.length>0" mat-icon-button matTooltip="编辑文档" color="primary" (click)="edit()">
+      <button *ngIf="docs.length>0" mat-icon-button matTooltip="编辑文档" color="primary" (click)="openEditDocDialog()">
         <mat-icon>edit</mat-icon>
       </button>
     </span>
@@ -231,6 +231,31 @@
     <button mat-button (click)="addDoc()" color="primary" [disabled]="isOccupying">添加</button>
   </mat-dialog-actions>
 </ng-template>
+
+<ng-template #editDocDialog>
+  <h2 mat-dialog-title>更新 swagger 接口文档</h2>
+  <mat-dialog-content>
+    <form [formGroup]="editForm" class="d-flex flex-column">
+      <mat-form-field>
+        <mat-label>名称</mat-label>
+        <input matInput placeholder="文档名称" formControlName="name" required>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>描述</mat-label>
+        <input matInput placeholder="描述" formControlName="description">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>路径</mat-label>
+        <input matInput placeholder="swagger.json地址，支持url及本地路径" formControlName="path" required>
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button mat-dialog-close>取消</button>
+    <button mat-button (click)="editDoc()" color="primary" [disabled]="isOccupying">更新</button>
+  </mat-dialog-actions>
+</ng-template>
+
 
 <ng-template #modelInfo>
   <h2 mat-dialog-title>{{selectedModel?.name}}</h2>
