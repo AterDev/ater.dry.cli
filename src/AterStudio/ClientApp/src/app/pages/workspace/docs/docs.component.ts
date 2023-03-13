@@ -82,12 +82,14 @@ export class DocsComponent implements OnInit {
   }
 
   initForm(): void {
+    // 添加表单
     this.addForm = new FormGroup({
       name: new FormControl<string | null>(null, [Validators.required, Validators.maxLength(20)]),
       description: new FormControl<string | null>(null, [Validators.maxLength(100)]),
-      path: new FormControl<string | null>(null, [Validators.required, Validators.maxLength(200)]),
+      path: new FormControl<string | null>('http://localhost:5002/swagger/name/swagger.json', [Validators.required, Validators.maxLength(200)]),
     });
 
+    // 生成请求表单
     let defaultPath = `\\src\\app\\share`;
 
     if (this.projectState.project?.path?.endsWith(".sln")) {

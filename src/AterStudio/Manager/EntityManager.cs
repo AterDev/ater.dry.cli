@@ -148,6 +148,7 @@ public class EntityManager
         project.WebAppPath = webPath;
         project.SwaggerPath = swaggerPath;
         _dbContext.Projects.Update(project);
+
         swaggerPath ??= Path.Combine(project.HttpPath, "swagger.json");
         await CommandRunner.GenerateRequestAsync(swaggerPath, webPath, type);
     }
