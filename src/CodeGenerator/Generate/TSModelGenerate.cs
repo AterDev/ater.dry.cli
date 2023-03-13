@@ -136,9 +136,8 @@ public class TSModelGenerate : GenerateBase
         {
             tsContent = ToInterfaceString(schema, schemaKey);
         }
-        GenFileInfo file = new(tsContent)
+        GenFileInfo file = new(fileName,tsContent)
         {
-            Name = fileName,
             Path = path ?? "",
             Content = tsContent,
             ModelName = schemaKey

@@ -17,12 +17,8 @@ public class GenFileInfo
     /// <summary>
     /// 模型名称
     /// </summary>
-    public string ModelName { get; set; }
+    public string? ModelName { get; set; }
 
-    public GenFileInfo(string content)
-    {
-        Content = content;
-    }
     public GenFileInfo(string name, string content)
     {
         Name = name;

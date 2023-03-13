@@ -26,6 +26,8 @@ public class RequestCommand : CommandBase
         DocUrl = docUrl;
         DocName = docUrl.Split('/').Reverse().Skip(1).First();
 
+        // 兼容过去没有分组的生成
+        if (DocName == "v1") DocName = string.Empty;
         OutputPath = Path.Combine(output, DocName);
         LibType = libType;
 

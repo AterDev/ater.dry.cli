@@ -120,10 +120,8 @@ public class RequestGenerate : GenerateBase
             };
 
             string fileName = currentTag.Name?.ToHyphen() + ".service.ts";
-            GenFileInfo file = new(content)
-            {
-                Name = fileName,
-            };
+            GenFileInfo file = new(fileName, content);
+
             files.Add(file);
         }
         return files;

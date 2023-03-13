@@ -101,7 +101,6 @@ public class ProjectManager
         {
             return default;
         }
-        return default;
     }
 
     /// <summary>

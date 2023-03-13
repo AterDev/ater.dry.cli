@@ -8,7 +8,9 @@ public class DbContext
     public ILiteCollection<EntityInfo> EntityInfos { get; set; }
     public ILiteCollection<ApiDocInfo> ApiDocInfos { get; set; }
 
+#pragma warning disable CS8618 // 在退出构造函数时，不可为 null 的字段必须包含非 null 值。请考虑声明为可以为 null。
     public DbContext()
+#pragma warning restore CS8618 // 在退出构造函数时，不可为 null 的字段必须包含非 null 值。请考虑声明为可以为 null。
     {
         string path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
         var localDir = Path.Combine(path, "AterStudio");
