@@ -88,10 +88,18 @@ export class DocsComponent implements OnInit {
       path: new FormControl<string | null>(null, [Validators.required, Validators.maxLength(200)]),
     });
 
+    let defaultPath = `\\src\\app\\share`;
+
+    if (this.projectState.project?.path?.endsWith(".sln")) {
+      defaultPath = this.projectState.project.httpPath + '\\ClientApp' + defaultPath;
+    } else {
+      defaultPath = this.projectState.project?.path + defaultPath;
+    }
+
     this.requestForm = new FormGroup({
       swagger: new FormControl<string | null>('./swagger.json', []),
       type: new FormControl<RequestLibType>(RequestLibType.NgHttp, []),
-      path: new FormControl<string | null>(this.projectState.project?.httpPath!+'\\ClientApp\\src\\app\\share', [Validators.required])
+      path: new FormControl<string | null>(defaultPath, [Validators.required])
     });
   }
   getDocs(): void {
