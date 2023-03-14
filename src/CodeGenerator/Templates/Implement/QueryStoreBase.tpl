@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Infrastructure;
 
-namespace ${Namespace}.Implement;
+namespace Application.Implement;
 /// <summary>
 /// 只读仓储
 /// </summary>
@@ -45,12 +45,32 @@ public class QueryStoreBase<TContext, TEntity> :
             : _db.IgnoreQueryFilters().AsQueryable();
     }
 
+    public virtual async Task<TEntity?> FindAsync(Guid id)
+    {
+        TEntity? res = await _query.Where(d => d.Id == id)
+            .AsNoTracking()
+            .FirstOrDefaultAsync();
+        ResetQuery();
+        return res;
+    }
+
     public virtual async Task<TDto?> FindAsync<TDto>(Guid id)
         where TDto : class
     {
         TDto? res = await _query.Where(d => d.Id == id)
             .AsNoTracking()
             .ProjectTo<TDto>()
+            .FirstOrDefaultAsync();
+        ResetQuery();
+        return res;
+    }
+
+    public virtual async Task<TEntity?> FindAsync(Expression<Func<TEntity, bool>>? whereExp)
+    {
+        Expression<Func<TEntity, bool>> exp = e => true;
+        whereExp ??= exp;
+        TEntity? res = await _query.Where(whereExp)
+            .AsNoTracking()
             .FirstOrDefaultAsync();
         ResetQuery();
         return res;
@@ -71,6 +91,18 @@ public class QueryStoreBase<TContext, TEntity> :
             .AsNoTracking()
             .ProjectTo<TDto>()
             .FirstOrDefaultAsync();
+        ResetQuery();
+        return res;
+    }
+
+
+    public virtual async Task<List<TEntity>> ListAsync(Expression<Func<TEntity, bool>>? whereExp)
+    {
+        Expression<Func<TEntity, bool>> exp = e => true;
+        whereExp ??= exp;
+        List<TEntity> res = await _query.Where(whereExp)
+            .AsNoTracking()
+            .ToListAsync();
         ResetQuery();
         return res;
     }
