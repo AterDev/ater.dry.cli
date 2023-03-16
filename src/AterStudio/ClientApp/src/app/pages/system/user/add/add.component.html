@@ -69,7 +69,7 @@
   </mat-form-field>  <mat-form-field>
     <mat-label>Avatar</mat-label>
     <textarea matInput placeholder="Avatar" formControlName="avatar"  minlength="" maxlength="200"
-      cols="5"></textarea>
+      rows="5"></textarea>
     <mat-error *ngIf="avatar?.invalid">
     {{getValidatorMessage('avatar')}}
     </mat-error>
