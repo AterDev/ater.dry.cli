@@ -39,13 +39,16 @@ try {
     $Version = $VersionNode.Node.InnerText
     $PackageId = $PackageNode.Node.InnerText
 
-    # uninstall old version
-    Write-Host 'uninstall old version'
-    dotnet tool uninstall -g $PackageId
+    
     Write-Host 'build and pack new version...'
     # build & pack
     dotnet build -c release
     dotnet pack --no-build -c release
+    
+    # uninstall old version
+    Write-Host 'uninstall old version'
+    dotnet tool uninstall -g $PackageId
+
     Write-Host 'install new version'
     dotnet tool install -g --add-source ./nupkg $PackageId --version $Version
 

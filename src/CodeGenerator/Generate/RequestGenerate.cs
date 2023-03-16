@@ -143,6 +143,11 @@ public class RequestGenerate : GenerateBase
         return files;
     }
 
+    /// <summary>
+    /// 解析参数及类型
+    /// </summary>
+    /// <param name="schema"></param>
+    /// <returns></returns>
     public static (string type, string? refType) GetParamType(OpenApiSchema? schema)
     {
         if (schema == null)
@@ -220,6 +225,14 @@ public class RequestGenerate : GenerateBase
                     {
                         type = "FormData";
                     }
+                }
+
+                // TODO:object  字典
+                if (schema.AdditionalProperties != null)
+                {
+                    var (inType, inRefType) = GetParamType(schema.AdditionalProperties);
+                    refType = inRefType;
+                    type = $"Map<string, {inType}>";
                 }
                 break;
             default:
