@@ -21,6 +21,10 @@ export class IndexComponent implements OnInit {
   data: {$EntityName}ItemDto[] = [];
   columns: string[] = [{$Columns}];
   dataSource!: MatTableDataSource<{$EntityName}ItemDto>;
+  dialogRef!: MatDialogRef<{}, any>;
+  @ViewChild('myDialog', { static: true })
+  myTmpl!: TemplateRef<{}>;
+
   filter: {$EntityName}FilterDto;
   pageSizeOption = [12, 20, 50];
   constructor(
@@ -87,43 +91,21 @@ export class IndexComponent implements OnInit {
 }
 
 /*
-openAddDialog(): void {
-  const ref = this.dialog.open(AddComponent, {
+* 弹窗示例
+openMyDialog(): void {
+  this.dialogRef = this.dialog.open(myTmpl, {
     hasBackdrop: true,
+    minWidth: 300,
     disableClose: false,
     data: {
     }
   });
-  ref.afterClosed().subscribe(res => {
+  this.dialogRef.afterClosed().subscribe(res => {
     if (res) {
-      this.snb.open('添加成功');
-      this.getList();
+      
     }
   });
 }
-openDetailDialog(id: string): void {
-  const ref = this.dialog.open(DetailComponent, {
-    hasBackdrop: true,
-    disableClose: false,
-    data: { id }
-  });
-  ref.afterClosed().subscribe(res => {
-    if (res) { }
-  });
-}
-
-openEditDialog(id: string): void {
-  const ref = this.dialog.open(EditComponent, {
-    hasBackdrop: true,
-    disableClose: false,
-    data: { id }
-  });
-  ref.afterClosed().subscribe(res => {
-    if (res) {
-      this.snb.open('修改成功');
-      this.getList();
-    }
-  });
 }*/
 
   /**

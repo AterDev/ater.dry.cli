@@ -35,3 +35,20 @@
 <mat-paginator [pageSizeOptions]="pageSizeOption"
 [pageIndex]="filter.pageIndex!-1" [pageSize]="filter.pageSize"
   [length]="total" (page)="getList($event)"showFirstLastButtons></mat-paginator>
+
+
+<ng-template #myDialog>
+  <h2 mat-dialog-title>标题</h2>
+  <mat-dialog-content>
+    <form [formGroup]="form">
+      <mat-form-field appearance="fill">
+        <input matInput placeholder="新名称" formControlName="name" required>
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button mat-dialog-close>取消</button>
+    <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
+    <button mat-button>确认</button>
+  </mat-dialog-actions>
+</ng-template>
