@@ -10,7 +10,7 @@
       <mat-icon>stop_circle</mat-icon>
     </button>
     <button mat-button color="primary" (click)="openSyncDialog()">
-      同步前端
+      生成页面
     </button>
     <button mat-button color="primary" [matMenuTriggerFor]="menu">批量操作</button>
     <mat-menu #menu="matMenu">
@@ -105,12 +105,12 @@
 </ng-template>
 
 <ng-template #syncDialog>
-  <h2 mat-dialog-title>一键同步</h2>
+  <h2 mat-dialog-title>生成页面</h2>
   <mat-dialog-content>
-    <p>一键同步仅用于使用了
+    <p>生成页面仅用于使用了
       <strong>Ater.web.template</strong>
-      模板的项目，会生成
-      <strong>Angular</strong>项目所需要的代码。
+      模板的项目，对添加了[NgPage]特性的实体，会生成
+      <strong>Angular</strong>组件内容
     </p>
     <p>
       相关代码生成到

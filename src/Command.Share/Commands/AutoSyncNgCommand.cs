@@ -35,11 +35,11 @@ public class AutoSyncNgCommand : CommandBase
         ApiDocument = new OpenApiStringReader()
            .Read(openApiContent, out _);
 
-        Console.WriteLine(Instructions[0]);
-        await GenerateTsInterfacesAsync();
-        await GenerateCommonFilesAsync();
-        await GenerateNgServicesAsync();
-        Console.WriteLine("😀 Ng services sync completed!" + Environment.NewLine);
+        //Console.WriteLine(Instructions[0]);
+        //await GenerateTsInterfacesAsync();
+        //await GenerateCommonFilesAsync();
+        //await GenerateNgServicesAsync();
+        //Console.WriteLine("😀 Ng services sync completed!" + Environment.NewLine);
         // 2 同步路由、页面
         Console.WriteLine(Instructions[1]);
         await GeneratePagesAsync();

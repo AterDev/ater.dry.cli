@@ -383,7 +383,7 @@ public class NgPageGenerate : GenerateBase
         string declareStrings = "";
         foreach (PropertyInfo item in props)
         {
-            importStrings += @$"import {{ {item.Type} }} from 'src/app/share/models/enum/{item.Type.ToHyphen()}.model';" + Environment.NewLine;
+            importStrings += @$"import {{ {item.Type} }} from 'src/app/share/admin/models/enum/{item.Type.ToHyphen()}.model';" + Environment.NewLine;
             declareStrings += @$"{item.Type} = {item.Type};" + Environment.NewLine;
         }
         return content.Replace("[@Imports]", importStrings + "[@Imports]")
@@ -400,13 +400,11 @@ public class NgPageGenerate : GenerateBase
         return tsContent.Replace("[@Imports]", @"import * as ClassicEditor from 'ng-ckeditor5-classic';
 import { environment } from 'src/environments/environment';
 import { CKEditor5 } from '@ckeditor/ckeditor5-angular';
-// import { OidcSecurityService } from 'angular-auth-oidc-client';
 [@Imports]")
             .Replace("[@Declares]", @"public editorConfig!: CKEditor5.Config;
   public editor: CKEditor5.EditorConstructor = ClassicEditor;
   [@Declares]")
-            .Replace("[@DI]", @"
-    // private authService: OidcSecurityService,")
+            .Replace("[@DI]", @"")
             .Replace("[@Methods]", @"  initEditor(): void {
     this.editorConfig = {
       // placeholder: '请添加图文信息提供证据，也可以直接从Word文档中复制',
