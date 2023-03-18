@@ -136,7 +136,7 @@ public class TSModelGenerate : GenerateBase
         {
             tsContent = ToInterfaceString(schema, schemaKey);
         }
-        GenFileInfo file = new(fileName,tsContent)
+        GenFileInfo file = new(fileName, tsContent)
         {
             Path = path ?? "",
             Content = tsContent,
@@ -258,6 +258,11 @@ public class TSModelGenerate : GenerateBase
  */
 ";
         }
+        // TODO:先判断x-enumData
+        KeyValuePair<string, Microsoft.OpenApi.Interfaces.IOpenApiExtension> enumData = schema.Extensions
+            .Where(e => e.Key == "x-enumData")
+            .FirstOrDefault();
+
         KeyValuePair<string, Microsoft.OpenApi.Interfaces.IOpenApiExtension> enumNames = schema.Extensions
             .Where(e => e.Key == "x-enumNames")
             .FirstOrDefault();
