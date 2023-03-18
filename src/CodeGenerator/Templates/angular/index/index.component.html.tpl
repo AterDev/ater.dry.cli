@@ -40,7 +40,7 @@
 <ng-template #myDialog>
   <h2 mat-dialog-title>标题</h2>
   <mat-dialog-content>
-    <form [formGroup]="form">
+    <form [formGroup]="mydialogForm">
       <mat-form-field appearance="fill">
         <input matInput placeholder="新名称" formControlName="name" required>
       </mat-form-field>

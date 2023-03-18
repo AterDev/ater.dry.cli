@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { {$EntityName}Service } from 'src/app/share/admin/services/{$EntityPathName}.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confirm-dialog.component';
@@ -7,7 +7,7 @@ import { {$EntityName}FilterDto } from 'src/app/share/admin/models/{$EntityPathN
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-index',
@@ -24,7 +24,7 @@ export class IndexComponent implements OnInit {
   dialogRef!: MatDialogRef<{}, any>;
   @ViewChild('myDialog', { static: true })
   myTmpl!: TemplateRef<{}>;
-
+  mydialogForm!: FormGroup;
   filter: {$EntityName}FilterDto;
   pageSizeOption = [12, 20, 50];
   constructor(
