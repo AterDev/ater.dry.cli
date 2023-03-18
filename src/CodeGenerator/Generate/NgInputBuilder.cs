@@ -98,7 +98,8 @@ public class NgInputBuilder
     <mat-error *ngIf=""{name}?.invalid"">
     {{{{getValidatorMessage('{name}')}}}}
     </mat-error>
-  </mat-form-field>"
+  </mat-form-field>
+"
 ;
         return html;
     }
@@ -113,7 +114,8 @@ public class NgInputBuilder
     <mat-error *ngIf=""{name}?.invalid"">
     {{{{getValidatorMessage('{name}')}}}}
     </mat-error>
-  </mat-form-field>";
+  </mat-form-field>
+";
         return html;
     }
     public string BuildSelect()
@@ -130,7 +132,8 @@ public class NgInputBuilder
   <mat-error *ngIf=""{name}?.invalid"">
     {{{{getValidatorMessage('{name}')}}}}
   </mat-error>
-</mat-form-field>";
+</mat-form-field>
+";
         return html;
     }
 
