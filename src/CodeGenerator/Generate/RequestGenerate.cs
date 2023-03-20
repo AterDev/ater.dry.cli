@@ -163,27 +163,36 @@ public class RequestGenerate : GenerateBase
 
     public static string ToEnumSwitchString(string enumType, OpenApiSchema schema)
     {
+        KeyValuePair<string, IOpenApiExtension> enumData = schema.Extensions
+                .Where(e => e.Key == "x-enumData")
+                .FirstOrDefault();
+        // 过滤没有注释的内容
+        if (enumData.Value == null) return string.Empty;
+        if (enumData.Value is OpenApiArray data)
+        {
+            if (!data.Any()) { return string.Empty; }
+        }
+
         var sb = new StringBuilder();
-        sb.AppendLine($"case '{enumType}'");
+        sb.AppendLine($"case '{enumType}':");
         sb.AppendLine("{");
         sb.AppendLine($"  switch (value)");
         sb.AppendLine("  {");
 
-        KeyValuePair<string, IOpenApiExtension> enumData = schema.Extensions
-                .Where(e => e.Key == "x-enumData")
-                .FirstOrDefault();
         if (enumData.Value is OpenApiArray array)
         {
             for (int i = 0; i < array.Count; i++)
             {
                 var item = ((OpenApiObject)array[i]);
-                string caseString = string.Format("    case {0}: result = '{1}'; break;", item["value"], item["description"]);
+
+                string caseString = string.Format("    case {0}: result = '{1}'; break;", ((OpenApiInteger)item["value"]).Value, ((OpenApiString)item["description"]).Value);
 
                 sb.AppendLine(caseString);
             }
             sb.AppendLine("    default:  break;");
         }
 
+        sb.AppendLine("  }");
         sb.AppendLine("}");
         sb.AppendLine("break;");
         return sb.ToString();

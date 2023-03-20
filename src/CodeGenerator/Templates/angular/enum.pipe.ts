@@ -1,4 +1,4 @@
-// 该文件自动生成，会被覆盖更新
+// 璇ユ枃浠惰嚜鍔ㄧ敓鎴愶紝浼氳瑕嗙洊鏇存柊
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
