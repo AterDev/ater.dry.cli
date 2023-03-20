@@ -20,6 +20,7 @@
 		<None Remove="Templates\angular\edit\edit.component.css.tpl" />
 		<None Remove="Templates\angular\edit\edit.component.html.tpl" />
 		<None Remove="Templates\angular\edit\edit.component.ts" />
+		<None Remove="Templates\angular\enum.pipe.ts" />
 		<None Remove="Templates\angular\group.module.ts" />
 		<None Remove="Templates\angular\group.routing.module.ts" />
 		<None Remove="Templates\angular\index\index.component.css.tpl" />
@@ -64,6 +65,7 @@
 		<None Remove="Templates\RequestService\service.ts" />
 	</ItemGroup>
 	<ItemGroup>
+		<EmbeddedResource Include="Templates\angular\enum.pipe.ts" />
 		<EmbeddedResource Include="Templates\angular\navigation.html.tpl" />
 		<EmbeddedResource Include="Templates\angular\group.module.ts" />
 		<EmbeddedResource Include="Templates\angular\group.routing.module.ts" />

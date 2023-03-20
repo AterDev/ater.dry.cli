@@ -39,7 +39,7 @@ public static class CommandRunner
         try
         {
             Console.WriteLine("🔵 Generating ts models and ng services...");
-            NgCommand cmd = new(url, output);
+            var cmd = new RequestCommand(url, output, RequestLibType.NgHttp);
             await cmd.RunAsync();
         }
         catch (WebException webExp)

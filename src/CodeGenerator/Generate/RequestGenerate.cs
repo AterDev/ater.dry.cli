@@ -1,6 +1,9 @@
 using System.Xml.Linq;
+using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Extensions;
+using Microsoft.OpenApi.Interfaces;
 using Microsoft.OpenApi.Models;
+using SharpYaml.Tokens;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CodeGenerator.Generate;
@@ -141,6 +144,49 @@ public class RequestGenerate : GenerateBase
         }
         TsModelFiles = files;
         return files;
+    }
+
+    public static string GetEnumPipeContent(IDictionary<string, OpenApiSchema> schemas)
+    {
+        string tplContent = GetTplContent("angular.enum.pipe.ts");
+        string codeBlocks = "";
+        foreach (KeyValuePair<string, OpenApiSchema> item in schemas)
+        {
+            if (item.Value.Enum.Count > 0)
+            {
+                codeBlocks += ToEnumSwitchString(item.Key, item.Value);
+            }
+        }
+        tplContent = tplContent.Replace("${EnumBlocks}", codeBlocks);
+        return tplContent;
+    }
+
+    public static string ToEnumSwitchString(string enumType, OpenApiSchema schema)
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine($"case '{enumType}'");
+        sb.AppendLine("{");
+        sb.AppendLine($"  switch (value)");
+        sb.AppendLine("  {");
+
+        KeyValuePair<string, IOpenApiExtension> enumData = schema.Extensions
+                .Where(e => e.Key == "x-enumData")
+                .FirstOrDefault();
+        if (enumData.Value is OpenApiArray array)
+        {
+            for (int i = 0; i < array.Count; i++)
+            {
+                var item = ((OpenApiObject)array[i]);
+                string caseString = string.Format("    case {0}: result = '{1}'; break;", item["value"], item["description"]);
+
+                sb.AppendLine(caseString);
+            }
+            sb.AppendLine("    default:  break;");
+        }
+
+        sb.AppendLine("}");
+        sb.AppendLine("break;");
+        return sb.ToString();
     }
 
     /// <summary>

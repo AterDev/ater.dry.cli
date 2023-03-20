@@ -1,4 +1,5 @@
 ﻿using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Interfaces;
 using Microsoft.OpenApi.Models;
 
 namespace CodeGenerator.Generate;
@@ -259,11 +260,11 @@ public class TSModelGenerate : GenerateBase
 ";
         }
         // TODO:先判断x-enumData
-        KeyValuePair<string, Microsoft.OpenApi.Interfaces.IOpenApiExtension> enumData = schema.Extensions
+        KeyValuePair<string, IOpenApiExtension> enumData = schema.Extensions
             .Where(e => e.Key == "x-enumData")
             .FirstOrDefault();
 
-        KeyValuePair<string, Microsoft.OpenApi.Interfaces.IOpenApiExtension> enumNames = schema.Extensions
+        KeyValuePair<string, IOpenApiExtension> enumNames = schema.Extensions
             .Where(e => e.Key == "x-enumNames")
             .FirstOrDefault();
 

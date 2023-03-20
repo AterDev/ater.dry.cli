@@ -66,6 +66,12 @@ public class RequestCommand : CommandBase
         string content = RequestGenerate.GetBaseService(LibType);
         string dir = Path.Combine(OutputPath, "services");
         await GenerateFileAsync(dir, "base.service.ts", content, false);
+
+        // 枚举pipe
+        var schemas = ApiDocument!.Components.Schemas;
+        string pipeContent = RequestGenerate.GetEnumPipeContent(schemas);
+        dir = Path.Combine(OutputPath, "pipe");
+        await GenerateFileAsync(dir, "enum-text.pipe.ts", pipeContent, true);
     }
 
     public async Task GenerateRequestServicesAsync()
