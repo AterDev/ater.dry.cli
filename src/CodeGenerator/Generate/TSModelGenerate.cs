@@ -22,8 +22,8 @@ public class TSModelGenerate : GenerateBase
                 OpenApiSchema? responseSchema = operation.Value.Responses.FirstOrDefault().Value
                      ?.Content.FirstOrDefault().Value
                      ?.Schema;
-                (string? RequestType, string? requestRefType) = RequestGenerate.GetParamType(requestSchema);
-                (string? ResponseType, string? responseRefType) = RequestGenerate.GetParamType(responseSchema);
+                (string? RequestType, string? requestRefType) = RequestGenerate.GetTypescriptParamType(requestSchema);
+                (string? ResponseType, string? responseRefType) = RequestGenerate.GetTypescriptParamType(responseSchema);
 
                 // 存储对应的Tag
                 // 请求dto

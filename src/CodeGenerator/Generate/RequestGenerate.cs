@@ -1,10 +1,7 @@
-using System.Xml.Linq;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Interfaces;
 using Microsoft.OpenApi.Models;
-using SharpYaml.Tokens;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CodeGenerator.Generate;
 /// <summary>
@@ -61,15 +58,15 @@ public class RequestGenerate : GenerateBase
                     Path = path.Key,
                     Tag = operation.Value.Tags.FirstOrDefault()?.Name,
                 };
-                (function.RequestType, function.RequestRefType) = GetParamType(operation.Value.RequestBody?.Content.Values.FirstOrDefault()?.Schema);
-                (function.ResponseType, function.ResponseRefType) = GetParamType(operation.Value.Responses.FirstOrDefault().Value
+                (function.RequestType, function.RequestRefType) = GetTypescriptParamType(operation.Value.RequestBody?.Content.Values.FirstOrDefault()?.Schema);
+                (function.ResponseType, function.ResponseRefType) = GetTypescriptParamType(operation.Value.Responses.FirstOrDefault().Value
                     ?.Content.FirstOrDefault().Value
                     ?.Schema);
                 function.Params = operation.Value.Parameters?.Select(p =>
                 {
                     string? location = p.In?.GetDisplayName();
                     bool? inpath = location?.ToLower()?.Equals("path");
-                    (string type, string _) = GetParamType(p.Schema);
+                    (string type, string _) = GetTypescriptParamType(p.Schema);
                     return new FunctionParams
                     {
                         Description = p.Description,
@@ -203,7 +200,7 @@ public class RequestGenerate : GenerateBase
     /// </summary>
     /// <param name="schema"></param>
     /// <returns></returns>
-    public static (string type, string? refType) GetParamType(OpenApiSchema? schema)
+    public static (string type, string? refType) GetTypescriptParamType(OpenApiSchema? schema)
     {
         if (schema == null)
         {
@@ -285,7 +282,7 @@ public class RequestGenerate : GenerateBase
                 // TODO:object  字典
                 if (schema.AdditionalProperties != null)
                 {
-                    var (inType, inRefType) = GetParamType(schema.AdditionalProperties);
+                    var (inType, inRefType) = GetTypescriptParamType(schema.AdditionalProperties);
                     refType = inRefType;
                     type = $"Map<string, {inType}>";
                 }
@@ -336,7 +333,7 @@ public class RequestGenerate : GenerateBase
         List<string> refTypes = new();
         if (functions != null)
         {
-            functionstr = string.Join("\n", functions.Select(f => f.ToFunction()).ToArray());
+            functionstr = string.Join("\n", functions.Select(f => f.ToNgRequestFunction()).ToArray());
             string[] baseTypes = new string[] { "string", "string[]", "number", "number[]", "boolean", "integer" };
             // 获取请求和响应的类型，以便导入
             List<string?> requestRefs = functions

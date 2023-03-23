@@ -20,7 +20,7 @@ public class RequestServiceFile
         List<string> refTypes = new();
         if (Functions != null)
         {
-            functions = string.Join("\n", Functions.Select(f => f.ToFunction()).ToArray());
+            functions = string.Join("\n", Functions.Select(f => f.ToNgRequestFunction()).ToArray());
             string[] baseTypes = new string[] { "string", "string[]", "number", "number[]", "boolean" };
             // 获取请求和响应的类型，以便导入
             List<string?> requestRefs = Functions
@@ -117,7 +117,7 @@ public class RequestServiceFunction
     /// </summary>
     public string? Tag { get; set; }
 
-    public string ToFunction()
+    public string ToNgRequestFunction()
     {
         ResponseType = string.IsNullOrWhiteSpace(ResponseType) ? "any" : ResponseType;
         // 函数名处理，去除tag前缀，然后格式化
