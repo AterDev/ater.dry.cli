@@ -19,6 +19,7 @@ ${Properties}
         Http = new HttpClient()
         {
             BaseAddress = new Uri(BaseUrl),
+            Timeout = TimeSpan.FromSeconds(10)
         };
         JsonSerializerOptions = new JsonSerializerOptions()
         {
