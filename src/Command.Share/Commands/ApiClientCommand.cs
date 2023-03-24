@@ -31,7 +31,7 @@ public class ApiClientCommand : CommandBase
 
         // 兼容过去没有分组的生成
         if (DocName == "v1") DocName = string.Empty;
-        OutputPath = Path.Combine(output, DocName);
+        OutputPath = output;
         LanguageType = languageType;
 
         Instructions.Add($"  🔹 generate ts interfaces.");
@@ -64,7 +64,7 @@ public class ApiClientCommand : CommandBase
     public async Task GenerateCommonFilesAsync()
     {
         string baseContent = CSHttpClientGenerate.GetBaseService();
-        
+
         string globalUsingContent = CSHttpClientGenerate.GetGlobalUsing();
 
         string dir = Path.Combine(OutputPath, "Services");

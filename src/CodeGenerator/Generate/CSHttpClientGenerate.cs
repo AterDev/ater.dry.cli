@@ -27,7 +27,7 @@ public class CSHttpClientGenerate : GenerateBase
 
     public static string GetBaseService()
     {
-        return default!;
+        return GetTplContent("RequestService.CsharpeBaseService.tpl");
     }
 
     /// <summary>
@@ -37,14 +37,14 @@ public class CSHttpClientGenerate : GenerateBase
     /// <returns></returns>
     public static string GetClient(List<GenFileInfo> infos)
     {
-        var tplContent = GetTplContent("RequestService.CsharpeClient.cs.tpl");
+        var tplContent = GetTplContent("RequestService.CsharpClient.tpl");
         var propsString = "";
         var initPropsString = "";
 
         infos.ForEach(info =>
         {
-            propsString += @$"    public {info.Name}Service {info.Name}Services {{ get; init; }}" + Environment.NewLine;
-            initPropsString += $"        {info.Name}Service = new {info.Name}Service(Http);" + Environment.NewLine;
+            propsString += @$"    public {info.ModelName}Service {info.ModelName}Services {{ get; init; }}" + Environment.NewLine;
+            initPropsString += $"        {info.ModelName}Service = new {info.ModelName}Service(Http);" + Environment.NewLine;
         });
 
         tplContent = tplContent.Replace("${Properties}", propsString)
@@ -52,9 +52,11 @@ public class CSHttpClientGenerate : GenerateBase
 
         return tplContent;
     }
+
     public static string GetGlobalUsing()
     {
-        return default!;
+        var content = GetTplContent("RequestService.GlobalUsings.tpl");
+        return content;
     }
 
     public List<GenFileInfo> GetServices()
@@ -80,7 +82,10 @@ public class CSHttpClientGenerate : GenerateBase
             string content = ToRequestService(serviceFile);
 
             string fileName = currentTag.Name + "Service.cs";
-            GenFileInfo file = new(fileName, content);
+            GenFileInfo file = new(fileName, content)
+            {
+                ModelName = currentTag.Name
+            };
             files.Add(file);
         }
         return files;
@@ -117,6 +122,14 @@ public class CSHttpClientGenerate : GenerateBase
     public static string ToRequestFunction(RequestServiceFunction function)
     {
         function.ResponseType = string.IsNullOrWhiteSpace(function.ResponseType) ? "object" : function.ResponseType;
+
+        // TODO:特殊处理PageList，针对泛型类型，不通用
+        if (function.ResponseType.EndsWith("PageList") && function.ResponseRefType.EndsWith("PageList"))
+        {
+            var type = function.ResponseType.Replace("PageList", "");
+            function.ResponseType = $"PageList<{type}>";
+        }
+
         // 函数名处理，去除tag前缀，然后格式化
         function.Name = function.Name.Replace(function.Tag + "_", "");
         function.Name = function.Name.ToCamelCase();
@@ -136,7 +149,7 @@ public class CSHttpClientGenerate : GenerateBase
             function.Params.ForEach(p =>
             {
                 //<param name="dto"></param>
-                paramsComments += $"/// <param name=\"{p.Name}\">{p.Description ?? p.Type} </param>\n";
+                paramsComments += $"    /// <param name=\"{p.Name}\">{p.Description ?? p.Type} </param>\n";
             });
         }
         if (!string.IsNullOrEmpty(function.RequestType))
@@ -151,14 +164,14 @@ public class CSHttpClientGenerate : GenerateBase
             }
 
             dataString = ", data";
-            paramsComments += $"/// <param name=\"data\">{function.RequestType}</param>\n";
+            paramsComments += $"    /// <param name=\"data\">{function.RequestType}</param>\n";
         }
         // 注释生成
         string comments = $"""
              /// <summary>
              /// {function.Description ?? function.Name}
              /// </summary>
-             {paramsComments}    /// <returns></returns>
+         {paramsComments}    /// <returns></returns>
          """;
 
         // 构造请求url
@@ -186,10 +199,11 @@ public class CSHttpClientGenerate : GenerateBase
         }
         string res = $$"""
         {{comments}}
-            public {{function.ResponseType}} {{function.Name}}({{paramsString}}) {
-                const url = $"{{function.Path}}";
+            public {{function.ResponseType}} {{function.Name.ToPascalCase()}}({{paramsString}}) {
+                var url = $"{{function.Path}}";
                 return await {{function.Method}}JsonAsync<{{function.ResponseType}}>(url{{dataString}});
             }
+
         """;
         return res;
     }

@@ -62,9 +62,9 @@
 		<None Remove="Templates\protobuf.tpl" />
 		<None Remove="Templates\ProtoService.tpl" />
 		<None Remove="Templates\RequestService\axios.service.tpl" />
-		<None Remove="Templates\RequestService\CsharpeBaseService.cs.tpl" />
-		<None Remove="Templates\RequestService\CsharpeClient.cs.tpl" />
-		<None Remove="Templates\RequestService\GlobalUsings.cs.tpl" />
+		<None Remove="Templates\RequestService\CsharpClient.tpl" />
+		<None Remove="Templates\RequestService\CsharpeBaseService.tpl" />
+		<None Remove="Templates\RequestService\GlobalUsings.tpl" />
 		<None Remove="Templates\RequestService\service.ts" />
 	</ItemGroup>
 	<ItemGroup>
@@ -126,9 +126,9 @@
 		<EmbeddedResource Include="Templates\Protobuf.tpl" />
 		<EmbeddedResource Include="Templates\ProtoService.tpl" />
 		<EmbeddedResource Include="Templates\RequestService\axios.service.tpl" />
-		<EmbeddedResource Include="Templates\RequestService\CsharpeBaseService.cs.tpl" />
-		<EmbeddedResource Include="Templates\RequestService\CsharpeClient.cs.tpl" />
-		<EmbeddedResource Include="Templates\RequestService\GlobalUsings.cs.tpl" />
+		<EmbeddedResource Include="Templates\RequestService\CsharpeBaseService.tpl" />
+		<EmbeddedResource Include="Templates\RequestService\CsharpClient.tpl" />
+		<EmbeddedResource Include="Templates\RequestService\GlobalUsings.tpl" />
 		<EmbeddedResource Include="Templates\RequestService\service.ts" />
 	</ItemGroup>
 	

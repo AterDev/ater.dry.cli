@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using CodeGenerator.Test.Hepler;
+using Command.Share;
 using Command.Share.Commands;
 using Core.Infrastructure;
 using Core.Infrastructure.Helper;
@@ -81,7 +82,6 @@ public class CommandTest
         await cmd.RunAsync();
     }
 
-
     [Fact]
     public void Should_Config()
     {
@@ -89,5 +89,14 @@ public class CommandTest
         _ = AssemblyHelper.GetSlnFile(currentDir, "*.sln", currentDir.Root);
 
         System.Console.WriteLine("");
+    }
+
+
+    [Fact]
+    public async Task Should_generate_ApiClientAsync()
+    {
+        string url = "http://localhost:5002/swagger/admin/swagger.json";
+        string outputPath = @"d:\test";
+        await CommandRunner.GenerateCSharpApiClientAsync(outputPath, url);
     }
 }
