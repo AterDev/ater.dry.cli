@@ -1,6 +1,8 @@
 ﻿using System.Data;
+using System.Xml.Linq;
 using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
+using SharpYaml.Tokens;
 
 namespace CodeGenerator.Generate;
 /// <summary>
@@ -35,9 +37,7 @@ public class CSHttpClientGenerate : GenerateBase
         return default!;
     }
 
-
-
-    public List<GenFileInfo> GetServices(IList<OpenApiTag> tags)
+    public List<GenFileInfo> GetServices()
     {
         List<GenFileInfo> files = new();
         List<RequestServiceFunction> functions = GetAllRequestFunctions();
@@ -48,7 +48,7 @@ public class CSHttpClientGenerate : GenerateBase
         {
             // 查询该标签包含的所有方法
             List<RequestServiceFunction> tagFunctions = group.ToList();
-            OpenApiTag? currentTag = tags.Where(t => t.Name == group.Key).FirstOrDefault();
+            OpenApiTag? currentTag = ApiTags.Where(t => t.Name == group.Key).FirstOrDefault();
             currentTag ??= new OpenApiTag { Name = group.Key, Description = group.Key };
             RequestServiceFile serviceFile = new()
             {
@@ -59,87 +59,121 @@ public class CSHttpClientGenerate : GenerateBase
 
             string content = ToRequestService(serviceFile);
 
-            string fileName = currentTag.Name?.ToHyphen() + ".service.ts";
+            string fileName = currentTag.Name + "Service.cs";
             GenFileInfo file = new(fileName, content);
-
             files.Add(file);
         }
         return files;
     }
 
-    public string ToRequestService(RequestServiceFile serviceFile)
+    public static string ToRequestService(RequestServiceFile serviceFile)
     {
         var functions = serviceFile.Functions;
         string functionstr = "";
-        // import引用的models
-        string importModels = "";
         List<string> refTypes = new();
         if (functions != null)
         {
-            functionstr = string.Join("\n", functions.Select(f => f.ToNgRequestFunction()).ToArray());
-            string[] baseTypes = new string[] { "string", "string[]", "number", "number[]", "boolean", "integer" };
-            // 获取请求和响应的类型，以便导入
-            List<string?> requestRefs = functions
-                .Where(f => !string.IsNullOrEmpty(f.RequestRefType)
-                    && !baseTypes.Contains(f.RequestRefType))
-                .Select(f => f.RequestRefType).ToList();
-            List<string?> responseRefs = functions
-                .Where(f => !string.IsNullOrEmpty(f.ResponseRefType)
-                    && !baseTypes.Contains(f.ResponseRefType))
-                .Select(f => f.ResponseRefType).ToList();
+            functionstr = string.Join("\n", functions.Select(f => ToRequestFunction(f)).ToArray());
 
-            // 参数中的类型
-            List<string?> paramsRefs = functions.SelectMany(f => f.Params!)
-                .Where(p => !baseTypes.Contains(p.Type))
-                .Select(p => p.Type)
-                .ToList();
-            if (requestRefs != null)
-            {
-                refTypes.AddRange(requestRefs!);
-            }
-
-            if (responseRefs != null)
-            {
-                refTypes.AddRange(responseRefs!);
-            }
-
-            if (paramsRefs != null)
-            {
-                refTypes.AddRange(paramsRefs!);
-            }
-
-            refTypes = refTypes.GroupBy(t => t)
-                .Select(g => g.FirstOrDefault()!)
-                .ToList();
-
-            refTypes.ForEach(t =>
-            {
-                if (Config.EnumModels.Contains(t))
-                {
-                    importModels += $"import {{ {t} }} from '../models/enum/{t.ToHyphen()}.model';{Environment.NewLine}";
-                }
-                else
-                {
-                    string? dirName = "";
-                    importModels += $"import {{ {t} }} from '../models/{dirName?.ToHyphen()}/{t.ToHyphen()}.model';{Environment.NewLine}";
-                }
-
-            });
         }
-        string result = $@"import {{ Injectable }} from '@angular/core';
-import {{ BaseService }} from './base.service';
-import {{ Observable }} from 'rxjs';
-{importModels}
-/**
- * {serviceFile.Description}
- */
-@Injectable({{ providedIn: 'root' }})
-export class {serviceFile.Name}Service extends BaseService {{
-{functionstr}
-}}
-";
+        string result = $$"""
+        using Share.Models.{{serviceFile.Name}}Dtos;
+        namespace Dusi.Manage.Client.Services;
+        /// <summary>
+        /// {{serviceFile.Description}}
+        /// </summary>
+        public class {{serviceFile.Name}}Service : BaseService
+        {
+            public {{serviceFile.Name}}Service(HttpClient httpClient) : base(httpClient)
+            {
+
+            }
+        {{functionstr}}
+        }
+        """;
         return result;
     }
+
+    public static string ToRequestFunction(RequestServiceFunction function)
+    {
+        function.ResponseType = string.IsNullOrWhiteSpace(function.ResponseType) ? "object" : function.ResponseType;
+        // 函数名处理，去除tag前缀，然后格式化
+        function.Name = function.Name.Replace(function.Tag + "_", "");
+        function.Name = function.Name.ToCamelCase();
+        // 处理参数
+        string paramsString = "";
+        string paramsComments = "";
+        string dataString = "";
+
+        if (function.Params?.Count > 0)
+        {
+            paramsString = string.Join(", ",
+                function.Params.OrderByDescending(p => p.IsRequired)
+                    .Select(p => p.IsRequired
+                        ? p.Type + " " + p.Name
+                        : p.Type + "? " + p.Name)
+                .ToArray());
+            function.Params.ForEach(p =>
+            {
+                //<param name="dto"></param>
+                paramsComments += $"/// <param name=\"{p.Name}\">{p.Description ?? p.Type} </param>\n";
+            });
+        }
+        if (!string.IsNullOrEmpty(function.RequestType))
+        {
+            if (function.Params?.Count > 0)
+            {
+                paramsString += $", {function.RequestType} data";
+            }
+            else
+            {
+                paramsString = $"{function.RequestType} data";
+            }
+
+            dataString = ", data";
+            paramsComments += $"/// <param name=\"data\">{function.RequestType}</param>\n";
+        }
+        // 注释生成
+        string comments = $"""
+             /// <summary>
+             /// {function.Description ?? function.Name}
+             /// </summary>
+             {paramsComments}    /// <returns></returns>
+         """;
+
+        // 构造请求url
+        List<string?>? paths = function.Params?.Where(p => p.InPath).Select(p => p.Name)?.ToList();
+        // 需要拼接的参数,特殊处理文件上传
+        List<string?>? reqParams = function.Params?.Where(p => !p.InPath && p.Type != "IForm")
+            .Select(p => p.Name)?.ToList();
+
+        if (reqParams != null)
+        {
+            string queryParams = "";
+            queryParams = string.Join("&", reqParams.Select(p =>
+            {
+                return $"{p}={{{p}}}";
+            }).ToArray());
+            if (!string.IsNullOrEmpty(queryParams))
+            {
+                function.Path += "?" + queryParams;
+            }
+        }
+        FunctionParams? file = function.Params?.Where(p => p.Type!.Equals("FormData")).FirstOrDefault();
+        if (file != null)
+        {
+            dataString = $", {file.Name}";
+        }
+        string res = $$"""
+        {{comments}}
+            public {{function.ResponseType}} {{function.Name}}({{paramsString}}) {
+                const url = $"{{function.Path}}";
+                return await {{function.Method}}JsonAsync<{{function.ResponseType}}>(url{{dataString}});
+            }
+        """;
+        return res;
+    }
+
 
     /// <summary>
     /// 获取方法信息
@@ -198,7 +232,7 @@ export class {serviceFile.Name}Service extends BaseService {{
             return (string.Empty, string.Empty);
         }
 
-        string? type = "any";
+        string? type = "object";
         string? refType = schema.Reference?.Id;
         if (schema.Reference != null)
         {
@@ -222,17 +256,19 @@ export class {serviceFile.Name}Service extends BaseService {{
                 }
                 else
                 {
-                    type = "number";
+                    type = "int";
                 }
                 break;
+
             case "file":
-                type = "FormData";
+                type = "IFile";
                 break;
+
             case "string":
                 type = schema.Format switch
                 {
-                    "binary" => "FormData",
-                    "date-time" => "string",
+                    "binary" => "IFile",
+                    "date-time" => "DateTimeOffset",
                     _ => "string",
                 };
                 break;
@@ -241,7 +277,7 @@ export class {serviceFile.Name}Service extends BaseService {{
                 if (schema.Items.Reference != null)
                 {
                     refType = schema.Items.Reference.Id;
-                    type = refType + "[]";
+                    type = $"List<{refType}>";
                 }
                 else if (schema.Items.Type != null)
                 {
@@ -249,24 +285,25 @@ export class {serviceFile.Name}Service extends BaseService {{
                     refType = schema.Items.Type;
                     refType = refType switch
                     {
-                        "integer" => "number",
+                        "integer" => "int",
                         _ => refType
                     };
-                    type = refType + "[]";
+                    type = $"List<{refType}>";
                 }
                 else if (schema.Items.OneOf?.FirstOrDefault()?.Reference != null)
                 {
                     refType = schema.Items.OneOf?.FirstOrDefault()!.Reference.Id;
-                    type = refType + "[]";
+                    type = $"List<{refType}>";
                 }
                 break;
+
             case "object":
                 OpenApiSchema obj = schema.Properties.FirstOrDefault().Value;
                 if (obj != null)
                 {
                     if (obj.Format == "binary")
                     {
-                        type = "FormData";
+                        type = "IFile";
                     }
                 }
 
@@ -275,7 +312,7 @@ export class {serviceFile.Name}Service extends BaseService {{
                 {
                     var (inType, inRefType) = GetCsharpParamType(schema.AdditionalProperties);
                     refType = inRefType;
-                    type = $"Map<string, {inType}>";
+                    type = $"Dictionary<string, {inType}>";
                 }
                 break;
             default:
