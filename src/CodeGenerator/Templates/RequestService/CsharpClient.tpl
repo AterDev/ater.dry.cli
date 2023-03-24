@@ -32,6 +32,12 @@ ${InitProperties}
         #endregion
     }
 
+    public void SetToken(string token)
+    {
+
+        Http.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", "Bearer " + token);
+    }
+
     public void SetBaseUrl(string url)
     {
         this.BaseUrl = url;
