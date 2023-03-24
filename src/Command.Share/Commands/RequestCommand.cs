@@ -24,7 +24,14 @@ public class RequestCommand : CommandBase
     public RequestCommand(string docUrl, string output, RequestLibType libType)
     {
         DocUrl = docUrl;
-        DocName = docUrl.Split('/').Reverse().Skip(1).First();
+        if (docUrl.Contains("http"))
+        {
+            DocName = docUrl.Split('/').Reverse().Skip(1).First();
+        }
+        else
+        {
+            DocName = string.Empty;
+        }
 
         // 兼容过去没有分组的生成
         if (DocName == "v1") DocName = string.Empty;

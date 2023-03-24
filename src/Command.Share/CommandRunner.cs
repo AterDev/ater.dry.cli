@@ -177,7 +177,7 @@ public static class CommandRunner
     /// <param name="swaggerUrl"></param>
     /// <param name="language"></param>
     /// <returns></returns>
-    public static async Task GenerateCSharpApiClientAsync(string outputPath, string swaggerUrl, LanguageType language = LanguageType.CSharp)
+    public static async Task GenerateCSharpApiClientAsync(string swaggerUrl, string outputPath, LanguageType language = LanguageType.CSharp)
     {
         var cmd = new ApiClientCommand(swaggerUrl, outputPath, language);
         await cmd.RunAsync();

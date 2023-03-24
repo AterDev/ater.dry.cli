@@ -1,4 +1,5 @@
 ﻿using Command.Share;
+using Command.Share.Commands;
 using Core.Infrastructure;
 using Core.Models;
 using Datastore;
@@ -151,6 +152,14 @@ public class EntityManager
 
         swaggerPath ??= Path.Combine(project.HttpPath, "swagger.json");
         await CommandRunner.GenerateRequestAsync(swaggerPath, webPath, type);
+    }
+
+
+    public async Task GenerateClientRequestAsync(Project project, string webPath, LanguageType type, string? swaggerPath = null)
+    {
+        Const.PROJECT_ID = project.ProjectId;
+        swaggerPath ??= Path.Combine(project.HttpPath, "swagger.json");
+        await CommandRunner.GenerateCSharpApiClientAsync(swaggerPath, webPath, type);
     }
 
     public async Task GenerateSyncAsync(Project project)

@@ -1,9 +1,6 @@
 ﻿using System.Data;
-using System.Xml.Linq;
 using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
-using SharpYaml.Tokens;
-using static System.Net.WebRequestMethods;
 
 namespace CodeGenerator.Generate;
 /// <summary>
@@ -25,9 +22,11 @@ public class CSHttpClientGenerate : GenerateBase
     }
 
 
-    public static string GetBaseService()
+    public static string GetBaseService(string namespaceName)
     {
-        return GetTplContent("RequestService.CsharpeBaseService.tpl");
+        var content = GetTplContent("RequestService.CsharpeBaseService.tpl");
+        content = content.Replace("${Namespace}", namespaceName);
+        return content;
     }
 
     /// <summary>
@@ -35,15 +34,18 @@ public class CSHttpClientGenerate : GenerateBase
     /// </summary>
     /// <param name="list">所有子服务</param>
     /// <returns></returns>
-    public static string GetClient(List<GenFileInfo> infos)
+    public static string GetClient(List<GenFileInfo> infos, string namespaceName, string className)
     {
         var tplContent = GetTplContent("RequestService.CsharpClient.tpl");
+        tplContent = tplContent.Replace("${Namespace}", namespaceName)
+            .Replace("${ClassName}", className);
+
         var propsString = "";
         var initPropsString = "";
 
         infos.ForEach(info =>
         {
-            propsString += @$"    public {info.ModelName}Service {info.ModelName}Services {{ get; init; }}" + Environment.NewLine;
+            propsString += @$"    public {info.ModelName}Service {info.ModelName}Service {{ get; init; }}" + Environment.NewLine;
             initPropsString += $"        {info.ModelName}Service = new {info.ModelName}Service(Http);" + Environment.NewLine;
         });
 
@@ -199,9 +201,9 @@ public class CSHttpClientGenerate : GenerateBase
         }
         string res = $$"""
         {{comments}}
-            public {{function.ResponseType}} {{function.Name.ToPascalCase()}}({{paramsString}}) {
+            public async Task<{{function.ResponseType}}?> {{function.Name.ToPascalCase()}}({{paramsString}}) {
                 var url = $"{{function.Path}}";
-                return await {{function.Method}}JsonAsync<{{function.ResponseType}}>(url{{dataString}});
+                return await {{function.Method}}JsonAsync<{{function.ResponseType}}?>(url{{dataString}});
             }
 
         """;
@@ -276,7 +278,7 @@ public class CSHttpClientGenerate : GenerateBase
         switch (schema.Type)
         {
             case "boolean":
-                type = "boolean";
+                type = "bool";
                 break;
             case "integer":
                 // 看是否为enum

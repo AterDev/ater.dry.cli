@@ -97,6 +97,6 @@ public class CommandTest
     {
         string url = "http://localhost:5002/swagger/admin/swagger.json";
         string outputPath = @"d:\test";
-        await CommandRunner.GenerateCSharpApiClientAsync(outputPath, url);
+        await CommandRunner.GenerateCSharpApiClientAsync(url, outputPath);
     }
 }

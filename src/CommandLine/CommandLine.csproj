@@ -19,9 +19,11 @@
 		<RepositoryUrl>https://github.com/AterDev/cli.git</RepositoryUrl>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<PackageReleaseNotes>
-1 studio 添加对swagger 配置更新;
-2 代码生成:前端支持对多个swagger内容生成对应的服务;
-3 优化前端服务生成体验;</PackageReleaseNotes>
+			1 studio 添加对swagger 配置更新;
+			2 代码生成:前端支持对多个swagger内容生成对应的服务;
+			3 优化前端服务生成体验;
+			4 添加CSharp客户端请求生成(仅针对AtApi模板项目，不通用);
+		</PackageReleaseNotes>
 		<PackageIcon>logo.jpg</PackageIcon>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<RootNamespace>Droplet.$(MSBuildProjectName.Replace("cli", "CLI"))</RootNamespace>

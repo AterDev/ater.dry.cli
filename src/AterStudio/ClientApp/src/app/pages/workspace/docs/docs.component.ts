@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { LanguageType } from 'models/enum/language-type.model';
 import { ApiDocTag } from 'src/app/share/models/api-doc-tag.model';
 import { ApiDocInfo } from 'src/app/share/models/api-doc/api-doc-info.model';
 import { EntityInfo } from 'src/app/share/models/entity-info.model';
@@ -25,6 +26,7 @@ import { ProjectService } from 'src/app/share/services/project.service';
 export class DocsComponent implements OnInit {
   OperationType = OperationType;
   RequestLibType = RequestLibType;
+  LanguageType = LanguageType;
   project = {} as Project;
   projectId: string;
   isRefresh = false;
@@ -44,6 +46,7 @@ export class DocsComponent implements OnInit {
   editForm!: FormGroup;
   dialogRef!: MatDialogRef<{}, any>;
   requestForm!: FormGroup;
+  clientRequestForm!: FormGroup;
 
   @ViewChild("addDocDialog", { static: true })
   addTmpRef!: TemplateRef<{}>;
@@ -56,6 +59,9 @@ export class DocsComponent implements OnInit {
 
   @ViewChild("requestDialog", { static: true })
   requestTmpRef!: TemplateRef<{}>;
+
+  @ViewChild("clientRequestDialog", { static: true })
+  clientRequestTmpRef!: TemplateRef<{}>;
 
   restApiGroups = [] as RestApiGroup[];
   filterApiGroups = [] as RestApiGroup[];
@@ -113,6 +119,12 @@ export class DocsComponent implements OnInit {
       swagger: new FormControl<string | null>('./swagger.json', []),
       type: new FormControl<RequestLibType>(RequestLibType.NgHttp, []),
       path: new FormControl<string | null>(defaultPath, [Validators.required])
+    });
+
+    this.clientRequestForm = new FormGroup({
+      swagger: new FormControl<string | null>('./swagger.json', []),
+      type: new FormControl<LanguageType>(LanguageType.CSharp, []),
+      path: new FormControl<string | null>(this.projectState.project?.httpPath ?? "", [Validators.required])
     });
   }
   getDocs(): void {
@@ -174,6 +186,14 @@ export class DocsComponent implements OnInit {
       minWidth: 400
     });
   }
+
+  openClientRequestDialog(): void {
+    this.clientRequestForm.get('swagger')?.setValue(this.currentDoc?.path);
+    this.dialogRef = this.dialog.open(this.clientRequestTmpRef, {
+      minWidth: 400
+    });
+  }
+
   delete(): void {
     const id = this.currentDoc!.id;
     if (id) {
@@ -201,7 +221,7 @@ export class DocsComponent implements OnInit {
               this.dialogRef.close();
             }
           });
-      }else{
+      } else {
         this.snb.open('未选择接口文档');
       }
 
@@ -214,6 +234,26 @@ export class DocsComponent implements OnInit {
     const type = this.requestForm.get('type')?.value as number;
     const path = this.requestForm.get('path')?.value as string;
     this.entitySrv.generateRequest(this.projectId!, path, type, swagger)
+      .subscribe({
+        next: res => {
+          if (res) {
+            this.snb.open('生成成功');
+            this.dialogRef.close();
+          }
+          this.isSync = false;
+        },
+        error: () => {
+          this.isSync = false;
+        }
+      })
+  }
+
+  generateClientRequest(): void {
+    this.isSync = true;
+    const swagger = this.clientRequestForm.get('swagger')?.value as string;
+    const type = this.clientRequestForm.get('type')?.value as number;
+    const path = this.clientRequestForm.get('path')?.value as string;
+    this.entitySrv.generateClientRequest(this.projectId!, path, type, swagger)
       .subscribe({
         next: res => {
           if (res) {

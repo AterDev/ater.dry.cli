@@ -488,6 +488,77 @@
         }
       }
     },
+    "/api/Entity/generateClientRequest/{id}": {
+      "get": {
+        "tags": [
+          "Entity"
+        ],
+        "summary": "生成客户端请求",
+        "operationId": "Entity_GenerateClientRequest",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "webPath",
+            "in": "query",
+            "description": "",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "",
+            "style": "form",
+            "schema": {
+              "$ref": "#/components/schemas/LanguageType"
+            }
+          },
+          {
+            "name": "swaggerPath",
+            "in": "query",
+            "description": "",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Entity/generateSync/{id}": {
       "post": {
         "tags": [
@@ -1098,6 +1169,16 @@
           }
         },
         "additionalProperties": false
+      },
+      "LanguageType": {
+        "enum": [
+          0
+        ],
+        "type": "integer",
+        "format": "int32",
+        "x-enumNames": [
+          "CSharp"
+        ]
       },
       "OperationType": {
         "enum": [

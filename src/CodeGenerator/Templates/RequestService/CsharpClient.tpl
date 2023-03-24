@@ -1,7 +1,7 @@
-﻿using Share.Models.AuthDtos;
-namespace Dusi.Manage.Client;
+﻿using ${Namespace}.Services;
+namespace ${Namespace};
 
-public class ManagerClient
+public class ${ClassName}Client
 {
     private string BaseUrl { get; set; } = "";
     public string? AccessToken { get; set; }
@@ -13,7 +13,7 @@ public class ManagerClient
 ${Properties}
     #endregion
 
-    public ManagerClient()
+    public ${ClassName}Client()
     {
         Http = new HttpClient()
         {
@@ -24,7 +24,7 @@ ${Properties}
             ReferenceHandler = ReferenceHandler.IgnoreCycles,
             Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
         };
-        _ = RefreshTokenAsync(option.Key, option.Secret).Result;
+
         #region api services
 ${InitProperties}
         #endregion

@@ -63,8 +63,8 @@ public class ApiClientCommand : CommandBase
 
     public async Task GenerateCommonFilesAsync()
     {
-        string baseContent = CSHttpClientGenerate.GetBaseService();
-
+        var nspName = new DirectoryInfo(OutputPath).Name;
+        string baseContent = CSHttpClientGenerate.GetBaseService(nspName);
         string globalUsingContent = CSHttpClientGenerate.GetGlobalUsing();
 
         string dir = Path.Combine(OutputPath, "Services");
@@ -84,7 +84,9 @@ public class ApiClientCommand : CommandBase
             string dir = Path.Combine(OutputPath, "Services");
             await GenerateFileAsync(dir, service.Name, service.Content, true);
         }
-        string clientContent = CSHttpClientGenerate.GetClient(services);
+        var nspName = new DirectoryInfo(OutputPath).Name;
+        var className = string.IsNullOrWhiteSpace(DocName) ? "Manager" : DocName.ToPascalCase();
+        string clientContent = CSHttpClientGenerate.GetClient(services, nspName, className);
         await GenerateFileAsync(OutputPath, DocName.ToPascalCase() + "Client.cs", clientContent, true);
     }
 }

@@ -1,5 +1,5 @@
 ﻿
-namespace Dusi.Manage.Client.Services;
+namespace ${Namespace}.Services;
 public class BaseService
 {
     protected HttpClient Http { get; set; }
@@ -16,8 +16,6 @@ public class BaseService
         };
     }
 
-
-
     /// <summary>
     /// json post 封装
     /// </summary>
@@ -26,7 +24,7 @@ public class BaseService
     /// <param name="route"></param>
     /// <param name="data"></param>
     /// <returns></returns>
-    public async Task<TResult?> PostJsonAsync<TResult>(string route, object? data)
+    public async Task<TResult?> PostJsonAsync<TResult>(string route, object? data = null)
     {
         return await SendJsonAsync<TResult>(HttpMethod.Post, route, data);
     }
@@ -39,7 +37,7 @@ public class BaseService
     /// <param name="route"></param>
     /// <param name="data"></param>
     /// <returns></returns>
-    public async Task<TResult?> PutJsonAsync<TResult>(string route, object? data)
+    public async Task<TResult?> PutJsonAsync<TResult>(string route, object? data = null)
     {
         return await SendJsonAsync<TResult>(HttpMethod.Put, route, data);
     }

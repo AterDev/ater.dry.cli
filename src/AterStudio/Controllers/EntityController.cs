@@ -1,4 +1,5 @@
 ﻿using AterStudio.Manager;
+using Command.Share.Commands;
 using Datastore.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -73,6 +74,27 @@ public class EntityController : ControllerBase
         await _manager.GenerateRequestAsync(project, webPath, type, swaggerPath);
         return true;
     }
+
+    /// <summary>
+    /// 生成客户端请求
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="webPath"></param>
+    /// <param name="type"></param>
+    /// <param name="swaggerPath"></param>
+    /// <returns></returns>
+    [HttpGet("generateClientRequest/{id}")]
+    public async Task<ActionResult<bool>> GenerateClientRequest([FromRoute] Guid id, string webPath, LanguageType type, string? swaggerPath = null)
+    {
+        Project? project = _manager.Find(id);
+        if (project == null)
+        {
+            return NotFound("项目不存在");
+        }
+        await _manager.GenerateClientRequestAsync(project, webPath, type, swaggerPath);
+        return true;
+    }
+
 
     /// <summary>
     /// 同步ng页面

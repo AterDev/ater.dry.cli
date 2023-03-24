@@ -5,6 +5,7 @@ import { GenerateDto } from '../models/entity/generate-dto.model';
 import { BatchGenerateDto } from '../models/entity/batch-generate-dto.model';
 import { EntityFile } from '../models/entity/entity-file.model';
 import { RequestLibType } from '../models/enum/request-lib-type.model';
+import { LanguageType } from '../models/enum/language-type.model';
 
 /**
  * 实体
@@ -48,6 +49,18 @@ export class EntityService extends BaseService {
    */
   generateRequest(id: string, webPath?: string, type?: RequestLibType, swaggerPath?: string): Observable<boolean> {
     const url = `/api/Entity/generateRequest/${id}?webPath=${webPath}&type=${type}&swaggerPath=${swaggerPath}`;
+    return this.request<boolean>('get', url);
+  }
+
+  /**
+   * 生成客户端请求
+   * @param id 
+   * @param webPath 
+   * @param type 
+   * @param swaggerPath 
+   */
+  generateClientRequest(id: string, webPath?: string, type?: LanguageType, swaggerPath?: string): Observable<boolean> {
+    const url = `/api/Entity/generateClientRequest/${id}?webPath=${webPath}&type=${type}&swaggerPath=${swaggerPath}`;
     return this.request<boolean>('get', url);
   }
 
