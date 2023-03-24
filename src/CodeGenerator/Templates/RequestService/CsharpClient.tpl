@@ -13,8 +13,9 @@ public class ${ClassName}Client
 ${Properties}
     #endregion
 
-    public ${ClassName}Client()
+    public ${ClassName}Client(string? baseUrl = null)
     {
+        BaseUrl = baseUrl ?? "";
         Http = new HttpClient()
         {
             BaseAddress = new Uri(BaseUrl),
