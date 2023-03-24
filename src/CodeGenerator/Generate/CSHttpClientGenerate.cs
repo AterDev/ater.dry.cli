@@ -201,7 +201,7 @@ public class CSHttpClientGenerate : GenerateBase
         }
         string res = $$"""
         {{comments}}
-            public async Task<{{function.ResponseType}}?> {{function.Name.ToPascalCase()}}({{paramsString}}) {
+            public async Task<{{function.ResponseType}}?> {{function.Name.ToPascalCase()}}Async({{paramsString}}) {
                 var url = $"{{function.Path}}";
                 return await {{function.Method}}JsonAsync<{{function.ResponseType}}?>(url{{dataString}});
             }
