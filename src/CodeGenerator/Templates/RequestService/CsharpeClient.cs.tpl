@@ -9,9 +9,11 @@ public class ManagerClient
     public JsonSerializerOptions JsonSerializerOptions { get; set; }
     public ErrorResult? ErrorMsg { get; set; } = null;
 
-    ${Properties}
+    #region api services
+${Properties}
+    #endregion
 
-    public ManagerClient(AuthOption option)
+    public ManagerClient()
     {
         Http = new HttpClient()
         {
@@ -23,8 +25,9 @@ public class ManagerClient
             Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
         };
         _ = RefreshTokenAsync(option.Key, option.Secret).Result;
-
-        ${InitProperties}
+        #region api services
+${InitProperties}
+        #endregion
     }
 
     public void SetBaseUrl(string url)
@@ -40,10 +43,4 @@ public class ErrorResult
     public string? Detail { get; set; }
     public int Status { get; set; } = 500;
     public string? TraceId { get; set; }
-}
-
-public class AuthOption
-{
-    public required string Key { get; set; }
-    public required string Secret { get; set; }
 }

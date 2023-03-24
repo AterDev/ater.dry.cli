@@ -1,10 +1,10 @@
+﻿using System;
 using Microsoft.OpenApi.Models;
 namespace Command.Share.Commands;
-
 /// <summary>
-/// 前端ts请求生成命令
+/// 客户端请求生成
 /// </summary>
-public class RequestCommand : CommandBase
+public class ApiClientCommand : CommandBase
 {
     /// <summary>
     /// swagger文档链接
@@ -17,11 +17,14 @@ public class RequestCommand : CommandBase
 
     public OpenApiDocument? ApiDocument { get; set; }
 
-    public RequestLibType LibType { get; set; } = RequestLibType.NgHttp;
+    public LanguageType LanguageType { get; set; } = LanguageType.CSharp;
 
+    /// <summary>
+    /// 输出目录
+    /// </summary>
     public string OutputPath { get; set; }
 
-    public RequestCommand(string docUrl, string output, RequestLibType libType)
+    public ApiClientCommand(string docUrl, string output, LanguageType languageType)
     {
         DocUrl = docUrl;
         DocName = docUrl.Split('/').Reverse().Skip(1).First();
@@ -29,12 +32,11 @@ public class RequestCommand : CommandBase
         // 兼容过去没有分组的生成
         if (DocName == "v1") DocName = string.Empty;
         OutputPath = Path.Combine(output, DocName);
-        LibType = libType;
+        LanguageType = languageType;
 
         Instructions.Add($"  🔹 generate ts interfaces.");
         Instructions.Add($"  🔹 generate request services.");
     }
-
     public async Task RunAsync()
     {
         string openApiContent = "";
@@ -53,49 +55,42 @@ public class RequestCommand : CommandBase
         ApiDocument = new OpenApiStringReader()
             .Read(openApiContent, out _);
 
-
         Console.WriteLine(Instructions[0]);
         await GenerateCommonFilesAsync();
         await GenerateRequestServicesAsync();
-        Console.WriteLine("😀 Request services generate completed!" + Environment.NewLine);
+        Console.WriteLine("😀 Api Client generate completed!" + Environment.NewLine);
     }
-
 
     public async Task GenerateCommonFilesAsync()
     {
-        string content = RequestGenerate.GetBaseService(LibType);
-        string dir = Path.Combine(OutputPath, "services");
-        await GenerateFileAsync(dir, "base.service.ts", content, false);
+        string baseContent = CSHttpClientGenerate.GetBaseService();
+        
+        string globalUsingContent = CSHttpClientGenerate.GetGlobalUsing();
 
-        // 枚举pipe
-        var schemas = ApiDocument!.Components.Schemas;
-        string pipeContent = RequestGenerate.GetEnumPipeContent(schemas);
-        dir = Path.Combine(OutputPath, "pipe");
-        await GenerateFileAsync(dir, "enum-text.pipe.ts", pipeContent, true);
+        string dir = Path.Combine(OutputPath, "Services");
+        await GenerateFileAsync(dir, "BaseService.cs", baseContent, true);
+
+        await GenerateFileAsync(OutputPath, "GlobalUsings.cs", globalUsingContent, false);
+
     }
 
     public async Task GenerateRequestServicesAsync()
     {
-        RequestGenerate ngGen = new(ApiDocument!)
-        {
-            LibType = LibType
-        };
-
-        // 获取对应的ts模型类，生成文件
-        List<GenFileInfo> models = ngGen.GetTSInterfaces();
-        foreach (GenFileInfo model in models)
-        {
-            string dir = Path.Combine(OutputPath, "models", model.Path.ToHyphen());
-            await GenerateFileAsync(dir, model.Name, model.Content, true);
-        }
-
+        var gen = new CSHttpClientGenerate(ApiDocument!);
         // 获取请求服务并生成文件
-        List<GenFileInfo> services = ngGen.GetServices(ApiDocument!.Tags);
+        List<GenFileInfo> services = gen.GetServices();
         foreach (GenFileInfo service in services)
         {
-            string dir = Path.Combine(OutputPath, "services");
+            string dir = Path.Combine(OutputPath, "Services");
             await GenerateFileAsync(dir, service.Name, service.Content, true);
         }
-
+        string clientContent = CSHttpClientGenerate.GetClient(services);
+        await GenerateFileAsync(OutputPath, DocName.ToPascalCase() + "Client.cs", clientContent, true);
     }
+}
+
+
+public enum LanguageType
+{
+    CSharp
 }

@@ -3,6 +3,7 @@ using System.Xml.Linq;
 using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
 using SharpYaml.Tokens;
+using static System.Net.WebRequestMethods;
 
 namespace CodeGenerator.Generate;
 /// <summary>
@@ -28,9 +29,28 @@ public class CSHttpClientGenerate : GenerateBase
     {
         return default!;
     }
-    public static string GetClient()
+
+    /// <summary>
+    /// 生成客户端类
+    /// </summary>
+    /// <param name="list">所有子服务</param>
+    /// <returns></returns>
+    public static string GetClient(List<GenFileInfo> infos)
     {
-        return default!;
+        var tplContent = GetTplContent("RequestService.CsharpeClient.cs.tpl");
+        var propsString = "";
+        var initPropsString = "";
+
+        infos.ForEach(info =>
+        {
+            propsString += @$"    public {info.Name}Service {info.Name}Services {{ get; init; }}" + Environment.NewLine;
+            initPropsString += $"        {info.Name}Service = new {info.Name}Service(Http);" + Environment.NewLine;
+        });
+
+        tplContent = tplContent.Replace("${Properties}", propsString)
+            .Replace("${InitProperties}", initPropsString);
+
+        return tplContent;
     }
     public static string GetGlobalUsing()
     {
