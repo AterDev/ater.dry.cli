@@ -2,9 +2,9 @@
 namespace ${Namespace}.Services;
 public class BaseService
 {
-    protected HttpClient Http { get; set; }
-    protected JsonSerializerOptions JsonSerializerOptions { get; set; }
-    protected ErrorResult? ErrorMsg { get; set; } = null;
+    public HttpClient Http { get; set; }
+    public JsonSerializerOptions JsonSerializerOptions { get; set; }
+    public ErrorResult? ErrorMsg { get; set; } = null;
 
     public BaseService(HttpClient httpClient)
     {
@@ -24,7 +24,7 @@ public class BaseService
     /// <param name="route"></param>
     /// <param name="data"></param>
     /// <returns></returns>
-    public async Task<TResult?> PostJsonAsync<TResult>(string route, object? data = null)
+    protected async Task<TResult?> PostJsonAsync<TResult>(string route, object? data = null)
     {
         return await SendJsonAsync<TResult>(HttpMethod.Post, route, data);
     }
@@ -37,7 +37,7 @@ public class BaseService
     /// <param name="route"></param>
     /// <param name="data"></param>
     /// <returns></returns>
-    public async Task<TResult?> PutJsonAsync<TResult>(string route, object? data = null)
+    protected async Task<TResult?> PutJsonAsync<TResult>(string route, object? data = null)
     {
         return await SendJsonAsync<TResult>(HttpMethod.Put, route, data);
     }
@@ -49,7 +49,7 @@ public class BaseService
     /// <param name="route"></param>
     /// <param name="dic"></param>
     /// <returns></returns>
-    public async Task<TResult?> GetJsonAsync<TResult>(string route, Dictionary<string, string?>? dic = null)
+    protected async Task<TResult?> GetJsonAsync<TResult>(string route, Dictionary<string, string?>? dic = null)
     {
         return await SendJsonAsync<TResult>(HttpMethod.Get, route, dic);
     }
@@ -61,19 +61,19 @@ public class BaseService
     /// <param name="route"></param>
     /// <param name="dic"></param>
     /// <returns></returns>
-    public async Task<TResult?> DeleteJsonAsync<TResult>(string route, Dictionary<string, string?>? dic = null)
+    protected async Task<TResult?> DeleteJsonAsync<TResult>(string route, Dictionary<string, string?>? dic = null)
     {
         return await SendJsonAsync<TResult>(HttpMethod.Delete, route, dic);
     }
 
-    public static string ToUrlParameters(Dictionary<string, string?> dic)
+    protected static string ToUrlParameters(Dictionary<string, string?> dic)
     {
         return string.Join("&", dic.Where(d => d.Value != null)
             .Select(d => string.Format("{0}={1}", d.Key, d.Value))
             );
     }
 
-    public async Task<TResult?> SendJsonAsync<TResult>(HttpMethod method, string route, object? data)
+    protected async Task<TResult?> SendJsonAsync<TResult>(HttpMethod method, string route, object? data)
     {
         HttpResponseMessage? res = null;
         if (method == HttpMethod.Post)
@@ -95,7 +95,7 @@ public class BaseService
         }
     }
 
-    public async Task<TResult?> SendJsonAsync<TResult>(HttpMethod method, string route, Dictionary<string, string?>? dic = null)
+    protected async Task<TResult?> SendJsonAsync<TResult>(HttpMethod method, string route, Dictionary<string, string?>? dic = null)
     {
         if (dic != null)
         {
