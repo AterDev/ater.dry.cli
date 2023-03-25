@@ -13,14 +13,20 @@ public class ${ClassName}Client
 ${Properties}
     #endregion
 
-    public ${ClassName}Client(string? baseUrl = null)
+    public AdminClient(string? baseUrl = null, HttpClientHandler? handler = null)
     {
         BaseUrl = baseUrl ?? "";
-        Http = new HttpClient()
-        {
-            BaseAddress = new Uri(BaseUrl),
-            Timeout = TimeSpan.FromSeconds(10)
-        };
+        Http = handler == null ?
+            new HttpClient()
+            {
+                BaseAddress = new Uri(BaseUrl),
+                Timeout = TimeSpan.FromSeconds(15)
+            } :
+            new HttpClient(handler)
+            {
+                BaseAddress = new Uri(BaseUrl),
+                Timeout = TimeSpan.FromSeconds(15)
+            };
         JsonSerializerOptions = new JsonSerializerOptions()
         {
             ReferenceHandler = ReferenceHandler.IgnoreCycles,
@@ -34,7 +40,7 @@ ${InitProperties}
 
     public void SetToken(string token)
     {
-
+        Http.DefaultRequestHeaders.Clear();
         Http.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", "Bearer " + token);
     }
 
