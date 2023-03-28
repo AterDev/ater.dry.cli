@@ -186,7 +186,7 @@ public class RequestGenerate : GenerateBase
 
                 sb.AppendLine(caseString);
             }
-            sb.AppendLine("    default:  break;");
+            sb.AppendLine("    default: '默认'; break;");
         }
 
         sb.AppendLine("  }");
