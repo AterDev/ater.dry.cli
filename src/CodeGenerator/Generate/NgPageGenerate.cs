@@ -397,32 +397,12 @@ public class NgPageGenerate : GenerateBase
     /// <returns></returns>
     private static string InsertEditor(string tsContent)
     {
-        return tsContent.Replace("[@Imports]", @"import * as ClassicEditor from 'ng-ckeditor5-classic';
-import { environment } from 'src/environments/environment';
-import { CKEditor5 } from '@ckeditor/ckeditor5-angular';
+        return tsContent.Replace("[@Imports]", @"import { environment } from 'src/environments/environment';
 [@Imports]")
-            .Replace("[@Declares]", @"public editorConfig!: CKEditor5.Config;
-  public editor: CKEditor5.EditorConstructor = ClassicEditor;
-  [@Declares]")
+            .Replace("[@Declares]", @"[@Declares]")
             .Replace("[@DI]", @"")
-            .Replace("[@Methods]", @"  initEditor(): void {
-    this.editorConfig = {
-      // placeholder: '请添加图文信息提供证据，也可以直接从Word文档中复制',
-      simpleUpload: {
-        uploadUrl: '',// set your api url like:environment.uploadEditorFileUrl,
-        headers: {
-          Authorization: 'Bearer ' + localStorage.getItem(""accessToken"")
-        }
-      },
-      language: 'zh-cn'
-    };
-  }
-  onReady(editor: any) {
-    editor.ui.getEditableElement().parentElement.insertBefore(
-      editor.ui.view.toolbar.element,
-      editor.ui.getEditableElement()
-    );
-  }").Replace("[@Init]", "this.initEditor();");
+            .Replace("[@Methods]", @"  initEditor(): void {  }
+").Replace("[@Init]", "this.initEditor();");
     }
 
 

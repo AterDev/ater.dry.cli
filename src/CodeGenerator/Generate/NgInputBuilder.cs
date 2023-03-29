@@ -75,8 +75,7 @@ public class NgInputBuilder
         }
         else if (MaxLength > 1000 || MinLength >= 100)
         {
-            html = $@" <ckeditor [editor]=""editor"" [config]=""editorConfig"" formControlName=""{name}"" (ready)=""onReady($event)"">
-    </ckeditor>
+            html = $@" <textarea formControlName=""{name}"" rows=""10"" ></textarea>
 ";
         }
 
