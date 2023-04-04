@@ -65,9 +65,9 @@ public class ApiDocManager
                 RestApiGroups = helper.RestApiGroups
             };
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            throw new Exception($"{path} 请求失败！");
+            throw new Exception($"{path} 请求失败！" + ex.Message);
         }
     }
 

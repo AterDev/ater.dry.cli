@@ -129,6 +129,7 @@ public class OpenApiHelper
                     {
                         apiInfo.ResponseInfo = model;
                     }
+                    if (ResponseType.EndsWith("[]")) { apiInfo.ResponseInfo.IsList = true; }
                 }
                 // 请求的参数
                 if (requestParameters != null)
@@ -415,6 +416,7 @@ public class OpenApiHelper
                 else
                 {
                     type = "number";
+                    refType = "number";
                 }
                 break;
             case "file":

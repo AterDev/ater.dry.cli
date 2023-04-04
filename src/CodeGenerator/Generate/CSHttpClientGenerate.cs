@@ -293,6 +293,7 @@ public class CSHttpClientGenerate : GenerateBase
                 else
                 {
                     type = "int";
+                    refType = "int";
                 }
                 break;
 

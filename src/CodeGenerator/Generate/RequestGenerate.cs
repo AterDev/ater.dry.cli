@@ -232,6 +232,7 @@ public class RequestGenerate : GenerateBase
                 else
                 {
                     type = "number";
+                    refType = "number";
                 }
                 break;
             case "file":

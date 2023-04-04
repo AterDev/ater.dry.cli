@@ -27,7 +27,8 @@
     </span>
 
     <span class="example-spacer"></span>
-    <button mat-icon-button matTooltip="生成客户端请求" color="primary" [disabled]="isLoading" (click)="openClientRequestDialog()">
+    <button mat-icon-button matTooltip="生成客户端请求" color="primary" [disabled]="isLoading"
+      (click)="openClientRequestDialog()">
       <mat-icon>code</mat-icon>
     </button>
     <button mat-icon-button matTooltip="生成前端请求服务" color="primary" [disabled]="isLoading" (click)="openRequestDialog()">
@@ -165,7 +166,9 @@
             <mat-chip-list>
               <mat-chip color="primary">application/json</mat-chip>
               <mat-chip color="primary" selected matTooltip="返回类型"
-                *ngIf="currentApi.responseInfo.name">{{currentApi.responseInfo.name}}</mat-chip>
+                *ngIf="currentApi.responseInfo.name">{{currentApi.responseInfo.name}}
+                <span *ngIf="currentApi.responseInfo.isList">[]</span>
+              </mat-chip>
             </mat-chip-list>
             <!-- 渲染内容 -->
             <table mat-table [dataSource]="currentApi.responseInfo.propertyInfos!" class="my-2">
