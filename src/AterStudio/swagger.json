@@ -1129,6 +1129,9 @@
             "type": "boolean",
             "nullable": true
           },
+          "isList": {
+            "type": "boolean"
+          },
           "propertyInfos": {
             "type": "array",
             "items": {

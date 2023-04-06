@@ -140,6 +140,7 @@ public class RequestServiceFunction
                 paramsComments += $"   * @param {p.Name} {p.Description ?? p.Type}\n";
             });
         }
+
         if (!string.IsNullOrEmpty(RequestType))
         {
             if (Params?.Count > 0)

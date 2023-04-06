@@ -9,8 +9,7 @@ export interface EntityInfo {
   comment?: string | null;
   keyType?: EntityKeyType | null;
   isEnum?: boolean | null;
-  isList: boolean ;
+  isList: boolean;
   propertyInfos?: PropertyInfo[] | null;
-
 
 }

@@ -58,6 +58,10 @@ public class RequestGenerate : GenerateBase
                     Path = path.Key,
                     Tag = operation.Value.Tags.FirstOrDefault()?.Name,
                 };
+                if (string.IsNullOrWhiteSpace(function.Name))
+                {
+                    function.Name = operation.Key + "_" + path.Key.Split("/").LastOrDefault();
+                }
                 (function.RequestType, function.RequestRefType) = GetTypescriptParamType(operation.Value.RequestBody?.Content.Values.FirstOrDefault()?.Schema);
                 (function.ResponseType, function.ResponseRefType) = GetTypescriptParamType(operation.Value.Responses.FirstOrDefault().Value
                     ?.Content.FirstOrDefault().Value
