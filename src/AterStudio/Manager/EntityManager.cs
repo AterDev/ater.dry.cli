@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using System.Text;
+using System.Xml.Linq;
 using Command.Share;
 using Command.Share.Commands;
 using Core.Infrastructure;
@@ -116,6 +117,34 @@ public class EntityManager
             return dtoFiles;
         }
         return dtoFiles;
+    }
+
+    /// <summary>
+    /// 保存Dto内容
+    /// </summary>
+    /// <param name="projectId"></param>
+    /// <param name="fileName"></param>
+    /// <param name="Content"></param>
+    /// <returns></returns>
+    public bool UpdateDtoContent(Guid projectId, string fileName, string Content)
+    {
+        var project = _dbContext.Projects.FindById(projectId);
+        string dtoPath = Path.Combine(project!.SharePath, "Models");
+        var filePath = Directory.GetFiles(dtoPath, fileName, SearchOption.AllDirectories).FirstOrDefault();
+        try
+        {
+            if (filePath != null)
+            {
+                File.WriteAllTextAsync(filePath, Content, Encoding.UTF8);
+                return true;
+            }
+
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+        return false;
     }
 
     public Project? Find(Guid id)

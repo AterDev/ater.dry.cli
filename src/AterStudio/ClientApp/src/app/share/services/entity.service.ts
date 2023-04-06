@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BaseService } from './base.service';
 import { Observable } from 'rxjs';
+import { UpdateDtoDto } from '../models/entity/update-dto-dto.model';
 import { GenerateDto } from '../models/entity/generate-dto.model';
 import { BatchGenerateDto } from '../models/entity/batch-generate-dto.model';
 import { EntityFile } from '../models/entity/entity-file.model';
@@ -30,6 +31,16 @@ export class EntityService extends BaseService {
   getDtos(projectId?: string, entityName?: string): Observable<EntityFile[]> {
     const url = `/api/Entity/dtos?projectId=${projectId}&entityName=${entityName}`;
     return this.request<EntityFile[]>('get', url);
+  }
+
+  /**
+   * 更新内容
+   * @param projectId 
+   * @param data UpdateDtoDto
+   */
+  updateDtoContent(projectId: string, data: UpdateDtoDto): Observable<boolean> {
+    const url = `/api/Entity/dto/${projectId}`;
+    return this.request<boolean>('put', url, data);
   }
 
   /**

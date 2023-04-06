@@ -1,4 +1,5 @@
 ﻿using AterStudio.Manager;
+using AterStudio.Models;
 using Command.Share.Commands;
 using Datastore.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -36,6 +37,18 @@ public class EntityController : ControllerBase
     public List<EntityFile> GetDtos(Guid projectId, string entityName)
     {
         return _manager.GetDtos(projectId, entityName);
+    }
+
+    /// <summary>
+    /// 更新内容
+    /// </summary>
+    /// <param name="projectId"></param>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    [HttpPut("dto/{projectId}")]
+    public bool UpdateDtoContent([FromRoute] Guid projectId, UpdateDtoDto dto)
+    {
+        return _manager.UpdateDtoContent(projectId, dto.FileName, dto.Content);
     }
 
     [HttpPost("generate")]

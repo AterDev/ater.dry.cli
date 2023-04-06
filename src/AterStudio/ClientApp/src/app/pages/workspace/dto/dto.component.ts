@@ -19,6 +19,7 @@ export class DtoComponent implements OnInit {
   isLoading = true;
   projectId: string;
   editorOptions = { theme: 'vs-dark', language: 'csharp' };
+  currentTabName: string | null = null;
   code: string = '';
   constructor(
     public route: ActivatedRoute,
@@ -51,7 +52,10 @@ export class DtoComponent implements OnInit {
           next: (res) => {
             if (res) {
               this.dtos = res;
-              this.code = this.dtos[0].content ?? '';
+              if (this.dtos.length > 0) {
+                this.code = this.dtos[0].content ?? '';
+                this.currentTabName = this.dtos[0].name!;
+              }
             } else {
             }
           },
@@ -67,7 +71,32 @@ export class DtoComponent implements OnInit {
 
   tabChange(event: MatTabChangeEvent): void {
     var tab = event.tab.textLabel;
+    this.currentTabName = event.tab.textLabel;
     this.code = this.dtos.find((val) => val.name == tab)?.content ?? '';
+  }
+
+  save(): void {
+    if (this.currentTabName) {
+      this.service.updateDtoContent(this.projectId,
+        {
+          fileName: this.currentTabName,
+          content: this.code
+        })
+        .subscribe({
+          next: (res) => {
+            if (res) {
+              this.dtos.find((val) => val.name == this.currentTabName)!.content = this.code;
+              this.snb.open('保存成功');
+            } else {
+            }
+          },
+          error: (error) => {
+            this.snb.open(error.detail);
+          }
+        });
+    } else {
+      this.snb.open('未选择有效文件');
+    }
   }
   back(): void {
     this.location.back();
