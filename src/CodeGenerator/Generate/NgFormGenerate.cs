@@ -11,10 +11,6 @@ public class NgFormGenerate : GenerateBase
     {
     }
 
-    public static void Add(PropertyInfo input)
-    {
-    }
-
     /// <summary>
     /// 生成添加组件
     /// </summary>
@@ -25,7 +21,7 @@ public class NgFormGenerate : GenerateBase
         {
             foreach (PropertyInfo input in propertyInfos)
             {
-                NgInputBuilder inputBuilder = new(input.Type, input.Name, input.DisplayName)
+                NgInputBuilder inputBuilder = new(input.Type, input.Name, input.CommentSummary ?? input.DisplayName)
                 {
                     IsDecimal = input.IsDecimal,
                     IsRequired = input.IsRequired,

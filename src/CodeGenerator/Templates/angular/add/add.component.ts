@@ -55,7 +55,7 @@ export class AddComponent implements OnInit {
 
   add(): void {
     if(this.formGroup.valid) {
-    this.isProcessing = false;
+    this.isProcessing = true;
     const data = this.formGroup.value as {$EntityName}AddDto;
     this.service.add(data)
       .subscribe({
@@ -65,14 +65,13 @@ export class AddComponent implements OnInit {
             // this.dialogRef.close(res);
             this.router.navigate(['../index'], { relativeTo: this.route });
           }
-
         },
         error: (error) => {
             this.snb.open(error.detail);
           },
-          complate: () => {
-              this.isProcessing = false;
-          }
+        complate: () => {
+            this.isProcessing = false;
+        }
       });
     }
   }

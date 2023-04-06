@@ -90,8 +90,10 @@ export class IndexComponent implements OnInit {
     });
   }
   delete(item: {$EntityName}ItemDto): void {
+    this.isProcessing = true;
     this.service.delete(item.id)
-      .subscribe(res => {
+    .subscribe({
+      next: (res) => {
         if (res) {
           this.data = this.data.filter(_ => _.id !== item.id);
           this.dataSource.data = this.data;
@@ -99,7 +101,14 @@ export class IndexComponent implements OnInit {
         } else {
           this.snb.open('删除失败');
         }
-      });
+      },
+      error: (error) => {
+        this.snb.open(error.detail);
+      },
+      complete: ()=>{
+        this.isProcessing = false;
+      }
+    });
 }
 
   /**
@@ -108,5 +117,4 @@ export class IndexComponent implements OnInit {
   edit(id: string): void {
     this.router.navigate(['../edit/' + id], { relativeTo: this.route });
   }
-
 }
