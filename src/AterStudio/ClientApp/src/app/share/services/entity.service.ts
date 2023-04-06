@@ -23,6 +23,16 @@ export class EntityService extends BaseService {
   }
 
   /**
+   * 获取dtos
+   * @param projectId 
+   * @param entityName 
+   */
+  getDtos(projectId?: string, entityName?: string): Observable<EntityFile[]> {
+    const url = `/api/Entity/dtos?projectId=${projectId}&entityName=${entityName}`;
+    return this.request<EntityFile[]>('get', url);
+  }
+
+  /**
    * generate
    * @param data GenerateDto
    */

@@ -26,6 +26,18 @@ public class EntityController : ControllerBase
             : _manager.GetEntityFiles(id, name);
     }
 
+    /// <summary>
+    /// 获取dtos
+    /// </summary>
+    /// <param name="projectId"></param>
+    /// <param name="entityName"></param>
+    /// <returns></returns>
+    [HttpGet("dtos")]
+    public List<EntityFile> GetDtos(Guid projectId, string entityName)
+    {
+        return _manager.GetDtos(projectId, entityName);
+    }
+
     [HttpPost("generate")]
     public async Task<ActionResult<bool>> GenerateAsync(GenerateDto dto)
     {

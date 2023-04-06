@@ -1,0 +1,26 @@
+<mat-toolbar>
+  <button mat-icon-button (click)="back()" matTooltip="返回">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span>
+    {{name}}
+  </span>
+  <span class="example-spacer"></span>
+</mat-toolbar>
+
+<div class="" *ngIf="!isLoading">
+  <section class="noContent" *ngIf="dtos.length<=0">
+    未找到相关DTO
+  </section>
+  <section class="content" *ngIf="dtos.length>0">
+    <div class="d-flex flex-column p-1">
+      <mat-tab-group class="w-100" (selectedTabChange)="tabChange($event)">
+        <mat-tab [label]="dto.name!" *ngFor="let dto of dtos"></mat-tab>
+      </mat-tab-group>
+      <div class="d-flex w-100">
+        <ngx-monaco-editor class="editor" [options]="editorOptions" [(ngModel)]="code"
+          (onInit)="onInit($event)"></ngx-monaco-editor>
+      </div>
+    </div>
+  </section>
+</div>

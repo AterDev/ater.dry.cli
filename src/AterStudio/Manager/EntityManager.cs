@@ -1,4 +1,5 @@
-﻿using Command.Share;
+﻿using System.Xml.Linq;
+using Command.Share;
 using Command.Share.Commands;
 using Core.Infrastructure;
 using Core.Models;
@@ -66,6 +67,55 @@ public class EntityManager
         }
 
         return entityFiles;
+    }
+
+    /// <summary>
+    /// 获取实体对应的dto
+    /// </summary>
+    /// <param name="projectId"></param>
+    /// <param name="entityName"></param>
+    /// <returns></returns>
+    public List<EntityFile> GetDtos(Guid projectId, string entityName)
+    {
+        List<EntityFile> dtoFiles = new();
+        //var project = await _context.Projects.FindAsync(projectId);
+        var project = _dbContext.Projects.FindById(projectId);
+        try
+        {
+            // dto目录
+            if (entityName.EndsWith(".cs"))
+            {
+                entityName = entityName.Replace(".cs", "");
+            }
+            string dtoPath = Path.Combine(project!.SharePath, "Models", $"{entityName}Dtos");
+            // get files in directory
+            List<string> filePaths = Directory.GetFiles(dtoPath, "*.cs", SearchOption.AllDirectories).ToList();
+
+            if (filePaths.Any())
+            {
+                filePaths = filePaths.Where(f => !f.EndsWith(".g.cs"))
+                    .ToList();
+
+                foreach (string? path in filePaths)
+                {
+                    FileInfo file = new(path);
+                    EntityFile item = new()
+                    {
+                        Name = file.Name,
+                        BaseDirPath = dtoPath,
+                        Path = file.FullName.Replace(dtoPath, ""),
+                        Content = File.ReadAllText(path)
+                    };
+
+                    dtoFiles.Add(item);
+                }
+            }
+        }
+        catch (Exception)
+        {
+            return dtoFiles;
+        }
+        return dtoFiles;
     }
 
     public Project? Find(Guid id)

@@ -10,6 +10,7 @@ import { MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/snack-bar';
 import { CustomerHttpInterceptor } from './share/customer-http.interceptor';
 import { WorkspaceModule } from './pages/workspace/workspace.module';
 import { ShareModule } from './share/share.module';
+import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { ShareModule } from './share/share.module';
     AppRoutingModule,
     ComponentsModule,
     HomeModule,
-    WorkspaceModule
+    WorkspaceModule,
+    MonacoEditorModule.forRoot()
   ],
   providers: [
     { provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: { duration: 2500 } },

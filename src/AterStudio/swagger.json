@@ -317,6 +317,67 @@
         }
       }
     },
+    "/api/Entity/dtos": {
+      "get": {
+        "tags": [
+          "Entity"
+        ],
+        "summary": "获取dtos",
+        "operationId": "Entity_GetDtos",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "query",
+            "description": "",
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "entityName",
+            "in": "query",
+            "description": "",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EntityFile"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EntityFile"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EntityFile"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Entity/generate": {
       "post": {
         "tags": [
