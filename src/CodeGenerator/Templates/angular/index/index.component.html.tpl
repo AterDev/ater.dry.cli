@@ -1,4 +1,4 @@
-<div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
+<div class="d-flex gap-1">
   <mat-toolbar color="">
     <mat-toolbar-row style="font-size:16px">
       <div class="d-flex">
@@ -12,8 +12,19 @@
     </mat-toolbar-row>
   </mat-toolbar>
 </div>
-<table mat-table [dataSource]="dataSource" style="width: 100%;">
-{$ColumnsDef}
+<!-- 加载框 -->
+<div class="d-flex text-center justify-content-center mt-2">
+  <mat-spinner mode="indeterminate" *ngIf="isLoading">
+  </mat-spinner>
+</div>
+<!-- 无数据时显示 -->
+<div *ngIf="data?.length<=0" class="p-2">
+  <h4>
+    暂无内容！
+  </h4>
+</div>
+<table mat-table *ngIf="!isLoading" [dataSource]="dataSource" style="width: 100%;">
+  {$ColumnsDef}
   <ng-container matColumnDef="actions">
     <th mat-header-cell *matHeaderCellDef>操作</th>
     <td mat-cell *matCellDef="let element">
@@ -32,9 +43,8 @@
   <tr mat-header-row *matHeaderRowDef="columns"></tr>
   <tr mat-row *matRowDef="let row; columns: columns;"></tr>
 </table>
-<mat-paginator [pageSizeOptions]="pageSizeOption"
-[pageIndex]="filter.pageIndex!-1" [pageSize]="filter.pageSize"
-  [length]="total" (page)="getList($event)"showFirstLastButtons></mat-paginator>
+<mat-paginator [pageSizeOptions]="pageSizeOption" [pageIndex]="filter.pageIndex!-1" [pageSize]="filter.pageSize"
+  [length]="total" (page)="getList($event)" showFirstLastButtons></mat-paginator>
 
 
 <ng-template #myDialog>

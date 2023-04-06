@@ -1,4 +1,4 @@
-<mat-toolbar fxLayoutGap="4px">
+<mat-toolbar class="d-flex gap-1">
   <button color="basic" mat-icon-button matTooltip="返回" (click)="back()">
     <mat-icon>arrow_back</mat-icon>
   </button>

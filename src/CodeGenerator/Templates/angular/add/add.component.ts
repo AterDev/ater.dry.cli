@@ -5,7 +5,6 @@ import { {$EntityName} } from 'src/app/share/admin/models/{$EntityPathName}/{$En
 import { {$EntityName}AddDto } from 'src/app/share/admin/models/{$EntityPathName}/{$EntityPathName}-add-dto.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Location } from '@angular/common';
 [@Imports]
 @Component({
@@ -18,6 +17,7 @@ export class AddComponent implements OnInit {
     formGroup!: FormGroup;
     data = {} as {$EntityName}AddDto;
     isLoading = true;
+    isProcessing = false;
     constructor(
         [@DI]
         private service: {$EntityName}Service,
@@ -55,6 +55,7 @@ export class AddComponent implements OnInit {
 
   add(): void {
     if(this.formGroup.valid) {
+    this.isProcessing = false;
     const data = this.formGroup.value as {$EntityName}AddDto;
     this.service.add(data)
       .subscribe({
@@ -66,12 +67,16 @@ export class AddComponent implements OnInit {
           }
 
         },
-        error: () => {
-
-        }
+        error: (error) => {
+            this.snb.open(error.detail);
+          },
+          complate: () => {
+              this.isProcessing = false;
+          }
       });
     }
   }
+
   back(): void {
     this.location.back();
   }

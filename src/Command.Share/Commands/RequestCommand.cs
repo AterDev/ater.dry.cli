@@ -67,7 +67,6 @@ public class RequestCommand : CommandBase
         Console.WriteLine("😀 Request services generate completed!" + Environment.NewLine);
     }
 
-
     public async Task GenerateCommonFilesAsync()
     {
         string content = RequestGenerate.GetBaseService(LibType);

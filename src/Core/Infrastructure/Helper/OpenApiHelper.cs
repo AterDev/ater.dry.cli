@@ -231,7 +231,7 @@ public class OpenApiHelper
                 }
                 else
                 {
-                    prop.CommentSummary = enums[i].ToString();
+                    prop.CommentSummary = (enums[i] as OpenApiInteger)?.Value.ToString() ?? i.ToString();
                 }
                 props.Add(prop);
             }

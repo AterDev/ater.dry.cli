@@ -5,7 +5,6 @@ import { {$EntityName}Service } from 'src/app/share/admin/services/{$EntityPathN
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { {$EntityName}UpdateDto } from 'src/app/share/admin/models/{$EntityPathName}/{$EntityPathName}-update-dto.model';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Location } from '@angular/common';
 [@Imports]
 @Component({
@@ -17,6 +16,7 @@ export class EditComponent implements OnInit {
   [@Declares]
   id!: string;
   isLoading = true;
+  isProcessing = false;
   data = {} as {$EntityName};
   updateData = {} as {$EntityName}UpdateDto;
   formGroup!: FormGroup;
@@ -72,6 +72,7 @@ export class EditComponent implements OnInit {
   }
   edit(): void {
     if(this.formGroup.valid) {
+      this.isProcessing = true;
       this.updateData = this.formGroup.value as {$EntityName}UpdateDto;
       this.service.update(this.id, this.updateData)
         .subscribe({
@@ -82,7 +83,11 @@ export class EditComponent implements OnInit {
               this.router.navigate(['../../index'], { relativeTo: this.route });
             }
           },
-          error:()=>{
+          error: (error) => {
+            this.snb.open(error.detail);
+          },
+          complate: () => {
+            this.isProcessing = false;
           }
         });
     }

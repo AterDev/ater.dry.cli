@@ -17,6 +17,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 export class IndexComponent implements OnInit {
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
   isLoading = true;
+  isProcessing = false;
   total = 0;
   data: {$EntityName}ItemDto[] = [];
   columns: string[] = [{$Columns}];
@@ -51,13 +52,24 @@ export class IndexComponent implements OnInit {
       this.filter.pageSize = event.pageSize;
     }
     this.service.filter(this.filter)
-      .subscribe(res => {
-        if (res.data) {
-          this.data = res.data;
-          this.total = res.count;
-          this.dataSource = new MatTableDataSource<{$EntityName}ItemDto>(this.data);
+      .subscribe({
+        next: (res) => {
+          if (res) {
+            if (res.data) {
+              this.data = res.data;
+              this.total = res.count;
+              this.dataSource = new MatTableDataSource<{$EntityName}>(this.data);
+            }
+          } else {
+            this.snb.open('');
+          }
+        },
+        error: (error) => {
+          this.snb.open(error.detail);
+        },
+        complete: () => {
+          this.isLoading = false;
         }
-        this.isLoading = false;
       });
   }
 
@@ -89,24 +101,6 @@ export class IndexComponent implements OnInit {
         }
       });
 }
-
-/*
-* 弹窗示例
-openMyDialog(): void {
-  this.dialogRef = this.dialog.open(myTmpl, {
-    hasBackdrop: true,
-    minWidth: 300,
-    disableClose: false,
-    data: {
-    }
-  });
-  this.dialogRef.afterClosed().subscribe(res => {
-    if (res) {
-      
-    }
-  });
-}
-}*/
 
   /**
    * 编辑
