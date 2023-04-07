@@ -90,6 +90,8 @@ export class EditComponent implements OnInit {
             this.isProcessing = false;
           }
         });
+    } else {
+        this.snb.open('表单验证不通过，请检查填写的内容!');
     }
   }
 
