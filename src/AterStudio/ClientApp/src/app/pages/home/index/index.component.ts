@@ -4,6 +4,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Route, Router } from '@angular/router';
+import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confirm-dialog.component';
 import { Project } from 'src/app/share/models/project/project.model';
 import { ProjectStateService } from 'src/app/share/project-state.service';
 import { ProjectService } from 'src/app/share/services/project.service';
@@ -72,6 +73,22 @@ export class IndexComponent implements OnInit {
     }
   }
 
+  deleteConfirm(item: string): void {
+    const ref = this.dialog.open(ConfirmDialogComponent, {
+      hasBackdrop: true,
+      disableClose: false,
+      data: {
+        title: '删除',
+        content: '是否确定删除?'
+      }
+    });
+
+    ref.afterClosed().subscribe(res => {
+      if (res) {
+        this.delete(item);
+      }
+    });
+  }
 
   delete(id: string): void {
     if (id) {

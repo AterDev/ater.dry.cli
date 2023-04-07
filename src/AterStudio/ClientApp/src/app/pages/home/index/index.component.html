@@ -21,7 +21,7 @@
       </mat-card-content>
       <mat-card-actions>
         <button mat-button (click)="selectProject(item.id)" color="primary">进入工作台</button>
-        <button mat-icon-button matTooltip="删除项目" class="delete-action" (click)="delete(item.id)">
+        <button mat-icon-button matTooltip="删除项目" class="delete-action" (click)="deleteConfirm(item.id)">
           <mat-icon color="warn">delete</mat-icon>
         </button>
       </mat-card-actions>
