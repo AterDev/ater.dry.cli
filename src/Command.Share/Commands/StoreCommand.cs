@@ -127,7 +127,7 @@ public class StoreCommand : CommandBase
             Directory.CreateDirectory(testDir);
         }
         string managerContent = CodeGen.GetManagerTestContent();
-        await GenerateFileAsync(testDir, $"I{entityName}ManagerTest.cs", managerContent);
+        await GenerateFileAsync(testDir, $"{entityName}ManagerTest.cs", managerContent);
     }
 
     /// <summary>

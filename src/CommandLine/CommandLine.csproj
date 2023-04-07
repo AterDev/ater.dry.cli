@@ -8,7 +8,7 @@
 		<AssemblyVersion>0.1.0.0</AssemblyVersion>
 		<FileVersion>0.1.0.0</FileVersion>
 		<PackageId>ater.droplet.cli</PackageId>
-		<Version>7.1.0-beta2</Version>
+		<Version>7.1.0-beta3</Version>
 		<Description> ater.web 框架代码生成器</Description>
 		<Authors>NilTor</Authors>
 		<Company>Atersoft</Company>
@@ -23,7 +23,9 @@
 			2 代码生成:前端支持对多个swagger内容生成对应的服务;
 			3 优化前端服务生成体验;
 			4 添加CSharp客户端请求生成(仅针对AtApi模板项目，不通用);
-			5 ng模板更新
+			5 ng模板更新;
+			6 添加manager 测试内容;
+			7 优化命令行输出内容;
 		</PackageReleaseNotes>
 		<PackageIcon>logo.jpg</PackageIcon>
 		<ImplicitUsings>enable</ImplicitUsings>

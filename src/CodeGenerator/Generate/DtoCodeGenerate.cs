@@ -119,13 +119,10 @@ public class DtoCodeGenerate : GenerateBase
             .Select(c => c.Name).ToList();
         props = props.Where(p => !deletePropNames.Contains(p.Name)).ToList();
 
-        Console.WriteLine("remove props:" + string.Join(",", deletePropNames));
-
         // 2 要更新的属性
         var updatePropNames = PropertyChanges.Where(c => c.Type != ChangeType.Delete)
             .Select(c => c.Name).ToList();
 
-        Console.WriteLine("update props:" + string.Join(",", updatePropNames));
         var updateProps = EntityInfo.PropertyInfos.Where(p => updatePropNames.Contains(p.Name)).ToList();
         updateProps.ForEach(p =>
         {

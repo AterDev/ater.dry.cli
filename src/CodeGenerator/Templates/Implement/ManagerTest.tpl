@@ -1,5 +1,5 @@
 ﻿using Application.IManager;
-using Core.Entities.${Namespace};
+using ${Namespace};
 using Core.Utils;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Share.Models.${EntityName}Dtos;

@@ -1,4 +1,4 @@
-﻿namespace CodeGenerator.Generate;
+namespace CodeGenerator.Generate;
 
 /// <summary>
 /// 数据仓储生成
@@ -66,6 +66,7 @@ public class ManagerGenerate : GenerateBase
     {
         string tplContent = GetTplContent($"Implement.ManagerTest.tpl");
         var entityHelper = new EntityParseHelper(EntityPath);
+        entityHelper.Parse();
         tplContent = tplContent.Replace(TplConst.NAMESPACE, entityHelper.NamespaceName);
         string entityName = Path.GetFileNameWithoutExtension(EntityPath);
         tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName);
