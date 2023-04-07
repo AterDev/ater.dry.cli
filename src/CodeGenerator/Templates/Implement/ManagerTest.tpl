@@ -9,17 +9,18 @@ namespace Application.Test.Managers;
 public class ${EntityName}ManagerTest : BaseTest
 {
     private readonly I${EntityName}Manager manager;
+    public string RandomString { get; set; }
 
     public ${EntityName}ManagerTest(WebApplicationFactory<Program> factory) : base(factory)
     {
         manager = Services.GetRequiredService<I${EntityName}Manager>();
+        RandomString = DateTime.Now.ToString("MMddmmss");
     }
-
 
     [Fact]
     public async Task Shoud_AddAsync()
     {
-        // var entity = new ${EntityName}{};
+        // var entity = new ${EntityName}(){ Name = "" + RandomString};
         // var res = await manager.AddAsync(entity);
         // Assert.Equal(entity.UserName, res.UserName);
     }
@@ -33,7 +34,7 @@ public class ${EntityName}ManagerTest : BaseTest
 
         if (entity != null)
         {
-            // dto.UserName = "updateUser";
+            // dto.UserName = "updateUser" + RandomString;
             var res = await manager.UpdateAsync(entity, dto);
             // Assert.Equal(dto.UserName, res.UserName);
         }
