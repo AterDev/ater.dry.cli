@@ -10,18 +10,19 @@ public class StoreCommand : CommandBase
     public string EntityPath { get; set; }
     public string StorePath { get; set; }
     public string DtoPath { get; set; }
-    public DataStoreGenerate CodeGen { get; set; }
+    public ManagerGenerate CodeGen { get; set; }
 
     public StoreCommand(string entityPath, string dtoPath, string servicePath, string? contextName = null)
     {
         EntityPath = entityPath;
         StorePath = servicePath;
         DtoPath = dtoPath;
-        CodeGen = new DataStoreGenerate(entityPath, dtoPath, servicePath, contextName);
+        CodeGen = new ManagerGenerate(entityPath, dtoPath, servicePath, contextName);
         string entityName = Path.GetFileNameWithoutExtension(entityPath);
         Instructions.Add($"  🔹 generate interface & base class.");
         Instructions.Add($"  🔹 generate {entityName} DataStore.");
-        Instructions.Add($"  🔹 generate Manger files.");
+        Instructions.Add($"  🔹 generate Manager files.");
+        Instructions.Add($"  🔹 generate Manager test files.");
         Instructions.Add($"  🔹 generate Services inject files.");
         Instructions.Add($"  🔹 update Globalusings files.");
     }
@@ -43,14 +44,16 @@ public class StoreCommand : CommandBase
 
         Console.WriteLine(Instructions[2]);
         await GenerateMangerAsync();
-
         Console.WriteLine(Instructions[3]);
-        await GenerateServicesAsync();
+        await GenerateMangerTestAsync();
 
         Console.WriteLine(Instructions[4]);
+        await GenerateServicesAsync();
+
+        Console.WriteLine(Instructions[5]);
         await GenerateGlobalUsingsFilesAsync();
 
-        Console.WriteLine("😀 DataStroe generate completed!" + Environment.NewLine);
+        Console.WriteLine("😀 Manager generate completed!" + Environment.NewLine);
     }
 
     /// <summary>
@@ -112,6 +115,19 @@ public class StoreCommand : CommandBase
         await GenerateFileAsync(iManagerDir, $"I{entityName}Manager.cs", interfaceContent);
         // 生成manger
         await GenerateFileAsync(managerDir, $"{entityName}Manager.cs", managerContent);
+    }
+
+
+    public async Task GenerateMangerTestAsync()
+    {
+        string testDir = Path.Combine(StorePath, "..", "..", "test", "Application.Test", "Managers");
+        string entityName = Path.GetFileNameWithoutExtension(EntityPath);
+        if (Directory.Exists(testDir))
+        {
+            Directory.CreateDirectory(testDir);
+        }
+        string managerContent = CodeGen.GetManagerTestContent();
+        await GenerateFileAsync(testDir, $"I{entityName}ManagerTest.cs", managerContent);
     }
 
     /// <summary>

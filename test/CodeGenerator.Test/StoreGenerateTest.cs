@@ -13,7 +13,7 @@ public class StoreGenerateTest
     {
         string entityPath = PathHelper.GetProjectFilePath("Entity/Blog.cs");
         string projectPath = PathHelper.GetProjectPath();
-        DataStoreGenerate gen = new(entityPath, projectPath, projectPath);
+        ManagerGenerate gen = new(entityPath, projectPath, projectPath);
         string contextName = gen.GetContextName();
         Assert.Equal("TestDbContext", contextName);
     }

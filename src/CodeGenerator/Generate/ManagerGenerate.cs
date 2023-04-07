@@ -3,7 +3,7 @@
 /// <summary>
 /// 数据仓储生成
 /// </summary>
-public class DataStoreGenerate : GenerateBase
+public class ManagerGenerate : GenerateBase
 {
     /// <summary>
     /// Entity 文件路径
@@ -23,7 +23,7 @@ public class DataStoreGenerate : GenerateBase
     /// </summary>
     public string? ShareNamespace { get; set; }
     public string? ServiceNamespace { get; set; }
-    public DataStoreGenerate(string entityPath, string dtoPath, string servicePath, string? contextName = null)
+    public ManagerGenerate(string entityPath, string dtoPath, string servicePath, string? contextName = null)
     {
         EntityPath = entityPath;
         SharePath = dtoPath;
@@ -55,6 +55,21 @@ public class DataStoreGenerate : GenerateBase
         string content = GetTplContent($"Implement.{tplName}.tpl");
         content = content.Replace(TplConst.NAMESPACE, ServiceNamespace);
         return content;
+    }
+
+
+    /// <summary>
+    /// manager测试内容
+    /// </summary>
+    /// <returns></returns>
+    public string GetManagerTestContent()
+    {
+        string tplContent = GetTplContent($"Implement.ManagerTest.tpl");
+        var entityHelper = new EntityParseHelper(EntityPath);
+        tplContent = tplContent.Replace(TplConst.NAMESPACE, entityHelper.NamespaceName);
+        string entityName = Path.GetFileNameWithoutExtension(EntityPath);
+        tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName);
+        return tplContent;
     }
 
     public string GetUserContextClass()
