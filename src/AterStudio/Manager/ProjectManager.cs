@@ -26,9 +26,18 @@ public class ProjectManager
     {
         // 获取并构造参数
         FileInfo slnFile = new(path);
+        // 如果是目录
+        if ((slnFile.Attributes & FileAttributes.Directory) != 0)
+        {
+            var slnPath = Directory.GetFiles(path, "*.sln", SearchOption.TopDirectoryOnly).FirstOrDefault();
+            if (slnPath != null)
+            {
+                slnFile = new FileInfo(slnPath);
+            }
+        }
+
         string dir = slnFile.DirectoryName!;
         string configFilePath = Path.Combine(dir!, Config.ConfigFileName);
-
 
         await ConfigCommand.InitConfigFileAsync(dir);
         string configJson = await File.ReadAllTextAsync(configFilePath);

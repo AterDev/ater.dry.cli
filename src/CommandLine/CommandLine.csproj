@@ -23,6 +23,7 @@
 			2 代码生成:前端支持对多个swagger内容生成对应的服务;
 			3 优化前端服务生成体验;
 			4 添加CSharp客户端请求生成(仅针对AtApi模板项目，不通用);
+			5 ng模板更新
 		</PackageReleaseNotes>
 		<PackageIcon>logo.jpg</PackageIcon>
 		<ImplicitUsings>enable</ImplicitUsings>
