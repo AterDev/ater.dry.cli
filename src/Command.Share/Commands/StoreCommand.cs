@@ -120,14 +120,18 @@ public class StoreCommand : CommandBase
 
     public async Task GenerateMangerTestAsync()
     {
-        string testDir = Path.Combine(StorePath, "..", "..", "test", "Application.Test", "Managers");
-        string entityName = Path.GetFileNameWithoutExtension(EntityPath);
-        if (Directory.Exists(testDir))
+        string testProjectPath = Path.Combine(StorePath, "..", "..", "test", "Application.Test");
+        if (Directory.Exists(testProjectPath))
         {
-            Directory.CreateDirectory(testDir);
+            string testDir = Path.Combine(testProjectPath, "Managers");
+            string entityName = Path.GetFileNameWithoutExtension(EntityPath);
+            if (Directory.Exists(testDir))
+            {
+                Directory.CreateDirectory(testDir);
+            }
+            string managerContent = CodeGen.GetManagerTestContent();
+            await GenerateFileAsync(testDir, $"{entityName}ManagerTest.cs", managerContent);
         }
-        string managerContent = CodeGen.GetManagerTestContent();
-        await GenerateFileAsync(testDir, $"{entityName}ManagerTest.cs", managerContent);
     }
 
     /// <summary>
