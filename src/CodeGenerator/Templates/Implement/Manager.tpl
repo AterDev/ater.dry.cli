@@ -33,7 +33,7 @@ public class ${EntityName}Manager : DomainManagerBase<${EntityName}, ${EntityNam
     public override async Task<PageList<${EntityName}ItemDto>> FilterAsync(${EntityName}FilterDto filter)
     {
         // TODO:根据实际业务构建筛选条件
-        // if (...){ Queryable = ...;}
+        // example: Queryable = Queryable.WhereNotNull(filter.field, q => q.field = filter.field);
         return await Query.FilterAsync<${EntityName}ItemDto>(Queryable, filter.PageIndex, filter.PageSize);
     }
 
