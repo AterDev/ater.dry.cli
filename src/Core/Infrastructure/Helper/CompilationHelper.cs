@@ -9,15 +9,14 @@ public class CompilationHelper
     public SemanticModel? SemanticModel { get; set; }
     public ITypeSymbol? ClassSymbol { get; set; }
     public SyntaxTree? SyntaxTree { get; set; }
-    public CompilationHelper()
-    {
-        Compilation = CSharpCompilation.Create("tmp");
-    }
+    public IEnumerable<INamedTypeSymbol> AllClass { get; set; }
+
     public CompilationHelper(string path, string? dllFilter = null)
     {
         string suffix = DateTime.Now.ToString("HHmmss");
         Compilation = CSharpCompilation.Create("tmp" + suffix);
         AddDllReferences(path, dllFilter);
+        AllClass = GetAllClasses();
     }
     public void AddDllReferences(string path, string? dllFilter = null)
     {
@@ -67,7 +66,7 @@ public class CompilationHelper
     /// 获取所有类型
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<INamedTypeSymbol> GetAllClasses()
+    protected IEnumerable<INamedTypeSymbol> GetAllClasses()
     {
         IEnumerable<INamespaceSymbol> namespaces = Compilation.GlobalNamespace.GetNamespaceMembers();
         return GetNamespacesClasses(namespaces);
@@ -80,8 +79,7 @@ public class CompilationHelper
     public List<string> GetAllEnumClasses()
     {
         // TODO:枚举可以存储，不用每次获取 
-        IEnumerable<INamedTypeSymbol> all = GetAllClasses();
-        return all.Where(c => c.BaseType != null
+        return AllClass.Where(c => c.BaseType != null
                 && c.BaseType.Name.Equals("Enum"))
             .Select(c => c.Name)
             .Distinct()
@@ -90,7 +88,7 @@ public class CompilationHelper
 
     public INamedTypeSymbol? GetEnum(string name)
     {
-        return GetAllClasses().Where(c => c.Name == name)
+        return AllClass.Where(c => c.Name == name)
             .Where(c => c.BaseType != null
                 && c.BaseType.Name.Equals("Enum"))
             .FirstOrDefault();
@@ -98,7 +96,19 @@ public class CompilationHelper
 
     public INamedTypeSymbol? GetClass(string name)
     {
-        return GetAllClasses().Where(cls => cls.Name == name).FirstOrDefault();
+        return AllClass.Where(cls => cls.Name == name).FirstOrDefault();
+    }
+
+    /// <summary>
+    /// 获取一组类型的命名空间
+    /// </summary>
+    /// <param name="classNames"></param>
+    public List<string> GetNamespaceNames(List<string> classNames)
+    {
+        return AllClass.Where(cls => classNames.Contains(cls.Name))
+            .Select(cls => cls.ContainingNamespace.ToDisplayString())
+            .Distinct()
+            .ToList();
     }
 
     /// <summary>

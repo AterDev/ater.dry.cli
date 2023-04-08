@@ -14,7 +14,7 @@ public class ManagerGenerate : GenerateBase
     /// </summary>
     public string StorePath { get; set; }
     /// <summary>
-    /// DTO 所有项目目录路径
+    /// DTO 所在项目目录路径
     /// </summary>
     public string SharePath { get; set; }
     public string? ContextName { get; set; }
@@ -144,14 +144,6 @@ public class ManagerGenerate : GenerateBase
     /// <returns></returns>
     public string GetDataStoreContext()
     {
-        // 获取所有继承了 DataStoreBase 的类
-        //var assemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(StorePath));
-        //var cpl = new CompilationHelper(StorePath, assemblyName);
-        //var classes = cpl.GetAllClasses();
-        //var queryStores = CompilationHelper.GetClassNameByBaseType(classes, "QuerySet");
-        //var commandStores = CompilationHelper.GetClassNameByBaseType(classes, "CommandSet");
-        //var allDataStores = queryStores.Concat(commandStores);
-
         string queryPath = Path.Combine(StorePath, $"{Const.QUERY_STORE}");
         string[] queryFiles = Directory.GetFiles(queryPath, $"*{Const.QUERY_STORE}.cs", SearchOption.TopDirectoryOnly);
         string commandPath = Path.Combine(StorePath, $"{Const.COMMAND_STORE}");
@@ -163,8 +155,12 @@ public class ManagerGenerate : GenerateBase
         string ctorAssign = "";
         string oneTab = "    ";
         string twoTab = "        ";
+        string usings = "";
         if (allDataStores.Any())
         {
+            var compilationHelper = new CompilationHelper(SharePath);
+            var entityClassNames = new List<string>();
+
             allDataStores.ToList().ForEach(filePath =>
             {
                 string fileName = Path.GetFileNameWithoutExtension(filePath);
@@ -176,6 +172,8 @@ public class ManagerGenerate : GenerateBase
                 string propGeneric = fileName.Replace($"{Const.QUERY_STORE}", "")
                     .Replace($"{Const.COMMAND_STORE}", "");
 
+                entityClassNames.Add(propGeneric);
+
                 string row = $"{oneTab}public {propType}<{propGeneric}> {propName} {{ get; init; }}";
                 props += row + Environment.NewLine;
                 // 构造函数参数
@@ -186,6 +184,15 @@ public class ManagerGenerate : GenerateBase
                 ctorAssign += row + Environment.NewLine;
                 ctorAssign += $"{twoTab}AddCache({propName});" + Environment.NewLine;
             });
+            // 关联模型需要引入的命名空间
+            var importNamespaces = compilationHelper.GetNamespaceNames(entityClassNames);
+            if (importNamespaces.Any())
+            {
+                importNamespaces.ForEach(n =>
+                {
+                    usings += $"using {n};" + Environment.NewLine;
+                });
+            }
         }
         // 构建服务
         string content = GetTplContent("Implement.DataStoreContext.tpl");
@@ -193,7 +200,7 @@ public class ManagerGenerate : GenerateBase
         content = content.Replace(TplConst.STORECONTEXT_PROPS, props);
         content = content.Replace(TplConst.STORECONTEXT_PARAMS, ctorParams);
         content = content.Replace(TplConst.STORECONTEXT_ASSIGN, ctorAssign);
-        return content;
+        return usings + content;
     }
 
     /// <summary>
@@ -287,7 +294,7 @@ public class ManagerGenerate : GenerateBase
         // 获取所有继承了 DataStoreBase 的类
         string? assemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(StorePath));
         CompilationHelper cpl = new(StorePath, assemblyName);
-        IEnumerable<INamedTypeSymbol> classes = cpl.GetAllClasses();
+        IEnumerable<INamedTypeSymbol> classes = cpl.AllClass;
         if (classes != null)
         {
             IEnumerable<INamedTypeSymbol> allDataStores = CompilationHelper.GetClassNameByBaseType(classes, "DataStoreBase");
@@ -317,7 +324,7 @@ public class ManagerGenerate : GenerateBase
         string name = "ContextBase";
         string? assemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(StorePath));
         CompilationHelper cpl = new(StorePath, assemblyName);
-        IEnumerable<INamedTypeSymbol> classes = cpl.GetAllClasses();
+        IEnumerable<INamedTypeSymbol> classes = cpl.AllClass;
         if (classes != null)
         {
             // 获取所有继承 dbcontext的上下文

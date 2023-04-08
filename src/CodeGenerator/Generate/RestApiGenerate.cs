@@ -193,7 +193,7 @@ public class RestApiGenerate : GenerateBase
         string name = "ContextBase";
         string? assemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(StorePath));
         CompilationHelper cpl = new(StorePath, assemblyName);
-        IEnumerable<INamedTypeSymbol> classes = cpl.GetAllClasses();
+        IEnumerable<INamedTypeSymbol> classes = cpl.AllClass;
         if (classes != null)
         {
             // 获取所有继承 dbcontext的上下文
