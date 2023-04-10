@@ -26,6 +26,7 @@
 			5 ng模板更新;
 			6 添加manager 测试内容;
 			7 优化命令行输出内容;
+			8 修复studio读取配置文件;
 			其他细节完善;
 		</PackageReleaseNotes>
 		<PackageIcon>logo.jpg</PackageIcon>

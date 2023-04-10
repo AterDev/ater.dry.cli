@@ -11,6 +11,8 @@ public class ConfigCommand
     /// </summary>
     public static async Task InitConfigFileAsync(string? configPath = null)
     {
+        // TODO:获取工具版本
+
         configPath ??= GetConfigPath();
         Console.WriteLine("use config path:" + configPath);
 
@@ -25,6 +27,7 @@ public class ConfigCommand
             {
                 ProjectId = Guid.NewGuid()
             };
+
             Const.PROJECT_ID = options.ProjectId;
             string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
             await File.WriteAllTextAsync(path, content, Encoding.UTF8);

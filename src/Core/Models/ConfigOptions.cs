@@ -25,6 +25,7 @@ public class ConfigOptions
     public string CreatedTimeName { get; set; } = "CreatedTime";
     public string UpdatedTimeName { get; set; } = "UpdatedTime";
 
+    public double Version { get; set; } = 1.0;
     /// <summary>
     /// swagger地址
     /// </summary>
