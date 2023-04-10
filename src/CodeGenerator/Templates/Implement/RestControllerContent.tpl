@@ -34,7 +34,7 @@ ${AdditionManagersInit}
     [HttpPost]
     public async Task<ActionResult<${EntityName}>> AddAsync(${EntityName}AddDto dto)
     {
-        ${AddActionBlock}
+${AddActionBlock}
     }
 
     /// <summary>
@@ -46,7 +46,7 @@ ${AdditionManagersInit}
     [HttpPut("{id}")]
     public async Task<ActionResult<${EntityName}?>> UpdateAsync([FromRoute] ${IdType} id, ${EntityName}UpdateDto dto)
     {
-        ${UpdateActionBlock}
+${UpdateActionBlock}
     }
 
     /// <summary>

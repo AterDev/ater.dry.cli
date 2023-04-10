@@ -13,7 +13,6 @@ public class StudioCommand
         string appPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
         var studioPath = Path.Combine(appPath, "AterStudio");
-        var file = new FileInfo(Path.Combine(studioPath, Config.StudioFileName));
 
         // 检查并更新
         Update();

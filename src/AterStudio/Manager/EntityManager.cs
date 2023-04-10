@@ -1,9 +1,8 @@
 ﻿using System.Text;
-using System.Xml.Linq;
 using Command.Share;
 using Command.Share.Commands;
+using Core;
 using Core.Infrastructure;
-using Core.Models;
 using Datastore;
 using Datastore.Models;
 
@@ -15,6 +14,14 @@ public class EntityManager
     public EntityManager(DbContext dbContext)
     {
         _dbContext = dbContext;
+        var configOptions = ConfigCommand.ReadConfigFile();
+        if (configOptions != null)
+        {
+            Config.IdType = configOptions.IdType;
+            Console.WriteLine("IDType:" + Config.IdType);
+
+            Config.CreatedTimeName = configOptions.CreatedTimeName;
+        }
     }
 
     /// <summary>

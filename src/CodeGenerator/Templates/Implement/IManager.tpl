@@ -11,7 +11,7 @@ public interface I${EntityName}Manager : IDomainManager<${EntityName}, ${EntityN
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    Task<${EntityName}?> GetOwnedAsync(Guid id);
+    Task<${EntityName}?> GetOwnedAsync(${IdType} id);
 
     /// <summary>
     /// 创建待添加实体

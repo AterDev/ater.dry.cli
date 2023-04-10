@@ -122,9 +122,11 @@ public class RestApiGenerate : GenerateBase
             .Replace("${AdditionManagersDI}", additionManagerDI)
             .Replace("${AdditionManagersInit}", additionManagerInit);
 
-        //var actionContent = GetAddApiContent();
-        //actionContent += GetUpdateApiContent();
+        var addContent = GetAddApiContent();
+        var updateContent = GetUpdateApiContent();
 
+        tplContent = tplContent.Replace("${AddActionBlock}", addContent)
+            .Replace("${UpdateActionBlock}", updateContent);
         tplContent = tplContent.Replace(TplConst.NAMESPACE, ApiNamespace)
             .Replace(TplConst.SHARE_NAMESPACE, ShareNamespace)
             .Replace(TplConst.ENTITY_NAME, entityName)

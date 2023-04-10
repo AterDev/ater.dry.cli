@@ -196,10 +196,10 @@ public class ManagerGenerate : GenerateBase
         }
         // 构建服务
         string content = GetTplContent("Implement.DataStoreContext.tpl");
-        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace);
-        content = content.Replace(TplConst.STORECONTEXT_PROPS, props);
-        content = content.Replace(TplConst.STORECONTEXT_PARAMS, ctorParams);
-        content = content.Replace(TplConst.STORECONTEXT_ASSIGN, ctorAssign);
+        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace)
+            .Replace(TplConst.STORECONTEXT_PROPS, props)
+            .Replace(TplConst.STORECONTEXT_PARAMS, ctorParams)
+            .Replace(TplConst.STORECONTEXT_ASSIGN, ctorAssign);
         return usings + content;
     }
 
@@ -265,8 +265,9 @@ public class ManagerGenerate : GenerateBase
     {
         string entityName = Path.GetFileNameWithoutExtension(EntityPath);
         string tplContent = GetTplContent($"Implement.IManager.tpl");
-        tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName);
-        tplContent = tplContent.Replace(TplConst.NAMESPACE, ServiceNamespace);
+        tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName)
+            .Replace(TplConst.ID_TYPE, Config.IdType)
+            .Replace(TplConst.NAMESPACE, ServiceNamespace);
         return tplContent;
     }
 
@@ -278,8 +279,9 @@ public class ManagerGenerate : GenerateBase
     {
         string entityName = Path.GetFileNameWithoutExtension(EntityPath);
         string tplContent = GetTplContent($"Implement.Manager.tpl");
-        tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName);
-        tplContent = tplContent.Replace(TplConst.NAMESPACE, ServiceNamespace);
+        tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName)
+            .Replace(TplConst.ID_TYPE, Config.IdType)
+            .Replace(TplConst.NAMESPACE, ServiceNamespace);
         return tplContent;
     }
 
