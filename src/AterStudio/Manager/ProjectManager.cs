@@ -44,12 +44,12 @@ public class ProjectManager
 
         ConfigOptions? config = JsonSerializer.Deserialize<ConfigOptions>(configJson);
 
-        string projectName = Path.GetFileNameWithoutExtension(path);
+        string projectName = Path.GetFileNameWithoutExtension(slnFile.FullName);
         Project project = new()
         {
             ProjectId = config!.ProjectId,
             DisplayName = name,
-            Path = path,
+            Path = slnFile.FullName,
             Name = projectName,
             ApplicationPath = config.StorePath.ToFullPath("src", dir),
             EntityFrameworkPath = config.DbContextPath.ToFullPath("src", dir),

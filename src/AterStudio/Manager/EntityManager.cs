@@ -14,14 +14,7 @@ public class EntityManager
     public EntityManager(DbContext dbContext)
     {
         _dbContext = dbContext;
-        var configOptions = ConfigCommand.ReadConfigFile();
-        if (configOptions != null)
-        {
-            Config.IdType = configOptions.IdType;
-            Console.WriteLine("IDType:" + Config.IdType);
 
-            Config.CreatedTimeName = configOptions.CreatedTimeName;
-        }
     }
 
     /// <summary>
@@ -166,6 +159,7 @@ public class EntityManager
 
     public async Task GenerateAsync(Project project, GenerateDto dto)
     {
+        await InitConfigAsync(project);
         Const.PROJECT_ID = project.ProjectId;
         CommandRunner.dbContext = _dbContext;
         switch (dto.CommandType)
@@ -192,6 +186,7 @@ public class EntityManager
     /// <returns></returns>
     public async Task BatchGenerateAsync(Project project, BatchGenerateDto dto)
     {
+        await InitConfigAsync(project);
         Const.PROJECT_ID = project.ProjectId;
         switch (dto.CommandType)
         {
@@ -230,6 +225,7 @@ public class EntityManager
 
     public async Task GenerateRequestAsync(Project project, string webPath, RequestLibType type, string? swaggerPath = null)
     {
+        await InitConfigAsync(project);
         Const.PROJECT_ID = project.ProjectId;
         // 更新选项
         project.WebAppPath = webPath;
@@ -243,6 +239,7 @@ public class EntityManager
 
     public async Task GenerateClientRequestAsync(Project project, string webPath, LanguageType type, string? swaggerPath = null)
     {
+        await InitConfigAsync(project);
         Const.PROJECT_ID = project.ProjectId;
         swaggerPath ??= Path.Combine(project.HttpPath, "swagger.json");
         await CommandRunner.GenerateCSharpApiClientAsync(swaggerPath, webPath, type);
@@ -250,8 +247,28 @@ public class EntityManager
 
     public async Task GenerateSyncAsync(Project project)
     {
+        await InitConfigAsync(project);
         Const.PROJECT_ID = project.ProjectId;
         string swaggerPath = Path.Combine(project.HttpPath, "swagger.json");
         await CommandRunner.SyncToAngularAsync(swaggerPath, project.EntityPath, project.SharePath, project.HttpPath);
+    }
+
+    private async Task InitConfigAsync(Project project)
+    {
+        var slnFile = new FileInfo(project.Path);
+
+        // 如果是目录
+        string? configFile = (slnFile.Attributes & FileAttributes.Directory) != 0
+            ? Path.Combine(project.Path, Config.ConfigFileName)
+            : Path.Combine(slnFile.DirectoryName!, Config.ConfigFileName);
+
+        var content = await File.ReadAllTextAsync(configFile);
+        var options = JsonSerializer.Deserialize<ConfigOptions>(content);
+
+        if (options != null)
+        {
+            Config.IdType = options.IdType;
+            Config.CreatedTimeName = options.CreatedTimeName;
+        }
     }
 }
