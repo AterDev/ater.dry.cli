@@ -169,13 +169,15 @@ public class RestApiGenerate : GenerateBase
                 content += """
                         if (!await _user.ExistAsync())
                             return NotFound(ErrorMsg.NotFoundUser);
+
                 """;
             }
             else
             {
                 content += $$"""
                         if (!await {{manager}}.ExistAsync(dto.{{nav.Type}}Id))
-                            return NotFound("不存在的{{nav.CommentSummary}}");
+                            return NotFound("不存在的{{nav.CommentSummary ?? nav.Type}}");
+
                 """;
             }
         });

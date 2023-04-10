@@ -29,7 +29,7 @@ ${AdditionManagersInit}
     /// <summary>
     /// 新增
     /// </summary>
-    /// <param name="form"></param>
+    /// <param name="dto"></param>
     /// <returns></returns>
     [HttpPost]
     public async Task<ActionResult<${EntityName}>> AddAsync(${EntityName}AddDto dto)
@@ -41,7 +41,7 @@ ${AddActionBlock}
     /// 更新
     /// </summary>
     /// <param name="id"></param>
-    /// <param name="form"></param>
+    /// <param name="dto"></param>
     /// <returns></returns>
     [HttpPut("{id}")]
     public async Task<ActionResult<${EntityName}?>> UpdateAsync([FromRoute] ${IdType} id, ${EntityName}UpdateDto dto)
