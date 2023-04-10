@@ -1,5 +1,8 @@
 ﻿namespace CodeGenerator.Generate;
 
+/// <summary>
+/// 生成Rest API控制器
+/// </summary>
 public class RestApiGenerate : GenerateBase
 {
     /// <summary>

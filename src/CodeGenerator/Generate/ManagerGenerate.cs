@@ -23,6 +23,7 @@ public class ManagerGenerate : GenerateBase
     /// </summary>
     public string? ShareNamespace { get; set; }
     public string? ServiceNamespace { get; set; }
+    public readonly EntityInfo EntityInfo;
     public ManagerGenerate(string entityPath, string dtoPath, string servicePath, string? contextName = null)
     {
         EntityPath = entityPath;
@@ -31,6 +32,8 @@ public class ManagerGenerate : GenerateBase
         ContextName = contextName;
         ShareNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(SharePath));
         ServiceNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(StorePath));
+        EntityParseHelper entityHelper = new(entityPath);
+        EntityInfo = entityHelper.GetEntity();
     }
 
     /// <summary>
