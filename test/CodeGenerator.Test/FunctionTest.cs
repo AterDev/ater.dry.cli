@@ -2,6 +2,7 @@
 using System.Linq;
 using CodeGenerator.Generate;
 using Core.Infrastructure.Helper;
+using Core.Infrastructure.Utils;
 using Microsoft.OpenApi.Readers;
 
 namespace CodeGenerator.Test;
@@ -85,7 +86,19 @@ public class FunctionTest
 
         var projectFile = Path.Combine(current, "CodeGenerator.Test.csproj");
 
-        var type =  AssemblyHelper.GetProjectType(new FileInfo(projectFile));
+        var type = AssemblyHelper.GetProjectType(new FileInfo(projectFile));
         Assert.Equal("console", type);
+    }
+
+
+
+    [Fact]
+    public void Should_Indent()
+    {
+        var res = "hello";
+        res = res.Indent(2);
+
+        //var res = TabFormat.Indent("hello", 2);
+        Console.WriteLine(res);
     }
 }

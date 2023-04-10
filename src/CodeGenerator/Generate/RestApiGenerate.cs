@@ -102,6 +102,26 @@ public class RestApiGenerate : GenerateBase
         string entityName = Path.GetFileNameWithoutExtension(EntityPath);
         string tplContent = GetTplContent("Implement.RestControllerContent.tpl");
 
+        // 依赖注入
+        string additionManagerProps = "";
+        string additionManagerDI = "";
+        string additionManagerInit = "";
+
+        var requiredNavigations = EntityInfo.GetRequiredNavigation();
+        requiredNavigations?.ForEach(navigation =>
+        {
+            var name = navigation.Type;
+
+            additionManagerProps += $"    private readonly I{name}Manager _{name.ToCamelCase()}Manager;" + Environment.NewLine;
+
+            additionManagerDI += $",{Environment.NewLine}        I{name}Manager {name.ToCamelCase()}Manager";
+            //_catalogManager = catalogManager;
+            additionManagerInit += $"        _{name.ToCamelCase()}Manager = {name.ToCamelCase()}Manager;" + Environment.NewLine;
+        });
+        tplContent = tplContent.Replace("${AdditionManagersProps}", additionManagerProps)
+            .Replace("${AdditionManagersDI}", additionManagerDI)
+            .Replace("${AdditionManagersInit}", additionManagerInit);
+
         //var actionContent = GetAddApiContent();
         //actionContent += GetUpdateApiContent();
 
@@ -113,50 +133,57 @@ public class RestApiGenerate : GenerateBase
             .Replace(TplConst.COMMENT, EntityInfo?.Comment ?? "");
         //.Replace(TplConst.ADDITION_ACTION, actionContent ?? "")
         //.Replace(TplConst.ID_TYPE, Config.IdType);
-        return tplContent;
+
+        // 清理模板未被替换的变量
+        return ClearTemplate(tplContent);
     }
 
     /// <summary>
-    /// 生成关联添加
+    /// 生成添加方法
     /// </summary>
     /// <returns></returns>
     public string? GetAddApiContent()
     {
+        string content = "";
         string entityName = EntityInfo.Name;
-        Core.Models.PropertyInfo? navigationProp = EntityInfo.GetNavigation();
-        if (navigationProp == null)
+        var requiredNavigations = EntityInfo.GetRequiredNavigation();
+
+        //if (!await _user.ExistAsync())
+        //    return NotFound(ErrorMsg.NotFoundUser);
+        //if (!await _catalogManager.ExistAsync(dto.CatalogId))
+        //    return NotFound("不存在的目录");
+        //var entity = await manager.CreateNewEntityAsync(dto);
+        //return await manager.AddAsync(entity);
+
+        requiredNavigations?.ForEach(nav =>
         {
-            return null;
-        }
-
-        string content = $@"
-    /// <summary>
-    /// 关联添加
-    /// </summary>
-    /// <param name=""id"">所属对象id</param>
-    /// <param name=""list"">数组</param>
-    /// <param name=""dependStore""></param>
-    /// <returns></returns>
-    [HttpPost(""{{id}}"")]
-    public async Task<ActionResult<int>> AddInAsync([FromRoute] ${{IdType}} id, List<{entityName}UpdateDto> list, [FromServices] {navigationProp.Type}DataStore dependStore)
-    {{
-        var depend = await dependStore.FindAsync(id);
-        if (depend == null) return NotFound(""depend not exist"");
-        var newList = new List<{entityName}>();
-        list.ForEach(item =>
-        {{
-            var newItem = new {entityName}()
-            {{
-                {navigationProp.Name} = depend
-            }};
-            newList.Add(newItem.Merge(item));
-        }});
-        return await _store.BatchAddAsync(newList);
-    }}";
-
+            var manager = "_" + nav.Type.ToCamelCase() + "Manager";
+            // 如果关联的是用户
+            if (nav.Type.Equals("User"))
+            {
+                content += """
+                        if (!await _user.ExistAsync())
+                            return NotFound(ErrorMsg.NotFoundUser);
+                """;
+            }
+            else
+            {
+                content += $$"""
+                        if (!await {{manager}}.ExistAsync(dto.{{nav.Type}}Id))
+                            return NotFound("不存在的{{nav.CommentSummary}}");
+                """;
+            }
+        });
+        content += """
+                    var entity = await manager.CreateNewEntityAsync(dto);
+                    return await manager.AddAsync(entity);
+            """;
         return content;
     }
-    // TODO:update api 
+    /// <summary>
+    /// 生成更新方法
+    /// </summary>
+    /// <returns></returns>
     public static string? GetUpdateApiContent()
     {
         return default;
@@ -181,7 +208,6 @@ public class RestApiGenerate : GenerateBase
         File.WriteAllText(Path.Combine(ApiPath, "RepositoryServiceExtensions.cs"), tplContent);
         Console.WriteLine("create file:" + Path.Combine(ApiPath, "RepositoryServiceExtensions.cs") + "\r\n" + "写入仓储注册服务完成");
     }
-
 
     /// <summary>
     /// get user DbContext name
@@ -216,5 +242,12 @@ public class RestApiGenerate : GenerateBase
             }
         }
         return name;
+    }
+
+    private string ClearTemplate(string tplContent)
+    {
+        return tplContent.Replace("${AdditionManagersProps}", "")
+            .Replace("${AdditionManagersDI}", "")
+            .Replace("${AdditionManagersInit}", "");
     }
 }

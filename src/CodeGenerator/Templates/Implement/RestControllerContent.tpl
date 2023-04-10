@@ -4,12 +4,15 @@ namespace ${Namespace}.Controllers;
 ${Comment}
 public class ${EntityName}${APISuffix} : RestControllerBase<I${EntityName}Manager>
 {
+${AdditionManagersProps}
+
     public ${EntityName}${APISuffix}(
         IUserContext user,
         ILogger<${EntityName}${APISuffix}> logger,
-        I${EntityName}Manager manager
+        I${EntityName}Manager manager${AdditionManagersDI}
         ) : base(manager, user, logger)
     {
+${AdditionManagersInit}
     }
 
     /// <summary>
@@ -29,10 +32,9 @@ public class ${EntityName}${APISuffix} : RestControllerBase<I${EntityName}Manage
     /// <param name="form"></param>
     /// <returns></returns>
     [HttpPost]
-    public async Task<ActionResult<${EntityName}>> AddAsync(${EntityName}AddDto form)
+    public async Task<ActionResult<${EntityName}>> AddAsync(${EntityName}AddDto dto)
     {
-        var entity = await manager.CreateNewEntityAsync(form);
-        return await manager.AddAsync(entity);
+        ${AddActionBlock}
     }
 
     /// <summary>
@@ -42,11 +44,9 @@ public class ${EntityName}${APISuffix} : RestControllerBase<I${EntityName}Manage
     /// <param name="form"></param>
     /// <returns></returns>
     [HttpPut("{id}")]
-    public async Task<ActionResult<${EntityName}?>> UpdateAsync([FromRoute] ${IdType} id, ${EntityName}UpdateDto form)
+    public async Task<ActionResult<${EntityName}?>> UpdateAsync([FromRoute] ${IdType} id, ${EntityName}UpdateDto dto)
     {
-        var current = await manager.GetOwnedAsync(id);
-        if (current == null) return NotFound();
-        return await manager.UpdateAsync(current, form);
+        ${UpdateActionBlock}
     }
 
     /// <summary>

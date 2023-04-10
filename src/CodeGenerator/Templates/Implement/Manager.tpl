@@ -42,11 +42,12 @@ public class ${EntityName}Manager : DomainManagerBase<${EntityName}, ${EntityNam
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public async Task<${EntityName}?> GetOwnedAsync(Guid id)
+    public async Task<${EntityName}?> GetOwnedAsync(${IdType} id)
     {
         var query = Command.Db.Where(q => q.Id == id);
         // TODO:获取用户所属的对象
         // query = query.Where(q => q.User.Id == _userContext.UserId);
         return await query.FirstOrDefaultAsync();
     }
+
 }

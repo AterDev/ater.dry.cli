@@ -39,12 +39,12 @@ public class EntityInfo : EntityBase
     /// 获取导航属性
     /// </summary>
     /// <returns></returns>
-    public PropertyInfo? GetNavigation()
+    public List<PropertyInfo>? GetRequiredNavigation()
     {
         return PropertyInfos?.Where(p => p.IsNavigation
             && p.HasMany == false
-            && p.IsNullable == false)
-            .FirstOrDefault();
+            && p.IsRequired)
+            .ToList();
     }
 }
 public enum EntityKeyType
