@@ -20,9 +20,13 @@ public class ${EntityName}ManagerTest : BaseTest
     [Fact]
     public async Task Shoud_AddAsync()
     {
-        // var entity = new ${EntityName}(){ Name = "" + RandomString};
-        // var res = await manager.AddAsync(entity);
-        // Assert.Equal(entity.UserName, res.UserName);
+        //var dto = new ${EntityName}AddDto()
+        //{
+        //    Name = "" + RandomString
+        //};
+        //var entity = await manager.CreateNewEntityAsync(dto);
+        //var res = await manager.AddAsync(entity);
+        //Assert.Equal(entity.Name, res.Name);
     }
 
 
@@ -36,7 +40,7 @@ public class ${EntityName}ManagerTest : BaseTest
         {
             // dto.UserName = "updateUser" + RandomString;
             var res = await manager.UpdateAsync(entity, dto);
-            // Assert.Equal(dto.UserName, res.UserName);
+            // Assert.Equal(dto.Name, res.Name);
         }
     }
 
