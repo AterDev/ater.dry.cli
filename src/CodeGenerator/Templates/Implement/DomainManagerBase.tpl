@@ -96,6 +96,15 @@ public class DomainManagerBase<TEntity, TUpdate, TFilter, TItem> : IDomainManage
     {
         return await Query.FindAsync<TDto>(whereExp);
     }
+    /// <summary>
+    /// 是否存在
+    /// </summary>
+    /// <param name="id">主键id</param>
+    /// <returns></returns>
+    public async Task<bool> ExistAsync(Guid id)
+    {
+        return await Query.Db.AnyAsync(q => q.Id == id);
+    }
 
     /// <summary>
     /// 条件查询列表

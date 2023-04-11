@@ -325,7 +325,8 @@ public class DtoCodeGenerate : GenerateBase
             NamespaceName = EntityInfo.NamespaceName,
             Comment = FormatComment(EntityInfo.Comment, "添加时请求结构"),
             Tag = EntityInfo.Name,
-            Properties = props?.Where(p => p.Name != "Id"
+            Properties = props?.Where(p => !p.IsNavigation
+                && p.Name != "Id"
                 && p.Name != "CreatedTime"
                 && p.Name != "UpdatedTime"
                 && p.Name != "IsDeleted")
@@ -384,7 +385,8 @@ public class DtoCodeGenerate : GenerateBase
 
         };
         // 处理非required的都设置为nullable
-        List<PropertyInfo>? properties = props?.Where(p => p.Name != "Id"
+        List<PropertyInfo>? properties = props?.Where(p => !p.IsNavigation
+                && p.Name != "Id"
                 && p.Name != "CreatedTime"
                 && p.Name != "UpdatedTime"
                 && p.Name != "IsDeleted")

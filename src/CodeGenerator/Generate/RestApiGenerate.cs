@@ -207,10 +207,12 @@ public class RestApiGenerate : GenerateBase
                             if ({{variable}} == null) return NotFound("不存在的{{nav.CommentSummary ?? nav.Type}}");
                             current.{{nav.Type}} = {{variable}};
                         }
-                        return await manager.UpdateAsync(current, dto);
                 """;
             }
         });
+        content += """
+                    return await manager.UpdateAsync(current, dto);
+            """;
         return content;
     }
 
