@@ -284,7 +284,7 @@ public class EntityParseHelper
     /// </summary>
     /// <param name="syntax"></param>
     /// <returns></returns>
-    protected static string GetCommentSummary(PropertyDeclarationSyntax syntax)
+    protected static string? GetCommentSummary(PropertyDeclarationSyntax syntax)
     {
         var trivia = syntax.GetLeadingTrivia()
             .Select(x => x.GetStructure()).OfType<DocumentationCommentTriviaSyntax>()
@@ -295,13 +295,13 @@ public class EntityParseHelper
         }
         var summary = trivia.Content.OfType<XmlElementSyntax>().Where(e => e.StartTag.Name.ToString() == "summary").FirstOrDefault();
 
-        if (summary == null) return string.Empty;
+        if (summary == null) return null;
 
         var contentNode = summary?.ChildNodes().OfType<XmlTextSyntax>().FirstOrDefault();
         if (contentNode != null)
             return string.Join(' ', contentNode.TextTokens.Where(x => x.IsKind(SyntaxKind.XmlTextLiteralToken))
                 .Select(x => x.Text.Trim()).Where(x => !string.IsNullOrWhiteSpace(x)).ToList());
-        return string.Empty;
+        return null;
     }
 
     /// <summary>

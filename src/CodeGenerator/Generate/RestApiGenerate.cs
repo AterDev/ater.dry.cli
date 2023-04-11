@@ -156,7 +156,7 @@ public class RestApiGenerate : GenerateBase
         {
             var manager = "_" + nav.Type.ToCamelCase() + "Manager";
             // 如果关联的是用户
-            if (nav.Type.Equals("User"))
+            if (nav.Type != "User" && nav.Type != "SystemUser")
             {
                 content += """
                         if (!await _user.ExistAsync())

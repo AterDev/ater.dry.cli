@@ -348,7 +348,7 @@ public class ManagerGenerate : GenerateBase
         {
             var manager = "_" + nav.Type.ToCamelCase() + "Manager";
             var idName = nav.Type + "Id";
-            if (!nav.Type.Equals("User"))
+            if (nav.Type != "User" && nav.Type != "SystemUser")
             {
                 content += $$"""
                         Command.Db.Entry(entity).Property("{{idName}}").CurrentValue = dto.{{idName}};
