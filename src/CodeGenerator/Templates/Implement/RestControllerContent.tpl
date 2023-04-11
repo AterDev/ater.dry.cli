@@ -1,11 +1,11 @@
-﻿using ${ShareNamespace}.Models.${EntityName}Dtos;
+﻿using Core.Const;
+using ${ShareNamespace}.Models.${EntityName}Dtos;
 namespace ${Namespace}.Controllers;
 
 ${Comment}
 public class ${EntityName}${APISuffix} : RestControllerBase<I${EntityName}Manager>
 {
 ${AdditionManagersProps}
-
     public ${EntityName}${APISuffix}(
         IUserContext user,
         ILogger<${EntityName}${APISuffix}> logger,

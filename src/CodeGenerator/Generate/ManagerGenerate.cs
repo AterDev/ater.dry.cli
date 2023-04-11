@@ -365,9 +365,9 @@ public class ManagerGenerate : GenerateBase
                 """;
             }
         });
-        content += """      
+        content += $$"""      
                 // other required props
-                return entity;
+                return {{(navigations == null ? "entity" : "Task.FromResult(entity)")}};
         """;
         return content;
     }
@@ -400,28 +400,30 @@ public class ManagerGenerate : GenerateBase
         string content = """
                     /*
                     Queryable = Queryable
+
             """;
 
         string entityName = EntityInfo.Name;
-        var props = EntityInfo.PropertyInfos.Where(p => !p.IsList && p.HasMany == false)
-            .Where(p => p.IsRequired || !p.IsNullable)
+        var props = EntityInfo.PropertyInfos.Where(p => !p.IsList)
+            .Where(p => p.IsRequired && !p.IsNullable)
             .Where(p => !p.Name.EndsWith("Id"))
-            .Where(p => p.MaxLength is not (not null and >= 1000))
+            .Where(p => p.MaxLength is not (not null and >= 200))
             .ToList();
-        props.ForEach(p =>
+
+        props?.ForEach(p =>
         {
             var name = p.Name;
             if (p.IsNavigation)
             {
                 content += $$"""
-                        .WhereNotNull(filter.{{name}}Id, q => q.{{name}}.Id == filter.{{name}}Id)
+                            .WhereNotNull(filter.{{name}}Id, q => q.{{name}}.Id == filter.{{name}}Id)
 
                 """;
             }
             else
             {
                 content += $$"""
-                        .WhereNotNull(filter.{{name}}, q => q.{{name}} == filter.{{name}})
+                            .WhereNotNull(filter.{{name}}, q => q.{{name}} == filter.{{name}})
 
                 """;
             }
@@ -430,7 +432,6 @@ public class ManagerGenerate : GenerateBase
                     */
                     // TODO: other filter conditions
                     return await Query.FilterAsync<{{entityName}}ItemDto>(Queryable, filter.PageIndex, filter.PageSize, filter.OrderBy);
-            }
             """;
         return content;
     }

@@ -88,6 +88,7 @@ public class RestApiGenerate : GenerateBase
             "global using System.Text.Json.Serialization;",
             "global using Microsoft.EntityFrameworkCore;",
             "global using Http.API.Infrastructure;",
+            "global using Core.Const;",
             $"global using {EntityInfo.NamespaceName};",
             $"global using {EntityNamespace}.Utils;",
             $"global using {EntityNamespace}.Models;",
@@ -196,17 +197,15 @@ public class RestApiGenerate : GenerateBase
         requiredNavigations?.ForEach(nav =>
         {
             var manager = "_" + nav.Type.ToCamelCase() + "Manager";
+            var variable = nav.Type.ToCamelCase();
             if (!nav.Type.Equals("User"))
             {
                 content += $$"""
-                        if (dto.{{nav.Type}}Id != null)
+                        if (current.{{nav.Type}}.Id != dto.{{nav.Type}}Id)
                         {
-                            if (current.{{nav.Type}}.Id != dto.{{nav.Type}}Id)
-                            {
-                                var {{nav.Type.ToCamelCase()}} = await {{manager}}.GetCurrentAsync(dto.{{nav.Type}}Id.Value);
-                                if (catalog == null) return NotFound("不存在的{{nav.CommentSummary ?? nav.Type}}");
-                                current.{{nav.Type}} = {{nav.Type.ToCamelCase()}};
-                            }
+                            var {{variable}} = await {{manager}}.GetCurrentAsync(dto.{{nav.Type}}Id);
+                            if ({{variable}} == null) return NotFound("不存在的{{nav.CommentSummary ?? nav.Type}}");
+                            current.{{nav.Type}} = {{variable}};
                         }
                         return await manager.UpdateAsync(current, dto);
                 """;
