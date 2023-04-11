@@ -307,7 +307,9 @@ public class ManagerGenerate : GenerateBase
             .Replace("${AdditionManagersInit}", additionManagerInit);
 
         // 方法内容
-
+        tplContent = tplContent.Replace("${AddActionBlock}", GetAddMethodContent())
+            .Replace("${UpdateActionBlock}", GetUpdateMethodContent())
+            .Replace("${FilterActionBlock}", GetFilterMethodContent());
 
         tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName)
             .Replace(TplConst.ID_TYPE, Config.IdType)

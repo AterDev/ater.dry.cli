@@ -212,7 +212,7 @@ public class RestApiGenerate : GenerateBase
                 """;
             }
         });
-        return default;
+        return content;
     }
 
     /// <summary>

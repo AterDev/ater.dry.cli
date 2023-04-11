@@ -27,6 +27,7 @@
 			6 添加manager 测试内容;
 			7 优化命令行输出内容;
 			8 修复studio读取配置文件;
+			9 进一步提升CURD的代码生成;
 			其他细节完善;
 		</PackageReleaseNotes>
 		<PackageIcon>logo.jpg</PackageIcon>
