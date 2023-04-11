@@ -5,10 +5,13 @@ namespace ${Namespace}.Manager;
 
 public class ${EntityName}Manager : DomainManagerBase<${EntityName}, ${EntityName}UpdateDto, ${EntityName}FilterDto, ${EntityName}ItemDto>, I${EntityName}Manager
 {
-
+${AdditionManagersProps}
     private readonly IUserContext _userContext;
-    public ${EntityName}Manager(DataStoreContext storeContext, IUserContext userContext) : base(storeContext)
+    public ${EntityName}Manager(
+        DataStoreContext storeContext, 
+        IUserContext userContext${AdditionManagersDI}) : base(storeContext)
     {
+${AdditionManagersInit}
         _userContext = userContext;
     }
 
@@ -19,22 +22,17 @@ public class ${EntityName}Manager : DomainManagerBase<${EntityName}, ${EntityNam
     /// <returns></returns>
     public Task<${EntityName}> CreateNewEntityAsync(${EntityName}AddDto dto)
     {
-        var entity = dto.MapTo<${EntityName}AddDto, ${EntityName}>();
-        // 构建实体
-        return Task.FromResult(entity);
+${AddActionBlock}
     }
 
     public override async Task<${EntityName}> UpdateAsync(${EntityName} entity, ${EntityName}UpdateDto dto)
     {
-        // 根据实际业务更新
-        return await base.UpdateAsync(entity, dto);
+${UpdateActionBlock}
     }
 
     public override async Task<PageList<${EntityName}ItemDto>> FilterAsync(${EntityName}FilterDto filter)
     {
-        // TODO:根据实际业务构建筛选条件
-        // example: Queryable = Queryable.WhereNotNull(filter.field, q => q.field = filter.field);
-        return await Query.FilterAsync<${EntityName}ItemDto>(Queryable, filter.PageIndex, filter.PageSize);
+${FilterActionBlock}
     }
 
     /// <summary>

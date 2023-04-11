@@ -1,3 +1,5 @@
+using System.Reflection.Metadata;
+
 namespace CodeGenerator.Generate;
 
 /// <summary>
@@ -282,10 +284,153 @@ public class ManagerGenerate : GenerateBase
     {
         string entityName = Path.GetFileNameWithoutExtension(EntityPath);
         string tplContent = GetTplContent($"Implement.Manager.tpl");
+
+        // 依赖注入
+        string additionManagerProps = "";
+        string additionManagerDI = "";
+        string additionManagerInit = "";
+
+        var navigations = EntityInfo.PropertyInfos.Where(p => p.IsNavigation && p.HasMany == true)
+            .ToList();
+        navigations?.ForEach(navigation =>
+        {
+            var name = navigation.Type;
+
+            additionManagerProps += $"    private readonly I{name}Manager _{name.ToCamelCase()}Manager;" + Environment.NewLine;
+
+            additionManagerDI += $",{Environment.NewLine}        I{name}Manager {name.ToCamelCase()}Manager";
+            //_catalogManager = catalogManager;
+            additionManagerInit += $"        _{name.ToCamelCase()}Manager = {name.ToCamelCase()}Manager;" + Environment.NewLine;
+        });
+        tplContent = tplContent.Replace("${AdditionManagersProps}", additionManagerProps)
+            .Replace("${AdditionManagersDI}", additionManagerDI)
+            .Replace("${AdditionManagersInit}", additionManagerInit);
+
+        // 方法内容
+
+
         tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName)
             .Replace(TplConst.ID_TYPE, Config.IdType)
             .Replace(TplConst.NAMESPACE, ServiceNamespace);
         return tplContent;
+    }
+
+    public string GetAddMethodContent()
+    {
+        string entityName = EntityInfo.Name;
+        string content = $$"""
+                    var entity = dto.MapTo<{{entityName}}AddDto, {{entityName}}>();
+
+            """;
+        // 包含的关联内容
+        var navigations = EntityInfo.PropertyInfos.Where(p => p.IsNavigation && p.HasMany == true)
+          .ToList();
+        navigations?.ForEach(nav =>
+        {
+            var manager = "_" + nav.Type.ToCamelCase() + "Manager";
+            var variable = nav.Name.ToCamelCase();
+            content += $$"""
+                    if (dto.{{nav.Type}}Ids != null && dto.{{nav.Type}}Ids.Any())
+                    {
+                        var {{variable}}= await {{manager}}.Command.Db.Where(t => dto.{{nav.Type}}Ids.Contains(t.Id)).ToListAsync();
+                        if ({{variable}} != null)
+                        {
+                            entity.{{nav.Name}} = {{variable}};
+                        }
+                    }
+            """;
+        });
+        // 所属的关联内容
+        var requiredNavigations = EntityInfo.GetRequiredNavigation();
+        requiredNavigations?.ForEach(nav =>
+        {
+            var manager = "_" + nav.Type.ToCamelCase() + "Manager";
+            var idName = nav.Type + "Id";
+            if (!nav.Type.Equals("User"))
+            {
+                content += $$"""
+                        Command.Db.Entry(entity).Property("{{idName}}").CurrentValue = dto.{{idName}};
+                        // or entity.{{idName}} = dto.{{idName}};
+
+                """;
+            }
+            else
+            {
+                content += $$"""
+                        Command.Db.Entry(entity).Property("{{idName}}").CurrentValue = _userContext.UserId!.Value;
+                        // or entity.{{idName}} = _userContext.UserId!.Value;
+
+                """;
+            }
+        });
+        content += """      
+                // other required props
+                return entity;
+        """;
+        return content;
+    }
+    public string GetUpdateMethodContent()
+    {
+        string content = "";
+        // 包含的关联内容
+        var navigations = EntityInfo.PropertyInfos.Where(p => p.IsNavigation && p.HasMany == true)
+          .ToList();
+        navigations?.ForEach(nav =>
+        {
+            var manager = "_" + nav.Type.ToCamelCase() + "Manager";
+            var variable = nav.Name.ToCamelCase();
+            content += $$"""
+                    if (dto.{{nav.Type}}Ids != null && dto.{{nav.Type}}Ids.Any())
+                    {
+                        var {{variable}}= await {{manager}}.Command.Db.Where(t => dto.{{nav.Type}}Ids.Contains(t.Id)).ToListAsync();
+                        if ({{variable}} != null)
+                        {
+                            entity.{{nav.Name}} = {{variable}};
+                        }
+                    }
+            """;
+        });
+        content += """      return await base.UpdateAsync(entity, dto);""";
+        return content;
+    }
+    public string GetFilterMethodContent()
+    {
+        string content = """
+                    /*
+                    Queryable = Queryable
+            """;
+
+        string entityName = EntityInfo.Name;
+        var props = EntityInfo.PropertyInfos.Where(p => !p.IsList && p.HasMany == false)
+            .Where(p => p.IsRequired || !p.IsNullable)
+            .Where(p => !p.Name.EndsWith("Id"))
+            .Where(p => p.MaxLength is not (not null and >= 1000))
+            .ToList();
+        props.ForEach(p =>
+        {
+            var name = p.Name;
+            if (p.IsNavigation)
+            {
+                content += $$"""
+                        .WhereNotNull(filter.{{name}}Id, q => q.{{name}}.Id == filter.{{name}}Id)
+
+                """;
+            }
+            else
+            {
+                content += $$"""
+                        .WhereNotNull(filter.{{name}}, q => q.{{name}} == filter.{{name}})
+
+                """;
+            }
+        });
+        content += $$"""
+                    */
+                    // TODO: other filter conditions
+                    return await Query.FilterAsync<{{entityName}}ItemDto>(Queryable, filter.PageIndex, filter.PageSize, filter.OrderBy);
+            }
+            """;
+        return content;
     }
 
     /// <summary>

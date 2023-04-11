@@ -430,7 +430,7 @@ export class {serviceFile.Name}Service extends BaseService {{
                 Params.OrderByDescending(p => p.IsRequired)
                     .Select(p => p.IsRequired
                         ? p.Name + ": " + p.Type
-                        : p.Name + ": " + p.Type + " = ''")
+                        : p.Name + "?: " + p.Type)
                 .ToArray());
             Params.ForEach(p =>
             {

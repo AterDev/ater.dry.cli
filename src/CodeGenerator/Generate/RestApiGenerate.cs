@@ -136,8 +136,6 @@ public class RestApiGenerate : GenerateBase
             .Replace(TplConst.API_SUFFIX, Suffix)
             .Replace(TplConst.ID_TYPE, Config.IdType)
             .Replace(TplConst.COMMENT, EntityInfo?.Comment ?? "");
-        //.Replace(TplConst.ADDITION_ACTION, actionContent ?? "")
-        //.Replace(TplConst.ID_TYPE, Config.IdType);
 
         // 清理模板未被替换的变量
         return ClearTemplate(tplContent);
@@ -152,13 +150,6 @@ public class RestApiGenerate : GenerateBase
         string content = "";
         string entityName = EntityInfo.Name;
         var requiredNavigations = EntityInfo.GetRequiredNavigation();
-
-        //if (!await _user.ExistAsync())
-        //    return NotFound(ErrorMsg.NotFoundUser);
-        //if (!await _catalogManager.ExistAsync(dto.CatalogId))
-        //    return NotFound("不存在的目录");
-        //var entity = await manager.CreateNewEntityAsync(dto);
-        //return await manager.AddAsync(entity);
 
         requiredNavigations?.ForEach(nav =>
         {
@@ -187,12 +178,40 @@ public class RestApiGenerate : GenerateBase
             """;
         return content;
     }
+
     /// <summary>
     /// 生成更新方法
     /// </summary>
     /// <returns></returns>
-    public static string? GetUpdateApiContent()
+    public string? GetUpdateApiContent()
     {
+        string content = """
+                    var current = await manager.GetOwnedAsync(id);
+                    if (current == null) return NotFound(ErrorMsg.NotFoundResource);
+
+            """;
+        string entityName = EntityInfo.Name;
+        var requiredNavigations = EntityInfo.GetRequiredNavigation();
+
+        requiredNavigations?.ForEach(nav =>
+        {
+            var manager = "_" + nav.Type.ToCamelCase() + "Manager";
+            if (!nav.Type.Equals("User"))
+            {
+                content += $$"""
+                        if (dto.{{nav.Type}}Id != null)
+                        {
+                            if (current.{{nav.Type}}.Id != dto.{{nav.Type}}Id)
+                            {
+                                var {{nav.Type.ToCamelCase()}} = await {{manager}}.GetCurrentAsync(dto.{{nav.Type}}Id.Value);
+                                if (catalog == null) return NotFound("不存在的{{nav.CommentSummary ?? nav.Type}}");
+                                current.{{nav.Type}} = {{nav.Type.ToCamelCase()}};
+                            }
+                        }
+                        return await manager.UpdateAsync(current, dto);
+                """;
+            }
+        });
         return default;
     }
 
