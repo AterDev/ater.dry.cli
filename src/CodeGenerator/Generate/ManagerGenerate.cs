@@ -91,7 +91,7 @@ public class ManagerGenerate : GenerateBase
         entityHelper.Parse();
         // 构造内容
         string content = $$"""
-                    var dto  = new {{EntityInfo.Name}}AddDto()
+                    var dto = new {{EntityInfo.Name}}AddDto()
                     {
 
             """;
@@ -127,7 +127,7 @@ public class ManagerGenerate : GenerateBase
         entityHelper.Parse();
         // 构造内容
         string content = $$"""
-                    var dto  = new {{EntityInfo.Name}}UpdateDto()
+                    var dto = new {{EntityInfo.Name}}UpdateDto()
                     {
 
             """;

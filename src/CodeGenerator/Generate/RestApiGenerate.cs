@@ -156,22 +156,19 @@ public class RestApiGenerate : GenerateBase
         {
             var manager = "_" + nav.Type.ToCamelCase() + "Manager";
             // 如果关联的是用户
-            if (nav.Type != "User" && nav.Type != "SystemUser")
+            content += nav.Type switch
             {
-                content += """
+                not "User" and not "SystemUser" => """
+                        if (!await {manager}.ExistAsync(dto.{nav.Type}Id))
+                            return NotFound("不存在的{nav.CommentSummary ?? nav.Type}");
+
+                """,
+                _ => $$"""
                         if (!await _user.ExistAsync())
                             return NotFound(ErrorMsg.NotFoundUser);
 
-                """;
-            }
-            else
-            {
-                content += $$"""
-                        if (!await {{manager}}.ExistAsync(dto.{{nav.Type}}Id))
-                            return NotFound("不存在的{{nav.CommentSummary ?? nav.Type}}");
-
-                """;
-            }
+                """,
+            };
         });
         content += """
                     var entity = await manager.CreateNewEntityAsync(dto);
@@ -198,7 +195,7 @@ public class RestApiGenerate : GenerateBase
         {
             var manager = "_" + nav.Type.ToCamelCase() + "Manager";
             var variable = nav.Type.ToCamelCase();
-            if (!nav.Type.Equals("User"))
+            if (!nav.Type.Equals("User") && !nav.Type.Equals("SystemUser"))
             {
                 content += $$"""
                         if (current.{{nav.Type}}.Id != dto.{{nav.Type}}Id)
