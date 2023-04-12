@@ -70,10 +70,10 @@ ${UpdateActionBlock}
     [HttpDelete("{id}")]
     public async Task<ActionResult<${EntityName}?>> DeleteAsync([FromRoute] ${IdType} id)
     {
-        // TODO:实现删除逻辑,注意删除权限
+        // 注意删除权限
         var entity = await manager.GetOwnedAsync(id);
         if (entity == null) return NotFound();
-        return Forbid();
-        // return await manager.DeleteAsync(entity);
+        // return Forbid();
+        return await manager.DeleteAsync(entity);
     }
 }

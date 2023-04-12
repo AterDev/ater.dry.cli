@@ -77,7 +77,9 @@ public class ManagerGenerate : GenerateBase
         tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName);
 
         var addContent = GenManagerAddTest();
-        tplContent = tplContent.Replace("${AddContent}", addContent);
+        var updateContent = GenManagerUpdateTest();
+        tplContent = tplContent.Replace("${AddContent}", addContent)
+            .Replace("${UpdateContent}", updateContent);
         return tplContent;
     }
 
@@ -114,6 +116,45 @@ public class ManagerGenerate : GenerateBase
                     var entity = await manager.CreateNewEntityAsync(dto);
                     var res = await manager.AddAsync(entity);
             {{assertContent}}
+            """;
+        return content;
+    }
+    private string GenManagerUpdateTest()
+    {
+        // 解析add dto
+        var addDtoPath = Path.Combine(SharePath, "Models", EntityInfo.Name + "Dtos", EntityInfo.Name + "AddDto.cs");
+        var entityHelper = new EntityParseHelper(addDtoPath);
+        entityHelper.Parse();
+        // 构造内容
+        string content = $$"""
+                    var dto  = new {{EntityInfo.Name}}UpdateDto()
+                    {
+
+            """;
+        var requiredProps = entityHelper.PropertyInfos?.Where(i => i.IsRequired).ToList();
+        var assertContent = "";
+        requiredProps?.ForEach(p =>
+        {
+            var row = (p.Type) switch
+            {
+                "Guid" => $"{p.Name} = new Guid(\"\"),",
+                "string" => $"{p.Name} = \"{p.Name}\" + RandomString,",
+                "int" or "double" => $"{p.Name} = 0,",
+                "bool" => $"{p.Name} = true,",
+                _ => p.IsEnum ? $"{p.Name} = 0," : $"",
+            };
+            content += $"{row + Environment.NewLine}".Indent(3);
+            assertContent += $"Assert.Equal(entity.{p.Name}, res.{p.Name});{Environment.NewLine}".Indent(3);
+        });
+
+        content += $$"""
+                    };
+                    var entity = await manager.Command.Db.FirstOrDefaultAsync();
+                    if (entity != null)
+                    {
+                        var res = await manager.UpdateAsync(entity, dto);
+            {{assertContent}}
+                    }
             """;
         return content;
     }
@@ -437,12 +478,7 @@ public class ManagerGenerate : GenerateBase
     }
     public string GetFilterMethodContent()
     {
-        string content = """
-                    /*
-                    Queryable = Queryable
-
-            """;
-
+        string content = "";
         string entityName = EntityInfo.Name;
         var props = EntityInfo.PropertyInfos.Where(p => !p.IsList)
             .Where(p => p.IsRequired && !p.IsNullable)
@@ -450,27 +486,35 @@ public class ManagerGenerate : GenerateBase
             .Where(p => p.MaxLength is not (not null and >= 200))
             .ToList();
 
+        if (props.Any())
+        {
+            content += """
+                    Queryable = Queryable
+
+            """;
+        }
+        var last = props?.LastOrDefault();
         props?.ForEach(p =>
         {
+            bool isLast = (p == last);
             var name = p.Name;
             if (p.IsNavigation)
             {
                 content += $$"""
-                            .WhereNotNull(filter.{{name}}Id, q => q.{{name}}.Id == filter.{{name}}Id)
+                            .WhereNotNull(filter.{{name}}Id, q => q.{{name}}.Id == filter.{{name}}Id){{(isLast ? ";" : "")}}
 
                 """;
             }
             else
             {
                 content += $$"""
-                            .WhereNotNull(filter.{{name}}, q => q.{{name}} == filter.{{name}})
+                            .WhereNotNull(filter.{{name}}, q => q.{{name}} == filter.{{name}}){{(isLast ? ";" : "")}}
 
                 """;
             }
         });
         content += $$"""
-                    */
-                    // TODO: other filter conditions
+                    // TODO: custom filter conditions
                     return await Query.FilterAsync<{{entityName}}ItemDto>(Queryable, filter.PageIndex, filter.PageSize, filter.OrderBy);
             """;
         return content;

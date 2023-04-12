@@ -2,6 +2,7 @@
 using ${Namespace};
 using Core.Utils;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
 using Share.Models.${EntityName}Dtos;
 
 namespace Application.Test.Managers;
@@ -26,15 +27,7 @@ ${AddContent}
     [Fact]
     public async Task Should_UpdateAsync()
     {
-        var dto = new ${EntityName}UpdateDto();
-        var entity = manager.Command.Db.FirstOrDefault();
-
-        if (entity != null)
-        {
-            // dto.UserName = "updateUser" + RandomString;
-            var res = await manager.UpdateAsync(entity, dto);
-            // Assert.Equal(dto.Name, res.Name);
-        }
+${UpdateContent}
     }
 
     [Fact]
