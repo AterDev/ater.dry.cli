@@ -20,15 +20,8 @@ public class ${EntityName}ManagerTest : BaseTest
     [Fact]
     public async Task Shoud_AddAsync()
     {
-        //var dto = new ${EntityName}AddDto()
-        //{
-        //    Name = "" + RandomString
-        //};
-        //var entity = await manager.CreateNewEntityAsync(dto);
-        //var res = await manager.AddAsync(entity);
-        //Assert.Equal(entity.Name, res.Name);
+${AddContent}
     }
-
 
     [Fact]
     public async Task Should_UpdateAsync()

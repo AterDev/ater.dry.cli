@@ -75,7 +75,47 @@ public class ManagerGenerate : GenerateBase
         tplContent = tplContent.Replace(TplConst.NAMESPACE, entityHelper.NamespaceName);
         string entityName = Path.GetFileNameWithoutExtension(EntityPath);
         tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName);
+
+        var addContent = GenManagerAddTest();
+        tplContent = tplContent.Replace("${AddContent}", addContent);
         return tplContent;
+    }
+
+    private string GenManagerAddTest()
+    {
+        // 解析add dto
+        var addDtoPath = Path.Combine(SharePath, "Models", EntityInfo.Name + "Dtos", EntityInfo.Name + "AddDto.cs");
+        var entityHelper = new EntityParseHelper(addDtoPath);
+        entityHelper.Parse();
+        // 构造内容
+        string content = $$"""
+                    var dto  = new {{EntityInfo.Name}}AddDto()
+                    {
+
+            """;
+        var requiredProps = entityHelper.PropertyInfos?.Where(i => i.IsRequired).ToList();
+        var assertContent = "";
+        requiredProps?.ForEach(p =>
+        {
+            var row = (p.Type) switch
+            {
+                "Guid" => $"{p.Name} = new Guid(\"\"),",
+                "string" => $"{p.Name} = \"{p.Name}\" + RandomString,",
+                "int" or "double" => $"{p.Name} = 0,",
+                "bool" => $"{p.Name} = true,",
+                _ => p.IsEnum ? $"{p.Name} = 0," : $"",
+            };
+            content += $"{row + Environment.NewLine}".Indent(3);
+            assertContent += $"Assert.Equal(entity.{p.Name}, res.{p.Name});{Environment.NewLine}".Indent(2);
+        });
+
+        content += $$"""
+                    };
+                    var entity = await manager.CreateNewEntityAsync(dto);
+                    var res = await manager.AddAsync(entity);
+            {{assertContent}}
+            """;
+        return content;
     }
 
     public string GetUserContextClass()
