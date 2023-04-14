@@ -16,8 +16,7 @@ public class CommandBuilder
         ConfigOptions = ConfigCommand.ReadConfigFile();
         if (ConfigOptions != null)
         {
-            Config.IdType = ConfigOptions.IdType;
-            Config.CreatedTimeName = ConfigOptions.CreatedTimeName;
+            Config.SetConfig(ConfigOptions);
         }
     }
 

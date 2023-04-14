@@ -89,15 +89,16 @@ public class ApiCommand : CommandBase
         string entityName = Path.GetFileNameWithoutExtension(EntityPath);
         string apiContent = CodeGen.GetRestApiContent();
 
-
-        string adminContent = apiContent
-            .Replace(CodeGen.ApiNamespace + ".Controllers", CodeGen.ApiNamespace + ".Controllers.AdminControllers");
-
+        if (Config.IsSplitController == true)
+        {
+            string adminContent = apiContent
+                .Replace(CodeGen.ApiNamespace + ".Controllers", CodeGen.ApiNamespace + ".Controllers.AdminControllers");
+            await GenerateFileAsync(adminDir, $"{entityName}{Suffix}.cs", adminContent);
+        }
         string clientContent = apiContent
             .Replace("RestControllerBase", "ClientControllerBase");
-
         await GenerateFileAsync(apiDir, $"{entityName}{Suffix}.cs", clientContent);
-        await GenerateFileAsync(adminDir, $"{entityName}{Suffix}.cs", adminContent);
+
     }
 
     private async Task GenerateCommonFilesAsync()

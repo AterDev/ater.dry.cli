@@ -41,11 +41,14 @@ public class ConfigCommand
                 {
                     options.ProjectId = Guid.NewGuid();
                     Const.PROJECT_ID = options.ProjectId;
-                    string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
-                    await File.WriteAllTextAsync(path, content, Encoding.UTF8);
-                    Console.WriteLine("Update config file success");
+                    
                 }
+
+                string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
+                await File.WriteAllTextAsync(path, content, Encoding.UTF8);
+                Console.WriteLine("Update config file success");
             }
+
             else
             {
                 Console.WriteLine("config file parsing error! : " + path);

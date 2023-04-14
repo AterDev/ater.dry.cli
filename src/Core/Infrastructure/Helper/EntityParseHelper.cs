@@ -177,7 +177,7 @@ public class EntityParseHelper
     /// </summary>
     private void GetNgPageAttribute()
     {
-        CompilationUnitSyntax root = SyntaxTree.GetCompilationUnitRoot();
+        CompilationUnitSyntax root = SyntaxTree!.GetCompilationUnitRoot();
         ClassDeclarationSyntax? syntax = root.DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
         List<AttributeSyntax> attributesSyntax = syntax!.DescendantNodes().OfType<AttributeSyntax>().ToList();
         if (attributesSyntax != null && attributesSyntax.Any())

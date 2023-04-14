@@ -27,6 +27,10 @@ public class ConfigOptions
     public string CreatedTimeName { get; set; } = "CreatedTime";
     public string UpdatedTimeName { get; set; } = "UpdatedTime";
 
+    /// <summary>
+    /// 是否拆分
+    /// </summary>
+    public bool? IsSplitController { get; set; } = false;
     public double Version { get; set; } = 1.0;
     /// <summary>
     /// swagger地址

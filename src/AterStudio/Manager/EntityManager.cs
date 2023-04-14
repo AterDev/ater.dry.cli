@@ -267,8 +267,7 @@ public class EntityManager
 
         if (options != null)
         {
-            Config.IdType = options.IdType;
-            Config.CreatedTimeName = options.CreatedTimeName;
+            Config.SetConfig(options);
         }
     }
 }
