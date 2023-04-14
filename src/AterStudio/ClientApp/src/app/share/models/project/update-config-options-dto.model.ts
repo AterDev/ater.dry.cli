@@ -9,5 +9,6 @@ export interface UpdateConfigOptionsDto {
   idType?: string | null;
   createdTimeName?: string | null;
   updatedTimeName?: string | null;
+  isSplitController?: boolean | null;
 
 }

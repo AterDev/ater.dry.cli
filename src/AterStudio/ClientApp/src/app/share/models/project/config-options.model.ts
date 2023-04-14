@@ -10,6 +10,7 @@ export interface ConfigOptions {
   idType?: string | null;
   createdTimeName?: string | null;
   updatedTimeName?: string | null;
+  isSplitController?: boolean | null;
   version: number;
   swaggerPath?: string | null;
   webAppPath?: string | null;

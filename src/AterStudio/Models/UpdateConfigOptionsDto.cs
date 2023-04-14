@@ -12,4 +12,5 @@ public class UpdateConfigOptionsDto
     public string? IdType { get; set; } 
     public string? CreatedTimeName { get; set; }
     public string? UpdatedTimeName { get; set; }
+    public bool? IsSplitController { get; set; }
 }

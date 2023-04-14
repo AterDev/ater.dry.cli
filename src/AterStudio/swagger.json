@@ -1350,6 +1350,10 @@
             "type": "string",
             "nullable": true
           },
+          "isSplitController": {
+            "type": "boolean",
+            "nullable": true
+          },
           "version": {
             "type": "number",
             "format": "double"
@@ -1778,6 +1782,10 @@
           },
           "updatedTimeName": {
             "type": "string",
+            "nullable": true
+          },
+          "isSplitController": {
+            "type": "boolean",
             "nullable": true
           }
         },

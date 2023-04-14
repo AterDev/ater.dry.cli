@@ -158,10 +158,12 @@ public class ProjectManager
             options.DtoPath = dto.DtoPath;
         if (dto.ApiPath != null)
             options.ApiPath = dto.ApiPath;
+        if (dto.IsSplitController != null)
+            options.IsSplitController = dto.IsSplitController;
 
         string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
         await File.WriteAllTextAsync(Path.Combine(configPath, Config.ConfigFileName), content, Encoding.UTF8);
-        return default;
+        return true;
     }
     /// <summary>
     /// 是否在监视中
