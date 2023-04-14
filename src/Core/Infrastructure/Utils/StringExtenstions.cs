@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace Core.Infrastructure.Utils;
 
-public static class Extenstions
+public static class StringExtenstions
 {
     /// <summary>
     /// to hyphen style: HelloWord->hellow-word

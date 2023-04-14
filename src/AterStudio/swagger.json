@@ -770,11 +770,13 @@
         "tags": [
           "Project"
         ],
+        "summary": "添加项目",
         "operationId": "Project_Add",
         "parameters": [
           {
             "name": "name",
             "in": "query",
+            "description": "",
             "style": "form",
             "schema": {
               "type": "string"
@@ -783,6 +785,7 @@
           {
             "name": "path",
             "in": "query",
+            "description": "",
             "style": "form",
             "schema": {
               "type": "string"
@@ -943,6 +946,112 @@
                   "items": {
                     "$ref": "#/components/schemas/SubProjectInfo"
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Project/setting/{id}": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "summary": "获取项目配置文件内容",
+        "operationId": "Project_GetConfigOptions",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfigOptions"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfigOptions"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfigOptions"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "summary": "更新配置",
+        "operationId": "Project_UpdateConfig",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateConfigOptionsDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateConfigOptionsDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateConfigOptionsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
                 }
               }
             }
@@ -1193,6 +1302,68 @@
           "API",
           "Protobuf"
         ]
+      },
+      "ConfigOptions": {
+        "type": "object",
+        "properties": {
+          "rootPath": {
+            "type": "string",
+            "nullable": true
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "dtoPath": {
+            "type": "string",
+            "nullable": true
+          },
+          "entityPath": {
+            "type": "string",
+            "nullable": true
+          },
+          "dbContextPath": {
+            "type": "string",
+            "nullable": true
+          },
+          "storePath": {
+            "type": "string",
+            "nullable": true
+          },
+          "apiPath": {
+            "type": "string",
+            "nullable": true
+          },
+          "idStyle": {
+            "type": "string",
+            "nullable": true
+          },
+          "idType": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdTimeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "updatedTimeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "version": {
+            "type": "number",
+            "format": "double"
+          },
+          "swaggerPath": {
+            "type": "string",
+            "nullable": true
+          },
+          "webAppPath": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "EntityFile": {
         "type": "object",
@@ -1576,6 +1747,41 @@
         },
         "additionalProperties": false,
         "description": "项目信息"
+      },
+      "UpdateConfigOptionsDto": {
+        "type": "object",
+        "properties": {
+          "dtoPath": {
+            "type": "string",
+            "description": "dto项目目录",
+            "nullable": true
+          },
+          "entityPath": {
+            "type": "string",
+            "nullable": true
+          },
+          "storePath": {
+            "type": "string",
+            "nullable": true
+          },
+          "apiPath": {
+            "type": "string",
+            "nullable": true
+          },
+          "idType": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdTimeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "updatedTimeName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "UpdateDtoDto": {
         "type": "object",

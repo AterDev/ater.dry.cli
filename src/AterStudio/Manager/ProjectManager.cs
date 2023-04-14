@@ -1,4 +1,5 @@
-﻿using AterStudio.Models;
+﻿using System.Text;
+using AterStudio.Models;
 using Command.Share;
 using Command.Share.Commands;
 using Core;
@@ -112,6 +113,56 @@ public class ProjectManager
         }
     }
 
+    /// <summary>
+    /// 获取项目配置文件内容
+    /// </summary>
+    /// <returns></returns>
+    public async Task<ConfigOptions?> GetConfigOptions(Guid projectId)
+    {
+        var project = GetProject(projectId);
+        var configPath = File.Exists(project.Path)
+            ? Path.Combine(project.Path, "..")
+            : Path.Combine(project.Path);
+        var options = ConfigCommand.ReadConfigFile(configPath);
+
+        if (options == null)
+        {
+            await ConfigCommand.InitConfigFileAsync(Path.Combine(configPath, ".."));
+            options = ConfigCommand.ReadConfigFile(Path.Combine(configPath, ".."));
+        }
+        return options;
+    }
+
+    /// <summary>
+    /// 更新配置内容
+    /// </summary>
+    /// <param name="projectId"></param>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    public async Task<bool> UpdateConfigAsync(Guid projectId, UpdateConfigOptionsDto dto)
+    {
+        var project = GetProject(projectId);
+        var configPath = File.Exists(project.Path)
+            ? Path.Combine(project.Path, "..")
+            : Path.Combine(project.Path);
+        var options = ConfigCommand.ReadConfigFile(configPath);
+        if (options == null) { return false; }
+
+        if (dto.IdType != null)
+            options.IdType = dto.IdType;
+        if (dto.EntityPath != null)
+            options.EntityPath = dto.EntityPath;
+        if (dto.StorePath != null)
+            options.StorePath = dto.StorePath;
+        if (dto.DtoPath != null)
+            options.DtoPath = dto.DtoPath;
+        if (dto.ApiPath != null)
+            options.ApiPath = dto.ApiPath;
+
+        string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
+        await File.WriteAllTextAsync(Path.Combine(configPath, Config.ConfigFileName), content, Encoding.UTF8);
+        return default;
+    }
     /// <summary>
     /// 是否在监视中
     /// </summary>

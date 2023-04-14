@@ -3,11 +3,14 @@
   <button *ngIf="type!='desktop'" mat-raised-button (click)="addProjectDialog()" color="primary">添加项目</button>
   <mat-divider class="mt-2">
   </mat-divider>
-  <div class="d-flex gap-1">
+  <div class="d-flex gap-1" *ngIf="!isLoading">
     <mat-card *ngFor="let item of projects" class="col-lg-3 col-md-4 col-sm-4 col-3 card">
       <mat-card-header>
         <mat-card-title>
           {{item.displayName}}
+          <button mat-icon-button matTooltip="项目配置" color="primary" (click)="openSetting(item)">
+            <mat-icon>settings</mat-icon>
+          </button>
         </mat-card-title>
         <mat-card-subtitle>
           {{item.name}}
@@ -47,4 +50,40 @@
     <button mat-button mat-dialog-close>取消</button>
     <button mat-button (click)="addProject()" color="primary">确认添加</button>
   </mat-dialog-actions>
+</ng-template>
+
+<ng-template #settingDialog>
+  <ng-container *ngIf="config && !isProcessing">
+    <h2 mat-dialog-title>配置修改</h2>
+    <p>也可以直接编辑项目根目录中的.droplet-config.json</p>
+    <strong>以下路径相对于项目根路径,不用以/开头</strong>
+    <mat-dialog-content class="mt-1">
+      <form [formGroup]="settingForm" class="d-flex flex-column">
+        <mat-form-field>
+          <mat-label>实体目录</mat-label>
+          <input matInput placeholder="实体所在项目目录,3-200字符" formControlName="entityPath" required>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Dto目录</mat-label>
+          <input matInput placeholder="Dto所在项目目录,3-200字符" formControlName="dtoPath" required>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>应用层目录</mat-label>
+          <input matInput placeholder="应用层所在项目目录,3-200字符" formControlName="storePath" required>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>接口层目录</mat-label>
+          <input matInput placeholder="API接口层所在项目目录,3-200字符" formControlName="apiPath" required>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Id类型</mat-label>
+          <input matInput placeholder="支持Guid/int" formControlName="idType" required>
+        </mat-form-field>
+      </form>
+    </mat-dialog-content>
+    <mat-dialog-actions class="justify-content-end">
+      <button mat-button mat-dialog-close>取消</button>
+      <button mat-button (click)="saveSetting()" color="primary">提交修改</button>
+    </mat-dialog-actions>
+  </ng-container>
 </ng-template>

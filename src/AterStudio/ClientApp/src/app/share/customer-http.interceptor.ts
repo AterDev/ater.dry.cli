@@ -46,8 +46,9 @@ export class CustomerHttpInterceptor implements HttpInterceptor {
       case 403:
         errors.detail = '403:已拒绝请求';
         break;
+      case 404:
       case 409:
-        errors.detail = error.error;
+        errors.detail = error.error.detail;
         break;
       default:
         if (!error.error) {
@@ -62,6 +63,7 @@ export class CustomerHttpInterceptor implements HttpInterceptor {
         }
         break;
     }
+    errors.status = error.status;
     this.snb.open(errors.detail);
     return throwError(() => errors);
   }

@@ -3,8 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "prestart": "node aspnetcore-https",
-    "start": "ng serve --port 14200 --ssl",
+    "start": "ng serve --port 14200",
     "build": "ng build",
     "build:ssr": "ng run AterStudio:server:dev",
     "watch": "ng build --watch --configuration development",

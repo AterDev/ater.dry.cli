@@ -12,14 +12,10 @@ public class ConfigCommand
     public static async Task InitConfigFileAsync(string? configPath = null)
     {
         // TODO:获取工具版本
-
         configPath ??= GetConfigPath();
         Console.WriteLine("use config path:" + configPath);
-
         FileInfo file = new(Path.Combine(configPath, Config.ConfigFileName));
-        string path = file == null
-            ? Path.Combine(configPath, Config.ConfigFileName)
-            : file.FullName;
+        string path = file.FullName;
 
         if (!File.Exists(path))
         {
@@ -57,12 +53,15 @@ public class ConfigCommand
         }
     }
 
+
+
     /// <summary>
     /// 读取配置文件
     /// </summary>
-    public static ConfigOptions? ReadConfigFile()
+    /// <param name="configPath"></param>
+    public static ConfigOptions? ReadConfigFile(string? configPath = null)
     {
-        string configPath = GetConfigPath();
+        configPath ??= GetConfigPath();
         FileInfo file = new(Path.Combine(configPath, Config.ConfigFileName));
         if (!file.Exists)
         {

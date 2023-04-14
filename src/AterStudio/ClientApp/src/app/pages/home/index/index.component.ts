@@ -5,7 +5,9 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Route, Router } from '@angular/router';
 import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confirm-dialog.component';
+import { ConfigOptions } from 'src/app/share/models/project/config-options.model';
 import { Project } from 'src/app/share/models/project/project.model';
+import { UpdateConfigOptionsDto } from 'src/app/share/models/project/update-config-options-dto.model';
 import { ProjectStateService } from 'src/app/share/project-state.service';
 import { ProjectService } from 'src/app/share/services/project.service';
 
@@ -15,13 +17,17 @@ import { ProjectService } from 'src/app/share/services/project.service';
   styleUrls: ['./index.component.css']
 })
 export class IndexComponent implements OnInit {
-
-  @ViewChild("addDialog", { static: true })
-  dialogTmpRef!: TemplateRef<{}>;
+  @ViewChild("addDialog", { static: true }) dialogTmpRef!: TemplateRef<{}>;
+  @ViewChild("settingDialog", { static: true }) settingTmpRef!: TemplateRef<{}>;
   dialogRef!: MatDialogRef<{}, any>;
   projects = [] as Project[];
+  current: Project | null = null;
+  config: ConfigOptions | null = null;
   addForm!: FormGroup;
+  settingForm!: FormGroup;
   type: string | null = null;
+  isLoading = true;
+  isProcessing = false;
   constructor(
     private service: ProjectService,
     private projectState: ProjectStateService,
@@ -43,7 +49,6 @@ export class IndexComponent implements OnInit {
       path: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(100)])
     })
   }
-
   addProjectDialog(): void {
     this.dialogRef = this.dialog.open(this.dialogTmpRef, {
       minWidth: 300
@@ -70,6 +75,68 @@ export class IndexComponent implements OnInit {
         })
     } else {
       this.snb.open('输入有误，请查检');
+    }
+  }
+  openSetting(project: Project): void {
+    this.current = project;
+    this.isProcessing = true;
+    this.service.getConfigOptions(project.id)
+      .subscribe({
+        next: (res) => {
+          if (res) {
+            this.config = res;
+            this.buildSettingForm();
+            this.dialogRef = this.dialog.open(this.settingTmpRef, {
+              minWidth: 500
+            })
+          }
+        },
+        error: (error) => {
+          this.snb.open(error.detail);
+          this.isProcessing = false;
+        },
+        complete: () => {
+          this.isProcessing = false;
+        }
+      });
+  }
+  buildSettingForm(): void {
+    this.settingForm = new FormGroup({
+      dtoPath: new FormControl(this.config?.dtoPath, [Validators.required, Validators.minLength(3), Validators.maxLength(200)]),
+      entityPath: new FormControl(this.config?.entityPath, [Validators.required, Validators.minLength(3), Validators.maxLength(200)]),
+      storePath: new FormControl(this.config?.storePath, [Validators.required, Validators.minLength(3), Validators.maxLength(200)]),
+      apiPath: new FormControl(this.config?.apiPath, [Validators.required, Validators.minLength(3), Validators.maxLength(200)]),
+      idType: new FormControl(this.config?.idType ?? "Guid", [Validators.required, Validators.minLength(2), Validators.maxLength(20)]),
+    });
+  }
+  saveSetting(): void {
+    if (this.settingForm.valid && this.current) {
+      const idType = this.settingForm.get('idType')?.value;
+      if (idType !== 'Guid' && idType !== 'int') {
+        this.snb.open('Id类型仅支持Guid或int');
+        return;
+      }
+      this.isProcessing = true;
+      const data = this.settingForm.value as UpdateConfigOptionsDto;
+
+      this.service.updateConfig(this.current.id, data)
+        .subscribe({
+          next: (res) => {
+            if (res) {
+              this.snb.open('保存成功');
+              this.dialogRef.close();
+            } else {
+              this.snb.open('保存失败');
+            }
+          },
+          error: (error) => {
+            this.snb.open(error.detail);
+            this.isProcessing = false;
+          },
+          complete: () => {
+            this.isProcessing = false;
+          }
+        });
     }
   }
 
@@ -121,9 +188,21 @@ export class IndexComponent implements OnInit {
     }
   }
   getProjects(): void {
+    this.isLoading = true;
     this.service.list()
-      .subscribe(res => {
-        this.projects = res;
+      .subscribe({
+        next: (res) => {
+          if (res) {
+            this.projects = res;
+          } else {
+          }
+        },
+        error: (error) => {
+          this.snb.open(error.detail);
+        },
+        complete: () => {
+          this.isLoading = false;
+        }
       });
   }
 }

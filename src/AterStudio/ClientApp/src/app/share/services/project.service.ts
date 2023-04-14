@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BaseService } from './base.service';
 import { Observable } from 'rxjs';
+import { UpdateConfigOptionsDto } from '../models/project/update-config-options-dto.model';
 import { Project } from '../models/project/project.model';
 import { SubProjectInfo } from '../models/project/sub-project-info.model';
+import { ConfigOptions } from '../models/project/config-options.model';
 
 /**
  * 项目
@@ -18,9 +20,9 @@ export class ProjectService extends BaseService {
   }
 
   /**
-   * add
-   * @param name string
-   * @param path string
+   * 添加项目
+   * @param name 
+   * @param path 
    */
   add(name?: string, path?: string): Observable<Project> {
     const url = `/api/Project?name=${name}&path=${path}`;
@@ -52,6 +54,25 @@ export class ProjectService extends BaseService {
   getAllProjectInfos(id: string): Observable<SubProjectInfo[]> {
     const url = `/api/Project/sub/${id}`;
     return this.request<SubProjectInfo[]>('get', url);
+  }
+
+  /**
+   * 获取项目配置文件内容
+   * @param id 
+   */
+  getConfigOptions(id: string): Observable<ConfigOptions> {
+    const url = `/api/Project/setting/${id}`;
+    return this.request<ConfigOptions>('get', url);
+  }
+
+  /**
+   * 更新配置
+   * @param id 
+   * @param data UpdateConfigOptionsDto
+   */
+  updateConfig(id: string, data: UpdateConfigOptionsDto): Observable<boolean> {
+    const url = `/api/Project/setting/${id}`;
+    return this.request<boolean>('put', url, data);
   }
 
   /**

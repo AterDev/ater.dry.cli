@@ -1,5 +1,7 @@
 ﻿namespace Core.Models;
-
+/// <summary>
+/// 项目配置
+/// </summary>
 public class ConfigOptions
 {
     /// <summary>

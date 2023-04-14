@@ -42,12 +42,42 @@ public class ProjectController : ControllerBase
         return _manager.GetAllProjects(id);
     }
 
+    /// <summary>
+    /// 添加项目
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="path"></param>
+    /// <returns></returns>
     [HttpPost]
     public async Task<ActionResult<Project?>> AddAsync(string name, string path)
     {
         return (!System.IO.File.Exists(path) && !Directory.Exists(path))
             ? Problem("未找到该路径")
             : await _manager.AddProjectAsync(name, path);
+    }
+
+    /// <summary>
+    /// 获取项目配置文件内容
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpGet("setting/{id}")]
+    public async Task<ActionResult<ConfigOptions>> GetConfigOptionsAsync([FromRoute] Guid id)
+    {
+        var config = await _manager.GetConfigOptions(id);
+        return config == null ? Problem("配置文件加载失败") : config;
+    }
+
+    /// <summary>
+    /// 更新配置
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    [HttpPut("setting/{id}")]
+    public async Task<bool> UpdateConfigAsync([FromRoute] Guid id, UpdateConfigOptionsDto dto)
+    {
+        return await _manager.UpdateConfigAsync(id, dto);
     }
 
     /// <summary>
