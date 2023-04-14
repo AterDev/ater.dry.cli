@@ -1,4 +1,4 @@
-# 说明
+# Description(说明)
 > This is a code assistance tool that provides code generation functions for `ASP.NET Core` projects and `Typescript front-end` projects, and supports command line and graphical interface operations. It is recommended to use the [Ater.web](https://github.com/AterDev/ater.web) template to create projects
 
 这是一个代码辅助工具，面向`ASP.NET Core`项目以及`Typescript前端`项目提供代码生成的功能，支持命令行与图形界面操作。请使用 [Ater.web](https://github.com/AterDev/ater.web) 模板创建项目。
@@ -23,7 +23,7 @@
 - Angular基础CURD页面
 
 
-## 安装
+## Install(安装)
 > Check package version first!
 
 首先检查包版本，工具依赖.NET SDK,对应关系如下：
@@ -44,7 +44,10 @@ dotnet tool install --global ater.droplet.cli
 
 请到[nuget](https://www.nuget.org/packages/ater.droplet.cli)中查询最新版本！
 
-## 使用
+## Usage(使用)
+
+### ⭐(Use Web UI)使用图形界面
+
 > One command to start the UI interface and enjoy it!
 
 一条命令启动UI界面!
@@ -77,6 +80,7 @@ droplet studio
 
 ![front-end](./images/front-end.png)
 
+### Use command line(使用命令行)
 
 > You can also use `droplet --help` to view command help information.
 >
