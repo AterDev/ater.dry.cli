@@ -37,18 +37,18 @@ export class IndexComponent implements OnInit {
   searchKey = '';
   isSync = false;
   isListening = false;
+  isProcessing = false;
   @ViewChild("requestDialog", { static: true })
   requestTmpRef!: TemplateRef<{}>;
   @ViewChild("syncDialog", { static: true })
   syncTmpRef!: TemplateRef<{}>;
 
-  @ViewChild("protobufDialog", { static: true })
-  protobufTmpRef!: TemplateRef<{}>;
+  @ViewChild("protobufDialog", { static: true }) protobufTmpRef!: TemplateRef<{}>;
+  @ViewChild("apiDialog", { static: true }) apiTmpRef!: TemplateRef<{}>;
   selection = new SelectionModel<EntityFile>(true, []);
-
   selectedWebProjectIds: string[] = [];
   webProjects: SubProjectInfo[] = [];
-
+  currentEntity: EntityFile | null = null;
   constructor(
     public route: ActivatedRoute,
     public router: Router,
@@ -155,11 +155,8 @@ export class IndexComponent implements OnInit {
   }
 
 
-  openProtobufDialog(element?: any): void {
-    if (element) {
-      this.selection.select(element);
-    }
-
+  openSelectProjectDialog(type: CommandType, element: EntityFile | null): void {
+    this.currentEntity = element;
     this.projectSrv.getAllProjectInfos(this.projectId)
       .subscribe({
         next: (res) => {
@@ -168,9 +165,22 @@ export class IndexComponent implements OnInit {
               return p.projectType == ProjectType.Web &&
                 !p.name?.endsWith('Test.csproj')
             });
-            this.dialogRef = this.dialog.open(this.protobufTmpRef, {
-              minWidth: 300
-            });
+            switch (type) {
+              case CommandType.API:
+                this.dialogRef = this.dialog.open(this.apiTmpRef, {
+                  minWidth: 300
+                });
+                break;
+
+              case CommandType.Protobuf:
+                this.dialogRef = this.dialog.open(this.protobufTmpRef, {
+                  minWidth: 300
+                });
+                break;
+              default:
+                break;
+            }
+
           } else {
             this.snb.open('没有有效的项目');
           }
@@ -182,26 +192,44 @@ export class IndexComponent implements OnInit {
   }
 
   batch(type: CommandType): void {
-    const selected = this.selection.selected;
+    let selected = this.selection.selected;
+    if (this.currentEntity !== null) {
+      selected = [this.currentEntity];
+    }
     if (selected.length > 0) {
       let data: BatchGenerateDto = {
         projectId: this.projectId!,
         entityPaths: selected.map(s => this.baseEntityPath + s.path),
         commandType: type,
       };
-      // protobuf参数
-      if (this.selectedWebProjectIds.length > 0 && type == CommandType.Protobuf) {
+      // 参数
+      if (this.selectedWebProjectIds.length > 0
+        && (type == CommandType.Protobuf
+          || type == CommandType.API)) {
         data.projectPath = this.selectedWebProjectIds;
       }
+      this.isSync = true;
       this.service.batchGenerate(data)
-        .subscribe(res => {
-          if (res) {
-            this.snb.open('生成成功');
-            if (type == CommandType.Protobuf) {
-              this.dialogRef.close();
+        .subscribe({
+          next: (res) => {
+            if (res) {
+              this.snb.open('生成成功');
+              if (type == CommandType.Protobuf
+                || type == CommandType.API) {
+                this.dialogRef.close();
+              }
+            } else {
+              this.snb.open('生成失败');
             }
+          },
+          error: (error) => {
+            this.snb.open(error.detail);
+            this.isSync = false;
+          },
+          complete: () => {
+            this.isSync = false;
           }
-        })
+        });
     } else {
       this.snb.open('未选择任何实体');
     }
@@ -211,17 +239,6 @@ export class IndexComponent implements OnInit {
     var data = event.source.selectedOptions.selected;
     this.selectedWebProjectIds = data.map<string>(d => d.value);
   }
-
-  generateProto(): void {
-    if (this.selectedWebProjectIds.length > 0) {
-      this.service
-    } else {
-      this.snb.open('未选择任何项目');
-      return;
-    }
-  }
-
-
   generateRequest(): void {
     this.isSync = true;
     const swagger = this.requestForm.get('swagger')?.value as string;

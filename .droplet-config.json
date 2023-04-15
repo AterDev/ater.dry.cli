@@ -9,5 +9,9 @@
   "IdStyle": "Id",
   "IdType": "Guid",
   "CreatedTimeName": "CreatedTime",
-  "UpdatedTimeName": "UpdatedTime"
+  "UpdatedTimeName": "UpdatedTime",
+  "IsSplitController": false,
+  "Version": 1,
+  "SwaggerPath": null,
+  "WebAppPath": null
 }

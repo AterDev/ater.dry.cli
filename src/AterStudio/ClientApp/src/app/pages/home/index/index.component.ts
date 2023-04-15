@@ -87,7 +87,7 @@ export class IndexComponent implements OnInit {
             this.config = res;
             this.buildSettingForm();
             this.dialogRef = this.dialog.open(this.settingTmpRef, {
-              minWidth: 500,
+              minWidth: 450,
             })
           }
         },
@@ -107,7 +107,7 @@ export class IndexComponent implements OnInit {
       storePath: new FormControl(this.config?.storePath, [Validators.required, Validators.minLength(3), Validators.maxLength(200)]),
       apiPath: new FormControl(this.config?.apiPath, [Validators.required, Validators.minLength(3), Validators.maxLength(200)]),
       idType: new FormControl(this.config?.idType ?? "Guid", [Validators.required, Validators.minLength(2), Validators.maxLength(20)]),
-      isSplitController: new FormControl<boolean>(this.config?.isSplitController ?? false, Validators.required)
+      isSplitController: new FormControl<boolean>(this.config?.isSplitController ?? false)
     });
   }
   saveSetting(): void {
@@ -138,6 +138,8 @@ export class IndexComponent implements OnInit {
             this.isProcessing = false;
           }
         });
+    } else {
+      console.log(this.settingForm.errors);
     }
   }
 

@@ -8,7 +8,7 @@
 		<AssemblyVersion>0.1.0.0</AssemblyVersion>
 		<FileVersion>0.1.0.0</FileVersion>
 		<PackageId>ater.droplet.cli</PackageId>
-		<Version>7.1.0-beta3</Version>
+		<Version>7.1.0-rc1</Version>
 		<Description> ater.web 框架代码生成器</Description>
 		<Authors>NilTor</Authors>
 		<Company>Atersoft</Company>
@@ -28,6 +28,7 @@
 			7 优化命令行输出内容;
 			8 修复studio读取配置文件;
 			9 进一步提升CURD的代码生成;
+			10 添加项目配置修改;
 			其他细节完善;
 		</PackageReleaseNotes>
 		<PackageIcon>logo.jpg</PackageIcon>

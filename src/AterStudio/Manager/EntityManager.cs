@@ -206,7 +206,12 @@ public class EntityManager
             case CommandType.API:
                 foreach (string item in dto.EntityPaths)
                 {
-                    await CommandRunner.GenerateApiAsync(item, project.SharePath, project.ApplicationPath, project.HttpPath, "Controller");
+                    dto.ProjectPath?.ForEach(p =>
+                    {
+                        var apiPath = Path.Combine(p, "..");
+                        CommandRunner.GenerateApiAsync(item, project.SharePath, project.ApplicationPath, apiPath, "Controller").Wait();
+                    });
+
                 }
                 break;
             case CommandType.Protobuf:
