@@ -160,7 +160,7 @@ public class RestApiGenerate : GenerateBase
             {
                 not "User" and not "SystemUser" => $$"""
                         if (!await {{manager}}.ExistAsync(dto.{{nav.Name}}Id))
-                            return NotFound("不存在的{nav.CommentSummary ?? nav.Type}");
+                            return NotFound("不存在的{{nav.CommentSummary ?? nav.Type}}");
 
                 """,
                 _ => $$"""

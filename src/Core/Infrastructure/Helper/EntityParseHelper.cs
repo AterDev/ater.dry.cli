@@ -291,7 +291,7 @@ public class EntityParseHelper
             .FirstOrDefault();
         if (trivia == null)
         {
-            return string.Empty;
+            return null;
         }
         var summary = trivia.Content.OfType<XmlElementSyntax>().Where(e => e.StartTag.Name.ToString() == "summary").FirstOrDefault();
 
