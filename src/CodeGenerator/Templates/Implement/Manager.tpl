@@ -1,4 +1,5 @@
-﻿using ${Namespace}.IManager;
+﻿using ${Namespace}.Implement;
+using ${Namespace}.IManager;
 using Share.Models.${EntityName}Dtos;
 
 namespace ${Namespace}.Manager;

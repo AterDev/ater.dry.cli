@@ -110,7 +110,7 @@ public class StoreCommand : CommandBase
         string entityName = Path.GetFileNameWithoutExtension(EntityPath);
 
         string interfaceContent = CodeGen.GetIManagerContent();
-        string managerContent = CodeGen.GetManagerContext();
+        string managerContent = CodeGen.GetManagerContent();
         // 生成接口
         await GenerateFileAsync(iManagerDir, $"I{entityName}Manager.cs", interfaceContent);
         // 生成manger

@@ -2,7 +2,7 @@
 using Core.Const;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 
-namespace Http.API.Infrastructure;
+namespace ${Namespace}.Infrastructure;
 
 /// <summary>
 /// 管理后台权限控制器

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Infrastructure;
 
-namespace Application.Implement;
+namespace ${Namespace}.Implement;
 
 public class DomainManagerBase<TEntity, TUpdate, TFilter, TItem> : IDomainManager<TEntity, TUpdate, TFilter, TItem>
     where TEntity : EntityBase

@@ -1,5 +1,5 @@
-﻿using Application.IManager;
-using ${Namespace};
+﻿using ${Namespace}.IManager;
+using ${EntityNamespace};
 using Core.Utils;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;

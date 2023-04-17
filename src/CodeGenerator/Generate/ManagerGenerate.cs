@@ -72,7 +72,8 @@ public class ManagerGenerate : GenerateBase
         string tplContent = GetTplContent($"Implement.ManagerTest.tpl");
         var entityHelper = new EntityParseHelper(EntityPath);
         entityHelper.Parse();
-        tplContent = tplContent.Replace(TplConst.NAMESPACE, entityHelper.NamespaceName);
+        tplContent = tplContent.Replace(TplConst.ENTITY_NAMESPACE, entityHelper.NamespaceName)
+            .Replace(TplConst.NAMESPACE, ServiceNamespace);
         string entityName = Path.GetFileNameWithoutExtension(EntityPath);
         tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName);
 
@@ -361,7 +362,7 @@ public class ManagerGenerate : GenerateBase
     /// Manager默认代码内容
     /// </summary>
     /// <returns></returns>
-    public string GetManagerContext()
+    public string GetManagerContent()
     {
         string entityName = Path.GetFileNameWithoutExtension(EntityPath);
         string tplContent = GetTplContent($"Implement.Manager.tpl");

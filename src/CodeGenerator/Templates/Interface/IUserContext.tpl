@@ -1,4 +1,4 @@
-﻿namespace Application.Interface;
+﻿namespace ${Namespace}.Interface;
 
 /// <summary>
 /// 用户上下文

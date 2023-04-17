@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace Application.Implement;
+namespace ${Namespace}.Implement;
 
 public class UserContext : IUserContext
 {

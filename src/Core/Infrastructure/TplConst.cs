@@ -6,6 +6,7 @@ public static class TplConst
     public const string ID_TYPE = @"${IdType}";
     public const string COMMENT = @"${Comment}";
     public const string NAMESPACE = @"${Namespace}";
+    public const string ENTITY_NAMESPACE = @"${EntityNamespace}";
     /// <summary>
     /// 控制器后缀
     /// </summary>
