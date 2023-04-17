@@ -306,7 +306,7 @@ public class DtoCodeGenerate : GenerateBase
 
         List<PropertyInfo>? referenceProps = EntityInfo.PropertyInfos?
             .Where(p => p.IsNavigation && !p.IsList)
-            .Where(p => !p.Type.EndsWith("User"))
+            .Where(p => !p.Type.Equals("User") && !p.Type.Equals("SystemUser"))
             .Select(s => new PropertyInfo()
             {
                 Name = s.Name + "Id",
@@ -364,7 +364,7 @@ public class DtoCodeGenerate : GenerateBase
         // 导航属性处理
         List<PropertyInfo>? referenceProps = EntityInfo.PropertyInfos?
             .Where(p => p.IsNavigation && !p.IsList)
-            .Where(p => !p.Type.EndsWith("User"))
+            .Where(p => !p.Type.Equals("User") && !p.Type.Equals("SystemUser"))
             .Select(s => new PropertyInfo()
             {
                 Name = s.Name + "Id",

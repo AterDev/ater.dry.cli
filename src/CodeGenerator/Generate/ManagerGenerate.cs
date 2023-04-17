@@ -429,7 +429,7 @@ public class ManagerGenerate : GenerateBase
         requiredNavigations?.ForEach(nav =>
         {
             var manager = "_" + nav.Type.ToCamelCase() + "Manager";
-            var idName = nav.Type + "Id";
+            var idName = nav.Name + "Id";
             if (nav.Type != "User" && nav.Type != "SystemUser")
             {
                 content += $$"""
