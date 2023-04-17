@@ -198,12 +198,13 @@ public class RestApiGenerate : GenerateBase
             if (!nav.Type.Equals("User") && !nav.Type.Equals("SystemUser"))
             {
                 content += $$"""
-                        if (current.{{nav.Type}}.Id != dto.{{nav.Name}}Id)
+                        if (current.{{nav.Name}}.Id != dto.{{nav.Name}}Id)
                         {
                             var {{variable}} = await {{manager}}.GetCurrentAsync(dto.{{nav.Name}}Id);
                             if ({{variable}} == null) return NotFound("不存在的{{nav.CommentSummary ?? nav.Type}}");
                             current.{{nav.Name}} = {{variable}};
                         }
+
                 """;
             }
         });
