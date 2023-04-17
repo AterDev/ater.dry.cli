@@ -87,7 +87,8 @@ public class StoreCommand : CommandBase
         foreach (string name in interfaceFiles)
         {
             string content = CodeGen.GetInterfaceFile(name);
-            await GenerateFileAsync(interfaceDir, $"{name}.cs", content, true);
+            bool cover = name == "IUserContext" ? false : true;
+            await GenerateFileAsync(interfaceDir, $"{name}.cs", content, cover);
         }
         // 生成实现文件
         foreach (string name in implementFiles)

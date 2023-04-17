@@ -1,4 +1,5 @@
-﻿namespace ${Namespace}.Interface;
+﻿using System.Security.Claims;
+namespace ${Namespace}.Interface;
 
 /// <summary>
 /// 用户上下文
@@ -14,7 +15,7 @@ public interface IUserContext
     public List<string>? Roles { get; set; }
     public Guid? GroupId { get; init; }
     Claim? FindClaim(string claimType);
-    Task<SystemUser?> GetSystemUserAsync();
+    // Task<SystemUser?> GetSystemUserAsync();
     Task<User?> GetUserAsync();
     bool IsRole(string roleName);
 }
