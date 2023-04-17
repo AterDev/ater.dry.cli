@@ -489,6 +489,7 @@ public class ManagerGenerate : GenerateBase
         if (props.Any())
         {
             content += """
+                    // https://github.com/AterDev/ater.web/blob/56542e5653ee795855705e43482e64df0ee8383d/templates/apistd/src/Core/Utils/Extensions.cs#L82
                     Queryable = Queryable
 
             """;

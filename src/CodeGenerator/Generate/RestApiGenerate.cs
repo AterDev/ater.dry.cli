@@ -158,8 +158,8 @@ public class RestApiGenerate : GenerateBase
             // 如果关联的是用户
             content += nav.Type switch
             {
-                not "User" and not "SystemUser" => """
-                        if (!await {manager}.ExistAsync(dto.{nav.Type}Id))
+                not "User" and not "SystemUser" => $$"""
+                        if (!await {{manager}}.ExistAsync(dto.{{nav.Name}}Id))
                             return NotFound("不存在的{nav.CommentSummary ?? nav.Type}");
 
                 """,
@@ -198,11 +198,11 @@ public class RestApiGenerate : GenerateBase
             if (!nav.Type.Equals("User") && !nav.Type.Equals("SystemUser"))
             {
                 content += $$"""
-                        if (current.{{nav.Type}}.Id != dto.{{nav.Type}}Id)
+                        if (current.{{nav.Type}}.Id != dto.{{nav.Name}}Id)
                         {
-                            var {{variable}} = await {{manager}}.GetCurrentAsync(dto.{{nav.Type}}Id);
+                            var {{variable}} = await {{manager}}.GetCurrentAsync(dto.{{nav.Name}}Id);
                             if ({{variable}} == null) return NotFound("不存在的{{nav.CommentSummary ?? nav.Type}}");
-                            current.{{nav.Type}} = {{variable}};
+                            current.{{nav.Name}} = {{variable}};
                         }
                 """;
             }

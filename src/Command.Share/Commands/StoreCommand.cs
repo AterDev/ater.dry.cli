@@ -87,13 +87,13 @@ public class StoreCommand : CommandBase
         foreach (string name in interfaceFiles)
         {
             string content = CodeGen.GetInterfaceFile(name);
-            await GenerateFileAsync(interfaceDir, $"{name}.cs", content);
+            await GenerateFileAsync(interfaceDir, $"{name}.cs", content, true);
         }
         // 生成实现文件
         foreach (string name in implementFiles)
         {
             string content = CodeGen.GetImplementFile(name);
-            await GenerateFileAsync(implementDir, $"{name}.cs", content);
+            await GenerateFileAsync(implementDir, $"{name}.cs", content, true);
         }
         // 生成user上下文
         await GenerateFileAsync(implementDir, "UserContext.cs", userClass);

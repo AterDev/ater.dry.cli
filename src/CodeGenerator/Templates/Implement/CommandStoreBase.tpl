@@ -1,6 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace ${Namespace}.Implement;
+/// <summary>
+/// 可写仓储基类,请勿直接修改本类内容,可修改 CommandSet<TEntity> 
+/// </summary>
+/// <typeparam name="TContext"></typeparam>
+/// <typeparam name="TEntity"></typeparam>
 public class CommandStoreBase<TContext, TEntity> : ICommandStore<TEntity>, ICommandStoreExt<TEntity>
     where TContext : DbContext
     where TEntity : EntityBase

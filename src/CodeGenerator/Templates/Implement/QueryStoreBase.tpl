@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore.Infrastructure;
 
-namespace Application.Implement;
+namespace ${Namespace}.Implement;
 /// <summary>
-/// 只读仓储
+/// 只读仓储基类,请勿直接修改本类内容,可修改 QuerySet<TEntity> 
 /// </summary>
 /// <typeparam name="TContext"></typeparam>
 /// <typeparam name="TEntity"></typeparam>
