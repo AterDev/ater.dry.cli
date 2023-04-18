@@ -30,7 +30,7 @@ public class StoreCommand : CommandBase
     /// <summary>
     /// 生成仓储
     /// </summary>
-    public async Task RunAsync()
+    public async Task RunAsync(bool force)
     {
         if (!File.Exists(EntityPath))
         {
@@ -43,9 +43,9 @@ public class StoreCommand : CommandBase
         await GenerateStoreFilesAsync();
 
         Console.WriteLine(Instructions[2]);
-        await GenerateMangerAsync();
+        await GenerateMangerAsync(force);
         Console.WriteLine(Instructions[3]);
-        await GenerateMangerTestAsync();
+        await GenerateMangerTestAsync(force);
 
         Console.WriteLine(Instructions[4]);
         await GenerateServicesAsync();
@@ -104,7 +104,7 @@ public class StoreCommand : CommandBase
     /// <summary>
     /// 生成manager
     /// </summary>
-    public async Task GenerateMangerAsync()
+    public async Task GenerateMangerAsync(bool force)
     {
         string iManagerDir = Path.Combine(StorePath, "IManager");
         string managerDir = Path.Combine(StorePath, "Manager");
@@ -113,13 +113,13 @@ public class StoreCommand : CommandBase
         string interfaceContent = CodeGen.GetIManagerContent();
         string managerContent = CodeGen.GetManagerContent();
         // 生成接口
-        await GenerateFileAsync(iManagerDir, $"I{entityName}Manager.cs", interfaceContent);
+        await GenerateFileAsync(iManagerDir, $"I{entityName}Manager.cs", interfaceContent, force);
         // 生成manger
-        await GenerateFileAsync(managerDir, $"{entityName}Manager.cs", managerContent);
+        await GenerateFileAsync(managerDir, $"{entityName}Manager.cs", managerContent, force);
     }
 
 
-    public async Task GenerateMangerTestAsync()
+    public async Task GenerateMangerTestAsync(bool force)
     {
         string testProjectPath = Path.Combine(StorePath, "..", "..", "test", "Application.Test");
         if (Directory.Exists(testProjectPath))
@@ -131,7 +131,7 @@ public class StoreCommand : CommandBase
                 Directory.CreateDirectory(testDir);
             }
             string managerContent = CodeGen.GetManagerTestContent();
-            await GenerateFileAsync(testDir, $"{entityName}ManagerTest.cs", managerContent);
+            await GenerateFileAsync(testDir, $"{entityName}ManagerTest.cs", managerContent, force);
         }
     }
 

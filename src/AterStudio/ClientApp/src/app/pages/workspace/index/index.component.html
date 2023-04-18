@@ -2,13 +2,13 @@
   <mat-toolbar>
     <span>{{project.displayName}}</span>
     <span class="example-spacer"></span>
-    <button mat-icon-button matTooltip="开启监听实体，会自动更新dto" color="primary" [disabled]="isListening"
+    <!-- <button mat-icon-button matTooltip="开启监听实体，会自动更新dto" color="primary" [disabled]="isListening"
       (click)="startWatch()">
       <mat-icon>play_arrow</mat-icon>
     </button>
     <button mat-icon-button matTooltip="停止监听实体" color="primary" [disabled]="!isListening" (click)="stopWatch()">
       <mat-icon>stop_circle</mat-icon>
-    </button>
+    </button> -->
     <button mat-button color="primary" (click)="openSyncDialog()">
       生成页面
     </button>
@@ -64,12 +64,12 @@
         </button>
         <button mat-button color="primary" [matMenuTriggerFor]="menu">代码生成</button>
         <mat-menu #menu="matMenu">
-          <button mat-menu-item (click)="generate(element.path,CommandType.Dto)" matTooltip="生成dto,不会覆盖原内容"
+          <button mat-menu-item (click)="generate(element.path,CommandType.Dto)" matTooltip="生成dto"
             matTooltipPosition="right">生成Dto</button>
           <button mat-menu-item (click)="generate(element.path,CommandType.Manager)"
-            matTooltip="生成dto/dataStore/manager,不会覆盖原内容" matTooltipPosition="right">生成Manager</button>
+            matTooltip="生成dto/dataStore/manager" matTooltipPosition="right">生成Manager</button>
           <button mat-menu-item (click)="openSelectProjectDialog(CommandType.API,element)"
-            matTooltip="生成dto/dataStore/manager/api,不会覆盖原内容" matTooltipPosition="right">生成APIControler</button>
+            matTooltip="生成dto/dataStore/manager/webapi" matTooltipPosition="right">生成APIControler</button>
           <button mat-menu-item (click)="openSelectProjectDialog(CommandType.Protobuf,element)"
             matTooltip="生成proto协议文件">生成Protobuf</button>
         </mat-menu>

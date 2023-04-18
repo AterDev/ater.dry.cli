@@ -37,7 +37,7 @@ public class ApiCommand : CommandBase
         Instructions.Add($"  🔹 generate {entityName} RestApi.");
         Instructions.Add($"  🔹 update Globalusings files.");
     }
-    public async Task RunAsync()
+    public async Task RunAsync(bool force = false)
     {
         if (!File.Exists(EntityPath))
         {
@@ -47,7 +47,7 @@ public class ApiCommand : CommandBase
         Console.WriteLine(Instructions[0]);
         await GenerateCommonFilesAsync();
         Console.WriteLine(Instructions[1]);
-        await GenerateRestApiAsync();
+        await GenerateRestApiAsync(force);
         Console.WriteLine(Instructions[2]);
         await GenerateGlobalUsingsFilesAsync();
         Console.WriteLine("😀 RestApi generate completed!" + Environment.NewLine);
@@ -77,7 +77,7 @@ public class ApiCommand : CommandBase
         }
     }
 
-    private async Task GenerateRestApiAsync()
+    private async Task GenerateRestApiAsync(bool force)
     {
         string apiDir = Path.Combine(ApiPath, "Controllers");
         string adminDir = Path.Combine(ApiPath, "Controllers", "AdminControllers");
@@ -93,11 +93,11 @@ public class ApiCommand : CommandBase
         {
             string adminContent = apiContent
                 .Replace(CodeGen.ApiNamespace + ".Controllers", CodeGen.ApiNamespace + ".Controllers.AdminControllers");
-            await GenerateFileAsync(adminDir, $"{entityName}{Suffix}.cs", adminContent);
+            await GenerateFileAsync(adminDir, $"{entityName}{Suffix}.cs", adminContent,force);
         }
         string clientContent = apiContent
             .Replace("RestControllerBase", "ClientControllerBase");
-        await GenerateFileAsync(apiDir, $"{entityName}{Suffix}.cs", clientContent);
+        await GenerateFileAsync(apiDir, $"{entityName}{Suffix}.cs", clientContent, force);
 
     }
 

@@ -165,7 +165,7 @@ public class EntityManager
         switch (dto.CommandType)
         {
             case CommandType.Dto:
-                await CommandRunner.GenerateDtoAsync(dto.EntityPath, project.SharePath, true);
+                await CommandRunner.GenerateDtoAsync(dto.EntityPath, project.SharePath, dto.IsCover);
                 break;
             case CommandType.Manager:
                 await CommandRunner.GenerateManagerAsync(dto.EntityPath, project.SharePath, project.ApplicationPath);

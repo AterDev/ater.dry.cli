@@ -98,14 +98,14 @@ public static class CommandRunner
     /// <param name="servicePath"></param>
     /// <returns></returns>
     public static async Task GenerateManagerAsync(string path, string dtoPath = "",
-            string servicePath = "")
+            string servicePath = "", bool force = false)
     {
         Console.WriteLine("🔵 Generate dtos");
         DtoCommand dtoCmd = new(path, dtoPath);
-        await dtoCmd.RunAsync();
+        await dtoCmd.RunAsync(force);
         Console.WriteLine("🔵 Generate manager");
         StoreCommand storeCmd = new(path, dtoPath, servicePath);
-        await storeCmd.RunAsync();
+        await storeCmd.RunAsync(force);
     }
 
     /// <summary>
@@ -116,20 +116,20 @@ public static class CommandRunner
     /// <param name="apiPath">网站目录</param>
     /// <param name="suffix">控制器后缀名</param>
     public static async Task GenerateApiAsync(string path, string dtoPath = "",
-            string servicePath = "", string apiPath = "", string suffix = "")
+            string servicePath = "", string apiPath = "", string suffix = "",bool force = false)
     {
         try
         {
             Console.WriteLine("🔵 Generate dtos");
             DtoCommand dtoCmd = new(path, dtoPath);
-            await dtoCmd.RunAsync();
+            await dtoCmd.RunAsync(force);
             Console.WriteLine("🔵 Generate store");
             StoreCommand storeCmd = new(path, dtoPath, servicePath, suffix);
-            await storeCmd.RunAsync();
+            await storeCmd.RunAsync(force);
 
             Console.WriteLine("🔵 Generate rest api");
             ApiCommand apiCmd = new(path, dtoPath, servicePath, apiPath, suffix);
-            await apiCmd.RunAsync();
+            await apiCmd.RunAsync(force);
         }
         catch (Exception ex)
         {

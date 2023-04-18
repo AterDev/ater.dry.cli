@@ -70,7 +70,8 @@ export class IndexComponent implements OnInit {
     this.initForm();
     this.getProjectInfo();
     this.getEntity();
-    this.getWatchStatus();
+    // this.getWatchStatus();
+    this.getProjects();
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
@@ -154,9 +155,7 @@ export class IndexComponent implements OnInit {
       })
   }
 
-
-  openSelectProjectDialog(type: CommandType, element: EntityFile | null): void {
-    this.currentEntity = element;
+  getProjects(): void {
     this.projectSrv.getAllProjectInfos(this.projectId)
       .subscribe({
         next: (res) => {
@@ -165,21 +164,7 @@ export class IndexComponent implements OnInit {
               return p.projectType == ProjectType.Web &&
                 !p.name?.endsWith('Test.csproj')
             });
-            switch (type) {
-              case CommandType.API:
-                this.dialogRef = this.dialog.open(this.apiTmpRef, {
-                  minWidth: 300
-                });
-                break;
 
-              case CommandType.Protobuf:
-                this.dialogRef = this.dialog.open(this.protobufTmpRef, {
-                  minWidth: 300
-                });
-                break;
-              default:
-                break;
-            }
 
           } else {
             this.snb.open('没有有效的项目');
@@ -189,6 +174,25 @@ export class IndexComponent implements OnInit {
           this.snb.open(error);
         }
       });
+  }
+
+  openSelectProjectDialog(type: CommandType, element: EntityFile | null): void {
+    this.currentEntity = element;
+    switch (type) {
+      case CommandType.API:
+        this.dialogRef = this.dialog.open(this.apiTmpRef, {
+          minWidth: 300
+        });
+        break;
+
+      case CommandType.Protobuf:
+        this.dialogRef = this.dialog.open(this.protobufTmpRef, {
+          minWidth: 300
+        });
+        break;
+      default:
+        break;
+    }
   }
 
   batch(type: CommandType): void {

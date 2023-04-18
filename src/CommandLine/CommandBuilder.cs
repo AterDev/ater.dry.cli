@@ -143,13 +143,18 @@ public class CommandBuilder
         storeOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.StorePath));
         Option<string> typeOption = new(new[] { "--type", "-t" },
             "api type, valid values:rest/grpc/graph");
+        Option<bool> forceOption = new(new[] { "--force", "-f" },
+           "force overwrite file");
+        forceOption.SetDefaultValue(false);
+
         typeOption.SetDefaultValue("rest");
         apiCommand.AddArgument(path);
         apiCommand.AddOption(dtoOption);
         apiCommand.AddOption(storeOption);
+        apiCommand.AddOption(forceOption);
 
         apiCommand.SetHandler(
-            CommandRunner.GenerateManagerAsync, path, dtoOption, storeOption);
+            CommandRunner.GenerateManagerAsync, path, dtoOption, storeOption, forceOption);
 
         RootCommand.Add(apiCommand);
     }
@@ -179,15 +184,20 @@ public class CommandBuilder
         suffixOption.SetDefaultValue("Controller");
         Option<string> typeOption = new(new[] { "--type", "-t" },
             "api type, valid values:rest/grpc/graph, just support rest");
+        Option<bool> forceOption = new(new[] { "--force", "-f" },
+      "force overwrite file");
+        forceOption.SetDefaultValue(false);
+
         typeOption.SetDefaultValue("rest");
         apiCommand.AddArgument(path);
         apiCommand.AddOption(dtoOption);
         apiCommand.AddOption(managerOption);
         apiCommand.AddOption(apiOption);
         apiCommand.AddOption(suffixOption);
+        apiCommand.AddOption(forceOption);
 
         apiCommand.SetHandler(
-            CommandRunner.GenerateApiAsync, path, dtoOption, managerOption, apiOption, suffixOption);
+            CommandRunner.GenerateApiAsync, path, dtoOption, managerOption, apiOption, suffixOption, forceOption);
 
         RootCommand.Add(apiCommand);
     }
