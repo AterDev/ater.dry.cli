@@ -165,13 +165,13 @@ public class EntityManager
         switch (dto.CommandType)
         {
             case CommandType.Dto:
-                await CommandRunner.GenerateDtoAsync(dto.EntityPath, project.SharePath, dto.IsCover);
+                await CommandRunner.GenerateDtoAsync(dto.EntityPath, project.SharePath, dto.Force);
                 break;
             case CommandType.Manager:
-                await CommandRunner.GenerateManagerAsync(dto.EntityPath, project.SharePath, project.ApplicationPath);
+                await CommandRunner.GenerateManagerAsync(dto.EntityPath, project.SharePath, project.ApplicationPath, dto.Force);
                 break;
             case CommandType.API:
-                await CommandRunner.GenerateApiAsync(dto.EntityPath, project.SharePath, project.ApplicationPath, project.HttpPath, "Controller");
+                await CommandRunner.GenerateApiAsync(dto.EntityPath, project.SharePath, project.ApplicationPath, project.HttpPath, "Controller", dto.Force);
                 break;
             default:
                 break;
@@ -193,13 +193,13 @@ public class EntityManager
             case CommandType.Dto:
                 foreach (string item in dto.EntityPaths)
                 {
-                    await CommandRunner.GenerateDtoAsync(item, project.SharePath, true);
+                    await CommandRunner.GenerateDtoAsync(item, project.SharePath, dto.Force);
                 }
                 break;
             case CommandType.Manager:
                 foreach (string item in dto.EntityPaths)
                 {
-                    await CommandRunner.GenerateManagerAsync(item, project.SharePath, project.ApplicationPath);
+                    await CommandRunner.GenerateManagerAsync(item, project.SharePath, project.ApplicationPath, dto.Force);
                 }
 
                 break;
@@ -209,7 +209,7 @@ public class EntityManager
                     dto.ProjectPath?.ForEach(p =>
                     {
                         var apiPath = Path.Combine(p, "..");
-                        CommandRunner.GenerateApiAsync(item, project.SharePath, project.ApplicationPath, apiPath, "Controller").Wait();
+                        CommandRunner.GenerateApiAsync(item, project.SharePath, project.ApplicationPath, apiPath, "Controller", dto.Force).Wait();
                     });
 
                 }

@@ -3,5 +3,6 @@ export interface GenerateDto {
   projectId: string;
   entityPath?: string | null;
   commandType?: CommandType | null;
+  force: boolean;
 
 }

@@ -4,5 +4,6 @@ export interface BatchGenerateDto {
   entityPaths?: string[] | null;
   commandType?: CommandType | null;
   projectPath?: string[] | null;
+  force: boolean;
 
 }

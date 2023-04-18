@@ -1283,6 +1283,9 @@
               "type": "string"
             },
             "nullable": true
+          },
+          "force": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -1469,6 +1472,9 @@
           },
           "commandType": {
             "$ref": "#/components/schemas/CommandType"
+          },
+          "force": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

@@ -14,10 +14,10 @@
     </button>
     <button mat-button color="primary" [matMenuTriggerFor]="menu">批量操作</button>
     <mat-menu #menu="matMenu">
-      <button mat-menu-item (click)="batch(CommandType.Dto)" matTooltip="生成dto,不会覆盖原内容"
+      <button mat-menu-item (click)="openGenerateDialog(CommandType.Dto,null)" matTooltip="生成dto,不会覆盖原内容"
         matTooltipPosition="right">生成Dto</button>
-      <button mat-menu-item (click)="batch(CommandType.Manager)" matTooltip="生成dto/dataStore/manager,不会覆盖原内容"
-        matTooltipPosition="right">生成Manager</button>
+      <button mat-menu-item (click)="openGenerateDialog(CommandType.Manager,null)"
+        matTooltip="生成dto/dataStore/manager,不会覆盖原内容" matTooltipPosition="right">生成Manager</button>
       <button mat-menu-item (click)="openSelectProjectDialog(CommandType.API,null)"
         matTooltip="生成dto/dataStore/manager/api,不会覆盖原内容" matTooltipPosition="right">生成APIControler</button>
       <button mat-menu-item (click)="openSelectProjectDialog(CommandType.Protobuf,null)" matTooltip="生成proto协议文件"
@@ -64,9 +64,9 @@
         </button>
         <button mat-button color="primary" [matMenuTriggerFor]="menu">代码生成</button>
         <mat-menu #menu="matMenu">
-          <button mat-menu-item (click)="generate(element.path,CommandType.Dto)" matTooltip="生成dto"
+          <button mat-menu-item (click)="openGenerateDialog(CommandType.Dto,element)" matTooltip="生成dto"
             matTooltipPosition="right">生成Dto</button>
-          <button mat-menu-item (click)="generate(element.path,CommandType.Manager)"
+          <button mat-menu-item (click)="openGenerateDialog(CommandType.Manager,element)"
             matTooltip="生成dto/dataStore/manager" matTooltipPosition="right">生成Manager</button>
           <button mat-menu-item (click)="openSelectProjectDialog(CommandType.API,element)"
             matTooltip="生成dto/dataStore/manager/webapi" matTooltipPosition="right">生成APIControler</button>
@@ -134,6 +134,19 @@
   </mat-dialog-actions>
 </ng-template>
 
+<ng-template #generateDialog>
+  <h2>
+    生成{{currentType==CommandType.Dto?'DTO':'Manager'}}
+  </h2>
+  <mat-dialog-content class="py-2">
+    <mat-slide-toggle [(ngModel)]="this.force" class="mt-2">覆盖现有代码</mat-slide-toggle>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button mat-dialog-close>取消</button>
+    <button mat-button (click)="generate()" color="primary" [disabled]="isSync">生成</button>
+  </mat-dialog-actions>
+</ng-template>
+
 <ng-template #protobufDialog>
   <h2 mat-dialog-title>生成protobuf文件</h2>
   <mat-dialog-content>
@@ -153,13 +166,15 @@
 
 <ng-template #apiDialog>
   <h2 mat-dialog-title>生成REST API</h2>
-  <mat-dialog-content>
+  <mat-dialog-content class="py-2">
     <p>请选择项目</p>
     <mat-selection-list (selectionChange)="selectProject($event)">
       <mat-list-option *ngFor="let project of webProjects" [value]="project.path">
         {{project.name}}
       </mat-list-option>
     </mat-selection-list>
+
+    <mat-slide-toggle [(ngModel)]="this.force" class="mt-2">覆盖现有代码</mat-slide-toggle>
   </mat-dialog-content>
   <mat-dialog-actions>
     <button mat-button mat-dialog-close>取消</button>

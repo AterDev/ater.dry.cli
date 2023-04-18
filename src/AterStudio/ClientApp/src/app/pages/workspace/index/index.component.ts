@@ -36,6 +36,7 @@ export class IndexComponent implements OnInit {
   dialogRef!: MatDialogRef<{}, any>;
   searchKey = '';
   isSync = false;
+  force = false;
   isListening = false;
   isProcessing = false;
   @ViewChild("requestDialog", { static: true })
@@ -45,10 +46,13 @@ export class IndexComponent implements OnInit {
 
   @ViewChild("protobufDialog", { static: true }) protobufTmpRef!: TemplateRef<{}>;
   @ViewChild("apiDialog", { static: true }) apiTmpRef!: TemplateRef<{}>;
+  @ViewChild("generateDialog", { static: true }) generateTmpRef!: TemplateRef<{}>;
   selection = new SelectionModel<EntityFile>(true, []);
   selectedWebProjectIds: string[] = [];
   webProjects: SubProjectInfo[] = [];
   currentEntity: EntityFile | null = null;
+  currentType: CommandType | null = null;
+  isBatch = false;
   constructor(
     public route: ActivatedRoute,
     public router: Router,
@@ -141,19 +145,7 @@ export class IndexComponent implements OnInit {
     });
   }
 
-  generate(path: string, type: CommandType): void {
-    const dto: GenerateDto = {
-      projectId: this.projectId!,
-      entityPath: this.baseEntityPath + path,
-      commandType: type
-    };
-    this.service.generate(dto)
-      .subscribe(res => {
-        if (res) {
-          this.snb.open('生成成功');
-        }
-      })
-  }
+
 
   getProjects(): void {
     this.projectSrv.getAllProjectInfos(this.projectId)
@@ -178,6 +170,7 @@ export class IndexComponent implements OnInit {
 
   openSelectProjectDialog(type: CommandType, element: EntityFile | null): void {
     this.currentEntity = element;
+    this.currentType = type;
     switch (type) {
       case CommandType.API:
         this.dialogRef = this.dialog.open(this.apiTmpRef, {
@@ -194,7 +187,38 @@ export class IndexComponent implements OnInit {
         break;
     }
   }
+  openGenerateDialog(type: CommandType, element: EntityFile | null): void {
+    this.isBatch = element === null;
+    this.currentEntity = element;
+    this.currentType = type;
+    this.dialogRef = this.dialog.open(this.generateTmpRef, {
+      minWidth: 300,
+    });
+  }
 
+  generate(): void {
+    if (this.isBatch) {
+      this.batch(this.currentType!);
+    } else {
+      if (this.currentEntity && this.currentType !== null) {
+        const dto: GenerateDto = {
+          projectId: this.projectId!,
+          entityPath: this.baseEntityPath + this.currentEntity.path,
+          commandType: this.currentType,
+          force: this.force
+        };
+        this.service.generate(dto)
+          .subscribe(res => {
+            if (res) {
+              this.snb.open('生成成功');
+              this.dialogRef.close();
+            }
+          })
+      } else {
+      }
+    }
+
+  }
   batch(type: CommandType): void {
     let selected = this.selection.selected;
     if (this.currentEntity !== null) {
@@ -205,6 +229,7 @@ export class IndexComponent implements OnInit {
         projectId: this.projectId!,
         entityPaths: selected.map(s => this.baseEntityPath + s.path),
         commandType: type,
+        force: this.force
       };
       // 参数
       if (this.selectedWebProjectIds.length > 0
@@ -218,10 +243,7 @@ export class IndexComponent implements OnInit {
           next: (res) => {
             if (res) {
               this.snb.open('生成成功');
-              if (type == CommandType.Protobuf
-                || type == CommandType.API) {
-                this.dialogRef.close();
-              }
+              this.dialogRef.close();
             } else {
               this.snb.open('生成失败');
             }

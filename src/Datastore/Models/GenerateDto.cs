@@ -8,7 +8,7 @@ public class GenerateDto
     /// <summary>
     /// 是否覆盖
     /// </summary>
-    public bool IsCover { get; set; } = false;
+    public bool Force { get; set; } = false;
 }
 
 /// <summary>

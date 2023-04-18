@@ -60,33 +60,22 @@ public class EntityParseHelper
         }
 
         FileInfo fileInfo = new(filePath);
-        FileInfo? projectFile = AssemblyHelper.FindProjectFile(fileInfo.Directory!, fileInfo.Directory!.Root);
-
-        if (projectFile == null)
-        {
-            throw new ArgumentException("can't find project file");
-        }
+        FileInfo? projectFile = AssemblyHelper.FindProjectFile(fileInfo.Directory!, fileInfo.Directory!.Root)
+            ?? throw new ArgumentException("can't find project file");
 
         ProjectFile = projectFile;
         AssemblyName = GetAssemblyName();
         CompilationHelper = new CompilationHelper(ProjectFile.Directory!.FullName);
 
-        try
-        {
-            using FileStream stream = fileInfo.Open(FileMode.Open, FileAccess.Read, FileShare.None);
-            var reader = new StreamReader(stream, Encoding.UTF8);
-            var content = reader.ReadToEnd();
+        using FileStream stream = fileInfo.Open(FileMode.Open, FileAccess.Read, FileShare.None);
+        var reader = new StreamReader(stream, Encoding.UTF8);
+        var content = reader.ReadToEnd();
 
-            CompilationHelper.AddSyntaxTree(content);
-            SyntaxTree = CompilationHelper.SyntaxTree;
-            Compilation = CompilationHelper.Compilation;
-            SemanticModel = CompilationHelper.SemanticModel;
-            RootNodes = SyntaxTree.GetCompilationUnitRoot().DescendantNodes();
-        }
-        catch (IOException ex)
-        {
-            Console.WriteLine("文件无法读取" + ex.Message);
-        }
+        CompilationHelper.AddSyntaxTree(content);
+        SyntaxTree = CompilationHelper.SyntaxTree;
+        Compilation = CompilationHelper.Compilation;
+        SemanticModel = CompilationHelper.SemanticModel;
+        RootNodes = SyntaxTree?.GetCompilationUnitRoot().DescendantNodes();
     }
 
     /// <summary>
@@ -205,7 +194,7 @@ public class EntityParseHelper
     public List<PropertyInfo> GetPropertyInfos(string? parentClassName = null)
     {
         List<PropertyInfo> properties = new();
-        CompilationUnitSyntax root = SyntaxTree.GetCompilationUnitRoot();
+        CompilationUnitSyntax root = SyntaxTree!.GetCompilationUnitRoot();
         IEnumerable<PropertyDeclarationSyntax> propertySyntax = root.DescendantNodes().OfType<PropertyDeclarationSyntax>();
 
         // 如果指定父类名称
@@ -504,7 +493,7 @@ public class EntityParseHelper
     public string? GetParentClassName()
     {
         // 获取当前类名
-        ClassDeclarationSyntax? classDeclarationSyntax = RootNodes.OfType<ClassDeclarationSyntax>().FirstOrDefault();
+        ClassDeclarationSyntax? classDeclarationSyntax = RootNodes!.OfType<ClassDeclarationSyntax>().FirstOrDefault();
         var classSymbol = SemanticModel.GetDeclaredSymbol(classDeclarationSyntax!);
         return classSymbol?.BaseType?.Name;
     }
