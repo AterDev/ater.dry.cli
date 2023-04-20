@@ -4,45 +4,10 @@ namespace ${Namespace}.Interface;
 /// <summary>
 /// 仓储数据管理接口
 /// </summary>
-public interface IDomainManager<TEntity, TUpdate, TFilter, TItem>
+public interface IDomainManager<TEntity>
     where TEntity : EntityBase
-    where TFilter : FilterBase
 {
     DataStoreContext Stores { get; init; }
     QuerySet<TEntity> Query { get; init; }
     CommandSet<TEntity> Command { get; init; }
-
-    /// <summary>
-    /// 获取当前对象,通常是在修改前进行查询
-    /// </summary>
-    /// <param name="id"></param>
-    /// <param name="navigations"></param>
-    /// <returns></returns>
-    Task<TEntity?> GetCurrentAsync(Guid id, params string[] navigations);
-    Task<TEntity> AddAsync(TEntity entity);
-    Task<TEntity> UpdateAsync(TEntity entity, TUpdate dto);
-    Task<TEntity?> FindAsync(Guid id);
-    /// <summary>
-    /// 查询对象
-    /// </summary>
-    /// <typeparam name="TDto"></typeparam>
-    /// <param name="whereExp"></param>
-    /// <returns></returns>
-    Task<TDto?> FindAsync<TDto>(Expression<Func<TEntity, bool>>? whereExp) where TDto : class;
-    /// <summary>
-    /// 列表条件查询
-    /// </summary>
-    /// <typeparam name="TDto"></typeparam>
-    /// <param name="whereExp"></param>
-    /// <returns></returns>
-    Task<List<TDto>> ListAsync<TDto>(Expression<Func<TEntity, bool>>? whereExp) where TDto : class;
-    /// <summary>
-    /// 分页查询
-    /// </summary>
-    /// <param name="filter"></param>
-    /// <returns></returns>
-    Task<PageList<TItem>> FilterAsync(TFilter filter);
-    Task<TEntity?> DeleteAsync(TEntity entity, bool softDelete = true);
-
-    Task<bool> ExistAsync(Guid id);
 }

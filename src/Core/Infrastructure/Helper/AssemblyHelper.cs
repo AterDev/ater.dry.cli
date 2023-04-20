@@ -53,7 +53,6 @@ public class AssemblyHelper
         return name;
     }
 
-
     /// <summary>
     /// 获取项目类型
     /// </summary>
@@ -145,6 +144,15 @@ public class AssemblyHelper
         {
             return default;
         }
+    }
+
+    /// <summary>
+    /// 获取版本
+    /// </summary>
+    /// <returns></returns>
+    public static string GetVersion()
+    {
+        return Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
     }
 
     /// <summary>

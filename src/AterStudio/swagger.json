@@ -322,7 +322,7 @@
         "tags": [
           "Entity"
         ],
-        "summary": "获取dtos",
+        "summary": "s\r\n            获取dtos",
         "operationId": "Entity_GetDtos",
         "parameters": [
           {

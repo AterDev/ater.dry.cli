@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using CodeGenerator.Generate;
 using Core.Infrastructure.Helper;
@@ -90,15 +91,4 @@ public class FunctionTest
         Assert.Equal("console", type);
     }
 
-
-
-    [Fact]
-    public void Should_Indent()
-    {
-        var res = "hello";
-        res = res.Indent(2);
-
-        //var res = TabFormat.Indent("hello", 2);
-        Console.WriteLine(res);
-    }
 }
