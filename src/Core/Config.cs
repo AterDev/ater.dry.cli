@@ -4,6 +4,7 @@ public static class Config
 {
     public static string IdType { get; set; } = "Guid";
     public static string CreatedTimeName { get; set; } = "CreatedTime";
+    public static string Version { get; private set; } = "7.0";
     public static string DtoPath { get; set; } = "Share";
     public static string EntityPath { get; set; } = "Core";
     public static string DbContextPath { get; set; } = "Database/EntityFramework";
@@ -31,5 +32,6 @@ public static class Config
         Config.ApiPath = configOptions.ApiPath;
         Config.DtoPath = configOptions.DtoPath;
         Config.CreatedTimeName = configOptions.CreatedTimeName;
+        Config.Version = configOptions.Version;
     }
 }

@@ -24,7 +24,8 @@ export class EntityService extends BaseService {
   }
 
   /**
-   * 获取dtos
+   * s
+            获取dtos
    * @param projectId 
    * @param entityName 
    */

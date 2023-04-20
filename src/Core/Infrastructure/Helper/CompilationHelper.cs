@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using System.Reflection.Metadata;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Core.Infrastructure.Helper;
 
@@ -10,11 +11,13 @@ public class CompilationHelper
     public ITypeSymbol? ClassSymbol { get; set; }
     public SyntaxTree? SyntaxTree { get; set; }
     public IEnumerable<INamedTypeSymbol> AllClass { get; set; }
+    public CompilationUnitSyntax? SyntaxRoot { get; set; }
 
     public CompilationHelper(string path, string? dllFilter = null)
     {
         string suffix = DateTime.Now.ToString("HHmmss");
         Compilation = CSharpCompilation.Create("tmp" + suffix);
+
         AddDllReferences(path, dllFilter);
         AllClass = GetAllClasses();
     }
@@ -41,8 +44,10 @@ public class CompilationHelper
     public void AddSyntaxTree(string content)
     {
         SyntaxTree = CSharpSyntaxTree.ParseText(content);
+        SyntaxRoot = SyntaxTree!.GetCompilationUnitRoot();
         Compilation = Compilation.AddSyntaxTrees(SyntaxTree);
         SemanticModel = Compilation.GetSemanticModel(SyntaxTree);
+
         ClassDeclarationSyntax? classNode = SyntaxTree.GetCompilationUnitRoot().DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
         ClassSymbol = classNode == null ? null : SemanticModel.GetDeclaredSymbol(classNode);
     }
@@ -145,4 +150,48 @@ public class CompilationHelper
         return classes;
     }
 
+
+    /// <summary>
+    /// 方法是否存在某个接口中
+    /// </summary>
+    /// <param name="interfaceName"></param>
+    /// <param name="methodContent"></param>
+    /// <returns></returns>
+    public bool IsMethodExistInInterface(string interfaceName, string methodContent)
+    {
+        INamedTypeSymbol? interfaceSymbol = AllClass.Where(cls => cls.Name == interfaceName).FirstOrDefault();
+        if (interfaceSymbol == null)
+        {
+            return false;
+        }
+
+        return SyntaxTree!.GetRoot().DescendantNodes()
+            .Where(n => n is MethodDeclarationSyntax)
+            .Any(m => m.ToString() == methodContent);
+
+    }
+
+
+    /// <summary>
+    /// 向接口插入方法
+    /// </summary>
+    /// <param name="methodContent"></param>
+    public void InsertMethodToInterface(string methodContent)
+    {
+        if (SyntaxTree != null && SyntaxRoot != null)
+        {
+            var interfaceDeclaration = SyntaxRoot.DescendantNodes()
+           .OfType<InterfaceDeclarationSyntax>().Single();
+
+            methodContent = $"    {methodContent}" + Environment.NewLine;
+            if (SyntaxFactory.ParseMemberDeclaration(methodContent) is not MethodDeclarationSyntax methodNode)
+            {
+                return;
+            }
+
+            var newInterfaceDeclaration = interfaceDeclaration.AddMembers(methodNode);
+            SyntaxRoot = SyntaxRoot.ReplaceNode(interfaceDeclaration, newInterfaceDeclaration);
+        }
+
+    }
 }

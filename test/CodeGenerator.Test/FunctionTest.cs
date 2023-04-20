@@ -78,8 +78,6 @@ public class FunctionTest
         Assert.Equal("abc", originType);
     }
 
-
-
     [Fact]
     public void Should_get_projectType()
     {
@@ -89,6 +87,26 @@ public class FunctionTest
 
         var type = AssemblyHelper.GetProjectType(new FileInfo(projectFile));
         Assert.Equal("console", type);
+    }
+
+    [Fact]
+    public void SHould_Parse_Interface()
+    {
+        var projectPath = @"C:\codes\ater.web\templates\apistd\src\Application\";
+        var interfaceName = "ISystemConfigManager";
+        var filePath = Path.Combine(projectPath, "IManager", interfaceName + ".cs");
+
+        var compilation = new CompilationHelper(projectPath);
+        compilation.AddSyntaxTree(File.ReadAllText(filePath));
+
+        var exist = compilation.IsMethodExistInInterface(interfaceName, "Task<SystemConfig?> GetOwnedAsync(Guid id);");
+        Assert.True(exist);
+
+         compilation.InsertMethodToInterface("Task<SystemConfig?> GetOwnedAsync(int id);");
+        var content = compilation.SyntaxRoot!.ToFullString();
+
+        Console.WriteLine();
+
     }
 
 }

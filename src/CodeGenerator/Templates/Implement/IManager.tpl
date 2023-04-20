@@ -51,6 +51,5 @@ public interface I${EntityName}Manager : IDomainManager<${EntityName}>
     /// <returns></returns>
     Task<PageList<TItem>> FilterAsync(TFilter filter);
     Task<TEntity?> DeleteAsync(TEntity entity, bool softDelete = true);
-
     Task<bool> ExistAsync(Guid id);
 }

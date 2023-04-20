@@ -11,7 +11,7 @@ export interface ConfigOptions {
   createdTimeName?: string | null;
   updatedTimeName?: string | null;
   isSplitController?: boolean | null;
-  version: number;
+  version?: string | null;
   swaggerPath?: string | null;
   webAppPath?: string | null;
 

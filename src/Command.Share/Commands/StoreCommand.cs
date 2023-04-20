@@ -1,4 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
 using Core.Infrastructure;
+using NuGet.Versioning;
 
 namespace Command.Share.Commands;
 
@@ -82,12 +84,19 @@ public class StoreCommand : CommandBase
         string[] implementFiles = new string[] { "CommandStoreBase", "QueryStoreBase", "DomainManagerBase" };
         string userClass = CodeGen.GetUserContextClass();
 
-
+        var cover = false;
         // 生成接口文件
         foreach (string name in interfaceFiles)
         {
             string content = CodeGen.GetInterfaceFile(name);
-            bool cover = name == "IUserContext" ? false : true;
+            // 更新需要覆盖的文件
+            if (AssemblyHelper.NeedUpdate("7.0.0")
+                && name == "IDomainManager")
+            {
+                cover = true;
+            }
+            // 不可覆盖的文件
+            cover = name == "IUserContext" ? false : true;
             await GenerateFileAsync(interfaceDir, $"{name}.cs", content, cover);
         }
         // 生成实现文件
@@ -112,8 +121,27 @@ public class StoreCommand : CommandBase
 
         string interfaceContent = CodeGen.GetIManagerContent();
         string managerContent = CodeGen.GetManagerContent();
-        // 生成接口
-        await GenerateFileAsync(iManagerDir, $"I{entityName}Manager.cs", interfaceContent, force);
+
+        // 如果文件已经存在，并且没有选择覆盖，并且符合更新要求，则进行更新
+        var iManagerPath = Path.Combine(iManagerDir, $"I{entityName}Manager.cs");
+        if (!force
+            && File.Exists(iManagerPath)
+            && AssemblyHelper.NeedUpdate("7.0.0"))
+        {
+            // update files
+            var compilation = new CompilationHelper(StorePath);
+            var content = await File.ReadAllTextAsync(iManagerPath);
+            compilation.AddSyntaxTree(content);
+            // TODO:构造更新的内容
+
+            //if(!compilation.IsMethodExistInInterface($"I{entityName}Manager"),)
+        }
+        else
+        {
+            // 生成接口
+            await GenerateFileAsync(iManagerDir, $"I{entityName}Manager.cs", interfaceContent, force);
+        }
+
         // 生成manger
         await GenerateFileAsync(managerDir, $"{entityName}Manager.cs", managerContent, force);
     }

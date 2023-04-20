@@ -1358,8 +1358,8 @@
             "nullable": true
           },
           "version": {
-            "type": "number",
-            "format": "double"
+            "type": "string",
+            "nullable": true
           },
           "swaggerPath": {
             "type": "string",

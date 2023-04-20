@@ -11,7 +11,8 @@ public class ConfigCommand
     /// </summary>
     public static async Task InitConfigFileAsync(string? configPath = null)
     {
-        // TODO:获取工具版本
+        // 获取工具版本
+        var version = AssemblyHelper.GetVersion();
         configPath ??= GetConfigPath();
         Console.WriteLine("use config path:" + configPath);
         FileInfo file = new(Path.Combine(configPath, Config.ConfigFileName));
@@ -41,7 +42,6 @@ public class ConfigCommand
                 {
                     options.ProjectId = Guid.NewGuid();
                     Const.PROJECT_ID = options.ProjectId;
-                    
                 }
 
                 string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });

@@ -1,4 +1,5 @@
 ﻿using System.Xml.Linq;
+using NuGet.Versioning;
 
 namespace Core.Infrastructure.Helper;
 
@@ -180,6 +181,21 @@ public class AssemblyHelper
             }
         }
         return null;
+    }
+
+
+    /// <summary>
+    /// 判断是否需要更新
+    /// </summary>
+    /// <param name="minVersionStr">最小版本号</param>
+    /// <returns></returns>
+    public static bool NeedUpdate(string minVersionStr)
+    {
+        var minVersion = NuGetVersion.Parse(minVersionStr);
+        var oldVerion = NuGetVersion.Parse(Config.Version);
+        var currentVersion = NuGetVersion.Parse(GetVersion());
+        return VersionComparer.Compare(oldVerion, minVersion, VersionComparison.Version) >= 0
+            && VersionComparer.Compare(oldVerion, currentVersion, VersionComparison.Version) < 0;
     }
 
     public class XmlCommentMember
