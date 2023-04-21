@@ -261,14 +261,13 @@ public class EntityManager
     private async Task InitConfigAsync(Project project)
     {
         var slnFile = new FileInfo(project.Path);
-
         // 如果是目录
         string? configFile = (slnFile.Attributes & FileAttributes.Directory) != 0
-            ? Path.Combine(project.Path, Config.ConfigFileName)
-            : Path.Combine(slnFile.DirectoryName!, Config.ConfigFileName);
+            ? Path.Combine(project.Path)
+            : Path.Combine(slnFile.DirectoryName!);
 
-        var content = await File.ReadAllTextAsync(configFile);
-        var options = JsonSerializer.Deserialize<ConfigOptions>(content);
+        await ConfigCommand.InitConfigFileAsync(configFile);
+        var options = ConfigCommand.ReadConfigFile(configFile);
 
         if (options != null)
         {

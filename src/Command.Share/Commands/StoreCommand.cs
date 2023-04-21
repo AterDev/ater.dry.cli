@@ -132,9 +132,28 @@ public class StoreCommand : CommandBase
             var compilation = new CompilationHelper(StorePath);
             var content = await File.ReadAllTextAsync(iManagerPath);
             compilation.AddSyntaxTree(content);
-            // TODO:构造更新的内容
+            // 构造更新的内容
+            var methods = new string[]{
+                $"Task<{entityName}?> GetCurrentAsync(Guid id, params string[] navigations);",
+                $"Task<{entityName}> AddAsync({entityName} entity);",
+                $"Task<{entityName}> UpdateAsync({entityName} entity, {entityName}UpdateDto dto);",
+                $"Task<{entityName}?> FindAsync(Guid id);",
+                $"Task<TDto?> FindAsync<TDto>(Expression<Func<{entityName}, bool>>? whereExp) where TDto : class;",
+                $"Task<List<TDto>> ListAsync<TDto>(Expression<Func<{entityName}, bool>>? whereExp) where TDto : class;",
+                $"Task<PageList<{entityName}ItemDto>> FilterAsync({entityName}FilterDto filter);",
+                $"Task<{entityName}?> DeleteAsync({entityName} entity, bool softDelete = true);",
+                $"Task<bool> ExistAsync(Guid id);",
+            };
 
-            //if(!compilation.IsMethodExistInInterface($"I{entityName}Manager"),)
+            foreach (var method in methods)
+            {
+                if (!compilation.MehtodExist(method))
+                {
+                    compilation.InsertInteraceMethod(method);
+                }
+            }
+            interfaceContent = compilation.SyntaxRoot!.ToString();
+            await GenerateFileAsync(iManagerDir, $"I{entityName}Manager.cs", interfaceContent, true);
         }
         else
         {

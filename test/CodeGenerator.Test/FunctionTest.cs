@@ -102,7 +102,7 @@ public class FunctionTest
         var exist = compilation.IsMethodExistInInterface(interfaceName, "Task<SystemConfig?> GetOwnedAsync(Guid id);");
         Assert.True(exist);
 
-         compilation.InsertMethodToInterface("Task<SystemConfig?> GetOwnedAsync(int id);");
+         compilation.InsertInteraceMethod("Task<SystemConfig?> GetOwnedAsync(int id);");
         var content = compilation.SyntaxRoot!.ToFullString();
 
         Console.WriteLine();

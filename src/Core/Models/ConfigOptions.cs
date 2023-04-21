@@ -1,4 +1,8 @@
-﻿using Core.Infrastructure.Helper;
+﻿using System.Globalization;
+using System.Text.Json.Serialization;
+using System.Text.Json;
+using Core.Infrastructure.Helper;
+using LiteDB;
 
 namespace Core.Models;
 /// <summary>
@@ -33,6 +37,8 @@ public class ConfigOptions
     /// 是否拆分
     /// </summary>
     public bool? IsSplitController { get; set; } = false;
+
+    [JsonConverter(typeof(DoubleStringJsonConverter))]
     public string Version { get; set; } = "1.0";
     /// <summary>
     /// swagger地址
@@ -42,4 +48,23 @@ public class ConfigOptions
     /// 前端路径
     /// </summary>
     public string? WebAppPath { get; set; }
+}
+
+public class DoubleStringJsonConverter : JsonConverter<string>
+{
+    public override string Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        if (reader.TokenType == JsonTokenType.Number)
+        {
+            return reader.GetDouble().ToString();
+        }
+        else
+        {
+            return reader.GetString() ?? "";
+        }
+    }
+
+
+    public override void Write(Utf8JsonWriter writer, string value, JsonSerializerOptions options) =>
+            writer.WriteStringValue(value);
 }

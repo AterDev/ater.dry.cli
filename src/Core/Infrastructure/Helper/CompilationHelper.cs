@@ -157,41 +157,31 @@ public class CompilationHelper
     /// <param name="interfaceName"></param>
     /// <param name="methodContent"></param>
     /// <returns></returns>
-    public bool IsMethodExistInInterface(string interfaceName, string methodContent)
+    public bool MehtodExist(string methodContent)
     {
-        INamedTypeSymbol? interfaceSymbol = AllClass.Where(cls => cls.Name == interfaceName).FirstOrDefault();
-        if (interfaceSymbol == null)
-        {
-            return false;
-        }
-
-        return SyntaxTree!.GetRoot().DescendantNodes()
+        return SyntaxRoot!.DescendantNodes()
             .Where(n => n is MethodDeclarationSyntax)
             .Any(m => m.ToString() == methodContent);
-
     }
-
 
     /// <summary>
     /// 向接口插入方法
     /// </summary>
     /// <param name="methodContent"></param>
-    public void InsertMethodToInterface(string methodContent)
+    public void InsertInteraceMethod(string methodContent)
     {
         if (SyntaxTree != null && SyntaxRoot != null)
         {
             var interfaceDeclaration = SyntaxRoot.DescendantNodes()
-           .OfType<InterfaceDeclarationSyntax>().Single();
+                .OfType<InterfaceDeclarationSyntax>().Single();
 
             methodContent = $"    {methodContent}" + Environment.NewLine;
             if (SyntaxFactory.ParseMemberDeclaration(methodContent) is not MethodDeclarationSyntax methodNode)
             {
                 return;
             }
-
             var newInterfaceDeclaration = interfaceDeclaration.AddMembers(methodNode);
             SyntaxRoot = SyntaxRoot.ReplaceNode(interfaceDeclaration, newInterfaceDeclaration);
         }
-
     }
 }

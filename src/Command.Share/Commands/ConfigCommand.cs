@@ -48,7 +48,6 @@ public class ConfigCommand
                 await File.WriteAllTextAsync(path, content, Encoding.UTF8);
                 Console.WriteLine("Update config file success");
             }
-
             else
             {
                 Console.WriteLine("config file parsing error! : " + path);

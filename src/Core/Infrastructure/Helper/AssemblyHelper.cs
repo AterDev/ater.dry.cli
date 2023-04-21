@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using System.Diagnostics;
+using System.Xml.Linq;
 using NuGet.Versioning;
 
 namespace Core.Infrastructure.Helper;
@@ -153,6 +154,10 @@ public class AssemblyHelper
     /// <returns></returns>
     public static string GetVersion()
     {
+
+        FileVersionInfo info = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
+
+
         return Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
     }
 
