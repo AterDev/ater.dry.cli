@@ -195,7 +195,7 @@ public class CompilationHelper
 
             if (oldBaseList != null)
             {
-                var typeName = SyntaxFactory.ParseTypeName("IDomainManager<SystemConfig>");
+                var typeName = SyntaxFactory.ParseTypeName(newImplementContent);
                 var baseType = SyntaxFactory.SimpleBaseType(typeName);
                 var newBaseList = SyntaxFactory.BaseList(
                     SyntaxFactory.SingletonSeparatedList<BaseTypeSyntax>(baseType)

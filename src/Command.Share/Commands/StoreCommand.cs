@@ -152,7 +152,7 @@ public class StoreCommand : CommandBase
                     compilation.InsertInteraceMethod(method);
                 }
             }
-            compilation.ReplaceImplement($": IDomainManager<{entityName}>");
+            compilation.ReplaceImplement($"IDomainManager<{entityName}>");
             interfaceContent = compilation.SyntaxRoot!.ToString();
             await GenerateFileAsync(iManagerDir, $"I{entityName}Manager.cs", interfaceContent, true);
         }
