@@ -86,11 +86,11 @@ public class EntityManager
         }
 
         bool hasDto = false; bool hasManager = false; bool hasAPI = false;
-        var dtoPath = Path.Combine(basePath, "src", Config.DtoPath, "Models", entityName + "Dtos");
+        var dtoPath = Path.Combine(basePath, "src", Config.DtoPath, "Models", $"{entityName}Dtos", $"{entityName}AddDto.cs");
         var managerPath = Path.Combine(basePath, "src", Config.StorePath, "IManager", $"I{entityName}Manager.cs");
         var apiPath = Path.Combine(basePath, "src", Config.ApiPath, "Controllers", $"{entityName}Controller.cs");
 
-        if (Directory.Exists(dtoPath)) { hasDto = true; }
+        if (File.Exists(dtoPath)) { hasDto = true; }
         if (File.Exists(managerPath)) { hasManager = true; }
         if (File.Exists(apiPath)) { hasAPI = true; }
 

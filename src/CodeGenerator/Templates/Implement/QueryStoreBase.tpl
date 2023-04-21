@@ -2,7 +2,7 @@
 
 namespace ${Namespace}.Implement;
 /// <summary>
-/// 只读仓储基类,请勿直接修改本类内容,可修改 QuerySet<TEntity> 
+/// 只读仓储基类,请勿直接修改基类内容
 /// </summary>
 /// <typeparam name="TContext"></typeparam>
 /// <typeparam name="TEntity"></typeparam>

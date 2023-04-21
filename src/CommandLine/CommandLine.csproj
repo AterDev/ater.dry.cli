@@ -31,6 +31,7 @@
 			10 添加项目配置修改;
 			11 代码生成加入覆盖选项;
 			12 移除实体监听功能;
+			13 添加生成状态展示;
 			其他细节完善;
 		</PackageReleaseNotes>
 		<PackageIcon>logo.jpg</PackageIcon>
