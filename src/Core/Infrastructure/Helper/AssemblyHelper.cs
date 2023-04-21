@@ -1,4 +1,5 @@
 ﻿using System.Xml.Linq;
+using NuGet.Versioning;
 
 namespace Core.Infrastructure.Helper;
 
@@ -52,7 +53,6 @@ public class AssemblyHelper
         }
         return name;
     }
-
 
     /// <summary>
     /// 获取项目类型
@@ -148,6 +148,15 @@ public class AssemblyHelper
     }
 
     /// <summary>
+    /// 获取版本
+    /// </summary>
+    /// <returns></returns>
+    public static string GetVersion()
+    {
+        return Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
+    }
+
+    /// <summary>
     /// 获取当前项目下的 xml 注释中的members
     /// </summary>
     /// <returns></returns>
@@ -172,6 +181,21 @@ public class AssemblyHelper
             }
         }
         return null;
+    }
+
+
+    /// <summary>
+    /// 判断是否需要更新
+    /// </summary>
+    /// <param name="minVersionStr">最小版本号</param>
+    /// <returns></returns>
+    public static bool NeedUpdate(string minVersionStr)
+    {
+        var minVersion = NuGetVersion.Parse(minVersionStr);
+        var oldVerion = NuGetVersion.Parse(Config.Version);
+        var currentVersion = NuGetVersion.Parse(GetVersion());
+        return VersionComparer.Compare(oldVerion, minVersion, VersionComparison.Version) >= 0
+            && VersionComparer.Compare(oldVerion, currentVersion, VersionComparison.Version) < 0;
     }
 
     public class XmlCommentMember

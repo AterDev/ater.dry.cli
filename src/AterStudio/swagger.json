@@ -322,7 +322,7 @@
         "tags": [
           "Entity"
         ],
-        "summary": "获取dtos",
+        "summary": "s\r\n            获取dtos",
         "operationId": "Entity_GetDtos",
         "parameters": [
           {
@@ -1358,8 +1358,8 @@
             "nullable": true
           },
           "version": {
-            "type": "number",
-            "format": "double"
+            "type": "string",
+            "nullable": true
           },
           "swaggerPath": {
             "type": "string",

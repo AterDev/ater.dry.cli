@@ -33,7 +33,7 @@ public class ConfigOptions
     /// 是否拆分
     /// </summary>
     public bool? IsSplitController { get; set; } = false;
-    public double Version { get; set; } = 7.1;
+    public string Version { get; set; } = "1.0";
     /// <summary>
     /// swagger地址
     /// </summary>

@@ -27,7 +27,7 @@ public class EntityController : ControllerBase
             : _manager.GetEntityFiles(id, name);
     }
 
-    /// <summary>
+    /// <summary>s
     /// 获取dtos
     /// </summary>
     /// <param name="projectId"></param>
