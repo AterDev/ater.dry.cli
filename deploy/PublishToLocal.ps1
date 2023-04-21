@@ -27,6 +27,7 @@ try {
         Remove-Item .\publish\Command.Share.dll
         Remove-Item .\publish\Core.dll
         Remove-Item .\publish\Datastore.dll
+        Remove-Item .\publish\NuGet.Versioning.dll
         Remove-Item .\publish\swagger.json
         Compress-Archive -Path .\publish\*  -DestinationPath "../CommandLine/studio.zip" -CompressionLevel Optimal -Force
     }

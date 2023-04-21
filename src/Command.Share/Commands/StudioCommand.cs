@@ -88,7 +88,20 @@ public class StudioCommand
     {
         Console.WriteLine($"check&update studio...");
 
-        var copyFiles = new string[] { "Microsoft.CodeAnalysis.CSharp", "Microsoft.CodeAnalysis", "LiteDB", "SharpYaml", "Microsoft.OpenApi", "CodeGenerator", "Microsoft.OpenApi.Readers", "Core", "Command.Share", "Datastore" };
+        var copyFiles = new string[]
+        {
+            "Microsoft.CodeAnalysis.CSharp",
+            "Microsoft.CodeAnalysis",
+            "LiteDB",
+            "SharpYaml",
+            "Microsoft.OpenApi",
+            "CodeGenerator",
+            "Microsoft.OpenApi.Readers",
+            "Core",
+            "Command.Share",
+            "Datastore",
+            "NuGet.Versioning"
+        };
 
         string appPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
         string userPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
