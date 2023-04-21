@@ -184,4 +184,27 @@ public class CompilationHelper
             SyntaxRoot = SyntaxRoot.ReplaceNode(interfaceDeclaration, newInterfaceDeclaration);
         }
     }
+    public void ReplaceImplement(string newImplementContent)
+    {
+        // replace interface first node  with new node 
+        if (SyntaxTree != null && SyntaxRoot != null)
+        {
+            var interfaceNode = SyntaxRoot.DescendantNodes()
+                .OfType<InterfaceDeclarationSyntax>().Single();
+            var oldBaseList = interfaceNode.DescendantNodes().OfType<BaseListSyntax>().Single();
+
+            if (oldBaseList != null)
+            {
+                var typeName = SyntaxFactory.ParseTypeName("IDomainManager<SystemConfig>");
+                var baseType = SyntaxFactory.SimpleBaseType(typeName);
+                var newBaseList = SyntaxFactory.BaseList(
+                    SyntaxFactory.SingletonSeparatedList<BaseTypeSyntax>(baseType)
+                );
+
+                var newInterfaceNode = interfaceNode.ReplaceNode(oldBaseList, newBaseList);
+                SyntaxRoot = SyntaxRoot.ReplaceNode(interfaceNode, newInterfaceNode);
+            }
+
+        }
+    }
 }
