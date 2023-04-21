@@ -53,10 +53,17 @@ public class EntityManager
                         Path = file.FullName.Replace(entityPath, ""),
                         Content = File.ReadAllText(path)
                     };
+                    // 查询生成的dto\manager\api状态
+                    var states = GetEntityStates(project.Path, Path.GetFileNameWithoutExtension(file.Name));
+                    item.HasDto = states.hasDto;
+                    item.HasManager = states.hasManager;
+                    item.HasAPI = states.hasAPI;
 
                     entityFiles.Add(item);
                 }
             }
+
+            // 名称筛选
             if (!string.IsNullOrWhiteSpace(name))
             {
                 entityFiles = entityFiles.Where(f => f.Name.ToLower().Contains(name.ToLower())).ToList();
@@ -68,6 +75,26 @@ public class EntityManager
         }
 
         return entityFiles;
+    }
+
+    private (bool hasDto, bool hasManager, bool hasAPI) GetEntityStates(string path, string entityName)
+    {
+        var basePath = path;
+        if (File.Exists(path))
+        {
+            basePath = Path.Combine(path, "..");
+        }
+
+        bool hasDto = false; bool hasManager = false; bool hasAPI = false;
+        var dtoPath = Path.Combine(basePath, "src", Config.DtoPath, "Models", entityName + "Dtos");
+        var managerPath = Path.Combine(basePath, "src", Config.StorePath, "IManager", $"I{entityName}Manager.cs");
+        var apiPath = Path.Combine(basePath, "src", Config.ApiPath, "Controllers", $"{entityName}Controller.cs");
+
+        if (Directory.Exists(dtoPath)) { hasDto = true; }
+        if (File.Exists(managerPath)) { hasManager = true; }
+        if (File.Exists(apiPath)) { hasAPI = true; }
+
+        return (hasDto, hasManager, hasAPI);
     }
 
     /// <summary>

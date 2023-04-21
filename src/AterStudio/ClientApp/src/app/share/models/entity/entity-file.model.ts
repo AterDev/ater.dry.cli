@@ -4,5 +4,8 @@ export interface EntityFile {
   baseDirPath?: string | null;
   path?: string | null;
   content?: string | null;
+  hasDto: boolean;
+  hasManager: boolean;
+  hasAPI: boolean;
 
 }

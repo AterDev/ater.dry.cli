@@ -99,7 +99,7 @@ public class FunctionTest
         var compilation = new CompilationHelper(projectPath);
         compilation.AddSyntaxTree(File.ReadAllText(filePath));
 
-        var exist = compilation.IsMethodExistInInterface(interfaceName, "Task<SystemConfig?> GetOwnedAsync(Guid id);");
+        var exist = compilation.MehtodExist("Task<SystemConfig?> GetOwnedAsync(Guid id);");
         Assert.True(exist);
 
          compilation.InsertInteraceMethod("Task<SystemConfig?> GetOwnedAsync(int id);");

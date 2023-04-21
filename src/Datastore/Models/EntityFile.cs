@@ -10,4 +10,8 @@ public class EntityFile
     public required string BaseDirPath { get; set; }
     public required string Path { get; set; }
     public string? Content { get; set; }
+
+    public bool HasDto { get; set; } = false;
+    public bool HasManager { get; set; } = false;
+    public bool HasAPI { get; set; } = false;
 }

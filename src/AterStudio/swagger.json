@@ -1394,6 +1394,15 @@
           "content": {
             "type": "string",
             "nullable": true
+          },
+          "hasDto": {
+            "type": "boolean"
+          },
+          "hasManager": {
+            "type": "boolean"
+          },
+          "hasAPI": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
