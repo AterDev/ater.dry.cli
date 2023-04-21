@@ -99,8 +99,7 @@ public class StudioCommand
             "Microsoft.OpenApi.Readers",
             "Core",
             "Command.Share",
-            "Datastore",
-            "NuGet.Versioning"
+            "Datastore"
         };
 
         string appPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
