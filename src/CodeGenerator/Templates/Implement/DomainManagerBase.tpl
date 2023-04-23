@@ -24,7 +24,7 @@ public class DomainManagerBase<TEntity, TUpdate, TFilter, TItem>
     /// </summary>
     public bool AutoSave { get; set; } = true;
     public DatabaseFacade Database { get; init; }
-    protected readonly IUserContext? _userContext;
+    protected IUserContext? _userContext;
 
     public DomainManagerBase(DataStoreContext storeContext)
     {
