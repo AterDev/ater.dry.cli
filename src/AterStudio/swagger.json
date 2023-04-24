@@ -378,6 +378,67 @@
         }
       }
     },
+    "/api/Entity/fileContent": {
+      "get": {
+        "tags": [
+          "Entity"
+        ],
+        "summary": "获取文件内容\r\nentity/manager",
+        "operationId": "Entity_GetFileContent",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "query",
+            "description": "",
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "entityName",
+            "in": "query",
+            "description": "",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "isManager",
+            "in": "query",
+            "description": "是否为manager",
+            "style": "form",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntityFile"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntityFile"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntityFile"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Entity/dto/{projectId}": {
       "put": {
         "tags": [
@@ -701,6 +762,68 @@
             "schema": {
               "type": "string",
               "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Entity/generateNgModule/{id}": {
+      "post": {
+        "tags": [
+          "Entity"
+        ],
+        "summary": "生成NG组件模块",
+        "operationId": "Entity_GenerateNgModule",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "entityName",
+            "in": "query",
+            "description": "",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "rootPath",
+            "in": "query",
+            "description": "",
+            "style": "form",
+            "schema": {
+              "type": "string"
             }
           }
         ],

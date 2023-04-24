@@ -23,9 +23,7 @@
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
-            "allowedCommonJsDependencies": [
-              "oidc-client"
-            ],
+            "allowedCommonJsDependencies": [],
             "assets": [
               "src/assets",
               {
@@ -39,7 +37,11 @@
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [
+              "./node_modules/marked/marked.min.js",
+              "./node_modules/prismjs/prism.js",
+              "./node_modules/clipboard/dist/clipboard.min.js"
+            ]
           },
           "configurations": {
             "production": {

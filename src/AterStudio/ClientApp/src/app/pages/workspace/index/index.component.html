@@ -24,9 +24,17 @@
         matTooltipPosition="right">生成Protobuf</button>
     </mat-menu>
   </mat-toolbar>
-  <mat-form-field class="w-100 mt-2">
-    <input matInput placeholder="搜索实体类" [(ngModel)]="searchKey" (keyup.enter)="getEntity()">
-  </mat-form-field>
+
+  <div class="d-flex align-items-center mt-2">
+    <mat-form-field style="min-width: 300px;">
+      <input matInput placeholder="搜索实体类" [(ngModel)]="searchKey" (keyup)="applyFilter($event)">
+    </mat-form-field>
+    <span class="example-spacer"></span>
+    <button mat-icon-button matTooltip="refresh" (click)="getEntity()" color="primary">
+      <mat-icon>refresh</mat-icon>
+    </button>
+  </div>
+
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" style="width: 100%;">
     <!-- Checkbox Column -->
     <ng-container matColumnDef="select">
@@ -45,7 +53,9 @@
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef>类名</th>
       <td mat-cell *matCellDef="let element">
-        {{element.name}}
+        <button mat-button color="primary" (click)="openPreviewDialog(element,false)">
+          {{element.name}}
+        </button>
       </td>
     </ng-container>
     <ng-container matColumnDef="path">
@@ -66,6 +76,10 @@
             matTooltip="生成dto/dataStore/manager" matTooltipPosition="right">生成Manager</button>
           <button mat-menu-item (click)="openSelectProjectDialog(CommandType.API,element)"
             matTooltip="生成dto/dataStore/manager/webapi" matTooltipPosition="right">生成APIControler</button>
+
+          <button mat-menu-item (click)="openNgPagesDialog(element)" matTooltip="生成angular curd组件模块"
+            matTooltipPosition="right">生成NG组件模块</button>
+
           <button mat-menu-item (click)="openSelectProjectDialog(CommandType.Protobuf,element)"
             matTooltip="生成proto协议文件">生成Protobuf</button>
         </mat-menu>
@@ -75,7 +89,8 @@
           <mat-icon>code</mat-icon>
         </button>
 
-        <button mat-icon-button [disabled]="!element.hasManager" color="primary" matTooltip="已生成Manager">
+        <button mat-icon-button [disabled]="!element.hasManager" color="primary" matTooltip="已生成Manager"
+          (click)="openPreviewDialog(element,true)">
           <mat-icon>linear_scale</mat-icon>
         </button>
         <button mat-icon-button [disabled]="!element.hasAPI" color="primary" matTooltip="已生成API">
@@ -172,6 +187,22 @@
 </ng-template>
 
 
+<ng-template #ngPagesDialog>
+  <h2 mat-dialog-title>生成Ng页面组件(Material)</h2>
+  <p>注：页面依赖模型和服务，可在接口文档中成前端请求服务！</p>
+  <mat-dialog-content class="py-2">
+    <mat-form-field class="w-100">
+      <mat-label>前端项目根目录</mat-label>
+      <input matInput placeholder="路径" [(ngModel)]="webPath" required>
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions class="justify-content-end">
+    <button mat-button mat-dialog-close>取消</button>
+    <button mat-button (click)="genNgModule()" color="primary" [disabled]="isSync">生成</button>
+  </mat-dialog-actions>
+</ng-template>
+
+
 <ng-template #apiDialog>
   <h2 mat-dialog-title>生成REST API</h2>
   <mat-dialog-content class="py-2">
@@ -181,11 +212,22 @@
         {{project.name}}
       </mat-list-option>
     </mat-selection-list>
-
     <mat-slide-toggle [(ngModel)]="this.force" class="mt-2">覆盖现有代码</mat-slide-toggle>
   </mat-dialog-content>
   <mat-dialog-actions>
     <button mat-button mat-dialog-close>取消</button>
     <button mat-button (click)="batch(CommandType.API)" color="primary" [disabled]="isSync">生成</button>
+  </mat-dialog-actions>
+</ng-template>
+
+<ng-template #previewDialog>
+  <h2 mat-dialog-title>
+    {{previewItem?.name}}
+  </h2>
+  <mat-dialog-content>
+    <ngx-monaco-editor class="editor" [options]="editorOptions" [(ngModel)]="previewItem!.content"></ngx-monaco-editor>
+  </mat-dialog-content>
+  <mat-dialog-actions class="justify-content-end">
+    <button mat-button [mat-dialog-close]="true">取消</button>
   </mat-dialog-actions>
 </ng-template>

@@ -40,6 +40,21 @@ public class EntityController : ControllerBase
     }
 
     /// <summary>
+    /// 获取文件内容
+    /// entity/manager
+    /// </summary>
+    /// <param name="projectId"></param>
+    /// <param name="entityName"></param>
+    /// <param name="isManager">是否为manager</param>
+    /// <returns></returns>
+    [HttpGet("fileContent")]
+    public EntityFile? GetFileContent(Guid projectId, string entityName, bool isManager)
+    {
+        return _manager.GetFileContent(projectId, entityName, isManager);
+    }
+
+
+    /// <summary>
     /// 更新内容
     /// </summary>
     /// <param name="projectId"></param>
@@ -137,4 +152,26 @@ public class EntityController : ControllerBase
         await _manager.GenerateSyncAsync(project);
         return true;
     }
+
+
+    /// <summary>
+    /// 生成NG组件模块
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="entityName"></param>
+    /// <param name="rootPath"></param>
+    /// <returns></returns>
+    [HttpPost("generateNgModule/{id}")]
+    public async Task<ActionResult<bool>> GenerateNgModuleAsync([FromRoute] Guid id, string entityName, string rootPath)
+    {
+        Project? project = _manager.Find(id);
+        if (project == null)
+        {
+            return NotFound("项目不存在");
+        }
+        await _manager.GenerateNgModuleAsync(project, entityName, rootPath);
+        return true;
+    }
+
+
 }

@@ -9,6 +9,6 @@ public class Const
     public const string FilterDto = "FilterDto";
     public const string AddDto = "AddDto";
     public const string UpdateDto = "UpdateDto";
-
     public static Guid PROJECT_ID;
+    public const string Version = "7.0";
 }

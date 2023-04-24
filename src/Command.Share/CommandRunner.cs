@@ -104,7 +104,7 @@ public static class CommandRunner
         DtoCommand dtoCmd = new(path, dtoPath);
         await dtoCmd.RunAsync(force);
         Console.WriteLine("🔵 Generate manager");
-        StoreCommand storeCmd = new(path, dtoPath, servicePath);
+        ManagerCommand storeCmd = new(path, dtoPath, servicePath);
         await storeCmd.RunAsync(force);
     }
 
@@ -124,7 +124,7 @@ public static class CommandRunner
             DtoCommand dtoCmd = new(path, dtoPath);
             await dtoCmd.RunAsync(force);
             Console.WriteLine("🔵 Generate store");
-            StoreCommand storeCmd = new(path, dtoPath, servicePath, suffix);
+            ManagerCommand storeCmd = new(path, dtoPath, servicePath, suffix);
             await storeCmd.RunAsync(force);
 
             Console.WriteLine("🔵 Generate rest api");
@@ -141,12 +141,12 @@ public static class CommandRunner
     /// 根据已生成的dto生成相应的前端表单页面
     /// </summary>
     /// <param name="dtoPath">service根目录</param>
-    /// <param name="name">实体类名称</param>
+    /// <param name="entityPah">实体路径</param>
     /// <param name="output">前端根目录</param>
-    public static async Task GenerateNgPagesAsync(string name, string dtoPath, string output = "")
+    public static async Task GenerateNgPagesAsync(string entityPah, string dtoPath, string output = "")
     {
         Console.WriteLine("🔵 Generate view");
-        ViewCommand viewCmd = new(name, dtoPath, output);
+        ViewCommand viewCmd = new ViewCommand(entityPah, dtoPath, output);
         await viewCmd.RunAsync();
     }
 

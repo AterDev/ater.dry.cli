@@ -1,4 +1,5 @@
 ﻿using System.Reflection.Metadata;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Core.Infrastructure.Helper;
@@ -184,6 +185,25 @@ public class CompilationHelper
             SyntaxRoot = SyntaxRoot.ReplaceNode(interfaceDeclaration, newInterfaceDeclaration);
         }
     }
+
+    public void InsertClassMethod(string methodContent)
+    {
+        if (SyntaxTree != null && SyntaxRoot != null)
+        {
+            var classDeclaration = SyntaxRoot.DescendantNodes()
+                .OfType<ClassDeclarationSyntax>().Single();
+
+            methodContent = $"    {methodContent}" + Environment.NewLine;
+            if (SyntaxFactory.ParseMemberDeclaration(methodContent) is not MethodDeclarationSyntax methodNode)
+            {
+                return;
+            }
+            var newClassDeclaration = classDeclaration.AddMembers(methodNode);
+            SyntaxRoot = SyntaxRoot.ReplaceNode(classDeclaration, newClassDeclaration);
+        }
+    }
+
+
     public void ReplaceImplement(string newImplementContent)
     {
         // replace interface first node  with new node 
@@ -197,9 +217,15 @@ public class CompilationHelper
             {
                 var typeName = SyntaxFactory.ParseTypeName(newImplementContent);
                 var baseType = SyntaxFactory.SimpleBaseType(typeName);
+
+                // add space and newline to baseType 
+                var newColonToken = SyntaxFactory.Token(SyntaxKind.ColonToken)
+                  .WithTrailingTrivia(SyntaxFactory.Space);
+
                 var newBaseList = SyntaxFactory.BaseList(
-                    SyntaxFactory.SingletonSeparatedList<BaseTypeSyntax>(baseType)
-                );
+                  SyntaxFactory.SingletonSeparatedList<BaseTypeSyntax>(baseType))
+                  .WithTrailingTrivia(SyntaxFactory.LineFeed)
+                  .WithColonToken(newColonToken);
 
                 var newInterfaceNode = interfaceNode.ReplaceNode(oldBaseList, newBaseList);
                 SyntaxRoot = SyntaxRoot.ReplaceNode(interfaceNode, newInterfaceNode);

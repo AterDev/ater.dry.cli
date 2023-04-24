@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+﻿using Microsoft.EntityFrameworkCore.Infrastructure;
 namespace ${Namespace}.Interface;
 
 /// <summary>

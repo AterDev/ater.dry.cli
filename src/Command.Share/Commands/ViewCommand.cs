@@ -33,7 +33,7 @@ public class ViewCommand : CommandBase
         EntityPath = entityPath;
         DtoPath = dtoPath;
         OutputPath = outputPath;
-        Instructions.Add($"  🔹 generate module,routing and menu.");
+        Instructions.Add($"  🔹 generate module, routing.");
         Instructions.Add($"  🔹 generate pages.");
 
         if (!File.Exists(entityPath))
@@ -129,15 +129,14 @@ public class ViewCommand : CommandBase
 
     private async Task GenerateModuleWithRoutingAsync()
     {
-        _ = EntityName.ToHyphen();
-        string moduleName = ModuleName ?? EntityName;
+        string moduleName = ModuleName ?? EntityName.ToHyphen();
         string? routeName = Route?.ToPascalCase().ToHyphen();
         string dir = Path.Combine(OutputPath, "src", "app", "pages", moduleName, routeName ?? "");
 
         string module = Gen.GetModule(Route?.ToPascalCase());
         string routing = Gen.GetRoutingModule(moduleName, Route?.ToPascalCase());
-        string moduleFilename = routeName + ".module.ts";
-        string routingFilename = routeName + "-routing.module.ts";
+        string moduleFilename = routeName ?? moduleName + ".module.ts";
+        string routingFilename = routeName ?? moduleName + "-routing.module.ts";
         await GenerateFileAsync(dir, moduleFilename, module);
         await GenerateFileAsync(dir, routingFilename, routing);
 
@@ -154,7 +153,7 @@ public class ViewCommand : CommandBase
     /// <returns></returns>
     private async Task GeneratePagesAsync()
     {
-        string moduleName = ModuleName ?? EntityName;
+        string moduleName = ModuleName ?? EntityName.ToHyphen();
         string dir = Path.Combine(OutputPath, "src", "app", "pages", moduleName, Route?.ToPascalCase().ToHyphen() ?? "");
 
         NgComponentInfo addComponent = Gen.BuildAddPage();

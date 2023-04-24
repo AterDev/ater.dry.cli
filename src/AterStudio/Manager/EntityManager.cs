@@ -146,6 +146,43 @@ public class EntityManager
         return dtoFiles;
     }
 
+
+    public EntityFile? GetFileContent(Guid projectId, string entityName, bool isManager)
+    {
+        var project = _dbContext.Projects.FindById(projectId);
+        if (entityName.EndsWith(".cs"))
+        {
+            entityName = entityName.Replace(".cs", "");
+        }
+
+        string? filePath = null;
+        if (isManager)
+        {
+            filePath = Path.Combine(project!.ApplicationPath, "Manager", $"{entityName}Manager.cs");
+        }
+        else
+        {
+            var entityDir = Path.Combine(project!.EntityPath, "Entities");
+            filePath = Directory.GetFiles(entityDir, $"{entityName}.cs", SearchOption.AllDirectories)
+                .FirstOrDefault();
+        }
+        if (filePath != null)
+        {
+            var file = new FileInfo(filePath);
+
+            return new EntityFile()
+            {
+                Name = file.Name,
+                BaseDirPath = file.DirectoryName ?? "",
+                Path = file.FullName,
+                Content = File.ReadAllText(filePath)
+            };
+
+        }
+
+        return default;
+    }
+
     /// <summary>
     /// 保存Dto内容
     /// </summary>
@@ -283,6 +320,25 @@ public class EntityManager
         Const.PROJECT_ID = project.ProjectId;
         string swaggerPath = Path.Combine(project.HttpPath, "swagger.json");
         await CommandRunner.SyncToAngularAsync(swaggerPath, project.EntityPath, project.SharePath, project.HttpPath);
+    }
+
+    public async Task GenerateNgModuleAsync(Project project, string entityName, string rootPath)
+    {
+        await InitConfigAsync(project);
+        Const.PROJECT_ID = project.ProjectId;
+        var dtoPath = Path.Combine(project.Path, "..", "src", Config.DtoPath);
+        var entityDir = Path.Combine(project.Path, "..", "src", Config.EntityPath, "Entities");
+        var entityPath = Directory.GetFiles(entityDir, entityName, SearchOption.AllDirectories)
+            .FirstOrDefault();
+
+        if (entityPath != null)
+        {
+            await CommandRunner.GenerateNgPagesAsync(entityPath, dtoPath, rootPath);
+        }
+        else
+        {
+            throw new FileNotFoundException($"未找到实体文件:{entityPath}");
+        }
     }
 
     private async Task InitConfigAsync(Project project)
