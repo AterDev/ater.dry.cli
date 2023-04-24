@@ -131,12 +131,16 @@ public class RestApiGenerate : GenerateBase
 
         tplContent = tplContent.Replace("${AddActionBlock}", addContent)
             .Replace("${UpdateActionBlock}", updateContent);
+
+        // add see cref comment
+
+        var comment = EntityInfo?.Comment + Environment.NewLine + $"/// <see cref=\"{ServiceNamespace}.Manager.{entityName}Manager\"/>";
         tplContent = tplContent.Replace(TplConst.NAMESPACE, ApiNamespace)
             .Replace(TplConst.SHARE_NAMESPACE, ShareNamespace)
             .Replace(TplConst.ENTITY_NAME, entityName)
             .Replace(TplConst.API_SUFFIX, Suffix)
             .Replace(TplConst.ID_TYPE, Config.IdType)
-            .Replace(TplConst.COMMENT, EntityInfo?.Comment ?? "");
+            .Replace(TplConst.COMMENT, comment);
 
         // 清理模板未被替换的变量
         return ClearTemplate(tplContent);
