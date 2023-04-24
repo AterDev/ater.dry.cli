@@ -24,9 +24,17 @@
         matTooltipPosition="right">生成Protobuf</button>
     </mat-menu>
   </mat-toolbar>
-  <mat-form-field class="w-100 mt-2">
-    <input matInput placeholder="搜索实体类" [(ngModel)]="searchKey" (keyup.enter)="getEntity()">
-  </mat-form-field>
+
+  <div class="d-flex align-items-center mt-2">
+    <mat-form-field style="min-width: 300px;">
+      <input matInput placeholder="搜索实体类" [(ngModel)]="searchKey" (keyup)="applyFilter($event)">
+    </mat-form-field>
+    <span class="example-spacer"></span>
+    <button mat-icon-button matTooltip="refresh" (click)="getEntity()" color="primary">
+      <mat-icon>refresh</mat-icon>
+    </button>
+  </div>
+
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" style="width: 100%;">
     <!-- Checkbox Column -->
     <ng-container matColumnDef="select">

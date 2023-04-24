@@ -144,7 +144,10 @@ export class IndexComponent implements OnInit {
       minWidth: 300
     });
   }
-
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
 
 
   getProjects(): void {
