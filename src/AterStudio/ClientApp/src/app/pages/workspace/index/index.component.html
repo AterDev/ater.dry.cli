@@ -76,6 +76,10 @@
             matTooltip="生成dto/dataStore/manager" matTooltipPosition="right">生成Manager</button>
           <button mat-menu-item (click)="openSelectProjectDialog(CommandType.API,element)"
             matTooltip="生成dto/dataStore/manager/webapi" matTooltipPosition="right">生成APIControler</button>
+
+          <button mat-menu-item (click)="openNgPagesDialog(element)" matTooltip="生成angular curd组件模块"
+            matTooltipPosition="right">生成NG组件模块</button>
+
           <button mat-menu-item (click)="openSelectProjectDialog(CommandType.Protobuf,element)"
             matTooltip="生成proto协议文件">生成Protobuf</button>
         </mat-menu>
@@ -183,6 +187,22 @@
 </ng-template>
 
 
+<ng-template #ngPagesDialog>
+  <h2 mat-dialog-title>生成Ng页面组件</h2>
+  <p>注：页面依赖模型和服务，可在接口文档中成前端请求服务！</p>
+  <mat-dialog-content class="py-2">
+    <mat-form-field class="w-100">
+      <mat-label>前端项目根目录</mat-label>
+      <input matInput placeholder="路径" [(ngModel)]="webPath" required>
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions class="justify-content-end">
+    <button mat-button mat-dialog-close>取消</button>
+    <button mat-button (click)="genNgModule()" color="primary" [disabled]="isSync">生成</button>
+  </mat-dialog-actions>
+</ng-template>
+
+
 <ng-template #apiDialog>
   <h2 mat-dialog-title>生成REST API</h2>
   <mat-dialog-content class="py-2">
@@ -192,7 +212,6 @@
         {{project.name}}
       </mat-list-option>
     </mat-selection-list>
-
     <mat-slide-toggle [(ngModel)]="this.force" class="mt-2">覆盖现有代码</mat-slide-toggle>
   </mat-dialog-content>
   <mat-dialog-actions>
@@ -205,7 +224,7 @@
   <h2 mat-dialog-title>
     {{previewItem?.name}}
   </h2>
-  <mat-dialog-content >
+  <mat-dialog-content>
     <ngx-monaco-editor class="editor" [options]="editorOptions" [(ngModel)]="previewItem!.content"></ngx-monaco-editor>
   </mat-dialog-content>
   <mat-dialog-actions class="justify-content-end">

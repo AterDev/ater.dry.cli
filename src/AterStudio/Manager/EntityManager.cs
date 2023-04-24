@@ -322,6 +322,25 @@ public class EntityManager
         await CommandRunner.SyncToAngularAsync(swaggerPath, project.EntityPath, project.SharePath, project.HttpPath);
     }
 
+    public async Task GenerateNgModuleAsync(Project project, string entityName, string rootPath)
+    {
+        await InitConfigAsync(project);
+        Const.PROJECT_ID = project.ProjectId;
+        var dtoPath = Path.Combine(project.Path, "..", "src", Config.DtoPath);
+        var entityDir = Path.Combine(project.Path, "..", "src", Config.EntityPath, "Entities");
+        var entityPath = Directory.GetFiles(entityDir, entityName, SearchOption.AllDirectories)
+            .FirstOrDefault();
+
+        if (entityPath != null)
+        {
+            await CommandRunner.GenerateNgPagesAsync(entityPath, dtoPath, rootPath);
+        }
+        else
+        {
+            throw new FileNotFoundException($"未找到实体文件:{entityPath}");
+        }
+    }
+
     private async Task InitConfigAsync(Project project)
     {
         var slnFile = new FileInfo(project.Path);

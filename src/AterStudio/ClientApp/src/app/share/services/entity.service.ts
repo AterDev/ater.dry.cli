@@ -107,4 +107,15 @@ entity/manager
     return this.request<boolean>('post', url);
   }
 
+  /**
+   * 生成NG组件模块
+   * @param id 
+   * @param entityName 
+   * @param rootPath 
+   */
+  generateNgModule(id: string, entityName?: string, rootPath?: string): Observable<boolean> {
+    const url = `/api/Entity/generateNgModule/${id}?entityName=${entityName}&rootPath=${rootPath}`;
+    return this.request<boolean>('post', url);
+  }
+
 }

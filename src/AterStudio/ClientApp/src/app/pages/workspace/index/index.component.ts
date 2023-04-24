@@ -49,8 +49,10 @@ export class IndexComponent implements OnInit {
   @ViewChild("protobufDialog", { static: true }) protobufTmpRef!: TemplateRef<{}>;
   @ViewChild("apiDialog", { static: true }) apiTmpRef!: TemplateRef<{}>;
   @ViewChild("generateDialog", { static: true }) generateTmpRef!: TemplateRef<{}>;
-  @ViewChild('previewDialog', { static: true }) previewTmpl!: TemplateRef<any>;
+  @ViewChild('previewDialog', { static: true }) previewTmpl!: TemplateRef<{}>;
+  @ViewChild('ngPagesDialog', { static: true }) ngPagesTmpl!: TemplateRef<{}>;
   editorOptions = { theme: 'vs-dark', language: 'csharp', minimap: { enabled: false } };
+  webPath: string | null = null;
   previewItem: EntityFile | null = null;
   selection = new SelectionModel<EntityFile>(true, []);
   selectedWebProjectIds: string[] = [];
@@ -71,12 +73,16 @@ export class IndexComponent implements OnInit {
     if (projectState.project) {
       this.projectId = projectState.project?.id;
     } else {
-      // TODO:
       this.projectId = '';
       this.router.navigateByUrl('/');
     }
   }
   ngOnInit(): void {
+    if (this.projectState.project?.path?.endsWith(".sln")) {
+      this.webPath = this.projectState.project.httpPath + '\\ClientApp';
+    } else {
+      this.webPath = this.projectState.project?.path ?? ''
+    }
     this.initForm();
     this.getProjectInfo();
     this.getEntity();
@@ -148,6 +154,12 @@ export class IndexComponent implements OnInit {
   openSyncDialog(): void {
     this.dialogRef = this.dialog.open(this.syncTmpRef, {
       minWidth: 300
+    });
+  }
+  openNgPagesDialog(element: EntityFile | null): void {
+    this.currentEntity = element;
+    this.dialogRef = this.dialog.open(this.ngPagesTmpl, {
+      minWidth: 400
     });
   }
   applyFilter(event: Event) {
@@ -226,6 +238,32 @@ export class IndexComponent implements OnInit {
     });
   }
 
+  genNgModule(): void {
+    if (this.currentEntity && this.webPath) {
+      this.isSync = true;
+      this.service.generateNgModule(this.projectId, this.currentEntity.name!, this.webPath)
+        .subscribe({
+          next: (res) => {
+            if (res) {
+              this.snb.open('生成成功');
+              this.dialogRef.close();
+            } else {
+              this.snb.open('生成失败');
+            }
+          },
+          error: (error) => {
+            this.snb.open(error.detail);
+            this.isSync = false;
+          },
+          complete: () => {
+            this.isSync = false;
+          }
+        });
+
+    } else {
+      this.snb.open('请填写路径');
+    }
+  }
   generate(): void {
     if (this.isBatch) {
       this.batch(this.currentType!);
@@ -247,7 +285,6 @@ export class IndexComponent implements OnInit {
       } else {
       }
     }
-
   }
   batch(type: CommandType): void {
     let selected = this.selection.selected;
