@@ -146,6 +146,43 @@ public class EntityManager
         return dtoFiles;
     }
 
+
+    public EntityFile? GetFileContent(Guid projectId, string entityName, bool isManager)
+    {
+        var project = _dbContext.Projects.FindById(projectId);
+        if (entityName.EndsWith(".cs"))
+        {
+            entityName = entityName.Replace(".cs", "");
+        }
+
+        string? filePath = null;
+        if (isManager)
+        {
+            filePath = Path.Combine(project!.ApplicationPath, "Manager", $"{entityName}Manager.cs");
+        }
+        else
+        {
+            var entityDir = Path.Combine(project!.EntityPath, "Entities");
+            filePath = Directory.GetFiles(entityDir, $"{entityName}.cs", SearchOption.AllDirectories)
+                .FirstOrDefault();
+        }
+        if (filePath != null)
+        {
+            var file = new FileInfo(filePath);
+
+            return new EntityFile()
+            {
+                Name = file.Name,
+                BaseDirPath = file.DirectoryName ?? "",
+                Path = file.FullName,
+                Content = File.ReadAllText(filePath)
+            };
+
+        }
+
+        return default;
+    }
+
     /// <summary>
     /// 保存Dto内容
     /// </summary>

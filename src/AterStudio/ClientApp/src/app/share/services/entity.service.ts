@@ -35,6 +35,18 @@ export class EntityService extends BaseService {
   }
 
   /**
+   * 获取文件内容
+entity/manager
+   * @param projectId 
+   * @param entityName 
+   * @param isManager 是否为manager
+   */
+  getFileContent(projectId?: string, entityName?: string, isManager?: boolean): Observable<EntityFile> {
+    const url = `/api/Entity/fileContent?projectId=${projectId}&entityName=${entityName}&isManager=${isManager}`;
+    return this.request<EntityFile>('get', url);
+  }
+
+  /**
    * 更新内容
    * @param projectId 
    * @param data UpdateDtoDto

@@ -53,7 +53,9 @@
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef>类名</th>
       <td mat-cell *matCellDef="let element">
-        {{element.name}}
+        <button mat-button color="primary" (click)="openPreviewDialog(element,false)">
+          {{element.name}}
+        </button>
       </td>
     </ng-container>
     <ng-container matColumnDef="path">
@@ -83,7 +85,8 @@
           <mat-icon>code</mat-icon>
         </button>
 
-        <button mat-icon-button [disabled]="!element.hasManager" color="primary" matTooltip="已生成Manager">
+        <button mat-icon-button [disabled]="!element.hasManager" color="primary" matTooltip="已生成Manager"
+          (click)="openPreviewDialog(element,true)">
           <mat-icon>linear_scale</mat-icon>
         </button>
         <button mat-icon-button [disabled]="!element.hasAPI" color="primary" matTooltip="已生成API">
@@ -195,5 +198,17 @@
   <mat-dialog-actions>
     <button mat-button mat-dialog-close>取消</button>
     <button mat-button (click)="batch(CommandType.API)" color="primary" [disabled]="isSync">生成</button>
+  </mat-dialog-actions>
+</ng-template>
+
+<ng-template #previewDialog>
+  <h2 mat-dialog-title>
+    {{previewItem?.name}}
+  </h2>
+  <mat-dialog-content >
+    <ngx-monaco-editor class="editor" [options]="editorOptions" [(ngModel)]="previewItem!.content"></ngx-monaco-editor>
+  </mat-dialog-content>
+  <mat-dialog-actions class="justify-content-end">
+    <button mat-button [mat-dialog-close]="true">取消</button>
   </mat-dialog-actions>
 </ng-template>

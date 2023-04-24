@@ -40,6 +40,21 @@ public class EntityController : ControllerBase
     }
 
     /// <summary>
+    /// 获取文件内容
+    /// entity/manager
+    /// </summary>
+    /// <param name="projectId"></param>
+    /// <param name="entityName"></param>
+    /// <param name="isManager">是否为manager</param>
+    /// <returns></returns>
+    [HttpGet("fileContent")]
+    public EntityFile? GetFileContent(Guid projectId, string entityName, bool isManager)
+    {
+        return _manager.GetFileContent(projectId, entityName, isManager);
+    }
+
+
+    /// <summary>
     /// 更新内容
     /// </summary>
     /// <param name="projectId"></param>

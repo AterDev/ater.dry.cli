@@ -7,6 +7,7 @@ import { NavigationComponent } from './navigation/navigation.component';
 import { DocsComponent } from './docs/docs.component';
 import { DtoComponent } from './dto/dto.component';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
+import { MarkdownModule } from 'ngx-markdown';
 
 
 @NgModule({
@@ -20,7 +21,8 @@ import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
     ComponentsModule,
     ShareModule,
     WorkspaceRoutingModule,
-    MonacoEditorModule
+    MonacoEditorModule,
+    MarkdownModule.forRoot()
   ]
 })
 export class WorkspaceModule { }

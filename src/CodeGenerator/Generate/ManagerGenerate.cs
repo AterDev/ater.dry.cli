@@ -474,7 +474,7 @@ public class ManagerGenerate : GenerateBase
                     }
             """;
         });
-        content += """      return await base.UpdateAsync(entity, dto);""";
+        content += """    return await base.UpdateAsync(entity, dto);""";
         return content;
     }
     public string GetFilterMethodContent()
@@ -490,7 +490,6 @@ public class ManagerGenerate : GenerateBase
         if (props.Any())
         {
             content += """
-                    // https://github.com/AterDev/ater.web/blob/56542e5653ee795855705e43482e64df0ee8383d/templates/apistd/src/Core/Utils/Extensions.cs#L82
                     Queryable = Queryable
 
             """;

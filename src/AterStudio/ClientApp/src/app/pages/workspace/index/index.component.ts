@@ -6,6 +6,7 @@ import { MatSelectionListChange } from '@angular/material/list';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
+import { lastValueFrom } from 'rxjs';
 import { BatchGenerateDto } from 'src/app/share/models/entity/batch-generate-dto.model';
 import { EntityFile } from 'src/app/share/models/entity/entity-file.model';
 import { GenerateDto } from 'src/app/share/models/entity/generate-dto.model';
@@ -17,6 +18,7 @@ import { SubProjectInfo } from 'src/app/share/models/project/sub-project-info.mo
 import { ProjectStateService } from 'src/app/share/project-state.service';
 import { EntityService } from 'src/app/share/services/entity.service';
 import { ProjectService } from 'src/app/share/services/project.service';
+
 @Component({
   selector: 'app-index',
   templateUrl: './index.component.html',
@@ -47,12 +49,16 @@ export class IndexComponent implements OnInit {
   @ViewChild("protobufDialog", { static: true }) protobufTmpRef!: TemplateRef<{}>;
   @ViewChild("apiDialog", { static: true }) apiTmpRef!: TemplateRef<{}>;
   @ViewChild("generateDialog", { static: true }) generateTmpRef!: TemplateRef<{}>;
+  @ViewChild('previewDialog', { static: true }) previewTmpl!: TemplateRef<any>;
+  editorOptions = { theme: 'vs-dark', language: 'csharp', minimap: { enabled: false } };
+  previewItem: EntityFile | null = null;
   selection = new SelectionModel<EntityFile>(true, []);
   selectedWebProjectIds: string[] = [];
   webProjects: SubProjectInfo[] = [];
   currentEntity: EntityFile | null = null;
   currentType: CommandType | null = null;
   isBatch = false;
+  isCopied = false;
   constructor(
     public route: ActivatedRoute,
     public router: Router,
@@ -149,6 +155,27 @@ export class IndexComponent implements OnInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
+  async openPreviewDialog(item: EntityFile, isManager: boolean) {
+    if (isManager) {
+      item = await this.getFileContent(item.name!, true);
+    }
+    this.previewItem = item;
+    this.dialogRef = this.dialog.open(this.previewTmpl, {
+      minWidth: 850,
+      minHeight: 800
+    });
+  }
+
+  async getFileContent(entityName: string, isManager: boolean): Promise<EntityFile> {
+    return await lastValueFrom(this.service.getFileContent(this.projectId, entityName, isManager));
+  }
+
+  copyCode(): void {
+    this.isCopied = true;
+    setTimeout(() => {
+      this.isCopied = false;
+    }, 1500);
+  }
 
   getProjects(): void {
     this.projectSrv.getAllProjectInfos(this.projectId)
