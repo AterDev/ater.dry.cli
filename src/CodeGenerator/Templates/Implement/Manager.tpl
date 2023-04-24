@@ -7,7 +7,6 @@ namespace ${Namespace}.Manager;
 public class ${EntityName}Manager : DomainManagerBase<${EntityName}, ${EntityName}UpdateDto, ${EntityName}FilterDto, ${EntityName}ItemDto>, I${EntityName}Manager
 {
 ${AdditionManagersProps}
-    private readonly IUserContext _userContext;
     public ${EntityName}Manager(
         DataStoreContext storeContext, 
         IUserContext userContext${AdditionManagersDI}) : base(storeContext)

@@ -26,30 +26,30 @@ public interface I${EntityName}Manager : IDomainManager<${EntityName}>
     /// <param name="id"></param>
     /// <param name="navigations"></param>
     /// <returns></returns>
-    Task<TEntity?> GetCurrentAsync(Guid id, params string[] navigations);
-    Task<TEntity> AddAsync(TEntity entity);
-    Task<TEntity> UpdateAsync(TEntity entity, TUpdate dto);
-    Task<TEntity?> FindAsync(Guid id);
+    Task<${EntityName}?> GetCurrentAsync(Guid id, params string[] navigations);
+    Task<${EntityName}> AddAsync(${EntityName} entity);
+    Task<${EntityName}> UpdateAsync(${EntityName} entity, ${EntityName}UpdateDto dto);
+    Task<${EntityName}?> FindAsync(Guid id);
     /// <summary>
     /// 查询对象
     /// </summary>
     /// <typeparam name="TDto"></typeparam>
     /// <param name="whereExp"></param>
     /// <returns></returns>
-    Task<TDto?> FindAsync<TDto>(Expression<Func<TEntity, bool>>? whereExp) where TDto : class;
+    Task<TDto?> FindAsync<TDto>(Expression<Func<${EntityName}, bool>>? whereExp) where TDto : class;
     /// <summary>
     /// 列表条件查询
     /// </summary>
     /// <typeparam name="TDto"></typeparam>
     /// <param name="whereExp"></param>
     /// <returns></returns>
-    Task<List<TDto>> ListAsync<TDto>(Expression<Func<TEntity, bool>>? whereExp) where TDto : class;
+    Task<List<TDto>> ListAsync<TDto>(Expression<Func<${EntityName}, bool>>? whereExp) where TDto : class;
     /// <summary>
     /// 分页查询
     /// </summary>
     /// <param name="filter"></param>
     /// <returns></returns>
-    Task<PageList<TItem>> FilterAsync(TFilter filter);
-    Task<TEntity?> DeleteAsync(TEntity entity, bool softDelete = true);
+    Task<PageList<${EntityName}ItemDto>> FilterAsync(${EntityName}FilterDto filter);
+    Task<${EntityName}?> DeleteAsync(${EntityName} entity, bool softDelete = true);
     Task<bool> ExistAsync(Guid id);
 }
