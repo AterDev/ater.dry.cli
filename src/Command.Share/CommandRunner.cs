@@ -104,7 +104,7 @@ public static class CommandRunner
         DtoCommand dtoCmd = new(path, dtoPath);
         await dtoCmd.RunAsync(force);
         Console.WriteLine("🔵 Generate manager");
-        StoreCommand storeCmd = new(path, dtoPath, servicePath);
+        ManagerCommand storeCmd = new(path, dtoPath, servicePath);
         await storeCmd.RunAsync(force);
     }
 
@@ -124,7 +124,7 @@ public static class CommandRunner
             DtoCommand dtoCmd = new(path, dtoPath);
             await dtoCmd.RunAsync(force);
             Console.WriteLine("🔵 Generate store");
-            StoreCommand storeCmd = new(path, dtoPath, servicePath, suffix);
+            ManagerCommand storeCmd = new(path, dtoPath, servicePath, suffix);
             await storeCmd.RunAsync(force);
 
             Console.WriteLine("🔵 Generate rest api");

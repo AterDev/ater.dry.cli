@@ -7,14 +7,14 @@ namespace Command.Share.Commands;
 /// <summary>
 /// 数据仓储生成
 /// </summary>
-public class StoreCommand : CommandBase
+public class ManagerCommand : CommandBase
 {
     public string EntityPath { get; set; }
     public string StorePath { get; set; }
     public string DtoPath { get; set; }
     public ManagerGenerate CodeGen { get; set; }
 
-    public StoreCommand(string entityPath, string dtoPath, string servicePath, string? contextName = null)
+    public ManagerCommand(string entityPath, string dtoPath, string servicePath, string? contextName = null)
     {
         EntityPath = entityPath;
         StorePath = servicePath;
@@ -39,6 +39,7 @@ public class StoreCommand : CommandBase
             Console.WriteLine($"the {EntityPath} not exist");
             return;
         }
+        UpdateFiles();
         Console.WriteLine(Instructions[0]);
         await GenerateCommonFilesAsync();
         Console.WriteLine(Instructions[1]);
@@ -56,6 +57,38 @@ public class StoreCommand : CommandBase
         await GenerateGlobalUsingsFilesAsync();
 
         Console.WriteLine("😀 Manager generate completed!" + Environment.NewLine);
+    }
+
+    /// <summary>
+    /// 待更新的内容
+    /// </summary>
+    private void UpdateFiles()
+    {
+        if (AssemblyHelper.NeedUpdate(Const.Version))
+        {
+            string updateContent = "";
+            Console.WriteLine("🆕 need update base infrastructure.");
+            var whereNotNullString = """
+                    public static IQueryable<TSource> WhereNotNull<TSource>(this IQueryable<TSource> source, object? field, Expression<Func<TSource, bool>> expression)
+                    {
+                        return field != null ? source.Where(expression) : source;
+                    }
+                """;
+            // update extension class
+            var extensionPath = Path.Combine(StorePath, "..", Config.EntityPath, "Utils", "Extensions.cs");
+            var compilation = new CompilationHelper(Path.Combine(EntityPath, ".."));
+            if (File.Exists(extensionPath))
+            {
+                compilation.AddSyntaxTree(File.ReadAllText(extensionPath));
+                if (!compilation.MehtodExist(" public static IQueryable<TSource> WhereNotNull<TSource>(this IQueryable<TSource> source, object? field, Expression<Func<TSource, bool>> expression)"))
+                {
+                    compilation.InsertClassMethod(whereNotNullString);
+                    updateContent += "👉 add [WhereNotNull] method to Extension.cs!" + Environment.NewLine;
+                }
+            }
+            updateContent += "update finish!";
+            Console.WriteLine(updateContent);
+        }
     }
 
     /// <summary>
@@ -126,7 +159,7 @@ public class StoreCommand : CommandBase
         var iManagerPath = Path.Combine(iManagerDir, $"I{entityName}Manager.cs");
         if (!force
             && File.Exists(iManagerPath)
-            && AssemblyHelper.NeedUpdate("7.0.0"))
+            && AssemblyHelper.NeedUpdate(Const.Version))
         {
             // update files
             var compilation = new CompilationHelper(StorePath);
