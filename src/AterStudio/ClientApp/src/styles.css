@@ -1,3 +1,4 @@
+@import './assets/bootstrap-grid.min.css';
 @import 'prismjs/plugins/toolbar/prism-toolbar.css';
 @import './assets/vs-dark-plus.css';
 @import 'prismjs/plugins/line-numbers/prism-line-numbers.css';
