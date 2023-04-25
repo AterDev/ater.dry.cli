@@ -86,7 +86,7 @@ export class EditComponent implements OnInit {
           error: (error) => {
             this.snb.open(error.detail);
           },
-          complate: () => {
+          complete: () => {
             this.isProcessing = false;
           }
         });

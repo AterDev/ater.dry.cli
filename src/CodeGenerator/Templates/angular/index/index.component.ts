@@ -8,6 +8,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-index',
@@ -58,7 +59,7 @@ export class IndexComponent implements OnInit {
             if (res.data) {
               this.data = res.data;
               this.total = res.count;
-              this.dataSource = new MatTableDataSource<{$EntityName}>(this.data);
+              this.dataSource = new MatTableDataSource<{$EntityName}ItemDto>(this.data);
             }
           } else {
             this.snb.open('');

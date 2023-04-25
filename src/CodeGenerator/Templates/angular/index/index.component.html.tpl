@@ -17,34 +17,47 @@
   <mat-spinner mode="indeterminate" *ngIf="isLoading">
   </mat-spinner>
 </div>
+
+
+<div *ngIf="!isLoading">
+  <!-- 无数据时显示 -->
+  <ng-container *ngIf="data && data.length<=0; else elseTemplate">
+    <h4>
+      暂无内容！
+    </h4>
+  </ng-container>
+  <ng-template #elseTemplate>
+    <table mat-table [dataSource]="dataSource" style="width: 100%;">
+    {$ColumnsDef}
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>操作</th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button color="link" [routerLink]="['../detail',element.id]" matTooltip="查看">
+            <mat-icon>pages</mat-icon>
+          </button>
+          <button mat-icon-button color="primary" (click)="edit(element.id)" matTooltip="编辑">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" matTooltip="删除" (click)="deleteConfirm(element)">
+            <mat-icon>delete_forever</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columns"></tr>
+      <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="pageSizeOption" [pageIndex]="filter.pageIndex!-1" [pageSize]="filter.pageSize"
+      [length]="total" (page)="getList($event)" showFirstLastButtons></mat-paginator>
+  </ng-template>
+
 <!-- 无数据时显示 -->
-<div *ngIf="data?.length<=0" class="p-2">
+<div *ngIf="data && data.length<=0" class="p-2">
   <h4>
     暂无内容！
   </h4>
 </div>
-<table mat-table *ngIf="!isLoading" [dataSource]="dataSource" style="width: 100%;">
-  {$ColumnsDef}
-  <ng-container matColumnDef="actions">
-    <th mat-header-cell *matHeaderCellDef>操作</th>
-    <td mat-cell *matCellDef="let element">
-      <button mat-icon-button color="link" [routerLink]="['../detail',element.id]" matTooltip="查看">
-        <mat-icon>pages</mat-icon>
-      </button>
-      <button mat-icon-button color="primary" (click)="edit(element.id)" matTooltip="编辑">
-        <mat-icon>edit</mat-icon>
-      </button>
-      <button mat-icon-button color="warn" matTooltip="删除" (click)="deleteConfirm(element)">
-        <mat-icon>delete_forever</mat-icon>
-      </button>
-    </td>
-  </ng-container>
 
-  <tr mat-header-row *matHeaderRowDef="columns"></tr>
-  <tr mat-row *matRowDef="let row; columns: columns;"></tr>
-</table>
-<mat-paginator [pageSizeOptions]="pageSizeOption" [pageIndex]="filter.pageIndex!-1" [pageSize]="filter.pageSize"
-  [length]="total" (page)="getList($event)" showFirstLastButtons></mat-paginator>
 
 
 <ng-template #myDialog>

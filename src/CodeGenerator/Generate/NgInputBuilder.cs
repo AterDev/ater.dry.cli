@@ -50,7 +50,7 @@ public class NgInputBuilder
     {
         string name = Name.ToCamelCase();
         string html = "";
-        if (MaxLength < 200)
+        if (MaxLength <= 200)
         {
             html = $@"  <mat-form-field>
     <mat-label>{Label}</mat-label>
