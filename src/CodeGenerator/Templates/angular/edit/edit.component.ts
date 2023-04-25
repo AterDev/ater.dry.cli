@@ -49,13 +49,21 @@ export class EditComponent implements OnInit {
   [@Methods]
   getDetail(): void {
     this.service.getDetail(this.id)
-      .subscribe(res => {
-        this.data = res;
-        this.initForm();
-        this.isLoading = false;
-      }, error => {
-        this.snb.open(error);
-      })
+      .subscribe({
+        next: (res) => {
+          if (res) {
+            this.data = res;
+            this.initForm();
+            this.isLoading = false;
+          } else {
+            this.snb.open('');
+          }
+        },
+        error: (error) => {
+          this.snb.open(error.detail);
+          this.isLoading = false;
+        }
+      });
   }
 
   initForm(): void {
@@ -85,6 +93,7 @@ export class EditComponent implements OnInit {
           },
           error: (error) => {
             this.snb.open(error.detail);
+            this.isProcessing = false;
           },
           complete: () => {
             this.isProcessing = false;

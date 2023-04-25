@@ -67,6 +67,7 @@ export class IndexComponent implements OnInit {
         },
         error: (error) => {
           this.snb.open(error.detail);
+          this.isLoading = false;
         },
         complete: () => {
           this.isLoading = false;

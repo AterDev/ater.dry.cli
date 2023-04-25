@@ -68,6 +68,7 @@ export class AddComponent implements OnInit {
         },
         error: (error) => {
             this.snb.open(error.detail);
+            this.isProcessing = false;
           },
         complete: () => {
             this.isProcessing = false;

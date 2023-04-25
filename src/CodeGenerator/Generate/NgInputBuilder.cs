@@ -54,7 +54,7 @@ public class NgInputBuilder
         {
             html = $@"  <mat-form-field>
     <mat-label>{Label}</mat-label>
-    <input matInput placeholder=""{Label}"" formControlName=""{name}"" {(IsRequired ? "required" : "")} minlength=""{MinLength}"" maxlength=""{MaxLength}"">
+    <input matInput placeholder=""{Label},不超过{MaxLength}字"" formControlName=""{name}"" {(IsRequired ? "required" : "")} minlength=""{MinLength}"" maxlength=""{MaxLength}"">
     <mat-error *ngIf=""{name}?.invalid"">
     {{{{getValidatorMessage('{name}')}}}}
     </mat-error>
@@ -65,7 +65,7 @@ public class NgInputBuilder
         {
             html = $@"  <mat-form-field>
     <mat-label>{Label}</mat-label>
-    <textarea matInput placeholder=""{Label}"" formControlName=""{name}"" {(IsRequired ? "required" : "")} minlength=""{MinLength}"" maxlength=""{MaxLength}""
+    <textarea matInput placeholder=""{Label},不超过{MaxLength}字"" formControlName=""{name}"" {(IsRequired ? "required" : "")} minlength=""{MinLength}"" maxlength=""{MaxLength}""
       cols=""5""></textarea>
     <mat-error *ngIf=""{name}?.invalid"">
     {{{{getValidatorMessage('{name}')}}}}
