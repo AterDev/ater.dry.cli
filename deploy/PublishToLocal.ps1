@@ -7,30 +7,6 @@ param (
 $location = Get-Location
 $OutputEncoding = [System.Console]::OutputEncoding = [System.Console]::InputEncoding = [System.Text.Encoding]::UTF8
 try {
-    if ($withStudio -eq $true) {
-        # build web project
-        Set-Location ../src/AterStudio
-        if ([System.IO.File]::Exists("./publish")) {
-            Remove-Item .\publish -R -Force
-        }
-        
-        dotnet publish -c release -o ./publish
-        # 移除部分 dll文件，减少体积
-        Remove-Item .\publish\Microsoft.CodeAnalysis.CSharp.dll
-        Remove-Item .\publish\Swashbuckle.AspNetCore.SwaggerUI.dll
-        Remove-Item .\publish\Microsoft.CodeAnalysis.dll
-        Remove-Item .\publish\LiteDB.dll
-        Remove-Item .\publish\Microsoft.OpenApi.Readers.dll
-        Remove-Item .\publish\SharpYaml.dll
-
-        Remove-Item .\publish\CodeGenerator.dll
-        Remove-Item .\publish\Command.Share.dll
-        Remove-Item .\publish\Core.dll
-        Remove-Item .\publish\Datastore.dll
-        Remove-Item .\publish\swagger.json
-        Compress-Archive -Path .\publish\*  -DestinationPath "../CommandLine/studio.zip" -CompressionLevel Optimal -Force
-    }
-
 
     Set-Location $location
     # get package name and version
@@ -56,8 +32,36 @@ try {
     }
     $path = Join-Path  $location "../src/AterStudio/AterStudio.csproj"
     $xml.Save($path)
-    
 
+
+    if ($withStudio -eq $true) {
+        # build web project
+        Set-Location ../src/AterStudio
+        if (Test-Path -Path ".\publish") {
+            Remove-Item .\publish -R -Force
+        }
+        
+        dotnet publish -c release -o ./publish
+        # 移除部分 dll文件，减少体积
+        Remove-Item .\publish\Microsoft.CodeAnalysis.CSharp.dll
+        Remove-Item .\publish\Swashbuckle.AspNetCore.SwaggerUI.dll
+        Remove-Item .\publish\Microsoft.CodeAnalysis.dll
+        Remove-Item .\publish\LiteDB.dll
+        Remove-Item .\publish\Microsoft.OpenApi.Readers.dll
+        Remove-Item .\publish\Microsoft.OpenApi.dll
+        Remove-Item .\publish\SharpYaml.dll
+        Remove-Item .\publish\AterStudio.exe
+
+        Remove-Item .\publish\CodeGenerator.dll
+        Remove-Item .\publish\Command.Share.dll
+        Remove-Item .\publish\Core.dll
+        Remove-Item .\publish\Datastore.dll
+        Remove-Item .\publish\swagger.json
+        Compress-Archive -Path .\publish\*  -DestinationPath "../CommandLine/studio.zip" -CompressionLevel Optimal -Force
+    }
+
+
+    Set-Location $location
     Set-Location ../src/CommandLine
     Write-Host 'build and pack new version...'
     # build & pack
