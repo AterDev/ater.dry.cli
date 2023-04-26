@@ -13,7 +13,7 @@ public static class CommandRunner
     {
         try
         {
-            Console.WriteLine("🔵 Generating markdown doc");
+            Console.WriteLine("🚀 Generating markdown doc");
             DocCommand cmd = new(url, output);
             await cmd.RunAsync();
         }
@@ -38,7 +38,7 @@ public static class CommandRunner
     {
         try
         {
-            Console.WriteLine("🔵 Generating ts models and ng services...");
+            Console.WriteLine("🚀 Generating ts models and ng services...");
             var cmd = new RequestCommand(url, output, RequestLibType.NgHttp);
             await cmd.RunAsync();
         }
@@ -63,7 +63,7 @@ public static class CommandRunner
     {
         try
         {
-            Console.WriteLine($"🔵 Generating ts models and {type} request services...");
+            Console.WriteLine($"🚀 Generating ts models and {type} request services...");
             RequestCommand cmd = new(url, output, type);
             await cmd.RunAsync();
         }
@@ -85,7 +85,7 @@ public static class CommandRunner
     /// <param name="entityPath"></param>
     public static async Task GenerateDtoAsync(string entityPath, string output, bool force)
     {
-        Console.WriteLine("🔵 Generating Dtos...");
+        Console.WriteLine("🚀 Generating Dtos...");
         DtoCommand cmd = new(entityPath, output);
         await cmd.RunAsync(force);
     }
@@ -100,10 +100,10 @@ public static class CommandRunner
     public static async Task GenerateManagerAsync(string path, string dtoPath = "",
             string servicePath = "", bool force = false)
     {
-        Console.WriteLine("🔵 Generate dtos");
+        Console.WriteLine("🚀 Generate dtos");
         DtoCommand dtoCmd = new(path, dtoPath);
         await dtoCmd.RunAsync(force);
-        Console.WriteLine("🔵 Generate manager");
+        Console.WriteLine("🚀 Generate manager");
         ManagerCommand storeCmd = new(path, dtoPath, servicePath);
         await storeCmd.RunAsync(force);
     }
@@ -120,14 +120,14 @@ public static class CommandRunner
     {
         try
         {
-            Console.WriteLine("🔵 Generate dtos");
+            Console.WriteLine("🚀 Generate dtos");
             DtoCommand dtoCmd = new(path, dtoPath);
             await dtoCmd.RunAsync(force);
-            Console.WriteLine("🔵 Generate store");
+            Console.WriteLine("🚀 Generate store");
             ManagerCommand storeCmd = new(path, dtoPath, servicePath, suffix);
             await storeCmd.RunAsync(force);
 
-            Console.WriteLine("🔵 Generate rest api");
+            Console.WriteLine("🚀 Generate rest api");
             ApiCommand apiCmd = new(path, dtoPath, servicePath, apiPath, suffix);
             await apiCmd.RunAsync(force);
         }
@@ -145,7 +145,7 @@ public static class CommandRunner
     /// <param name="output">前端根目录</param>
     public static async Task GenerateNgPagesAsync(string entityPah, string dtoPath, string output = "")
     {
-        Console.WriteLine("🔵 Generate view");
+        Console.WriteLine("🚀 Generate view");
         ViewCommand viewCmd = new ViewCommand(entityPah, dtoPath, output);
         await viewCmd.RunAsync();
     }

@@ -1,3 +1,4 @@
+using Datastore;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Interfaces;
@@ -28,14 +29,30 @@ public class RequestGenerate : GenerateBase
 
     public static string GetBaseService(RequestLibType libType)
     {
-        string content = libType switch
-        {
-            RequestLibType.NgHttp => GetTplContent("angular.base.service.tpl"),
-            RequestLibType.Axios => GetTplContent("RequestService.axios.service.tpl"),
-            _ => ""
-        };
+        var db = new DbContext();
+        string? content = null;
 
-        return content;
+        var data = db.TemplateFile.FindAll();
+        switch (libType)
+        {
+            case RequestLibType.NgHttp:
+                content = db.TemplateFile.Query()
+                    .Where(t => t.Name == "angular.base.service.tpl")
+                    .Where(t => t.ProjectId == Const.PROJECT_ID)
+                    .Select(t => t.Content)
+                    .FirstOrDefault();
+                return content ?? GetTplContent("angular.base.service.tpl");
+
+            case RequestLibType.Axios:
+                content = db.TemplateFile.Query()
+                    .Where(t => t.Name == "RequestService.axios.service.tpl")
+                    .Select(t => t.Content)
+                    .FirstOrDefault();
+                return content ?? GetTplContent("RequestService.axios.service.tpl");
+            default:
+                break;
+        }
+        return default!;
     }
 
     /// <summary>

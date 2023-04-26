@@ -1,6 +1,9 @@
 <div class="d-flex">
   <div class="col-auto">
     <!-- select from list -->
+    <legend class="h2 mt-2">
+      选择模板文件
+    </legend>
     <mat-action-list>
       <button mat-list-item *ngFor="let file of allFiles" (click)="selectFile(file.name!)">
         {{file.displayName}}

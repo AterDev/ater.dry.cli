@@ -296,7 +296,6 @@ public class EntityManager
     public async Task GenerateRequestAsync(Project project, string webPath, RequestLibType type, string? swaggerPath = null)
     {
         await InitConfigAsync(project);
-        Const.PROJECT_ID = project.ProjectId;
         // 更新选项
         project.WebAppPath = webPath;
         project.SwaggerPath = swaggerPath;
@@ -310,14 +309,12 @@ public class EntityManager
     public async Task GenerateClientRequestAsync(Project project, string webPath, LanguageType type, string? swaggerPath = null)
     {
         await InitConfigAsync(project);
-        Const.PROJECT_ID = project.ProjectId;
         swaggerPath ??= Path.Combine(project.HttpPath, "swagger.json");
         await CommandRunner.GenerateCSharpApiClientAsync(swaggerPath, webPath, type);
     }
 
     public async Task GenerateSyncAsync(Project project)
     {
-        await InitConfigAsync(project);
         Const.PROJECT_ID = project.ProjectId;
         string swaggerPath = Path.Combine(project.HttpPath, "swagger.json");
         await CommandRunner.SyncToAngularAsync(swaggerPath, project.EntityPath, project.SharePath, project.HttpPath);
@@ -326,7 +323,6 @@ public class EntityManager
     public async Task GenerateNgModuleAsync(Project project, string entityName, string rootPath)
     {
         await InitConfigAsync(project);
-        Const.PROJECT_ID = project.ProjectId;
         var dtoPath = Path.Combine(project.Path, "..", "src", Config.DtoPath);
         var entityDir = Path.Combine(project.Path, "..", "src", Config.EntityPath, "Entities");
         var entityPath = Directory.GetFiles(entityDir, entityName, SearchOption.AllDirectories)
@@ -344,6 +340,7 @@ public class EntityManager
 
     private async Task InitConfigAsync(Project project)
     {
+        Const.PROJECT_ID = project.ProjectId;
         var slnFile = new FileInfo(project.Path);
         // 如果是目录
         string? configFile = (slnFile.Attributes & FileAttributes.Directory) != 0

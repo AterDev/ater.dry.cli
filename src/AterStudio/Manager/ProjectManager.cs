@@ -4,6 +4,7 @@ using Command.Share;
 using Command.Share.Commands;
 using Core;
 using Core.Entities;
+using Core.Infrastructure;
 using Core.Infrastructure.Helper;
 using Datastore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -235,7 +236,7 @@ public class ProjectManager
             file = new TemplateFile
             {
                 Name = name,
-                ProjectId = id,
+                ProjectId = Const.PROJECT_ID,
                 Content = content
             };
             _db.TemplateFile.EnsureIndex(f => f.Name);
@@ -244,7 +245,7 @@ public class ProjectManager
         else
         {
             file.Content = content;
-            file.ProjectId = id;
+            file.ProjectId = Const.PROJECT_ID;
             return _db.TemplateFile.Update(file);
         }
     }

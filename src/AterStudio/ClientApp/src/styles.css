@@ -29,3 +29,9 @@ body {
 .w-100 {
     width: 100% !important;
 }
+
+
+.h2 {
+    font-size: 1.2rem;
+    padding: 4px 8px;
+}
