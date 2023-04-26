@@ -26,6 +26,10 @@
             <mat-icon>api</mat-icon>
             <span *ngIf="opened">接口文档</span>
           </a>
+          <a mat-list-item routerLink="/workspace/database" routerLinkActive="active">
+            <mat-icon>table_view</mat-icon>
+            <span *ngIf="opened">实体表结构</span>
+          </a>
           <a mat-list-item routerLink="/workspace/setting" routerLinkActive="active">
             <mat-icon>settings</mat-icon>
             <span *ngIf="opened">配置</span>

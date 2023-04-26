@@ -202,8 +202,6 @@ public class CompilationHelper
             SyntaxRoot = SyntaxRoot.ReplaceNode(classDeclaration, newClassDeclaration);
         }
     }
-
-
     public void ReplaceImplement(string newImplementContent)
     {
         // replace interface first node  with new node 
@@ -232,5 +230,26 @@ public class CompilationHelper
             }
 
         }
+    }
+
+
+    /// <summary>
+    /// 获取所有属性类型
+    /// </summary>
+    /// <returns></returns>
+    public List<string> GetPropertyTypes()
+    {
+        // get all properties from class
+        var properties = SyntaxRoot!.DescendantNodes()
+            .OfType<PropertyDeclarationSyntax>()
+            .ToList();
+
+        // get  generic type  from PropertyDeclarationSyntax
+        var genericTypes = properties
+            .Select(p => p.Type)
+            .OfType<GenericNameSyntax>()
+            .ToList();
+
+        return default!;
     }
 }

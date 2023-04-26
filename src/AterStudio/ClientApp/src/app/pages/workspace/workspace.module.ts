@@ -9,6 +9,7 @@ import { DtoComponent } from './dto/dto.component';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import { MarkdownModule } from 'ngx-markdown';
 import { SettingComponent } from './setting/setting.component';
+import { DatabaseComponent } from './database/database.component';
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import { SettingComponent } from './setting/setting.component';
     NavigationComponent,
     DocsComponent,
     DtoComponent,
-    SettingComponent
+    SettingComponent,
+    DatabaseComponent
   ],
   imports: [
     ComponentsModule,

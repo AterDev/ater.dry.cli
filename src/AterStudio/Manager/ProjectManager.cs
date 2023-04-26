@@ -270,4 +270,19 @@ public class ProjectManager
             };
         return file;
     }
+
+
+    /// <summary>
+    /// 获取项目根目录
+    /// </summary>
+    /// <param name="projectPath"></param>
+    /// <returns></returns>
+    public static string GetProjectRootPath(string projectPath)
+    {
+        var slnFile = new FileInfo(projectPath);
+        return (slnFile.Attributes & FileAttributes.Directory) != 0
+            ? Path.Combine(projectPath)
+            : Path.Combine(slnFile.DirectoryName!);
+
+    }
 }
