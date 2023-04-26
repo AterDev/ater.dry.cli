@@ -74,10 +74,13 @@ public class RequestCommand : CommandBase
         await GenerateFileAsync(dir, "base.service.ts", content, false);
 
         // 枚举pipe
-        var schemas = ApiDocument!.Components.Schemas;
-        string pipeContent = RequestGenerate.GetEnumPipeContent(schemas);
-        dir = Path.Combine(OutputPath, "pipe");
-        await GenerateFileAsync(dir, "enum-text.pipe.ts", pipeContent, true);
+        if (LibType == RequestLibType.NgHttp)
+        {
+            var schemas = ApiDocument!.Components.Schemas;
+            string pipeContent = RequestGenerate.GetEnumPipeContent(schemas);
+            dir = Path.Combine(OutputPath, "pipe");
+            await GenerateFileAsync(dir, "enum-text.pipe.ts", pipeContent, true);
+        }
     }
 
     public async Task GenerateRequestServicesAsync()

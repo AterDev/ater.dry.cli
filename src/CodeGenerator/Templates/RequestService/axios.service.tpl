@@ -1,178 +1,193 @@
-﻿import router from "@/router";
-import storage from "@/utils/storage";
-import server from "@/_config/server";
-import loading from "@/_packages/request/loading";
-import { RequestOptions } from "@/_packages/request/utils/request";
-import axios, {
+﻿import axios from 'axios'
+import type {
   AxiosInstance,
-  Method,
   AxiosRequestConfig,
   AxiosResponse,
-  ResponseType,
-} from "axios";
+  Method
+} from 'axios'
+import cancelPendingRequest from '@/_packages/request/cancelPendingRequest'
+import cacheTaskResponse from '@/_packages/request/cacheTaskResponse'
+import loadingService from '@/_packages/request/loading'
+import { useSingleMsg } from '@/hooks/utils'
+import router from '@/router'
+import { storage } from '@/utils'
+import mockUrls from '@/_config/mock.json'
+
+declare module 'axios' {
+  interface AxiosRequestConfig {
+    /**
+     * 开启loading(默认开启)
+     */
+    loading?: boolean
+    /**
+     * 最大重试次数(默认3次)
+     */
+    retryTimes?: number
+    /**
+     * 重试延迟(默认100毫秒)
+     */
+    retryDelay?: number
+    /**
+     * 当前重试次数
+     */
+    retryCount?: number
+    /**
+     * 缓存, 只取最后一次返回结果(默认关闭)
+     */
+    cache_task?: boolean
+    cache_task_config?: any
+    /**
+     * 取消重复请求(默认关闭)
+     */
+    repeat_cancel?: boolean
+    /**
+     * 开启错误提示(默认开启)
+     */
+    errorMsg?: boolean
+  }
+}
 
 // 定义常见http状态码错误
-const httpStatus: { [key: number]: string } = {
-  400: "请求参数错误",
-  401: "未授权，请登录",
-  403: "服务器拒绝访问",
-  404: "404 Not Found",
-  405: "请求方法不允许",
-  408: "请求超时",
-  500: "服务器内部错误",
-  501: "服务未实现",
-  502: "网关错误",
-  503: "服务不可用",
-  504: "网关超时",
-  505: "HTTP版本不受支持",
-};
+const httpStatus: Record<number, string> = {
+  400: '请求参数错误',
+  401: '授权状态失效，请重新登录',
+  403: '服务器拒绝访问',
+  404: '404 Not Found',
+  405: '请求方法不允许',
+  408: '请求超时',
+  500: '服务器内部错误',
+  501: '服务未实现',
+  502: '网关错误',
+  503: '服务不可用',
+  504: '网关超时',
+  505: 'HTTP版本不受支持'
+}
+
+interface Options {
+  base: AxiosRequestConfig
+  interceptors?: {
+    request?: (config: AxiosRequestConfig) => void | Promise<any>
+    response?: (response: AxiosResponse) => void | Promise<any>
+    responseError?: (response: AxiosResponse) => void | Promise<any>
+  }
+  loadingService?: {
+    loadingStart: () => void
+    loadingClose: () => void
+  }
+}
 
 export class BaseService {
-  private http: AxiosInstance;
-  queue: any[];
+  private http: AxiosInstance
   constructor() {
-    this.http = axios.create(options.base);
-    this.queue = [];
-
+    this.http = axios.create(options.base)
     this.http.interceptors.request.use(
       async (config) => {
         try {
-          /** 自定义请求拦截器 */
-          await options.interceptors?.request?.(config);
-          /** 如果配置了loading */
-          if (config.loading !== false && !config.retryActiveCount) {
-            options.loading?.loadingStart();
-          }
-          this.addQueue(config);
-          return config;
-        } catch (e) {
-          // 捕获代码错误
-          return Promise.reject(e);
+          await options.interceptors?.request?.(config)
+          config.loading !== false && options.loadingService?.loadingStart()
+          config.repeat_cancel && cancelPendingRequest.removePending(config)
+          config.cache_task && cacheTaskResponse.addTask(config)
+          cancelPendingRequest.addPending(config)
+          return config
+        } catch (error) {
+          return Promise.reject(error)
         }
       },
       (error) => {
-        return Promise.reject(error);
+        return Promise.reject(error)
       }
-    );
+    )
     this.http.interceptors.response.use(
       async (response) => {
         try {
-          /** 自定义响应拦截器 */
-          await options.interceptors?.response?.(response);
-          await options.loading?.loadingClose();
-          this.removeQueue(response.config);
-          return response.data;
-        } catch (e) {
-          /** 如果捕获到代码异常，直接reject */
-          if (e instanceof Error) {
-            return Promise.reject(e);
+          response.config.loading !== false &&
+            options.loadingService?.loadingClose()
+          response.config.repeat_cancel && cancelPendingRequest.removePending(response.config)
+          await options.interceptors?.response?.(response)
+          if (response.config.cache_task) {
+            return new Promise((resolve) => {
+              const cache_task_config = response.config.cache_task_config
+              response.config.cache_task_config = {
+                ...cache_task_config,
+                status: true,
+                resolve,
+                data: response.data
+              }
+              cacheTaskResponse.removeTask(response.config)
+            })
           }
-          return this.retryRequest(response);
+          return response.data
+        } catch (error) {
+          return Promise.reject(error)
         }
       },
       async (error) => {
-        if (error?.response) {
-          /** 执行错误拦截器钩子 */
-          try {
-            await options.interceptors?.responseError?.(error.response);
-            //如果HTTP状态码非200，并且有返回内容
-            return this.retryRequest(error.response);
-          } catch (e) {
-            /** 如果捕获到代码异常，直接reject */
-            if (e instanceof Error) {
-              return Promise.reject(e);
-            }
-            return this.retryRequest(error.response);
-          }
-        } else {
-          if (axios.isCancel(error)) {
-            //主动取消请求
-            return Promise.reject(
-              new Error(`当前请求已取消：\n${error.message}`)
-            );
-          } else {
-            options.loading?.showToast?.(error?.message || error + "");
-            return Promise.reject(error?.message || error + "" || "未知错误");
-          }
+        error.config?.loading !== false &&
+          options.loadingService?.loadingClose()
+        error.config && cancelPendingRequest.removePending(error.config)
+        error.config && cacheTaskResponse.removeTaskItem(error.config)
+        if (error.response) {
+          await options.interceptors?.responseError?.(error.response)
+          // 请求已发出，服务器使用状态代码进行响应
+          // 超出 2xx 的范围
+          return this.retryRequest(error)
         }
-      }
-    );
-  }
-  /** 添加请求队列 */
-  addQueue(config: AxiosRequestConfig) {
-    this.queue.forEach((item, index) => {
-      // 如果存在相同的请求，进入判断
-      if (item.url === config.url && item.method === config.method) {
-        if (item.cancel && item.queue) {
-          item.cancel(JSON.stringify(item));
+        if (axios.isCancel(error)) {
+          return Promise.reject(new Error(`当前请求已取消：\n${error.message}`))
         }
-        // 如果存在相同的请求，从请求队列中移除旧的请求
-        this.queue.splice(index, 1);
+        return Promise.reject(error)
       }
-    });
-    config.cancelToken = new axios.CancelToken((c) => {
-      //添加队列
-      this.queue.push({
-        url: config.url,
-        method: config.method,
-        params: config.params,
-        data: config.data,
-        cancel: c,
-        //默认允许取消请求
-        queue: config.queue ?? true,
-      });
-    });
+    )
   }
-  /** 移出请求队列 */
-  removeQueue(config: AxiosRequestConfig) {
-    const index = this.queue.findIndex((item) => {
-      return item.url === config.url && item.method === config.method;
-    });
-    if (index !== -1) {
-      this.queue.splice(index, 1);
+  /**
+   * 请求重试
+   */
+  retryRequest(error: any) {
+    const config = error.config
+    if (!config || !config.retryTimes) {
+      return this.handleReject(error)
     }
-  }
-  /** 请求重试 */
-  retryRequest(response: AxiosResponse) {
-    const config = response.config;
-    if (config.retryActiveCount === undefined) {
-      //设置当前重试第几次，默认0
-      config.retryActiveCount = 0;
+    const { retryCount = 0, retryDelay = 300, retryTimes = 0 } = config
+    // 在请求对象上设置重试次数
+    config.retryCount = retryCount
+    // 判断是否超过了重试次数
+    if (retryCount >= retryTimes) {
+      return Promise.reject(error)
     }
-    if (config.retryCount === undefined) {
-      //设置重置最大次数，默认3
-      config.retryCount = 3;
-    }
-    if (config.retryActiveCount >= config.retryCount || config.retry !== true) {
-      this.removeQueue(response.config);
-      return this.handleReject(response);
-    }
-    config.retryActiveCount += 1;
-    return new Promise((resolve) => {
+    // 增加重试次数
+    config.retryCount++
+    // 延时处理
+    const delay = new Promise<void>((resolve) => {
       setTimeout(() => {
-        resolve(this.http(response.config));
-      }, config.retryDelay || 100);
-    });
+        resolve()
+      }, retryDelay)
+    })
+    // 重新发起请求
+    return delay.then(() => {
+      return this.http(config)
+    })
   }
-  /** 抛出请求异常 */
-  async handleReject(response: AxiosResponse) {
-    await options.loading?.loadingClose();
-    this.removeQueue(response.config);
+  /**
+   * 抛出请求异常
+   */
+  handleReject(error: any) {
+    const response: AxiosResponse = error.response
     //进行全局错误提示
     if (response.data.detail) {
       //如果后端返回了具体错误内容
-      options.loading?.showToast?.(response.data.detail);
-      return Promise.reject(response.data);
+      error.config?.errorMsg !== false &&
+        useSingleMsg('error', response.data.detail)
+      return Promise.reject(error)
     }
     if (response.status && httpStatus[response.status]) {
       // 存在错误状态码
-      options.loading?.showToast?.(httpStatus[response.status]);
-      return Promise.reject(response.data);
+      error.config?.errorMsg !== false &&
+        useSingleMsg('error', httpStatus[response.status])
+      return Promise.reject(error)
     }
     //如果没有具体错误内容，找后端
-    console.error(`后端接口未按照约定返回，请注意：\n${response.config.url}`);
-    await options.loading?.showToast?.("未知错误，请稍后再试");
-    return Promise.reject(new Error("未知错误，请稍后再试"));
+    console.error(`后端接口未按照约定返回，请注意：\n${response.config.url}`)
+    return Promise.reject(new Error('未知错误，请稍后再试'))
   }
 
   protected request<R>(
@@ -184,43 +199,35 @@ export class BaseService {
     return this.http.request<any, R, any>({
       url: path,
       method,
-      params: ["get"].includes(method) ? body : undefined,
-      data: ["post", "put", "patch"].includes(method) ? body : undefined,
-      queue: ext?.queue,
-      retry: ext?.retry,
-      loading: ext?.loading,
-      baseURL: ext?.baseUrl || options.base.baseURL,
-      responseType: ext?.responseType,
-    });
+      params: ['get', 'delete'].includes(method) ? body : undefined,
+      data: ['post', 'put'].includes(method) ? body : undefined,
+      ...ext
+    })
   }
 }
 
-export interface ExtOptions {
-  queue?: boolean | undefined;
-  retry?: boolean | undefined;
-  loading?: boolean | undefined;
-  baseUrl?: string | null;
-  responseType?: ResponseType;
-}
+export type ExtOptions = AxiosRequestConfig
 
-const options: RequestOptions = {
+const {VITE_APP_SERVER_URL, MODE, VITE_APP_MOCK_URL} = import.meta.env
+const options: Options = {
   base: {
-    baseURL: server.baseUrl,
+    baseURL: VITE_APP_SERVER_URL
   },
-  loading,
   interceptors: {
     request: (config) => {
-      const token = storage.get("accountInfo")?.token;
-      token && ((config.headers as any).Authorization = `Bearer ${token}`);
-      return Promise.resolve(config);
+      const token = storage.get('userInfo')?.token
+      token && ((config.headers as any).Authorization = `Bearer ${token}`)
+      if(MODE === 'development' && (mockUrls as string[]).includes(config.url!)) {
+        config.baseURL = VITE_APP_MOCK_URL
+      }
     },
     responseError(errorResponse) {
       if (errorResponse.status === 401) {
         router.replace({
-          name: "login",
-        });
+          name: 'login'
+        })
       }
-      return Promise.reject("未授权，请登录");
-    },
+    }
   },
-};
+  loadingService
+}

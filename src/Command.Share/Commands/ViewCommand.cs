@@ -168,8 +168,7 @@ public class ViewCommand : CommandBase
         await GenerateComponentAsync(dir, editComponent);
         await GenerateComponentAsync(dir, detailComponent);
         await GenerateComponentAsync(dir, indexComponent);
-
-        dir = Path.Combine(OutputPath, "src", "app", "components");
+         
         await GenerateComponentAsync(dir, layoutComponent);
         await GenerateComponentAsync(dir, confirmDialogComponent);
         await GenerateFileAsync(dir, "components.module.ts", componentsModule);
