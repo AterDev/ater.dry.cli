@@ -3,6 +3,7 @@ using AterStudio.Models;
 using Command.Share;
 using Command.Share.Commands;
 using Core;
+using Core.Entities;
 using Core.Infrastructure.Helper;
 using Datastore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -11,16 +12,16 @@ namespace AterStudio.Manager;
 
 public class ProjectManager
 {
-    private readonly DbContext _dbContext;
+    private readonly DbContext _db;
 
     public ProjectManager(DbContext dbContext)
     {
-        _dbContext = dbContext;
+        _db = dbContext;
     }
 
     public List<Project> GetProjects()
     {
-        return _dbContext.Projects.FindAll().ToList();
+        return _db.Projects.FindAll().ToList();
     }
 
     public async Task<Project?> AddProjectAsync(string name, string path)
@@ -61,20 +62,20 @@ public class ProjectManager
             WebAppPath = config.WebAppPath
         };
 
-        _dbContext.Projects.EnsureIndex(p => p.ProjectId);
-        _dbContext.Projects.Insert(project);
+        _db.Projects.EnsureIndex(p => p.ProjectId);
+        _db.Projects.Insert(project);
 
         return project;
     }
 
     public bool DeleteProject(Guid id)
     {
-        return _dbContext.Projects.Delete(id);
+        return _db.Projects.Delete(id);
     }
 
     public Project GetProject(Guid id)
     {
-        return _dbContext.Projects.FindById(id);
+        return _db.Projects.FindById(id);
     }
 
     public List<SubProjectInfo>? GetAllProjects(Guid id)
@@ -190,5 +191,82 @@ public class ProjectManager
     public void StopWatcher(Project project)
     {
         WatcherManager.StopWatcher(project.ProjectId);
+    }
+
+    /// <summary>
+    /// 可修改的模板内容
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public List<TemplateFile> GetTemplateFiles(Guid id)
+    {
+        return new List<TemplateFile>
+        {
+            new TemplateFile()
+            {
+                Name = "RequestService.axios.service.tpl",
+                DisplayName = "Axios请求基础类",
+                ProjectId = id
+            },
+            new TemplateFile()
+            {
+                Name = "angular.base.service.tpl",
+                DisplayName = "Angular请求基础类",
+                ProjectId = id
+            },
+        };
+    }
+
+    /// <summary>
+    /// save template content
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="name"></param>
+    /// <param name="content"></param>
+    /// <returns></returns>
+    public bool SaveTemplate(Guid id, string name, string content)
+    {
+        var file = _db.TemplateFile.Query()
+           .Where(f => f.Name.Equals(name))
+           .FirstOrDefault();
+
+        if (file == null)
+        {
+            file = new TemplateFile
+            {
+                Name = name,
+                ProjectId = id,
+                Content = content
+            };
+            _db.TemplateFile.EnsureIndex(f => f.Name);
+            return _db.TemplateFile.Insert(file).AsBoolean;
+        }
+        else
+        {
+            file.Content = content;
+            file.ProjectId = id;
+            return _db.TemplateFile.Update(file);
+        }
+    }
+
+    /// <summary>
+    /// get template content
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    public TemplateFile GetTemplate(Guid id, string name)
+    {
+        var project = GetProject(id);
+        // 从库中获取，如果没有，则从模板中读取
+        var file = _db.TemplateFile.Query()
+            .Where(f => f.Name.Equals(name))
+            .FirstOrDefault() ?? new TemplateFile
+            {
+                Name = name,
+                ProjectId = id,
+                Content = GenerateBase.GetTplContent(name)
+            };
+        return file;
     }
 }

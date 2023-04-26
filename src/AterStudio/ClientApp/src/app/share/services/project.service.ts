@@ -2,9 +2,11 @@ import { Injectable } from '@angular/core';
 import { BaseService } from './base.service';
 import { Observable } from 'rxjs';
 import { UpdateConfigOptionsDto } from '../models/project/update-config-options-dto.model';
+import { TemplateFileUpsert } from '../models/project/template-file-upsert.model';
 import { Project } from '../models/project/project.model';
 import { SubProjectInfo } from '../models/project/sub-project-info.model';
 import { ConfigOptions } from '../models/project/config-options.model';
+import { TemplateFile } from '../models/project/template-file.model';
 
 /**
  * 项目
@@ -73,6 +75,35 @@ export class ProjectService extends BaseService {
   updateConfig(id: string, data: UpdateConfigOptionsDto): Observable<boolean> {
     const url = `/api/Project/setting/${id}`;
     return this.request<boolean>('put', url, data);
+  }
+
+  /**
+   * 获取模板名称
+   * @param id string
+   */
+  getTemplateFiles(id: string): Observable<TemplateFile[]> {
+    const url = `/api/Project/tempaltes/${id}`;
+    return this.request<TemplateFile[]>('get', url);
+  }
+
+  /**
+   * 获取模板内容
+   * @param id 
+   * @param name 
+   */
+  getTemplateFile(id: string, name?: string): Observable<TemplateFile> {
+    const url = `/api/Project/template/${id}?name=${name}`;
+    return this.request<TemplateFile>('get', url);
+  }
+
+  /**
+   * 更新模板内容
+   * @param id 
+   * @param data TemplateFileUpsert
+   */
+  saveTemplateFile(id: string, data: TemplateFileUpsert): Observable<boolean> {
+    const url = `/api/Project/template/${id}`;
+    return this.request<boolean>('post', url, data);
   }
 
   /**

@@ -1,7 +1,7 @@
 ﻿using AterStudio.Models;
+using Core.Entities;
 using Core.Infrastructure;
 using Core.Infrastructure.Helper;
-using Core.Models;
 using Datastore;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;

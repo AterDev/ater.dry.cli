@@ -1,4 +1,5 @@
 using System.Reflection.Metadata;
+using Core.Entities;
 
 namespace CodeGenerator.Generate;
 

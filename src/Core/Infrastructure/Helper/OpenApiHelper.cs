@@ -1,4 +1,5 @@
-﻿using Microsoft.OpenApi.Any;
+﻿using Core.Entities;
+using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
 using PropertyInfo = Core.Models.PropertyInfo;

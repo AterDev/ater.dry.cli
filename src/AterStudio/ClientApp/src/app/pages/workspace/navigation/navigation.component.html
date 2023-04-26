@@ -9,7 +9,7 @@
       </button>
     </div>
     <mat-accordion class="example-headers-align" multi>
-      <!-- 知识库 -->
+      <!-- 工作台 -->
       <mat-expansion-panel hideToggle>
         <mat-expansion-panel-header>
           <mat-panel-title>
@@ -23,8 +23,12 @@
             <span *ngIf="opened">代码生成</span>
           </a>
           <a mat-list-item routerLink="/workspace/docs" routerLinkActive="active">
-            <mat-icon>description</mat-icon>
+            <mat-icon>api</mat-icon>
             <span *ngIf="opened">接口文档</span>
+          </a>
+          <a mat-list-item routerLink="/workspace/setting" routerLinkActive="active">
+            <mat-icon>settings</mat-icon>
+            <span *ngIf="opened">配置</span>
           </a>
         </mat-nav-list>
       </mat-expansion-panel>

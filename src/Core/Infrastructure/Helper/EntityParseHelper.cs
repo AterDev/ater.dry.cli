@@ -1,5 +1,6 @@
 ﻿
 using System.Text.RegularExpressions;
+using Core.Entities;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PropertyInfo = Core.Models.PropertyInfo;
 

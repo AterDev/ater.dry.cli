@@ -9,7 +9,7 @@ public class GenerateBase
     /// 获取模板内容
     /// </summary>
     /// <param name="tplPath"></param>
-    protected static string GetTplContent(string tplPath)
+    public static string GetTplContent(string tplPath)
     {
         tplPath = "CodeGenerator.Templates." + tplPath;
         // 读取模板文件

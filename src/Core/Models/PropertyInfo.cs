@@ -1,4 +1,5 @@
-﻿using LiteDB;
+﻿using Core.Entities;
+using LiteDB;
 
 namespace Core.Models;
 

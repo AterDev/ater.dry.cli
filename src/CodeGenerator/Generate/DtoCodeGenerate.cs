@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using Core.Entities;
 using Datastore;
 using Datastore.Models;
 using PropertyInfo = Core.Models.PropertyInfo;

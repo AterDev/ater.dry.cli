@@ -1,4 +1,5 @@
-﻿using PropertyInfo = Core.Models.PropertyInfo;
+﻿using Core.Entities;
+using PropertyInfo = Core.Models.PropertyInfo;
 
 namespace CodeGenerator.Generate;
 public class ProtobufGenerate : GenerateBase

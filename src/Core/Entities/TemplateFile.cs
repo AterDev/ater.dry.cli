@@ -5,25 +5,28 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.Models;
+namespace Core.Entities;
 /// <summary>
-/// 接口文档
+/// 模板内容
 /// </summary>
-public class ApiDocInfo : EntityBase
+public class TemplateFile : EntityBase
 {
     /// <summary>
-    /// 文档名称
+    /// 名称
     /// </summary>
+    [MaxLength(100)]
     public required string Name { get; set; }
 
     /// <summary>
-    /// 文档描述
+    /// 显示名称
     /// </summary>
-    public string? Description { get; set; }
+    [MaxLength(60)]
+    public string? DisplayName { get; set; }
 
     /// <summary>
-    /// 文档地址
+    /// 内容
     /// </summary>
-    public required string Path { get; set; }
+    [MaxLength(10_000)]
+    public string? Content { get; set; }
 
 }

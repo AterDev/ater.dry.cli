@@ -1,5 +1,6 @@
 ﻿using AterStudio.Manager;
 using AterStudio.Models;
+using Core.Entities;
 using Datastore.Models;
 using Microsoft.AspNetCore.Mvc;
 

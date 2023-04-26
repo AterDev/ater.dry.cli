@@ -1,4 +1,6 @@
-﻿namespace AterStudio.Models;
+﻿using Core.Entities;
+
+namespace AterStudio.Models;
 
 /// <summary>
 /// 接口返回模型

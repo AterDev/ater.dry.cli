@@ -1,5 +1,6 @@
 ﻿using AterStudio.Manager;
 using AterStudio.Models;
+using Core.Entities;
 using Core.Infrastructure;
 using Datastore;
 using Microsoft.AspNetCore.Mvc;
@@ -90,6 +91,43 @@ public class ProjectController : ControllerBase
     {
         return _manager.DeleteProject(id);
     }
+
+
+    /// <summary>
+    /// 获取模板名称
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("tempaltes/{id}")]
+    public List<TemplateFile> GetTemplateFiles([FromRoute] Guid id)
+    {
+        return _manager.GetTemplateFiles(id);
+    }
+
+
+    /// <summary>
+    /// 获取模板内容
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    [HttpGet("template/{id}")]
+    public TemplateFile GetTemplateFile([FromRoute] Guid id, string name)
+    {
+        return _manager.GetTemplate(id, name);
+    }
+
+    /// <summary>
+    /// 更新模板内容
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    [HttpPost("template/{id}")]
+    public bool SaveTemplateFile([FromRoute] Guid id, TemplateFileUpsert dto)
+    {
+        return _manager.SaveTemplate(id, dto.Name, dto.Content);
+    }
+
 
     /// <summary>
     /// 获取监听状态

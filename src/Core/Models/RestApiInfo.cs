@@ -1,4 +1,5 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Core.Entities;
+using Microsoft.OpenApi.Models;
 namespace Core.Models;
 
 /// <summary>

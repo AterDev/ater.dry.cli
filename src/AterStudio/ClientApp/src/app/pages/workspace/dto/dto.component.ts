@@ -18,7 +18,11 @@ export class DtoComponent implements OnInit {
   dtos: EntityFile[] = [];
   isLoading = true;
   projectId: string;
-  editorOptions = { theme: 'vs-dark', language: 'csharp' };
+  editorOptions = {
+    theme: 'vs-dark', language: 'csharp', minimap: {
+      enabled: false
+    }
+  };
   currentTabName: string | null = null;
   code: string = '';
   constructor(

@@ -1,6 +1,7 @@
 ﻿using LiteDB;
+using PropertyInfo = Core.Models.PropertyInfo;
 
-namespace Core.Models;
+namespace Core.Entities;
 /// <summary>
 /// defined entity model 
 /// </summary>

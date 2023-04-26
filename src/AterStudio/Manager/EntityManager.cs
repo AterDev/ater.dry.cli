@@ -2,6 +2,7 @@
 using Command.Share;
 using Command.Share.Commands;
 using Core;
+using Core.Entities;
 using Core.Infrastructure;
 using Datastore;
 using Datastore.Models;
