@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Text;
 using AterStudio.Manager;
 using Core.Entities;
 using Core.Infrastructure;
@@ -26,6 +27,7 @@ public class EntityAdvance
     /// <returns>markdown format</returns>
     public string GetDatabaseStructure(Guid id)
     {
+        var result = "";
         var project = _dbContext.Projects.FindById(id);
 
         var projectPath = ProjectManager.GetProjectRootPath(project.Path);
@@ -48,28 +50,35 @@ public class EntityAdvance
 
                 if (entityPath != null)
                 {
-                    compilation.AddSyntaxTree(File.ReadAllText(entityPath));
+                    var entityCompilation = new EntityParseHelper(entityPath);
+                    var entityInfo = entityCompilation.GetEntity();
+                    result += ToMarkdown(entityInfo);
 
                 }
             }
         }
-
-        return default;
+        return result;
     }
-    //public EntityInfo ParseEntity(ClassDeclarationSyntax classDeclaration)
-    //{
-    //    string name = classDeclaration!.Identifier.ToString();
-    //    string comment = GetClassComment(classDeclaration);
-    //    string? namespaceName = CompilationHelper.GetNamesapce();
 
-    //    return new EntityInfo()
-    //    {
-    //        Name = name,
-    //        ProjectId = Const.PROJECT_ID,
-    //        NamespaceName = namespaceName,
-    //        Comment = comment,
-    //        PropertyInfos = GetPropertyInfos(),
-    //    };
-    //    return default;
-    //}
+    /// <summary>
+    /// 实体转换为markdown table
+    /// </summary>
+    /// <param name="entityInfo"></param>
+    /// <returns></returns>
+    public string ToMarkdown(EntityInfo entityInfo)
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine($"## {entityInfo.Name} ({entityInfo.Summary})");
+        sb.AppendLine($"|字段名|类型|是否可空|说明|");
+        sb.AppendLine($"|---|---|---|---|");
+        foreach (var property in entityInfo.PropertyInfos)
+        {
+            var comment = string.IsNullOrWhiteSpace(property.CommentSummary)
+                ? "无"
+                : property.CommentSummary;
+
+            sb.AppendLine($"|{property.Name}|{property.Type}|{property.IsNullable}|{comment}|");
+        }
+        return sb.ToString();
+    }
 }

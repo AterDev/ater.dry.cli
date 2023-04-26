@@ -1,4 +1,5 @@
-﻿using AterStudio.Manager;
+﻿using AterStudio.Advance;
+using AterStudio.Manager;
 using AterStudio.Models;
 using Core.Entities;
 using Core.Infrastructure;
@@ -15,9 +16,11 @@ namespace AterStudio.Controllers;
 public class ProjectController : ControllerBase
 {
     private readonly ProjectManager _manager;
-    public ProjectController(ProjectManager manager)
+    private readonly EntityAdvance _advace;
+    public ProjectController(ProjectManager manager, EntityAdvance advace)
     {
         _manager = manager;
+        _advace = advace;
     }
 
     [HttpGet]
@@ -128,6 +131,16 @@ public class ProjectController : ControllerBase
         return _manager.SaveTemplate(id, dto.Name, dto.Content);
     }
 
+    /// <summary>
+    /// 获取实体表结构
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpGet("database/{id}")]
+    public string GetDatabaseContent([FromRoute] Guid id)
+    {
+        return _advace.GetDatabaseStructure(id);
+    }
 
     /// <summary>
     /// 获取监听状态

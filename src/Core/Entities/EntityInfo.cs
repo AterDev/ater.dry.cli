@@ -23,6 +23,10 @@ public class EntityInfo : EntityBase
     /// 类注释
     /// </summary>
     public string? Comment { get; set; }
+    /// <summary>
+    /// 类注释
+    /// </summary>
+    public string? Summary { get; set; }
     public EntityKeyType KeyType { get; set; } = EntityKeyType.Guid;
 
     /// <summary>

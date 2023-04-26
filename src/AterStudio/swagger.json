@@ -1314,6 +1314,49 @@
         }
       }
     },
+    "/api/Project/database/{id}": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "summary": "获取实体表结构",
+        "operationId": "Project_GetDatabaseContent",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Project/watcher/{id}": {
       "get": {
         "tags": [
@@ -1683,6 +1726,10 @@
             "nullable": true
           },
           "comment": {
+            "type": "string",
+            "nullable": true
+          },
+          "summary": {
             "type": "string",
             "nullable": true
           },

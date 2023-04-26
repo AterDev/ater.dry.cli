@@ -107,6 +107,15 @@ export class ProjectService extends BaseService {
   }
 
   /**
+   * 获取实体表结构
+   * @param id 
+   */
+  getDatabaseContent(id: string): Observable<string> {
+    const url = `/api/Project/database/${id}`;
+    return this.request<string>('get', url);
+  }
+
+  /**
    * 获取监听状态
    * @param id string
    */

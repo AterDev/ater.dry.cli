@@ -7,6 +7,7 @@ export interface EntityInfo {
   namespaceName?: string | null;
   assemblyName?: string | null;
   comment?: string | null;
+  summary?: string | null;
   keyType?: EntityKeyType | null;
   isEnum?: boolean | null;
   isList: boolean;

@@ -1,5 +1,4 @@
-﻿
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using Core.Entities;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PropertyInfo = Core.Models.PropertyInfo;
@@ -102,17 +101,18 @@ public class EntityParseHelper
     public EntityInfo GetEntity()
     {
         ClassDeclarationSyntax? classDeclarationSyntax = RootNodes?.OfType<ClassDeclarationSyntax>().FirstOrDefault();
-        string name = classDeclarationSyntax!.Identifier.ToString();
-        string comment = GetClassComment(classDeclarationSyntax);
-        string? namespaceName = CompilationHelper.GetNamesapce();
+        Name = classDeclarationSyntax?.Identifier.ToString();
+        NamespaceName = CompilationHelper.GetNamesapce();
+        Comment = GetClassComment(classDeclarationSyntax);
 
         return new EntityInfo()
         {
-            Name = name,
+            Name = Name!,
             ProjectId = Const.PROJECT_ID,
             AssemblyName = AssemblyName,
-            NamespaceName = namespaceName,
-            Comment = comment,
+            NamespaceName = NamespaceName,
+            Comment = Comment,
+            Summary = GetComment(),
             PropertyInfos = GetPropertyInfos(),
             KeyType = KeyType
         };
@@ -158,7 +158,7 @@ public class EntityParseHelper
     {
         List<AssemblyHelper.XmlCommentMember>? members = AssemblyHelper.GetXmlMembers(ProjectFile.Directory!);
         return members?.Where(m => m.FullName.EndsWith(NamespaceName + "." + Name))
-                .Select(s => s.Summary)
+                .Select(s => s.Summary?.Trim())
                 .FirstOrDefault();
     }
 

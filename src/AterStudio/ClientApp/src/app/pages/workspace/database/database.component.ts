@@ -1,15 +1,52 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ProjectStateService } from 'src/app/share/project-state.service';
+import { ProjectService } from 'src/app/share/services/project.service';
+
+import 'prismjs/plugins/line-numbers/prism-line-numbers.js';
+import 'prismjs/components/prism-markup.min.js';
 
 @Component({
   selector: 'app-database',
   templateUrl: './database.component.html',
-  styleUrls: ['./database.component.css']
+  styleUrls: ['./database.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 export class DatabaseComponent implements OnInit {
 
-  constructor() { }
+  content: string | null = null;
+  projectId: string | null = null;
+  editorOptions = { theme: 'vs-dark', language: 'markdown', minimap: { enabled: false } };
+  constructor(
+    private service: ProjectService,
+    private projectState: ProjectStateService,
+    private snb: MatSnackBar
+  ) {
+
+    this.projectId = projectState.project?.id!;
+  }
 
   ngOnInit(): void {
+    this.getContent();
+  }
+
+
+  getContent(): void {
+    if (this.projectId)
+      this.service.getDatabaseContent(this.projectId)
+        .subscribe({
+          next: (res) => {
+            if (res) {
+              this.content = res;
+
+            } else {
+              this.snb.open('');
+            }
+          },
+          error: (error) => {
+            this.snb.open(error.detail);
+          }
+        });
   }
 
 }

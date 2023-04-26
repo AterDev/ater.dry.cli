@@ -3,6 +3,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
 using AterStudio;
+using AterStudio.Advance;
 using AterStudio.Manager;
 using Datastore;
 using Microsoft.AspNetCore.Diagnostics;
@@ -16,6 +17,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<DbContext>();
 builder.Services.AddScoped<ProjectManager>();
+builder.Services.AddScoped<EntityAdvance>();
 builder.Services.AddScoped<EntityManager>();
 builder.Services.AddScoped<ApiDocManager>();
 

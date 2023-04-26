@@ -1,6 +1,7 @@
 ﻿using System.Reflection.Metadata;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using PropertyInfo = Core.Models.PropertyInfo;
 
 namespace Core.Infrastructure.Helper;
 
@@ -248,8 +249,18 @@ public class CompilationHelper
         var genericTypes = properties
             .Select(p => p.Type)
             .OfType<GenericNameSyntax>()
+            .Select(t => t.TypeArgumentList.Arguments.First().ToString())
             .ToList();
 
-        return default!;
+        return genericTypes;
+    }
+
+    /// <summary>
+    /// 获取父类名称
+    /// </summary>
+    /// <returns></returns>
+    public string? GetParentClassName()
+    {
+        return ClassSymbol?.BaseType?.Name;
     }
 }
