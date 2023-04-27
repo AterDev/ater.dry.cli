@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Core.Infrastructure;
+using Core.Models;
 using NuGet.Versioning;
 
 namespace Command.Share.Commands;
@@ -39,7 +40,7 @@ public class ManagerCommand : CommandBase
             Console.WriteLine($"the {EntityPath} not exist");
             return;
         }
-        UpdateFiles();
+        await UpdateFilesAsync();
         Console.WriteLine(Instructions[0]);
         await GenerateCommonFilesAsync();
         Console.WriteLine(Instructions[1]);
@@ -62,7 +63,7 @@ public class ManagerCommand : CommandBase
     /// <summary>
     /// 待更新的内容
     /// </summary>
-    private void UpdateFiles()
+    private async Task UpdateFilesAsync()
     {
         if (AssemblyHelper.NeedUpdate(Const.Version))
         {
@@ -76,15 +77,24 @@ public class ManagerCommand : CommandBase
                 """;
             // update extension class
             var extensionPath = Path.Combine(StorePath, "..", Config.EntityPath, "Utils", "Extensions.cs");
-            var compilation = new CompilationHelper(Path.Combine(EntityPath, ".."));
+
             if (File.Exists(extensionPath))
             {
+                var compilation = new CompilationHelper(Path.Combine(EntityPath, ".."));
                 compilation.AddSyntaxTree(File.ReadAllText(extensionPath));
                 if (!compilation.MehtodExist(" public static IQueryable<TSource> WhereNotNull<TSource>(this IQueryable<TSource> source, object? field, Expression<Func<TSource, bool>> expression)"))
                 {
                     compilation.InsertClassMethod(whereNotNullString);
+
+                    var newClassContent = compilation.SyntaxRoot!.ToString();
+                    await GenerateFileAsync(Path.Combine(extensionPath,".."), $"Extensions.cs", newClassContent, true);
+
                     updateContent += "👉 add [WhereNotNull] method to Extension.cs!" + Environment.NewLine;
                 }
+            }
+            else
+            {
+                Console.WriteLine($"⚠️ can't find {extensionPath}");
             }
             updateContent += "update finish!";
             Console.WriteLine(updateContent);

@@ -192,15 +192,17 @@ public class CompilationHelper
         if (SyntaxTree != null && SyntaxRoot != null)
         {
             var classDeclaration = SyntaxRoot.DescendantNodes()
-                .OfType<ClassDeclarationSyntax>().Single();
-
-            methodContent = $"    {methodContent}" + Environment.NewLine;
-            if (SyntaxFactory.ParseMemberDeclaration(methodContent) is not MethodDeclarationSyntax methodNode)
+                .OfType<ClassDeclarationSyntax>().FirstOrDefault();
+            if (classDeclaration != null)
             {
-                return;
+                methodContent = $"    {methodContent}" + Environment.NewLine;
+                if (SyntaxFactory.ParseMemberDeclaration(methodContent) is not MethodDeclarationSyntax methodNode)
+                {
+                    return;
+                }
+                var newClassDeclaration = classDeclaration.AddMembers(methodNode);
+                SyntaxRoot = SyntaxRoot.ReplaceNode(classDeclaration, newClassDeclaration);
             }
-            var newClassDeclaration = classDeclaration.AddMembers(methodNode);
-            SyntaxRoot = SyntaxRoot.ReplaceNode(classDeclaration, newClassDeclaration);
         }
     }
     public void ReplaceImplement(string newImplementContent)
