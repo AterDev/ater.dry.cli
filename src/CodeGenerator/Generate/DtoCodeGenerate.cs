@@ -311,9 +311,10 @@ public class DtoCodeGenerate : GenerateBase
             .Where(p => !p.Type.Equals("User") && !p.Type.Equals("SystemUser"))
             .Select(s => new PropertyInfo()
             {
-                Name = s.Name + (s.IsList ? "Ids" : "Id"),
-                Type = s.IsList ? $"List<{KeyType}>?" : KeyType,
+                Name = s.NavigationName + (s.IsList ? "Ids" : "Id"),
+                Type = s.IsList ? $"List<{KeyType}>" : KeyType,
                 IsRequired = s.IsRequired,
+                IsNullable = s.IsNullable,
                 ProjectId = Const.PROJECT_ID
             })
             .ToList();
@@ -371,10 +372,11 @@ public class DtoCodeGenerate : GenerateBase
             .Where(p => !p.Type.Equals("User") && !p.Type.Equals("SystemUser"))
             .Select(s => new PropertyInfo()
             {
-                Name = s.Name + (s.IsList ? "Ids" : "Id"),
-                Type = s.IsList ? $"List<{KeyType}>?" : KeyType,
+                Name = s.NavigationName + (s.IsList ? "Ids" : "Id"),
+                Type = s.IsList ? $"List<{KeyType}>" : KeyType,
                 ProjectId = Const.PROJECT_ID,
-                IsRequired = s.IsRequired
+                IsRequired = s.IsRequired,
+                IsNullable = s.IsNullable,
             })
             .ToList();
 
