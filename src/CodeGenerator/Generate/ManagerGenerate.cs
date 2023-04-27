@@ -377,7 +377,7 @@ public class ManagerGenerate : GenerateBase
             .ToList();
         navigations?.ForEach(navigation =>
         {
-            var name = navigation.Type;
+            var name = navigation.NavigationName?? navigation.Type;
 
             additionManagerProps += $"    private readonly I{name}Manager _{name.ToCamelCase()}Manager;" + Environment.NewLine;
 
@@ -412,12 +412,13 @@ public class ManagerGenerate : GenerateBase
           .ToList();
         navigations?.ForEach(nav =>
         {
-            var manager = "_" + nav.Type.ToCamelCase() + "Manager";
+            var name = nav.NavigationName ?? nav.Type;
+            var manager = "_" + name.ToCamelCase() + "Manager";
             var variable = nav.Name.ToCamelCase();
             content += $$"""
-                    if (dto.{{nav.Type}}Ids != null && dto.{{nav.Type}}Ids.Any())
+                    if (dto.{{name}}Ids != null && dto.{{name}}Ids.Any())
                     {
-                        var {{variable}}= await {{manager}}.Command.Db.Where(t => dto.{{nav.Type}}Ids.Contains(t.Id)).ToListAsync();
+                        var {{variable}}= await {{manager}}.Command.Db.Where(t => dto.{{name}}Ids.Contains(t.Id)).ToListAsync();
                         if ({{variable}} != null)
                         {
                             entity.{{nav.Name}} = {{variable}};
@@ -429,9 +430,10 @@ public class ManagerGenerate : GenerateBase
         var requiredNavigations = EntityInfo.GetRequiredNavigation();
         requiredNavigations?.ForEach(nav =>
         {
-            var manager = "_" + nav.Type.ToCamelCase() + "Manager";
+            var name = nav.NavigationName ?? nav.Type;
+            var manager = "_" + name.ToCamelCase() + "Manager";
             var idName = nav.Name + "Id";
-            if (nav.Type != "User" && nav.Type != "SystemUser")
+            if (name != "User" && name != "SystemUser")
             {
                 content += $$"""
                         Command.Db.Entry(entity).Property("{{idName}}").CurrentValue = dto.{{idName}};
@@ -462,12 +464,13 @@ public class ManagerGenerate : GenerateBase
           .ToList();
         navigations?.ForEach(nav =>
         {
-            var manager = "_" + nav.Type.ToCamelCase() + "Manager";
+            var name = nav.NavigationName ?? nav.Type;
+            var manager = "_" + name.ToCamelCase() + "Manager";
             var variable = nav.Name.ToCamelCase();
             content += $$"""
-                    if (dto.{{nav.Type}}Ids != null && dto.{{nav.Type}}Ids.Any())
+                    if (dto.{{name}}Ids != null && dto.{{name}}Ids.Any())
                     {
-                        var {{variable}}= await {{manager}}.Command.Db.Where(t => dto.{{nav.Type}}Ids.Contains(t.Id)).ToListAsync();
+                        var {{variable}}= await {{manager}}.Command.Db.Where(t => dto.{{name}}Ids.Contains(t.Id)).ToListAsync();
                         if ({{variable}} != null)
                         {
                             entity.{{nav.Name}} = {{variable}};

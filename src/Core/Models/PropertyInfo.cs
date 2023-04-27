@@ -26,6 +26,10 @@ public class PropertyInfo : EntityBase
     /// </summary>
     public bool? HasMany { get; set; }
     public bool IsEnum { get; set; } = false;
+    /// <summary>
+    /// 是否包括set方法
+    /// </summary>
+    public bool HasSet { get; set; } = true;
     public string? AttributeText { get; set; }
     /// <summary>
     /// xml comment

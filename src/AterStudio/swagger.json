@@ -1932,6 +1932,9 @@
           "isEnum": {
             "type": "boolean"
           },
+          "hasSet": {
+            "type": "boolean"
+          },
           "attributeText": {
             "type": "string",
             "nullable": true

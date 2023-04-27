@@ -218,6 +218,11 @@ public class EntityParseHelper
             propertyInfo.AttributeText = GetAttributeText(prop);
             propertyInfo.CommentXml = GetCommentXml(prop);
             propertyInfo.CommentSummary = GetCommentSummary(prop);
+
+            // weather property has set method?
+            propertyInfo.HasSet = prop.AccessorList?.Accessors
+                .Any(a => a.Kind() == SyntaxKind.SetAccessorDeclaration) ?? false;
+
             // attributes
             ParsePropertyAttributes(prop, propertyInfo);
             properties.Add(propertyInfo);

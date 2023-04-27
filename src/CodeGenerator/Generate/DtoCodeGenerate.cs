@@ -306,12 +306,13 @@ public class DtoCodeGenerate : GenerateBase
         }
 
         List<PropertyInfo>? referenceProps = EntityInfo.PropertyInfos?
-            .Where(p => p.IsNavigation && !p.IsList)
+            .Where(p => p.IsNavigation &&
+                (p.IsRequired || !p.IsNullable || string.IsNullOrWhiteSpace(p.DefaultValue)))
             .Where(p => !p.Type.Equals("User") && !p.Type.Equals("SystemUser"))
             .Select(s => new PropertyInfo()
             {
-                Name = s.Name + "Id",
-                Type = KeyType,
+                Name = s.Name + (s.IsList ? "Ids" : "Id"),
+                Type = s.IsList ? $"List<{KeyType}>?" : KeyType,
                 IsRequired = s.IsRequired,
                 ProjectId = Const.PROJECT_ID
             })
@@ -329,6 +330,7 @@ public class DtoCodeGenerate : GenerateBase
             Comment = FormatComment(EntityInfo.Comment, "添加时请求结构"),
             Tag = EntityInfo.Name,
             Properties = props?.Where(p => !p.IsNavigation
+                && p.HasSet
                 && p.Name != "Id"
                 && p.Name != "CreatedTime"
                 && p.Name != "UpdatedTime"
@@ -364,12 +366,13 @@ public class DtoCodeGenerate : GenerateBase
         }
         // 导航属性处理
         List<PropertyInfo>? referenceProps = EntityInfo.PropertyInfos?
-            .Where(p => p.IsNavigation && !p.IsList)
+            .Where(p => p.IsNavigation &&
+                (p.IsRequired || !p.IsNullable || string.IsNullOrWhiteSpace(p.DefaultValue)))
             .Where(p => !p.Type.Equals("User") && !p.Type.Equals("SystemUser"))
             .Select(s => new PropertyInfo()
             {
-                Name = s.Name + "Id",
-                Type = KeyType,
+                Name = s.Name + (s.IsList ? "Ids" : "Id"),
+                Type = s.IsList ? $"List<{KeyType}>?" : KeyType,
                 ProjectId = Const.PROJECT_ID,
                 IsRequired = s.IsRequired
             })
@@ -390,6 +393,7 @@ public class DtoCodeGenerate : GenerateBase
         };
         // 处理非required的都设置为nullable
         List<PropertyInfo>? properties = props?.Where(p => !p.IsNavigation
+                && p.HasSet
                 && p.Name != "Id"
                 && p.Name != "CreatedTime"
                 && p.Name != "UpdatedTime"

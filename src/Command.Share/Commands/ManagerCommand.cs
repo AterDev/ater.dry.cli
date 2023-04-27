@@ -83,7 +83,7 @@ public class ManagerCommand : CommandBase
             {
                 var compilation = new CompilationHelper(Path.Combine(EntityPath, ".."));
                 compilation.AddSyntaxTree(File.ReadAllText(extensionPath));
-                if (!compilation.MehtodExist(" public static IQueryable<TSource> WhereNotNull<TSource>(this IQueryable<TSource> source, object? field, Expression<Func<TSource, bool>> expression)"))
+                if (!compilation.MehtodExist("public static IQueryable<TSource> WhereNotNull<TSource>(this IQueryable<TSource> source, object? field, Expression<Func<TSource, bool>> expression)"))
                 {
                     compilation.InsertClassMethod(whereNotNullString);
 

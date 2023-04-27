@@ -163,7 +163,7 @@ public class CompilationHelper
     {
         return SyntaxRoot!.DescendantNodes()
             .Where(n => n is MethodDeclarationSyntax)
-            .Any(m => m.ToString() == methodContent);
+            .Any(m => m.ToString().Contains(methodContent));
     }
 
     /// <summary>

@@ -11,6 +11,7 @@ export interface PropertyInfo {
   navigationName?: string | null;
   hasMany?: boolean | null;
   isEnum: boolean;
+  hasSet: boolean;
   attributeText?: string | null;
   commentXml?: string | null;
   commentSummary?: string | null;
