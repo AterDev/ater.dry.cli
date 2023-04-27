@@ -67,6 +67,7 @@ public class ManagerCommand : CommandBase
     {
         if (AssemblyHelper.NeedUpdate(Const.Version))
         {
+            // 更新扩展方法
             string updateContent = "";
             Console.WriteLine("🆕 need update base infrastructure.");
             var whereNotNullString = """
@@ -87,7 +88,7 @@ public class ManagerCommand : CommandBase
                     compilation.InsertClassMethod(whereNotNullString);
 
                     var newClassContent = compilation.SyntaxRoot!.ToString();
-                    await GenerateFileAsync(Path.Combine(extensionPath,".."), $"Extensions.cs", newClassContent, true);
+                    await GenerateFileAsync(Path.Combine(extensionPath, ".."), $"Extensions.cs", newClassContent, true);
 
                     updateContent += "👉 add [WhereNotNull] method to Extension.cs!" + Environment.NewLine;
                 }
@@ -96,6 +97,32 @@ public class ManagerCommand : CommandBase
             {
                 Console.WriteLine($"⚠️ can't find {extensionPath}");
             }
+            // 更新Error Const 常量
+            var errorMsgPath = Path.Combine(StorePath, "..", Config.EntityPath, "Const", "ErrorMsg.cs");
+            if (!File.Exists(errorMsgPath))
+            {
+                File.WriteAllText(errorMsgPath, """
+                    namespace Core.Const;
+                    /// <summary>
+                    /// 错误信息
+                    /// </summary>
+                    public static class ErrorMsg
+                    {
+                        /// <summary>
+                        /// 未找到该用户
+                        /// </summary>
+                        public const string NotFoundUser = "未找到该用户!";
+                        /// <summary>
+                        /// 未找到的资源
+                        /// </summary>
+                        public const string NotFoundResource = "未找到的资源!";
+                    }
+
+                    """);
+
+                updateContent += "👉 add ErrorMsg.cs!" + Environment.NewLine;
+            }
+
             updateContent += "update finish!";
             Console.WriteLine(updateContent);
         }
