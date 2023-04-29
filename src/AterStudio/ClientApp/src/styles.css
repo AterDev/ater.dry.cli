@@ -30,8 +30,13 @@ body {
     width: 100% !important;
 }
 
-
 .h2 {
     font-size: 1.2rem;
     padding: 4px 8px;
+}
+.gap-1{
+    gap: 8px;
+}
+.gap-2 {
+    gap: 16px;
 }

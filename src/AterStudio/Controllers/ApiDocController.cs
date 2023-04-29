@@ -43,7 +43,12 @@ public class ApiDocController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<ApiDocContent?>> GetApiDocContentAsync([FromRoute] Guid id)
     {
-        return await _manager.GetContentAsync(id);
+        var res = await _manager.GetContentAsync(id);
+        if (res == null)
+        {
+            return Problem(_manager.ErrorMsg);
+        }
+        return res;
     }
 
 

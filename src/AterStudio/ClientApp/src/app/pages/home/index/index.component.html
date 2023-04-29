@@ -1,10 +1,8 @@
 <!-- project -->
 <div class="container p-2">
   <button *ngIf="type!='desktop'" mat-raised-button (click)="addProjectDialog()" color="primary">添加项目</button>
-  <mat-divider class="mt-2">
-  </mat-divider>
-  <div class="d-flex gap-1" *ngIf="!isLoading">
-    <mat-card *ngFor="let item of projects" class="col-lg-3 col-md-4 col-sm-4 col-3 card">
+  <div class="d-flex gap-1 flex-wrap mt-2" *ngIf="!isLoading">
+    <mat-card *ngFor="let item of projects" class="col">
       <mat-card-header>
         <mat-card-title>
           {{item.displayName}}

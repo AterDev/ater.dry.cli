@@ -12,6 +12,8 @@ public class ApiDocManager
 {
     private readonly DbContext _dbContext;
 
+    public string? ErrorMsg { get; set; }
+
     public ApiDocManager(DbContext dbContext)
     {
         _dbContext = dbContext;
@@ -34,7 +36,7 @@ public class ApiDocManager
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public async Task<ApiDocContent> GetContentAsync(Guid id)
+    public async Task<ApiDocContent?> GetContentAsync(Guid id)
     {
         var apiDocInfo = _dbContext.ApiDocInfos.FindById(id);
         var path = apiDocInfo.Path;
@@ -45,6 +47,7 @@ public class ApiDocManager
             if (path.StartsWith("http://") || path.StartsWith("https://"))
             {
                 using HttpClient http = new();
+                http.Timeout = TimeSpan.FromSeconds(5);
                 openApiContent = await http.GetStringAsync(path);
             }
             else
@@ -67,7 +70,8 @@ public class ApiDocManager
         }
         catch (Exception ex)
         {
-            throw new Exception($"{path} 请求失败！" + ex.Message);
+            ErrorMsg = $"{path} 请求失败！" + ex.Message;
+            return default;
         }
     }
 
