@@ -7,11 +7,9 @@ using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
 
 namespace AterStudio.Manager;
-
 public class ApiDocManager
 {
     private readonly DbContext _dbContext;
-
     public string? ErrorMsg { get; set; }
 
     public ApiDocManager(DbContext dbContext)

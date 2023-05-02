@@ -9,7 +9,7 @@ ${Properties}
     /// <summary>
     /// 绑在对象
     /// </summary>
-    private readonly Dictionary<string, object> SetCache = new();
+    private readonly Dictionary<string, object> StoreCache = new();
 
     public DataStoreContext(
 ${CtorParams}
@@ -47,14 +47,14 @@ ${CtorAssign}
     private void AddCache(object set)
     {
         var typeName = set.GetType().Name;
-        if (!SetCache.ContainsKey(typeName))
+        if (!StoreCache.ContainsKey(typeName))
         {
-            SetCache.Add(typeName, set);
+            StoreCache.Add(typeName, set);
         }
     }
 
     private object GetSet(string type)
     {
-        return SetCache[type];
+        return StoreCache[type];
     }
 }

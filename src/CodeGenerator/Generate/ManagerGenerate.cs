@@ -262,15 +262,15 @@ public class ManagerGenerate : GenerateBase
 
                 entityClassNames.Add(propGeneric);
 
-                string row = $"{oneTab}public {propType}<{propGeneric}> {propName} {{ get; init; }}";
-                props += row + Environment.NewLine;
+                //string row = $"{oneTab}public {propType}<{propGeneric}> {propName} {{ get; init; }}";
+                //props += row + Environment.NewLine;
                 // 构造函数参数
-                row = $"{twoTab}{fileName} {propName.ToCamelCase()},";
+                string row = $"{twoTab}{fileName} {propName.ToCamelCase()},";
                 ctorParams += row + Environment.NewLine;
                 // 构造函数赋值
-                row = $"{twoTab}{propName} = {propName.ToCamelCase()};";
-                ctorAssign += row + Environment.NewLine;
-                ctorAssign += $"{twoTab}AddCache({propName});" + Environment.NewLine;
+                //row = $"{twoTab}{propName} = {propName.ToCamelCase()};";
+                //ctorAssign += row + Environment.NewLine;
+                ctorAssign += $"{twoTab}AddCache({propName.ToCamelCase()});" + Environment.NewLine;
             });
             // 关联模型需要引入的命名空间
             var importNamespaces = compilationHelper.GetNamespaceNames(entityClassNames);
@@ -285,7 +285,7 @@ public class ManagerGenerate : GenerateBase
         // 构建服务
         string content = GetTplContent("Implement.DataStoreContext.tpl");
         content = content.Replace(TplConst.NAMESPACE, ServiceNamespace)
-            .Replace(TplConst.STORECONTEXT_PROPS, props)
+            .Replace(TplConst.STORECONTEXT_PROPS, "")
             .Replace(TplConst.STORECONTEXT_PARAMS, ctorParams)
             .Replace(TplConst.STORECONTEXT_ASSIGN, ctorAssign);
         return usings + content;
@@ -377,7 +377,7 @@ public class ManagerGenerate : GenerateBase
             .ToList();
         navigations?.ForEach(navigation =>
         {
-            var name = navigation.NavigationName?? navigation.Type;
+            var name = navigation.NavigationName ?? navigation.Type;
 
             additionManagerProps += $"    private readonly I{name}Manager _{name.ToCamelCase()}Manager;" + Environment.NewLine;
 
