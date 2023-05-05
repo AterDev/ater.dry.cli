@@ -1,18 +1,9 @@
-# Description(说明)
-> This is a code assistance tool that provides code generation functions for `ASP.NET Core` projects and `Typescript front-end` projects, and supports command line and graphical interface operations. It is recommended to use the [Ater.web](https://github.com/AterDev/ater.web) template to create projects
+# Droplet CLI
 
-这是一个代码辅助工具，面向`ASP.NET Core`项目以及`Typescript前端`项目提供代码生成的功能，支持命令行与图形界面操作。请使用 [Ater.web](https://github.com/AterDev/ater.web) 模板创建项目。
+Droplet 是一个`dotnet`命令行工具，同时提供Web UI界面，帮助您快速生成代码！
 
-> It can help developers generate common code templates according to entity models (. cs files), including:
-> - Dto files, add, update, query, list and other Dto files
-> - Data store layer:entity DbSet wrapper
-> - Manager layer:business implementation code
-> - Controller API
-> - Typescript interface type
-> - Angular or Axios request service
-> - Angular Basic CURD Page
+## 特性
 
-可以帮助开发者根据实体模型(.cs文件)生成常用的代码模板，包括：
 - Dto文件，增加、更新、查询、列表等Dto文件
 - 数据仓储层代码,对实体的数据操作封装
 - Manager层，业务实现代码
@@ -21,77 +12,31 @@
 - Typescript 接口类型
 - Angular或Axios 的请求服务
 - Angular基础CURD页面
+- 其他更多高级功能
 
+### 对ASP.NET Core的支持
 
-## Install(安装)
-> Check package version first!
+droplet 命令工具可以帮助开发者根据实体模型(.cs文件)生成常用的代码模板，包括：
 
-首先检查包版本，工具依赖.NET SDK,对应关系如下：
+- Dto文件，增加、更新、查询、列表等Dto文件
+- 仓储文件，数据仓储层代码
+- 控制器文件
+- Protobuf文件
+- 客户端请求服务
 
-|Package Version|.NET SDK Version|
-|-|-|
-|6.x|6.0|
-|7.x|7.0|
+### 对Typescript的支持
 
-> If you want to use it alone, please use the 'dotnet tool' command to install it, such as:
+对于前端，可以根据swagger OpenApi的json内容，生成请求所需要的代码(.ts)，包括：
 
-如果你想单独使用，请使用`dotnet tool`命令安装，如：
-```
-dotnet tool install --global ater.droplet.cli
-```
+- 请求服务,`xxx.service.ts`
+- 接口模型,`xxx.ts`
 
-> please use the latest version from [nuget](https://www.nuget.org/packages/ater.droplet.cli)!
+## 项目模板支持
 
-请到[nuget](https://www.nuget.org/packages/ater.droplet.cli)中查询最新版本！
+可使用[ater.web.templates](https://www.nuget.org/packages/ater.web.templates)项目模板，建议配合使用！
 
-## Usage(使用)
+## 文档
 
-### ⭐(Use Web UI)使用图形界面
+更多文档信息请查看
 
-> One command to start the UI interface and enjoy it!
-
-一条命令启动UI界面!
-```pwsh
-droplet studio
-```
-
-> Show entities and generate codes!
-
-查看实体模型，并根据实体模型生成相应的代码:
-
-![entities](./images/code%20generate.png)
-
-
-> generate actions
-
-选择要生成的内容
-
-![generate-actons](./images/generate%20actions.png)
-
-> edit dtos
-
-在线编辑dto
-
-![edit dtos](./images/edit%20dtos.png)
-
-> front-end support
-
-前端内容生成
-
-![front-end](./images/front-end.png)
-
-### Use command line(使用命令行)
-
-> You can also use `droplet --help` to view command help information.
->
-> Use `droplet [command] --help` to view specific command help information.
->
-> You can also view [Online Documentation](https://github.com/AterDev/ater.docs/tree/dev/cn/droplet%20cli).
-
-
-你可以使用`droplet --help` 查看命令帮助信息。
-
-或者使用`droplet [command] --help` 查看具体命令帮助信息。
-
-也可以查看[在线文档](https://github.com/AterDev/ater.docs/tree/dev/cn/droplet%20cli)。
-
+### [官方文档](https://docs.dusi.dev/zh/droplet/%E6%A6%82%E8%BF%B0.html)
