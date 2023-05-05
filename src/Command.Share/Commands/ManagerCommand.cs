@@ -150,23 +150,26 @@ public class ManagerCommand : CommandBase
         // 文件
         string[] interfaceFiles = new string[] { "ICommandStore", "ICommandStoreExt", "IQueryStore", "IQueryStoreExt", "IDomainManager", "IUserContext" };
 
-
         string[] implementFiles = new string[] { "CommandStoreBase", "QueryStoreBase", "DomainManagerBase" };
         string userClass = CodeGen.GetUserContextClass();
 
-        var cover = false;
         // 生成接口文件
         foreach (string name in interfaceFiles)
         {
             string content = CodeGen.GetInterfaceFile(name);
+
+            bool cover;
             // 更新需要覆盖的文件
             if (AssemblyHelper.NeedUpdate("7.0.0")
                 && name == "IDomainManager")
             {
                 cover = true;
             }
-            // 不可覆盖的文件
-            cover = name == "IUserContext" ? false : true;
+            else
+            {
+                // 不可覆盖的文件
+                cover = name != "IUserContext";
+            }
             await GenerateFileAsync(interfaceDir, $"{name}.cs", content, cover);
         }
         // 生成实现文件

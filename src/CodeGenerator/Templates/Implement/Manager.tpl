@@ -9,7 +9,8 @@ public class ${EntityName}Manager : DomainManagerBase<${EntityName}, ${EntityNam
 ${AdditionManagersProps}
     public ${EntityName}Manager(
         DataStoreContext storeContext, 
-        IUserContext userContext${AdditionManagersDI}) : base(storeContext)
+        ILogger<${EntityName}Manager> logger,
+        IUserContext userContext${AdditionManagersDI}) : base(storeContext, logger)
     {
 ${AdditionManagersInit}
         _userContext = userContext;
