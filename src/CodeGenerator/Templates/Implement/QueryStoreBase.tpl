@@ -6,7 +6,7 @@ namespace ${Namespace}.Implement;
 /// </summary>
 /// <typeparam name="TContext"></typeparam>
 /// <typeparam name="TEntity"></typeparam>
-public class QueryStoreBase<TContext, TEntity> :
+public partial class QueryStoreBase<TContext, TEntity> :
     IQueryStore<TEntity>, IQueryStoreExt<TEntity>
     where TContext : DbContext
     where TEntity : EntityBase

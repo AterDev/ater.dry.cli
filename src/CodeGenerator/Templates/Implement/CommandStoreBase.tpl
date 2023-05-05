@@ -6,7 +6,7 @@ namespace ${Namespace}.Implement;
 /// </summary>
 /// <typeparam name="TContext"></typeparam>
 /// <typeparam name="TEntity"></typeparam>
-public class CommandStoreBase<TContext, TEntity> : ICommandStore<TEntity>, ICommandStoreExt<TEntity>
+public partial class CommandStoreBase<TContext, TEntity> : ICommandStore<TEntity>, ICommandStoreExt<TEntity>
     where TContext : DbContext
     where TEntity : EntityBase
 {

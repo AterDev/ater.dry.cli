@@ -2,7 +2,7 @@
 
 namespace ${Namespace}.Implement;
 
-public class DomainManagerBase<TEntity, TUpdate, TFilter, TItem> 
+public partial class DomainManagerBase<TEntity, TUpdate, TFilter, TItem> 
     where TEntity : EntityBase
     where TFilter : FilterBase
 {

@@ -1,6 +1,6 @@
 ﻿namespace ${Namespace}.Implement;
 
-public static class StoreServicesExtensions
+public static partial class StoreServicesExtensions
 {
     public static void AddDataStore(this IServiceCollection services)
     {
