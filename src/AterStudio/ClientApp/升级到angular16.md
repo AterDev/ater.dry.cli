@@ -54,7 +54,9 @@ ng update @angular/material@15 @angular/cdk@15
 
 ```
 
-然后重复之前的操作。
+然后执行`pnpm install`安装新版本包。
+
+之后重复之前的升级操作。
 
 ```pwsh
 ng update
@@ -75,3 +77,19 @@ ng update @angular/material@16 @angular/cdk@16
 升级v16有很多目的，我个人最主要的是尝试新的构建系统，实测，原先20+s的构建时间，可以缩减到7s，效果十分显著，使用起来也非常简单，我们来尝试一下。
 
 ### 使用 esbuild
+
+修改`angular.json`中的配置：
+
+```json
+"architect": {
+  "build": {
+    "builder": "@angular-devkit/build-angular:browser-esbuild",
+    //...
+  }
+  //...
+}
+```
+
+然后尝试一下`ng build`与`ng serve`，你会发现他们花费的时间差不多，build的时间大大缩减！
+
+这比`signal`什么的香多了！
