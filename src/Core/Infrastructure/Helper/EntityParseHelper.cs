@@ -1,6 +1,9 @@
 ﻿using System.Text.RegularExpressions;
+
 using Core.Entities;
+
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+
 using PropertyInfo = Core.Models.PropertyInfo;
 
 namespace Core.Infrastructure.Helper;
@@ -465,15 +468,24 @@ public class EntityParseHelper
 
             if (maxLength != null)
             {
-                propertyInfo.MaxLength = Convert.ToInt32(maxLength.ToString());
+                if (int.TryParse(maxLength.ToString(), out int val))
+                {
+                    propertyInfo.MaxLength = val;
+                }
             }
             if (minLength != null)
             {
-                propertyInfo.MinLength = Convert.ToInt32(minLength.ToString());
+                if (int.TryParse(minLength.ToString(), out int val))
+                {
+                    propertyInfo.MinLength = val;
+                }
             }
             if (stringLength != null)
             {
-                propertyInfo.MaxLength = Convert.ToInt32(stringLength.ToString());
+                if (!int.TryParse(stringLength.ToString(), out int val))
+                {
+                    propertyInfo.MaxLength = val;
+                }
             }
         }
     }
