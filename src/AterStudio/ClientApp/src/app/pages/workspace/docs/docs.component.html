@@ -90,9 +90,9 @@
         <legend>请求内容</legend>
         <!-- query -->
         <div *ngIf="currentApi.queryParameters!.length > 0">
-          <mat-chip-list>
+          <mat-chip-set>
             <mat-chip color="primary">Query</mat-chip>
-          </mat-chip-list>
+          </mat-chip-set>
           <table mat-table #table [dataSource]="currentApi.queryParameters!" class="my-2">
             <ng-container matColumnDef="name">
               <th mat-header-cell *matHeaderCellDef> 名称 </th>
@@ -117,10 +117,10 @@
         </div>
         <!-- body -->
         <div *ngIf="currentApi.requestInfo">
-          <mat-chip-list>
+          <mat-chip-set>
             <mat-chip color="primary">application/json</mat-chip>
             <mat-chip color="primary" selected matTooltip="请求类型">{{currentApi.requestInfo.name}}</mat-chip>
-          </mat-chip-list>
+          </mat-chip-set>
           <div *ngIf="currentApi.requestInfo.propertyInfos!.length>0">
             <table mat-table [dataSource]="currentApi.requestInfo.propertyInfos!" class="my-2">
               <!-- 表格模板 -->
@@ -163,13 +163,13 @@
         <div *ngIf="currentApi.responseInfo">
           <!--  -->
           <ng-container *ngIf="currentApi.responseInfo.propertyInfos!.length>0;else responseElse">
-            <mat-chip-list>
+            <mat-chip-set>
               <mat-chip color="primary">application/json</mat-chip>
               <mat-chip color="primary" selected matTooltip="返回类型"
                 *ngIf="currentApi.responseInfo.name">{{currentApi.responseInfo.name}}
                 <span *ngIf="currentApi.responseInfo.isList">[]</span>
               </mat-chip>
-            </mat-chip-list>
+            </mat-chip-set>
             <!-- 渲染内容 -->
             <table mat-table [dataSource]="currentApi.responseInfo.propertyInfos!" class="my-2">
               <ng-container matColumnDef="name">
@@ -204,10 +204,10 @@
             </table>
           </ng-container>
           <ng-template #responseElse>
-            <mat-chip-list>
+            <mat-chip-set>
               <mat-chip color="primary">application/json</mat-chip>
               <mat-chip color="primary" selected matTooltip="返回类型">{{currentApi.responseInfo.name}}</mat-chip>
-            </mat-chip-list>
+            </mat-chip-set>
           </ng-template>
         </div>
       </div>
