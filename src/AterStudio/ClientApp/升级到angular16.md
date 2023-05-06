@@ -23,7 +23,7 @@ Angular 16版本带来了不少重大的变更，但官方的升级帮助页面�
 ```
 
 > [!NOTE]
-> 请注意，这里我没有将包版本调整到符合angular16的要求，因为我们当前版本是v14，我们要先升级到v15，然后再升级到v16，这里的包版本是对应v15的要求。
+> 请注意，这里我没有将包版本调整到符合Angular16的要求，因为我们当前版本是v14，我们要先升级到v15，然后再升级到v16，这里的包版本是对应v15的要求。
 
 然后运行`pnpm install`或`npm install`。
 
@@ -44,5 +44,34 @@ ng update @angular/core@15 @angular/cli@15
 ng update @angular/material@15 @angular/cdk@15
 ```
 
+#### 升级到v16
+
+先调整包版本
+
+```json
+"zone.js": "~0.13.0"
+"typescript": "~5.0.0"
+
+```
+
+然后重复之前的操作。
+
+```pwsh
+ng update
+ng update @angular/core@16 @angular/cli@16 
+# then commit your repo
+ng update @angular/material@16 @angular/cdk@16
+```
+
+### 其他内容
+
+如果你还使用了其他类库，需要先确认是否支持Angular16。同时按照官方升级文档，处理其他潜在的问题。
+
 > [!NOTE]
 > 在执行`ng update`前，请先暂存当前仓库的内容，否则会警告无法执行！
+
+## 运行
+
+升级v16有很多目的，我个人最主要的是尝试新的构建系统，实测，原先20+s的构建时间，可以缩减到7s，效果十分显著，使用起来也非常简单，我们来尝试一下。
+
+### 使用 esbuild
