@@ -2,10 +2,13 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
+
 using AterStudio;
 using AterStudio.Advance;
 using AterStudio.Manager;
+
 using Datastore;
+
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Models;
@@ -83,7 +86,7 @@ app.UseExceptionHandler(handler =>
         var result = new
         {
             Title = "程序内部错误:" + exception?.Message,
-            Detail = exception?.Message,
+            Detail = exception?.Message + exception?.StackTrace,
             Status = 500,
             TraceId = context.TraceIdentifier
         };
