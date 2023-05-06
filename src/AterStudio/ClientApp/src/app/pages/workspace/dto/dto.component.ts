@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { EntityService } from 'src/app/share/services/entity.service';
 import { EntityFile } from 'models/entity/entity-file.model';
 import { ProjectStateService } from 'src/app/share/project-state.service';
-import { MatTabChangeEvent } from '@angular/material/tabs';
+import { MatLegacyTabChangeEvent as MatTabChangeEvent } from '@angular/material/legacy-tabs';
 
 @Component({
   selector: 'app-dto',

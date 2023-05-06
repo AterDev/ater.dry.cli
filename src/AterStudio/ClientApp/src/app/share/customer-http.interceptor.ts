@@ -8,7 +8,7 @@ import {
 } from '@angular/common/http';
 
 import { catchError } from 'rxjs/operators';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 import { Observable, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { LoginService } from '../auth/login.service';

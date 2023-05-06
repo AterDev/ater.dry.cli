@@ -6,7 +6,7 @@ import { ComponentsModule } from './components/components.module';
 import { AppRoutingModule } from './app-routing.module';
 import { HomeModule } from './pages/home/home.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/snack-bar';
+import { MAT_LEGACY_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/legacy-snack-bar';
 import { CustomerHttpInterceptor } from './share/customer-http.interceptor';
 import { WorkspaceModule } from './pages/workspace/workspace.module';
 import { ShareModule } from './share/share.module';
@@ -40,7 +40,7 @@ import { MarkdownModule, MarkedOptions, ClipboardOptions, ClipboardButtonCompone
     MonacoEditorModule.forRoot()
   ],
   providers: [
-    { provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: { duration: 2500 } },
+    { provide: MAT_LEGACY_SNACK_BAR_DEFAULT_OPTIONS, useValue: { duration: 2500 } },
     { provide: HTTP_INTERCEPTORS, useClass: CustomerHttpInterceptor, multi: true },
   ],
   bootstrap: [AppComponent]

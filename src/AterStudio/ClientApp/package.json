@@ -1,6 +1,6 @@
 {
   "name": "aterstudio",
-  "version": "0.0.0",
+  "version": "7.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --port 9160",
@@ -12,12 +12,12 @@
   "private": true,
   "dependencies": {
     "@angular/animations": "^15.2.9",
-    "@angular/cdk": "^14.2.7",
+    "@angular/cdk": "^15.2.9",
     "@angular/common": "^15.2.9",
     "@angular/compiler": "^15.2.9",
     "@angular/core": "^15.2.9",
     "@angular/forms": "^15.2.9",
-    "@angular/material": "^14.2.7",
+    "@angular/material": "^15.2.9",
     "@angular/platform-browser": "^15.2.9",
     "@angular/platform-browser-dynamic": "^15.2.9",
     "@angular/platform-server": "^15.2.9",
@@ -30,7 +30,7 @@
     "prismjs": "^1.29.0",
     "rxjs": "~7.5.6",
     "tslib": "^2.4.0",
-    "zone.js": "~0.12.0"
+    "zone.js": "~0.13.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^15.2.8",
@@ -45,7 +45,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "^2.0.0",
-    "typescript": "~4.9.0"
+    "typescript": "~5.0.0"
   },
   "overrides": {
     "autoprefixer": "10.4.5"

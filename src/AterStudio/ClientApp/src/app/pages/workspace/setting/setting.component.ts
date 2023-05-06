@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 import { TemplateFile } from 'src/app/share/models/project/template-file.model';
 import { ProjectStateService } from 'src/app/share/project-state.service';
 import { ProjectService } from 'src/app/share/services/project.service';
