@@ -23,7 +23,7 @@
     "@angular/platform-server": "^15.2.9",
     "@angular/router": "^15.2.9",
     "monaco-editor": "^0.33.0",
-    "ngx-monaco-editor-v2": "^14.0.4",
+    "ngx-monaco-editor-v2": "^15.0.1",
     "clipboard": "^2.0.11",
     "marked": "^4.3.0",
     "ngx-markdown": "^15.0.1",
