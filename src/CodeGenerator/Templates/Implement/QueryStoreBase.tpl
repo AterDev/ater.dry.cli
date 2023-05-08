@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace ${Namespace}.Implement;
+
 /// <summary>
 /// 只读仓储基类,请勿直接修改基类内容
 /// </summary>
@@ -192,9 +193,9 @@ public partial class QueryStoreBase<TContext, TEntity> :
         int count = _query.Count();
         List<TItem> data = await _query
             .AsNoTracking()
+            .OrderByDescending(t => t.CreatedTime)
             .Skip((pageIndex - 1) * pageSize)
             .Take(pageSize)
-            .OrderByDescending(t => t.CreatedTime)
             .ProjectTo<TItem>()
             .ToListAsync();
         ResetQuery();
@@ -205,7 +206,6 @@ public partial class QueryStoreBase<TContext, TEntity> :
             PageIndex = pageIndex
         };
     }
-
 }
 
 
@@ -216,3 +216,4 @@ public class QuerySet<TEntity> : QueryStoreBase<QueryDbContext, TEntity>
     {
     }
 }
+
