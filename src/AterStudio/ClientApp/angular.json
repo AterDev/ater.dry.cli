@@ -83,7 +83,7 @@
             },
             "development": {
               "browserTarget": "AterStudio:build:development",
-              "proxyConfig": "proxy.conf.js"
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"
