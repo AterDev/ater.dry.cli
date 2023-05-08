@@ -4,8 +4,13 @@
   <div class="d-flex gap-1 flex-wrap mt-2" *ngIf="!isLoading">
     <mat-card *ngFor="let item of projects" class="col">
       <mat-card-header>
-        <mat-card-title>
-          {{item.displayName}}
+        <mat-card-title class="d-flex align-items-center">
+          <span>
+            {{item.displayName}}
+          </span>
+
+
+
           <button mat-icon-button matTooltip="项目配置" color="primary" (click)="openSetting(item)">
             <mat-icon>settings</mat-icon>
           </button>
