@@ -30,6 +30,9 @@
       <input matInput placeholder="搜索实体类" [(ngModel)]="searchKey" (keyup)="applyFilter($event)">
     </mat-form-field>
     <span class="example-spacer"></span>
+    <button mat-icon-button matTooltip="添加实体" color="primary" (click)="openAddEntity()">
+      <mat-icon>add_circle_outline</mat-icon>
+    </button>
     <button mat-icon-button matTooltip="refresh" (click)="getEntity()" color="primary">
       <mat-icon>refresh</mat-icon>
     </button>
@@ -229,5 +232,24 @@
   </mat-dialog-content>
   <mat-dialog-actions class="justify-content-end">
     <button mat-button [mat-dialog-close]="true">取消</button>
+  </mat-dialog-actions>
+</ng-template>
+
+<ng-template #addEntityDialog>
+  <h2 mat-dialog-title>添加实体</h2>
+  <mat-dialog-content class="py-2 d-flex flex-column">
+    <p>请描述您的实体</p>
+    <mat-form-field>
+      <mat-label>实体名称</mat-label>
+      <input matInput placeholder="名称" [(ngModel)]="entityName" required>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>实体描述</mat-label>
+      <input matInput placeholder="描述" [(ngModel)]="entityDescription" required>
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions class="justify-content-end">
+    <button mat-button mat-dialog-close>取消</button>
+    <button mat-button (click)="addEntity()" color="primary" [disabled]="isSync">添加</button>
   </mat-dialog-actions>
 </ng-template>

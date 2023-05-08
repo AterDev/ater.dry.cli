@@ -8,9 +8,6 @@
           <span>
             {{item.displayName}}
           </span>
-
-
-
           <button mat-icon-button matTooltip="项目配置" color="primary" (click)="openSetting(item)">
             <mat-icon>settings</mat-icon>
           </button>
@@ -58,9 +55,9 @@
 <ng-template #settingDialog>
   <ng-container *ngIf="config && !isProcessing">
     <h2 mat-dialog-title>配置修改</h2>
-    <p>也可以直接编辑项目根目录中的.droplet-config.json</p>
-    <strong>以下路径相对于项目根路径,不用以/开头</strong>
     <mat-dialog-content class="my-1 py-2">
+      <p>也可以直接编辑项目根目录中的.droplet-config.json</p>
+      <strong>以下路径相对于项目根路径,不用以/开头</strong>
       <form [formGroup]="settingForm" class="d-flex flex-column">
         <mat-form-field>
           <mat-label>实体目录</mat-label>

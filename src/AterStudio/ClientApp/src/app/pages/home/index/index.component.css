@@ -1,4 +1,4 @@
-.card:hover .delete-action {
+.mdc-card:hover .delete-action {
     display: inline-block;
 }
 

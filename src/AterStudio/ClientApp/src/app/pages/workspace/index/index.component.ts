@@ -41,16 +41,19 @@ export class IndexComponent implements OnInit {
   force = false;
   isListening = false;
   isProcessing = false;
+
+  entityName: string | null = null;
+  entityDescription: string | null = null;
   @ViewChild("requestDialog", { static: true })
   requestTmpRef!: TemplateRef<{}>;
   @ViewChild("syncDialog", { static: true })
   syncTmpRef!: TemplateRef<{}>;
-
   @ViewChild("protobufDialog", { static: true }) protobufTmpRef!: TemplateRef<{}>;
   @ViewChild("apiDialog", { static: true }) apiTmpRef!: TemplateRef<{}>;
   @ViewChild("generateDialog", { static: true }) generateTmpRef!: TemplateRef<{}>;
   @ViewChild('previewDialog', { static: true }) previewTmpl!: TemplateRef<{}>;
   @ViewChild('ngPagesDialog', { static: true }) ngPagesTmpl!: TemplateRef<{}>;
+  @ViewChild('addEntityDialog', { static: true }) addEntityTmpl!: TemplateRef<{}>;
   editorOptions = { theme: 'vs-dark', language: 'csharp', minimap: { enabled: false } };
   webPath: string | null = null;
   previewItem: EntityFile | null = null;
@@ -162,6 +165,12 @@ export class IndexComponent implements OnInit {
       minWidth: 400
     });
   }
+  openAddEntity(): void {
+    this.dialogRef = this.dialog.open(this.addEntityTmpl, {
+      minWidth: 400,
+      minHeight: 400
+    });
+  }
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -228,6 +237,10 @@ export class IndexComponent implements OnInit {
       default:
         break;
     }
+  }
+
+  addEntity(): void {
+    // TODO:获取实体内容
   }
   openGenerateDialog(type: CommandType, element: EntityFile | null): void {
     this.isBatch = element === null;
