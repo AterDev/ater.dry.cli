@@ -2,27 +2,21 @@
   <mat-toolbar color="primary">
     <button mat-button [routerLink]="['/index']" routerLinkActive="active">项目</button>
     <span style="display:flex;flex:1 1 auto"></span>
-    <!-- <span *ngIf="isLogin">
-      <button [matMenuTriggerFor]="appMenu" mat-button>
-        {{username}}
+    <span *ngIf="isLogin">
+      <button [matMenuTriggerFor]="appMenu" mat-button style="flex-direction: row-reverse;">
+        您已登录
         <mat-icon>arrow_drop_down</mat-icon>
       </button>
       <mat-menu #appMenu="matMenu">
-        <span mat-menu-item>
-          你好,{{username}}
-        </span>
-        <button mat-menu-item routerLink="/account" disabled>
-          <mat-icon>assignment_ind</mat-icon>
-          <span>账号设置</span>
-        </button>
+
         <button mat-menu-item (click)="logout()">
-          <mat-icon>exit_to_app</mat-icon>
           <span>登出</span>
+          <mat-icon>exit_to_app</mat-icon>
         </button>
       </mat-menu>
-    </span> -->
+    </span>
     <span *ngIf="!isLogin">
-      <!-- <button mat-button (click)="login()">登录</button> -->
+      <button mat-button (click)="login()">登录</button>
     </span>
   </mat-toolbar>
 </div>

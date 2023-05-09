@@ -183,7 +183,7 @@ export class IndexComponent implements OnInit {
     if (project) {
 
       this.projectState.setProject(project);
-      this.router.navigateByUrl('/workspace/code');
+      this.router.navigateByUrl('/workspace/index');
 
     } else {
       this.snb.open('无效的项目');

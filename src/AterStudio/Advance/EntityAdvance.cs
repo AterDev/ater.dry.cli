@@ -2,21 +2,19 @@
 using System.Text;
 using AterStudio.Manager;
 using Core.Entities;
-using Core.Infrastructure;
 using Core.Infrastructure.Helper;
 using Datastore;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace AterStudio.Advance;
 
 public class EntityAdvance
 {
-
     private readonly DbContext _dbContext;
-    public EntityAdvance(DbContext dbContext)
+    private readonly DusiHttpClient _httpClient;
+    public EntityAdvance(DbContext dbContext, DusiHttpClient httpClient)
     {
         _dbContext = dbContext;
+        _httpClient = httpClient;
     }
 
 
@@ -80,5 +78,16 @@ public class EntityAdvance
             sb.AppendLine($"|{property.Name}|{property.Type}|{property.IsNullable}|{comment}|");
         }
         return sb.ToString();
+    }
+
+
+    public async Task<string?> GetTokenAsync(string username, string password)
+    {
+        return await _httpClient.GetTokenAsync(username, password);
+    }
+
+    public async Task<List<string>?> GetEntityAsync(string name, string description)
+    {
+        return await _httpClient.GetEntityAsync(name, description);
     }
 }

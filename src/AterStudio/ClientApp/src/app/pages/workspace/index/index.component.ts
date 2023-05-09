@@ -166,10 +166,8 @@ export class IndexComponent implements OnInit {
     });
   }
   openAddEntity(): void {
-    this.dialogRef = this.dialog.open(this.addEntityTmpl, {
-      minWidth: 400,
-      minHeight: 400
-    });
+    this.router.navigateByUrl('/workspace/entity');
+
   }
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;

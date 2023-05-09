@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 // import { OAuthService, OAuthErrorEvent, UserInfo } from 'angular-oauth2-oidc';
 import { Router } from '@angular/router';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { AdvanceService } from 'src/app/share/services/advance.service';
 import { LoginService } from 'src/app/auth/login.service';
-import { AuthService } from 'src/app/share/services/auth.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-login',
@@ -13,35 +14,17 @@ import { AuthService } from 'src/app/share/services/auth.service';
 export class LoginComponent implements OnInit {
   public loginForm!: FormGroup;
   constructor(
+    private advanceService: AdvanceService,
     private loginService: LoginService,
-    private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private snb: MatSnackBar
 
   ) {
   }
   get username() { return this.loginForm.get('username'); }
   get password() { return this.loginForm.get('password'); }
+
   ngOnInit(): void {
-    // const token = this.oauthService.getAccessToken();
-    // const cliams = this.oauthService.getIdentityClaims();
-    // if (token && cliams) {
-    //   this.router.navigateByUrl('/index');
-    // }
-
-    // this.oauthService.events.subscribe(event => {
-    //   if (event instanceof OAuthErrorEvent) {
-    //     // TODO:处理错误
-    //     console.error(event);
-    //   } else {
-    //     if (event.type === 'token_received' || event.type === 'token_refreshed') {
-    //       this.oauthService.loadUserProfile()
-    //         .then(() => {
-    //           this.router.navigateByUrl('/index');
-    //         });
-    //     }
-    //   }
-    // });
-
     this.loginForm = new FormGroup({
       username: new FormControl('', [Validators.required, Validators.minLength(3)]),
       password: new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(50)])
@@ -68,16 +51,18 @@ export class LoginComponent implements OnInit {
     return '';
   }
   doLogin(): void {
-
-    let data = this.loginForm.value;
-    // 登录接口
-    this.authService.login(data)
-      .subscribe(res => {
-        this.loginService.saveLoginState(res);
-        this.router.navigate(['/']);
-      });
+    if (this.loginForm.valid) {
+      this.advanceService.getToken(this.username?.value, this.password?.value)
+        .subscribe(res => {
+          if (res) {
+            this.loginService.saveLoginState(this.username?.value, res);
+            this.router.navigate(['/']);
+          } else {
+            this.snb.open('用户名密码错误');
+          }
+        });
+    }
   }
-
 
   logout(): void {
     this.loginService.logout();

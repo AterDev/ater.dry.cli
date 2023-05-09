@@ -10,6 +10,7 @@ import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import { MarkdownModule } from 'ngx-markdown';
 import { SettingComponent } from './setting/setting.component';
 import { DatabaseComponent } from './database/database.component';
+import { EntityComponent } from './entity/entity.component';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import { DatabaseComponent } from './database/database.component';
     DocsComponent,
     DtoComponent,
     SettingComponent,
-    DatabaseComponent
+    DatabaseComponent,
+    EntityComponent
   ],
   imports: [
     ComponentsModule,

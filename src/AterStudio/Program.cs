@@ -23,6 +23,7 @@ builder.Services.AddScoped<ProjectManager>();
 builder.Services.AddScoped<EntityAdvance>();
 builder.Services.AddScoped<EntityManager>();
 builder.Services.AddScoped<ApiDocManager>();
+builder.Services.AddHttpClient<DusiHttpClient>();
 
 // cors配置 
 builder.Services.AddCors(options =>

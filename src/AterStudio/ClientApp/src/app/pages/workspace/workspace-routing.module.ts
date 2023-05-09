@@ -7,17 +7,20 @@ import { NavigationComponent } from './navigation/navigation.component';
 import { CustomRouteReuseStrategy } from 'src/app/custom-route-strategy';
 import { SettingComponent } from './setting/setting.component';
 import { DatabaseComponent } from './database/database.component';
+import { EntityComponent } from './entity/entity.component';
 
 const routes: Routes = [
   {
     path: 'workspace',
     component: NavigationComponent,
     children: [
-      { path: 'code', component: IndexComponent },
+      { path: '', pathMatch: 'full', redirectTo: 'index' },
+      { path: 'index', component: IndexComponent },
+      { path: 'entity', component: EntityComponent },
       { path: 'docs', component: DocsComponent },
       { path: 'database', component: DatabaseComponent },
       { path: 'setting', component: SettingComponent },
-      { path: 'code/dto/:name', component: DtoComponent }
+      { path: 'index/dto/:name', component: DtoComponent }
     ]
   },
 ];
