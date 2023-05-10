@@ -86,8 +86,9 @@ public class EntityAdvance
         return await _httpClient.GetTokenAsync(username, password);
     }
 
-    public async Task<List<string>?> GetEntityAsync(string name, string description)
+    public async Task<List<string>?> GetEntityAsync(string name, string description, string token)
     {
+        _httpClient.SetToken(token);
         return await _httpClient.GetEntityAsync(name, description);
     }
 }

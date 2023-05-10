@@ -20,7 +20,7 @@ const routes: Routes = [
       { path: 'docs', component: DocsComponent },
       { path: 'database', component: DatabaseComponent },
       { path: 'setting', component: SettingComponent },
-      { path: 'index/dto/:name', component: DtoComponent }
+      { path: 'dto/:name', component: DtoComponent }
     ]
   },
 ];

@@ -18,7 +18,7 @@ export class EntityService extends BaseService {
    * @param id string
    * @param name string
    */
-  list(id: string, name?: string): Observable<EntityFile[]> {
+  list(id: string, name: string | null): Observable<EntityFile[]> {
     const url = `/api/Entity/${id}?name=${name}`;
     return this.request<EntityFile[]>('get', url);
   }
@@ -29,7 +29,7 @@ export class EntityService extends BaseService {
    * @param projectId 
    * @param entityName 
    */
-  getDtos(projectId?: string, entityName?: string): Observable<EntityFile[]> {
+  getDtos(projectId: string | null, entityName: string | null): Observable<EntityFile[]> {
     const url = `/api/Entity/dtos?projectId=${projectId}&entityName=${entityName}`;
     return this.request<EntityFile[]>('get', url);
   }
@@ -41,7 +41,7 @@ entity/manager
    * @param entityName 
    * @param isManager 是否为manager
    */
-  getFileContent(projectId?: string, entityName?: string, isManager?: boolean): Observable<EntityFile> {
+  getFileContent(projectId: string | null, entityName: string | null, isManager: boolean | null): Observable<EntityFile> {
     const url = `/api/Entity/fileContent?projectId=${projectId}&entityName=${entityName}&isManager=${isManager}`;
     return this.request<EntityFile>('get', url);
   }
@@ -81,7 +81,7 @@ entity/manager
    * @param type 
    * @param swaggerPath 
    */
-  generateRequest(id: string, webPath?: string, type?: RequestLibType, swaggerPath?: string): Observable<boolean> {
+  generateRequest(id: string, webPath: string | null, type: RequestLibType | null, swaggerPath: string | null): Observable<boolean> {
     const url = `/api/Entity/generateRequest/${id}?webPath=${webPath}&type=${type}&swaggerPath=${swaggerPath}`;
     return this.request<boolean>('get', url);
   }
@@ -93,7 +93,7 @@ entity/manager
    * @param type 
    * @param swaggerPath 
    */
-  generateClientRequest(id: string, webPath?: string, type?: LanguageType, swaggerPath?: string): Observable<boolean> {
+  generateClientRequest(id: string, webPath: string | null, type: LanguageType | null, swaggerPath: string | null): Observable<boolean> {
     const url = `/api/Entity/generateClientRequest/${id}?webPath=${webPath}&type=${type}&swaggerPath=${swaggerPath}`;
     return this.request<boolean>('get', url);
   }
@@ -113,7 +113,7 @@ entity/manager
    * @param entityName 
    * @param rootPath 
    */
-  generateNgModule(id: string, entityName?: string, rootPath?: string): Observable<boolean> {
+  generateNgModule(id: string, entityName: string | null, rootPath: string | null): Observable<boolean> {
     const url = `/api/Entity/generateNgModule/${id}?entityName=${entityName}&rootPath=${rootPath}`;
     return this.request<boolean>('post', url);
   }

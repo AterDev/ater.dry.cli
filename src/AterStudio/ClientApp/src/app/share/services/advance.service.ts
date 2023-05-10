@@ -8,21 +8,21 @@ import { Observable } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class AdvanceService extends BaseService {
   /**
-   * getToken
-   * @param username string
-   * @param password string
+   * 获取token
+   * @param username 
+   * @param password 
    */
-  getToken(username?: string, password?: string): Observable<string> {
+  getToken(username: string | null, password: string | null): Observable<string> {
     const url = `/api/Advance/token?username=${username}&password=${password}`;
     return this.request<string>('get', url);
   }
 
   /**
-   * getEntity
-   * @param name string
-   * @param description string
+   * 生成实体
+   * @param name 
+   * @param description 
    */
-  getEntity(name?: string, description?: string): Observable<string[]> {
+  getEntity(name: string | null, description: string | null): Observable<string[]> {
     const url = `/api/Advance/entity?name=${name}&description=${description}`;
     return this.request<string[]>('get', url);
   }

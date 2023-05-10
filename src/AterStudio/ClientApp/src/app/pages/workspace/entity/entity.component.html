@@ -1,8 +1,9 @@
-<div class="container">
+<div class="w-100">
   <mat-toolbar>
     <button mat-icon-button matTooltip="返回" (click)="back()">
       <mat-icon>arrow_back</mat-icon>
     </button>
+    创建实体 (preview)
     <span class="example-spacer"></span>
     <!-- <button mat-icon-button matTooltip="开启监听实体，会自动更新dto" color="primary" [disabled]="isListening"
       (click)="startWatch()">
@@ -12,4 +13,54 @@
       <mat-icon>stop_circle</mat-icon>
     </button> -->
   </mat-toolbar>
+
+  <div class="w-100 d-flex mt-1">
+    <!-- 录入 -->
+    <div class="d-flex flex-column p-1">
+      <mat-form-field>
+        <mat-label>实体名称</mat-label>
+        <input matInput placeholder="实体名称" [(ngModel)]="name" required>
+
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>实体描述</mat-label>
+        <textarea matInput placeholder="描述您的实体，如包含的属性" [(ngModel)]="description" rows="5"></textarea>
+      </mat-form-field>
+      <button mat-flat-button color="primary" class="w-100" [disabled]="isProcessing" (click)="generate()">生成</button>
+
+      <div *ngIf="selectedIndex!=null" class="mt-2">
+        <mat-form-field>
+          <mat-label>子目录</mat-label>
+          <input matInput placeholder="留空则添加到Entities根目录下" [(ngModel)]="namespace">
+        </mat-form-field>
+        <button mat-flat-button color=" primary" class="w-100" [disabled]="isProcessing" (click)="save()">保存</button>
+      </div>
+
+    </div>
+    <!-- 内容展示  -->
+    <div class="d-flex flex-column align-items-center mt-2 w-100" *ngIf="isProcessing">
+      <p>
+        努力生成实体模型...这可能会花费1分钟的时间.
+      </p>
+      <mat-spinner mode="indeterminate"></mat-spinner>
+    </div>
+    <div class="d-flex flex-grow-1 gap-1 p-1" *ngIf="entities && !isProcessing">
+      <div class=" d-flex flex-column col">
+        <div class="d-flex justify-content-end">
+          <mat-icon matTooltip="选择并作为实体模型模板" class="clickable" [color]="selectedIndex==0? 'primary':''"
+            (click)="select(0)">verified</mat-icon>
+        </div>
+        <ngx-monaco-editor class="editor" [options]="editorOptions" [(ngModel)]="entities[0]"
+          (onInit)="onInit($event)"></ngx-monaco-editor>
+      </div>
+      <div class="d-flex flex-column col" *ngIf="entities[1]">
+        <div class="d-flex justify-content-end">
+          <mat-icon matTooltip="选择并作为实体模型模板" class="clickable" [color]="selectedIndex==1? 'primary':''"
+            (click)="select(1)">verified</mat-icon>
+        </div>
+        <ngx-monaco-editor class="editor" [options]="editorOptions" [(ngModel)]="entities[1]"
+          (onInit)="onInit($event)"></ngx-monaco-editor>
+      </div>
+    </div>
+  </div>
 </div>

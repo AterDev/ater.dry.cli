@@ -26,7 +26,7 @@ export class ProjectService extends BaseService {
    * @param name 
    * @param path 
    */
-  add(name?: string, path?: string): Observable<Project> {
+  add(name: string | null, path: string | null): Observable<Project> {
     const url = `/api/Project?name=${name}&path=${path}`;
     return this.request<Project>('post', url);
   }
@@ -91,7 +91,7 @@ export class ProjectService extends BaseService {
    * @param id 
    * @param name 
    */
-  getTemplateFile(id: string, name?: string): Observable<TemplateFile> {
+  getTemplateFile(id: string, name: string | null): Observable<TemplateFile> {
     const url = `/api/Project/template/${id}?name=${name}`;
     return this.request<TemplateFile>('get', url);
   }

@@ -10,6 +10,15 @@ public class DusiHttpClient
         Client = client;
     }
 
+    public void SetToken(string token)
+    {
+        if (!Client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", token))
+        {
+            Client.DefaultRequestHeaders.Clear();
+            Client.DefaultRequestHeaders.Add("Authorization", token);
+        }
+    }
+
     public async Task<string?> GetTokenAsync(string username, string password)
     {
         var response = await Client.PostAsJsonAsync("/api/user/login", new
@@ -24,8 +33,6 @@ public class DusiHttpClient
         }
         return default;
     }
-
-
 
     public async Task<List<string>?> GetEntityAsync(string name, string description)
     {

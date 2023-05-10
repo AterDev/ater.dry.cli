@@ -33,7 +33,6 @@ export class DtoComponent implements OnInit {
     private location: Location
   ) {
     this.name = this.route.snapshot.paramMap.get('name');
-    console.log(this.name);
 
     if (projectState.project) {
       this.projectId = projectState.project?.id;

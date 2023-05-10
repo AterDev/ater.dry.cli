@@ -16,7 +16,7 @@
       </mat-menu>
     </span>
     <span *ngIf="!isLogin">
-      <button mat-button (click)="login()">登录</button>
+      <button mat-button (click)="login()" matTooltip="登录可使用部分高级功能">登录</button>
     </span>
   </mat-toolbar>
 </div>
