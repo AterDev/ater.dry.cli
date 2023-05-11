@@ -205,13 +205,13 @@ public class CompilationHelper
             }
         }
     }
-    public void ReplaceImplement(string newImplementContent)
+    public void ReplaceInterfaceImplement(string newImplementContent)
     {
         // replace interface first node  with new node 
         if (SyntaxTree != null && SyntaxRoot != null)
         {
             var interfaceNode = SyntaxRoot.DescendantNodes()
-                .OfType<InterfaceDeclarationSyntax>().Single();
+                .OfType<InterfaceDeclarationSyntax>().First();
             var oldBaseList = interfaceNode.DescendantNodes().OfType<BaseListSyntax>().Single();
 
             if (oldBaseList != null)
@@ -235,7 +235,30 @@ public class CompilationHelper
         }
     }
 
+    public void AddClassBaseType(string newImplementContent)
+    {
+        if (SyntaxTree != null && SyntaxRoot != null)
+        {
+            var classNode = SyntaxRoot.DescendantNodes()
+                .OfType<ClassDeclarationSyntax>().First();
 
+            var typeName = SyntaxFactory.ParseTypeName(newImplementContent);
+            var baseType = SyntaxFactory.SimpleBaseType(typeName);
+
+            // add space and newline to baseType 
+            var newColonToken = SyntaxFactory.Token(SyntaxKind.ColonToken)
+              .WithTrailingTrivia(SyntaxFactory.Space);
+
+            var newBaseList = SyntaxFactory.BaseList(
+              SyntaxFactory.SingletonSeparatedList<BaseTypeSyntax>(baseType))
+                  .WithTrailingTrivia(SyntaxFactory.LineFeed)
+                  .WithColonToken(newColonToken);
+
+            var newInterfaceNode = classNode.WithBaseList(newBaseList);
+            SyntaxRoot = SyntaxRoot.ReplaceNode(classNode, newInterfaceNode);
+
+        }
+    }
     /// <summary>
     /// 获取所有属性类型
     /// </summary>
@@ -263,6 +286,8 @@ public class CompilationHelper
     /// <returns></returns>
     public string? GetParentClassName()
     {
-        return ClassSymbol?.BaseType?.Name;
+        var classNode = SyntaxTree!.GetCompilationUnitRoot().DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
+
+        return classNode?.BaseList?.Types.FirstOrDefault()?.ToString();
     }
 }

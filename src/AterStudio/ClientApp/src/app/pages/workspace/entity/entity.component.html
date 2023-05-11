@@ -5,13 +5,6 @@
     </button>
     创建实体 (preview)
     <span class="example-spacer"></span>
-    <!-- <button mat-icon-button matTooltip="开启监听实体，会自动更新dto" color="primary" [disabled]="isListening"
-      (click)="startWatch()">
-      <mat-icon>play_arrow</mat-icon>
-    </button>
-    <button mat-icon-button matTooltip="停止监听实体" color="primary" [disabled]="!isListening" (click)="stopWatch()">
-      <mat-icon>stop_circle</mat-icon>
-    </button> -->
   </mat-toolbar>
 
   <div class="w-100 d-flex mt-1">
@@ -26,21 +19,22 @@
         <mat-label>实体描述</mat-label>
         <textarea matInput placeholder="描述您的实体，如包含的属性" [(ngModel)]="description" rows="5"></textarea>
       </mat-form-field>
-      <button mat-flat-button color="primary" class="w-100" [disabled]="isProcessing" (click)="generate()">生成</button>
+      <button mat-flat-button class="w-100" [disabled]="isProcessing" (click)="generate()">生成</button>
 
-      <div *ngIf="selectedIndex!=null" class="mt-2">
-        <mat-form-field>
+      <div class="mt-3" *ngIf="selectedIndex!=null">
+        <p>您已选择模板，可进行编辑后保存</p>
+        <mat-form-field class="w-100">
           <mat-label>子目录</mat-label>
           <input matInput placeholder="留空则添加到Entities根目录下" [(ngModel)]="namespace">
         </mat-form-field>
-        <button mat-flat-button color=" primary" class="w-100" [disabled]="isProcessing" (click)="save()">保存</button>
+        <button mat-flat-button color="primary" class="w-100" [disabled]="isProcessing" (click)="save()">保存</button>
       </div>
 
     </div>
     <!-- 内容展示  -->
     <div class="d-flex flex-column align-items-center mt-2 w-100" *ngIf="isProcessing">
       <p>
-        努力生成实体模型...这可能会花费1分钟的时间.
+        努力生成实体模型...这可能会花费数十秒的时间.
       </p>
       <mat-spinner mode="indeterminate"></mat-spinner>
     </div>

@@ -30,7 +30,7 @@
       <input matInput placeholder="搜索实体类" [(ngModel)]="searchKey" (keyup)="applyFilter($event)">
     </mat-form-field>
     <span class="example-spacer"></span>
-    <button mat-icon-button matTooltip="添加实体" color="primary" (click)="openAddEntity()">
+    <button mat-icon-button matTooltip="添加实体" color="primary" (click)="openAddEntity()" *ngIf="isLogin">
       <mat-icon>add_circle_outline</mat-icon>
     </button>
     <button mat-icon-button matTooltip="refresh" (click)="getEntity()" color="primary">

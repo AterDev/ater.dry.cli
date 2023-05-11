@@ -1,4 +1,5 @@
 ﻿using AterStudio.Advance;
+using AterStudio.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AterStudio.Controllers;
@@ -44,6 +45,20 @@ public class AdvanceController : ControllerBase
             return Problem("获取失败");
         }
         return res;
+    }
+
+
+    /// <summary>
+    /// 创建实体
+    /// </summary>
+    /// <param name="projectId"></param>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    [HttpPost("entity/{projectId}")]
+    public bool CreateEntity([FromRoute] Guid projectId, AddEntityDto dto)
+    {
+        return _entityAdvance.CreateEntity(projectId, dto);
+
     }
 }
 

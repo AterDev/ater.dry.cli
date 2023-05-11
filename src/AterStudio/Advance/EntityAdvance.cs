@@ -1,8 +1,10 @@
 ﻿using System.Reflection;
 using System.Text;
 using AterStudio.Manager;
+using AterStudio.Models;
 using Core.Entities;
 using Core.Infrastructure.Helper;
+using Core.Infrastructure.Utils;
 using Datastore;
 
 namespace AterStudio.Advance;
@@ -80,7 +82,6 @@ public class EntityAdvance
         return sb.ToString();
     }
 
-
     public async Task<string?> GetTokenAsync(string username, string password)
     {
         return await _httpClient.GetTokenAsync(username, password);
@@ -90,5 +91,51 @@ public class EntityAdvance
     {
         _httpClient.SetToken(token);
         return await _httpClient.GetEntityAsync(name, description);
+    }
+
+    /// <summary>
+    /// 创建新的实体
+    /// </summary>
+    /// <param name="projectId"></param>
+    /// <param name="dto"></param>
+    public bool CreateEntity(Guid projectId, AddEntityDto dto)
+    {
+        var project = _dbContext.Projects.FindById(projectId);
+        string entityPath = Path.Combine(project!.EntityPath, "Entities");
+        string namespaceContent = "namespace Core.Entities";
+        if (!string.IsNullOrWhiteSpace(dto.Namespace))
+        {
+            entityPath = Path.Combine(entityPath, dto.Namespace);
+            namespaceContent += $".{dto.Namespace.ToPascalCase()}";
+        }
+        if (!Directory.Exists(entityPath))
+        {
+            Directory.CreateDirectory(entityPath);
+        }
+        namespaceContent = namespaceContent + ";" + Environment.NewLine;
+        // 预处理
+        var code = dto.Content.Replace("[Requried]", "");
+        code = namespaceContent + code;
+
+        // 代码分析
+        var compilation = new CompilationHelper(entityPath);
+        compilation.AddSyntaxTree(code);
+
+        // 继承EntityBase
+        if (compilation.GetParentClassName() == null)
+        {
+            compilation.AddClassBaseType("EntityBase");
+        }
+        try
+        {
+            var interfaceContent = compilation.SyntaxRoot!.ToString();
+            File.WriteAllTextAsync(Path.Combine(entityPath, compilation.ClassSymbol!.Name + ".cs"), interfaceContent);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message + ex.StackTrace);
+            return false;
+        }
     }
 }

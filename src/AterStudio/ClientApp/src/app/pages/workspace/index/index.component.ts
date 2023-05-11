@@ -7,6 +7,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { lastValueFrom } from 'rxjs';
+import { LoginService } from 'src/app/auth/login.service';
 import { BatchGenerateDto } from 'src/app/share/models/entity/batch-generate-dto.model';
 import { EntityFile } from 'src/app/share/models/entity/entity-file.model';
 import { GenerateDto } from 'src/app/share/models/entity/generate-dto.model';
@@ -64,6 +65,7 @@ export class IndexComponent implements OnInit {
   currentType: CommandType | null = null;
   isBatch = false;
   isCopied = false;
+  isLogin = false;
   constructor(
     public route: ActivatedRoute,
     public router: Router,
@@ -71,7 +73,8 @@ export class IndexComponent implements OnInit {
     public projectSrv: ProjectService,
     public projectState: ProjectStateService,
     public dialog: MatDialog,
-    public snb: MatSnackBar
+    public snb: MatSnackBar,
+    private loginService: LoginService
   ) {
     if (projectState.project) {
       this.projectId = projectState.project?.id;
@@ -79,6 +82,7 @@ export class IndexComponent implements OnInit {
       this.projectId = '';
       this.router.navigateByUrl('/');
     }
+    this.isLogin = loginService.isLogin;
   }
   ngOnInit(): void {
     if (this.projectState.project?.path?.endsWith(".sln")) {

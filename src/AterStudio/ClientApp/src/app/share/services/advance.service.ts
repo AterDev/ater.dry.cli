@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BaseService } from './base.service';
 import { Observable } from 'rxjs';
+import { AddEntityDto } from '../models/advance/add-entity-dto.model';
 
 /**
  * Advance
@@ -25,6 +26,16 @@ export class AdvanceService extends BaseService {
   getEntity(name: string | null, description: string | null): Observable<string[]> {
     const url = `/api/Advance/entity?name=${name}&description=${description}`;
     return this.request<string[]>('get', url);
+  }
+
+  /**
+   * 创建实体
+   * @param projectId 
+   * @param data AddEntityDto
+   */
+  createEntity(projectId: string, data: AddEntityDto): Observable<boolean> {
+    const url = `/api/Advance/entity/${projectId}`;
+    return this.request<boolean>('post', url, data);
   }
 
 }

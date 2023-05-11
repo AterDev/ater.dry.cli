@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { EntityService } from 'src/app/share/services/entity.service';
 import { AdvanceService } from 'src/app/share/services/advance.service';
+import { ProjectStateService } from 'src/app/share/project-state.service';
 
 @Component({
   selector: 'app-entity',
@@ -18,6 +19,7 @@ export class EntityComponent {
   selectedIndex: number | null = null;
   selectedContent: string | null = null;
   namespace: string | null = null;
+  projectId: string | null = null;
   editorOptions = {
     theme: 'vs-dark', language: 'csharp', minimap: {
       enabled: false
@@ -27,11 +29,12 @@ export class EntityComponent {
     public snb: MatSnackBar,
     public router: Router,
     public service: AdvanceService,
+    public projectState: ProjectStateService,
     private location: Location
   ) {
-
+    if (projectState.project)
+      this.projectId = projectState.project?.id;
   }
-
   ngOnInit(): void {
 
   }
@@ -69,8 +72,28 @@ export class EntityComponent {
   }
 
   save(): void {
-    if (this.selectedContent) {
-
+    if (this.selectedContent && this.projectId) {
+      this.isProcessing = true;
+      this.service.createEntity(this.projectId, {
+        namespace: this.namespace,
+        content: this.selectedContent
+      }).subscribe({
+        next: (res) => {
+          if (res) {
+            this.snb.open('创建成功,请在编辑器中查看');
+          } else {
+            this.snb.open('');
+          }
+          this.isProcessing = false;
+        },
+        error: (error) => {
+          this.snb.open(error.detail);
+          this.isProcessing = false;
+        }
+      });
+    } else {
+      this.snb.open('未选择内容或ProjectId丢失');
+      console.log('projectId:', this.projectId);
     }
   }
 

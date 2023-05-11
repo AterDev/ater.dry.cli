@@ -225,7 +225,7 @@ public class ManagerCommand : CommandBase
                     compilation.InsertInteraceMethod(method);
                 }
             }
-            compilation.ReplaceImplement($"IDomainManager<{entityName}>");
+            compilation.ReplaceInterfaceImplement($"IDomainManager<{entityName}>");
             interfaceContent = compilation.SyntaxRoot!.ToString();
             await GenerateFileAsync(iManagerDir, $"I{entityName}Manager.cs", interfaceContent, true);
         }
