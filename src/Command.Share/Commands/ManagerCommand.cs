@@ -311,6 +311,6 @@ public class ManagerCommand : CommandBase
         await GenerateFileAsync(implementDir, "DataStoreContext.cs", storeContext, true);
         await GenerateFileAsync(implementDir, "StoreServicesExtensions.cs", storeService, true);
 
-
     }
+
 }

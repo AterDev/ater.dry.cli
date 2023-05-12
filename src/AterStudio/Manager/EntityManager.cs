@@ -293,7 +293,7 @@ public class EntityManager
                 {
                     dto.EntityPaths?.ForEach(p =>
                     {
-                        CommandRunner.ClearCodes(project, item);
+                        CommandRunner.ClearCodesAsync(project, item);
                     });
                 }
                 break;
