@@ -176,7 +176,7 @@ export class IndexComponent implements OnInit {
     this.dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
         title: '确认清除？',
-        content: '你将清除所有选中实体相关生成的代码！'
+        content: '该操作将清除所有选中实体相关生成的代码，部分代码需要您手动删除！'
       }
     });
 

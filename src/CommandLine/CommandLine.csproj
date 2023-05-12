@@ -13,6 +13,7 @@
 		<Authors>NilTor</Authors>
 		<Company>Atersoft</Company>
 		<Copyright>Atersoft</Copyright>
+		<SatelliteResourceLanguages>en,zh-cn</SatelliteResourceLanguages>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageProjectUrl>https://github.com/AterDev/cli</PackageProjectUrl>
 		<RepositoryType>git</RepositoryType>
@@ -54,6 +55,8 @@
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 		<PlatformTarget>AnyCPU</PlatformTarget>
+		<DebugType>None</DebugType>
+		<DebugSymbols>false</DebugSymbols>
 	</PropertyGroup>
 
 	<ItemGroup>
