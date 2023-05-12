@@ -8,6 +8,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { lastValueFrom } from 'rxjs';
 import { LoginService } from 'src/app/auth/login.service';
+import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confirm-dialog.component';
 import { BatchGenerateDto } from 'src/app/share/models/entity/batch-generate-dto.model';
 import { EntityFile } from 'src/app/share/models/entity/entity-file.model';
 import { GenerateDto } from 'src/app/share/models/entity/generate-dto.model';
@@ -169,9 +170,26 @@ export class IndexComponent implements OnInit {
       minWidth: 400
     });
   }
+  clearCodesDialog(): void {
+    this.dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: '确认清除？',
+        content: '你将清除所有选中实体相关生成的代码！'
+      }
+    });
+
+    this.dialogRef.afterClosed()
+      .subscribe({
+        next: (res) => {
+          if (res) {
+
+          }
+        }
+
+      });
+  }
   openAddEntity(): void {
     this.router.navigateByUrl('/workspace/entity');
-
   }
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;

@@ -1,3 +1,4 @@
+using Core.Entities;
 using Datastore;
 
 namespace Command.Share;
@@ -116,7 +117,7 @@ public static class CommandRunner
     /// <param name="apiPath">网站目录</param>
     /// <param name="suffix">控制器后缀名</param>
     public static async Task GenerateApiAsync(string path, string dtoPath = "",
-            string servicePath = "", string apiPath = "", string suffix = "",bool force = false)
+            string servicePath = "", string apiPath = "", string suffix = "", bool force = false)
     {
         try
         {
@@ -167,6 +168,48 @@ public static class CommandRunner
         var cmd = new ProtoCommand(entityPath, projectPath);
         await cmd.RunAsync();
         return cmd.ErrorMessage;
+    }
+
+    /// <summary>
+    /// 清除生成代码
+    /// </summary>
+    /// <param name="EntityName">实体类名称</param>
+    public static void ClearCodes(Project project, string EntityName)
+    {
+        // 清理dto
+        var dtoPath = Path.Combine(project.SharePath, "Models", EntityName + "Dtos");
+        if (Directory.Exists(dtoPath))
+        {
+            Directory.Delete(dtoPath, true);
+        }
+        // 清理data store
+        var storePath = Path.Combine(project.ApplicationPath, "CommandStore", EntityName + "CommandStore.cs");
+        if (File.Exists(storePath))
+        {
+            File.Delete(storePath);
+        }
+        storePath = Path.Combine(project.ApplicationPath, "QueryStore", EntityName + "QueryStore.cs");
+        if (File.Exists(storePath))
+        {
+            File.Delete(storePath);
+        }
+
+        // 清理manager
+        var managerPath = Path.Combine(project.ApplicationPath, "Manager", EntityName + "Manager.cs");
+        if (File.Exists(managerPath))
+        {
+            File.Delete(managerPath);
+        }
+        managerPath = Path.Combine(project.ApplicationPath, "IManager", $"I{EntityName}Manager.cs");
+        if (File.Exists(managerPath))
+        {
+            File.Delete(managerPath);
+        }
+        // 更新 依赖注入
+
+
+        // 清除web api 
+
     }
 
     /// <summary>

@@ -22,6 +22,8 @@
         matTooltip="生成dto/dataStore/manager/api,不会覆盖原内容" matTooltipPosition="right">生成APIControler</button>
       <button mat-menu-item (click)="openSelectProjectDialog(CommandType.Protobuf,null)" matTooltip="生成proto协议文件"
         matTooltipPosition="right">生成Protobuf</button>
+      <button mat-menu-item (click)="clearCodesDialog()" matTooltip="清理实体相关的生成代码"
+        matTooltipPosition="right">清理生成代码</button>
     </mat-menu>
   </mat-toolbar>
 

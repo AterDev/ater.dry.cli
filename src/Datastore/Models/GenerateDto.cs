@@ -31,5 +31,9 @@ public enum CommandType
     /// <summary>
     /// protobuf
     /// </summary>
-    Protobuf
+    Protobuf,
+    /// <summary>
+    /// 清除
+    /// </summary>
+    Clear
 }

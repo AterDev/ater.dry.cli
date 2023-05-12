@@ -288,6 +288,15 @@ public class EntityManager
                     });
                 }
                 break;
+            case CommandType.Clear:
+                foreach (string item in dto.EntityPaths)
+                {
+                    dto.EntityPaths?.ForEach(p =>
+                    {
+                        CommandRunner.ClearCodes(project, item);
+                    });
+                }
+                break;
             default:
                 break;
         }

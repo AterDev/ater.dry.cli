@@ -34,6 +34,7 @@
 			13 添加生成状态展示;
 			14 添加模板配置功能;
 			15 实体创建功能预览;
+			16 添加清理生成代码的功能;
 			其他细节完善;
 		</PackageReleaseNotes>
 		<PackageIcon>logo.jpg</PackageIcon>
