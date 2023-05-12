@@ -1,4 +1,5 @@
 import { SelectionModel } from '@angular/cdk/collections';
+import { splitNsName } from '@angular/compiler';
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -143,6 +144,7 @@ export class IndexComponent implements OnInit {
   }
 
   getEntity(): void {
+    this.selection.clear();
     this.service.list(this.projectId!, this.searchKey)
       .subscribe(res => {
         if (res.length > 0) {
@@ -182,10 +184,37 @@ export class IndexComponent implements OnInit {
       .subscribe({
         next: (res) => {
           if (res) {
-
+            let selected = this.selection.selected;
+            if (selected.length > 0) {
+              let data: BatchGenerateDto = {
+                projectId: this.projectId!,
+                entityPaths: selected.map(s => this.baseEntityPath + s.path),
+                commandType: CommandType.Clear,
+                force: this.force
+              };
+              this.isSync = true;
+              this.service.batchGenerate(data)
+                .subscribe({
+                  next: (res) => {
+                    if (res) {
+                      this.snb.open('清理成功');
+                    } else {
+                      this.snb.open('清理成功');
+                    }
+                  },
+                  error: (error) => {
+                    this.snb.open(error.detail);
+                    this.isSync = false;
+                  },
+                  complete: () => {
+                    this.isSync = false;
+                  }
+                });
+            } else {
+              this.snb.open('未选择任何实体');
+            }
           }
         }
-
       });
   }
   openAddEntity(): void {

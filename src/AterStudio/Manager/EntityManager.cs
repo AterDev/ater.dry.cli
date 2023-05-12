@@ -291,10 +291,8 @@ public class EntityManager
             case CommandType.Clear:
                 foreach (string item in dto.EntityPaths)
                 {
-                    dto.EntityPaths?.ForEach(p =>
-                    {
-                        CommandRunner.ClearCodesAsync(project, item);
-                    });
+                    var entityName = Path.GetFileNameWithoutExtension(item);
+                    await CommandRunner.ClearCodesAsync(project, entityName);
                 }
                 break;
             default:

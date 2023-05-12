@@ -176,6 +176,12 @@ public static class CommandRunner
     /// <param name="EntityName">实体类名称</param>
     public static async Task ClearCodesAsync(Project project, string EntityName)
     {
+        if (EntityName.ToLower().Equals("systemuser"))
+        {
+            Console.WriteLine("⚠️ SystemUser can't be deleted, skip it!");
+            return;
+        }
+        await Console.Out.WriteLineAsync($"start cleaning {EntityName}");
         // 清理dto
         var dtoPath = Path.Combine(project.SharePath, "Models", EntityName + "Dtos");
         if (Directory.Exists(dtoPath))
@@ -212,33 +218,51 @@ public static class CommandRunner
             File.Delete(managerPath);
             await Console.Out.WriteLineAsync("✔️ clear IManager");
         }
-        // 更新 依赖注入
-        var entityPath = Path.Combine(project.EntityPath, "Entities", EntityName + ".cs");
-        var managerCmd = new ManagerCommand(entityPath, project.SharePath, project.ApplicationPath);
-        await managerCmd.GenerateServicesAsync();
-
-        await Console.Out.WriteLineAsync("✔️ update manager");
-        // 清除web api 
-        var apiPath = Path.Combine(project.HttpPath, "Controllers");
         try
         {
+            // 更新 依赖注入
+            var entityPath = Directory.GetFiles(Path.Combine(project.EntityPath, "Entities"), EntityName + ".cs", SearchOption.AllDirectories).First();
+
+            var managerCmd = new ManagerCommand(entityPath, project.SharePath, project.ApplicationPath);
+            await managerCmd.GenerateServicesAsync();
+
+            await Console.Out.WriteLineAsync("✔️ update manager");
+            // 清除web api 
+            var apiPath = Path.Combine(project.HttpPath, "Controllers");
+
             var files = Directory.GetFiles(apiPath, $"{EntityName}Controller.cs", SearchOption.AllDirectories).ToList();
             files.ForEach(f =>
             {
                 File.Delete(f);
                 Console.WriteLine($"✔️ clear api {f}");
             });
-            files = Directory.GetFiles(Path.Combine(project.HttpPath, "..", "Microservice", "Controllers"), $"{EntityName}Controller.cs", SearchOption.AllDirectories)
-                .ToList();
-            files.ForEach(f =>
+
+            var microPath = Path.Combine(project.HttpPath, "..", "Microservice", "Controllers");
+            if (Directory.Exists(microPath))
             {
-                File.Delete(f);
-                Console.WriteLine($"✔️ clear api {f}");
-            });
+                files = Directory.GetFiles(microPath, $"{EntityName}Controller.cs", SearchOption.AllDirectories)
+    .ToList();
+                files.ForEach(f =>
+                {
+                    File.Delete(f);
+                    Console.WriteLine($"✔️ clear api {f}");
+                });
+            }
+            // 清除test
+            var testPath = Path.Combine(project.HttpPath, "..", "..", "test", "Application.Test");
+            if (Directory.Exists(testPath))
+            {
+                var testFile = Path.Combine(testPath, "Managers", $"{EntityName}ManagerTest.cs");
+                if (File.Exists(testFile))
+                {
+                    File.Delete(testFile);
+                    Console.WriteLine($"✔️ clear test {testFile}");
+                }
+            }
         }
         catch (Exception ex)
         {
-            await Console.Out.WriteLineAsync(ex.Message);
+            await Console.Out.WriteLineAsync(ex.Message + ex.InnerException + ex.StackTrace);
         }
     }
 

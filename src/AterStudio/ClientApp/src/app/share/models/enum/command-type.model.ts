@@ -3,5 +3,6 @@ export enum CommandType {
   Manager = 1,
   API = 2,
   Protobuf = 3,
+  Clear = 4,
 
 }
