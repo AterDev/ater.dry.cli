@@ -83,7 +83,7 @@ public class ManagerCommand : CommandBase
             {
                 var compilation = new CompilationHelper(Path.Combine(EntityPath, ".."));
                 compilation.AddSyntaxTree(File.ReadAllText(extensionPath));
-                if (!compilation.MehtodExist("public static IQueryable<TSource> WhereNotNull<TSource>(this IQueryable<TSource> source, object? field, Expression<Func<TSource, bool>> expression)"))
+                if (!compilation.MethodExist("public static IQueryable<TSource> WhereNotNull<TSource>(this IQueryable<TSource> source, object? field, Expression<Func<TSource, bool>> expression)"))
                 {
                     compilation.InsertClassMethod(whereNotNullString);
 
@@ -220,9 +220,9 @@ public class ManagerCommand : CommandBase
 
             foreach (var method in methods)
             {
-                if (!compilation.MehtodExist(method))
+                if (!compilation.MethodExist(method))
                 {
-                    compilation.InsertInteraceMethod(method);
+                    compilation.InsertInterfaceMethod(method);
                 }
             }
             compilation.ReplaceInterfaceImplement($"IDomainManager<{entityName}>");

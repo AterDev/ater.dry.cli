@@ -1,7 +1,4 @@
-﻿using System.Reflection.Metadata;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using PropertyInfo = Core.Models.PropertyInfo;
+﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Core.Infrastructure.Helper;
 
@@ -159,7 +156,7 @@ public class CompilationHelper
     /// <param name="interfaceName"></param>
     /// <param name="methodContent"></param>
     /// <returns></returns>
-    public bool MehtodExist(string methodContent)
+    public bool MethodExist(string methodContent)
     {
         return SyntaxRoot!.DescendantNodes()
             .Where(n => n is MethodDeclarationSyntax)
@@ -170,7 +167,7 @@ public class CompilationHelper
     /// 向接口插入方法
     /// </summary>
     /// <param name="methodContent"></param>
-    public void InsertInteraceMethod(string methodContent)
+    public void InsertInterfaceMethod(string methodContent)
     {
         if (SyntaxTree != null && SyntaxRoot != null)
         {
@@ -290,4 +287,5 @@ public class CompilationHelper
 
         return classNode?.BaseList?.Types.FirstOrDefault()?.ToString();
     }
+
 }

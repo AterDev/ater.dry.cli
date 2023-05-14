@@ -198,8 +198,9 @@ export class IndexComponent implements OnInit {
                   next: (res) => {
                     if (res) {
                       this.snb.open('清理成功');
+                      this.getEntity();
                     } else {
-                      this.snb.open('清理成功');
+                      this.snb.open('清理失败');
                     }
                   },
                   error: (error) => {
