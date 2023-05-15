@@ -151,6 +151,12 @@ export class IndexComponent implements OnInit {
           this.entityFiles = res;
           this.baseEntityPath = res[0].baseDirPath ?? '';
           this.dataSource = new MatTableDataSource<EntityFile>(this.entityFiles);
+
+          this.dataSource.filterPredicate = (data, filter: string) => {
+            if (data.name)
+              return data.name.toLowerCase().indexOf(filter) > -1;
+            return false;
+          }
         }
         this.isLoading = false;
       })
@@ -222,6 +228,7 @@ export class IndexComponent implements OnInit {
     this.router.navigateByUrl('/workspace/entity');
   }
   applyFilter(event: Event) {
+
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
