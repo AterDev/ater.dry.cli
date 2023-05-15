@@ -105,7 +105,7 @@ public class ManagerGenerate : GenerateBase
         {
             var row = (p.Type) switch
             {
-                "Guid" => $"{p.Name} = Guid.NewGuid(),",
+                "Guid" => $"{p.Name} = new Guid(\"\"),",
                 "string" => $"{p.Name} = \"{p.Name}\" + RandomString,",
                 "int" or "double" => $"{p.Name} = 0,",
                 "bool" => $"{p.Name} = true,",
@@ -146,7 +146,7 @@ public class ManagerGenerate : GenerateBase
             var row = (p.Type) switch
             {
                 "Guid" => $"{p.Name} = new Guid(\"\"),",
-                "string" => $"{p.Name} = \"{p.Name}\" + RandomString,",
+                "string" => $"{p.Name} = \"Update{p.Name}\" + RandomString,",
                 "int" or "double" => $"{p.Name} = 0,",
                 "bool" => $"{p.Name} = true,",
                 _ => p.IsEnum ? $"{p.Name} = 0," : $"",

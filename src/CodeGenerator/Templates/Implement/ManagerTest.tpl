@@ -17,21 +17,25 @@ public class ${EntityName}ManagerTest : BaseTest
         manager = Services.GetRequiredService<I${EntityName}Manager>();
         RandomString = DateTime.Now.ToString("MMddmmss");
     }
-
     [Fact]
-    public async Task Shoud_AddAsync()
+    public async Task ${EntityName}_Should_Pass()
+    {
+        await Shoud_AddAsync();
+        await Should_UpdateAsync();
+        await Should_QueryAsync();
+    }
+
+    async internal Task Shoud_AddAsync()
     {
 ${AddContent}
     }
 
-    [Fact]
-    public async Task Should_UpdateAsync()
+    async internal Task Should_UpdateAsync()
     {
 ${UpdateContent}
     }
 
-    [Fact]
-    public async Task Should_QueryAsync()
+    async internal Task Should_QueryAsync()
     {
         var filter = new ${EntityName}FilterDto()
         {
