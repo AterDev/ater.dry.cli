@@ -21,7 +21,7 @@ ${AdditionManagersInit}
     /// </summary>
     /// <param name="dto"></param>
     /// <returns></returns>
-    public Task<${EntityName}> CreateNewEntityAsync(${EntityName}AddDto dto)
+    public async Task<${EntityName}> CreateNewEntityAsync(${EntityName}AddDto dto)
     {
 ${AddActionBlock}
     }

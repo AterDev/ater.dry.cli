@@ -1,4 +1,3 @@
-using System.Reflection.Metadata;
 using Core.Entities;
 
 namespace CodeGenerator.Generate;
@@ -97,20 +96,24 @@ public class ManagerGenerate : GenerateBase
                     {
 
             """;
-        var requiredProps = entityHelper.PropertyInfos?.Where(i => i.IsRequired).ToList();
+        var requiredProps = entityHelper.PropertyInfos?.Where(i => i.IsRequired || !i.IsNullable)
+            .Where(i => !i.Name.ToLower().Contains("password"))
+            .Where(i => !i.IsNavigation && !i.IsList)
+            .ToList();
         var assertContent = "";
         requiredProps?.ForEach(p =>
         {
             var row = (p.Type) switch
             {
-                "Guid" => $"{p.Name} = new Guid(\"\"),",
+                "Guid" => $"{p.Name} = Guid.NewGuid(),",
                 "string" => $"{p.Name} = \"{p.Name}\" + RandomString,",
                 "int" or "double" => $"{p.Name} = 0,",
                 "bool" => $"{p.Name} = true,",
                 _ => p.IsEnum ? $"{p.Name} = 0," : $"",
             };
             content += $"{row + Environment.NewLine}".Indent(3);
-            assertContent += $"Assert.Equal(entity.{p.Name}, res.{p.Name});{Environment.NewLine}".Indent(2);
+            if (!p.Name.EndsWith("Id"))
+                assertContent += $"Assert.Equal(entity.{p.Name}, res.{p.Name});{Environment.NewLine}".Indent(2);
         });
 
         content += $$"""
@@ -133,7 +136,10 @@ public class ManagerGenerate : GenerateBase
                     {
 
             """;
-        var requiredProps = entityHelper.PropertyInfos?.Where(i => i.IsRequired).ToList();
+        var requiredProps = entityHelper.PropertyInfos?.Where(i => i.IsRequired || !i.IsNullable)
+            .Where(i => !i.Name.ToLower().Contains("password"))
+            .Where(i => !i.IsNavigation && !i.IsList)
+            .ToList();
         var assertContent = "";
         requiredProps?.ForEach(p =>
         {
@@ -146,7 +152,8 @@ public class ManagerGenerate : GenerateBase
                 _ => p.IsEnum ? $"{p.Name} = 0," : $"",
             };
             content += $"{row + Environment.NewLine}".Indent(3);
-            assertContent += $"Assert.Equal(entity.{p.Name}, res.{p.Name});{Environment.NewLine}".Indent(3);
+            if (!p.Name.EndsWith("Id"))
+                assertContent += $"Assert.Equal(entity.{p.Name}, res.{p.Name});{Environment.NewLine}".Indent(3);
         });
 
         content += $$"""
@@ -418,7 +425,7 @@ public class ManagerGenerate : GenerateBase
             content += $$"""
                     if (dto.{{name}}Ids != null && dto.{{name}}Ids.Any())
                     {
-                        var {{variable}}= await {{manager}}.Command.Db.Where(t => dto.{{name}}Ids.Contains(t.Id)).ToListAsync();
+                        var {{variable}} = await {{manager}}.Command.Db.Where(t => dto.{{name}}Ids.Contains(t.Id)).ToListAsync();
                         if ({{variable}} != null)
                         {
                             entity.{{nav.Name}} = {{variable}};
@@ -436,8 +443,8 @@ public class ManagerGenerate : GenerateBase
             if (name != "User" && name != "SystemUser")
             {
                 content += $$"""
-                        Command.Db.Entry(entity).Property("{{idName}}").CurrentValue = dto.{{idName}};
-                        // or entity.{{idName}} = dto.{{idName}};
+                        Command.Db.Entry(entity).Property("{{idName}}").CurrentValue = dto.{{name}}Id;
+                        // or entity.{{idName}} = dto.{{name}}Id;
 
                 """;
             }
@@ -452,7 +459,7 @@ public class ManagerGenerate : GenerateBase
         });
         content += $$"""      
                 // other required props
-                return {{(navigations == null ? "entity" : "Task.FromResult(entity)")}};
+                return await Task.FromResult(entity);
         """;
         return content;
     }
@@ -470,7 +477,7 @@ public class ManagerGenerate : GenerateBase
             content += $$"""
                     if (dto.{{name}}Ids != null && dto.{{name}}Ids.Any())
                     {
-                        var {{variable}}= await {{manager}}.Command.Db.Where(t => dto.{{name}}Ids.Contains(t.Id)).ToListAsync();
+                        var {{variable}} = await {{manager}}.Command.Db.Where(t => dto.{{name}}Ids.Contains(t.Id)).ToListAsync();
                         if ({{variable}} != null)
                         {
                             entity.{{nav.Name}} = {{variable}};

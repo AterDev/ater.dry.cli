@@ -46,3 +46,7 @@ body {
 .clickable {
     cursor: pointer;
 }
+
+.mat-mdc-dialog-container .mdc-dialog__content {
+    min-height: 60px;
+}

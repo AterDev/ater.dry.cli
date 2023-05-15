@@ -156,20 +156,20 @@
       中。
     </p>
   </mat-dialog-content>
-  <mat-dialog-actions>
+  <mat-dialog-actions class="justify-content-end">
     <button mat-button mat-dialog-close>取消</button>
     <button mat-button (click)="generateSync()" color="primary" [disabled]="isSync">生成</button>
   </mat-dialog-actions>
 </ng-template>
 
 <ng-template #generateDialog>
-  <h2>
+  <h2 mat-dialog-title>
     生成{{currentType==CommandType.Dto?'DTO':'Manager'}}
   </h2>
   <mat-dialog-content class="py-2">
     <mat-slide-toggle [(ngModel)]="this.force" class="mt-2">覆盖现有代码</mat-slide-toggle>
   </mat-dialog-content>
-  <mat-dialog-actions>
+  <mat-dialog-actions class="justify-content-end">
     <button mat-button mat-dialog-close>取消</button>
     <button mat-button (click)="generate()" color="primary" [disabled]="isSync">生成</button>
   </mat-dialog-actions>
@@ -185,7 +185,7 @@
       </mat-list-option>
     </mat-selection-list>
   </mat-dialog-content>
-  <mat-dialog-actions>
+  <mat-dialog-actions class="justify-content-end">
     <button mat-button mat-dialog-close>取消</button>
     <button mat-button (click)="batch(CommandType.Protobuf)" color="primary" [disabled]="isSync">生成</button>
   </mat-dialog-actions>

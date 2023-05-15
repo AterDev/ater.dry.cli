@@ -97,6 +97,7 @@ public class RestApiGenerate : GenerateBase
             $"global using {ShareNamespace}.Models;",
             $"global using {ServiceNamespace}.Interface;",
             $"global using {ServiceNamespace}.IManager;",
+            $"global using {ServiceNamespace}.AppConst;",
         };
     }
 
@@ -165,7 +166,7 @@ public class RestApiGenerate : GenerateBase
             content += nav.Type switch
             {
                 not "User" and not "SystemUser" => $$"""
-                        if (!await {{manager}}.ExistAsync(dto.{{nav.Name}}Id))
+                        if (!await {{manager}}.ExistAsync(dto.{{nav.Type}}Id))
                             return NotFound("不存在的{{nav.CommentSummary ?? nav.Type}}");
 
                 """,
@@ -204,9 +205,9 @@ public class RestApiGenerate : GenerateBase
             if (!nav.Type.Equals("User") && !nav.Type.Equals("SystemUser"))
             {
                 content += $$"""
-                        if (current.{{nav.Name}}.Id != dto.{{nav.Name}}Id)
+                        if (current.{{nav.Name}}.Id != dto.{{nav.Type}}Id)
                         {
-                            var {{variable}} = await {{manager}}.GetCurrentAsync(dto.{{nav.Name}}Id);
+                            var {{variable}} = await {{manager}}.GetCurrentAsync(dto.{{nav.Type}}Id);
                             if ({{variable}} == null) return NotFound("不存在的{{nav.CommentSummary ?? nav.Type}}");
                             current.{{nav.Name}} = {{variable}};
                         }

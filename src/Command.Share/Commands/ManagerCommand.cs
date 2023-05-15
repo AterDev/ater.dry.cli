@@ -1,7 +1,4 @@
-using System.Diagnostics.CodeAnalysis;
 using Core.Infrastructure;
-using Core.Models;
-using NuGet.Versioning;
 
 namespace Command.Share.Commands;
 
@@ -98,11 +95,11 @@ public class ManagerCommand : CommandBase
                 Console.WriteLine($"⚠️ can't find {extensionPath}");
             }
             // 更新Error Const 常量
-            var errorMsgPath = Path.Combine(StorePath, "..", Config.EntityPath, "Const", "ErrorMsg.cs");
+            var errorMsgPath = Path.Combine(StorePath, "AppConst", "ErrorMsg.cs");
             if (!File.Exists(errorMsgPath))
             {
                 File.WriteAllText(errorMsgPath, """
-                    namespace Core.Const;
+                    namespace Application.AppConst;
                     /// <summary>
                     /// 错误信息
                     /// </summary>
