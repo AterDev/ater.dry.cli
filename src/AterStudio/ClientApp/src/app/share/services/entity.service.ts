@@ -26,23 +26,21 @@ export class EntityService extends BaseService {
   /**
    * s
             获取dtos
-   * @param projectId 
    * @param entityName 
    */
-  getDtos(projectId: string | null, entityName: string | null): Observable<EntityFile[]> {
-    const url = `/api/Entity/dtos?projectId=${projectId}&entityName=${entityName}`;
+  getDtos(entityName: string | null): Observable<EntityFile[]> {
+    const url = `/api/Entity/dtos?entityName=${entityName}`;
     return this.request<EntityFile[]>('get', url);
   }
 
   /**
    * 获取文件内容
 entity/manager
-   * @param projectId 
    * @param entityName 
    * @param isManager 是否为manager
    */
-  getFileContent(projectId: string | null, entityName: string | null, isManager: boolean | null): Observable<EntityFile> {
-    const url = `/api/Entity/fileContent?projectId=${projectId}&entityName=${entityName}&isManager=${isManager}`;
+  getFileContent(entityName: string | null, isManager: boolean | null): Observable<EntityFile> {
+    const url = `/api/Entity/fileContent?entityName=${entityName}&isManager=${isManager}`;
     return this.request<EntityFile>('get', url);
   }
 

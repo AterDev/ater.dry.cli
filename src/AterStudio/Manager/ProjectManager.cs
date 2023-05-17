@@ -7,17 +7,18 @@ using Core.Entities;
 using Core.Infrastructure;
 using Core.Infrastructure.Helper;
 using Datastore;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace AterStudio.Manager;
 
 public class ProjectManager
 {
     private readonly DbContext _db;
+    private readonly ProjectContext _projectContext;
 
-    public ProjectManager(DbContext dbContext)
+    public ProjectManager(DbContext dbContext, ProjectContext projectContext)
     {
         _db = dbContext;
+        _projectContext = projectContext;
     }
 
     public List<Project> GetProjects()
@@ -28,18 +29,31 @@ public class ProjectManager
     public async Task<Project?> AddProjectAsync(string name, string path)
     {
         // 获取并构造参数
-        FileInfo slnFile = new(path);
+        FileInfo projectFile = new(path);
+        bool hasProjectFile = true;
         // 如果是目录
-        if ((slnFile.Attributes & FileAttributes.Directory) != 0)
+        if ((projectFile.Attributes & FileAttributes.Directory) != 0)
         {
-            var slnPath = Directory.GetFiles(path, "*.sln", SearchOption.TopDirectoryOnly).FirstOrDefault();
-            if (slnPath != null)
+            var projectFilePath = Directory.GetFiles(path, "*.sln", SearchOption.TopDirectoryOnly).FirstOrDefault();
+            if (projectFilePath != null)
             {
-                slnFile = new FileInfo(slnPath);
+                projectFile = new FileInfo(projectFilePath);
+            }
+            else
+            {
+                projectFilePath = Directory.GetFiles(path, "*.csproj", SearchOption.TopDirectoryOnly).FirstOrDefault();
+                if (projectFilePath != null)
+                {
+                    projectFile = new FileInfo(projectFilePath);
+                }
+                else
+                {
+                    hasProjectFile = false;
+                }
             }
         }
 
-        string dir = slnFile.DirectoryName!;
+        string dir = hasProjectFile ? projectFile.DirectoryName! : projectFile.FullName;
         string configFilePath = Path.Combine(dir!, Config.ConfigFileName);
 
         await ConfigCommand.InitConfigFileAsync(dir);
@@ -47,18 +61,18 @@ public class ProjectManager
 
         ConfigOptions? config = JsonSerializer.Deserialize<ConfigOptions>(configJson);
 
-        string projectName = Path.GetFileNameWithoutExtension(slnFile.FullName);
+        string projectName = Path.GetFileNameWithoutExtension(projectFile.FullName);
         Project project = new()
         {
             ProjectId = config!.ProjectId,
             DisplayName = name,
-            Path = slnFile.FullName,
+            Path = projectFile.FullName,
             Name = projectName,
-            ApplicationPath = config.StorePath.ToFullPath("src", dir),
-            EntityFrameworkPath = config.DbContextPath.ToFullPath("src", dir),
-            EntityPath = config.EntityPath.ToFullPath("src", dir),
-            HttpPath = config.ApiPath.ToFullPath("src", dir),
-            SharePath = config.DtoPath.ToFullPath("src", dir),
+            ApplicationPath = config.StorePath.ToFullPath("", dir),
+            EntityFrameworkPath = config.DbContextPath.ToFullPath("", dir),
+            EntityPath = config.EntityPath.ToFullPath("", dir),
+            HttpPath = config.ApiPath.ToFullPath("", dir),
+            SharePath = config.DtoPath.ToFullPath("", dir),
             SwaggerPath = config.SwaggerPath,
             WebAppPath = config.WebAppPath
         };
@@ -121,16 +135,12 @@ public class ProjectManager
     /// <returns></returns>
     public async Task<ConfigOptions?> GetConfigOptions(Guid projectId)
     {
-        var project = GetProject(projectId);
-        var configPath = File.Exists(project.Path)
-            ? Path.Combine(project.Path, "..")
-            : Path.Combine(project.Path);
-        var options = ConfigCommand.ReadConfigFile(configPath);
+        var options = ConfigCommand.ReadConfigFile(_projectContext.ProjectPath!);
 
         if (options == null)
         {
-            await ConfigCommand.InitConfigFileAsync(Path.Combine(configPath, ".."));
-            options = ConfigCommand.ReadConfigFile(Path.Combine(configPath, ".."));
+            await ConfigCommand.InitConfigFileAsync(Path.Combine(_projectContext.ProjectPath!, ".."));
+            options = ConfigCommand.ReadConfigFile(Path.Combine(_projectContext.ProjectPath!, ".."));
         }
         return options;
     }
@@ -148,7 +158,11 @@ public class ProjectManager
             ? Path.Combine(project.Path, "..")
             : Path.Combine(project.Path);
         var options = ConfigCommand.ReadConfigFile(configPath);
-        if (options == null) { return false; }
+
+        if (options == null)
+        {
+            return false;
+        }
 
         if (dto.IdType != null)
             options.IdType = dto.IdType;
@@ -167,6 +181,7 @@ public class ProjectManager
         await File.WriteAllTextAsync(Path.Combine(configPath, Config.ConfigFileName), content, Encoding.UTF8);
         return true;
     }
+
     /// <summary>
     /// 是否在监视中
     /// </summary>
@@ -271,18 +286,4 @@ public class ProjectManager
         return file;
     }
 
-
-    /// <summary>
-    /// 获取项目根目录
-    /// </summary>
-    /// <param name="projectPath"></param>
-    /// <returns></returns>
-    public static string GetProjectRootPath(string projectPath)
-    {
-        var slnFile = new FileInfo(projectPath);
-        return (slnFile.Attributes & FileAttributes.Directory) != 0
-            ? Path.Combine(projectPath)
-            : Path.Combine(slnFile.DirectoryName!);
-
-    }
 }

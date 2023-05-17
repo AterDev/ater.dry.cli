@@ -37,7 +37,7 @@ public class GenerateBase
             _ = Directory.CreateDirectory(path);
         }
 
-        File.WriteAllText(Path.Combine(path, fileName), content);
-        Console.WriteLine($"Created file {Path.Combine(path, fileName)}.");
+        File.WriteAllText(Path.Combine(path, fileName), content, Encoding.UTF8);
+        Console.WriteLine($"👉 Created file {Path.Combine(path, fileName)}.");
     }
 }

@@ -1,7 +1,6 @@
-﻿using System.Reflection;
-using System.Text;
-using AterStudio.Manager;
+﻿using System.Text;
 using AterStudio.Models;
+using Core;
 using Core.Entities;
 using Core.Infrastructure.Helper;
 using Core.Infrastructure.Utils;
@@ -13,10 +12,13 @@ public class EntityAdvance
 {
     private readonly DbContext _dbContext;
     private readonly DusiHttpClient _httpClient;
-    public EntityAdvance(DbContext dbContext, DusiHttpClient httpClient)
+    private readonly ProjectContext _projectContext;
+
+    public EntityAdvance(DbContext dbContext, DusiHttpClient httpClient, ProjectContext projectContext)
     {
         _dbContext = dbContext;
         _httpClient = httpClient;
+        _projectContext = projectContext;
     }
 
 
@@ -28,16 +30,13 @@ public class EntityAdvance
     public string GetDatabaseStructure(Guid id)
     {
         var result = "";
-        var project = _dbContext.Projects.FindById(id);
-
-        var projectPath = ProjectManager.GetProjectRootPath(project.Path);
         // get contextbase path 
-        var contextPath = Directory.GetFiles(projectPath, "ContextBase.cs", SearchOption.AllDirectories)
+        var contextPath = Directory.GetFiles(_projectContext.ProjectPath!, "ContextBase.cs", SearchOption.AllDirectories)
             .FirstOrDefault();
         if (contextPath != null)
         {
             // parse context content and get all proporties 
-            var compilation = new CompilationHelper(project.EntityFrameworkPath);
+            var compilation = new CompilationHelper(Path.Combine(_projectContext.ProjectPath!, Config.EntityPath));
             compilation.AddSyntaxTree(File.ReadAllText(contextPath));
 
             var propertyTypes = compilation.GetPropertyTypes();
@@ -45,7 +44,7 @@ public class EntityAdvance
             // search entity use propertyType and parse every entity use CompilationHelper
             foreach (var propertyType in propertyTypes)
             {
-                var entityPath = Directory.GetFiles(project.EntityPath, $"{propertyType}.cs", SearchOption.AllDirectories)
+                var entityPath = Directory.GetFiles(Path.Combine(_projectContext.ProjectPath!, Config.EntityPath), $"{propertyType}.cs", SearchOption.AllDirectories)
                     .FirstOrDefault();
 
                 if (entityPath != null)

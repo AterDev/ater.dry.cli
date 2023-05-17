@@ -17,7 +17,8 @@ Console.OutputEncoding = Encoding.UTF8;
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ProjectContext>();
 builder.Services.AddSingleton<DbContext>();
 builder.Services.AddScoped<ProjectManager>();
 builder.Services.AddScoped<EntityAdvance>();

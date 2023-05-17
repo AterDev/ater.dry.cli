@@ -19,11 +19,11 @@ public class ConfigOptions
     /// <summary>
     /// dto项目目录
     /// </summary>
-    public string DtoPath { get; set; } = "Share";
-    public string EntityPath { get; set; } = "Core";
-    public string DbContextPath { get; set; } = "Database/EntityFramework";
-    public string StorePath { get; set; } = "Application";
-    public string ApiPath { get; set; } = "Http.API";
+    public string DtoPath { get; set; } = "src/Share";
+    public string EntityPath { get; set; } = "src/Core";
+    public string DbContextPath { get; set; } = "src/Database/EntityFramework";
+    public string StorePath { get; set; } = "src/Application";
+    public string ApiPath { get; set; } = "src/Http.API";
 
     /// <summary>
     /// NameId/Id
@@ -39,7 +39,7 @@ public class ConfigOptions
     public bool? IsSplitController { get; set; } = false;
 
     [JsonConverter(typeof(DoubleStringJsonConverter))]
-    public string Version { get; set; } = "1.0";
+    public string Version { get; set; } = "1.1";
     /// <summary>
     /// swagger地址
     /// </summary>

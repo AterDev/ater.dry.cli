@@ -37,7 +37,6 @@ public class ManagerCommand : CommandBase
             Console.WriteLine($"the {EntityPath} not exist");
             return;
         }
-
         try
         {
             await UpdateFilesAsync();
@@ -46,7 +45,6 @@ public class ManagerCommand : CommandBase
         {
             await Console.Out.WriteLineAsync(ex.Message + ex.StackTrace);
         }
-
         Console.WriteLine(Instructions[0]);
         await GenerateCommonFilesAsync();
         Console.WriteLine(Instructions[1]);

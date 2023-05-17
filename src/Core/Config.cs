@@ -4,12 +4,12 @@ public static class Config
 {
     public static string IdType { get; set; } = "Guid";
     public static string CreatedTimeName { get; set; } = "CreatedTime";
-    public static string Version { get; private set; } = "7.0";
-    public static string DtoPath { get; set; } = "Share";
-    public static string EntityPath { get; set; } = "Core";
-    public static string DbContextPath { get; set; } = "Database/EntityFramework";
-    public static string StorePath { get; set; } = "Application";
-    public static string ApiPath { get; set; } = "Http.API";
+    public static string Version { get; private set; } = "1.1";
+    public static string DtoPath { get; set; } = "src/Share";
+    public static string EntityPath { get; set; } = "src/Core";
+    public static string DbContextPath { get; set; } = "src/Database/EntityFramework";
+    public static string StorePath { get; set; } = "src/Application";
+    public static string ApiPath { get; set; } = "src/Http.API";
     /// <summary>
     /// 是否拆分
     /// </summary>
@@ -25,13 +25,13 @@ public static class Config
 
     public static void SetConfig(ConfigOptions configOptions)
     {
-        Config.IdType = configOptions.IdType;
-        Config.IsSplitController = configOptions.IsSplitController;
-        Config.EntityPath = configOptions.EntityPath;
-        Config.StorePath = configOptions.StorePath;
-        Config.ApiPath = configOptions.ApiPath;
-        Config.DtoPath = configOptions.DtoPath;
-        Config.CreatedTimeName = configOptions.CreatedTimeName;
-        Config.Version = configOptions.Version;
+        IdType = configOptions.IdType;
+        IsSplitController = configOptions.IsSplitController;
+        EntityPath = configOptions.EntityPath;
+        StorePath = configOptions.StorePath;
+        ApiPath = configOptions.ApiPath;
+        DtoPath = configOptions.DtoPath;
+        CreatedTimeName = configOptions.CreatedTimeName;
+        Version = configOptions.Version;
     }
 }

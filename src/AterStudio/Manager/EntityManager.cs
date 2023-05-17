@@ -12,26 +12,25 @@ namespace AterStudio.Manager;
 public class EntityManager
 {
     private readonly DbContext _dbContext;
-    public EntityManager(DbContext dbContext)
+    private readonly ProjectContext _projectContext;
+    public EntityManager(DbContext dbContext, ProjectContext projectContext)
     {
         _dbContext = dbContext;
-
+        _projectContext = projectContext;
     }
 
     /// <summary>
     /// 获取实体列表
     /// </summary>
-    /// <param name="id"></param>
     /// <param name="name"></param>
     /// <returns></returns>
-    public List<EntityFile> GetEntityFiles(Guid id, string? name)
+    public List<EntityFile> GetEntityFiles(string? name)
     {
         List<EntityFile> entityFiles = new();
         //var project = await _context.Projects.FindAsync(projectId);
-        var project = _dbContext.Projects.FindById(id);
         try
         {
-            string entityPath = Path.Combine(project!.EntityPath, "Entities");
+            string entityPath = Path.Combine(_projectContext.ProjectPath!, Config.EntityPath, "Entities");
             // get files in directory
             List<string> filePaths = Directory.GetFiles(entityPath, "*.cs", SearchOption.AllDirectories).ToList();
 
@@ -55,7 +54,7 @@ public class EntityManager
                         Content = File.ReadAllText(path)
                     };
                     // 查询生成的dto\manager\api状态
-                    var states = GetEntityStates(project.Path, Path.GetFileNameWithoutExtension(file.Name));
+                    var states = GetEntityStates(_projectContext.ProjectPath!, Path.GetFileNameWithoutExtension(file.Name));
                     item.HasDto = states.hasDto;
                     item.HasManager = states.hasManager;
                     item.HasAPI = states.hasAPI;
@@ -80,16 +79,10 @@ public class EntityManager
 
     private (bool hasDto, bool hasManager, bool hasAPI) GetEntityStates(string path, string entityName)
     {
-        var basePath = path;
-        if (File.Exists(path))
-        {
-            basePath = Path.Combine(path, "..");
-        }
-
         bool hasDto = false; bool hasManager = false; bool hasAPI = false;
-        var dtoPath = Path.Combine(basePath, "src", Config.DtoPath, "Models", $"{entityName}Dtos", $"{entityName}AddDto.cs");
-        var managerPath = Path.Combine(basePath, "src", Config.StorePath, "IManager", $"I{entityName}Manager.cs");
-        var apiPath = Path.Combine(basePath, "src", Config.ApiPath, "Controllers", $"{entityName}Controller.cs");
+        var dtoPath = Path.Combine(path, "src", Config.DtoPath, "Models", $"{entityName}Dtos", $"{entityName}AddDto.cs");
+        var managerPath = Path.Combine(path, "src", Config.StorePath, "IManager", $"I{entityName}Manager.cs");
+        var apiPath = Path.Combine(path, "src", Config.ApiPath, "Controllers", $"{entityName}Controller.cs");
 
         if (File.Exists(dtoPath)) { hasDto = true; }
         if (File.Exists(managerPath)) { hasManager = true; }
@@ -101,14 +94,11 @@ public class EntityManager
     /// <summary>
     /// 获取实体对应的dto
     /// </summary>
-    /// <param name="projectId"></param>
     /// <param name="entityName"></param>
     /// <returns></returns>
-    public List<EntityFile> GetDtos(Guid projectId, string entityName)
+    public List<EntityFile> GetDtos(string entityName)
     {
         List<EntityFile> dtoFiles = new();
-        //var project = await _context.Projects.FindAsync(projectId);
-        var project = _dbContext.Projects.FindById(projectId);
         try
         {
             // dto目录
@@ -116,7 +106,7 @@ public class EntityManager
             {
                 entityName = entityName.Replace(".cs", "");
             }
-            string dtoPath = Path.Combine(project!.SharePath, "Models", $"{entityName}Dtos");
+            string dtoPath = Path.Combine(_projectContext.ProjectPath!, Config.DtoPath, "Models", $"{entityName}Dtos");
             // get files in directory
             List<string> filePaths = Directory.GetFiles(dtoPath, "*.cs", SearchOption.AllDirectories).ToList();
 
@@ -148,9 +138,8 @@ public class EntityManager
     }
 
 
-    public EntityFile? GetFileContent(Guid projectId, string entityName, bool isManager)
+    public EntityFile? GetFileContent(string entityName, bool isManager)
     {
-        var project = _dbContext.Projects.FindById(projectId);
         if (entityName.EndsWith(".cs"))
         {
             entityName = entityName.Replace(".cs", "");
@@ -159,11 +148,11 @@ public class EntityManager
         string? filePath = null;
         if (isManager)
         {
-            filePath = Path.Combine(project!.ApplicationPath, "Manager", $"{entityName}Manager.cs");
+            filePath = Path.Combine(_projectContext.ProjectPath!, Config.StorePath, "Manager", $"{entityName}Manager.cs");
         }
         else
         {
-            var entityDir = Path.Combine(project!.EntityPath, "Entities");
+            var entityDir = Path.Combine(_projectContext.ProjectPath!, Config.EntityPath, "Entities");
             filePath = Directory.GetFiles(entityDir, $"{entityName}.cs", SearchOption.AllDirectories)
                 .FirstOrDefault();
         }
@@ -180,7 +169,6 @@ public class EntityManager
             };
 
         }
-
         return default;
     }
 
@@ -193,8 +181,7 @@ public class EntityManager
     /// <returns></returns>
     public bool UpdateDtoContent(Guid projectId, string fileName, string Content)
     {
-        var project = _dbContext.Projects.FindById(projectId);
-        string dtoPath = Path.Combine(project!.SharePath, "Models");
+        string dtoPath = Path.Combine(_projectContext.ProjectPath!, Config.DtoPath, "Models");
         var filePath = Directory.GetFiles(dtoPath, fileName, SearchOption.AllDirectories).FirstOrDefault();
         try
         {
@@ -224,8 +211,6 @@ public class EntityManager
 
     public async Task GenerateAsync(Project project, GenerateDto dto)
     {
-        await InitConfigAsync(project);
-        Const.PROJECT_ID = project.ProjectId;
         CommandRunner.dbContext = _dbContext;
         switch (dto.CommandType)
         {
@@ -251,7 +236,6 @@ public class EntityManager
     /// <returns></returns>
     public async Task BatchGenerateAsync(Project project, BatchGenerateDto dto)
     {
-        await InitConfigAsync(project);
         Const.PROJECT_ID = project.ProjectId;
         switch (dto.CommandType)
         {
@@ -302,7 +286,6 @@ public class EntityManager
 
     public async Task GenerateRequestAsync(Project project, string webPath, RequestLibType type, string? swaggerPath = null)
     {
-        await InitConfigAsync(project);
         // 更新选项
         project.WebAppPath = webPath;
         project.SwaggerPath = swaggerPath;
@@ -315,7 +298,6 @@ public class EntityManager
 
     public async Task GenerateClientRequestAsync(Project project, string webPath, LanguageType type, string? swaggerPath = null)
     {
-        await InitConfigAsync(project);
         swaggerPath ??= Path.Combine(project.HttpPath, "swagger.json");
         await CommandRunner.GenerateCSharpApiClientAsync(swaggerPath, webPath, type);
     }
@@ -329,7 +311,6 @@ public class EntityManager
 
     public async Task GenerateNgModuleAsync(Project project, string entityName, string rootPath)
     {
-        await InitConfigAsync(project);
         var dtoPath = Path.Combine(project.Path, "..", "src", Config.DtoPath);
         var entityDir = Path.Combine(project.Path, "..", "src", Config.EntityPath, "Entities");
         var entityPath = Directory.GetFiles(entityDir, entityName, SearchOption.AllDirectories)
@@ -345,21 +326,5 @@ public class EntityManager
         }
     }
 
-    private async Task InitConfigAsync(Project project)
-    {
-        Const.PROJECT_ID = project.ProjectId;
-        var slnFile = new FileInfo(project.Path);
-        // 如果是目录
-        string? configFile = (slnFile.Attributes & FileAttributes.Directory) != 0
-            ? Path.Combine(project.Path)
-            : Path.Combine(slnFile.DirectoryName!);
 
-        await ConfigCommand.InitConfigFileAsync(configFile);
-        var options = ConfigCommand.ReadConfigFile(configFile);
-
-        if (options != null)
-        {
-            Config.SetConfig(options);
-        }
-    }
 }

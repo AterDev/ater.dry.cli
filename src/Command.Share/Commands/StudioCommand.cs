@@ -1,8 +1,9 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO.Compression;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Core.Entities;
+using LiteDB;
 
 namespace Command.Share.Commands;
 public class StudioCommand
@@ -20,17 +21,7 @@ public class StudioCommand
         Console.WriteLine("start studio...");
         // 运行
         string shell = "dotnet";
-        //switch (Environment.OSVersion.Platform)
-        //{
-        //    case PlatformID.Unix:
-        //        shell = "bash";
-        //        break;
-        //    default:
-        //        break;
-        //}
-
         var url = "http://localhost:9160";
-
         Process process = new()
         {
             StartInfo = new ProcessStartInfo
@@ -47,7 +38,6 @@ public class StudioCommand
             },
         };
         process.Start();
-
         Thread.Sleep(2000);
         // 启动浏览器
         try
@@ -84,7 +74,7 @@ public class StudioCommand
     /// <summary>
     /// 升级studio
     /// </summary>
-    public static void Update()
+    public static async void Update()
     {
         Console.WriteLine($"check&update studio...");
 
@@ -129,7 +119,31 @@ public class StudioCommand
                 File.Copy(sourceFile, Path.Combine(appPath, "AterStudio", file + ".dll"), true);
             }
         });
+        await UpdateConfigsAsync();
         Console.WriteLine("update complete!");
+    }
+
+    /// <summary>
+    /// 更新项目配置文件
+    /// </summary>
+    public static async Task UpdateConfigsAsync()
+    {
+        var localDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AterStudio");
+        var connectionString = $"Filename={Path.Combine(localDir, "droplet.db")};Upgrade=true;initialSize=5MB";
+
+        using var db = new LiteDatabase(connectionString);
+        var projects = db.GetCollection<Project>().FindAll().ToList();
+        foreach (var project in projects)
+        {
+            var path = project.Path;
+            if (File.Exists(project.Path))
+            {
+                path = Path.Combine(project.Path, "..");
+            }
+            path = Path.Combine(path, Config.ConfigFileName);
+            await ConfigCommand.UpdateConfigAsync(path);
+        }
+        db.Dispose();
     }
 
     public static void CopyDirectory(string sourceDir, string destinationDir, bool recursive)

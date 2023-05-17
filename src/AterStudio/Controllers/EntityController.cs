@@ -25,33 +25,31 @@ public class EntityController : ControllerBase
     {
         return !_manager.IsExist(id)
             ? NotFound("不存在的项目")
-            : _manager.GetEntityFiles(id, name);
+            : _manager.GetEntityFiles(name);
     }
 
     /// <summary>s
     /// 获取dtos
     /// </summary>
-    /// <param name="projectId"></param>
     /// <param name="entityName"></param>
     /// <returns></returns>
     [HttpGet("dtos")]
-    public List<EntityFile> GetDtos(Guid projectId, string entityName)
+    public List<EntityFile> GetDtos(string entityName)
     {
-        return _manager.GetDtos(projectId, entityName);
+        return _manager.GetDtos(entityName);
     }
 
     /// <summary>
     /// 获取文件内容
     /// entity/manager
     /// </summary>
-    /// <param name="projectId"></param>
     /// <param name="entityName"></param>
     /// <param name="isManager">是否为manager</param>
     /// <returns></returns>
     [HttpGet("fileContent")]
-    public EntityFile? GetFileContent(Guid projectId, string entityName, bool isManager)
+    public EntityFile? GetFileContent(string entityName, bool isManager)
     {
-        return _manager.GetFileContent(projectId, entityName, isManager);
+        return _manager.GetFileContent(entityName, isManager);
     }
 
 
@@ -153,7 +151,6 @@ public class EntityController : ControllerBase
         await _manager.GenerateSyncAsync(project);
         return true;
     }
-
 
     /// <summary>
     /// 生成NG组件模块

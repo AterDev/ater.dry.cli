@@ -8,7 +8,7 @@
 		<AssemblyVersion>0.1.0.0</AssemblyVersion>
 		<FileVersion>0.1.0.0</FileVersion>
 		<PackageId>ater.droplet.cli</PackageId>
-		<Version>7.1.0</Version>
+		<Version>7.1.1</Version>
 		<Description> ater.web 框架代码生成器</Description>
 		<Authors>NilTor</Authors>
 		<Company>Atersoft</Company>
@@ -20,23 +20,8 @@
 		<RepositoryUrl>https://github.com/AterDev/cli.git</RepositoryUrl>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<PackageReleaseNotes>
-			1 studio 添加对swagger 配置编辑;
-			2 代码生成:前端支持对多个swagger内容生成对应的服务;
-			3 优化前端服务生成体验;
-			4 添加CSharp客户端请求生成(仅针对AtApi模板项目，不通用);
-			5 ng模板更新;
-			6 添加manager 测试内容;
-			7 优化命令行输出内容;
-			8 修复studio读取配置文件;
-			9 进一步提升CURD的代码生成;
-			10 添加项目配置修改;
-			11 代码生成加入覆盖选项;
-			12 移除实体监听功能;
-			13 添加生成状态展示;
-			14 添加模板配置功能;
-			15 实体创建功能预览;
-			16 添加清理生成代码的功能;
-			其他细节完善;
+			1 项目配置及路径判断优化，增加兼容和扩展性;
+			2 fix bug:更新新文件创建时出错;
 		</PackageReleaseNotes>
 		<PackageIcon>logo.jpg</PackageIcon>
 		<ImplicitUsings>enable</ImplicitUsings>

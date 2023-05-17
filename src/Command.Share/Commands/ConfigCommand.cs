@@ -11,8 +11,6 @@ public class ConfigCommand
     /// </summary>
     public static async Task InitConfigFileAsync(string? configPath = null)
     {
-        // 获取工具版本
-        var version = AssemblyHelper.GetVersion();
         configPath ??= GetConfigPath();
         Console.WriteLine("use config path:" + configPath);
         FileInfo file = new(Path.Combine(configPath, Config.ConfigFileName));
@@ -33,25 +31,41 @@ public class ConfigCommand
         else
         {
             // 如果配置格式变了，需要更新
-            string config = File.ReadAllText(path);
-            var options = JsonSerializer.Deserialize<ConfigOptions>(config);
-            if (options != null)
-            {
-                Const.PROJECT_ID = options.ProjectId;
-                if (options.ProjectId == Guid.Empty)
-                {
-                    options.ProjectId = Guid.NewGuid();
-                    Const.PROJECT_ID = options.ProjectId;
-                }
+            await UpdateConfigAsync(path);
+        }
+    }
 
-                string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
-                await File.WriteAllTextAsync(path, content, Encoding.UTF8);
-                Console.WriteLine("Update config file success");
-            }
-            else
+    public static async Task UpdateConfigAsync(string path)
+    {
+        string config = File.ReadAllText(path);
+        var options = JsonSerializer.Deserialize<ConfigOptions>(config);
+        if (options != null)
+        {
+            Const.PROJECT_ID = options.ProjectId;
+            // 添加projectId标识 
+            if (options.ProjectId == Guid.Empty)
             {
-                Console.WriteLine("config file parsing error! : " + path);
+                options.ProjectId = Guid.NewGuid();
+                Const.PROJECT_ID = options.ProjectId;
             }
+            // 1.0配置更新
+            if (options.Version == "1.0")
+            {
+                options.DtoPath = "src/" + options.DtoPath;
+                options.EntityPath = "src/" + options.EntityPath;
+                options.DbContextPath = "src/" + options.DbContextPath;
+                options.StorePath = "src/" + options.StorePath;
+                options.ApiPath = "src/" + options.ApiPath;
+                options.Version = "1.1";
+            }
+
+            string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
+            await File.WriteAllTextAsync(path, content, Encoding.UTF8);
+            Console.WriteLine("Update config file success");
+        }
+        else
+        {
+            Console.WriteLine("config file parsing error! : " + path);
         }
     }
 
