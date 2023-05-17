@@ -86,9 +86,9 @@ public class EntityManager
     private (bool hasDto, bool hasManager, bool hasAPI) GetEntityStates(string path, string entityName)
     {
         bool hasDto = false; bool hasManager = false; bool hasAPI = false;
-        var dtoPath = Path.Combine(path, "src", Config.DtoPath, "Models", $"{entityName}Dtos", $"{entityName}AddDto.cs");
-        var managerPath = Path.Combine(path, "src", Config.StorePath, "IManager", $"I{entityName}Manager.cs");
-        var apiPath = Path.Combine(path, "src", Config.ApiPath, "Controllers", $"{entityName}Controller.cs");
+        var dtoPath = Path.Combine(path, Config.DtoPath, "Models", $"{entityName}Dtos", $"{entityName}AddDto.cs");
+        var managerPath = Path.Combine(path, Config.StorePath, "IManager", $"I{entityName}Manager.cs");
+        var apiPath = Path.Combine(path, Config.ApiPath, "Controllers", $"{entityName}Controller.cs");
 
         if (File.Exists(dtoPath)) { hasDto = true; }
         if (File.Exists(managerPath)) { hasManager = true; }
