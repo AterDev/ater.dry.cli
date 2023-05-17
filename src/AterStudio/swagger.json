@@ -2011,34 +2011,6 @@
           "path": {
             "type": "string",
             "nullable": true
-          },
-          "entityPath": {
-            "type": "string",
-            "nullable": true
-          },
-          "sharePath": {
-            "type": "string",
-            "nullable": true
-          },
-          "applicationPath": {
-            "type": "string",
-            "nullable": true
-          },
-          "httpPath": {
-            "type": "string",
-            "nullable": true
-          },
-          "entityFrameworkPath": {
-            "type": "string",
-            "nullable": true
-          },
-          "swaggerPath": {
-            "type": "string",
-            "nullable": true
-          },
-          "webAppPath": {
-            "type": "string",
-            "nullable": true
           }
         },
         "additionalProperties": false

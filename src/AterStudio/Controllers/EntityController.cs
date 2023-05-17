@@ -90,7 +90,7 @@ public class EntityController : ControllerBase
         {
             return NotFound("项目不存在");
         }
-        await _manager.BatchGenerateAsync(project, dto);
+        await _manager.BatchGenerateAsync(dto);
         return true;
     }
 
@@ -110,7 +110,7 @@ public class EntityController : ControllerBase
         {
             return NotFound("项目不存在");
         }
-        await _manager.GenerateRequestAsync(project, webPath, type, swaggerPath);
+        await _manager.GenerateRequestAsync(webPath, type, swaggerPath);
         return true;
     }
 

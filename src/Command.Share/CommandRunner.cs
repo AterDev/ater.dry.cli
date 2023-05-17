@@ -1,4 +1,3 @@
-using Core.Entities;
 using Datastore;
 
 namespace Command.Share;
@@ -174,7 +173,7 @@ public static class CommandRunner
     /// 清除生成代码
     /// </summary>
     /// <param name="EntityName">实体类名称</param>
-    public static async Task ClearCodesAsync(Project project, string EntityName)
+    public static async Task ClearCodesAsync(string entityPath, string sharePath, string applicationPath, string apiPath, string EntityName)
     {
         if (EntityName.ToLower().Equals("systemuser"))
         {
@@ -183,7 +182,7 @@ public static class CommandRunner
         }
         await Console.Out.WriteLineAsync($"start cleaning {EntityName}");
         // 清理dto
-        var dtoPath = Path.Combine(project.SharePath, "Models", EntityName + "Dtos");
+        var dtoPath = Path.Combine(sharePath, "Models", EntityName + "Dtos");
         if (Directory.Exists(dtoPath))
         {
             Directory.Delete(dtoPath, true);
@@ -191,13 +190,13 @@ public static class CommandRunner
         }
 
         // 清理data store
-        var storePath = Path.Combine(project.ApplicationPath, "CommandStore", EntityName + "CommandStore.cs");
+        var storePath = Path.Combine(applicationPath, "CommandStore", EntityName + "CommandStore.cs");
         if (File.Exists(storePath))
         {
             File.Delete(storePath);
             await Console.Out.WriteLineAsync("✔️ clear commandstore");
         }
-        storePath = Path.Combine(project.ApplicationPath, "QueryStore", EntityName + "QueryStore.cs");
+        storePath = Path.Combine(applicationPath, "QueryStore", EntityName + "QueryStore.cs");
         if (File.Exists(storePath))
         {
             File.Delete(storePath);
@@ -206,13 +205,13 @@ public static class CommandRunner
 
 
         // 清理manager
-        var managerPath = Path.Combine(project.ApplicationPath, "Manager", EntityName + "Manager.cs");
+        var managerPath = Path.Combine(applicationPath, "Manager", EntityName + "Manager.cs");
         if (File.Exists(managerPath))
         {
             File.Delete(managerPath);
             await Console.Out.WriteLineAsync("✔️ clear manager");
         }
-        managerPath = Path.Combine(project.ApplicationPath, "IManager", $"I{EntityName}Manager.cs");
+        managerPath = Path.Combine(applicationPath, "IManager", $"I{EntityName}Manager.cs");
         if (File.Exists(managerPath))
         {
             File.Delete(managerPath);
@@ -221,23 +220,23 @@ public static class CommandRunner
         try
         {
             // 更新 依赖注入
-            var entityPath = Directory.GetFiles(Path.Combine(project.EntityPath, "Entities"), EntityName + ".cs", SearchOption.AllDirectories).First();
+            var entityFilePath = Directory.GetFiles(Path.Combine(entityPath, "Entities"), EntityName + ".cs", SearchOption.AllDirectories).First();
 
-            var managerCmd = new ManagerCommand(entityPath, project.SharePath, project.ApplicationPath);
+            var managerCmd = new ManagerCommand(entityFilePath, sharePath, applicationPath);
             await managerCmd.GenerateServicesAsync();
 
             await Console.Out.WriteLineAsync("✔️ update manager");
             // 清除web api 
-            var apiPath = Path.Combine(project.HttpPath, "Controllers");
+            var apiControllerPath = Path.Combine(apiPath, "Controllers");
 
-            var files = Directory.GetFiles(apiPath, $"{EntityName}Controller.cs", SearchOption.AllDirectories).ToList();
+            var files = Directory.GetFiles(apiControllerPath, $"{EntityName}Controller.cs", SearchOption.AllDirectories).ToList();
             files.ForEach(f =>
             {
                 File.Delete(f);
                 Console.WriteLine($"✔️ clear api {f}");
             });
 
-            var microPath = Path.Combine(project.HttpPath, "..", "Microservice", "Controllers");
+            var microPath = Path.Combine(apiPath, "..", "Microservice", "Controllers");
             if (Directory.Exists(microPath))
             {
                 files = Directory.GetFiles(microPath, $"{EntityName}Controller.cs", SearchOption.AllDirectories)
@@ -249,7 +248,7 @@ public static class CommandRunner
                 });
             }
             // 清除test
-            var testPath = Path.Combine(project.HttpPath, "..", "..", "test", "Application.Test");
+            var testPath = Path.Combine(apiPath, "..", "..", "test", "Application.Test");
             if (Directory.Exists(testPath))
             {
                 var testFile = Path.Combine(testPath, "Managers", $"{EntityName}ManagerTest.cs");

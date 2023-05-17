@@ -97,10 +97,9 @@ public class EntityAdvance
     /// </summary>
     /// <param name="projectId"></param>
     /// <param name="dto"></param>
-    public bool CreateEntity(Guid projectId, AddEntityDto dto)
+    public bool CreateEntity(AddEntityDto dto)
     {
-        var project = _dbContext.Projects.FindById(projectId);
-        string entityPath = Path.Combine(project!.EntityPath, "Entities");
+        string entityPath = Path.Combine(_projectContext.EntityPath!, "Entities");
         string namespaceContent = "namespace Core.Entities";
         if (!string.IsNullOrWhiteSpace(dto.Namespace))
         {

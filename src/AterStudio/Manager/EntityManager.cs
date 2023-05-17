@@ -215,13 +215,13 @@ public class EntityManager
         switch (dto.CommandType)
         {
             case CommandType.Dto:
-                await CommandRunner.GenerateDtoAsync(dto.EntityPath, project.SharePath, dto.Force);
+                await CommandRunner.GenerateDtoAsync(dto.EntityPath, _projectContext.SharePath!, dto.Force);
                 break;
             case CommandType.Manager:
-                await CommandRunner.GenerateManagerAsync(dto.EntityPath, project.SharePath, project.ApplicationPath, dto.Force);
+                await CommandRunner.GenerateManagerAsync(dto.EntityPath, _projectContext.SharePath!, _projectContext.ApplicationPath!, dto.Force);
                 break;
             case CommandType.API:
-                await CommandRunner.GenerateApiAsync(dto.EntityPath, project.SharePath, project.ApplicationPath, project.HttpPath, "Controller", dto.Force);
+                await CommandRunner.GenerateApiAsync(dto.EntityPath, _projectContext.SharePath!, _projectContext.ApplicationPath!, _projectContext.ApiPath!, "Controller", dto.Force);
                 break;
             default:
                 break;
@@ -231,24 +231,22 @@ public class EntityManager
     /// <summary>
     /// 批量生成
     /// </summary>
-    /// <param name="project"></param>
     /// <param name="dto"></param>
     /// <returns></returns>
-    public async Task BatchGenerateAsync(Project project, BatchGenerateDto dto)
+    public async Task BatchGenerateAsync(BatchGenerateDto dto)
     {
-        Const.PROJECT_ID = project.ProjectId;
         switch (dto.CommandType)
         {
             case CommandType.Dto:
                 foreach (string item in dto.EntityPaths)
                 {
-                    await CommandRunner.GenerateDtoAsync(item, project.SharePath, dto.Force);
+                    await CommandRunner.GenerateDtoAsync(item, _projectContext.SharePath!, dto.Force);
                 }
                 break;
             case CommandType.Manager:
                 foreach (string item in dto.EntityPaths)
                 {
-                    await CommandRunner.GenerateManagerAsync(item, project.SharePath, project.ApplicationPath, dto.Force);
+                    await CommandRunner.GenerateManagerAsync(item, _projectContext.SharePath!, _projectContext.ApplicationPath!, dto.Force);
                 }
 
                 break;
@@ -257,8 +255,7 @@ public class EntityManager
                 {
                     dto.ProjectPath?.ForEach(p =>
                     {
-                        var apiPath = Path.Combine(p, "..");
-                        CommandRunner.GenerateApiAsync(item, project.SharePath, project.ApplicationPath, apiPath, "Controller", dto.Force).Wait();
+                        CommandRunner.GenerateApiAsync(item, _projectContext.SharePath!, _projectContext.ApplicationPath!, _projectContext.ApiPath!, "Controller", dto.Force).Wait();
                     });
 
                 }
@@ -276,7 +273,7 @@ public class EntityManager
                 foreach (string item in dto.EntityPaths)
                 {
                     var entityName = Path.GetFileNameWithoutExtension(item);
-                    await CommandRunner.ClearCodesAsync(project, entityName);
+                    await CommandRunner.ClearCodesAsync(_projectContext.EntityPath!, _projectContext.SharePath!, _projectContext.ApplicationPath!, _projectContext.ApiPath!, entityName);
                 }
                 break;
             default:
@@ -284,29 +281,34 @@ public class EntityManager
         }
     }
 
-    public async Task GenerateRequestAsync(Project project, string webPath, RequestLibType type, string? swaggerPath = null)
+    public async Task GenerateRequestAsync(string webPath, RequestLibType type, string? swaggerPath = null)
     {
         // 更新选项
-        project.WebAppPath = webPath;
-        project.SwaggerPath = swaggerPath;
-        _dbContext.Projects.Update(project);
+        var options = ConfigCommand.ReadConfigFile(_projectContext.ProjectPath!);
+        if (options != null)
+        {
+            options.WebAppPath = webPath;
+            options.SwaggerPath = swaggerPath;
+            string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
+            await File.WriteAllTextAsync(Path.Combine(_projectContext.ProjectPath!, Config.ConfigFileName), content, Encoding.UTF8);
+        }
 
-        swaggerPath ??= Path.Combine(project.HttpPath, "swagger.json");
+        swaggerPath ??= Path.Combine(_projectContext.ApiPath!, "swagger.json");
         await CommandRunner.GenerateRequestAsync(swaggerPath, webPath, type);
     }
 
 
     public async Task GenerateClientRequestAsync(Project project, string webPath, LanguageType type, string? swaggerPath = null)
     {
-        swaggerPath ??= Path.Combine(project.HttpPath, "swagger.json");
+        swaggerPath ??= Path.Combine(_projectContext.ApiPath!, "swagger.json");
         await CommandRunner.GenerateCSharpApiClientAsync(swaggerPath, webPath, type);
     }
 
     public async Task GenerateSyncAsync(Project project)
     {
         Const.PROJECT_ID = project.ProjectId;
-        string swaggerPath = Path.Combine(project.HttpPath, "swagger.json");
-        await CommandRunner.SyncToAngularAsync(swaggerPath, project.EntityPath, project.SharePath, project.HttpPath);
+        string swaggerPath = Path.Combine(_projectContext.ApiPath!, "swagger.json");
+        await CommandRunner.SyncToAngularAsync(swaggerPath, _projectContext.EntityPath!, _projectContext.SharePath!, _projectContext.ApiPath!);
     }
 
     public async Task GenerateNgModuleAsync(Project project, string entityName, string rootPath)

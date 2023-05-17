@@ -68,13 +68,6 @@ public class ProjectManager
             DisplayName = name,
             Path = projectFile.FullName,
             Name = projectName,
-            ApplicationPath = config.StorePath.ToFullPath("", dir),
-            EntityFrameworkPath = config.DbContextPath.ToFullPath("", dir),
-            EntityPath = config.EntityPath.ToFullPath("", dir),
-            HttpPath = config.ApiPath.ToFullPath("", dir),
-            SharePath = config.DtoPath.ToFullPath("", dir),
-            SwaggerPath = config.SwaggerPath,
-            WebAppPath = config.WebAppPath
         };
 
         _db.Projects.EnsureIndex(p => p.ProjectId);
@@ -153,12 +146,7 @@ public class ProjectManager
     /// <returns></returns>
     public async Task<bool> UpdateConfigAsync(Guid projectId, UpdateConfigOptionsDto dto)
     {
-        var project = GetProject(projectId);
-        var configPath = File.Exists(project.Path)
-            ? Path.Combine(project.Path, "..")
-            : Path.Combine(project.Path);
-        var options = ConfigCommand.ReadConfigFile(configPath);
-
+        var options = ConfigCommand.ReadConfigFile(_projectContext.ProjectPath!);
         if (options == null)
         {
             return false;
@@ -178,7 +166,7 @@ public class ProjectManager
             options.IsSplitController = dto.IsSplitController;
 
         string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
-        await File.WriteAllTextAsync(Path.Combine(configPath, Config.ConfigFileName), content, Encoding.UTF8);
+        await File.WriteAllTextAsync(Path.Combine(_projectContext.ProjectPath!, Config.ConfigFileName), content, Encoding.UTF8);
         return true;
     }
 
@@ -198,7 +186,7 @@ public class ProjectManager
     /// <param name="project"></param>
     public void StartWatcher(Project project)
     {
-        WatcherManager.StartWatcher(project.ProjectId, project.EntityPath, project.SharePath, project.ApplicationPath);
+        WatcherManager.StartWatcher(project.ProjectId, _projectContext.EntityPath!, _projectContext.SharePath!, _projectContext.ApplicationPath!);
     }
     /// <summary>
     /// 关闭监测

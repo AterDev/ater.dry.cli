@@ -10,6 +10,9 @@ public static class Config
     public static string DbContextPath { get; set; } = "src/Database/EntityFramework";
     public static string StorePath { get; set; } = "src/Application";
     public static string ApiPath { get; set; } = "src/Http.API";
+
+    public static string SwaggerPath { get; set; } = "";
+    public static string WebAppPath { get; set; } = "";
     /// <summary>
     /// 是否拆分
     /// </summary>
@@ -33,5 +36,7 @@ public static class Config
         DtoPath = configOptions.DtoPath;
         CreatedTimeName = configOptions.CreatedTimeName;
         Version = configOptions.Version;
+        WebAppPath = configOptions.WebAppPath ?? "";
+        SwaggerPath = configOptions.SwaggerPath ?? "";
     }
 }

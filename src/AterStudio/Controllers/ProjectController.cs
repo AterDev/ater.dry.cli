@@ -3,7 +3,6 @@ using AterStudio.Manager;
 using AterStudio.Models;
 using Core.Entities;
 using Core.Infrastructure;
-using Datastore;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AterStudio.Controllers;

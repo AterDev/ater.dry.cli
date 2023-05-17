@@ -57,7 +57,7 @@ public class AdvanceController : ControllerBase
     [HttpPost("entity/{projectId}")]
     public bool CreateEntity([FromRoute] Guid projectId, AddEntityDto dto)
     {
-        return _entityAdvance.CreateEntity(projectId, dto);
+        return _entityAdvance.CreateEntity(dto);
 
     }
 }

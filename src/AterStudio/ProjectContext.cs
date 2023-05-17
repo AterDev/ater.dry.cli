@@ -14,6 +14,11 @@ public class ProjectContext
     public Guid? ProjectId { get; set; }
     public Project? Project { get; set; }
     public string? ProjectPath { get; set; }
+    public string? SharePath { get; set; }
+    public string? ApplicationPath { get; set; }
+    public string? EntityPath { get; set; }
+    public string? ApiPath { get; set; }
+
 
     public ProjectContext(IHttpContextAccessor httpContextAccessor, DbContext context)
     {
@@ -30,6 +35,10 @@ public class ProjectContext
                 Config.SetConfig(options);
             }
 
+            SharePath = Path.Combine(ProjectPath, Config.DtoPath);
+            ApplicationPath = Path.Combine(ProjectPath, Config.StorePath);
+            EntityPath = Path.Combine(ProjectPath, Config.EntityPath);
+            ApiPath = Path.Combine(ProjectPath, Config.ApiPath);
         }
     }
 
