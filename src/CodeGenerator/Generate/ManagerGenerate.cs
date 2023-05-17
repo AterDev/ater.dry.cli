@@ -111,7 +111,7 @@ public class ManagerGenerate : GenerateBase
                 "bool" => $"{p.Name} = true,",
                 _ => p.IsEnum ? $"{p.Name} = 0," : $"",
             };
-            content += $"{row + Environment.NewLine}".Indent(3);
+            content += string.IsNullOrWhiteSpace(row) ? "" : $"{row + Environment.NewLine}".Indent(3);
             if (!p.Name.EndsWith("Id"))
                 assertContent += $"Assert.Equal(entity.{p.Name}, res.{p.Name});{Environment.NewLine}".Indent(2);
         });
@@ -485,7 +485,7 @@ public class ManagerGenerate : GenerateBase
                     }
             """;
         });
-        content += """    return await base.UpdateAsync(entity, dto);""";
+        content += "return await base.UpdateAsync(entity, dto);".Indent(2);
         return content;
     }
     public string GetFilterMethodContent()

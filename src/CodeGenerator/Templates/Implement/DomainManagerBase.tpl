@@ -117,7 +117,7 @@ public partial class DomainManagerBase<TEntity, TUpdate, TFilter, TItem>
         return await Query.FindAsync(q => q.Id == id);
     }
 
-    public async Task<TDto?> FindAsync<TDto>(Expression<Func<TEntity, bool>>? whereExp) where TDto : class
+    public async Task<TDto?> FindAsync<TDto>(Expression<Func<TEntity, bool>>? whereExp = null) where TDto : class
     {
         return await Query.FindAsync<TDto>(whereExp);
     }
@@ -137,11 +137,11 @@ public partial class DomainManagerBase<TEntity, TUpdate, TFilter, TItem>
     /// <typeparam name="TDto">返回类型</typeparam>
     /// <param name="whereExp"></param>
     /// <returns></returns>
-    public async Task<List<TDto>> ListAsync<TDto>(Expression<Func<TEntity, bool>>? whereExp) where TDto : class
+    public async Task<List<TDto>> ListAsync<TDto>(Expression<Func<TEntity, bool>>? whereExp = null) where TDto : class
     {
         return await Query.ListAsync<TDto>(whereExp);
     }
-    public async Task<List<TEntity>> ListAsync(Expression<Func<TEntity, bool>>? whereExp)
+    public async Task<List<TEntity>> ListAsync(Expression<Func<TEntity, bool>>? whereExp = null)
     {
         return await Query.ListAsync(whereExp);
     }
