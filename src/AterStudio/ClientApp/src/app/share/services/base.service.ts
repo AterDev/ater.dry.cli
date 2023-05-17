@@ -46,6 +46,7 @@ export class BaseService {
     return new HttpHeaders({
       Accept: 'application/json',
       Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
+      projectId: localStorage.getItem('projectId') ?? ''
     });
   }
   isMoblie(): boolean {

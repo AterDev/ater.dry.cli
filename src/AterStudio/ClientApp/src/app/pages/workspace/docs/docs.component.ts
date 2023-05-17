@@ -9,6 +9,7 @@ import { ApiDocInfo } from 'src/app/share/models/api-doc/api-doc-info.model';
 import { EntityInfo } from 'src/app/share/models/entity-info.model';
 import { OperationType } from 'src/app/share/models/enum/operation-type.model';
 import { RequestLibType } from 'src/app/share/models/enum/request-lib-type.model';
+import { ConfigOptions } from 'src/app/share/models/project/config-options.model';
 import { Project } from 'src/app/share/models/project/project.model';
 import { PropertyInfo } from 'src/app/share/models/property-info.model';
 import { RestApiGroup } from 'src/app/share/models/rest-api-group.model';
@@ -62,7 +63,7 @@ export class DocsComponent implements OnInit {
 
   @ViewChild("clientRequestDialog", { static: true })
   clientRequestTmpRef!: TemplateRef<{}>;
-
+  config: ConfigOptions | null = null;
   restApiGroups = [] as RestApiGroup[];
   filterApiGroups = [] as RestApiGroup[];
   modelInfos = [] as EntityInfo[];
@@ -87,7 +88,21 @@ export class DocsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.initForm();
+    // get config options
+    this.projectSrv.getConfigOptions()
+      .subscribe({
+        next: (res) => {
+          if (res) {
+            this.config = res;
+            this.initForm();
+          } else {
+            this.snb.open('获取失败');
+          }
+        },
+        error: (error) => {
+          this.snb.open(error.detail);
+        }
+      });
     this.getDocs();
   }
 
@@ -110,7 +125,7 @@ export class DocsComponent implements OnInit {
     let defaultPath = `\\src\\app\\share`;
 
     if (this.projectState.project?.path?.endsWith(".sln")) {
-      defaultPath = this.projectState.project.httpPath + '\\ClientApp' + defaultPath;
+      defaultPath = this.config?.apiPath + '\\ClientApp' + defaultPath;
     } else {
       defaultPath = this.projectState.project?.path + defaultPath;
     }
@@ -124,7 +139,7 @@ export class DocsComponent implements OnInit {
     this.clientRequestForm = new FormGroup({
       swagger: new FormControl<string | null>('./swagger.json', []),
       type: new FormControl<LanguageType>(LanguageType.CSharp, []),
-      path: new FormControl<string | null>(this.projectState.project?.httpPath ?? "", [Validators.required])
+      path: new FormControl<string | null>(this.config?.apiPath ?? "", [Validators.required])
     });
   }
   getDocs(): void {

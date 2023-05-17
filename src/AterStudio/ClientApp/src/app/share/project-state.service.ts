@@ -12,6 +12,7 @@ export class ProjectStateService {
   setProject(project: Project): void {
     this.project = project;
     localStorage.setItem('project', JSON.stringify(project));
+    localStorage.setItem('projectId', project.id);
   }
   getProject(): Project | null {
     if (this.project) {

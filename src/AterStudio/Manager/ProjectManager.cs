@@ -126,14 +126,16 @@ public class ProjectManager
     /// 获取项目配置文件内容
     /// </summary>
     /// <returns></returns>
-    public async Task<ConfigOptions?> GetConfigOptions(Guid projectId)
+    public ConfigOptions? GetConfigOptions()
     {
         var options = ConfigCommand.ReadConfigFile(_projectContext.ProjectPath!);
-
-        if (options == null)
+        if (options != null)
         {
-            await ConfigCommand.InitConfigFileAsync(Path.Combine(_projectContext.ProjectPath!, ".."));
-            options = ConfigCommand.ReadConfigFile(Path.Combine(_projectContext.ProjectPath!, ".."));
+            options.RootPath = _projectContext.ProjectPath!;
+            options.DtoPath = _projectContext.SharePath!;
+            options.ApiPath = _projectContext.ApiPath!;
+            options.EntityPath = _projectContext.EntityPath!;
+            options.StorePath = _projectContext.ApplicationPath!;
         }
         return options;
     }
@@ -141,10 +143,9 @@ public class ProjectManager
     /// <summary>
     /// 更新配置内容
     /// </summary>
-    /// <param name="projectId"></param>
     /// <param name="dto"></param>
     /// <returns></returns>
-    public async Task<bool> UpdateConfigAsync(Guid projectId, UpdateConfigOptionsDto dto)
+    public async Task<bool> UpdateConfigAsync(UpdateConfigOptionsDto dto)
     {
         var options = ConfigCommand.ReadConfigFile(_projectContext.ProjectPath!);
         if (options == null)

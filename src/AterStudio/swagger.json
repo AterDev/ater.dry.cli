@@ -1199,25 +1199,13 @@
         }
       }
     },
-    "/api/Project/setting/{id}": {
+    "/api/Project/setting": {
       "get": {
         "tags": [
           "Project"
         ],
         "summary": "获取项目配置文件内容",
         "operationId": "Project_GetConfigOptions",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -1247,18 +1235,6 @@
         ],
         "summary": "更新配置",
         "operationId": "Project_UpdateConfig",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
         "requestBody": {
           "description": "",
           "content": {

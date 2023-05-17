@@ -23,22 +23,24 @@ public class ProjectContext
     public ProjectContext(IHttpContextAccessor httpContextAccessor, DbContext context)
     {
         var id = httpContextAccessor.HttpContext?.Request.Headers["projectId"].ToString();
-        if (id != null)
+        if (!string.IsNullOrWhiteSpace(id))
         {
-            ProjectId = Guid.Parse(id);
-            Project = context.Projects.FindById(ProjectId);
-            Const.PROJECT_ID = ProjectId.Value;
-            ProjectPath = GetProjectRootPath(Project.Path);
-            var options = ConfigCommand.ReadConfigFile(ProjectPath);
-            if (options != null)
+            if (Guid.TryParse(id, out Guid ProjectId))
             {
-                Config.SetConfig(options);
-            }
+                Project = context.Projects.FindById(ProjectId);
+                Const.PROJECT_ID = ProjectId;
+                ProjectPath = GetProjectRootPath(Project.Path);
+                var options = ConfigCommand.ReadConfigFile(ProjectPath);
+                if (options != null)
+                {
+                    Config.SetConfig(options);
+                }
 
-            SharePath = Path.Combine(ProjectPath, Config.DtoPath);
-            ApplicationPath = Path.Combine(ProjectPath, Config.StorePath);
-            EntityPath = Path.Combine(ProjectPath, Config.EntityPath);
-            ApiPath = Path.Combine(ProjectPath, Config.ApiPath);
+                SharePath = Path.Combine(ProjectPath, Config.DtoPath);
+                ApplicationPath = Path.Combine(ProjectPath, Config.StorePath);
+                EntityPath = Path.Combine(ProjectPath, Config.EntityPath);
+                ApiPath = Path.Combine(ProjectPath, Config.ApiPath);
+            }
         }
     }
 

@@ -64,10 +64,10 @@ public class ProjectController : ControllerBase
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    [HttpGet("setting/{id}")]
-    public async Task<ActionResult<ConfigOptions>> GetConfigOptionsAsync([FromRoute] Guid id)
+    [HttpGet("setting")]
+    public ActionResult<ConfigOptions> GetConfigOptions()
     {
-        var config = await _manager.GetConfigOptions(id);
+        var config = _manager.GetConfigOptions();
         return config == null ? Problem("配置文件加载失败") : config;
     }
 
@@ -77,10 +77,10 @@ public class ProjectController : ControllerBase
     /// <param name="id"></param>
     /// <param name="dto"></param>
     /// <returns></returns>
-    [HttpPut("setting/{id}")]
-    public async Task<bool> UpdateConfigAsync([FromRoute] Guid id, UpdateConfigOptionsDto dto)
+    [HttpPut("setting")]
+    public async Task<bool> UpdateConfigAsync(UpdateConfigOptionsDto dto)
     {
-        return await _manager.UpdateConfigAsync(id, dto);
+        return await _manager.UpdateConfigAsync(dto);
     }
 
     /// <summary>

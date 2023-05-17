@@ -88,7 +88,7 @@ export class IndexComponent implements OnInit {
   }
   ngOnInit(): void {
     if (this.projectState.project?.path?.endsWith(".sln")) {
-      this.webPath = this.projectState.project.httpPath + '\\ClientApp';
+      this.webPath = this.projectState.project + '\\src\\Http.API\\ClientApp';
     } else {
       this.webPath = this.projectState.project?.path ?? ''
     }
@@ -116,10 +116,9 @@ export class IndexComponent implements OnInit {
   }
 
   getProjectInfo(): void {
-    this.projectSrv.project(this.projectId)
+    this.projectSrv.getConfigOptions()
       .subscribe(res => {
         if (res) {
-          this.project = res;
           this.requestForm.get('swagger')?.setValue(res.swaggerPath);
           this.requestForm.get('path')?.setValue(res.webAppPath);
         }
@@ -245,7 +244,7 @@ export class IndexComponent implements OnInit {
   }
 
   async getFileContent(entityName: string, isManager: boolean): Promise<EntityFile> {
-    return await lastValueFrom(this.service.getFileContent(this.projectId, entityName, isManager));
+    return await lastValueFrom(this.service.getFileContent(entityName, isManager));
   }
 
   copyCode(): void {

@@ -38,9 +38,7 @@ export class DatabaseComponent implements OnInit {
           next: (res) => {
             if (res) {
               this.content = res;
-
             } else {
-              this.snb.open('');
             }
           },
           error: (error) => {
@@ -48,5 +46,4 @@ export class DatabaseComponent implements OnInit {
           }
         });
   }
-
 }

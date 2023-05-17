@@ -60,20 +60,18 @@ export class ProjectService extends BaseService {
 
   /**
    * 获取项目配置文件内容
-   * @param id 
    */
-  getConfigOptions(id: string): Observable<ConfigOptions> {
-    const url = `/api/Project/setting/${id}`;
+  getConfigOptions(): Observable<ConfigOptions> {
+    const url = `/api/Project/setting`;
     return this.request<ConfigOptions>('get', url);
   }
 
   /**
    * 更新配置
-   * @param id 
    * @param data UpdateConfigOptionsDto
    */
-  updateConfig(id: string, data: UpdateConfigOptionsDto): Observable<boolean> {
-    const url = `/api/Project/setting/${id}`;
+  updateConfig(data: UpdateConfigOptionsDto): Observable<boolean> {
+    const url = `/api/Project/setting`;
     return this.request<boolean>('put', url, data);
   }
 

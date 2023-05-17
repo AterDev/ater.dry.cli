@@ -50,7 +50,7 @@ export class DtoComponent implements OnInit {
   }
   getDtos(): void {
     if (this.projectId && this.name) {
-      this.service.getDtos(this.projectId, this.name)
+      this.service.getDtos(this.name)
         .subscribe({
           next: (res) => {
             if (res) {

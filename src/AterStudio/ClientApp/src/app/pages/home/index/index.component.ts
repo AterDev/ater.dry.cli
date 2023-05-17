@@ -79,7 +79,7 @@ export class IndexComponent implements OnInit {
   openSetting(project: Project): void {
     this.current = project;
     this.isProcessing = true;
-    this.service.getConfigOptions(project.id)
+    this.service.getConfigOptions()
       .subscribe({
         next: (res) => {
           if (res) {
@@ -119,7 +119,7 @@ export class IndexComponent implements OnInit {
       this.isProcessing = true;
       const data = this.settingForm.value as UpdateConfigOptionsDto;
 
-      this.service.updateConfig(this.current.id, data)
+      this.service.updateConfig(data)
         .subscribe({
           next: (res) => {
             if (res) {
