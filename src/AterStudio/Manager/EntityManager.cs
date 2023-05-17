@@ -1,9 +1,12 @@
 ﻿using System.Text;
+
 using Command.Share;
 using Command.Share.Commands;
+
 using Core;
 using Core.Entities;
 using Core.Infrastructure;
+
 using Datastore;
 using Datastore.Models;
 
@@ -30,6 +33,9 @@ public class EntityManager
         //var project = await _context.Projects.FindAsync(projectId);
         try
         {
+
+            Config.EntityPath = Config.EntityPath.Replace('\\', Path.DirectorySeparatorChar)
+                .Replace('/', Path.DirectorySeparatorChar);
             string entityPath = Path.Combine(_projectContext.ProjectPath!, Config.EntityPath, "Entities");
             // get files in directory
             List<string> filePaths = Directory.GetFiles(entityPath, "*.cs", SearchOption.AllDirectories).ToList();

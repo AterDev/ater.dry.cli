@@ -1,7 +1,9 @@
 ﻿using Command.Share.Commands;
+
 using Core;
 using Core.Entities;
 using Core.Infrastructure;
+
 using Datastore;
 
 namespace AterStudio;
@@ -46,7 +48,7 @@ public class ProjectContext
 
     public static string GetProjectRootPath(string projectPath)
     {
-        return File.Exists(projectPath) ? Path.Combine(projectPath, "..") : projectPath;
+        return File.Exists(projectPath) ? Path.GetDirectoryName(projectPath)! : projectPath;
     }
 
 }
