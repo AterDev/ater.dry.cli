@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text.Json;
+
 using Core.Infrastructure;
 
 namespace Command.Share.Commands;
@@ -49,14 +50,14 @@ public class ConfigCommand
                 Const.PROJECT_ID = options.ProjectId;
             }
             // 1.0配置更新
-            if (options.Version == "1.0")
+            if (options.Version == "7.0")
             {
                 options.DtoPath = "src/" + options.DtoPath;
                 options.EntityPath = "src/" + options.EntityPath;
                 options.DbContextPath = "src/" + options.DbContextPath;
                 options.StorePath = "src/" + options.StorePath;
                 options.ApiPath = "src/" + options.ApiPath;
-                options.Version = "1.1";
+                options.Version = "7.1";
             }
 
             string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });

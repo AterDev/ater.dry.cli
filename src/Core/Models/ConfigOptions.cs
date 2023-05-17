@@ -39,7 +39,7 @@ public class ConfigOptions
     public bool? IsSplitController { get; set; } = false;
 
     [JsonConverter(typeof(DoubleStringJsonConverter))]
-    public string Version { get; set; } = "1.1";
+    public string Version { get; set; } = "7.1";
     /// <summary>
     /// swagger地址
     /// </summary>

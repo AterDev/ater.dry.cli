@@ -1,11 +1,15 @@
 ﻿using System.Text;
+
 using AterStudio.Models;
+
 using Command.Share;
 using Command.Share.Commands;
+
 using Core;
 using Core.Entities;
 using Core.Infrastructure;
 using Core.Infrastructure.Helper;
+
 using Datastore;
 
 namespace AterStudio.Manager;
@@ -132,10 +136,6 @@ public class ProjectManager
         if (options != null)
         {
             options.RootPath = _projectContext.ProjectPath!;
-            options.DtoPath = _projectContext.SharePath!;
-            options.ApiPath = _projectContext.ApiPath!;
-            options.EntityPath = _projectContext.EntityPath!;
-            options.StorePath = _projectContext.ApplicationPath!;
         }
         return options;
     }
