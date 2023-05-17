@@ -47,7 +47,7 @@ droplet 命令工具可以帮助开发者根据实体模型(.cs文件)生成常�
 
 |Package Version|.NET SDK Version|支持|
 |-|-|-|
-|6.x|6.0+|不再支持|
+|6.x|6.0+|不再更新|
 |7.x|7.0+|当前版本|
 |8.x|8.0+|未来支持|
 
@@ -79,3 +79,7 @@ droplet studio
 你可以使用`droplet --help` 查看命令帮助信息。
 
 或者使用`droplet [command] --help` 查看具体命令帮助信息。
+
+## 文档
+
+[查看完整文档](https://docs.dusi.dev/zh/droplet/%E6%A6%82%E8%BF%B0.html)
