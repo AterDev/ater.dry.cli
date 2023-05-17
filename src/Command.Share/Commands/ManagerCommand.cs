@@ -37,7 +37,16 @@ public class ManagerCommand : CommandBase
             Console.WriteLine($"the {EntityPath} not exist");
             return;
         }
-        await UpdateFilesAsync();
+
+        try
+        {
+            await UpdateFilesAsync();
+        }
+        catch (Exception ex)
+        {
+            await Console.Out.WriteLineAsync(ex.Message + ex.StackTrace);
+        }
+
         Console.WriteLine(Instructions[0]);
         await GenerateCommonFilesAsync();
         Console.WriteLine(Instructions[1]);
@@ -98,6 +107,11 @@ public class ManagerCommand : CommandBase
             var errorMsgPath = Path.Combine(StorePath, "AppConst", "ErrorMsg.cs");
             if (!File.Exists(errorMsgPath))
             {
+                if (!Directory.Exists(Path.Combine(StorePath, "AppConst")))
+                {
+                    Directory.CreateDirectory(Path.Combine(StorePath, "AppConst"));
+                }
+
                 File.WriteAllText(errorMsgPath, """
                     namespace Application.AppConst;
                     /// <summary>
