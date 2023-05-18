@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 using NuGet.Versioning;
 
 namespace Core.Infrastructure.Helper;
@@ -14,8 +13,16 @@ public class AssemblyHelper
     /// <returns></returns>
     public static FileInfo? FindProjectFile(DirectoryInfo dir, DirectoryInfo? root = null)
     {
-        FileInfo? file = dir.GetFiles("*.csproj")?.FirstOrDefault();
-        return root == null ? file : file == null && dir != root ? FindProjectFile(dir.Parent!, root) : file;
+        try
+        {
+            FileInfo? file = dir.GetFiles("*.csproj")?.FirstOrDefault();
+            return root == null ? file : file == null && dir != root ? FindProjectFile(dir.Parent!, root) : file;
+        }
+        catch (DirectoryNotFoundException)
+        {
+            Console.WriteLine("❌ can't find dir:" + dir.FullName);
+            return null;
+        }
     }
 
     /// <summary>

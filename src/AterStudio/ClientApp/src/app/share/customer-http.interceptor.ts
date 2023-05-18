@@ -60,6 +60,9 @@ export class CustomerHttpInterceptor implements HttpInterceptor {
           if (error.error.detail) {
             errors.detail = error.error.detail;
           }
+          if (error.error.title) {
+            errors.detail = error.error.title;
+          }
         }
         break;
     }

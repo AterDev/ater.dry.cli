@@ -210,6 +210,8 @@ export class IndexComponent implements OnInit {
                   },
                   error: (error) => {
                     this.snb.open(error.detail);
+                    console.log(error.detail);
+
                     this.isSync = false;
                   },
                   complete: () => {
@@ -322,6 +324,7 @@ export class IndexComponent implements OnInit {
           },
           error: (error) => {
             this.snb.open(error.detail);
+            console.log(error.detail);
             this.isSync = false;
           },
           complete: () => {
@@ -345,12 +348,20 @@ export class IndexComponent implements OnInit {
           force: this.force
         };
         this.service.generate(dto)
-          .subscribe(res => {
-            if (res) {
-              this.snb.open('生成成功');
-              this.dialogRef.close();
+          .subscribe({
+            next: (res) => {
+              if (res) {
+                this.snb.open('生成成功');
+                this.dialogRef.close();
+              } else {
+                this.snb.open('');
+              }
+            },
+            error: (error) => {
+              this.snb.open(error.detail);
             }
-          })
+          });
+
       } else {
       }
     }
@@ -386,6 +397,7 @@ export class IndexComponent implements OnInit {
           },
           error: (error) => {
             this.snb.open(error.detail);
+            console.log(error.detail);
             this.isSync = false;
           },
           complete: () => {

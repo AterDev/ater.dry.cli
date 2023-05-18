@@ -116,7 +116,11 @@
         <div *ngIf="currentApi.requestInfo">
           <mat-chip-set>
             <mat-chip color="primary">application/json</mat-chip>
-            <mat-chip color="primary" selected matTooltip="请求类型">{{currentApi.requestInfo.name}}</mat-chip>
+            <mat-chip color="primary" selected matTooltip="请求类型">
+              <strong>
+                {{currentApi.requestInfo.name}}
+              </strong>
+            </mat-chip>
           </mat-chip-set>
           <div *ngIf="currentApi.requestInfo.propertyInfos!.length>0">
             <table mat-table [dataSource]="currentApi.requestInfo.propertyInfos!" class="my-2">
@@ -162,9 +166,13 @@
           <ng-container *ngIf="currentApi.responseInfo.propertyInfos!.length>0;else responseElse">
             <mat-chip-set>
               <mat-chip color="primary">application/json</mat-chip>
-              <mat-chip color="primary" selected matTooltip="返回类型"
-                *ngIf="currentApi.responseInfo.name">{{currentApi.responseInfo.name}}
-                <span *ngIf="currentApi.responseInfo.isList">[]</span>
+              <mat-chip color="primary" selected matTooltip="返回类型" *ngIf="currentApi.responseInfo.name">
+
+                <strong>
+                  {{currentApi.responseInfo.name}}
+                  <span *ngIf="currentApi.responseInfo.isList">[]</span>
+                </strong>
+
               </mat-chip>
             </mat-chip-set>
             <!-- 渲染内容 -->
