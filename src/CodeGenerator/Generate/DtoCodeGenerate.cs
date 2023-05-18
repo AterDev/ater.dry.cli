@@ -312,7 +312,9 @@ public class DtoCodeGenerate : GenerateBase
             .Select(s => new PropertyInfo()
             {
                 Name = s.NavigationName + (s.IsList ? "Ids" : "Id"),
-                Type = s.IsList ? $"List<{KeyType}>" : KeyType,
+                Type = s.IsList
+                    ? $"List<{KeyType}>" + (s.IsRequired ? "" : "?")
+                    : KeyType,
                 IsRequired = s.IsRequired,
                 IsNullable = s.IsNullable,
                 DefaultValue = "",

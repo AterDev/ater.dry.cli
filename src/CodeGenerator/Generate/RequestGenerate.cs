@@ -29,30 +29,39 @@ public class RequestGenerate : GenerateBase
 
     public static string GetBaseService(RequestLibType libType)
     {
-        var db = new DbContext();
-        string? content = null;
-
-        var data = db.TemplateFile.FindAll();
-        switch (libType)
+        try
         {
-            case RequestLibType.NgHttp:
-                content = db.TemplateFile.Query()
-                    .Where(t => t.Name == "angular.base.service.tpl")
-                    .Where(t => t.ProjectId == Const.PROJECT_ID)
-                    .Select(t => t.Content)
-                    .FirstOrDefault();
-                return content ?? GetTplContent("angular.base.service.tpl");
+            var db = new DbContext();
+            string? content = null;
+            var data = db.TemplateFile?.FindAll().ToList();
+            switch (libType)
+            {
+                case RequestLibType.NgHttp:
+                    content = data?
+                        .Where(t => t.Name == "angular.base.service.tpl")
+                        .Where(t => t.ProjectId == Const.PROJECT_ID)
+                        .Select(t => t.Content)
+                        .FirstOrDefault();
+                    return content ?? GetTplContent("angular.base.service.tpl");
 
-            case RequestLibType.Axios:
-                content = db.TemplateFile.Query()
-                    .Where(t => t.Name == "RequestService.axios.service.tpl")
-                    .Select(t => t.Content)
-                    .FirstOrDefault();
-                return content ?? GetTplContent("RequestService.axios.service.tpl");
-            default:
-                break;
+                case RequestLibType.Axios:
+                    content = data?
+                        .Where(t => t.Name == "RequestService.axios.service.tpl")
+                        .Where(t => t.ProjectId == Const.PROJECT_ID)
+                        .Select(t => t.Content)
+                        .FirstOrDefault();
+                    return content ?? GetTplContent("RequestService.axios.service.tpl");
+                default:
+                    break;
+            }
         }
-        return default!;
+        catch (Exception ex)
+        {
+
+            Console.WriteLine("request base service:" + ex.Message + ex.StackTrace + ex.InnerException);
+            return default!;
+        }
+        return string.Empty;
     }
 
     /// <summary>
@@ -447,7 +456,7 @@ export class {serviceFile.Name}Service extends BaseService {{
                 Params.OrderByDescending(p => p.IsRequired)
                     .Select(p => p.IsRequired
                         ? p.Name + ": " + p.Type
-                        : p.Name + ": " + p.Type+" | null")
+                        : p.Name + ": " + p.Type + " | null")
                 .ToArray());
             Params.ForEach(p =>
             {
