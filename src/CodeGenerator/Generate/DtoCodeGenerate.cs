@@ -307,7 +307,7 @@ public class DtoCodeGenerate : GenerateBase
 
         List<PropertyInfo>? referenceProps = EntityInfo.PropertyInfos?
             .Where(p => p.IsNavigation &&
-                (p.IsRequired || !p.IsNullable || string.IsNullOrWhiteSpace(p.DefaultValue)))
+                (p.IsRequired || !p.IsNullable || !string.IsNullOrWhiteSpace(p.DefaultValue)))
             .Where(p => !p.Type.Equals("User") && !p.Type.Equals("SystemUser"))
             .Select(s => new PropertyInfo()
             {
@@ -315,13 +315,10 @@ public class DtoCodeGenerate : GenerateBase
                 Type = s.IsList ? $"List<{KeyType}>" : KeyType,
                 IsRequired = s.IsRequired,
                 IsNullable = s.IsNullable,
+                DefaultValue = "",
                 ProjectId = Const.PROJECT_ID
             })
             .ToList();
-
-        var dtoFileName = EntityInfo.Name + Const.AddDto + ".cs";
-        var dtoFilePath = Path.Combine(DtoPath, "Models", EntityInfo.Name + "Dtos", dtoFileName);
-        var props = MergeProperties(dtoFilePath);
 
         DtoInfo dto = new()
         {
@@ -330,7 +327,7 @@ public class DtoCodeGenerate : GenerateBase
             NamespaceName = EntityInfo.NamespaceName,
             Comment = FormatComment(EntityInfo.Comment, "添加时请求结构"),
             Tag = EntityInfo.Name,
-            Properties = props?.Where(p => !p.IsNavigation
+            Properties = EntityInfo.PropertyInfos?.Where(p => !p.IsNavigation
                 && p.HasSet
                 && p.Name != "Id"
                 && p.Name != "CreatedTime"
@@ -340,16 +337,14 @@ public class DtoCodeGenerate : GenerateBase
         };
 
         // 初次创建
-        if (props == EntityInfo.PropertyInfos)
+        referenceProps?.ForEach(item =>
         {
-            referenceProps?.ForEach(item =>
+            if (!dto.Properties.Any(p => p.Name.Equals(item.Name)))
             {
-                if (!dto.Properties.Any(p => p.Name.Equals(item.Name)))
-                {
-                    dto.Properties.Add(item);
-                }
-            });
-        }
+                dto.Properties.Add(item);
+            }
+        });
+
 
         return dto.ToDtoContent(AssemblyName, EntityInfo.Name, true);
     }
@@ -368,7 +363,7 @@ public class DtoCodeGenerate : GenerateBase
         // 导航属性处理
         List<PropertyInfo>? referenceProps = EntityInfo.PropertyInfos?
             .Where(p => p.IsNavigation &&
-                (p.IsRequired || !p.IsNullable || string.IsNullOrWhiteSpace(p.DefaultValue)))
+                (p.IsRequired || !p.IsNullable || !string.IsNullOrWhiteSpace(p.DefaultValue)))
             .Where(p => !p.Type.Equals("User") && !p.Type.Equals("SystemUser"))
             .Select(s => new PropertyInfo()
             {
@@ -380,10 +375,6 @@ public class DtoCodeGenerate : GenerateBase
             })
             .ToList();
 
-        var dtoFileName = EntityInfo.Name + Const.UpdateDto + ".cs";
-        var dtoFilePath = Path.Combine(DtoPath, "Models", EntityInfo.Name + "Dtos", dtoFileName);
-        var props = MergeProperties(dtoFilePath);
-
         DtoInfo dto = new()
         {
             EntityNamespace = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
@@ -394,7 +385,7 @@ public class DtoCodeGenerate : GenerateBase
 
         };
         // 处理非required的都设置为nullable
-        List<PropertyInfo>? properties = props?.Where(p => !p.IsNavigation
+        List<PropertyInfo>? properties = EntityInfo.PropertyInfos?.Where(p => !p.IsNavigation
                 && p.HasSet
                 && p.Name != "Id"
                 && p.Name != "CreatedTime"
@@ -404,24 +395,21 @@ public class DtoCodeGenerate : GenerateBase
 
         dto.Properties = properties?.Copy() ?? new List<PropertyInfo>();
 
-        // 初次创建
-        if (props == EntityInfo.PropertyInfos)
+        foreach (PropertyInfo item in dto.Properties)
         {
-            foreach (PropertyInfo item in dto.Properties)
+            if (!item.IsRequired)
             {
-                if (!item.IsRequired)
-                {
-                    item.IsNullable = true;
-                }
+                item.IsNullable = true;
             }
-            referenceProps?.ForEach(item =>
-            {
-                if (!dto.Properties.Any(p => p.Name.Equals(item.Name)))
-                {
-                    dto.Properties.Add(item);
-                }
-            });
         }
+        referenceProps?.ForEach(item =>
+        {
+            if (!dto.Properties.Any(p => p.Name.Equals(item.Name)))
+            {
+                dto.Properties.Add(item);
+            }
+        });
+
         foreach (PropertyInfo item in dto.Properties)
         {
             if (!item.IsRequired)

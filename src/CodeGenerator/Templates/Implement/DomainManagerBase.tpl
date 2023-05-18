@@ -47,6 +47,18 @@ public partial class DomainManagerBase<TEntity, TUpdate, TFilter, TItem>
         Database = Command.Database;
         _logger = logger;
     }
+
+    [Obsolete("not support in next version, use base(storeContext, logger)")]
+    public DomainManagerBase(DataStoreContext storeContext, IUserContext userContext)
+    {
+        Stores = storeContext;
+        Query = Stores.QuerySet<TEntity>();
+        Command = Stores.CommandSet<TEntity>();
+        Queryable = Query._query;
+        Database = Command.Database;
+        _userContext = userContext;
+    }
+
     public DomainManagerBase(DataStoreContext storeContext, IUserContext userContext, ILogger logger)
     {
         Stores = storeContext;
