@@ -136,7 +136,6 @@ public class RestApiGenerate : GenerateBase
             .Replace("${UpdateActionBlock}", updateContent);
 
         // add see cref comment
-
         var comment = EntityInfo?.Comment + Environment.NewLine + $"/// <see cref=\"{ServiceNamespace}.Manager.{entityName}Manager\"/>";
         tplContent = tplContent.Replace(TplConst.NAMESPACE, ApiNamespace)
             .Replace(TplConst.SHARE_NAMESPACE, ShareNamespace)

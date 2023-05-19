@@ -396,6 +396,7 @@ public class ManagerGenerate : GenerateBase
             .Replace("${AdditionManagersDI}", additionManagerDI)
             .Replace("${AdditionManagersInit}", additionManagerInit);
 
+
         // 方法内容
         tplContent = tplContent.Replace("${AddActionBlock}", GetAddMethodContent())
             .Replace("${UpdateActionBlock}", GetUpdateMethodContent())
@@ -403,6 +404,7 @@ public class ManagerGenerate : GenerateBase
 
         tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName)
             .Replace(TplConst.ID_TYPE, Config.IdType)
+            .Replace(TplConst.COMMENT, EntityInfo.Comment)
             .Replace(TplConst.NAMESPACE, ServiceNamespace);
         return tplContent;
     }

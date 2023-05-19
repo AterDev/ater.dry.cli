@@ -3,7 +3,7 @@ using ${Namespace}.IManager;
 using Share.Models.${EntityName}Dtos;
 
 namespace ${Namespace}.Manager;
-
+${Comment}
 public class ${EntityName}Manager : DomainManagerBase<${EntityName}, ${EntityName}UpdateDto, ${EntityName}FilterDto, ${EntityName}ItemDto>, I${EntityName}Manager
 {
 ${AdditionManagersProps}
