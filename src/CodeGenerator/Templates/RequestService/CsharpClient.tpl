@@ -3,9 +3,8 @@ namespace ${Namespace};
 
 public class ${ClassName}Client
 {
-    private string BaseUrl { get; set; } = "";
     public string? AccessToken { get; set; }
-    public HttpClient Http { get; set; }
+    private readonly HttpClient Http;
     public JsonSerializerOptions JsonSerializerOptions { get; set; }
     public ErrorResult? ErrorMsg { get; set; } = null;
 
@@ -13,20 +12,9 @@ public class ${ClassName}Client
 ${Properties}
     #endregion
 
-    public ${ClassName}Client(string? baseUrl = null, HttpClientHandler? handler = null)
+    public ${ClassName}Client(HttpClient http)
     {
-        BaseUrl = baseUrl ?? "";
-        Http = handler == null ?
-            new HttpClient()
-            {
-                BaseAddress = new Uri(BaseUrl),
-                Timeout = TimeSpan.FromSeconds(15)
-            } :
-            new HttpClient(handler)
-            {
-                BaseAddress = new Uri(BaseUrl),
-                Timeout = TimeSpan.FromSeconds(15)
-            };
+        Http = http;
         JsonSerializerOptions = new JsonSerializerOptions()
         {
             ReferenceHandler = ReferenceHandler.IgnoreCycles,
@@ -43,12 +31,6 @@ ${InitProperties}
         Http.DefaultRequestHeaders.Clear();
         Http.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", "Bearer " + token);
     }
-
-    public void SetBaseUrl(string url)
-    {
-        this.BaseUrl = url;
-    }
-
 }
 
 public class ErrorResult

@@ -46,7 +46,7 @@ public class CSHttpClientGenerate : GenerateBase
         infos.ForEach(info =>
         {
             propsString += @$"    public {info.ModelName}Service {info.ModelName} {{ get; init; }}" + Environment.NewLine;
-            initPropsString += $"        {info.ModelName} = new {info.ModelName}Service(Http);" + Environment.NewLine;
+            initPropsString += $"        {info.ModelName} = new {info.ModelName}Service(http);" + Environment.NewLine;
         });
 
         tplContent = tplContent.Replace("${Properties}", propsString)
