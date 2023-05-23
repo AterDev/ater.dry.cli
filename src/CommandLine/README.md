@@ -92,7 +92,7 @@ droplet studio
 >
 > Use `droplet [command] --help` to view specific command help information.
 >
-> You can also view [Online Documentation](https://github.com/AterDev/ater.docs/tree/dev/cn/droplet%20cli).
+> You can also view [Online Documentation](https://docs.dusi.dev/zh/droplet/%E6%A6%82%E8%BF%B0.html).
 
 你可以使用`droplet --help` 查看命令帮助信息。
 

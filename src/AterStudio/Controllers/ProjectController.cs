@@ -62,7 +62,6 @@ public class ProjectController : ControllerBase
     /// <summary>
     /// 获取项目配置文件内容
     /// </summary>
-    /// <param name="id"></param>
     /// <returns></returns>
     [HttpGet("setting")]
     public ActionResult<ConfigOptions> GetConfigOptions()
@@ -74,7 +73,6 @@ public class ProjectController : ControllerBase
     /// <summary>
     /// 更新配置
     /// </summary>
-    /// <param name="id"></param>
     /// <param name="dto"></param>
     /// <returns></returns>
     [HttpPut("setting")]

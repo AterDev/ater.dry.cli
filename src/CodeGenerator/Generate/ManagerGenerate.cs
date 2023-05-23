@@ -245,10 +245,8 @@ public class ManagerGenerate : GenerateBase
         string[] commandFiles = Directory.GetFiles(commandPath, $"*{Const.COMMAND_STORE}.cs", SearchOption.TopDirectoryOnly);
         IEnumerable<string> allDataStores = queryFiles.Concat(commandFiles);
 
-        string props = "";
         string ctorParams = "";
         string ctorAssign = "";
-        string oneTab = "    ";
         string twoTab = "        ";
         string usings = "";
         if (allDataStores.Any())
@@ -495,7 +493,7 @@ public class ManagerGenerate : GenerateBase
         string content = "";
         string entityName = EntityInfo.Name;
         var props = EntityInfo.PropertyInfos.Where(p => !p.IsList)
-            .Where(p => p.IsRequired && !p.IsNullable)
+            .Where(p => p.IsRequired && !p.IsNullable || p.IsEnum || p.Type.StartsWith("bool"))
             .Where(p => !p.Name.EndsWith("Id"))
             .Where(p => p.MaxLength is not (not null and >= 200))
             .ToList();

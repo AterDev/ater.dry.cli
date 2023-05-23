@@ -95,7 +95,6 @@ public class EntityAdvance
     /// <summary>
     /// 创建新的实体
     /// </summary>
-    /// <param name="projectId"></param>
     /// <param name="dto"></param>
     public bool CreateEntity(AddEntityDto dto)
     {
