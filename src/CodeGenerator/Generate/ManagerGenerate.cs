@@ -493,7 +493,9 @@ public class ManagerGenerate : GenerateBase
         string content = "";
         string entityName = EntityInfo.Name;
         var props = EntityInfo.PropertyInfos.Where(p => !p.IsList)
-            .Where(p => p.IsRequired && !p.IsNullable || p.IsEnum || p.Type.StartsWith("bool"))
+            .Where(p => p.IsRequired && !p.IsNullable
+              || p.IsEnum
+              || p.Type.StartsWith("bool") && p.Name != "IsDeleted")
             .Where(p => !p.Name.EndsWith("Id"))
             .Where(p => p.MaxLength is not (not null and >= 200))
             .ToList();
