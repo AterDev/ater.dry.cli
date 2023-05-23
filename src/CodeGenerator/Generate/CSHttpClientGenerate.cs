@@ -61,7 +61,7 @@ public class CSHttpClientGenerate : GenerateBase
         return content;
     }
 
-    public List<GenFileInfo> GetServices()
+    public List<GenFileInfo> GetServices(string namespaceName)
     {
         List<GenFileInfo> files = new();
         List<RequestServiceFunction> functions = GetAllRequestFunctions();
@@ -81,7 +81,7 @@ public class CSHttpClientGenerate : GenerateBase
                 Functions = tagFunctions
             };
 
-            string content = ToRequestService(serviceFile);
+            string content = ToRequestService(serviceFile, namespaceName);
 
             string fileName = currentTag.Name + "Service.cs";
             GenFileInfo file = new(fileName, content)
@@ -93,7 +93,7 @@ public class CSHttpClientGenerate : GenerateBase
         return files;
     }
 
-    public static string ToRequestService(RequestServiceFile serviceFile)
+    public static string ToRequestService(RequestServiceFile serviceFile, string namespaceName)
     {
         var functions = serviceFile.Functions;
         string functionstr = "";
@@ -105,7 +105,7 @@ public class CSHttpClientGenerate : GenerateBase
         }
         string result = $$"""
         using Share.Models.{{serviceFile.Name}}Dtos;
-        namespace Dusi.Manage.Client.Services;
+        namespace {{namespaceName}}.Services;
         /// <summary>
         /// {{serviceFile.Description}}
         /// </summary>

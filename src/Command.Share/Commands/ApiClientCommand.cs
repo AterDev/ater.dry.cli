@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi.Models;
 namespace Command.Share.Commands;
 /// <summary>
 /// 客户端请求生成
@@ -78,13 +77,13 @@ public class ApiClientCommand : CommandBase
     {
         var gen = new CSHttpClientGenerate(ApiDocument!);
         // 获取请求服务并生成文件
-        List<GenFileInfo> services = gen.GetServices();
+        var nspName = new DirectoryInfo(OutputPath).Name;
+        List<GenFileInfo> services = gen.GetServices(nspName);
         foreach (GenFileInfo service in services)
         {
             string dir = Path.Combine(OutputPath, "Services");
             await GenerateFileAsync(dir, service.Name, service.Content, true);
         }
-        var nspName = new DirectoryInfo(OutputPath).Name;
         var className = string.IsNullOrWhiteSpace(DocName) ? "Manager" : DocName.ToPascalCase();
         string clientContent = CSHttpClientGenerate.GetClient(services, nspName, className);
         await GenerateFileAsync(OutputPath, DocName.ToPascalCase() + "Client.cs", clientContent, true);

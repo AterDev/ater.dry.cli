@@ -172,11 +172,6 @@ public class DtoCodeGenerate : GenerateBase
         {
             return default;
         }
-
-        var dtoFileName = EntityInfo.Name + Const.ShortDto + ".cs";
-        var dtoFilePath = Path.Combine(DtoPath, "Models", EntityInfo.Name + "Dtos", dtoFileName);
-        var props = MergeProperties(dtoFilePath);
-
         DtoInfo dto = new()
         {
             EntityNamespace = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
@@ -184,21 +179,21 @@ public class DtoCodeGenerate : GenerateBase
             NamespaceName = EntityInfo.NamespaceName,
             Comment = FormatComment(EntityInfo.Comment, "概要"),
             Tag = EntityInfo.Name,
-            Properties = props?
+            Properties = EntityInfo.PropertyInfos?
                 .Where(p => p.Name != "IsDeleted")
                 .ToList()
         };
         // 初次创建
-        if (props == EntityInfo.PropertyInfos)
-        {
-            dto.Properties = dto.Properties?.Where(
-                (p => p.Name != "Content"
-                    && p.Name != "IsDeleted"
-                    && (p.MaxLength < 2000 || p.MaxLength == null)
-                    && !(p.IsList && p.IsNavigation))
-                )
-                .ToList();
-        }
+
+
+        dto.Properties = dto.Properties?.Where(
+            (p => p.Name != "Content"
+                && p.Name != "IsDeleted"
+                && (p.MaxLength < 2000 || p.MaxLength == null)
+                && !(p.IsList && p.IsNavigation))
+            )
+            .ToList();
+
         return dto.ToDtoContent(AssemblyName, EntityInfo.Name);
     }
 
@@ -208,11 +203,6 @@ public class DtoCodeGenerate : GenerateBase
         {
             return default;
         }
-
-        var dtoFileName = EntityInfo.Name + Const.ItemDto + ".cs";
-        var dtoFilePath = Path.Combine(DtoPath, "Models", EntityInfo.Name + "Dtos", dtoFileName);
-        var props = MergeProperties(dtoFilePath);
-
         DtoInfo dto = new()
         {
             EntityNamespace = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
@@ -220,17 +210,15 @@ public class DtoCodeGenerate : GenerateBase
             NamespaceName = EntityInfo.NamespaceName,
             Comment = FormatComment(EntityInfo.Comment, "列表元素"),
             Tag = EntityInfo.Name,
-            Properties = props?
+            Properties = EntityInfo.PropertyInfos?
                 .Where(p => p.Name != "IsDeleted")
                 .ToList()
         };
-        // 初次创建
-        if (props == EntityInfo.PropertyInfos)
-        {
-            dto.Properties = dto.Properties?.Where(p => !p.IsList
-            && (p.MaxLength <= 1000 || p.MaxLength == null)
-                    && !p.IsNavigation).ToList();
-        }
+
+        dto.Properties = dto.Properties?.Where(p => !p.IsList
+        && (p.MaxLength <= 1000 || p.MaxLength == null)
+                && !p.IsNavigation).ToList();
+
         return dto.ToDtoContent(AssemblyName, EntityInfo.Name);
     }
 
@@ -240,7 +228,6 @@ public class DtoCodeGenerate : GenerateBase
         {
             return default;
         }
-
         List<PropertyInfo>? referenceProps = EntityInfo.PropertyInfos?
             .Where(p => p.IsNavigation && !p.IsList)
             .Select(s => new PropertyInfo()
@@ -253,10 +240,6 @@ public class DtoCodeGenerate : GenerateBase
 
         string[] filterFields = new string[] { "Id", "CreatedTime", "UpdatedTime", "IsDeleted", "PageSize", "PageIndex" };
 
-        var dtoFileName = EntityInfo.Name + Const.FilterDto + ".cs";
-        var dtoFilePath = Path.Combine(DtoPath, "Models", EntityInfo.Name + "Dtos", dtoFileName);
-        var props = MergeProperties(dtoFilePath);
-
         DtoInfo dto = new()
         {
             EntityNamespace = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
@@ -267,7 +250,7 @@ public class DtoCodeGenerate : GenerateBase
             BaseType = "FilterBase",
         };
 
-        List<PropertyInfo>? properties = props?
+        List<PropertyInfo>? properties = EntityInfo.PropertyInfos?
                 .Where(p => (p.IsRequired && !p.IsNavigation)
                     || (!p.IsList
                         && !p.IsNavigation
@@ -278,23 +261,19 @@ public class DtoCodeGenerate : GenerateBase
                 .ToList();
         dto.Properties = properties.Copy() ?? new List<PropertyInfo>();
 
-        // 初次创建
-        if (props == EntityInfo.PropertyInfos)
+        // 筛选条件调整为可空
+        foreach (var item in dto.Properties)
         {
-            // 筛选条件调整为可空
-            foreach (var item in dto.Properties)
-            {
-                item.IsNullable = true;
-                item.IsRequired = false;
-            }
-            referenceProps?.ForEach(item =>
-            {
-                if (!dto.Properties.Any(p => p.Name.Equals(item.Name)))
-                {
-                    dto.Properties.Add(item);
-                }
-            });
+            item.IsNullable = true;
+            item.IsRequired = false;
         }
+        referenceProps?.ForEach(item =>
+        {
+            if (!dto.Properties.Any(p => p.Name.Equals(item.Name)))
+            {
+                dto.Properties.Add(item);
+            }
+        });
         return dto.ToDtoContent(AssemblyName, EntityInfo.Name);
     }
 

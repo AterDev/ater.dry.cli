@@ -13,7 +13,7 @@ public class ${ClassName}Client
 ${Properties}
     #endregion
 
-    public AdminClient(string? baseUrl = null, HttpClientHandler? handler = null)
+    public ${ClassName}Client(string? baseUrl = null, HttpClientHandler? handler = null)
     {
         BaseUrl = baseUrl ?? "";
         Http = handler == null ?

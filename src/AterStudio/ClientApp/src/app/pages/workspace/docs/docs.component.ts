@@ -141,7 +141,7 @@ export class DocsComponent implements OnInit {
     this.clientRequestForm = new FormGroup({
       swagger: new FormControl<string | null>('./swagger.json', []),
       type: new FormControl<LanguageType>(LanguageType.CSharp, []),
-      path: new FormControl<string | null>(this.config?.apiPath ?? "", [Validators.required])
+      path: new FormControl<string | null>(this.config?.rootPath + '\\' + this.config?.apiPath ?? "", [Validators.required])
     });
   }
   getDocs(): void {
