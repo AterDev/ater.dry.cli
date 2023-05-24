@@ -8,7 +8,7 @@
 		<AssemblyVersion>0.1.0.0</AssemblyVersion>
 		<FileVersion>0.1.0.0</FileVersion>
 		<PackageId>ater.droplet.cli</PackageId>
-		<Version>7.1.1</Version>
+		<Version>7.1.2</Version>
 		<Description> ater.web 框架代码生成器</Description>
 		<Authors>NilTor</Authors>
 		<Company>Atersoft</Company>
@@ -22,6 +22,7 @@
 		<PackageReleaseNotes>
 			1 项目配置及路径判断优化，增加兼容和扩展性;
 			2 fix bug:更新新文件创建时出错;
+			3 忽略实体中的JsonIgnore;
 		</PackageReleaseNotes>
 		<PackageIcon>logo.jpg</PackageIcon>
 		<ImplicitUsings>enable</ImplicitUsings>

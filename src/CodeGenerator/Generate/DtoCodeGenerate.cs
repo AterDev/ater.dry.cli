@@ -37,7 +37,6 @@ public class DtoCodeGenerate : GenerateBase
             EntityKeyType.String => "String",
             _ => "Guid"
         };
-        GetChangedProperties();
     }
 
     /// <summary>
@@ -181,10 +180,9 @@ public class DtoCodeGenerate : GenerateBase
             Tag = EntityInfo.Name,
             Properties = EntityInfo.PropertyInfos?
                 .Where(p => p.Name != "IsDeleted")
+                .Where(p => !p.IsJsonIgnore)
                 .ToList()
         };
-        // 初次创建
-
 
         dto.Properties = dto.Properties?.Where(
             (p => p.Name != "Content"
@@ -212,6 +210,7 @@ public class DtoCodeGenerate : GenerateBase
             Tag = EntityInfo.Name,
             Properties = EntityInfo.PropertyInfos?
                 .Where(p => p.Name != "IsDeleted")
+                .Where(p => !p.IsJsonIgnore)
                 .ToList()
         };
 
@@ -230,6 +229,7 @@ public class DtoCodeGenerate : GenerateBase
         }
         List<PropertyInfo>? referenceProps = EntityInfo.PropertyInfos?
             .Where(p => p.IsNavigation && !p.IsList)
+            .Where(p => !p.IsJsonIgnore)
             .Select(s => new PropertyInfo()
             {
                 Name = s.Name + "Id",
@@ -285,6 +285,7 @@ public class DtoCodeGenerate : GenerateBase
         }
 
         List<PropertyInfo>? referenceProps = EntityInfo.PropertyInfos?
+            .Where(p => !p.IsJsonIgnore)
             .Where(p => p.IsNavigation &&
                 (p.IsRequired || !p.IsNullable || !string.IsNullOrWhiteSpace(p.DefaultValue)))
             .Where(p => !p.Type.Equals("User") && !p.Type.Equals("SystemUser"))
@@ -343,6 +344,7 @@ public class DtoCodeGenerate : GenerateBase
         }
         // 导航属性处理
         List<PropertyInfo>? referenceProps = EntityInfo.PropertyInfos?
+            .Where(p => !p.IsJsonIgnore)
             .Where(p => p.IsNavigation &&
                 (p.IsRequired || !p.IsNullable || !string.IsNullOrWhiteSpace(p.DefaultValue)))
             .Where(p => !p.Type.Equals("User") && !p.Type.Equals("SystemUser"))

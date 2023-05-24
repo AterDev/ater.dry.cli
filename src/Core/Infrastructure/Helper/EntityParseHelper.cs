@@ -451,6 +451,8 @@ public class EntityParseHelper
             IEnumerable<AttributeArgumentSyntax>? required = GetAttributeArguments(attributes, "Required");
             IEnumerable<AttributeArgumentSyntax>? key = GetAttributeArguments(attributes, "Key");
 
+            IEnumerable<AttributeArgumentSyntax>? jsonIgnore = GetAttributeArguments(attributes, "JsonIgnore");
+
             if (key != null)
             {
                 KeyType = propertyInfo.Type.ToLower() switch
@@ -464,6 +466,10 @@ public class EntityParseHelper
             if (required != null)
             {
                 propertyInfo.IsRequired = true;
+            }
+            if (jsonIgnore != null)
+            {
+                propertyInfo.IsJsonIgnore = true;
             }
 
             if (maxLength != null)

@@ -16,6 +16,7 @@ public class PropertyInfo : EntityBase
     /// 是否为导航属性
     /// </summary>
     public bool IsNavigation { get; set; } = false;
+    public bool IsJsonIgnore { get; set; } = false;
     /// <summary>
     /// 导航属性类名称
     /// </summary>
