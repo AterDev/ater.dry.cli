@@ -26,20 +26,21 @@ public class AutoSyncNgCommand : CommandBase
         Instructions.Add($"  🔹 sync ng services.");
         Instructions.Add($"  🔹 sync ng pages.");
 
-        string openApiContent = File.ReadAllText(SwagerPath);
-        // 过滤特殊符号
-        openApiContent = openApiContent
-            .Replace("«", "")
-            .Replace("»", "");
+        //string openApiContent = File.ReadAllText(SwagerPath);
+        //// 过滤特殊符号
+        //openApiContent = openApiContent
+        //    .Replace("«", "")
+        //    .Replace("»", "");
 
-        ApiDocument = new OpenApiStringReader()
-           .Read(openApiContent, out _);
+        //ApiDocument = new OpenApiStringReader()
+        //   .Read(openApiContent, out _);
 
         //Console.WriteLine(Instructions[0]);
         //await GenerateTsInterfacesAsync();
         //await GenerateCommonFilesAsync();
         //await GenerateNgServicesAsync();
         //Console.WriteLine("😀 Ng services sync completed!" + Environment.NewLine);
+
         // 2 同步路由、页面
         Console.WriteLine(Instructions[1]);
         await GeneratePagesAsync();
