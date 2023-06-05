@@ -159,7 +159,7 @@ public class ManagerCommand : CommandBase
         // 文件
         string[] interfaceFiles = new string[] { "ICommandStore", "ICommandStoreExt", "IQueryStore", "IQueryStoreExt", "IDomainManager", "IUserContext" };
 
-        string[] implementFiles = new string[] { "CommandStoreBase", "QueryStoreBase", "DomainManagerBase" };
+        string[] implementFiles = new string[] { "CommandStoreBase", "QueryStoreBase", "ManagerBase", "DomainManagerBase" };
         string userClass = CodeGen.GetUserContextClass();
 
         // 生成接口文件
@@ -185,7 +185,8 @@ public class ManagerCommand : CommandBase
         foreach (string name in implementFiles)
         {
             string content = CodeGen.GetImplementFile(name);
-            await GenerateFileAsync(implementDir, $"{name}.cs", content, true);
+            bool isCover = name is not "DomainManagerBase";
+            await GenerateFileAsync(implementDir, $"{name}.cs", content, isCover);
         }
         // 生成user上下文
         await GenerateFileAsync(implementDir, "UserContext.cs", userClass);
