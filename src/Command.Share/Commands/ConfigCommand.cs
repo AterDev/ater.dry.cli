@@ -38,6 +38,11 @@ public class ConfigCommand
 
     public static async Task UpdateConfigAsync(string path)
     {
+        if (!File.Exists(path))
+        {
+            await Console.Out.WriteLineAsync("file not found:" + path);
+            return;
+        }
         string config = File.ReadAllText(path);
         var options = JsonSerializer.Deserialize<ConfigOptions>(config);
         if (options != null)
