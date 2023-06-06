@@ -30,18 +30,21 @@ public class ProjectContext
             if (Guid.TryParse(id, out Guid ProjectId))
             {
                 Project = context.Projects.FindById(ProjectId);
-                Const.PROJECT_ID = ProjectId;
-                ProjectPath = GetProjectRootPath(Project.Path);
-                var options = ConfigCommand.ReadConfigFile(ProjectPath);
-                if (options != null)
+                if (Project != null)
                 {
-                    Config.SetConfig(options);
-                }
+                    Const.PROJECT_ID = ProjectId;
+                    ProjectPath = GetProjectRootPath(Project.Path);
+                    var options = ConfigCommand.ReadConfigFile(ProjectPath);
+                    if (options != null)
+                    {
+                        Config.SetConfig(options);
+                    }
 
-                SharePath = Path.Combine(ProjectPath, Config.DtoPath);
-                ApplicationPath = Path.Combine(ProjectPath, Config.StorePath);
-                EntityPath = Path.Combine(ProjectPath, Config.EntityPath);
-                ApiPath = Path.Combine(ProjectPath, Config.ApiPath);
+                    SharePath = Path.Combine(ProjectPath, Config.DtoPath);
+                    ApplicationPath = Path.Combine(ProjectPath, Config.StorePath);
+                    EntityPath = Path.Combine(ProjectPath, Config.EntityPath);
+                    ApiPath = Path.Combine(ProjectPath, Config.ApiPath);
+                }
             }
         }
     }

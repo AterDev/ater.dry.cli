@@ -3,7 +3,7 @@
 using LiteDB;
 
 namespace Datastore;
-public class DbContext
+public class DbContext : IDisposable
 {
     private static LiteDatabase LiteDb { get; set; }
     public ILiteCollection<Project> Projects { get; set; }
@@ -28,5 +28,11 @@ public class DbContext
             TemplateFile = LiteDb.GetCollection<TemplateFile>();
         }
 
+    }
+    ~DbContext() => Dispose();
+
+    public void Dispose()
+    {
+        ((IDisposable)LiteDb).Dispose();
     }
 }

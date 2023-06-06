@@ -54,7 +54,7 @@ public class ConfigCommand
                 options.ProjectId = Guid.NewGuid();
                 Const.PROJECT_ID = options.ProjectId;
             }
-            // 1.0配置更新
+            // 7.0配置更新
             if (options.Version == "7.0")
             {
                 options.DtoPath = "src/" + options.DtoPath;
@@ -63,11 +63,11 @@ public class ConfigCommand
                 options.StorePath = "src/" + options.StorePath;
                 options.ApiPath = "src/" + options.ApiPath;
                 options.Version = "7.1";
-            }
 
-            string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
-            await File.WriteAllTextAsync(path, content, Encoding.UTF8);
-            Console.WriteLine("Update config file success");
+                string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
+                await File.WriteAllTextAsync(path, content, Encoding.UTF8);
+                Console.WriteLine("Update config file success");
+            }
         }
         else
         {

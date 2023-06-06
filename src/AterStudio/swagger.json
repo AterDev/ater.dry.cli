@@ -2037,6 +2037,9 @@
           "isNavigation": {
             "type": "boolean"
           },
+          "isJsonIgnore": {
+            "type": "boolean"
+          },
           "navigationName": {
             "type": "string",
             "nullable": true

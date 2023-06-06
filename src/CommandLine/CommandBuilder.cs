@@ -56,12 +56,14 @@ public class CommandBuilder
         System.CommandLine.Command configCommand = new("config", "config management");
 
         System.CommandLine.Command edit = new("edit", "edit config");
-        System.CommandLine.Command init = new("init", "init config");
+        System.CommandLine.Command init = new("init", "init config in current dir");
 
         edit.SetHandler(ConfigCommand.EditConfigFile);
         init.SetHandler(async () =>
         {
-            await ConfigCommand.InitConfigFileAsync();
+            // get current dir
+            string? currentDir = Directory.GetCurrentDirectory();
+            await ConfigCommand.InitConfigFileAsync(currentDir);
         });
 
         configCommand.AddCommand(edit);

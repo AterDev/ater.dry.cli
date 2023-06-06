@@ -8,6 +8,7 @@ export interface PropertyInfo {
   isList: boolean;
   isPublic: boolean;
   isNavigation: boolean;
+  isJsonIgnore: boolean;
   navigationName?: string | null;
   hasMany?: boolean | null;
   isEnum: boolean;
