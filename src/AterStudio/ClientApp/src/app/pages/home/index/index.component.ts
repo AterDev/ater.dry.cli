@@ -65,13 +65,20 @@ export class IndexComponent implements OnInit {
         this.snb.open('路径不是有效的sln文件');
       }
       this.service.add(name, path)
-        .subscribe(res => {
-          if (res) {
-            this.snb.open('添加成功');
-            this.dialogRef.close();
-            this.getProjects();
+        .subscribe({
+          next: (res) => {
+            if (res) {
+              this.snb.open('添加成功');
+              this.dialogRef.close();
+              this.getProjects();
+            } else {
+              this.snb.open('添加失败');
+            }
+          },
+          error: (error) => {
+            this.snb.open(error.detail);
           }
-        })
+        });
     } else {
       this.snb.open('输入有误，请查检');
     }
