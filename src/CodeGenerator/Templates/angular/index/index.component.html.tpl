@@ -50,15 +50,7 @@
     <mat-paginator [pageSizeOptions]="pageSizeOption" [pageIndex]="filter.pageIndex!-1" [pageSize]="filter.pageSize"
       [length]="total" (page)="getList($event)" showFirstLastButtons></mat-paginator>
   </ng-template>
-
-<!-- 无数据时显示 -->
-<div *ngIf="data && data.length<=0" class="p-2">
-  <h4>
-    暂无内容！
-  </h4>
 </div>
-
-
 
 <ng-template #myDialog>
   <h2 mat-dialog-title>标题</h2>
