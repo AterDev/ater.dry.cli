@@ -16,6 +16,7 @@ import { GenerateDto } from 'src/app/share/models/entity/generate-dto.model';
 import { CommandType } from 'src/app/share/models/enum/command-type.model';
 import { ProjectType } from 'src/app/share/models/enum/project-type.model';
 import { RequestLibType } from 'src/app/share/models/enum/request-lib-type.model';
+import { ConfigOptions } from 'src/app/share/models/project/config-options.model';
 import { Project } from 'src/app/share/models/project/project.model';
 import { SubProjectInfo } from 'src/app/share/models/project/sub-project-info.model';
 import { ProjectStateService } from 'src/app/share/project-state.service';
@@ -68,6 +69,7 @@ export class IndexComponent implements OnInit {
   isBatch = false;
   isCopied = false;
   isLogin = false;
+  config: ConfigOptions | null = null;
   constructor(
     public route: ActivatedRoute,
     public router: Router,
@@ -86,13 +88,23 @@ export class IndexComponent implements OnInit {
     }
     this.isLogin = loginService.isLogin;
   }
+
   ngOnInit(): void {
-    if (this.projectState.project?.path?.endsWith(".sln")) {
-      this.webPath = this.projectState.project + '\\src\\Http.API\\ClientApp';
-    } else {
-      this.webPath = this.projectState.project?.path ?? ''
-    }
-    this.initForm();
+
+    this.projectSrv.getConfigOptions()
+      .subscribe({
+        next: (res) => {
+          if (res) {
+            this.config = res;
+            this.initForm();
+          } else {
+            this.snb.open('获取失败');
+          }
+        },
+        error: (error) => {
+          this.snb.open(error.detail);
+        }
+      });
     this.getProjectInfo();
     this.getEntity();
     // this.getWatchStatus();
@@ -124,6 +136,7 @@ export class IndexComponent implements OnInit {
         }
       });
   }
+
   getWatchStatus(): void {
     this.projectSrv.getWatcherStatus(this.projectId)
       .subscribe(res => {
@@ -134,12 +147,20 @@ export class IndexComponent implements OnInit {
         }
       })
   }
+
   initForm(): void {
     this.requestForm = new FormGroup({
       swagger: new FormControl<string | null>('./swagger.json', []),
       type: new FormControl<RequestLibType>(RequestLibType.NgHttp, []),
       path: new FormControl<string | null>(null, [Validators.required])
     });
+
+    let defaultPath = `\\src\\app\\pages`;
+    if (this.projectState.project?.path?.endsWith(".sln")) {
+      this.webPath = this.config?.rootPath! + '\\' + this.config?.apiPath + '\\ClientApp' + defaultPath;
+    } else {
+      this.webPath = this.config?.rootPath! + defaultPath;
+    }
   }
 
   getEntity(): void {

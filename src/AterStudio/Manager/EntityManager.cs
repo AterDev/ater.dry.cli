@@ -317,10 +317,10 @@ public class EntityManager
         await CommandRunner.SyncToAngularAsync(swaggerPath, _projectContext.EntityPath!, _projectContext.SharePath!, _projectContext.ApiPath!);
     }
 
-    public async Task GenerateNgModuleAsync(Project project, string entityName, string rootPath)
+    public async Task GenerateNgModuleAsync(string entityName, string rootPath)
     {
-        var dtoPath = Path.Combine(project.Path, "..", "src", Config.DtoPath);
-        var entityDir = Path.Combine(project.Path, "..", "src", Config.EntityPath, "Entities");
+        var dtoPath = Path.Combine(_projectContext.ProjectPath!,  Config.DtoPath);
+        var entityDir = Path.Combine(_projectContext.ProjectPath!,  Config.EntityPath, "Entities");
         var entityPath = Directory.GetFiles(entityDir, entityName, SearchOption.AllDirectories)
             .FirstOrDefault();
 

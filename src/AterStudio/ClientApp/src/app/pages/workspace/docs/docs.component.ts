@@ -124,8 +124,6 @@ export class DocsComponent implements OnInit {
     // 生成请求表单
     let defaultPath = `\\src\\app\\share`;
 
-    console.log(this.config);
-
     if (this.projectState.project?.path?.endsWith(".sln")) {
       defaultPath = this.config?.rootPath! + '\\' + this.config?.apiPath + '\\ClientApp' + defaultPath;
     } else {

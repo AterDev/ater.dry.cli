@@ -167,7 +167,7 @@ public class EntityController : ControllerBase
         {
             return NotFound("项目不存在");
         }
-        await _manager.GenerateNgModuleAsync(project, entityName, rootPath);
+        await _manager.GenerateNgModuleAsync(entityName, rootPath);
         return true;
     }
 

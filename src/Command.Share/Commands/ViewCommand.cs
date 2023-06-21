@@ -131,7 +131,7 @@ public class ViewCommand : CommandBase
     {
         string moduleName = ModuleName ?? EntityName.ToHyphen();
         string? routeName = Route?.ToPascalCase().ToHyphen();
-        string dir = Path.Combine(OutputPath, "src", "app", "pages", moduleName, routeName ?? "");
+        string dir = Path.Combine(OutputPath, moduleName, routeName ?? "");
 
         string module = Gen.GetModule(Route?.ToPascalCase());
         string routing = Gen.GetRoutingModule(moduleName, Route?.ToPascalCase());
@@ -154,24 +154,24 @@ public class ViewCommand : CommandBase
     private async Task GeneratePagesAsync()
     {
         string moduleName = ModuleName ?? EntityName.ToHyphen();
-        string dir = Path.Combine(OutputPath, "src", "app", "pages", moduleName, Route?.ToPascalCase().ToHyphen() ?? "");
+        string dir = Path.Combine(OutputPath, moduleName, Route?.ToPascalCase().ToHyphen() ?? "");
 
         NgComponentInfo addComponent = Gen.BuildAddPage();
         NgComponentInfo editComponent = Gen.BuildEditPage();
         NgComponentInfo indexComponent = Gen.BuildIndexPage();
         NgComponentInfo detailComponent = Gen.BuildDetailPage();
-        NgComponentInfo layoutComponent = Gen.BuildLayout();
-        NgComponentInfo confirmDialogComponent = NgPageGenerate.BuildConfirmDialog();
-        string componentsModule = NgPageGenerate.GetComponentModule();
+        //NgComponentInfo layoutComponent = Gen.BuildLayout();
+        //NgComponentInfo confirmDialogComponent = NgPageGenerate.BuildConfirmDialog();
+        //string componentsModule = NgPageGenerate.GetComponentModule();
 
         await GenerateComponentAsync(dir, addComponent);
         await GenerateComponentAsync(dir, editComponent);
         await GenerateComponentAsync(dir, detailComponent);
         await GenerateComponentAsync(dir, indexComponent);
-         
-        await GenerateComponentAsync(dir, layoutComponent);
-        await GenerateComponentAsync(dir, confirmDialogComponent);
-        await GenerateFileAsync(dir, "components.module.ts", componentsModule);
+
+        //await GenerateComponentAsync(dir, layoutComponent);
+        //await GenerateComponentAsync(dir, confirmDialogComponent);
+        //await GenerateFileAsync(dir, "components.module.ts", componentsModule);
     }
 
     /// <summary>
@@ -187,6 +187,4 @@ public class ViewCommand : CommandBase
         await GenerateFileAsync(path, info.Name + ".component.css", info.CssContent!);
         await GenerateFileAsync(path, info.Name + ".component.html", info.HtmlContent!);
     }
-
-
 }
