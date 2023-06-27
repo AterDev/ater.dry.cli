@@ -70,6 +70,8 @@ export class IndexComponent implements OnInit {
   isCopied = false;
   isLogin = false;
   config: ConfigOptions | null = null;
+
+  editor: any;
   constructor(
     public route: ActivatedRoute,
     public router: Router,
@@ -111,20 +113,24 @@ export class IndexComponent implements OnInit {
     this.getProjects();
   }
 
-  /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
     const numSelected = this.selection.selected.length;
     const numRows = this.dataSource.data.length;
     return numSelected === numRows;
   }
 
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
   toggleAllRows() {
     if (this.isAllSelected()) {
       this.selection.clear();
       return;
     }
     this.selection.select(...this.dataSource.data);
+  }
+
+  initEditor(editor: any): void {
+    this.editor = editor;
+    console.log(this.editor);
+    console.log((window as any).monaco);
   }
 
   getProjectInfo(): void {

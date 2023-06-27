@@ -230,7 +230,7 @@
     {{previewItem?.name}}
   </h2>
   <mat-dialog-content>
-    <ngx-monaco-editor class="editor" [options]="editorOptions" [(ngModel)]="previewItem!.content"></ngx-monaco-editor>
+    <ngx-monaco-editor class="editor" [options]="editorOptions" [(ngModel)]="previewItem!.content" (onInit)="initEditor($event)"></ngx-monaco-editor>
   </mat-dialog-content>
   <mat-dialog-actions class="justify-content-end">
     <button mat-button [mat-dialog-close]="true">取消</button>
