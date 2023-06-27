@@ -20,7 +20,11 @@
         <mat-nav-list>
           <a mat-list-item routerLink="/workspace/index" routerLinkActive="active">
             <mat-icon>code</mat-icon>
-            <span *ngIf="opened">代码生成</span>
+            <span *ngIf="opened">实体管理</span>
+          </a>
+          <a mat-list-item routerLink="/workspace/feature" routerLinkActive="active" disabled matTooltip="开发中">
+            <mat-icon>hive</mat-icon>
+            <span *ngIf="opened">功能集成</span>
           </a>
           <a mat-list-item routerLink="/workspace/docs" routerLinkActive="active">
             <mat-icon>api</mat-icon>
@@ -32,7 +36,7 @@
           </a>
           <a mat-list-item routerLink="/workspace/setting" routerLinkActive="active">
             <mat-icon>settings</mat-icon>
-            <span *ngIf="opened">配置</span>
+            <span *ngIf="opened">模板配置</span>
           </a>
         </mat-nav-list>
       </mat-expansion-panel>

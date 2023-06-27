@@ -1,6 +1,12 @@
 <!-- project -->
 <div class="container p-2">
-  <button *ngIf="type!='desktop'" mat-raised-button (click)="addProjectDialog()" color="primary">添加项目</button>
+  <div class="d-flex flex-row align-items-center">
+    <button *ngIf=" type!='desktop'" mat-raised-button (click)=" addProjectDialog()" color="primary">添加项目</button>
+    <a *ngIf="type!='desktop'" class="ms-2" mat-mini-fab matTooltip="创建新解决方案" routerLink="/create" color="accent">
+      <mat-icon>add</mat-icon>
+    </a>
+  </div>
+
   <div class="d-flex gap-1 flex-wrap mt-2" *ngIf="!isLoading">
     <mat-card *ngFor="let item of projects" class="col">
       <mat-card-header>
@@ -8,7 +14,7 @@
           <span>
             {{item.displayName}}
           </span>
-          <button mat-icon-button matTooltip="项目配置" color="primary" (click)="openSetting(item)">
+          <button mat-icon-button matTooltip="项目路径配置" color="primary" (click)="openSetting(item)">
             <mat-icon>settings</mat-icon>
           </button>
         </mat-card-title>
