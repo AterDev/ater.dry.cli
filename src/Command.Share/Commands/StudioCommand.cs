@@ -8,17 +8,17 @@ using LiteDB;
 namespace Command.Share.Commands;
 public class StudioCommand
 {
-    public static void RunStudio()
+    public static async Task RunStudioAsync()
     {
-        Console.WriteLine("welcome ater studio!");
+        Console.WriteLine("🙌 welcome ater studio!");
         string appPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
         var studioPath = Path.Combine(appPath, "AterStudio");
 
         // 检查并更新
-        Update();
+        await UpdateAsync();
 
-        Console.WriteLine("start studio...");
+        Console.WriteLine("🚀 start studio...");
         // 运行
         string shell = "dotnet";
         var url = "http://localhost:9160";
@@ -74,9 +74,9 @@ public class StudioCommand
     /// <summary>
     /// 升级studio
     /// </summary>
-    public static async void Update()
+    public static async Task UpdateAsync()
     {
-        Console.WriteLine($"check&update studio...");
+        Console.WriteLine($"☑️ check&update studio...");
 
         var copyFiles = new string[]
         {
@@ -120,7 +120,29 @@ public class StudioCommand
             }
         });
         await UpdateConfigsAsync();
-        Console.WriteLine("update complete!");
+        UpdateTemplate();
+        Console.WriteLine("✅ update complete!");
+    }
+
+    /// <summary>
+    /// 下载或更新模板
+    /// </summary>
+    public static void UpdateTemplate()
+    {
+        // 安装模板
+        if (!ProcessHelper.RunCommand("dotnet", "new list atapi.pro", out string _))
+        {
+            if (!ProcessHelper.RunCommand("dotnet", "new install ater.web.templates", out _))
+            {
+                Console.WriteLine("⚠️ ater.web.templates install failed!");
+            }
+        }
+        else
+        {
+            if (ProcessHelper.RunCommand("dotnet", "new update", out string _))
+            {
+            }
+        }
     }
 
     /// <summary>

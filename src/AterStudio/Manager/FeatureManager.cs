@@ -27,15 +27,6 @@ public class FeatureManager
     /// <returns></returns>
     public async Task<bool> CreateNewSolutionAsync(string name, string path)
     {
-        // 安装模板
-        if (!ProcessHelper.RunCommand("dotnet", "new list atapi.pro", out string output))
-        {
-            if (!ProcessHelper.RunCommand("dotnet", "new install ater.web.templates", out _))
-            {
-                ErrorMsg = "安装模板失败";
-                return false;
-            }
-        }
         // 生成项目
         if (!Directory.Exists(path))
         {

@@ -20,6 +20,7 @@ public static class ProcessHelper
         process.StartInfo.Arguments = args;
         process.StartInfo.UseShellExecute = false;
         process.StartInfo.RedirectStandardError = true;
+        process.StartInfo.RedirectStandardOutput = true;
         process.Start();
         output = process.StandardError.ReadToEnd();
         process.WaitForExit();
