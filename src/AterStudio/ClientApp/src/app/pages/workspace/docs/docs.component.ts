@@ -35,8 +35,10 @@ export class DocsComponent implements OnInit {
   isLoading = true;
   isOccupying = false;
   currentApi: RestApiInfo | null = null;
+  currentModel: EntityInfo | null = null;
   selectedModel: EntityInfo | null = null;
   searchKey: string | null = null;
+  modelSearchKey: string | null = null;
   /**
    * 文档列表
    */
@@ -66,6 +68,7 @@ export class DocsComponent implements OnInit {
   config: ConfigOptions | null = null;
   restApiGroups = [] as RestApiGroup[];
   filterApiGroups = [] as RestApiGroup[];
+  filterModelInfos = [] as EntityInfo[];
   modelInfos = [] as EntityInfo[];
   tags = [] as ApiDocTag[];
   tableColumns = ['name', 'type', 'requried', 'description'];
@@ -294,6 +297,7 @@ export class DocsComponent implements OnInit {
                 this.restApiGroups = res.restApiGroups!;
                 this.filterApiGroups = this.restApiGroups;
                 this.modelInfos = res.modelInfos!;
+                this.filterModelInfos = this.modelInfos;
                 this.tags = res.openApiTags!;
                 // 更新当前展示的内容
                 if (this.currentApi != null) {
@@ -330,8 +334,6 @@ export class DocsComponent implements OnInit {
           }) > -1
       });
 
-      console.log(this.filterApiGroups);
-
       for (let index = 0; index < this.filterApiGroups.length; index++) {
         const group = this.filterApiGroups[index];
         this.filterApiGroups[index].apiInfos = group.apiInfos!
@@ -346,9 +348,25 @@ export class DocsComponent implements OnInit {
     }
   }
 
+  filterModels(): void {
+    if (this.modelSearchKey && this.modelSearchKey != null) {
+      const modelSearchKey = this.modelSearchKey.toLowerCase();
+      this.filterModelInfos = this.modelInfos.filter((val) => {
+        return val.name?.toLowerCase().includes(modelSearchKey)
+          || val.comment?.toLowerCase().includes(modelSearchKey)
+      });
+    } else {
+      this.filterModelInfos = this.modelInfos;
+    }
+  }
+
   selectApi(api: RestApiInfo): void {
     this.currentApi = api;
     console.log(this.currentApi);
+
+  }
+  selectModel(model: EntityInfo): void {
+    this.currentModel = model;
 
   }
 

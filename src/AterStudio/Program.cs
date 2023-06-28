@@ -98,6 +98,11 @@ app.UseExceptionHandler(handler =>
 
 // 初始化
 IServiceScope scope = app.Services.CreateScope();
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.UseCors("default");
 //app.UseHttpsRedirection();

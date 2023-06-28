@@ -95,6 +95,7 @@ table {
     border-radius: 4px;
 }
 
-td {
-    padding: 0 4px;
+legend {
+    font-weight: bold;
+    font-size: 1rem;
 }
