@@ -4,8 +4,8 @@
 </div>
 
 <div *ngIf="!isLoading">
-  <mat-toolbar>
-    <mat-form-field appearance="fill">
+  <mat-toolbar class="d-flex align-items-center">
+    <mat-form-field>
       <mat-select placeholder="选择接口" [(ngModel)]="currentDoc" (selectionChange)="getDocContent()">
         <mat-option *ngFor="let item of docs" [value]="item">
           {{item.name}}
@@ -36,188 +36,260 @@
       <mat-icon>refresh</mat-icon>
     </button>
   </mat-toolbar>
-  <div class="d-flex">
-    <!-- 左边接口树型列表 -->
-    <div class="col col-auto api-list" *ngIf="currentDoc!=null">
-      <!-- 搜索 -->
-      <mat-form-field class="w-100 mt-2">
-        <input matInput placeholder="搜索接口" [(ngModel)]="searchKey" (keyup.enter)="filterApis()">
-      </mat-form-field>
-      <mat-accordion class="example-headers-align" multi>
-        <mat-expansion-panel hideToggle [expanded]="true" *ngFor="let group of filterApiGroups">
-          <mat-expansion-panel-header>
-            <!-- 控制器名(Tag)/描述 -->
-            <mat-panel-title>
-              <span>{{group.name}} {{group.description}}</span>
-            </mat-panel-title>
-          </mat-expansion-panel-header>
-          <mat-nav-list *ngFor="let api of group.apiInfos" style="margin:0;padding:0">
-            <!-- [请求方法] 描述(Route) -->
-            <a mat-list-item class="api-item" (click)="selectApi(api)">
-              <span class="request-type" [style.color]="getApiTypeColor(api.operationType!)">
-                {{OperationType[api.operationType!].substring(0,1)}}
-              </span>
-              <span>
-                <span>{{api.summary??api.router}}</span>
-              </span>
 
-            </a>
-          </mat-nav-list>
-        </mat-expansion-panel>
-      </mat-accordion>
-    </div>
-    <!-- 右边内容 -->
-    <!-- 请求方法
-    路由地址
-    描述
-    -->
-    <div class="col p-2" *ngIf="currentApi">
-      <div class="section-block">
-        <legend>{{currentApi.summary}}</legend>
-        <div class="api-summary">
-          <span [style.color]="getApiTypeColor(currentApi.operationType!)">
-            {{ OperationType[currentApi.operationType!] }}
-          </span>
-          <span class="api-router">
-            {{currentApi.router}}
-          </span>
-        </div>
-      </div>
-      <div class="section-block">
-        <legend>请求内容</legend>
-        <!-- query -->
-        <div *ngIf="currentApi.queryParameters!.length > 0">
-          <mat-chip-set>
-            <mat-chip color="primary">Query</mat-chip>
-          </mat-chip-set>
-          <table mat-table #table [dataSource]="currentApi.queryParameters!" class="my-2">
-            <ng-container matColumnDef="name">
-              <th mat-header-cell *matHeaderCellDef> 名称 </th>
-              <td mat-cell *matCellDef="let row"> {{row.name}} </td>
-            </ng-container>
-            <ng-container matColumnDef="type">
-              <th mat-header-cell *matHeaderCellDef> 类型 </th>
-              <td mat-cell *matCellDef="let row"> {{row.type}} </td>
-            </ng-container>
-            <ng-container matColumnDef="requried">
-              <th mat-header-cell *matHeaderCellDef> 必须 </th>
-              <td mat-cell *matCellDef="let row"> {{row.isRequired?'是':'否'}} </td>
-            </ng-container>
-            <ng-container matColumnDef="description">
-              <th mat-header-cell *matHeaderCellDef> 说明 </th>
-              <td mat-cell *matCellDef="let row"> {{row.commentSummary}} </td>
-            </ng-container>
+  <mat-tab-group dynamicHeight mat-stretch-tabs="false" mat-align-tabs="start">
+    <mat-tab label="接口">
+      <div class="d-flex">
+        <!-- 左边接口树型列表 -->
+        <div class="col col-auto api-list" *ngIf="currentDoc!=null">
+          <!-- 搜索 -->
+          <mat-form-field class="w-100 mt-2">
+            <input matInput placeholder="搜索接口" [(ngModel)]="searchKey" (keyup.enter)="filterApis()">
+          </mat-form-field>
+          <mat-accordion class="example-headers-align" multi>
+            <mat-expansion-panel hideToggle [expanded]="true" *ngFor="let group of filterApiGroups">
+              <mat-expansion-panel-header>
+                <!-- 控制器名(Tag)/描述 -->
+                <mat-panel-title>
+                  <span>{{group.name}} {{group.description}}</span>
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <mat-nav-list *ngFor="let api of group.apiInfos" style="margin:0;padding:0">
+                <!-- [请求方法] 描述(Route) -->
+                <a mat-list-item class="api-item" (click)="selectApi(api)">
+                  <span class="request-type" [style.color]="getApiTypeColor(api.operationType!)">
+                    {{OperationType[api.operationType!].substring(0,1)}}
+                  </span>
+                  <span>
+                    <span>{{api.summary??api.router}}</span>
+                  </span>
 
-            <tr mat-header-row *matHeaderRowDef="tableColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: tableColumns"></tr>
-          </table>
+                </a>
+              </mat-nav-list>
+            </mat-expansion-panel>
+          </mat-accordion>
         </div>
-        <!-- body -->
-        <div *ngIf="currentApi.requestInfo">
-          <mat-chip-set>
-            <mat-chip color="primary">application/json</mat-chip>
-            <mat-chip color="primary" selected matTooltip="请求类型">
-              <strong>
-                {{currentApi.requestInfo.name}}
-              </strong>
-            </mat-chip>
-          </mat-chip-set>
-          <div *ngIf="currentApi.requestInfo.propertyInfos!.length>0">
-            <table mat-table [dataSource]="currentApi.requestInfo.propertyInfos!" class="my-2">
-              <!-- 表格模板 -->
-              <ng-container matColumnDef="name">
-                <th mat-header-cell *matHeaderCellDef> 名称 </th>
-                <td mat-cell *matCellDef="let row"> {{row.name}} </td>
-              </ng-container>
-              <ng-container matColumnDef="type">
-                <th mat-header-cell *matHeaderCellDef> 类型 </th>
-                <td mat-cell *matCellDef="let row">
-                  <ng-container *ngIf="row.isNavigation; else requestPropNav">
-                    <strong style="color: #318deb;">
-                      {{row.type}}
-                    </strong>
+        <!-- 右边内容 -->
+        <div class="col p-2" *ngIf="currentApi">
+          <div class="section-block">
+            <legend>{{currentApi.summary}}</legend>
+            <div class="api-summary">
+              <span [style.color]="getApiTypeColor(currentApi.operationType!)">
+                {{ OperationType[currentApi.operationType!] }}
+              </span>
+              <span class="api-router">
+                {{currentApi.router}}
+              </span>
+            </div>
+          </div>
+          <div class="section-block">
+            <legend>请求内容</legend>
+            <!-- query -->
+            <div *ngIf="currentApi.queryParameters!.length > 0">
+              <mat-chip-set>
+                <mat-chip color="primary">Query</mat-chip>
+              </mat-chip-set>
+              <table mat-table #table [dataSource]="currentApi.queryParameters!" class="my-2">
+                <ng-container matColumnDef="name">
+                  <th mat-header-cell *matHeaderCellDef> 名称 </th>
+                  <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+                </ng-container>
+                <ng-container matColumnDef="type">
+                  <th mat-header-cell *matHeaderCellDef> 类型 </th>
+                  <td mat-cell *matCellDef="let row"> {{row.type}} </td>
+                </ng-container>
+                <ng-container matColumnDef="requried">
+                  <th mat-header-cell *matHeaderCellDef> 必须 </th>
+                  <td mat-cell *matCellDef="let row"> {{row.isRequired?'是':'否'}} </td>
+                </ng-container>
+                <ng-container matColumnDef="description">
+                  <th mat-header-cell *matHeaderCellDef> 说明 </th>
+                  <td mat-cell *matCellDef="let row"> {{row.commentSummary}} </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="tableColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: tableColumns"></tr>
+              </table>
+            </div>
+            <!-- body -->
+            <div *ngIf="currentApi.requestInfo">
+              <mat-chip-set>
+                <mat-chip color="primary">application/json</mat-chip>
+                <mat-chip color="primary" selected matTooltip="请求类型">
+                  <strong>
+                    {{currentApi.requestInfo.name}}
+                  </strong>
+                </mat-chip>
+              </mat-chip-set>
+              <div *ngIf="currentApi.requestInfo.propertyInfos!.length>0">
+                <table mat-table [dataSource]="currentApi.requestInfo.propertyInfos!" class="my-2">
+                  <!-- 表格模板 -->
+                  <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef> 名称 </th>
+                    <td mat-cell *matCellDef="let row"> {{row.name}} </td>
                   </ng-container>
-                  <ng-template #requestPropNav>
-                    {{row.type}}
-                  </ng-template>
-                </td>
+                  <ng-container matColumnDef="type">
+                    <th mat-header-cell *matHeaderCellDef> 类型 </th>
+                    <td mat-cell *matCellDef="let row">
+                      <ng-container *ngIf="row.isNavigation; else requestPropNav">
+                        <strong style="color: #318deb;">
+                          {{row.type}}
+                        </strong>
+                      </ng-container>
+                      <ng-template #requestPropNav>
+                        {{row.type}}
+                      </ng-template>
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="requried">
+                    <th mat-header-cell *matHeaderCellDef> 必须 </th>
+                    <td mat-cell *matCellDef="let row"> {{row.isRequired?'是':'否'}} </td>
+                  </ng-container>
+                  <ng-container matColumnDef="description">
+                    <th mat-header-cell *matHeaderCellDef> 说明 </th>
+                    <td mat-cell *matCellDef="let row"> {{row.commentSummary}} </td>
+                  </ng-container>
+                  <!-- 行定义 -->
+                  <tr mat-header-row *matHeaderRowDef="tableColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: tableColumns" class="example-element-row"
+                    (click)="showModel(row)"></tr>
+                </table>
+              </div>
+            </div>
+
+          </div>
+          <div class="section-block">
+            <legend>返回内容</legend>
+            <div *ngIf="currentApi.responseInfo">
+              <!--  -->
+              <ng-container *ngIf="currentApi.responseInfo.propertyInfos!.length>0;else responseElse">
+                <mat-chip-set>
+                  <mat-chip color="primary">application/json</mat-chip>
+                  <mat-chip color="primary" selected matTooltip="返回类型" *ngIf="currentApi.responseInfo.name">
+
+                    <strong>
+                      {{currentApi.responseInfo.name}}
+                      <span *ngIf="currentApi.responseInfo.isList">[]</span>
+                    </strong>
+
+                  </mat-chip>
+                </mat-chip-set>
+                <!-- 渲染内容 -->
+                <table mat-table [dataSource]="currentApi.responseInfo.propertyInfos!" class="my-2">
+                  <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef> 名称 </th>
+                    <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+                  </ng-container>
+                  <ng-container matColumnDef="type">
+                    <th mat-header-cell *matHeaderCellDef> 类型 </th>
+                    <td mat-cell *matCellDef="let row">
+                      <ng-container *ngIf="row.isNavigation; else responsePropNav">
+                        <strong style="color: #318deb;">
+                          {{row.type}}
+                        </strong>
+                      </ng-container>
+                      <ng-template #responsePropNav>
+                        {{row.type}}
+                      </ng-template>
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="requried">
+                    <th mat-header-cell *matHeaderCellDef> 必须 </th>
+                    <td mat-cell *matCellDef="let row"> {{row.isRequired?'是':'否'}} </td>
+                  </ng-container>
+                  <ng-container matColumnDef="description">
+                    <th mat-header-cell *matHeaderCellDef> 说明 </th>
+                    <td mat-cell *matCellDef="let row"> {{row.commentSummary}} </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="tableColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: tableColumns" class="example-element-row"
+                    (click)="showModel(row)"></tr>
+                </table>
               </ng-container>
-              <ng-container matColumnDef="requried">
-                <th mat-header-cell *matHeaderCellDef> 必须 </th>
-                <td mat-cell *matCellDef="let row"> {{row.isRequired?'是':'否'}} </td>
-              </ng-container>
-              <ng-container matColumnDef="description">
-                <th mat-header-cell *matHeaderCellDef> 说明 </th>
-                <td mat-cell *matCellDef="let row"> {{row.commentSummary}} </td>
-              </ng-container>
-              <!-- 行定义 -->
-              <tr mat-header-row *matHeaderRowDef="tableColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: tableColumns" class="example-element-row"
-                (click)="showModel(row)"></tr>
-            </table>
+              <ng-template #responseElse>
+                <mat-chip-set>
+                  <mat-chip color="primary">application/json</mat-chip>
+                  <mat-chip color="primary" selected matTooltip="返回类型">{{currentApi.responseInfo.name}}</mat-chip>
+                </mat-chip-set>
+              </ng-template>
+            </div>
           </div>
         </div>
-
       </div>
-      <div class="section-block">
-        <legend>返回内容</legend>
-        <div *ngIf="currentApi.responseInfo">
-          <!--  -->
-          <ng-container *ngIf="currentApi.responseInfo.propertyInfos!.length>0;else responseElse">
-            <mat-chip-set>
-              <mat-chip color="primary">application/json</mat-chip>
-              <mat-chip color="primary" selected matTooltip="返回类型" *ngIf="currentApi.responseInfo.name">
-
-                <strong>
-                  {{currentApi.responseInfo.name}}
-                  <span *ngIf="currentApi.responseInfo.isList">[]</span>
-                </strong>
-
-              </mat-chip>
-            </mat-chip-set>
-            <!-- 渲染内容 -->
-            <table mat-table [dataSource]="currentApi.responseInfo.propertyInfos!" class="my-2">
-              <ng-container matColumnDef="name">
-                <th mat-header-cell *matHeaderCellDef> 名称 </th>
-                <td mat-cell *matCellDef="let row"> {{row.name}} </td>
-              </ng-container>
-              <ng-container matColumnDef="type">
-                <th mat-header-cell *matHeaderCellDef> 类型 </th>
-                <td mat-cell *matCellDef="let row">
-                  <ng-container *ngIf="row.isNavigation; else responsePropNav">
-                    <strong style="color: #318deb;">
-                      {{row.type}}
-                    </strong>
+    </mat-tab>
+    <mat-tab label="模型">
+      <div class="d-flex">
+        <!-- 左边接口树型列表 -->
+        <div class="col col-auto api-list" *ngIf="currentDoc!=null">
+          <!-- 搜索 -->
+          <mat-form-field class="w-100 mt-2">
+            <input matInput placeholder="搜索模型" [(ngModel)]="modelSearchKey" (keyup.enter)="filterModels()">
+          </mat-form-field>
+          <mat-nav-list *ngFor="let model of filterModelInfos" style="margin:0;padding:0">
+            <!-- [请求方法] 描述(Route) -->
+            <a mat-list-item class="api-item" (click)="selectModel(model)" [matTooltip]="model.comment??''">
+              <span>{{model.name}}</span>
+            </a>
+          </mat-nav-list>
+        </div>
+        <!-- 右边内容 -->
+        <div class="col p-2" *ngIf="currentModel">
+          <div class="section-block">
+            <legend>{{currentModel.name}} {{currentModel.comment}}</legend>
+            <div class="api-summary">
+              <span *ngIf="currentModel.isEnum">
+                枚举
+              </span>
+            </div>
+          </div>
+          <div class="section-block">
+            <div *ngIf="currentModel.propertyInfos">
+              <!--  -->
+              <ng-container *ngIf="currentModel.propertyInfos.length>0;else responseElse">
+                <!-- 渲染内容 -->
+                <table mat-table [dataSource]="currentModel.propertyInfos" class="my-2">
+                  <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef> 名称 </th>
+                    <td mat-cell *matCellDef="let row"> {{row.name}} </td>
                   </ng-container>
-                  <ng-template #responsePropNav>
-                    {{row.type}}
-                  </ng-template>
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="requried">
-                <th mat-header-cell *matHeaderCellDef> 必须 </th>
-                <td mat-cell *matCellDef="let row"> {{row.isRequired?'是':'否'}} </td>
-              </ng-container>
-              <ng-container matColumnDef="description">
-                <th mat-header-cell *matHeaderCellDef> 说明 </th>
-                <td mat-cell *matCellDef="let row"> {{row.commentSummary}} </td>
-              </ng-container>
+                  <ng-container matColumnDef="type">
+                    <th mat-header-cell *matHeaderCellDef> 类型 </th>
+                    <td mat-cell *matCellDef="let row">
+                      <ng-container *ngIf="row.isNavigation; else responsePropNav">
+                        <strong style="color: #318deb;">
+                          {{row.type}}
+                        </strong>
+                      </ng-container>
+                      <ng-template #responsePropNav>
+                        {{row.type}}
+                      </ng-template>
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="requried">
+                    <th mat-header-cell *matHeaderCellDef> 必须 </th>
+                    <td mat-cell *matCellDef="let row"> {{row.isRequired?'是':'否'}} </td>
+                  </ng-container>
+                  <ng-container matColumnDef="description">
+                    <th mat-header-cell *matHeaderCellDef> 说明 </th>
+                    <td mat-cell *matCellDef="let row"> {{row.commentSummary}} </td>
+                  </ng-container>
 
-              <tr mat-header-row *matHeaderRowDef="tableColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: tableColumns" class="example-element-row"
-                (click)="showModel(row)"></tr>
-            </table>
-          </ng-container>
-          <ng-template #responseElse>
-            <mat-chip-set>
-              <mat-chip color="primary">application/json</mat-chip>
-              <mat-chip color="primary" selected matTooltip="返回类型">{{currentApi.responseInfo.name}}</mat-chip>
-            </mat-chip-set>
-          </ng-template>
+                  <tr mat-header-row *matHeaderRowDef="tableColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: tableColumns" class="example-element-row"
+                    (click)="showModel(row)"></tr>
+                </table>
+              </ng-container>
+              <ng-template #responseElse>
+
+              </ng-template>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
+    </mat-tab>
+  </mat-tab-group>
+
 </div>
 <ng-template #addDocDialog>
   <h2 mat-dialog-title>添加 swagger 接口文档</h2>
