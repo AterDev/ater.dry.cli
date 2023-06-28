@@ -235,54 +235,78 @@
         </div>
         <!-- 右边内容 -->
         <div class="col p-2" *ngIf="currentModel">
-          <div class="section-block">
-            <legend>{{currentModel.name}} {{currentModel.comment}}</legend>
-            <div class="api-summary">
-              <span *ngIf="currentModel.isEnum">
-                枚举
-              </span>
-            </div>
-          </div>
-          <div class="section-block">
-            <div *ngIf="currentModel.propertyInfos">
-              <!--  -->
-              <ng-container *ngIf="currentModel.propertyInfos.length>0;else responseElse">
-                <!-- 渲染内容 -->
-                <table mat-table [dataSource]="currentModel.propertyInfos" class="my-2">
-                  <ng-container matColumnDef="name">
-                    <th mat-header-cell *matHeaderCellDef> 名称 </th>
-                    <td mat-cell *matCellDef="let row"> {{row.name}} </td>
-                  </ng-container>
-                  <ng-container matColumnDef="type">
-                    <th mat-header-cell *matHeaderCellDef> 类型 </th>
-                    <td mat-cell *matCellDef="let row">
-                      <ng-container *ngIf="row.isNavigation; else responsePropNav">
-                        <strong style="color: #318deb;">
+          <div class="d-flex">
+            <div class="col">
+              <legend>{{currentModel.name}} {{currentModel.comment}}</legend>
+              <div class="api-summary">
+                <span *ngIf="currentModel.isEnum">
+                  枚举
+                </span>
+              </div>
+              <div class="d-flex align-items-center gap-1 my-2">
+                <mat-select [value]="0" class="d-flex select" matTooltip="选择UI框架">
+                  <mat-option [value]="0">
+                    Angular Material
+                  </mat-option>
+                </mat-select>
+                <button mat-flat-button [matMenuTriggerFor]="menu" color="primary">生成</button>
+                <mat-menu #menu="matMenu">
+                  <button mat-menu-item (click)="generateUI('form')">提交表单</button>
+                  <button mat-menu-item (click)="generateUI('table')">展示列表</button>
+                </mat-menu>
+              </div>
+              <div *ngIf="currentModel.propertyInfos">
+                <!--  -->
+                <ng-container *ngIf="currentModel.propertyInfos.length>0;else responseElse">
+                  <!-- 渲染内容 -->
+                  <table mat-table [dataSource]="currentModel.propertyInfos" class="my-2">
+                    <ng-container matColumnDef="name">
+                      <th mat-header-cell *matHeaderCellDef> 名称 </th>
+                      <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="type">
+                      <th mat-header-cell *matHeaderCellDef> 类型 </th>
+                      <td mat-cell *matCellDef="let row">
+                        <ng-container *ngIf="row.isNavigation; else responsePropNav">
+                          <strong style="color: #318deb;">
+                            {{row.type}}
+                          </strong>
+                        </ng-container>
+                        <ng-template #responsePropNav>
                           {{row.type}}
-                        </strong>
-                      </ng-container>
-                      <ng-template #responsePropNav>
-                        {{row.type}}
-                      </ng-template>
-                    </td>
-                  </ng-container>
-                  <ng-container matColumnDef="requried">
-                    <th mat-header-cell *matHeaderCellDef> 必须 </th>
-                    <td mat-cell *matCellDef="let row"> {{row.isRequired?'是':'否'}} </td>
-                  </ng-container>
-                  <ng-container matColumnDef="description">
-                    <th mat-header-cell *matHeaderCellDef> 说明 </th>
-                    <td mat-cell *matCellDef="let row"> {{row.commentSummary}} </td>
-                  </ng-container>
+                        </ng-template>
+                      </td>
+                    </ng-container>
+                    <ng-container matColumnDef="requried">
+                      <th mat-header-cell *matHeaderCellDef> 必须 </th>
+                      <td mat-cell *matCellDef="let row"> {{row.isRequired?'是':'否'}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="description">
+                      <th mat-header-cell *matHeaderCellDef> 说明 </th>
+                      <td mat-cell *matCellDef="let row"> {{row.commentSummary}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="validator">
+                      <th mat-header-cell *matHeaderCellDef> 字段要求 </th>
+                      <td mat-cell *matCellDef="let row">
+                        <span *ngIf="row.minLength">
+                          {{row.minLength}}
+                        </span>
+                        <span *ngIf="row.maxLength">
+                          {{row.maxLength}}
+                        </span>
+                      </td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="modelTableColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: modelTableColumns" class="example-element-row"
+                      (click)="showModel(row)"></tr>
+                  </table>
+                </ng-container>
+                <ng-template #responseElse>
+                </ng-template>
+              </div>
+            </div>
+            <div class="col">
 
-                  <tr mat-header-row *matHeaderRowDef="tableColumns"></tr>
-                  <tr mat-row *matRowDef="let row; columns: tableColumns" class="example-element-row"
-                    (click)="showModel(row)"></tr>
-                </table>
-              </ng-container>
-              <ng-template #responseElse>
-
-              </ng-template>
             </div>
           </div>
         </div>

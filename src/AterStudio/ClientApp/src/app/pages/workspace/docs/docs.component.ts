@@ -72,6 +72,7 @@ export class DocsComponent implements OnInit {
   modelInfos = [] as EntityInfo[];
   tags = [] as ApiDocTag[];
   tableColumns = ['name', 'type', 'requried', 'description'];
+  modelTableColumns = ['name', 'type', 'requried', 'description', 'validator'];
 
   constructor(
     public projectSrv: ProjectService,
@@ -284,6 +285,10 @@ export class DocsComponent implements OnInit {
           this.isSync = false;
         }
       })
+  }
+
+  generateUI(type: string): void {
+
   }
 
   getDocContent(): void {

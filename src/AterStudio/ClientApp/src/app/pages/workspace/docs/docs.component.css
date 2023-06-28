@@ -99,3 +99,11 @@ legend {
     font-weight: bold;
     font-size: 1rem;
 }
+
+.select {
+    border: 1px solid #d6d6d6;
+    padding: 6px 8px;
+    border-radius: 2px;
+    min-width: 240px;
+    width: auto;
+}
