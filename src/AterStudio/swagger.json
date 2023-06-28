@@ -1789,6 +1789,23 @@
           "Redis",
           "Memory",
           "None"
+        ],
+        "x-enumData": [
+          {
+            "name": "Redis",
+            "value": 0,
+            "description": "Redis"
+          },
+          {
+            "name": "Memory",
+            "value": 1,
+            "description": "Memory"
+          },
+          {
+            "name": "None",
+            "value": 2,
+            "description": "None"
+          }
         ]
       },
       "CommandType": {
@@ -1807,7 +1824,8 @@
           "API",
           "Protobuf",
           "Clear"
-        ]
+        ],
+        "x-enumData": [ ]
       },
       "ConfigOptions": {
         "type": "object",
@@ -1879,11 +1897,13 @@
         "type": "object",
         "properties": {
           "name": {
+            "maxLength": 50,
             "type": "string",
             "description": "名称",
             "nullable": true
           },
           "path": {
+            "maxLength": 300,
             "type": "string",
             "description": "路径",
             "nullable": true
@@ -1906,13 +1926,41 @@
             "type": "boolean",
             "description": "是否包含任务管理服务"
           },
-          "features": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "功能模块",
+          "commandDbConnStrings": {
+            "maxLength": 300,
+            "type": "string",
+            "description": "写数据库连接字符串",
             "nullable": true
+          },
+          "queryDbConnStrings": {
+            "maxLength": 300,
+            "type": "string",
+            "description": "读数据库连接字符串",
+            "nullable": true
+          },
+          "cacheConnStrings": {
+            "maxLength": 200,
+            "type": "string",
+            "description": "缓存连接字符串",
+            "nullable": true
+          },
+          "cacheInstanceName": {
+            "maxLength": 60,
+            "type": "string",
+            "description": "缓存实例名称",
+            "nullable": true
+          },
+          "hasCmsFeature": {
+            "type": "boolean",
+            "description": "内容管理模块"
+          },
+          "hasUserLogsFeature": {
+            "type": "boolean",
+            "description": "用户日志模块"
+          },
+          "hasSystemLogsFeature": {
+            "type": "boolean",
+            "description": "系统日志模块"
           }
         },
         "additionalProperties": false,
@@ -1928,6 +1976,18 @@
         "x-enumNames": [
           "SQLServer",
           "PostgreSQL"
+        ],
+        "x-enumData": [
+          {
+            "name": "SQLServer",
+            "value": 0,
+            "description": "SQLServer"
+          },
+          {
+            "name": "PostgreSQL",
+            "value": 1,
+            "description": "PostgreSQL"
+          }
         ]
       },
       "EntityFile": {
@@ -2028,7 +2088,8 @@
           "Guid",
           "Int",
           "String"
-        ]
+        ],
+        "x-enumData": [ ]
       },
       "GenerateDto": {
         "type": "object",
@@ -2058,7 +2119,8 @@
         "format": "int32",
         "x-enumNames": [
           "CSharp"
-        ]
+        ],
+        "x-enumData": [ ]
       },
       "OperationType": {
         "enum": [
@@ -2082,7 +2144,8 @@
           "Head",
           "Patch",
           "Trace"
-        ]
+        ],
+        "x-enumData": [ ]
       },
       "Project": {
         "type": "object",
@@ -2122,7 +2185,8 @@
           "Web",
           "Console",
           "Lib"
-        ]
+        ],
+        "x-enumData": [ ]
       },
       "PropertyInfo": {
         "type": "object",
@@ -2228,7 +2292,8 @@
         "x-enumNames": [
           "NgHttp",
           "Axios"
-        ]
+        ],
+        "x-enumData": [ ]
       },
       "RestApiGroup": {
         "type": "object",

@@ -27,8 +27,32 @@ export interface CreateSolutionDto {
    */
   hasTaskManager: boolean;
   /**
-   * 功能模块
+   * 写数据库连接字符串
    */
-  features?: string[] | null;
+  commandDbConnStrings?: string | null;
+  /**
+   * 读数据库连接字符串
+   */
+  queryDbConnStrings?: string | null;
+  /**
+   * 缓存连接字符串
+   */
+  cacheConnStrings?: string | null;
+  /**
+   * 缓存实例名称
+   */
+  cacheInstanceName?: string | null;
+  /**
+   * 内容管理模块
+   */
+  hasCmsFeature: boolean;
+  /**
+   * 用户日志模块
+   */
+  hasUserLogsFeature: boolean;
+  /**
+   * 系统日志模块
+   */
+  hasSystemLogsFeature: boolean;
 
 }

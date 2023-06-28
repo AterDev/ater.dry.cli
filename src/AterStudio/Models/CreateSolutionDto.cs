@@ -1,4 +1,7 @@
-﻿namespace AterStudio.Models;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+
+namespace AterStudio.Models;
 
 /// <summary>
 /// 创建解决方案dto
@@ -8,10 +11,12 @@ public class CreateSolutionDto
     /// <summary>
     /// 名称
     /// </summary>
+    [MaxLength(50)]
     public required string Name { get; set; }
     /// <summary>
     /// 路径
     /// </summary>
+    [MaxLength(300)]
     public required string Path { get; set; }
 
     /// <summary>
@@ -40,34 +45,65 @@ public class CreateSolutionDto
     /// <summary>
     /// 写数据库连接字符串
     /// </summary>
+    [MaxLength(300)]
     public string? CommandDbConnStrings { get; set; }
     /// <summary>
     /// 读数据库连接字符串
     /// </summary>
+    [MaxLength(300)]
     public string? QueryDbConnStrings { get; set; }
     /// <summary>
     /// 缓存连接字符串
     /// </summary>
+    [MaxLength(200)]
     public string? CacheConnStrings { get; set; }
     /// <summary>
     /// 缓存实例名称
     /// </summary>
+    [MaxLength(60)]
     public string? CacheInstanceName { get; set; }
-
     /// <summary>
-    /// 功能模块
+    /// 内容管理模块
     /// </summary>
-    public string[]? Features { get; set; }
+    public bool HasCmsFeature { get; set; } = false;
+    /// <summary>
+    /// 用户日志模块
+    /// </summary>
+    public bool HasUserLogsFeature { get; set; } = false;
+    /// <summary>
+    /// 系统日志模块
+    /// </summary>
+    public bool HasSystemLogsFeature { get; set; } = false;
 }
 
 public enum DBType
 {
+    /// <summary>
+    /// SQLServer
+    /// </summary>
+    [Description("SQLServer")]
     SQLServer,
+    /// <summary>
+    /// PostgreSQL
+    /// </summary>
+    [Description("PostgreSQL")]
     PostgreSQL
 }
 public enum CacheType
 {
+    /// <summary>
+    /// Redis
+    /// </summary>
+    [Description(description: "Redis")]
     Redis,
+    /// <summary>
+    /// Memory
+    /// </summary>
+    [Description(description: "Memory")]
     Memory,
+    /// <summary>
+    /// None
+    /// </summary>
+    [Description(description: "None")]
     None
 }

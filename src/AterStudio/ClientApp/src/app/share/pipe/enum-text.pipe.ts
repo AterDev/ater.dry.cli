@@ -8,7 +8,28 @@ export class EnumTextPipe implements PipeTransform {
   transform(value: unknown, type: string): unknown {
     let result = '';
     switch (type) {
-      
+      case 'CacheType':
+{
+  switch (value)
+  {
+    case 0: result = 'Redis'; break;
+    case 1: result = 'Memory'; break;
+    case 2: result = 'None'; break;
+    default: '默认'; break;
+  }
+}
+break;
+case 'DBType':
+{
+  switch (value)
+  {
+    case 0: result = 'SQLServer'; break;
+    case 1: result = 'PostgreSQL'; break;
+    default: '默认'; break;
+  }
+}
+break;
+
       default:
         break;
     }

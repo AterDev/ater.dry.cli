@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { CacheType } from 'src/app/share/models/enum/cache-type.model';
+import { DBType } from 'src/app/share/models/enum/dbtype.model';
 import { CreateSolutionDto } from 'src/app/share/models/feature/create-solution-dto.model';
 import { FeatureService } from 'src/app/share/services/feature.service';
 
@@ -12,22 +14,51 @@ export class CreateComponent {
   addForm!: FormGroup;
   data = {} as CreateSolutionDto;
   isProcess = false;
+  DBType = DBType;
+  CacheType = CacheType;
 
   constructor(
     service: FeatureService
   ) {
 
   }
+  get name() { return this.addForm.get('name'); }
+  get path() { return this.addForm.get('path'); }
+  get dbType() { return this.addForm.get('dbType'); }
+  get cacheType() { return this.addForm.get('cacheType'); }
+  get hasTenant() { return this.addForm.get('hasTenant'); }
+  get hasIdentityServer() { return this.addForm.get('hasIdentityServer'); }
+  get hasTaskManager() { return this.addForm.get('hasTaskManager'); }
+  get commandDbConnStrings() { return this.addForm.get('commandDbConnStrings'); }
+  get queryDbConnStrings() { return this.addForm.get('queryDbConnStrings'); }
+  get cacheConnStrings() { return this.addForm.get('cacheConnStrings'); }
+  get cacheInstanceName() { return this.addForm.get('cacheInstanceName'); }
+  get hasCmsFeature() { return this.addForm.get('hasCmsFeature'); }
+  get hasUserLogsFeature() { return this.addForm.get('hasUserLogsFeature'); }
+  get hasSystemLogsFeature() { return this.addForm.get('hasSystemLogsFeature'); }
 
 
   ngOnInit(): void {
-    this.addForm = new FormGroup({
-
-    });
+    this.initForm();
   }
 
   initForm(): void {
-
+    this.addForm = new FormGroup({
+      name: new FormControl('', [Validators.required, Validators.maxLength(50)]),
+      path: new FormControl('', [Validators.required, Validators.maxLength(50)]),
+      dbType: new FormControl(DBType.PostgreSQL, []),
+      cacheType: new FormControl(CacheType.Redis, []),
+      hasTenant: new FormControl(false, []),
+      hasIdentityServer: new FormControl(false, []),
+      hasTaskManager: new FormControl(false, []),
+      commandDbConnStrings: new FormControl(null, [Validators.maxLength(300)]),
+      queryDbConnStrings: new FormControl(null, [Validators.maxLength(300)]),
+      cacheConnStrings: new FormControl(null, [Validators.maxLength(200)]),
+      cacheInstanceName: new FormControl(null, [Validators.maxLength(60)]),
+      hasCmsFeature: new FormControl(false, []),
+      hasUserLogsFeature: new FormControl(false, []),
+      hasSystemLogsFeature: new FormControl(false, []),
+    });
   }
 
   addSolution(): void {

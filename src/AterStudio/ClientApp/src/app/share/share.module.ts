@@ -5,9 +5,10 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { ToKeyValuePipe } from './pipe/to-key-value.pipe';
 import { ComponentsModule } from '../components/components.module';
+import { EnumTextPipe } from './pipe/enum-text.pipe';
 
 @NgModule({
-  declarations: [EnumPipe, ToKeyValuePipe],
+  declarations: [ToKeyValuePipe, EnumTextPipe],
   imports: [
     CommonModule,
     RouterModule,
@@ -21,7 +22,7 @@ import { ComponentsModule } from '../components/components.module';
     ReactiveFormsModule,
     FormsModule,
     ComponentsModule,
-    EnumPipe,
+    EnumTextPipe,
     ToKeyValuePipe
   ]
 })

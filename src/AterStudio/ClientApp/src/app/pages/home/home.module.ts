@@ -6,17 +6,23 @@ import { LoginComponent } from './login/login.component';
 import { IndexComponent } from './index/index.component';
 import { ShareModule } from 'src/app/share/share.module';
 import { CreateComponent } from './create/create.component';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
 
 
 @NgModule({
   declarations: [
     LoginComponent,
     IndexComponent,
-    CreateComponent
+    CreateComponent,
   ],
   imports: [
     ShareModule,
-    HomeRoutingModule
+    HomeRoutingModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule
   ]
 })
 export class HomeModule { }

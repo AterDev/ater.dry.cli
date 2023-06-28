@@ -3,25 +3,99 @@
   <form [formGroup]="addForm" class="d-flex  flex-column">
     <div class="d-flex flex-column">
       <h2>基本信息</h2>
-      <div>
+      <div class="d-flex flex-row gap-1">
         <mat-form-field>
-          <mat-label></mat-label>
-          <input matInput placeholder="label" value="value">
-          <mat-error>
-
+          <mat-label>解决方案名称</mat-label>
+          <input matInput placeholder="解决方案名称" formControlName="name" required maxlength="50" />
+          <mat-error *ngIf="name?.hasError('required')">
+            名称不能为空
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field style="width: 400px;">
+          <mat-label>路径</mat-label>
+          <input matInput placeholder="路径" formControlName="path" required maxlength="300" />
+          <mat-error *ngIf="path?.hasError('required')">
+            路径不能为空
           </mat-error>
         </mat-form-field>
       </div>
+      <p>
+        <span>生成路径: {{path?.value}}/{{name?.value}} </span>
+      </p>
     </div>
-    <div class="d-flex">
+    <div class="d-flex flex-column mt-2">
       <h2>选项配置</h2>
+      <div class="d-flex flex-row gap-1">
+        <mat-form-field>
+          <mat-label>数据库类型</mat-label>
+          <mat-select formControlName="dbType">
+            <mat-option *ngFor="let item of DBType | toKeyValue" [value]="item.value">{{item.key}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>缓存类型</mat-label>
+          <mat-select formControlName="cacheType">
+            <mat-option *ngFor="let item of CacheType | toKeyValue" [value]="item.value">{{item.key}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="d-flex gap-2 align-items-center ">
+        <mat-checkbox formControlName="hasTenant">启用租户</mat-checkbox>
+        <mat-checkbox formControlName="hasIdentityServer">验证授权服务</mat-checkbox>
+        <mat-checkbox formControlName="hasTaskManager">任务管理服务</mat-checkbox>
+      </div>
+
+
     </div>
-    <div class="d-flex">
+    <div class="d-flex flex-column mt-2">
       <h2>连接字符串</h2>
+      <mat-form-field>
+        <mat-label>可写数据库</mat-label>
+        <input matInput placeholder="填写连接字符串" formControlName="commandDbConnStrings" maxlength="300">
+        <mat-error *ngIf="commandDbConnStrings?.hasError('maxlength')">
+          不超过300字符
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>只读数据库</mat-label>
+        <input matInput placeholder="填写连接字符串" formControlName="queryDbConnStrings" maxlength="300">
+        <mat-error *ngIf="queryDbConnStrings?.hasError('maxlength')">
+          不超过300字符
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>缓存连接</mat-label>
+        <input matInput placeholder="localhost:6379" formControlName="cacheConnStrings" maxlength="200">
+        <mat-error *ngIf="cacheConnStrings?.hasError('maxlength')">
+          不超过200字符
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>缓存前缀</mat-label>
+        <input matInput placeholder="前缀" formControlName="cacheInstanceName" maxlength="60">
+        <mat-error *ngIf="cacheInstanceName?.hasError('maxlength')">
+          不超过60字符
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <div class="d-flex flex-column mt-1">
+      <h2>功能模块</h2>
+      <div class="d-flex gap-2 align-items-center ">
+        <mat-checkbox formControlName="hasCmsFeature" matTooltip="添加内容管理基础接口"
+          matTooltipPosition="below">内容管理</mat-checkbox>
+        <!-- <mat-icon class="ms-1" fontSet="material-icons-outlined">info</mat-icon> -->
+        <mat-checkbox formControlName="hasUserLogsFeature" matTooltip="用户行为记录"
+          matTooltipPosition="below">用户日志</mat-checkbox>
+        <mat-checkbox matTooltip="" formControlName="hasSystemLogsFeature" matTooltip="管理员用户操作日志"
+          matTooltipPosition="below">系统日志</mat-checkbox>
+      </div>
     </div>
 
-    <div>
-      <h2>功能模块</h2>
+    <div class="mt-2">
+      <button mat-flat-button color="primary">添加</button>
     </div>
   </form>
 </div>
