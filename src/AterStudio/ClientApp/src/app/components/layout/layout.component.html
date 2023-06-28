@@ -1,7 +1,7 @@
 <div class="page" *ngIf="this.type!='desktop'">
   <mat-toolbar color="primary">
     <a mat-button [routerLink]="['/index']" routerLinkActive="active">项目</a>
-    <!-- <a mat-button [routerLink]="['/form-builder']" routerLinkActive="active">表单生成器</a> -->
+    <a mat-button [routerLink]="['/uihelper']" routerLinkActive="active">UI生成助手</a>
     <span style="display:flex;flex:1 1 auto"></span>
     <span *ngIf="isLogin">
       <button [matMenuTriggerFor]="appMenu" mat-button style="flex-direction: row-reverse;">
@@ -9,7 +9,6 @@
         <mat-icon>arrow_drop_down</mat-icon>
       </button>
       <mat-menu #appMenu="matMenu">
-
         <button mat-menu-item (click)="logout()">
           <span>登出</span>
           <mat-icon>exit_to_app</mat-icon>

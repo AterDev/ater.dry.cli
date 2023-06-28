@@ -1,0 +1,24 @@
+<div class="container-fluid p-0">
+  <div class="row m-0">
+    <!-- 输入内容 -->
+    <div class="col">
+      <div class="d-flex gap-2 align-items-center justify-content-between ">
+        <h2 class="my-1 d-flex">请输入C#模型类</h2>
+        <button mat-flat-button [matMenuTriggerFor]="menu" color="primary">生成</button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="generate('form')">提交表单</button>
+          <button mat-menu-item (click)="generate('table')">展示列表</button>
+        </mat-menu>
+      </div>
+      <ngx-monaco-editor class="editor" [options]="editorOptions" [(ngModel)]="input"></ngx-monaco-editor>
+
+    </div>
+    <div class="col">
+      <h2 class="my-1">HTML</h2>
+      <ngx-monaco-editor class="editor-half" [options]="editorHtmlOptions" [(ngModel)]="input"></ngx-monaco-editor>
+      <h2 class="my-1">Typescript</h2>
+      <ngx-monaco-editor class="editor-half" [options]="editorTSOptions" [(ngModel)]="input"></ngx-monaco-editor>
+    </div>
+  </div>
+
+</div>
