@@ -1,5 +1,6 @@
 ﻿using AterStudio.Advance;
 using AterStudio.Manager;
+using AterStudio.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AterStudio.Controllers;
@@ -24,13 +25,11 @@ public class FeatureController : ControllerBase
     /// <summary>
     /// 创建新解决方案
     /// </summary>
-    /// <param name="name"></param>
-    /// <param name="path"></param>
     /// <returns></returns>
     [HttpPost("newSolution")]
-    public async Task<ActionResult<bool>> CreateNewSolution(string name, string path)
+    public async Task<ActionResult<bool>> CreateNewSolution(CreateSolutionDto dto)
     {
-        var res = await _feature.CreateNewSolutionAsync(name, path);
+        var res = await _feature.CreateNewSolutionAsync(dto);
         return res ? true : Problem(_feature.ErrorMsg);
     }
 }

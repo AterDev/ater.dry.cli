@@ -1,3 +1,27 @@
-<div class="container">
+<div class="container p-2">
+  <h1 class="mt-1">创建新解决方案</h1>
+  <form [formGroup]="addForm" class="d-flex  flex-column">
+    <div class="d-flex flex-column">
+      <h2>基本信息</h2>
+      <div>
+        <mat-form-field>
+          <mat-label></mat-label>
+          <input matInput placeholder="label" value="value">
+          <mat-error>
 
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="d-flex">
+      <h2>选项配置</h2>
+    </div>
+    <div class="d-flex">
+      <h2>连接字符串</h2>
+    </div>
+
+    <div>
+      <h2>功能模块</h2>
+    </div>
+  </form>
 </div>

@@ -986,24 +986,25 @@
         ],
         "summary": "创建新解决方案",
         "operationId": "Feature_CreateNewSolution",
-        "parameters": [
-          {
-            "name": "name",
-            "in": "query",
-            "description": "",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "path",
-            "in": "query",
-            "description": "",
-            "schema": {
-              "type": "string"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSolutionDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSolutionDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSolutionDto"
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
             "description": "Success",
@@ -1776,6 +1777,20 @@
         },
         "additionalProperties": false
       },
+      "CacheType": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32",
+        "x-enumNames": [
+          "Redis",
+          "Memory",
+          "None"
+        ]
+      },
       "CommandType": {
         "enum": [
           0,
@@ -1859,6 +1874,61 @@
           }
         },
         "additionalProperties": false
+      },
+      "CreateSolutionDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "名称",
+            "nullable": true
+          },
+          "path": {
+            "type": "string",
+            "description": "路径",
+            "nullable": true
+          },
+          "dbType": {
+            "$ref": "#/components/schemas/DBType"
+          },
+          "cacheType": {
+            "$ref": "#/components/schemas/CacheType"
+          },
+          "hasTenant": {
+            "type": "boolean",
+            "description": "是否包含租户"
+          },
+          "hasIdentityServer": {
+            "type": "boolean",
+            "description": "是否包含验证授权服务"
+          },
+          "hasTaskManager": {
+            "type": "boolean",
+            "description": "是否包含任务管理服务"
+          },
+          "features": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "功能模块",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "创建解决方案dto"
+      },
+      "DBType": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32",
+        "x-enumNames": [
+          "SQLServer",
+          "PostgreSQL"
+        ]
       },
       "EntityFile": {
         "type": "object",

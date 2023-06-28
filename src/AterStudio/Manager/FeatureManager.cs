@@ -1,4 +1,5 @@
-﻿using Core.Infrastructure.Helper;
+﻿using AterStudio.Models;
+using Core.Infrastructure.Helper;
 
 namespace AterStudio.Manager;
 /// <summary>
@@ -22,24 +23,22 @@ public class FeatureManager
     /// <summary>
     /// 创建新解决方案
     /// </summary>
-    /// <param name="name"></param>
-    /// <param name="path"></param>
     /// <returns></returns>
-    public async Task<bool> CreateNewSolutionAsync(string name, string path)
+    public async Task<bool> CreateNewSolutionAsync(CreateSolutionDto dto)
     {
         // 生成项目
-        if (!Directory.Exists(path))
+        if (!Directory.Exists(dto.Path))
         {
-            Directory.CreateDirectory(path);
+            Directory.CreateDirectory(dto.Path);
         }
-        if (!ProcessHelper.RunCommand("dotnet", $"new atapi.pro -o {path}", out _))
+        if (!ProcessHelper.RunCommand("dotnet", $"new atapi.pro -o {dto.Path}", out _))
         {
             ErrorMsg = "创建项目失败";
             return false;
         }
 
         // 添加项目
-        await _projectManager.AddProjectAsync(name, path);
+        await _projectManager.AddProjectAsync(dto.Name, dto.Path);
 
         return true;
     }
