@@ -23,7 +23,7 @@ builder.Services.AddSingleton<DbContext>();
 builder.Services.AddScoped<ProjectManager>();
 builder.Services.AddScoped<EntityAdvance>();
 builder.Services.AddScoped<EntityManager>();
-builder.Services.AddScoped<ApiDocManager>();
+builder.Services.AddScoped<SwaggerManager>();
 builder.Services.AddHttpClient<DusiHttpClient>();
 
 // cors配置 

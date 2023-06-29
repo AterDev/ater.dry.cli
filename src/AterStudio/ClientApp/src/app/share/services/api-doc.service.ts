@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { BaseService } from './base.service';
 import { Observable } from 'rxjs';
 import { ApiDocInfo } from '../models/api-doc/api-doc-info.model';
+import { CreateUIComponentDto } from '../models/api-doc/create-uicomponent-dto.model';
 import { ApiDocContent } from '../models/api-doc/api-doc-content.model';
+import { NgComponentInfo } from '../models/api-doc/ng-component-info.model';
 
 /**
  * api文档
@@ -53,6 +55,15 @@ export class ApiDocService extends BaseService {
   add(data: ApiDocInfo): Observable<ApiDocInfo> {
     const url = `/api/ApiDoc`;
     return this.request<ApiDocInfo>('post', url, data);
+  }
+
+  /**
+   * 生成页面组件
+   * @param data CreateUIComponentDto
+   */
+  createUIComponent(data: CreateUIComponentDto): Observable<NgComponentInfo> {
+    const url = `/api/ApiDoc/component`;
+    return this.request<NgComponentInfo>('post', url, data);
   }
 
 }

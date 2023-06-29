@@ -1,18 +1,16 @@
 ﻿using AterStudio.Models;
 using Core.Entities;
-using Core.Infrastructure;
 using Core.Infrastructure.Helper;
 using Datastore;
-using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
 
 namespace AterStudio.Manager;
-public class ApiDocManager
+public class SwaggerManager
 {
     private readonly DbContext _dbContext;
     public string? ErrorMsg { get; set; }
 
-    public ApiDocManager(DbContext dbContext)
+    public SwaggerManager(DbContext dbContext)
     {
         _dbContext = dbContext;
     }
@@ -113,4 +111,13 @@ public class ApiDocManager
         return _dbContext.ApiDocInfos.Delete(id);
     }
 
+    /// <summary>
+    /// 生成页面组件
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    public NgComponentInfo CreateUIComponent(CreateUIComponentDto dto)
+    {
+        return NgPageGenerate.GenFormComponent(dto.ModelInfo, dto.ServiceName);
+    }
 }

@@ -1,4 +1,5 @@
-﻿using PropertyInfo = Core.Models.PropertyInfo;
+﻿using Core.Entities;
+using PropertyInfo = Core.Models.PropertyInfo;
 
 namespace CodeGenerator.Generate;
 
@@ -12,11 +13,7 @@ public class NgPageGenerate : GenerateBase
     public string Output { get; }
     public string DtoDirName { get; set; }
 
-    public string[] TplVariables = new string[]
-    {
-        "[@Imports]","[@Declares]","[@DI]","[@Init]","[@Methods]",
-        "{$DefinedProperties}","{$DefinedFormControls}","{$DefinedValidatorMessage}"
-    };
+
 
     public NgPageGenerate(string entityName, string dtoPath, string output)
     {
@@ -78,6 +75,64 @@ public class NgPageGenerate : GenerateBase
         };
         return component;
     }
+
+    /// <summary>
+    /// 创建生成表单组件
+    /// </summary>
+    /// <param name="props"></param>
+    /// <param name="entityName"></param>
+    /// <returns></returns>
+    public static NgComponentInfo GenFormComponent(EntityInfo modelInfo, string serviceName)
+    {
+
+        var props = modelInfo.PropertyInfos;
+        var modelName = modelInfo.Name;
+
+        // 生成.ts
+        string tplContent = GetTplContent("angular.component.form.component.ts");
+        // 替换名称
+        tplContent = tplContent.Replace("{$ModelName}", modelName)
+            .Replace("{$ServiceName}", serviceName)
+            .Replace("{$EntityPathName}", modelName.ToHyphen());
+        string definedProperties = "";
+        string definedFormControls = "";
+        string definedValidatorMessage = "";
+        if (props != null)
+        {
+            GetFormControlAndValidate(props, false, ref definedProperties, ref definedFormControls, ref definedValidatorMessage);
+        }
+
+        tplContent = tplContent.Replace("{$DefinedProperties}", definedProperties)
+            .Replace("{$DefinedFormControls}", definedFormControls)
+            .Replace("{$DefinedValidatorMessage}", definedValidatorMessage);
+
+        // 是否需要引用富文本编辑器
+        if (props != null && props.Any(p => p.MaxLength >= 1000 || p.MinLength >= 100))
+        {
+            tplContent = InsertEditor(tplContent);
+        }
+        // 是否需要引用枚举类型
+        if (props != null && props.Any(p => p.IsEnum))
+        {
+            tplContent = InsertEnum(tplContent, props.Where(p => p.IsEnum).ToList());
+        }
+
+        tplContent = CleanTsTplVariables(tplContent);
+
+        // 生成html
+        NgFormGenerate formGen = new();
+        string htmlContent = NgFormGenerate.GenerateForm(props);
+        string cssContent = "";
+
+        NgComponentInfo component = new("form")
+        {
+            HtmlContent = htmlContent,
+            TsContent = tplContent,
+            CssContent = cssContent,
+        };
+        return component;
+    }
+
     public NgComponentInfo BuildEditPage()
     {
         // 生成.ts
@@ -410,8 +465,12 @@ public class NgPageGenerate : GenerateBase
     /// 清除模板中的点位符
     /// </summary>
     /// <returns></returns>
-    private string CleanTsTplVariables(string tplContent)
+    private static string CleanTsTplVariables(string tplContent)
     {
+        var TplVariables = new string[]{
+            "[@Imports]","[@Declares]","[@DI]","[@Init]","[@Methods]",
+            "{$DefinedProperties}","{$DefinedFormControls}","{$DefinedValidatorMessage}"
+        };
         foreach (string item in TplVariables)
         {
             tplContent = tplContent.Replace(item, "");

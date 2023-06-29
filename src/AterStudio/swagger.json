@@ -424,6 +424,57 @@
         }
       }
     },
+    "/api/ApiDoc/component": {
+      "post": {
+        "tags": [
+          "ApiDoc"
+        ],
+        "summary": "生成页面组件",
+        "operationId": "ApiDoc_CreateUIComponent",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUIComponentDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUIComponentDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUIComponentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/NgComponentInfo"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NgComponentInfo"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NgComponentInfo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Entity/{id}": {
       "get": {
         "tags": [
@@ -1966,6 +2017,23 @@
         "additionalProperties": false,
         "description": "创建解决方案dto"
       },
+      "CreateUIComponentDto": {
+        "type": "object",
+        "properties": {
+          "uiType": {
+            "$ref": "#/components/schemas/UIType"
+          },
+          "modelInfo": {
+            "$ref": "#/components/schemas/EntityInfo"
+          },
+          "serviceName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "生成组件模型"
+      },
       "DBType": {
         "enum": [
           0,
@@ -2121,6 +2189,36 @@
           "CSharp"
         ],
         "x-enumData": [ ]
+      },
+      "NgComponentInfo": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "routing": {
+            "type": "string",
+            "nullable": true
+          },
+          "tsContent": {
+            "type": "string",
+            "nullable": true
+          },
+          "htmlContent": {
+            "type": "string",
+            "nullable": true
+          },
+          "cssContent": {
+            "type": "string",
+            "nullable": true
+          },
+          "moduleName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "OperationType": {
         "enum": [
@@ -2418,6 +2516,22 @@
           }
         },
         "additionalProperties": false
+      },
+      "UIType": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "description": "使用的UI组件库",
+        "format": "int32",
+        "x-enumNames": [
+          "AngularMaterial",
+          "NGZORRO",
+          "VueElement"
+        ],
+        "x-enumData": [ ]
       },
       "UpdateConfigOptionsDto": {
         "type": "object",

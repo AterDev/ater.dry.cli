@@ -39,6 +39,36 @@ public class NgFormGenerate : GenerateBase
         return tplContent;
     }
 
+    /// <summary>
+    /// 生成表单
+    /// </summary>
+    /// <param name="propertyInfos"></param>
+    /// <returns></returns>
+    public static string GenerateForm(List<PropertyInfo>? propertyInfos)
+    {
+        string formControls = "";
+        if (propertyInfos != null)
+        {
+            foreach (PropertyInfo input in propertyInfos)
+            {
+                NgInputBuilder inputBuilder = new(input.Type, input.Name, input.CommentSummary ?? input.DisplayName)
+                {
+                    IsDecimal = input.IsDecimal,
+                    IsRequired = input.IsRequired,
+                    MaxLength = input.MaxLength,
+                    MinLength = input.MinLength,
+                    IsEnum = input.IsEnum,
+                    IsList = input.IsList
+                };
+                formControls += inputBuilder.ToFormControl();
+            }
+        }
+
+        string tplContent = GetTplContent("angular.component.form.component.html.tpl");
+        tplContent = tplContent.Replace("{$FormControls}", formControls);
+        return tplContent;
+    }
+
     public static string GenerateEditForm(List<PropertyInfo>? propertyInfos)
     {
         string formControls = "";

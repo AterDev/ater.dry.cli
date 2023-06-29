@@ -12,9 +12,9 @@ namespace AterStudio.Controllers;
 [Route("api/[controller]")]
 public class ApiDocController : ControllerBase
 {
-    private readonly ApiDocManager _manager;
+    private readonly SwaggerManager _manager;
     private readonly ProjectManager _project;
-    public ApiDocController(ApiDocManager manager, ProjectManager project)
+    public ApiDocController(SwaggerManager manager, ProjectManager project)
     {
         _manager = manager;
         _project = project;
@@ -79,7 +79,6 @@ public class ApiDocController : ControllerBase
         return res;
     }
 
-
     /// <summary>
     /// 删除
     /// </summary>
@@ -89,5 +88,16 @@ public class ApiDocController : ControllerBase
     public bool Delete([FromRoute] Guid id)
     {
         return _manager.Delete(id);
+    }
+
+    /// <summary>
+    /// 生成页面组件
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    [HttpPost("component")]
+    public NgComponentInfo CreateUIComponent(CreateUIComponentDto dto)
+    {
+        return _manager.CreateUIComponent(dto);
     }
 }
