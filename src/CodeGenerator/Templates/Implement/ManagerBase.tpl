@@ -31,8 +31,6 @@ public partial class ManagerBase<TEntity, TUpdate, TFilter, TItem>
     /// </summary>
     public bool AutoSave { get; set; } = true;
     public DatabaseFacade Database { get; init; }
-    protected IUserContext? _userContext;
-    protected readonly ILogger _logger;
 
     public ManagerBase(DataStoreContext storeContext)
     {
@@ -41,29 +39,6 @@ public partial class ManagerBase<TEntity, TUpdate, TFilter, TItem>
         Command = Stores.CommandSet<TEntity>();
         Queryable = Query._query;
         Database = Command.Database;
-        _logger = LoggerFactory.Create(builder => builder.AddConsole())
-            .CreateLogger<DataStoreContext>();
-    }
-
-    public ManagerBase(DataStoreContext storeContext, ILogger logger)
-    {
-        Stores = storeContext;
-        Query = Stores.QuerySet<TEntity>();
-        Command = Stores.CommandSet<TEntity>();
-        Queryable = Query._query;
-        Database = Command.Database;
-        _logger = logger;
-    }
-
-    public ManagerBase(DataStoreContext storeContext, IUserContext userContext, ILogger logger)
-    {
-        Stores = storeContext;
-        Query = Stores.QuerySet<TEntity>();
-        Command = Stores.CommandSet<TEntity>();
-        Queryable = Query._query;
-        Database = Command.Database;
-        _userContext = userContext;
-        _logger = logger;
     }
 
     public async Task<int> SaveChangesAsync()
