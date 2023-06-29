@@ -248,6 +248,12 @@
                   <mat-option [value]="0">
                     Angular Material
                   </mat-option>
+                  <mat-option [value]="1" disabled>
+                    NG-ZORRO
+                  </mat-option>
+                  <mat-option [value]="2" disabled>
+                    Vue Element
+                  </mat-option>
                 </mat-select>
                 <button mat-flat-button [matMenuTriggerFor]="menu" color="primary">生成</button>
                 <mat-menu #menu="matMenu">
@@ -289,7 +295,7 @@
                       <th mat-header-cell *matHeaderCellDef> 字段要求 </th>
                       <td mat-cell *matCellDef="let row">
                         <span *ngIf="row.minLength">
-                          {{row.minLength}}
+                          {{row.minLength}}-
                         </span>
                         <span *ngIf="row.maxLength">
                           {{row.maxLength}}

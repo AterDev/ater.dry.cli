@@ -183,7 +183,7 @@ public class OpenApiHelper
             string description = schema.Value.AllOf.LastOrDefault()?.Description
                 ?? schema.Value.Description;
             description = description?.Replace("\n", " ") ?? "";
-            List<PropertyInfo> props = GetTsProperties(schema.Value);
+            List<PropertyInfo> props = ParseProperties(schema.Value);
 
             var model = new EntityInfo
             {
@@ -245,14 +245,14 @@ public class OpenApiHelper
     /// </summary>
     /// <param name="schema"></param>
     /// <returns></returns>
-    public static List<PropertyInfo> GetTsProperties(OpenApiSchema schema)
+    public static List<PropertyInfo> ParseProperties(OpenApiSchema schema)
     {
-        List<PropertyInfo> tsProperties = new();
+        List<PropertyInfo> properties = new();
         // 继承的需要递归 从AllOf中获取属性
         if (schema.AllOf.Count > 1)
         {
             // 自己的属性在1中
-            tsProperties.AddRange(GetTsProperties(schema.AllOf[1]));
+            properties.AddRange(ParseProperties(schema.AllOf[1]));
         }
 
         if (schema.Properties.Count > 0)
@@ -269,7 +269,11 @@ public class OpenApiHelper
                     IsNullable = prop.Value.Nullable,
                     Name = name,
                     Type = type,
-                    IsRequired = !prop.Value.Nullable
+                    IsRequired = !prop.Value.Nullable,
+                    MinLength = prop.Value.MinLength,
+                    MaxLength = prop.Value.MaxLength,
+                    DefaultValue = prop.Value.Default?.ToString() ?? string.Empty,
+
                 };
                 if (!string.IsNullOrEmpty(prop.Value.Description))
                 {
@@ -307,11 +311,11 @@ public class OpenApiHelper
                 }
 
                 // 可空处理
-                tsProperties.Add(property);
+                properties.Add(property);
             }
         }
         // 重写的属性去重
-        List<PropertyInfo?> res = tsProperties.GroupBy(p => p.Name)
+        List<PropertyInfo?> res = properties.GroupBy(p => p.Name)
             .Select(s => s.FirstOrDefault()).ToList();
         return res!;
     }
