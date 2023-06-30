@@ -27,20 +27,21 @@ public class FeatureManager
     public async Task<bool> CreateNewSolutionAsync(CreateSolutionDto dto)
     {
         // 生成项目
+        var path = Path.Combine(dto.Path, dto.Name);
         if (!Directory.Exists(dto.Path))
         {
             Directory.CreateDirectory(dto.Path);
         }
-        if (!ProcessHelper.RunCommand("dotnet", $"new atapi.pro -o {dto.Path}", out _))
+        if (!ProcessHelper.RunCommand("dotnet", $"new atapi.pro -o {path}", out _))
         {
             ErrorMsg = "创建项目失败";
             return false;
         }
+        await Console.Out.WriteLineAsync($"✅ create new solution {path}");
 
         // 添加项目
-        await _projectManager.AddProjectAsync(dto.Name, dto.Path);
+        //await _projectManager.AddProjectAsync(dto.Name, dto.Path);
 
         return true;
     }
-
 }

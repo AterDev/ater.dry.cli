@@ -11,7 +11,7 @@ import { ActivatedRoute, Router } from '@angular/router';
     styleUrls: ['./add.component.css']
 })
 export class AddComponent implements OnInit {
-  [@Declares]
+[@Declares]
   formGroup!: FormGroup;
   data = {} as {$ModelName};
   isLoading = true;

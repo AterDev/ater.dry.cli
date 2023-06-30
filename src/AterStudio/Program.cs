@@ -24,6 +24,7 @@ builder.Services.AddScoped<ProjectManager>();
 builder.Services.AddScoped<EntityAdvance>();
 builder.Services.AddScoped<EntityManager>();
 builder.Services.AddScoped<SwaggerManager>();
+builder.Services.AddScoped<FeatureManager>();
 builder.Services.AddHttpClient<DusiHttpClient>();
 
 // cors配置 

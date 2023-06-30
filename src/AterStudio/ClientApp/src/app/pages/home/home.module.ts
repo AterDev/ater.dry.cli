@@ -9,7 +9,6 @@ import { CreateComponent } from './create/create.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
-import { UihelperComponent } from './uihelper/uihelper.component';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 
 
@@ -18,7 +17,6 @@ import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
     LoginComponent,
     IndexComponent,
     CreateComponent,
-    UihelperComponent,
   ],
   imports: [
     ShareModule,

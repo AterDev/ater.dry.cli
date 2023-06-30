@@ -93,7 +93,7 @@
     </div>
 
     <div class="mt-2">
-      <button mat-flat-button color="primary">添加</button>
+      <button mat-flat-button color="primary" (click)="addSolution()" [disabled]="isProcess">创建</button>
     </div>
   </form>
 </div>

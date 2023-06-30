@@ -1,9 +1,8 @@
-﻿using System.Diagnostics;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
+using System.Text.Json.Nodes;
 using CodeGenerator.Generate;
 using Core.Infrastructure.Helper;
-using Core.Infrastructure.Utils;
 using Microsoft.OpenApi.Readers;
 
 namespace CodeGenerator.Test;
@@ -90,7 +89,7 @@ public class FunctionTest
     }
 
     [Fact]
-    public void SHould_Parse_Interface()
+    public void Should_Parse_Interface()
     {
         var projectPath = @"C:\codes\ater.web\templates\apistd\src\Application\";
         var interfaceName = "ISystemConfigManager";
@@ -102,11 +101,33 @@ public class FunctionTest
         var exist = compilation.MethodExist("Task<SystemConfig?> GetOwnedAsync(Guid id);");
         Assert.True(exist);
 
-         compilation.InsertInterfaceMethod("Task<SystemConfig?> GetOwnedAsync(int id);");
+        compilation.InsertInterfaceMethod("Task<SystemConfig?> GetOwnedAsync(int id);");
         var content = compilation.SyntaxRoot!.ToFullString();
 
         Console.WriteLine();
 
     }
 
+    [Fact]
+    public void Test_JsonUpdate()
+    {
+        var jsonString = """
+                        {
+              "Logging": {
+                "LogLevel": {
+                  "Default": "Information",
+                  "Microsoft": "Warning",
+                  "Microsoft.Hosting.Lifetime": "Information"
+                }
+              },
+              "AllowedHosts": "*"
+            }
+            
+            """;
+        var jsonNode = JsonNode.Parse(jsonString);
+        JsonHelper.UpdateJsonNode(jsonNode, "AllowedHosts", "111");
+
+        Console.WriteLine();
+
+    }
 }

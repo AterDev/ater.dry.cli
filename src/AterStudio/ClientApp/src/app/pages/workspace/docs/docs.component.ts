@@ -325,8 +325,8 @@ export class DocsComponent implements OnInit {
         .subscribe({
           next: res => {
             if (res) {
-              this.snb.open('生成成功');
               this.componentCodes = res;
+              this.snb.open('生成成功');
             }
             this.isSync = false;
           },

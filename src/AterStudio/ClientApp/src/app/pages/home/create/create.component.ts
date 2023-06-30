@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { CacheType } from 'src/app/share/models/enum/cache-type.model';
 import { DBType } from 'src/app/share/models/enum/dbtype.model';
 import { CreateSolutionDto } from 'src/app/share/models/feature/create-solution-dto.model';
@@ -18,7 +19,9 @@ export class CreateComponent {
   CacheType = CacheType;
 
   constructor(
-    service: FeatureService
+    private service: FeatureService,
+    private snb: MatSnackBar
+
   ) {
 
   }
@@ -62,6 +65,26 @@ export class CreateComponent {
   }
 
   addSolution(): void {
-
+    if (this.addForm.valid) {
+      const data = this.addForm.value as CreateSolutionDto;
+      this.isProcess = true;
+      this.service.createNewSolution(data)
+        .subscribe({
+          next: (res) => {
+            if (res) {
+              this.snb.open('创建成功');
+            } else {
+              this.snb.open('');
+            }
+          },
+          error: (error) => {
+            this.snb.open(error.detail);
+            this.isProcess = false;
+          },
+          complete: () => {
+            this.isProcess = false;
+          }
+        });
+    }
   }
 }
