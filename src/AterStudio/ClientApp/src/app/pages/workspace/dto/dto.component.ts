@@ -3,9 +3,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { EntityService } from 'src/app/share/services/entity.service';
-import { EntityFile } from 'models/entity/entity-file.model';
 import { ProjectStateService } from 'src/app/share/project-state.service';
 import { MatTabChangeEvent } from '@angular/material/tabs';
+import { EntityFile } from 'src/app/share/models/entity/entity-file.model';
 
 @Component({
   selector: 'app-dto',

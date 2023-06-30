@@ -244,21 +244,15 @@
                 </span>
               </div>
               <div class="d-flex align-items-center gap-1 my-2">
-                <mat-select [value]="0" class="d-flex select" matTooltip="选择UI框架">
-                  <mat-option [value]="0">
-                    Angular Material
-                  </mat-option>
-                  <mat-option [value]="1" disabled>
-                    NG-ZORRO
-                  </mat-option>
-                  <mat-option [value]="2" disabled>
-                    Vue Element
+                <mat-select class="d-flex select" [(ngModel)]="uiType" matTooltip="选择UI框架">
+                  <mat-option *ngFor="let item of UIType| toKeyValue" [value]="item.value">
+                    {{item.key}}
                   </mat-option>
                 </mat-select>
                 <button mat-flat-button [matMenuTriggerFor]="menu" color="primary">生成</button>
                 <mat-menu #menu="matMenu">
-                  <button mat-menu-item (click)="generateUI('form')">提交表单</button>
-                  <button mat-menu-item (click)="generateUI('table')">展示列表</button>
+                  <button mat-menu-item (click)="generateUIComponent(ComponentType.Form)">提交表单</button>
+                  <button mat-menu-item (click)="generateUIComponent(ComponentType.Table)">展示列表</button>
                 </mat-menu>
               </div>
               <div *ngIf="currentModel.propertyInfos">
@@ -312,6 +306,15 @@
               </div>
             </div>
             <div class="col">
+              <ng-container *ngIf="componentCodes">
+                <h2 class="my-1">HTML</h2>
+                <ngx-monaco-editor class="editor-half" [options]="editorHtmlOptions"
+                  [ngModel]="componentCodes.htmlContent"></ngx-monaco-editor>
+                <h2 class="my-1">Typescript</h2>
+                <ngx-monaco-editor class="editor-half" [options]="editorTSOptions"
+                  [ngModel]="componentCodes.tsContent"></ngx-monaco-editor>
+              </ng-container>
+
 
             </div>
           </div>

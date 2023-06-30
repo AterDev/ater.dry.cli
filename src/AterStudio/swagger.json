@@ -1771,18 +1771,22 @@
           },
           "name": {
             "type": "string",
+            "description": "文档名称",
             "nullable": true
           },
           "description": {
             "type": "string",
+            "description": "文档描述",
             "nullable": true
           },
           "path": {
             "type": "string",
+            "description": "文档地址",
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "接口文档"
       },
       "ApiDocTag": {
         "type": "object",
@@ -1820,6 +1824,7 @@
             "items": {
               "type": "string"
             },
+            "description": "项目路径",
             "nullable": true
           },
           "force": {
@@ -1868,6 +1873,7 @@
           4
         ],
         "type": "integer",
+        "description": "命令类型",
         "format": "int32",
         "x-enumNames": [
           "Dto",
@@ -1878,11 +1884,25 @@
         ],
         "x-enumData": [ ]
       },
+      "ComponentType": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32",
+        "x-enumNames": [
+          "Form",
+          "Table"
+        ],
+        "x-enumData": [ ]
+      },
       "ConfigOptions": {
         "type": "object",
         "properties": {
           "rootPath": {
             "type": "string",
+            "description": "项目根目录",
             "nullable": true
           },
           "projectId": {
@@ -1891,6 +1911,7 @@
           },
           "dtoPath": {
             "type": "string",
+            "description": "dto项目目录",
             "nullable": true
           },
           "entityPath": {
@@ -1911,6 +1932,7 @@
           },
           "idStyle": {
             "type": "string",
+            "description": "NameId/Id",
             "nullable": true
           },
           "idType": {
@@ -1927,6 +1949,7 @@
           },
           "isSplitController": {
             "type": "boolean",
+            "description": "是否拆分",
             "nullable": true
           },
           "version": {
@@ -1935,14 +1958,17 @@
           },
           "swaggerPath": {
             "type": "string",
+            "description": "swagger地址",
             "nullable": true
           },
           "webAppPath": {
             "type": "string",
+            "description": "前端路径",
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "项目配置"
       },
       "CreateSolutionDto": {
         "type": "object",
@@ -2023,6 +2049,9 @@
           "uiType": {
             "$ref": "#/components/schemas/UIType"
           },
+          "componentType": {
+            "$ref": "#/components/schemas/ComponentType"
+          },
           "modelInfo": {
             "$ref": "#/components/schemas/EntityInfo"
           },
@@ -2067,6 +2096,7 @@
           },
           "comment": {
             "type": "string",
+            "description": "注释说明",
             "nullable": true
           },
           "baseDirPath": {
@@ -2106,22 +2136,27 @@
           },
           "name": {
             "type": "string",
+            "description": "类名",
             "nullable": true
           },
           "namespaceName": {
             "type": "string",
+            "description": "命名空间",
             "nullable": true
           },
           "assemblyName": {
             "type": "string",
+            "description": "程序集名称",
             "nullable": true
           },
           "comment": {
             "type": "string",
+            "description": "类注释",
             "nullable": true
           },
           "summary": {
             "type": "string",
+            "description": "类注释",
             "nullable": true
           },
           "keyType": {
@@ -2129,6 +2164,7 @@
           },
           "isEnum": {
             "type": "boolean",
+            "description": "是否为枚举类",
             "nullable": true
           },
           "isList": {
@@ -2139,10 +2175,12 @@
             "items": {
               "$ref": "#/components/schemas/PropertyInfo"
             },
+            "description": "属性",
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "defined entity model"
       },
       "EntityKeyType": {
         "enum": [
@@ -2174,7 +2212,8 @@
             "$ref": "#/components/schemas/CommandType"
           },
           "force": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "是否覆盖"
           }
         },
         "additionalProperties": false
@@ -2269,7 +2308,8 @@
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "项目"
       },
       "ProjectType": {
         "enum": [
@@ -2310,30 +2350,35 @@
             "nullable": true
           },
           "isList": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "是否是数组"
           },
           "isPublic": {
             "type": "boolean"
           },
           "isNavigation": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "是否为导航属性"
           },
           "isJsonIgnore": {
             "type": "boolean"
           },
           "navigationName": {
             "type": "string",
+            "description": "导航属性类名称",
             "nullable": true
           },
           "hasMany": {
             "type": "boolean",
+            "description": "导航属性的对应关系",
             "nullable": true
           },
           "isEnum": {
             "type": "boolean"
           },
           "hasSet": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "是否包括set方法"
           },
           "attributeText": {
             "type": "string",
@@ -2341,17 +2386,21 @@
           },
           "commentXml": {
             "type": "string",
+            "description": "xml comment",
             "nullable": true
           },
           "commentSummary": {
             "type": "string",
+            "description": "comment summary",
             "nullable": true
           },
           "isRequired": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "是否必须"
           },
           "isNullable": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "可空?"
           },
           "minLength": {
             "type": "integer",
@@ -2368,10 +2417,12 @@
           },
           "suffixContent": {
             "type": "string",
+            "description": "尾缀，如#endregion",
             "nullable": true
           },
           "defaultValue": {
             "type": "string",
+            "description": "默认值",
             "nullable": true
           },
           "entityInfo": {
@@ -2412,7 +2463,8 @@
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "接口分组信息"
       },
       "RestApiInfo": {
         "type": "object",
@@ -2422,10 +2474,12 @@
           },
           "router": {
             "type": "string",
+            "description": "路由",
             "nullable": true
           },
           "summary": {
             "type": "string",
+            "description": "说明",
             "nullable": true
           },
           "tag": {
@@ -2441,6 +2495,7 @@
             "items": {
               "$ref": "#/components/schemas/PropertyInfo"
             },
+            "description": "请求查询参数",
             "nullable": true
           },
           "requestInfo": {
@@ -2450,7 +2505,8 @@
             "$ref": "#/components/schemas/EntityInfo"
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "接口信息"
       },
       "SubProjectInfo": {
         "type": "object",
@@ -2484,20 +2540,24 @@
           "name": {
             "maxLength": 100,
             "type": "string",
+            "description": "名称",
             "nullable": true
           },
           "displayName": {
             "maxLength": 60,
             "type": "string",
+            "description": "显示名称",
             "nullable": true
           },
           "content": {
             "maxLength": 10000,
             "type": "string",
+            "description": "内容",
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "模板内容"
       },
       "TemplateFileUpsert": {
         "type": "object",
@@ -2591,6 +2651,10 @@
     }
   },
   "tags": [
+    {
+      "name": "Advance",
+      "description": "高级功能"
+    },
     {
       "name": "ApiDoc",
       "description": "api文档"

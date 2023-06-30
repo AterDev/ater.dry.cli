@@ -3,12 +3,16 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { LanguageType } from 'models/enum/language-type.model';
 import { ApiDocTag } from 'src/app/share/models/api-doc-tag.model';
 import { ApiDocInfo } from 'src/app/share/models/api-doc/api-doc-info.model';
+import { CreateUIComponentDto } from 'src/app/share/models/api-doc/create-uicomponent-dto.model';
+import { NgComponentInfo } from 'src/app/share/models/api-doc/ng-component-info.model';
 import { EntityInfo } from 'src/app/share/models/entity-info.model';
+import { ComponentType } from 'src/app/share/models/enum/component-type.model';
+import { LanguageType } from 'src/app/share/models/enum/language-type.model';
 import { OperationType } from 'src/app/share/models/enum/operation-type.model';
 import { RequestLibType } from 'src/app/share/models/enum/request-lib-type.model';
+import { UIType } from 'src/app/share/models/enum/uitype.model';
 import { ConfigOptions } from 'src/app/share/models/project/config-options.model';
 import { Project } from 'src/app/share/models/project/project.model';
 import { PropertyInfo } from 'src/app/share/models/property-info.model';
@@ -27,7 +31,9 @@ import { ProjectService } from 'src/app/share/services/project.service';
 export class DocsComponent implements OnInit {
   OperationType = OperationType;
   RequestLibType = RequestLibType;
+  ComponentType = ComponentType;
   LanguageType = LanguageType;
+  UIType = UIType;
   project = {} as Project;
   projectId: string;
   isRefresh = false;
@@ -50,6 +56,8 @@ export class DocsComponent implements OnInit {
   dialogRef!: MatDialogRef<{}, any>;
   requestForm!: FormGroup;
   clientRequestForm!: FormGroup;
+  uiType: UIType = UIType.AngularMaterial;
+  componentCodes: NgComponentInfo | null = null;
 
   @ViewChild("addDocDialog", { static: true })
   addTmpRef!: TemplateRef<{}>;
@@ -73,6 +81,16 @@ export class DocsComponent implements OnInit {
   tags = [] as ApiDocTag[];
   tableColumns = ['name', 'type', 'requried', 'description'];
   modelTableColumns = ['name', 'type', 'requried', 'description', 'validator'];
+  editorHtmlOptions = {
+    theme: 'vs-dark', language: 'html', minimap: {
+      enabled: false
+    }
+  };
+  editorTSOptions = {
+    theme: 'vs-dark', language: 'typescript', minimap: {
+      enabled: false
+    }
+  };
 
   constructor(
     public projectSrv: ProjectService,
@@ -146,6 +164,7 @@ export class DocsComponent implements OnInit {
       path: new FormControl<string | null>(this.config?.rootPath + '\\' + this.config?.apiPath ?? "", [Validators.required])
     });
   }
+
   getDocs(): void {
     this.service.list(this.projectId)
       .subscribe({
@@ -287,8 +306,39 @@ export class DocsComponent implements OnInit {
       })
   }
 
-  generateUI(type: string): void {
-
+  generateUIComponent(type: ComponentType): void {
+    if (this.currentModel) {
+      this.isSync = true;
+      const data: CreateUIComponentDto = {
+        componentType: type,
+        uiType: this.uiType,
+        modelInfo: this.currentModel,
+      };
+      // 获取到模型对应的服务名称
+      data.serviceName = this.restApiGroups.find(g =>
+        g.apiInfos?.find(api =>
+          api.requestInfo?.id === this.currentModel?.id
+          || api.responseInfo?.id === this.currentModel?.id))?.name;
+      if (!data.serviceName) {
+        data.serviceName = this.currentModel.name
+      }
+      this.service.createUIComponent(data)
+        .subscribe({
+          next: res => {
+            if (res) {
+              this.snb.open('生成成功');
+              this.componentCodes = res;
+            }
+            this.isSync = false;
+          },
+          error: error => {
+            this.snb.open(error.detail);
+            this.isSync = false;
+          }
+        })
+    } else {
+      this.snb.open('未选择有效的模型');
+    }
   }
 
   getDocContent(): void {
@@ -302,7 +352,7 @@ export class DocsComponent implements OnInit {
                 this.restApiGroups = res.restApiGroups!;
                 this.filterApiGroups = this.restApiGroups;
                 this.modelInfos = res.modelInfos!;
-                this.filterModelInfos = this.modelInfos;
+                this.filterModelInfos = this.modelInfos.filter(m => m.isEnum == false);
                 this.tags = res.openApiTags!;
                 // 更新当前展示的内容
                 if (this.currentApi != null) {
@@ -359,6 +409,7 @@ export class DocsComponent implements OnInit {
       this.filterModelInfos = this.modelInfos.filter((val) => {
         return val.name?.toLowerCase().includes(modelSearchKey)
           || val.comment?.toLowerCase().includes(modelSearchKey)
+          && val.isEnum == false
       });
     } else {
       this.filterModelInfos = this.modelInfos;

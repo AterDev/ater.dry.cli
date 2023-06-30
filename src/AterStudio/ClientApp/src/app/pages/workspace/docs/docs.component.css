@@ -107,3 +107,8 @@ legend {
     min-width: 240px;
     width: auto;
 }
+
+.editor-half{
+    width: 100%;
+    min-height: 572px;
+  }

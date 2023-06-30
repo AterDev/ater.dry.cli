@@ -58,7 +58,7 @@ public class PropertyInfo : EntityBase
     /// 默认值
     /// </summary>
     public string DefaultValue { get; set; } = string.Empty;
-    public EntityInfo EntityInfo { get; set; } = default!;
+    public EntityInfo? EntityInfo { get; set; }
 
     /// <summary>
     /// 转换成C#属性

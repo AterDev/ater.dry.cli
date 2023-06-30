@@ -1,3 +1,6 @@
+/**
+ * 命令类型
+ */
 export enum CommandType {
   Dto = 0,
   Manager = 1,

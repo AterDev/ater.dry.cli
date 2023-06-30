@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { AddEntityDto } from '../models/advance/add-entity-dto.model';
 
 /**
- * Advance
+ * 高级功能
  */
 @Injectable({ providedIn: 'root' })
 export class AdvanceService extends BaseService {
