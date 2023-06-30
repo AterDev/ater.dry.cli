@@ -14,6 +14,6 @@ export interface CreateUIComponentDto {
    * defined entity model
    */
   modelInfo?: EntityInfo | null;
-  serviceName?: string | null;
+  serviceName: string;
 
 }

@@ -1,5 +1,5 @@
 export interface NgComponentInfo {
-  name?: string | null;
+  name: string;
   routing?: string | null;
   tsContent?: string | null;
   htmlContent?: string | null;

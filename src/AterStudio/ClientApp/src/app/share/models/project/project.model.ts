@@ -4,8 +4,8 @@
 export interface Project {
   id: string;
   projectId: string;
-  name?: string | null;
-  displayName?: string | null;
-  path?: string | null;
+  name: string;
+  displayName: string;
+  path: string;
 
 }

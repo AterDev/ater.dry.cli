@@ -13,6 +13,8 @@
 		<None Remove="Templates\angular\components.module.ts" />
 		<None Remove="Templates\angular\component\form.component.html.tpl" />
 		<None Remove="Templates\angular\component\form.component.ts" />
+		<None Remove="Templates\angular\component\table.component.html.tpl" />
+		<None Remove="Templates\angular\component\table.component.ts" />
 		<None Remove="Templates\angular\confirmDialog\confirm-dialog.component.css.tpl" />
 		<None Remove="Templates\angular\confirmDialog\confirm-dialog.component.html.tpl" />
 		<None Remove="Templates\angular\confirmDialog\confirm-dialog.component.ts" />
@@ -74,6 +76,8 @@
 	<ItemGroup>
 		<EmbeddedResource Include="Templates\angular\component\form.component.html.tpl" />
 		<EmbeddedResource Include="Templates\angular\component\form.component.ts" />
+		<EmbeddedResource Include="Templates\angular\component\table.component.ts" />
+		<EmbeddedResource Include="Templates\angular\component\table.component.html.tpl" />
 		<EmbeddedResource Include="Templates\angular\enum.pipe.ts" />
 		<EmbeddedResource Include="Templates\angular\navigation.html.tpl" />
 		<EmbeddedResource Include="Templates\angular\group.module.ts" />

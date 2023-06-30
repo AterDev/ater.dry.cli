@@ -9,13 +9,13 @@ export interface RestApiInfo {
   /**
    * 路由
    */
-  router?: string | null;
+  router: string;
   /**
    * 说明
    */
   summary?: string | null;
   tag?: string | null;
-  operationId?: string | null;
+  operationId: string;
   /**
    * 请求查询参数
    */

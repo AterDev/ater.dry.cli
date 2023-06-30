@@ -7,7 +7,7 @@ export interface ApiDocInfo {
   /**
    * 文档名称
    */
-  name?: string | null;
+  name: string;
   /**
    * 文档描述
    */
@@ -15,6 +15,6 @@ export interface ApiDocInfo {
   /**
    * 文档地址
    */
-  path?: string | null;
+  path: string;
 
 }

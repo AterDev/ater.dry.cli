@@ -9,7 +9,7 @@ export interface EntityInfo {
   /**
    * 类名
    */
-  name?: string | null;
+  name: string;
   /**
    * 命名空间
    */
@@ -35,6 +35,6 @@ export interface EntityInfo {
   /**
    * 属性
    */
-  propertyInfos?: PropertyInfo[] | null;
+  propertyInfos?: PropertyInfo[];
 
 }

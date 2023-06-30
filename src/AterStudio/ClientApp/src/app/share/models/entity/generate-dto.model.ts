@@ -1,7 +1,7 @@
 import { CommandType } from '../enum/command-type.model';
 export interface GenerateDto {
   projectId: string;
-  entityPath?: string | null;
+  entityPath: string;
   /**
    * 命令类型
    */

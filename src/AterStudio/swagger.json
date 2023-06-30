@@ -1721,8 +1721,7 @@
             "nullable": true
           },
           "content": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           }
         },
         "additionalProperties": false
@@ -1735,24 +1734,21 @@
             "items": {
               "$ref": "#/components/schemas/RestApiGroup"
             },
-            "description": "接口信息",
-            "nullable": true
+            "description": "接口信息"
           },
           "modelInfos": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/EntityInfo"
             },
-            "description": "所有请求及返回类型信息",
-            "nullable": true
+            "description": "所有请求及返回类型信息"
           },
           "openApiTags": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ApiDocTag"
             },
-            "description": "tag信息",
-            "nullable": true
+            "description": "tag信息"
           }
         },
         "additionalProperties": false,
@@ -1771,8 +1767,7 @@
           },
           "name": {
             "type": "string",
-            "description": "文档名称",
-            "nullable": true
+            "description": "文档名称"
           },
           "description": {
             "type": "string",
@@ -1781,8 +1776,7 @@
           },
           "path": {
             "type": "string",
-            "description": "文档地址",
-            "nullable": true
+            "description": "文档地址"
           }
         },
         "additionalProperties": false,
@@ -1792,8 +1786,7 @@
         "type": "object",
         "properties": {
           "name": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "description": {
             "type": "string",
@@ -1813,8 +1806,7 @@
             "type": "array",
             "items": {
               "type": "string"
-            },
-            "nullable": true
+            }
           },
           "commandType": {
             "$ref": "#/components/schemas/CommandType"
@@ -1902,8 +1894,7 @@
         "properties": {
           "rootPath": {
             "type": "string",
-            "description": "项目根目录",
-            "nullable": true
+            "description": "项目根目录"
           },
           "projectId": {
             "type": "string",
@@ -1911,41 +1902,32 @@
           },
           "dtoPath": {
             "type": "string",
-            "description": "dto项目目录",
-            "nullable": true
+            "description": "dto项目目录"
           },
           "entityPath": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "dbContextPath": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "storePath": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "apiPath": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "idStyle": {
             "type": "string",
-            "description": "NameId/Id",
-            "nullable": true
+            "description": "NameId/Id"
           },
           "idType": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "createdTimeName": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "updatedTimeName": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "isSplitController": {
             "type": "boolean",
@@ -1953,8 +1935,7 @@
             "nullable": true
           },
           "version": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "swaggerPath": {
             "type": "string",
@@ -1976,14 +1957,12 @@
           "name": {
             "maxLength": 50,
             "type": "string",
-            "description": "名称",
-            "nullable": true
+            "description": "名称"
           },
           "path": {
             "maxLength": 300,
             "type": "string",
-            "description": "路径",
-            "nullable": true
+            "description": "路径"
           },
           "dbType": {
             "$ref": "#/components/schemas/DBType"
@@ -2056,8 +2035,7 @@
             "$ref": "#/components/schemas/EntityInfo"
           },
           "serviceName": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           }
         },
         "additionalProperties": false,
@@ -2091,8 +2069,7 @@
         "type": "object",
         "properties": {
           "name": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "comment": {
             "type": "string",
@@ -2100,12 +2077,10 @@
             "nullable": true
           },
           "baseDirPath": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "path": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "content": {
             "type": "string",
@@ -2136,8 +2111,7 @@
           },
           "name": {
             "type": "string",
-            "description": "类名",
-            "nullable": true
+            "description": "类名"
           },
           "namespaceName": {
             "type": "string",
@@ -2175,8 +2149,7 @@
             "items": {
               "$ref": "#/components/schemas/PropertyInfo"
             },
-            "description": "属性",
-            "nullable": true
+            "description": "属性"
           }
         },
         "additionalProperties": false,
@@ -2205,8 +2178,7 @@
             "format": "uuid"
           },
           "entityPath": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "commandType": {
             "$ref": "#/components/schemas/CommandType"
@@ -2233,8 +2205,7 @@
         "type": "object",
         "properties": {
           "name": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "routing": {
             "type": "string",
@@ -2296,16 +2267,13 @@
             "format": "uuid"
           },
           "name": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "displayName": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "path": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           }
         },
         "additionalProperties": false,
@@ -2338,12 +2306,10 @@
             "format": "uuid"
           },
           "type": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "name": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "displayName": {
             "type": "string",
@@ -2422,8 +2388,7 @@
           },
           "defaultValue": {
             "type": "string",
-            "description": "默认值",
-            "nullable": true
+            "description": "默认值"
           },
           "entityInfo": {
             "$ref": "#/components/schemas/EntityInfo"
@@ -2448,8 +2413,7 @@
         "type": "object",
         "properties": {
           "name": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "description": {
             "type": "string",
@@ -2459,8 +2423,7 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/RestApiInfo"
-            },
-            "nullable": true
+            }
           }
         },
         "additionalProperties": false,
@@ -2474,8 +2437,7 @@
           },
           "router": {
             "type": "string",
-            "description": "路由",
-            "nullable": true
+            "description": "路由"
           },
           "summary": {
             "type": "string",
@@ -2487,8 +2449,7 @@
             "nullable": true
           },
           "operationId": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "queryParameters": {
             "type": "array",
@@ -2512,12 +2473,10 @@
         "type": "object",
         "properties": {
           "name": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "path": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "projectType": {
             "$ref": "#/components/schemas/ProjectType"
@@ -2540,8 +2499,7 @@
           "name": {
             "maxLength": 100,
             "type": "string",
-            "description": "名称",
-            "nullable": true
+            "description": "名称"
           },
           "displayName": {
             "maxLength": 60,
@@ -2565,14 +2523,12 @@
           "name": {
             "maxLength": 60,
             "type": "string",
-            "description": "名称",
-            "nullable": true
+            "description": "名称"
           },
           "content": {
             "maxLength": 10000,
             "type": "string",
-            "description": "内容",
-            "nullable": true
+            "description": "内容"
           }
         },
         "additionalProperties": false
@@ -2637,13 +2593,11 @@
         "properties": {
           "fileName": {
             "maxLength": 100,
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "content": {
             "maxLength": 2000,
-            "type": "string",
-            "nullable": true
+            "type": "string"
           }
         },
         "additionalProperties": false

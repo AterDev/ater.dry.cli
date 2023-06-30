@@ -1,5 +1,5 @@
 export interface AddEntityDto {
   namespace?: string | null;
-  content?: string | null;
+  content: string;
 
 }

@@ -93,7 +93,8 @@ public class NgPageGenerate : GenerateBase
         // 替换名称
         tplContent = tplContent.Replace("{$ModelName}", modelName)
             .Replace("{$ServiceName}", serviceName)
-            .Replace("{$EntityPathName}", modelName.ToHyphen());
+            .Replace("{$ServicePathName}", serviceName.ToHyphen())
+            .Replace("{$ModelPathName}", modelName.ToHyphen());
         string definedProperties = "";
         string definedFormControls = "";
         string definedValidatorMessage = "";
@@ -129,6 +130,73 @@ public class NgPageGenerate : GenerateBase
             HtmlContent = htmlContent,
             TsContent = tplContent,
             CssContent = cssContent,
+        };
+        return component;
+    }
+
+    public static NgComponentInfo GenTableComponent(EntityInfo modelInfo, string serviceName)
+    {
+        // 需要展示的列
+        List<string>? columns = modelInfo.PropertyInfos?.Where(p => !p.IsList && !p.IsNavigation)
+            .Where(p => p.Name.ToLower() != "id")
+            .Select(p => p.Name)
+            .Skip(0).Take(5)
+            .ToList();
+
+        string[] columnsDef = Array.Empty<string>();
+        if (columns != null && columns.Any())
+        {
+            columnsDef = columns.Select(s =>
+            {
+                string? type = modelInfo.PropertyInfos?
+                    .Where(p => p.Name.Equals(s))
+                    .Select(p => p.Type)
+                    .FirstOrDefault();
+                string pipe = "";
+                if (type != null)
+                {
+                    if (type.Equals("DateTime") || type.Equals("DateTimeOffset"))
+                    {
+                        pipe = s.EndsWith("Date") ? " | date: 'yyyy-MM-dd'" : " | date: 'yyy-MM-dd HH:mm:ss'";
+                    }
+                }
+
+                return $@"  <ng-container matColumnDef=""{s.ToCamelCase()}"">
+    <th mat-header-cell *matHeaderCellDef>{s}</th>
+    <td mat-cell *matCellDef=""let element"">
+      {{{{element.{s.ToCamelCase()}{pipe}}}}}
+    </td>
+  </ng-container>
+";
+            }).ToArray();
+        }
+
+        string htmlContent = GetTplContent("angular.component.table.component.html.tpl");
+        htmlContent = htmlContent.Replace("{$ColumnsDef}", string.Join("", columnsDef));
+
+        // 解析属性，并生成相应ts代码
+        columnsDef = Array.Empty<string>();
+        if (columns != null && columns.Any())
+        {
+            columns.Add("actions");
+            columnsDef = columns.Select(s =>
+            {
+                return $@"'{s.ToCamelCase()}'";
+            }).ToArray();
+        }
+        var modelName = modelInfo.Name;
+        string tplContent = GetTplContent("angular.component.table.component.ts");
+        tplContent = tplContent.Replace("{$ModelName}", modelName)
+            .Replace("{$ModelPathName}", modelName.ToHyphen())
+            .Replace("{$ServiceName}", serviceName)
+            .Replace("{$ServicePathName}", serviceName.ToHyphen())
+            .Replace("{$Columns}", string.Join(", ", columnsDef));
+
+        NgComponentInfo component = new("index")
+        {
+            HtmlContent = htmlContent,
+            TsContent = tplContent,
+            CssContent = "",
         };
         return component;
     }
@@ -506,7 +574,7 @@ public class NgPageGenerate : GenerateBase
             definedValidatorMessage += @$"      case '{name}':
         return this.{name}?.errors?.['required'] ? '{property.Name}必填' :
           this.{name}?.errors?.['minlength'] ? '{property.Name}长度最少{property.MinLength}位' :
-            this.{name}?.errors?.['maxlength'] ? '{property.Name}长度最多{property.MaxLength}位' : '';
+          this.{name}?.errors?.['maxlength'] ? '{property.Name}长度最多{property.MaxLength}位' : '';
 ";
         }
     }

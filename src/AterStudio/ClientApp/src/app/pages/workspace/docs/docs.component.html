@@ -156,7 +156,6 @@
                 </table>
               </div>
             </div>
-
           </div>
           <div class="section-block">
             <legend>返回内容</legend>
@@ -235,8 +234,8 @@
         </div>
         <!-- 右边内容 -->
         <div class="col p-2" *ngIf="currentModel">
-          <div class="d-flex">
-            <div class="col">
+          <div class="d-flex gap-1 ">
+            <div class="col-auto">
               <legend>{{currentModel.name}} {{currentModel.comment}}</legend>
               <div class="api-summary">
                 <span *ngIf="currentModel.isEnum">
@@ -314,8 +313,6 @@
                 <ngx-monaco-editor class="editor-half" [options]="editorTSOptions"
                   [ngModel]="componentCodes.tsContent"></ngx-monaco-editor>
               </ng-container>
-
-
             </div>
           </div>
         </div>

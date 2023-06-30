@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { {$ServiceName}Service } from 'src/app/share/admin/services/{$ServiceName}.service';
+import { {$ServiceName}Service } from 'src/app/share/admin/services/{$ServicePathName}.service';
 import { {$ModelName} } from 'src/app/share/admin/models/{$ModelPathName}/{$ModelPathName}.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';

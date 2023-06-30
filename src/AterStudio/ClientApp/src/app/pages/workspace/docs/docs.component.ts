@@ -313,15 +313,14 @@ export class DocsComponent implements OnInit {
         componentType: type,
         uiType: this.uiType,
         modelInfo: this.currentModel,
+        serviceName: ''
       };
       // 获取到模型对应的服务名称
       data.serviceName = this.restApiGroups.find(g =>
         g.apiInfos?.find(api =>
           api.requestInfo?.id === this.currentModel?.id
-          || api.responseInfo?.id === this.currentModel?.id))?.name;
-      if (!data.serviceName) {
-        data.serviceName = this.currentModel.name
-      }
+          || api.responseInfo?.id === this.currentModel?.id))?.name ?? this.currentModel.name;
+
       this.service.createUIComponent(data)
         .subscribe({
           next: res => {

@@ -7,7 +7,7 @@ export interface TemplateFile {
   /**
    * 名称
    */
-  name?: string | null;
+  name: string;
   /**
    * 显示名称
    */

@@ -1,5 +1,5 @@
 export interface UpdateDtoDto {
-  fileName?: string | null;
-  content?: string | null;
+  fileName: string;
+  content: string;
 
 }

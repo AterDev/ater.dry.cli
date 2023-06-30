@@ -76,7 +76,7 @@ export class SettingComponent implements OnInit {
     if (this.templateFile !== null) {
       this.service.saveTemplateFile(this.projectId, {
         name: this.templateFile.name,
-        content: this.templateFile.content
+        content: this.templateFile.content!
       }).subscribe({
         next: (res) => {
           if (res) {

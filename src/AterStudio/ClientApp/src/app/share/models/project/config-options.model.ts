@@ -5,28 +5,28 @@ export interface ConfigOptions {
   /**
    * 项目根目录
    */
-  rootPath?: string | null;
+  rootPath: string;
   projectId: string;
   /**
    * dto项目目录
    */
-  dtoPath?: string | null;
-  entityPath?: string | null;
-  dbContextPath?: string | null;
-  storePath?: string | null;
-  apiPath?: string | null;
+  dtoPath: string;
+  entityPath: string;
+  dbContextPath: string;
+  storePath: string;
+  apiPath: string;
   /**
    * NameId/Id
    */
-  idStyle?: string | null;
-  idType?: string | null;
-  createdTimeName?: string | null;
-  updatedTimeName?: string | null;
+  idStyle: string;
+  idType: string;
+  createdTimeName: string;
+  updatedTimeName: string;
   /**
    * 是否拆分
    */
   isSplitController?: boolean | null;
-  version?: string | null;
+  version: string;
   /**
    * swagger地址
    */

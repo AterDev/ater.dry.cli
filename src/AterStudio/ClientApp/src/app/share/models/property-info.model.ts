@@ -2,8 +2,8 @@ import { EntityInfo } from './entity-info.model';
 export interface PropertyInfo {
   id: string;
   projectId: string;
-  type?: string | null;
-  name?: string | null;
+  type: string;
+  name: string;
   displayName?: string | null;
   /**
    * 是否是数组
@@ -55,7 +55,7 @@ export interface PropertyInfo {
   /**
    * 默认值
    */
-  defaultValue?: string | null;
+  defaultValue: string;
   /**
    * defined entity model
    */

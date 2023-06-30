@@ -118,6 +118,16 @@ public class SwaggerManager
     /// <returns></returns>
     public NgComponentInfo CreateUIComponent(CreateUIComponentDto dto)
     {
-        return NgPageGenerate.GenFormComponent(dto.ModelInfo, dto.ServiceName);
+        switch (dto.ComponentType)
+        {
+            case ComponentType.Form:
+                return NgPageGenerate.GenFormComponent(dto.ModelInfo, dto.ServiceName);
+
+            case ComponentType.Table:
+                return NgPageGenerate.GenTableComponent(dto.ModelInfo, dto.ServiceName);
+            default:
+                return default!;
+        }
+
     }
 }

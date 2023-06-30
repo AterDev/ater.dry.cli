@@ -2,10 +2,10 @@ export interface TemplateFileUpsert {
   /**
    * 名称
    */
-  name?: string | null;
+  name: string;
   /**
    * 内容
    */
-  content?: string | null;
+  content: string;
 
 }

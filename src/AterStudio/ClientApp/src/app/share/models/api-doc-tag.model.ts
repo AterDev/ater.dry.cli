@@ -1,5 +1,5 @@
 export interface ApiDocTag {
-  name?: string | null;
+  name: string;
   description?: string | null;
 
 }

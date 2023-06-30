@@ -7,11 +7,11 @@ export interface CreateSolutionDto {
   /**
    * 名称
    */
-  name?: string | null;
+  name: string;
   /**
    * 路径
    */
-  path?: string | null;
+  path: string;
   dbType?: DBType | null;
   cacheType?: CacheType | null;
   /**

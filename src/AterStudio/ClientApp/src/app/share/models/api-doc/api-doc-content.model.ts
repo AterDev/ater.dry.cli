@@ -8,14 +8,14 @@ export interface ApiDocContent {
   /**
    * 接口信息
    */
-  restApiGroups?: RestApiGroup[] | null;
+  restApiGroups?: RestApiGroup[];
   /**
    * 所有请求及返回类型信息
    */
-  modelInfos?: EntityInfo[] | null;
+  modelInfos?: EntityInfo[];
   /**
    * tag信息
    */
-  openApiTags?: ApiDocTag[] | null;
+  openApiTags?: ApiDocTag[];
 
 }

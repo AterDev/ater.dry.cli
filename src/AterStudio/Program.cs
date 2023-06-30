@@ -61,7 +61,7 @@ builder.Services.AddSwaggerGen(c =>
         ControllerActionDescriptor descriptor = (ControllerActionDescriptor)z.ActionDescriptor;
         return $"{descriptor.ControllerName}_{descriptor.ActionName}";
     });
-
+    c.SupportNonNullableReferenceTypes();
     c.SchemaFilter<EnumSchemaFilter>();
     c.MapType<DateOnly>(() => new OpenApiSchema
     {
