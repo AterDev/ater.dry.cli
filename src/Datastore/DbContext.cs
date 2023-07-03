@@ -17,17 +17,12 @@ public class DbContext : IDisposable
         var localDir = Path.Combine(path, "AterStudio");
         var connectionString = $"Filename={Path.Combine(localDir, "droplet.db")};Upgrade=true;initialSize=5MB";
 
-        if (LiteDb == null)
-        {
-            LiteDb = new LiteDatabase(connectionString);
-            LiteDb.Mapper.EmptyStringToNull = false;
-
-            Projects = LiteDb.GetCollection<Project>();
-            EntityInfos = LiteDb.GetCollection<EntityInfo>();
-            ApiDocInfos = LiteDb.GetCollection<ApiDocInfo>();
-            TemplateFile = LiteDb.GetCollection<TemplateFile>();
-        }
-
+        LiteDb ??= new LiteDatabase(connectionString);
+        LiteDb.Mapper.EmptyStringToNull = false;
+        Projects = LiteDb.GetCollection<Project>();
+        EntityInfos = LiteDb.GetCollection<EntityInfo>();
+        ApiDocInfos = LiteDb.GetCollection<ApiDocInfo>();
+        TemplateFile = LiteDb.GetCollection<TemplateFile>();
     }
     ~DbContext() => Dispose();
 

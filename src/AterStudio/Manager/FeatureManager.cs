@@ -50,24 +50,24 @@ public class FeatureManager
 
         if (jsonNode != null)
         {
-            JsonHelper.UpdateJsonNode(jsonNode, "Components.Database", dto.DBType.ToString().ToLower());
-            JsonHelper.UpdateJsonNode(jsonNode, "Components.Cache", dto.CacheType.ToString().ToLower());
+            JsonHelper.AddOrUpdateJsonNode(jsonNode, "Components.Database", dto.DBType.ToString().ToLower());
+            JsonHelper.AddOrUpdateJsonNode(jsonNode, "Components.Cache", dto.CacheType.ToString().ToLower());
 
             if (!string.IsNullOrWhiteSpace(dto.CommandDbConnStrings))
             {
-                JsonHelper.UpdateJsonNode(jsonNode, "ConnectionStrings.CommandDb", dto.CommandDbConnStrings);
+                JsonHelper.AddOrUpdateJsonNode(jsonNode, "ConnectionStrings.CommandDb", dto.CommandDbConnStrings);
             }
             if (!string.IsNullOrWhiteSpace(dto.QueryDbConnStrings))
             {
-                JsonHelper.UpdateJsonNode(jsonNode, "ConnectionStrings.QueryDb", dto.QueryDbConnStrings);
+                JsonHelper.AddOrUpdateJsonNode(jsonNode, "ConnectionStrings.QueryDb", dto.QueryDbConnStrings);
             }
             if (!string.IsNullOrWhiteSpace(dto.CacheConnStrings))
             {
-                JsonHelper.UpdateJsonNode(jsonNode, "ConnectionStrings.Cache", dto.CacheConnStrings);
+                JsonHelper.AddOrUpdateJsonNode(jsonNode, "ConnectionStrings.Cache", dto.CacheConnStrings);
             }
             if (!string.IsNullOrWhiteSpace(dto.CacheInstanceName))
             {
-                JsonHelper.UpdateJsonNode(jsonNode, "ConnectionStrings.CacheInstanceName", dto.CacheInstanceName);
+                JsonHelper.AddOrUpdateJsonNode(jsonNode, "ConnectionStrings.CacheInstanceName", dto.CacheInstanceName);
             }
 
             jsonString = jsonNode.ToString();

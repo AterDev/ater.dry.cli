@@ -96,7 +96,7 @@ public class RequestGenerate : GenerateBase
                 {
                     string? location = p.In?.GetDisplayName();
                     bool? inpath = location?.ToLower()?.Equals("path");
-                    (string type, string _) = GetTypescriptParamType(p.Schema);
+                    (string type, string? _) = GetTypescriptParamType(p.Schema);
                     return new FunctionParams
                     {
                         Description = p.Description,

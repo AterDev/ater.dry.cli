@@ -126,7 +126,7 @@ public class CSHttpClientGenerate : GenerateBase
         function.ResponseType = string.IsNullOrWhiteSpace(function.ResponseType) ? "object" : function.ResponseType;
 
         // TODO:特殊处理PageList，针对泛型类型，不通用
-        if (function.ResponseType.EndsWith("PageList") && function.ResponseRefType.EndsWith("PageList"))
+        if (function.ResponseType.EndsWith("PageList") && function.ResponseRefType!.EndsWith("PageList"))
         {
             var type = function.ResponseType.Replace("PageList", "");
             function.ResponseType = $"PageList<{type}>";
@@ -239,7 +239,7 @@ public class CSHttpClientGenerate : GenerateBase
                 {
                     string? location = p.In?.GetDisplayName();
                     bool? inpath = location?.ToLower()?.Equals("path");
-                    (string type, string _) = GetCsharpParamType(p.Schema);
+                    (string type, string? _) = GetCsharpParamType(p.Schema);
                     return new FunctionParams
                     {
                         Description = p.Description,

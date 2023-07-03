@@ -193,7 +193,6 @@ public class EntityParseHelper
     /// <summary>
     /// 获取该类的所有属性
     /// </summary>
-    /// <param name="filePath"></param>
     /// <returns></returns>
     public List<PropertyInfo> GetPropertyInfos(string? parentClassName = null)
     {
@@ -268,7 +267,7 @@ public class EntityParseHelper
             .Select(x => x.GetStructure()).OfType<DocumentationCommentTriviaSyntax>()
             .FirstOrDefault();
 
-        /// 缩进空格
+        // 缩进空格
         var whiteTrivia = syntax.GetLeadingTrivia()
             .Where(x => x.IsKind(SyntaxKind.WhitespaceTrivia))
             .FirstOrDefault();
@@ -319,7 +318,6 @@ public class EntityParseHelper
     /// 对属性的类型进行解析
     /// </summary>
     /// <param name="syntax"></param>
-    /// <param name="propertyInfo"></param>
     protected PropertyInfo ParsePropertyType(PropertyDeclarationSyntax syntax)
     {
         string[] listTypes = new[] { "IList", "List", "ICollection", "IEnumerable" };
@@ -436,7 +434,6 @@ public class EntityParseHelper
     /// <summary>
     /// 解析属性特性
     /// </summary>
-    /// <param name="property"></param>
     protected void ParsePropertyAttributes(PropertyDeclarationSyntax syntax, PropertyInfo propertyInfo)
     {
         List<AttributeSyntax> attributes = syntax.DescendantNodes().OfType<AttributeSyntax>().ToList();

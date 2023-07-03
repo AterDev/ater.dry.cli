@@ -139,7 +139,7 @@ public class OpenApiHelper
                     {
                         string? location = p.In?.GetDisplayName();
                         bool? inpath = location?.ToLower()?.Equals("path");
-                        (string type, string _) = GetParamType(p.Schema);
+                        (string type, string? _) = GetParamType(p.Schema);
                         return new PropertyInfo
                         {
                             ProjectId = Const.PROJECT_ID,

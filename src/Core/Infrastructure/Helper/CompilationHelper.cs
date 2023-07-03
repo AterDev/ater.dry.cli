@@ -153,7 +153,6 @@ public class CompilationHelper
     /// <summary>
     /// 方法是否存在某个接口中
     /// </summary>
-    /// <param name="interfaceName"></param>
     /// <param name="methodContent"></param>
     /// <returns></returns>
     public bool MethodExist(string methodContent)
