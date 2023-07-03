@@ -19,9 +19,8 @@
           </mat-error>
         </mat-form-field>
       </div>
-      <p>
+      <p *ngIf="path?.value">
         <span>生成路径: {{path?.value}}\{{name?.value}} </span>
-        <span></span>
       </p>
     </div>
     <div class="d-flex flex-column mt-2">
@@ -41,16 +40,16 @@
         </mat-form-field>
       </div>
       <div class="d-flex gap-2 align-items-center ">
-        <mat-checkbox formControlName="hasTenant">启用租户</mat-checkbox>
-        <mat-checkbox formControlName="hasIdentityServer">验证授权服务</mat-checkbox>
-        <mat-checkbox formControlName="hasTaskManager">任务管理服务</mat-checkbox>
+        <!-- <mat-checkbox formControlName="hasTenant">启用租户</mat-checkbox> -->
+        <!-- <mat-checkbox formControlName="hasIdentityServer" matTooltip="独立的IdentityServer服务">验证授权服务</mat-checkbox> -->
+        <!-- <mat-checkbox formControlName="hasTaskManager" matTooltip="独立的任务管理服务">任务管理服务</mat-checkbox> -->
       </div>
     </div>
     <div class="d-flex flex-column mt-2">
       <h2>连接字符串</h2>
       <mat-form-field>
         <mat-label>可写数据库</mat-label>
-        <input matInput placeholder="填写连接字符串" formControlName="commandDbConnStrings" maxlength="300">
+        <input matInput placeholder="数据库连接字符串" formControlName="commandDbConnStrings" maxlength="300">
         <mat-error *ngIf="commandDbConnStrings?.hasError('maxlength')">
           不超过300字符
         </mat-error>
@@ -58,27 +57,30 @@
 
       <mat-form-field>
         <mat-label>只读数据库</mat-label>
-        <input matInput placeholder="填写连接字符串" formControlName="queryDbConnStrings" maxlength="300">
+        <input matInput placeholder="数据库连接字符串" formControlName="queryDbConnStrings" maxlength="300">
         <mat-error *ngIf="queryDbConnStrings?.hasError('maxlength')">
           不超过300字符
         </mat-error>
       </mat-form-field>
+      <!-- 缓存配置 -->
+      <div *ngIf="cacheType?.value==CacheType.Redis" class="d-flex gap-1">
+        <mat-form-field class="col">
+          <mat-label>缓存连接</mat-label>
+          <input matInput placeholder="localhost:6379" formControlName="cacheConnStrings" maxlength="200">
+          <mat-error *ngIf="cacheConnStrings?.hasError('maxlength')">
+            不超过200字符
+          </mat-error>
+        </mat-form-field>
 
-      <mat-form-field>
-        <mat-label>缓存连接</mat-label>
-        <input matInput placeholder="localhost:6379" formControlName="cacheConnStrings" maxlength="200">
-        <mat-error *ngIf="cacheConnStrings?.hasError('maxlength')">
-          不超过200字符
-        </mat-error>
-      </mat-form-field>
+        <mat-form-field class="col-auto">
+          <mat-label>缓存前缀</mat-label>
+          <input matInput placeholder="前缀" formControlName="cacheInstanceName" maxlength="60">
+          <mat-error *ngIf="cacheInstanceName?.hasError('maxlength')">
+            不超过60字符
+          </mat-error>
+        </mat-form-field>
+      </div>
 
-      <mat-form-field>
-        <mat-label>缓存前缀</mat-label>
-        <input matInput placeholder="前缀" formControlName="cacheInstanceName" maxlength="60">
-        <mat-error *ngIf="cacheInstanceName?.hasError('maxlength')">
-          不超过60字符
-        </mat-error>
-      </mat-form-field>
     </div>
     <div class="d-flex flex-column mt-1">
       <h2>功能模块</h2>
