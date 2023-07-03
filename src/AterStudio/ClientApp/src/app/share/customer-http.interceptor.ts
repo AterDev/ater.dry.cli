@@ -61,13 +61,13 @@ export class CustomerHttpInterceptor implements HttpInterceptor {
             errors.detail = error.error.detail;
           }
           if (error.error.title) {
-            errors.detail = error.error.title;
+            errors.detail = error.error.title + ':' + errors.detail;
           }
         }
         break;
     }
     errors.status = error.status;
-    this.snb.open(errors.detail);
+    this.snb.open(errors.detail, '了解', { duration: 10000 });
     return throwError(() => errors);
   }
 }

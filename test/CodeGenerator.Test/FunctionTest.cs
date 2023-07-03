@@ -109,7 +109,7 @@ public class FunctionTest
     }
 
     [Fact]
-    public void Test_JsonUpdate()
+    public void Test_JsonNode()
     {
         var jsonString = """
                         {

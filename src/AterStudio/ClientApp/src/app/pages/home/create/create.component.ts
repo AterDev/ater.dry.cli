@@ -78,7 +78,7 @@ export class CreateComponent {
             }
           },
           error: (error) => {
-            this.snb.open(error.detail);
+            // this.snb.open(error.detail);
             this.isProcess = false;
           },
           complete: () => {

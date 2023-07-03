@@ -1,4 +1,5 @@
-﻿using AterStudio.Models;
+﻿using System.Text.Json.Nodes;
+using AterStudio.Models;
 using Core.Infrastructure.Helper;
 
 namespace AterStudio.Manager;
@@ -30,14 +31,49 @@ public class FeatureManager
         var path = Path.Combine(dto.Path, dto.Name);
         if (!Directory.Exists(dto.Path))
         {
-            Directory.CreateDirectory(dto.Path);
+            Directory.CreateDirectory(path);
         }
         if (!ProcessHelper.RunCommand("dotnet", $"new atapi.pro -o {path}", out _))
         {
-            ErrorMsg = "创建项目失败";
+            ErrorMsg = "创建项目失败，请尝试使用空目录创建";
             return false;
         }
         await Console.Out.WriteLineAsync($"✅ create new solution {path}");
+
+        // 修改配置文件
+        var configFile = Path.Combine(path, "src", "Http.API", "appsettings.json");
+        var jsonString = File.ReadAllText(configFile);
+        var jsonNode = JsonNode.Parse(jsonString, documentOptions: new JsonDocumentOptions
+        {
+            CommentHandling = JsonCommentHandling.Skip
+        });
+
+        if (jsonNode != null)
+        {
+            JsonHelper.UpdateJsonNode(jsonNode, "Components.Database", dto.DBType.ToString().ToLower());
+            JsonHelper.UpdateJsonNode(jsonNode, "Components.Cache", dto.CacheType.ToString().ToLower());
+
+            if (!string.IsNullOrWhiteSpace(dto.CommandDbConnStrings))
+            {
+                JsonHelper.UpdateJsonNode(jsonNode, "ConnectionStrings.CommandDb", dto.CommandDbConnStrings);
+            }
+            if (!string.IsNullOrWhiteSpace(dto.QueryDbConnStrings))
+            {
+                JsonHelper.UpdateJsonNode(jsonNode, "ConnectionStrings.QueryDb", dto.QueryDbConnStrings);
+            }
+            if (!string.IsNullOrWhiteSpace(dto.CacheConnStrings))
+            {
+                JsonHelper.UpdateJsonNode(jsonNode, "ConnectionStrings.Cache", dto.CacheConnStrings);
+            }
+            if (!string.IsNullOrWhiteSpace(dto.CacheInstanceName))
+            {
+                JsonHelper.UpdateJsonNode(jsonNode, "ConnectionStrings.CacheInstanceName", dto.CacheInstanceName);
+            }
+
+            jsonString = jsonNode.ToString();
+            await Console.Out.WriteLineAsync(jsonString);
+            File.WriteAllText(configFile, jsonString);
+        }
 
         // 添加项目
         //await _projectManager.AddProjectAsync(dto.Name, dto.Path);

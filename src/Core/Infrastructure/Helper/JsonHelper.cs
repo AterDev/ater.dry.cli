@@ -20,7 +20,6 @@ public static class JsonHelper
             if (current != null)
             {
                 current[paths[^1]] = JsonValue.Create(newValue);
-
             }
         }
         catch (Exception)

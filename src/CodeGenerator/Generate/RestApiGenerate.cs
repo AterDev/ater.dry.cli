@@ -191,7 +191,7 @@ public class RestApiGenerate : GenerateBase
     {
         string content = """
                     var current = await manager.GetCurrentAsync(id);
-                    if (current == null) return NotFound(ErrorMsg.NotFoundResource);
+                    if (current == null) { return NotFound(ErrorMsg.NotFoundResource) };
 
             """;
         string entityName = EntityInfo.Name;
