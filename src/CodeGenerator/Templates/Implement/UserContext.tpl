@@ -53,7 +53,7 @@ public partial class UserContext : IUserContext
     {
         return Roles != null && Roles.Any(r => r.ToLower() == roleName);
     }
-
+    /*
     public async Task<User?> GetUserAsync()
     {
         return await _context.Users.FindAsync(UserId);
@@ -63,4 +63,5 @@ public partial class UserContext : IUserContext
     {
         return await _context.SystemUsers.FindAsync(UserId);
     }
+    */
 }

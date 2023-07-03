@@ -90,14 +90,13 @@ public class RestApiGenerate : GenerateBase
             "global using System.Text.Json.Serialization;",
             "global using Microsoft.EntityFrameworkCore;",
             "global using Http.API.Infrastructure;",
-            "global using Core.Const;",
             $"global using {EntityInfo.NamespaceName};",
             $"global using {EntityNamespace}.Utils;",
             $"global using {EntityNamespace}.Models;",
             $"global using {ShareNamespace}.Models;",
             $"global using {ServiceNamespace}.Interface;",
             $"global using {ServiceNamespace}.IManager;",
-            $"global using {ServiceNamespace}.AppConst;",
+            $"global using {ServiceNamespace}.Const;",
         };
     }
 
