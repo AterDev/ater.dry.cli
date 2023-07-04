@@ -18,12 +18,15 @@ public class ModuleCommand
         await Console.Out.WriteLineAsync($"🆕 create module:{name} to {modulePath}");
         var tplContent = GenerateBase.GetTplContent("Implement.RestControllerBase.tpl");
         tplContent = tplContent.Replace(TplConst.NAMESPACE, name);
-        await AssemblyHelper.GenerateFileAsync(modulePath, "RestControllerBase.cs", tplContent);
+        var infrastructruePath = Path.Combine(modulePath, "Infrastructure");
+        await AssemblyHelper.GenerateFileAsync(infrastructruePath, "RestControllerBase.cs", tplContent);
 
         // global usings
         var usingsContent = GetGlobalUsings();
         usingsContent = usingsContent.Replace("${Module}", name);
         await AssemblyHelper.GenerateFileAsync(modulePath, "GlobalUsings.cs", usingsContent);
+
+
     }
 
     /// <summary>
@@ -58,6 +61,26 @@ public class ModuleCommand
             global using Microsoft.EntityFrameworkCore;
             global using Microsoft.Extensions.Logging;
             global using Share.Models;
+            """;
+    }
+
+    private static string GetCsProjectContent(string version = "7.0")
+    {
+        return $"""
+            <Project Sdk="Microsoft.NET.Sdk">
+            	<PropertyGroup>
+            		<TargetFramework>net{version}</TargetFramework>
+            		<ImplicitUsings>enable</ImplicitUsings>
+                    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+            		<Nullable>enable</Nullable>
+            	</PropertyGroup>
+            	<ItemGroup>
+            		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+            	</ItemGroup>
+            	<ItemGroup>
+            	  <ProjectReference Include="..\..\Application\Application.csproj" />
+            	</ItemGroup>
+            </Project>
             """;
     }
 }

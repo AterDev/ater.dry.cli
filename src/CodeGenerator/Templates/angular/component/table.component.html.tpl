@@ -59,6 +59,6 @@
   </mat-dialog-content>
   <mat-dialog-actions class="justify-content-end">
     <button mat-button mat-dialog-close>取消</button>
-    <button mat-button>确认</button>
+    <button mat-button color="primary">确认</button>
   </mat-dialog-actions>
 </ng-template>

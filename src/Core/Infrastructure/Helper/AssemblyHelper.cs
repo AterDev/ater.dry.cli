@@ -216,6 +216,18 @@ public class AssemblyHelper
     }
 
     /// <summary>
+    /// get csproject targetFramework 
+    /// </summary>
+    /// <param name="projectPath"></param>
+    /// <returns></returns>
+    public static string? GetTargetFramework(string projectPath)
+    {
+        XElement xml = XElement.Load(projectPath);
+        var targetFramework = xml.Descendants("TargetFramework").FirstOrDefault();
+        return targetFramework?.Value;
+    }
+
+    /// <summary>
     /// 生成文件
     /// </summary>
     /// <param name="dir"></param>

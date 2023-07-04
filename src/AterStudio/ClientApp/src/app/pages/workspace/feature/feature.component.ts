@@ -72,29 +72,30 @@ export class FeatureComponent {
     this.dialogRef = this.dialog.open(this.addTmpl, {
       width: '300px',
     });
-    this.dialogRef.afterClosed()
-      .subscribe(result => {
-        if (result && this.mydialogForm.valid) {
-          this.isProcessing = true;
-          this.service.createModule(this.name?.value)
-            .subscribe({
-              next: (res) => {
-                if (res) {
-                  this.snb.open('添加成功');
-                  this.getList();
-                } else {
-                }
-              },
-              error: (error) => {
-                this.snb.open(error.detail);
-                this.isProcessing = false;
-              },
-              complete: () => {
-                this.isProcessing = false;
-              }
-            });
-        }
-      });
   }
 
+  addModule(): void {
+    if (this.mydialogForm.valid) {
+      this.isProcessing = true;
+      this.service.createModule(this.name?.value)
+        .subscribe({
+          next: (res) => {
+            if (res) {
+              
+              this.snb.open('添加成功');
+              this.getList();
+            } else {
+            }
+          },
+          error: (error) => {
+            this.snb.open(error.detail);
+            this.isProcessing = false;
+          },
+          complete: () => {
+            this.dialogRef.close();
+            this.isProcessing = false;
+          }
+        });
+    }
+  }
 }
