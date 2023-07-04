@@ -46,10 +46,14 @@ public class ApiCommand : CommandBase
         }
         Console.WriteLine(Instructions[0]);
         await GenerateCommonFilesAsync();
+        await GenerateServicesAsync();
+
         Console.WriteLine(Instructions[1]);
         await GenerateRestApiAsync(force);
         Console.WriteLine(Instructions[2]);
         await GenerateGlobalUsingsFilesAsync();
+
+
         Console.WriteLine("😀 RestApi generate completed!" + Environment.NewLine);
     }
 
@@ -93,12 +97,24 @@ public class ApiCommand : CommandBase
         {
             string adminContent = apiContent
                 .Replace(CodeGen.ApiNamespace + ".Controllers", CodeGen.ApiNamespace + ".Controllers.AdminControllers");
-            await GenerateFileAsync(adminDir, $"{entityName}{Suffix}.cs", adminContent,force);
+            await GenerateFileAsync(adminDir, $"{entityName}{Suffix}.cs", adminContent, force);
         }
         string clientContent = apiContent
             .Replace("RestControllerBase", "ClientControllerBase");
         await GenerateFileAsync(apiDir, $"{entityName}{Suffix}.cs", clientContent, force);
 
+    }
+
+    /// <summary>
+    /// 生成注入服务
+    /// </summary>
+    public async Task GenerateServicesAsync()
+    {
+        string implementDir = Path.Combine(ApiPath, "Infrastructure");
+        string storeService = CodeGen.GetStoreService();
+
+        // 生成仓储上下文
+        await GenerateFileAsync(implementDir, "StoreServicesExtensions.cs", storeService, true);
     }
 
     private async Task GenerateCommonFilesAsync()

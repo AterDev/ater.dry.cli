@@ -72,7 +72,7 @@ ${UpdateActionBlock}
     {
         // 注意删除权限
         var entity = await manager.GetCurrentAsync(id);
-        if (entity == null) { return NotFound() };
+        if (entity == null) { return NotFound(); };
         // return Forbid();
         return await manager.DeleteAsync(entity);
     }

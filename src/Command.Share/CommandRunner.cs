@@ -217,15 +217,16 @@ public static class CommandRunner
             File.Delete(managerPath);
             await Console.Out.WriteLineAsync("✔️ clear IManager");
         }
+
         try
         {
             // 更新 依赖注入
             var entityFilePath = Directory.GetFiles(Path.Combine(entityPath, "Entities"), EntityName + ".cs", SearchOption.AllDirectories).First();
+            var apiCmd = new ApiCommand(entityFilePath, sharePath, applicationPath, apiPath);
+            await apiCmd.GenerateServicesAsync();
 
-            var managerCmd = new ManagerCommand(entityFilePath, sharePath, applicationPath);
-            await managerCmd.GenerateServicesAsync();
+            await Console.Out.WriteLineAsync("✔️ update manager service extention");
 
-            await Console.Out.WriteLineAsync("✔️ update manager");
             // 清除web api 
             var apiControllerPath = Path.Combine(apiPath, "Controllers");
 

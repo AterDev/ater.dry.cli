@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Nodes;
 using AterStudio.Models;
+using Command.Share.Commands;
 using Core.Infrastructure.Helper;
 
 namespace AterStudio.Manager;
@@ -19,7 +20,6 @@ public class FeatureManager
         _projectContext = projectContext;
         _projectManager = projectManager;
     }
-
 
     /// <summary>
     /// 创建新解决方案
@@ -79,5 +79,49 @@ public class FeatureManager
         //await _projectManager.AddProjectAsync(dto.Name, dto.Path);
 
         return true;
+    }
+
+    /// <summary>
+    /// 获取模块信息
+    /// </summary>
+    /// <returns></returns>
+    public List<SubProjectInfo> GetModulesInfo()
+    {
+        var res = new List<SubProjectInfo>();
+        var paths = ModuleCommand.GetModulesPaths(_projectContext.ProjectPath!);
+        paths?.ForEach(path =>
+        {
+            var moduleInfo = new SubProjectInfo
+            {
+                Name = Path.GetFileNameWithoutExtension(path),
+                Path = path,
+                ProjectType = ProjectType.Module
+            };
+            res.Add(moduleInfo);
+        });
+        return res;
+    }
+
+    /// <summary>
+    /// 创建模块
+    /// </summary>
+    /// <param name="name"></param>
+    public async Task<bool> CreateModuleAsync(string name)
+    {
+        try
+        {
+            await ModuleCommand.CreateModuleAsync(_projectContext.ProjectPath!, name);
+        }
+        catch (Exception e)
+        {
+            ErrorMsg = e.Message;
+            return false;
+        }
+        return true;
+    }
+
+    public void CreateMicroService()
+    {
+
     }
 }

@@ -3,6 +3,9 @@ using NuGet.Versioning;
 
 namespace Core.Infrastructure.Helper;
 
+/// <summary>
+/// 项目帮助类
+/// </summary>
 public class AssemblyHelper
 {
     /// <summary>
@@ -210,5 +213,31 @@ public class AssemblyHelper
     {
         public string FullName { get; set; } = string.Empty;
         public string? Summary { get; set; }
+    }
+
+    /// <summary>
+    /// 生成文件
+    /// </summary>
+    /// <param name="dir"></param>
+    /// <param name="fileName"></param>
+    /// <param name="content"></param>
+    /// <param name="cover"></param>
+    /// <returns></returns>
+    public static async Task GenerateFileAsync(string dir, string fileName, string content, bool cover = false)
+    {
+        if (!Directory.Exists(dir))
+        {
+            _ = Directory.CreateDirectory(dir);
+        }
+        string filePath = Path.Combine(dir, fileName);
+        if (!File.Exists(filePath) || cover)
+        {
+            await File.WriteAllTextAsync(filePath, content);
+            Console.WriteLine(@$"  🆕 generate file {fileName}.");
+        }
+        else
+        {
+            Console.WriteLine($"  🦘 Skip exist file: {fileName}.");
+        }
     }
 }

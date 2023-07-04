@@ -32,4 +32,26 @@ public class FeatureController : ControllerBase
         var res = await _feature.CreateNewSolutionAsync(dto);
         return res ? true : Problem(_feature.ErrorMsg);
     }
+
+    /// <summary>
+    /// 获取模块列表
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("modules")]
+    public List<SubProjectInfo> GetModulesInfo()
+    {
+        return _feature.GetModulesInfo();
+    }
+
+    /// <summary>
+    /// 创建模型
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    [HttpPost("createModule")]
+    public async Task<ActionResult<bool>> CreateModule(string name)
+    {
+        var res = await _feature.CreateModuleAsync(name);
+        return res ? true : Problem(_feature.ErrorMsg);
+    }
 }

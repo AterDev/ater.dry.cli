@@ -55,8 +55,8 @@ public class ManagerCommand : CommandBase
         Console.WriteLine(Instructions[3]);
         await GenerateMangerTestAsync(force);
 
-        Console.WriteLine(Instructions[4]);
-        await GenerateServicesAsync();
+        //Console.WriteLine(Instructions[4]);
+        //await GenerateServicesAsync();
 
         Console.WriteLine(Instructions[5]);
         await GenerateGlobalUsingsFilesAsync();
@@ -102,16 +102,16 @@ public class ManagerCommand : CommandBase
                 Console.WriteLine($"⚠️ can't find {extensionPath}");
             }
             // 更新Error Const 常量
-            var errorMsgPath = Path.Combine(StorePath, "AppConst", "ErrorMsg.cs");
+            var errorMsgPath = Path.Combine(StorePath, "Const", "ErrorMsg.cs");
             if (!File.Exists(errorMsgPath))
             {
-                if (!Directory.Exists(Path.Combine(StorePath, "AppConst")))
+                if (!Directory.Exists(Path.Combine(StorePath, "Const")))
                 {
-                    Directory.CreateDirectory(Path.Combine(StorePath, "AppConst"));
+                    Directory.CreateDirectory(Path.Combine(StorePath, "Const"));
                 }
 
                 File.WriteAllText(errorMsgPath, """
-                    namespace Application.AppConst;
+                    namespace Application.Const;
                     /// <summary>
                     /// 错误信息
                     /// </summary>
@@ -308,19 +308,15 @@ public class ManagerCommand : CommandBase
         await GenerateFileAsync(queryStoreDir, $"{entityName}QueryStore.cs", queryStoreContent);
         await GenerateFileAsync(commandStoreDir, $"{entityName}CommandStore.cs", commandStoreContent);
     }
+
     /// <summary>
     /// 生成注入服务
     /// </summary>
-    public async Task GenerateServicesAsync()
+    public async Task GetDataStoreContextAsync()
     {
         string implementDir = Path.Combine(StorePath, "Implement");
-        string storeService = CodeGen.GetStoreService();
         string storeContext = CodeGen.GetDataStoreContext();
-
         // 生成仓储上下文
         await GenerateFileAsync(implementDir, "DataStoreContext.cs", storeContext, true);
-        await GenerateFileAsync(implementDir, "StoreServicesExtensions.cs", storeService, true);
-
     }
-
 }

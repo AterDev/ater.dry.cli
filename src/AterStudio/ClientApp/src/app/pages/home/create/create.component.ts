@@ -21,10 +21,10 @@ export class CreateComponent {
   constructor(
     private service: FeatureService,
     private snb: MatSnackBar
-
   ) {
 
   }
+
   get name() { return this.addForm.get('name'); }
   get path() { return this.addForm.get('path'); }
   get dbType() { return this.addForm.get('dbType'); }
@@ -39,7 +39,6 @@ export class CreateComponent {
   get hasCmsFeature() { return this.addForm.get('hasCmsFeature'); }
   get hasUserLogsFeature() { return this.addForm.get('hasUserLogsFeature'); }
   get hasSystemLogsFeature() { return this.addForm.get('hasSystemLogsFeature'); }
-
 
   ngOnInit(): void {
     this.initForm();

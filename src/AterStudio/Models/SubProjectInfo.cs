@@ -23,5 +23,9 @@ public enum ProjectType
     /// <summary>
     /// 类库
     /// </summary>
-    Lib
+    Lib,
+    /// <summary>
+    /// 模块
+    /// </summary>
+    Module
 }

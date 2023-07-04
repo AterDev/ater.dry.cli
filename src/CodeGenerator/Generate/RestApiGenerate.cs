@@ -165,12 +165,13 @@ public class RestApiGenerate : GenerateBase
             {
                 not "User" and not "SystemUser" => $$"""
                         if (!await {{manager}}.ExistAsync(dto.{{nav.Type}}Id))
+                        {
                             return NotFound("不存在的{{nav.CommentSummary ?? nav.Type}}");
+                        }
 
                 """,
                 _ => $$"""
-                        if (!await _user.ExistAsync())
-                            return NotFound(ErrorMsg.NotFoundUser);
+                        if (!await _user.ExistAsync()) { return NotFound(ErrorMsg.NotFoundUser); }
 
                 """,
             };
@@ -190,7 +191,7 @@ public class RestApiGenerate : GenerateBase
     {
         string content = """
                     var current = await manager.GetCurrentAsync(id);
-                    if (current == null) { return NotFound(ErrorMsg.NotFoundResource) };
+                    if (current == null) { return NotFound(ErrorMsg.NotFoundResource); };
 
             """;
         string entityName = EntityInfo.Name;
@@ -206,7 +207,7 @@ public class RestApiGenerate : GenerateBase
                         if (current.{{nav.Name}}.Id != dto.{{nav.Type}}Id)
                         {
                             var {{variable}} = await {{manager}}.GetCurrentAsync(dto.{{nav.Type}}Id);
-                            if ({{variable}} == null) return NotFound("不存在的{{nav.CommentSummary ?? nav.Type}}");
+                            if ({{variable}} == null) { return NotFound("不存在的{{nav.CommentSummary ?? nav.Type}}"); }
                             current.{{nav.Name}} = {{variable}};
                         }
 
@@ -279,5 +280,59 @@ public class RestApiGenerate : GenerateBase
         return tplContent.Replace("${AdditionManagersProps}", "")
             .Replace("${AdditionManagersDI}", "")
             .Replace("${AdditionManagersInit}", "");
+    }
+
+    /// <summary>
+    /// 服务注册代码
+    /// </summary>
+    /// <returns></returns>
+    public string GetStoreService()
+    {
+        string storeServiceContent = "";
+        string managerServiceContent = "";
+
+        // 获取所有data stores
+        string storeDir = Path.Combine(StorePath, "DataStore");
+        string[] files = Array.Empty<string>();
+
+        if (Directory.Exists(storeDir))
+        {
+            files = Directory.GetFiles(storeDir, "*DataStore.cs", SearchOption.TopDirectoryOnly);
+        }
+
+        string[] queryFiles = Directory.GetFiles(Path.Combine(StorePath, $"{Const.QUERY_STORE}"), $"*{Const.QUERY_STORE}.cs", SearchOption.TopDirectoryOnly);
+        string[] commandFiles = Directory.GetFiles(Path.Combine(StorePath, $"{Const.COMMAND_STORE}"), $"*{Const.COMMAND_STORE}.cs", SearchOption.TopDirectoryOnly);
+
+        files = files.Concat(queryFiles).Concat(commandFiles).ToArray();
+
+        files?.ToList().ForEach(file =>
+        {
+            object name = Path.GetFileNameWithoutExtension(file);
+            string row = $"        services.AddScoped(typeof({name}));";
+            storeServiceContent += row + Environment.NewLine;
+        });
+
+        // 获取所有manager
+        string managerDir = Path.Combine(StorePath, "Manager");
+        if (!Directory.Exists(managerDir))
+        {
+            return string.Empty;
+        }
+
+        files = Directory.GetFiles(managerDir, "*Manager.cs", SearchOption.TopDirectoryOnly);
+
+        files?.ToList().ForEach(file =>
+        {
+            object name = Path.GetFileNameWithoutExtension(file);
+            string row = $"        services.AddScoped<I{name}, {name}>();";
+            managerServiceContent += row + Environment.NewLine;
+        });
+
+        // 构建服务
+        string content = GetTplContent("Implement.StoreServicesExtensions.tpl");
+        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace);
+        content = content.Replace(TplConst.SERVICE_STORES, storeServiceContent);
+        content = content.Replace(TplConst.SERVICE_MANAGER, managerServiceContent);
+        return content;
     }
 }

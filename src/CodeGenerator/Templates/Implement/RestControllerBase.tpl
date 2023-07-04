@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using Core.Const;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace ${Namespace}.Infrastructure;
@@ -82,7 +81,23 @@ public class ClientControllerBase<TManager> : RestControllerBase
 [Produces("application/json")]
 public class RestControllerBase : ControllerBase
 {
-
+    /// <summary>
+    /// 400返回格式处理
+    /// </summary>
+    /// <param name="error"></param>
+    /// <returns></returns>
+    [NonAction]
+    public override BadRequestObjectResult BadRequest([ActionResultObjectValue] object? error)
+    {
+        var res = new
+        {
+            Title = "请求错误",
+            Detail = error?.ToString(),
+            Status = 400,
+            TraceId = HttpContext.TraceIdentifier
+        };
+        return base.BadRequest(res);
+    }
     /// <summary>
     /// 404返回格式处理
     /// </summary>

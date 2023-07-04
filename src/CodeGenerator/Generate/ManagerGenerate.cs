@@ -233,122 +233,6 @@ public class ManagerGenerate : GenerateBase
         tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName);
         return tplContent;
     }
-    /// <summary>
-    /// store上下文
-    /// </summary>
-    /// <returns></returns>
-    public string GetDataStoreContext()
-    {
-        string queryPath = Path.Combine(StorePath, $"{Const.QUERY_STORE}");
-        string[] queryFiles = Directory.GetFiles(queryPath, $"*{Const.QUERY_STORE}.cs", SearchOption.TopDirectoryOnly);
-        string commandPath = Path.Combine(StorePath, $"{Const.COMMAND_STORE}");
-        string[] commandFiles = Directory.GetFiles(commandPath, $"*{Const.COMMAND_STORE}.cs", SearchOption.TopDirectoryOnly);
-        IEnumerable<string> allDataStores = queryFiles.Concat(commandFiles);
-
-        string ctorParams = "";
-        string ctorAssign = "";
-        string twoTab = "        ";
-        string usings = "";
-        if (allDataStores.Any())
-        {
-            var compilationHelper = new CompilationHelper(SharePath);
-            var entityClassNames = new List<string>();
-
-            allDataStores.ToList().ForEach(filePath =>
-            {
-                string fileName = Path.GetFileNameWithoutExtension(filePath);
-                // 属性名
-                string propName = fileName.Replace("Store", "");
-                // 属性类型
-                string propType = fileName.EndsWith($"{Const.QUERY_STORE}") ? "QuerySet" : "CommandSet";
-                // 属性泛型
-                string propGeneric = fileName.Replace($"{Const.QUERY_STORE}", "")
-                    .Replace($"{Const.COMMAND_STORE}", "");
-
-                entityClassNames.Add(propGeneric);
-
-                //string row = $"{oneTab}public {propType}<{propGeneric}> {propName} {{ get; init; }}";
-                //props += row + Environment.NewLine;
-                // 构造函数参数
-                string row = $"{twoTab}{fileName} {propName.ToCamelCase()},";
-                ctorParams += row + Environment.NewLine;
-                // 构造函数赋值
-                //row = $"{twoTab}{propName} = {propName.ToCamelCase()};";
-                //ctorAssign += row + Environment.NewLine;
-                ctorAssign += $"{twoTab}AddCache({propName.ToCamelCase()});" + Environment.NewLine;
-            });
-            // 关联模型需要引入的命名空间
-            var importNamespaces = compilationHelper.GetNamespaceNames(entityClassNames);
-            if (importNamespaces.Any())
-            {
-                importNamespaces.ForEach(n =>
-                {
-                    usings += $"using {n};" + Environment.NewLine;
-                });
-            }
-        }
-        // 构建服务
-        string content = GetTplContent("Implement.DataStoreContext.tpl");
-        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace)
-            .Replace(TplConst.STORECONTEXT_PROPS, "")
-            .Replace(TplConst.STORECONTEXT_PARAMS, ctorParams)
-            .Replace(TplConst.STORECONTEXT_ASSIGN, ctorAssign);
-        return usings + content;
-    }
-
-    /// <summary>
-    /// 服务注册代码
-    /// </summary>
-    /// <returns></returns>
-    public string GetStoreService()
-    {
-        string storeServiceContent = "";
-        string managerServiceContent = "";
-
-        // 获取所有data stores
-        string storeDir = Path.Combine(StorePath, "DataStore");
-        string[] files = Array.Empty<string>();
-
-        if (Directory.Exists(storeDir))
-        {
-            files = Directory.GetFiles(storeDir, "*DataStore.cs", SearchOption.TopDirectoryOnly);
-        }
-
-        string[] queryFiles = Directory.GetFiles(Path.Combine(StorePath, $"{Const.QUERY_STORE}"), $"*{Const.QUERY_STORE}.cs", SearchOption.TopDirectoryOnly);
-        string[] commandFiles = Directory.GetFiles(Path.Combine(StorePath, $"{Const.COMMAND_STORE}"), $"*{Const.COMMAND_STORE}.cs", SearchOption.TopDirectoryOnly);
-
-        files = files.Concat(queryFiles).Concat(commandFiles).ToArray();
-
-        files?.ToList().ForEach(file =>
-            {
-                object name = Path.GetFileNameWithoutExtension(file);
-                string row = $"        services.AddScoped(typeof({name}));";
-                storeServiceContent += row + Environment.NewLine;
-            });
-
-        // 获取所有manager
-        string managerDir = Path.Combine(StorePath, "Manager");
-        if (!Directory.Exists(managerDir))
-        {
-            return string.Empty;
-        }
-
-        files = Directory.GetFiles(managerDir, "*Manager.cs", SearchOption.TopDirectoryOnly);
-
-        files?.ToList().ForEach(file =>
-            {
-                object name = Path.GetFileNameWithoutExtension(file);
-                string row = $"        services.AddScoped<I{name}, {name}>();";
-                managerServiceContent += row + Environment.NewLine;
-            });
-
-        // 构建服务
-        string content = GetTplContent("Implement.StoreServicesExtensions.tpl");
-        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace);
-        content = content.Replace(TplConst.SERVICE_STORES, storeServiceContent);
-        content = content.Replace(TplConst.SERVICE_MANAGER, managerServiceContent);
-        return content;
-    }
 
     /// <summary>
     /// Manager接口内容
@@ -615,5 +499,68 @@ public class ManagerGenerate : GenerateBase
         string tplContent = GetTplContent("Extensions.tpl");
         tplContent = tplContent.Replace(TplConst.NAMESPACE, entityNamespace);
         return tplContent;
+    }
+
+    /// <summary>
+    /// store上下文
+    /// </summary>
+    /// <returns></returns>
+    public string GetDataStoreContext()
+    {
+        string queryPath = Path.Combine(StorePath, $"{Const.QUERY_STORE}");
+        string[] queryFiles = Directory.GetFiles(queryPath, $"*{Const.QUERY_STORE}.cs", SearchOption.TopDirectoryOnly);
+        string commandPath = Path.Combine(StorePath, $"{Const.COMMAND_STORE}");
+        string[] commandFiles = Directory.GetFiles(commandPath, $"*{Const.COMMAND_STORE}.cs", SearchOption.TopDirectoryOnly);
+        IEnumerable<string> allDataStores = queryFiles.Concat(commandFiles);
+
+        string ctorParams = "";
+        string ctorAssign = "";
+        string twoTab = "        ";
+        string usings = "";
+        if (allDataStores.Any())
+        {
+            var compilationHelper = new CompilationHelper(SharePath);
+            var entityClassNames = new List<string>();
+
+            allDataStores.ToList().ForEach(filePath =>
+            {
+                string fileName = Path.GetFileNameWithoutExtension(filePath);
+                // 属性名
+                string propName = fileName.Replace("Store", "");
+                // 属性类型
+                string propType = fileName.EndsWith($"{Const.QUERY_STORE}") ? "QuerySet" : "CommandSet";
+                // 属性泛型
+                string propGeneric = fileName.Replace($"{Const.QUERY_STORE}", "")
+                    .Replace($"{Const.COMMAND_STORE}", "");
+
+                entityClassNames.Add(propGeneric);
+
+                //string row = $"{oneTab}public {propType}<{propGeneric}> {propName} {{ get; init; }}";
+                //props += row + Environment.NewLine;
+                // 构造函数参数
+                string row = $"{twoTab}{fileName} {propName.ToCamelCase()},";
+                ctorParams += row + Environment.NewLine;
+                // 构造函数赋值
+                //row = $"{twoTab}{propName} = {propName.ToCamelCase()};";
+                //ctorAssign += row + Environment.NewLine;
+                ctorAssign += $"{twoTab}AddCache({propName.ToCamelCase()});" + Environment.NewLine;
+            });
+            // 关联模型需要引入的命名空间
+            var importNamespaces = compilationHelper.GetNamespaceNames(entityClassNames);
+            if (importNamespaces.Any())
+            {
+                importNamespaces.ForEach(n =>
+                {
+                    usings += $"using {n};" + Environment.NewLine;
+                });
+            }
+        }
+        // 构建服务
+        string content = GetTplContent("Implement.DataStoreContext.tpl");
+        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace)
+            .Replace(TplConst.STORECONTEXT_PROPS, "")
+            .Replace(TplConst.STORECONTEXT_PARAMS, ctorParams)
+            .Replace(TplConst.STORECONTEXT_ASSIGN, ctorAssign);
+        return usings + content;
     }
 }
