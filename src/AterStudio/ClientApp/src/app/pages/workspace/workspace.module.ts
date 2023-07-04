@@ -11,6 +11,7 @@ import { MarkdownModule } from 'ngx-markdown';
 import { SettingComponent } from './setting/setting.component';
 import { DatabaseComponent } from './database/database.component';
 import { EntityComponent } from './entity/entity.component';
+import { FeatureComponent } from './feature/feature.component';
 
 
 @NgModule({
@@ -21,7 +22,8 @@ import { EntityComponent } from './entity/entity.component';
     DtoComponent,
     SettingComponent,
     DatabaseComponent,
-    EntityComponent
+    EntityComponent,
+    FeatureComponent
   ],
   imports: [
     ComponentsModule,

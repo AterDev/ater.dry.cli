@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { UpdateConfigOptionsDto } from '../models/project/update-config-options-dto.model';
 import { TemplateFileUpsert } from '../models/project/template-file-upsert.model';
 import { Project } from '../models/project/project.model';
-import { SubProjectInfo } from '../models/project/sub-project-info.model';
+import { SubProjectInfo } from '../models/feature/sub-project-info.model';
 import { ConfigOptions } from '../models/project/config-options.model';
 import { TemplateFile } from '../models/project/template-file.model';
 

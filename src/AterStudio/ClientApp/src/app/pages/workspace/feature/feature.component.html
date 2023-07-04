@@ -1,0 +1,76 @@
+<div class="container">
+  <div class="d-flex gap-1">
+    <mat-toolbar>
+      <mat-toolbar-row style="font-size:16px">
+        <div class="d-flex">
+          <button mat-raised-button (click)="openModuleDialog()" color="primary">添加模块</button>
+        </div>
+        <div class="d-flex flex-grow-1"></div>
+      </mat-toolbar-row>
+    </mat-toolbar>
+  </div>
+  <!-- 加载框 -->
+  <div class="d-flex text-center justify-content-center mt-2">
+    <mat-spinner mode="indeterminate" *ngIf="isLoading">
+    </mat-spinner>
+  </div>
+  <div *ngIf="!isLoading">
+    <!-- 无数据时显示 -->
+    <ng-container *ngIf="data && data.length<=0; else elseTemplate">
+      <h4>
+        暂无内容！
+      </h4>
+    </ng-container>
+    <ng-template #elseTemplate>
+      <table mat-table [dataSource]="dataSource" style="width: 100%;" class="mat-elevation-z8">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>模块名</th>
+          <td mat-cell *matCellDef="let element">
+            {{element.name}}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="path">
+          <th mat-header-cell *matHeaderCellDef>模块路径</th>
+          <td mat-cell *matCellDef="let element">
+            {{element.path}}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>操作</th>
+          <td mat-cell *matCellDef="let element">
+            <!-- <button mat-icon-button color="link" [routerLink]="['../detail',element.id]" matTooltip="查看">
+              <mat-icon>pages</mat-icon>
+            </button> -->
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+        <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+      </table>
+    </ng-template>
+  </div>
+</div>
+
+<ng-template #addModuleDialog>
+  <h2 mat-dialog-title>添加模块</h2>
+  <mat-dialog-content>
+    <form [formGroup]="mydialogForm">
+      <mat-form-field appearance="fill" class="w-100">
+        <mat-label>模块名称</mat-label>
+        <input matInput placeholder="不超过40" formControlName="name" required>
+        <mat-error>
+          <span *ngIf="name?.hasError('maxLength')">
+            长度不能超过40
+          </span>
+          <span *ngIf="name?.hasError('required')">
+            名称必填
+          </span>
+        </mat-error>
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions class="justify-content-end">
+    <button mat-button mat-dialog-close>取消</button>
+    <button mat-button>确认</button>
+  </mat-dialog-actions>
+</ng-template>

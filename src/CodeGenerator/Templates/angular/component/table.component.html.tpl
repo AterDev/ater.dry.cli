@@ -52,11 +52,12 @@
   <mat-dialog-content>
     <form [formGroup]="mydialogForm">
       <mat-form-field appearance="fill">
-        <input matInput placeholder="新名称" formControlName="name" required>
+        <mat-label>名称</mat-label>
+        <input matInput placeholder="名称" formControlName="name" required>
       </mat-form-field>
     </form>
   </mat-dialog-content>
-  <mat-dialog-actions>
+  <mat-dialog-actions class="justify-content-end">
     <button mat-button mat-dialog-close>取消</button>
     <button mat-button>确认</button>
   </mat-dialog-actions>

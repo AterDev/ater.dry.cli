@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { {$ServiceName}Service } from 'src/app/share/admin/services/{$ServicePathName}.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confirm-dialog.component';
-import { {$ModelName} } from 'src/app/share/admin/models/{$ModelPathName}/{$ModelPathName}-item-dto.model';
+import { {$ModelName} } from 'src/app/share/admin/models/{$ModelPathName}/{$ModelPathName}.model';
 import { {$ServiceName}FilterDto } from 'src/app/share/admin/models/{$ModelPathName}/{$ModelPathName}-filter-dto.model';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -20,9 +20,9 @@ export class IndexComponent implements OnInit {
   isLoading = true;
   isProcessing = false;
   total = 0;
-  data: {$ModelName}ItemDto[] = [];
+  data: {$ModelName}[] = [];
   columns: string[] = [{$Columns}];
-  dataSource!: MatTableDataSource<{$ModelName}ItemDto>;
+  dataSource!: MatTableDataSource<{$ModelName}>;
   dialogRef!: MatDialogRef<{}, any>;
   @ViewChild('myDialog', { static: true })
   myTmpl!: TemplateRef<{}>;
@@ -30,7 +30,7 @@ export class IndexComponent implements OnInit {
   filter: {$ModelName}FilterDto;
   pageSizeOption = [12, 20, 50];
   constructor(
-    private service: {$ModelName}Service,
+    private service: {$ServiceName}Service,
     private snb: MatSnackBar,
     private dialog: MatDialog,
     private route: ActivatedRoute,
@@ -75,7 +75,7 @@ export class IndexComponent implements OnInit {
       });
   }
 
-  deleteConfirm(item: {$ModelName}ItemDto): void {
+  deleteConfirm(item: {$ModelName}): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       hasBackdrop: true,
       disableClose: false,
@@ -91,7 +91,7 @@ export class IndexComponent implements OnInit {
       }
     });
   }
-  delete(item: {$ModelName}ItemDto): void {
+  delete(item: {$ModelName}): void {
     this.isProcessing = true;
     this.service.delete(item.id)
     .subscribe({

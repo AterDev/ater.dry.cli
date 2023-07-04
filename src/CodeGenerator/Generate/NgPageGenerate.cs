@@ -160,14 +160,14 @@ public class NgPageGenerate : GenerateBase
                         pipe = s.EndsWith("Date") ? " | date: 'yyyy-MM-dd'" : " | date: 'yyy-MM-dd HH:mm:ss'";
                     }
                 }
-
-                return $@"  <ng-container matColumnDef=""{s.ToCamelCase()}"">
-    <th mat-header-cell *matHeaderCellDef>{s}</th>
-    <td mat-cell *matCellDef=""let element"">
-      {{{{element.{s.ToCamelCase()}{pipe}}}}}
-    </td>
-  </ng-container>
-";
+                return $$$"""
+                      <ng-container matColumnDef="{{{s.ToCamelCase()}}}">
+                        <th mat-header-cell *matHeaderCellDef>path</th>
+                        <td mat-cell *matCellDef="let element">
+                          {{element.{{{s.ToCamelCase()}}}{{{pipe}}}  }}
+                        </td>
+                      </ng-container>
+                """;
             }).ToArray();
         }
 
@@ -200,7 +200,6 @@ public class NgPageGenerate : GenerateBase
         };
         return component;
     }
-
     public NgComponentInfo BuildEditPage()
     {
         // 生成.ts

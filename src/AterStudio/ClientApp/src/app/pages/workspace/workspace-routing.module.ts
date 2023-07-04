@@ -8,6 +8,7 @@ import { CustomRouteReuseStrategy } from 'src/app/custom-route-strategy';
 import { SettingComponent } from './setting/setting.component';
 import { DatabaseComponent } from './database/database.component';
 import { EntityComponent } from './entity/entity.component';
+import { FeatureComponent } from './feature/feature.component';
 
 const routes: Routes = [
   {
@@ -20,7 +21,8 @@ const routes: Routes = [
       { path: 'docs', component: DocsComponent },
       { path: 'database', component: DatabaseComponent },
       { path: 'setting', component: SettingComponent },
-      { path: 'dto/:name', component: DtoComponent }
+      { path: 'dto/:name', component: DtoComponent },
+      { path: 'feature', component: FeatureComponent }
     ]
   },
 ];

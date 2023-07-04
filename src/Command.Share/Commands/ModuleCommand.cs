@@ -34,6 +34,10 @@ public class ModuleCommand
     public static List<string>? GetModulesPaths(string solutionPath)
     {
         var modulesPath = Path.Combine(solutionPath, "src", "Modules");
+        if (!Directory.Exists(modulesPath))
+        {
+            return default;
+        }
         var files = Directory.GetFiles(modulesPath, "*.csproj", SearchOption.AllDirectories).ToList();
         return files.Any() ? files : default;
     }
