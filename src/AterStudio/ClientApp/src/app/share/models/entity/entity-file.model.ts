@@ -7,6 +7,10 @@ export interface EntityFile {
   baseDirPath: string;
   path: string;
   content?: string | null;
+  /**
+   * 所属模块
+   */
+  module?: string | null;
   hasDto: boolean;
   hasManager: boolean;
   hasAPI: boolean;

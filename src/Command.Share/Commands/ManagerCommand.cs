@@ -74,24 +74,24 @@ public class ManagerCommand : CommandBase
             // 更新扩展方法
             string updateContent = "";
             Console.WriteLine("🆕 need update base infrastructure.");
-            var whereNotNullString = """
+            string whereNotNullString = """
                     public static IQueryable<TSource> WhereNotNull<TSource>(this IQueryable<TSource> source, object? field, Expression<Func<TSource, bool>> expression)
                     {
                         return field != null ? source.Where(expression) : source;
                     }
                 """;
             // update extension class
-            var extensionPath = Path.Combine(StorePath, "..", Config.EntityPath, "Utils", "Extensions.cs");
+            string extensionPath = Path.Combine(StorePath, "..", Config.EntityPath, "Utils", "Extensions.cs");
 
             if (File.Exists(extensionPath))
             {
-                var compilation = new CompilationHelper(Path.Combine(EntityPath, ".."));
+                CompilationHelper compilation = new(Path.Combine(EntityPath, ".."));
                 compilation.AddSyntaxTree(File.ReadAllText(extensionPath));
                 if (!compilation.MethodExist("public static IQueryable<TSource> WhereNotNull<TSource>(this IQueryable<TSource> source, object? field, Expression<Func<TSource, bool>> expression)"))
                 {
                     compilation.InsertClassMethod(whereNotNullString);
 
-                    var newClassContent = compilation.SyntaxRoot!.ToString();
+                    string newClassContent = compilation.SyntaxRoot!.ToString();
                     await GenerateFileAsync(Path.Combine(extensionPath, ".."), $"Extensions.cs", newClassContent, true);
 
                     updateContent += "👉 add [WhereNotNull] method to Extension.cs!" + Environment.NewLine;
@@ -102,12 +102,12 @@ public class ManagerCommand : CommandBase
                 Console.WriteLine($"⚠️ can't find {extensionPath}");
             }
             // 更新Error Const 常量
-            var errorMsgPath = Path.Combine(StorePath, "Const", "ErrorMsg.cs");
+            string errorMsgPath = Path.Combine(StorePath, "Const", "ErrorMsg.cs");
             if (!File.Exists(errorMsgPath))
             {
                 if (!Directory.Exists(Path.Combine(StorePath, "Const")))
                 {
-                    Directory.CreateDirectory(Path.Combine(StorePath, "Const"));
+                    _ = Directory.CreateDirectory(Path.Combine(StorePath, "Const"));
                 }
 
                 File.WriteAllText(errorMsgPath, """
@@ -206,17 +206,17 @@ public class ManagerCommand : CommandBase
         string managerContent = CodeGen.GetManagerContent();
 
         // 如果文件已经存在，并且没有选择覆盖，并且符合更新要求，则进行更新
-        var iManagerPath = Path.Combine(iManagerDir, $"I{entityName}Manager.cs");
+        string iManagerPath = Path.Combine(iManagerDir, $"I{entityName}Manager.cs");
         if (!force
             && File.Exists(iManagerPath)
             && AssemblyHelper.NeedUpdate(Const.Version))
         {
             // update files
-            var compilation = new CompilationHelper(StorePath);
-            var content = await File.ReadAllTextAsync(iManagerPath);
+            CompilationHelper compilation = new(StorePath);
+            string content = await File.ReadAllTextAsync(iManagerPath);
             compilation.AddSyntaxTree(content);
             // 构造更新的内容
-            var methods = new string[]{
+            string[] methods = new string[]{
                 $"Task<{entityName}?> GetCurrentAsync(Guid id, params string[] navigations);",
                 $"Task<{entityName}> AddAsync({entityName} entity);",
                 $"Task<{entityName}> UpdateAsync({entityName} entity, {entityName}UpdateDto dto);",
@@ -228,7 +228,7 @@ public class ManagerCommand : CommandBase
                 $"Task<bool> ExistAsync(Guid id);",
             };
 
-            foreach (var method in methods)
+            foreach (string method in methods)
             {
                 if (!compilation.MethodExist(method))
                 {
@@ -249,7 +249,6 @@ public class ManagerCommand : CommandBase
         await GenerateFileAsync(managerDir, $"{entityName}Manager.cs", managerContent, force);
     }
 
-
     public async Task GenerateMangerTestAsync(bool force)
     {
         string testProjectPath = Path.Combine(StorePath, "..", "..", "test", "Application.Test");
@@ -259,7 +258,7 @@ public class ManagerCommand : CommandBase
             string entityName = Path.GetFileNameWithoutExtension(EntityPath);
             if (Directory.Exists(testDir))
             {
-                Directory.CreateDirectory(testDir);
+                _ = Directory.CreateDirectory(testDir);
             }
             string managerContent = CodeGen.GetManagerTestContent();
             await GenerateFileAsync(testDir, $"{entityName}ManagerTest.cs", managerContent, force);

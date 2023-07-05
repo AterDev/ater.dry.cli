@@ -6,7 +6,7 @@ using Command.Share.Commands;
 using Core;
 using Core.Entities;
 using Core.Infrastructure;
-
+using Core.Infrastructure.Helper;
 using Datastore;
 using Datastore.Models;
 
@@ -49,21 +49,34 @@ public class EntityManager
                     )
                     .ToList();
 
+                var compilation = new CompilationHelper(Path.Combine(_projectContext.ProjectPath!, Config.EntityPath));
                 foreach (string? path in filePaths)
                 {
                     FileInfo file = new(path);
+
+                    var content = File.ReadAllText(path);
                     EntityFile item = new()
                     {
                         Name = file.Name,
                         BaseDirPath = entityPath,
                         Path = file.FullName.Replace(entityPath, ""),
-                        Content = File.ReadAllText(path)
+                        Content = content
                     };
                     // 查询生成的dto\manager\api状态
                     var states = GetEntityStates(_projectContext.ProjectPath!, Path.GetFileNameWithoutExtension(file.Name));
                     item.HasDto = states.hasDto;
                     item.HasManager = states.hasManager;
                     item.HasAPI = states.hasAPI;
+
+                    // 解析特性
+
+                    compilation.AddSyntaxTree(content);
+                    var moduleAttribution = compilation.GetClassAttribution("Module");
+                    if (moduleAttribution != null && moduleAttribution.Any())
+                    {
+                        var argument = moduleAttribution.Last().ArgumentList?.Arguments.FirstOrDefault();
+                        item.Module = argument?.Expression.ToString().Trim('"');
+                    }
 
                     entityFiles.Add(item);
                 }
@@ -319,8 +332,8 @@ public class EntityManager
 
     public async Task GenerateNgModuleAsync(string entityName, string rootPath)
     {
-        var dtoPath = Path.Combine(_projectContext.ProjectPath!,  Config.DtoPath);
-        var entityDir = Path.Combine(_projectContext.ProjectPath!,  Config.EntityPath, "Entities");
+        var dtoPath = Path.Combine(_projectContext.ProjectPath!, Config.DtoPath);
+        var entityDir = Path.Combine(_projectContext.ProjectPath!, Config.EntityPath, "Entities");
         var entityPath = Directory.GetFiles(entityDir, entityName, SearchOption.AllDirectories)
             .FirstOrDefault();
 

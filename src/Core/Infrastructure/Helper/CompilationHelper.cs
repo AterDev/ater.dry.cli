@@ -12,6 +12,11 @@ public class CompilationHelper
     public IEnumerable<INamedTypeSymbol> AllClass { get; set; }
     public CompilationUnitSyntax? SyntaxRoot { get; set; }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="path">程序集路径</param>
+    /// <param name="dllFilter"></param>
     public CompilationHelper(string path, string? dllFilter = null)
     {
         string suffix = DateTime.Now.ToString("HHmmss");
@@ -170,7 +175,7 @@ public class CompilationHelper
     {
         if (SyntaxTree != null && SyntaxRoot != null)
         {
-            var interfaceDeclaration = SyntaxRoot.DescendantNodes()
+            InterfaceDeclarationSyntax interfaceDeclaration = SyntaxRoot.DescendantNodes()
                 .OfType<InterfaceDeclarationSyntax>().Single();
 
             methodContent = $"    {methodContent}" + Environment.NewLine;
@@ -178,7 +183,7 @@ public class CompilationHelper
             {
                 return;
             }
-            var newInterfaceDeclaration = interfaceDeclaration.AddMembers(methodNode);
+            InterfaceDeclarationSyntax newInterfaceDeclaration = interfaceDeclaration.AddMembers(methodNode);
             SyntaxRoot = SyntaxRoot.ReplaceNode(interfaceDeclaration, newInterfaceDeclaration);
         }
     }
@@ -187,7 +192,7 @@ public class CompilationHelper
     {
         if (SyntaxTree != null && SyntaxRoot != null)
         {
-            var classDeclaration = SyntaxRoot.DescendantNodes()
+            ClassDeclarationSyntax? classDeclaration = SyntaxRoot.DescendantNodes()
                 .OfType<ClassDeclarationSyntax>().FirstOrDefault();
             if (classDeclaration != null)
             {
@@ -196,7 +201,7 @@ public class CompilationHelper
                 {
                     return;
                 }
-                var newClassDeclaration = classDeclaration.AddMembers(methodNode);
+                ClassDeclarationSyntax newClassDeclaration = classDeclaration.AddMembers(methodNode);
                 SyntaxRoot = SyntaxRoot.ReplaceNode(classDeclaration, newClassDeclaration);
             }
         }
@@ -206,25 +211,25 @@ public class CompilationHelper
         // replace interface first node  with new node 
         if (SyntaxTree != null && SyntaxRoot != null)
         {
-            var interfaceNode = SyntaxRoot.DescendantNodes()
+            InterfaceDeclarationSyntax interfaceNode = SyntaxRoot.DescendantNodes()
                 .OfType<InterfaceDeclarationSyntax>().First();
-            var oldBaseList = interfaceNode.DescendantNodes().OfType<BaseListSyntax>().Single();
+            BaseListSyntax oldBaseList = interfaceNode.DescendantNodes().OfType<BaseListSyntax>().Single();
 
             if (oldBaseList != null)
             {
-                var typeName = SyntaxFactory.ParseTypeName(newImplementContent);
-                var baseType = SyntaxFactory.SimpleBaseType(typeName);
+                TypeSyntax typeName = SyntaxFactory.ParseTypeName(newImplementContent);
+                SimpleBaseTypeSyntax baseType = SyntaxFactory.SimpleBaseType(typeName);
 
                 // add space and newline to baseType 
-                var newColonToken = SyntaxFactory.Token(SyntaxKind.ColonToken)
+                SyntaxToken newColonToken = SyntaxFactory.Token(SyntaxKind.ColonToken)
                   .WithTrailingTrivia(SyntaxFactory.Space);
 
-                var newBaseList = SyntaxFactory.BaseList(
+                BaseListSyntax newBaseList = SyntaxFactory.BaseList(
                   SyntaxFactory.SingletonSeparatedList<BaseTypeSyntax>(baseType))
                   .WithTrailingTrivia(SyntaxFactory.LineFeed)
                   .WithColonToken(newColonToken);
 
-                var newInterfaceNode = interfaceNode.ReplaceNode(oldBaseList, newBaseList);
+                InterfaceDeclarationSyntax newInterfaceNode = interfaceNode.ReplaceNode(oldBaseList, newBaseList);
                 SyntaxRoot = SyntaxRoot.ReplaceNode(interfaceNode, newInterfaceNode);
             }
 
@@ -235,22 +240,22 @@ public class CompilationHelper
     {
         if (SyntaxTree != null && SyntaxRoot != null)
         {
-            var classNode = SyntaxRoot.DescendantNodes()
+            ClassDeclarationSyntax classNode = SyntaxRoot.DescendantNodes()
                 .OfType<ClassDeclarationSyntax>().First();
 
-            var typeName = SyntaxFactory.ParseTypeName(newImplementContent);
-            var baseType = SyntaxFactory.SimpleBaseType(typeName);
+            TypeSyntax typeName = SyntaxFactory.ParseTypeName(newImplementContent);
+            SimpleBaseTypeSyntax baseType = SyntaxFactory.SimpleBaseType(typeName);
 
             // add space and newline to baseType 
-            var newColonToken = SyntaxFactory.Token(SyntaxKind.ColonToken)
+            SyntaxToken newColonToken = SyntaxFactory.Token(SyntaxKind.ColonToken)
               .WithTrailingTrivia(SyntaxFactory.Space);
 
-            var newBaseList = SyntaxFactory.BaseList(
+            BaseListSyntax newBaseList = SyntaxFactory.BaseList(
               SyntaxFactory.SingletonSeparatedList<BaseTypeSyntax>(baseType))
                   .WithTrailingTrivia(SyntaxFactory.LineFeed)
                   .WithColonToken(newColonToken);
 
-            var newInterfaceNode = classNode.WithBaseList(newBaseList);
+            ClassDeclarationSyntax newInterfaceNode = classNode.WithBaseList(newBaseList);
             SyntaxRoot = SyntaxRoot.ReplaceNode(classNode, newInterfaceNode);
 
         }
@@ -262,12 +267,12 @@ public class CompilationHelper
     public List<string> GetPropertyTypes()
     {
         // get all properties from class
-        var properties = SyntaxRoot!.DescendantNodes()
+        List<PropertyDeclarationSyntax> properties = SyntaxRoot!.DescendantNodes()
             .OfType<PropertyDeclarationSyntax>()
             .ToList();
 
         // get  generic type  from PropertyDeclarationSyntax
-        var genericTypes = properties
+        List<string> genericTypes = properties
             .Select(p => p.Type)
             .OfType<GenericNameSyntax>()
             .Select(t => t.TypeArgumentList.Arguments.First().ToString())
@@ -282,9 +287,27 @@ public class CompilationHelper
     /// <returns></returns>
     public string? GetParentClassName()
     {
-        var classNode = SyntaxTree!.GetCompilationUnitRoot().DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
+        ClassDeclarationSyntax? classNode = SyntaxTree!.GetCompilationUnitRoot().DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
 
         return classNode?.BaseList?.Types.FirstOrDefault()?.ToString();
     }
 
+
+    /// <summary>
+    /// get class attribution 
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    public List<AttributeSyntax>? GetClassAttribution(string? name = null)
+    {
+        ClassDeclarationSyntax? classNode = SyntaxTree!.GetCompilationUnitRoot().DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
+
+        List<AttributeSyntax>? classAttribution = classNode?.AttributeLists.SelectMany(a => a.Attributes).ToList();
+
+        if (name != null)
+        {
+            classAttribution = classAttribution?.Where(a => a.Name.ToString().Equals(name)).ToList();
+        }
+        return classAttribution;
+    }
 }

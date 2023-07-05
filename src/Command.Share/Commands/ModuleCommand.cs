@@ -14,19 +14,23 @@ public class ModuleCommand
     public static async Task CreateModuleAsync(string solutionPath, string name)
     {
         // 基础类
-        var modulePath = Path.Combine(solutionPath, "src", "Modules", name);
+        string modulePath = Path.Combine(solutionPath, "src", "Modules", name);
         await Console.Out.WriteLineAsync($"🆕 create module:{name} to {modulePath}");
-        var tplContent = GenerateBase.GetTplContent("Implement.RestControllerBase.tpl");
+        string tplContent = GenerateBase.GetTplContent("Implement.RestControllerBase.tpl");
         tplContent = tplContent.Replace(TplConst.NAMESPACE, name);
-        var infrastructruePath = Path.Combine(modulePath, "Infrastructure");
+        string infrastructruePath = Path.Combine(modulePath, "Infrastructure");
         await AssemblyHelper.GenerateFileAsync(infrastructruePath, "RestControllerBase.cs", tplContent);
 
         // global usings
-        var usingsContent = GetGlobalUsings();
+        string usingsContent = GetGlobalUsings();
         usingsContent = usingsContent.Replace("${Module}", name);
         await AssemblyHelper.GenerateFileAsync(modulePath, "GlobalUsings.cs", usingsContent);
 
-
+        // csproject 
+        // get target version 
+        string? targetVersion = AssemblyHelper.GetTargetFramework(Path.Combine(solutionPath, "src", "Http.API", "Http.API.csproj"));
+        string csprojContent = GetCsProjectContent(targetVersion ?? "7.0");
+        await AssemblyHelper.GenerateFileAsync(modulePath, $"{name}.csproj", csprojContent);
     }
 
     /// <summary>
@@ -36,12 +40,12 @@ public class ModuleCommand
     /// <returns>file path</returns>
     public static List<string>? GetModulesPaths(string solutionPath)
     {
-        var modulesPath = Path.Combine(solutionPath, "src", "Modules");
+        string modulesPath = Path.Combine(solutionPath, "src", "Modules");
         if (!Directory.Exists(modulesPath))
         {
             return default;
         }
-        var files = Directory.GetFiles(modulesPath, "*.csproj", SearchOption.AllDirectories).ToList();
+        List<string> files = Directory.GetFiles(modulesPath, "*.csproj", SearchOption.AllDirectories).ToList();
         return files.Any() ? files : default;
     }
 
@@ -53,7 +57,6 @@ public class ModuleCommand
             global using Application.Const;
             global using Application.Implement;
             global using Application.Interface;
-            global using ${Module}.IManager;
             global using ${Module}.Infrastructure;
             global using Core.Utils;
             global using Microsoft.AspNetCore.Authorization;
@@ -69,16 +72,17 @@ public class ModuleCommand
         return $"""
             <Project Sdk="Microsoft.NET.Sdk">
             	<PropertyGroup>
-            		<TargetFramework>net{version}</TargetFramework>
+            		<TargetFramework>{version}</TargetFramework>
             		<ImplicitUsings>enable</ImplicitUsings>
                     <GenerateDocumentationFile>true</GenerateDocumentationFile>
             		<Nullable>enable</Nullable>
+                    <NoWarn>1701;1702;1591</NoWarn>
             	</PropertyGroup>
             	<ItemGroup>
             		<FrameworkReference Include="Microsoft.AspNetCore.App" />
             	</ItemGroup>
             	<ItemGroup>
-            	  <ProjectReference Include="..\..\Application\Application.csproj" />
+            	    <ProjectReference Include="..\..\Application\Application.csproj" />
             	</ItemGroup>
             </Project>
             """;

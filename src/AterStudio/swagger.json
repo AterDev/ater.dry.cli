@@ -2167,6 +2167,11 @@
             "type": "string",
             "nullable": true
           },
+          "module": {
+            "type": "string",
+            "description": "所属模块",
+            "nullable": true
+          },
           "hasDto": {
             "type": "boolean"
           },

@@ -10,6 +10,10 @@ public class EntityFile
     public required string BaseDirPath { get; set; }
     public required string Path { get; set; }
     public string? Content { get; set; }
+    /// <summary>
+    /// 所属模块
+    /// </summary>
+    public string? Module { get; set; }
 
     public bool HasDto { get; set; } = false;
     public bool HasManager { get; set; } = false;

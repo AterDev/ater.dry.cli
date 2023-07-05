@@ -7,7 +7,7 @@ namespace ${Namespace}.Infrastructure;
 /// 管理后台权限控制器
 /// </summary>
 [Route("api/admin/[controller]")]
-[Authorize(Const.AdminUser)]
+[Authorize(AppConst.AdminUser)]
 [ApiExplorerSettings(GroupName = "admin")]
 public class RestControllerBase<TManager> : RestControllerBase
      where TManager : class
@@ -46,7 +46,7 @@ public class RestControllerBase<TManager> : RestControllerBase
 /// 用户端权限控制器
 /// </summary>
 /// <typeparam name="TManager"></typeparam>
-[Authorize(Const.User)]
+[Authorize(AppConst.User)]
 [ApiExplorerSettings(GroupName = "client")]
 public class ClientControllerBase<TManager> : RestControllerBase
      where TManager : class
