@@ -38,19 +38,19 @@ export class EntityService extends BaseService {
 entity/manager
    * @param entityName 
    * @param isManager 是否为manager
+   * @param moduleName 
    */
-  getFileContent(entityName: string | null, isManager: boolean | null): Observable<EntityFile> {
-    const url = `/api/Entity/fileContent?entityName=${entityName}&isManager=${isManager}`;
+  getFileContent(entityName: string | null, isManager: boolean | null, moduleName: string | null): Observable<EntityFile> {
+    const url = `/api/Entity/fileContent?entityName=${entityName}&isManager=${isManager}&moduleName=${moduleName}`;
     return this.request<EntityFile>('get', url);
   }
 
   /**
    * 更新内容
-   * @param projectId 
    * @param data UpdateDtoDto
    */
-  updateDtoContent(projectId: string, data: UpdateDtoDto): Observable<boolean> {
-    const url = `/api/Entity/dto/${projectId}`;
+  updateDtoContent(data: UpdateDtoDto): Observable<boolean> {
+    const url = `/api/Entity/dto`;
     return this.request<boolean>('put', url, data);
   }
 

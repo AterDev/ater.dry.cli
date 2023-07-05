@@ -45,24 +45,24 @@ public class EntityController : ControllerBase
     /// </summary>
     /// <param name="entityName"></param>
     /// <param name="isManager">是否为manager</param>
+    /// <param name="moduleName"></param>
     /// <returns></returns>
     [HttpGet("fileContent")]
-    public EntityFile? GetFileContent(string entityName, bool isManager)
+    public EntityFile? GetFileContent(string entityName, bool isManager, string? moduleName = null)
     {
-        return _manager.GetFileContent(entityName, isManager);
+        return _manager.GetFileContent(entityName, isManager, moduleName);
     }
 
 
     /// <summary>
     /// 更新内容
     /// </summary>
-    /// <param name="projectId"></param>
     /// <param name="dto"></param>
     /// <returns></returns>
-    [HttpPut("dto/{projectId}")]
-    public bool UpdateDtoContent([FromRoute] Guid projectId, UpdateDtoDto dto)
+    [HttpPut("dto")]
+    public bool UpdateDtoContent(UpdateDtoDto dto)
     {
-        return _manager.UpdateDtoContent(projectId, dto.FileName, dto.Content);
+        return _manager.UpdateDtoContent(dto.FileName, dto.Content);
     }
 
     [HttpPost("generate")]

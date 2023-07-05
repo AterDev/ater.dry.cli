@@ -263,7 +263,7 @@ export class IndexComponent implements OnInit {
 
   async openPreviewDialog(item: EntityFile, isManager: boolean) {
     if (isManager) {
-      item = await this.getFileContent(item.name!, true);
+      item = await this.getFileContent(item.name!, true, item.module ?? '');
     }
     this.previewItem = item;
     this.dialogRef = this.dialog.open(this.previewTmpl, {
@@ -272,8 +272,8 @@ export class IndexComponent implements OnInit {
     });
   }
 
-  async getFileContent(entityName: string, isManager: boolean): Promise<EntityFile> {
-    return await lastValueFrom(this.service.getFileContent(entityName, isManager));
+  async getFileContent(entityName: string, isManager: boolean, moduleName: string | null): Promise<EntityFile> {
+    return await lastValueFrom(this.service.getFileContent(entityName, isManager, moduleName));
   }
 
   copyCode(): void {

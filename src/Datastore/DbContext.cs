@@ -5,7 +5,7 @@ using LiteDB;
 namespace Datastore;
 public class DbContext : IDisposable
 {
-    private static LiteDatabase LiteDb { get; set; }
+    private static LiteDatabase? LiteDb { get; set; }
     public ILiteCollection<Project> Projects { get; set; }
     public ILiteCollection<EntityInfo> EntityInfos { get; set; }
     public ILiteCollection<ApiDocInfo> ApiDocInfos { get; set; }

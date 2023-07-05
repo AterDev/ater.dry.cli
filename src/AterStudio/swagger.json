@@ -605,6 +605,14 @@
             "schema": {
               "type": "boolean"
             }
+          },
+          {
+            "name": "moduleName",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -631,25 +639,13 @@
         }
       }
     },
-    "/api/Entity/dto/{projectId}": {
+    "/api/Entity/dto": {
       "put": {
         "tags": [
           "Entity"
         ],
         "summary": "更新内容",
         "operationId": "Entity_UpdateDtoContent",
-        "parameters": [
-          {
-            "name": "projectId",
-            "in": "path",
-            "description": "",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
         "requestBody": {
           "description": "",
           "content": {

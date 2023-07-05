@@ -52,18 +52,13 @@ export class IndexComponent implements OnInit {
     this.dialogRef = this.dialog.open(this.dialogTmpRef, {
       minWidth: 300
     });
-    this.dialogRef.afterClosed().subscribe(res => {
-
-    });
   }
 
   addProject(): void {
     if (this.addForm.valid) {
       const name = this.addForm.get('displayName')?.value as string;
       const path = this.addForm.get('path')?.value as string;
-      if (!path.endsWith('.sln')) {
-        this.snb.open('路径不是有效的sln文件');
-      }
+
       this.service.add(name, path)
         .subscribe({
           next: (res) => {

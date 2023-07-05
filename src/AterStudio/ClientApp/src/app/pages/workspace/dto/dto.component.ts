@@ -80,23 +80,21 @@ export class DtoComponent implements OnInit {
 
   save(): void {
     if (this.currentTabName) {
-      this.service.updateDtoContent(this.projectId,
-        {
-          fileName: this.currentTabName,
-          content: this.code
-        })
-        .subscribe({
-          next: (res) => {
-            if (res) {
-              this.dtos.find((val) => val.name == this.currentTabName)!.content = this.code;
-              this.snb.open('保存成功');
-            } else {
-            }
-          },
-          error: (error) => {
-            this.snb.open(error.detail);
+      this.service.updateDtoContent({
+        fileName: this.currentTabName,
+        content: this.code
+      }).subscribe({
+        next: (res) => {
+          if (res) {
+            this.dtos.find((val) => val.name == this.currentTabName)!.content = this.code;
+            this.snb.open('保存成功');
+          } else {
           }
-        });
+        },
+        error: (error) => {
+          this.snb.open(error.detail);
+        }
+      });
     } else {
       this.snb.open('未选择有效文件');
     }

@@ -173,18 +173,29 @@ public class EntityManager
         return dtoFiles;
     }
 
-
-    public EntityFile? GetFileContent(string entityName, bool isManager)
+    /// <summary>
+    /// 获取文件内容
+    /// </summary>
+    /// <param name="entityName"></param>
+    /// <param name="isManager"></param>
+    /// <param name="moduleName"></param>
+    /// <returns></returns>
+    public EntityFile? GetFileContent(string entityName, bool isManager, string? moduleName = null)
     {
         if (entityName.EndsWith(".cs"))
         {
             entityName = entityName.Replace(".cs", "");
         }
 
-        string? filePath = null;
+        string? filePath;
         if (isManager)
         {
             filePath = Path.Combine(_projectContext.SolutionPath!, Config.StorePath, "Manager", $"{entityName}Manager.cs");
+
+            if (!string.IsNullOrWhiteSpace(moduleName))
+            {
+                filePath = Path.Combine(_projectContext.SolutionPath!, "src", "Modules", moduleName, "Manager", $"{entityName}Manager.cs");
+            }
         }
         else
         {
@@ -211,11 +222,10 @@ public class EntityManager
     /// <summary>
     /// 保存Dto内容
     /// </summary>
-    /// <param name="projectId"></param>
     /// <param name="fileName"></param>
     /// <param name="Content"></param>
     /// <returns></returns>
-    public bool UpdateDtoContent(Guid projectId, string fileName, string Content)
+    public bool UpdateDtoContent(string fileName, string Content)
     {
         string dtoPath = Path.Combine(_projectContext.SolutionPath!, Config.DtoPath, "Models");
         var filePath = Directory.GetFiles(dtoPath, fileName, SearchOption.AllDirectories).FirstOrDefault();
