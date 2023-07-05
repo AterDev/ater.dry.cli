@@ -69,7 +69,6 @@ public class EntityManager
                     item.HasAPI = states.hasAPI;
 
                     // 解析特性
-
                     compilation.AddSyntaxTree(content);
                     var moduleAttribution = compilation.GetClassAttribution("Module");
                     if (moduleAttribution != null && moduleAttribution.Any())

@@ -8,14 +8,14 @@ namespace Command.Share.Commands;
 public class ManagerCommand : CommandBase
 {
     public string EntityPath { get; set; }
-    public string StorePath { get; set; }
+    public string ApplicationPath { get; set; }
     public string DtoPath { get; set; }
     public ManagerGenerate CodeGen { get; set; }
 
     public ManagerCommand(string entityPath, string dtoPath, string servicePath, string? contextName = null)
     {
         EntityPath = entityPath;
-        StorePath = servicePath;
+        ApplicationPath = servicePath;
         DtoPath = dtoPath;
         CodeGen = new ManagerGenerate(entityPath, dtoPath, servicePath, contextName);
         string entityName = Path.GetFileNameWithoutExtension(entityPath);
@@ -39,29 +39,38 @@ public class ManagerCommand : CommandBase
         }
         try
         {
+            // 版本更新基础文件
             await UpdateFilesAsync();
+
+            // 是否为模块
+            var compilation = new CompilationHelper(ApplicationPath, "Core");
+            var content = File.ReadAllText(EntityPath);
+
+            Console.WriteLine(Instructions[0]);
+            await GenerateCommonFilesAsync();
+            Console.WriteLine(Instructions[1]);
+            await GenerateStoreFilesAsync();
+
+            Console.WriteLine(Instructions[2]);
+            await GenerateMangerAsync(force);
+            Console.WriteLine(Instructions[3]);
+            await GenerateMangerTestAsync(force);
+
+            //Console.WriteLine(Instructions[4]);
+            //await GenerateServicesAsync();
+
+            Console.WriteLine(Instructions[5]);
+            await GenerateGlobalUsingsFilesAsync();
+
+            Console.WriteLine("😀 Manager generate completed!" + Environment.NewLine);
         }
         catch (Exception ex)
         {
             await Console.Out.WriteLineAsync(ex.Message + ex.StackTrace);
         }
-        Console.WriteLine(Instructions[0]);
-        await GenerateCommonFilesAsync();
-        Console.WriteLine(Instructions[1]);
-        await GenerateStoreFilesAsync();
 
-        Console.WriteLine(Instructions[2]);
-        await GenerateMangerAsync(force);
-        Console.WriteLine(Instructions[3]);
-        await GenerateMangerTestAsync(force);
 
-        //Console.WriteLine(Instructions[4]);
-        //await GenerateServicesAsync();
 
-        Console.WriteLine(Instructions[5]);
-        await GenerateGlobalUsingsFilesAsync();
-
-        Console.WriteLine("😀 Manager generate completed!" + Environment.NewLine);
     }
 
     /// <summary>
@@ -81,7 +90,7 @@ public class ManagerCommand : CommandBase
                     }
                 """;
             // update extension class
-            string extensionPath = Path.Combine(StorePath, "..", Config.EntityPath, "Utils", "Extensions.cs");
+            string extensionPath = Path.Combine(ApplicationPath, "..", Config.EntityPath, "Utils", "Extensions.cs");
 
             if (File.Exists(extensionPath))
             {
@@ -102,12 +111,12 @@ public class ManagerCommand : CommandBase
                 Console.WriteLine($"⚠️ can't find {extensionPath}");
             }
             // 更新Error Const 常量
-            string errorMsgPath = Path.Combine(StorePath, "Const", "ErrorMsg.cs");
+            string errorMsgPath = Path.Combine(ApplicationPath, "Const", "ErrorMsg.cs");
             if (!File.Exists(errorMsgPath))
             {
-                if (!Directory.Exists(Path.Combine(StorePath, "Const")))
+                if (!Directory.Exists(Path.Combine(ApplicationPath, "Const")))
                 {
-                    _ = Directory.CreateDirectory(Path.Combine(StorePath, "Const"));
+                    _ = Directory.CreateDirectory(Path.Combine(ApplicationPath, "Const"));
                 }
 
                 File.WriteAllText(errorMsgPath, """
@@ -153,8 +162,8 @@ public class ManagerCommand : CommandBase
         }
 
         // 目录
-        string interfaceDir = Path.Combine(StorePath, "Interface");
-        string implementDir = Path.Combine(StorePath, "Implement");
+        string interfaceDir = Path.Combine(ApplicationPath, "Interface");
+        string implementDir = Path.Combine(ApplicationPath, "Implement");
 
         // 文件
         string[] interfaceFiles = new string[] { "ICommandStore", "ICommandStoreExt", "IQueryStore", "IQueryStoreExt", "IDomainManager", "IUserContext" };
@@ -198,8 +207,8 @@ public class ManagerCommand : CommandBase
     /// </summary>
     public async Task GenerateMangerAsync(bool force)
     {
-        string iManagerDir = Path.Combine(StorePath, "IManager");
-        string managerDir = Path.Combine(StorePath, "Manager");
+        string iManagerDir = Path.Combine(ApplicationPath, "IManager");
+        string managerDir = Path.Combine(ApplicationPath, "Manager");
         string entityName = Path.GetFileNameWithoutExtension(EntityPath);
 
         string interfaceContent = CodeGen.GetIManagerContent();
@@ -212,7 +221,7 @@ public class ManagerCommand : CommandBase
             && AssemblyHelper.NeedUpdate(Const.Version))
         {
             // update files
-            CompilationHelper compilation = new(StorePath);
+            CompilationHelper compilation = new(ApplicationPath);
             string content = await File.ReadAllTextAsync(iManagerPath);
             compilation.AddSyntaxTree(content);
             // 构造更新的内容
@@ -251,7 +260,7 @@ public class ManagerCommand : CommandBase
 
     public async Task GenerateMangerTestAsync(bool force)
     {
-        string testProjectPath = Path.Combine(StorePath, "..", "..", "test", "Application.Test");
+        string testProjectPath = Path.Combine(ApplicationPath, "..", "..", "test", "Application.Test");
         if (Directory.Exists(testProjectPath))
         {
             string testDir = Path.Combine(testProjectPath, "Managers");
@@ -272,7 +281,7 @@ public class ManagerCommand : CommandBase
     public async Task GenerateGlobalUsingsFilesAsync()
     {
         List<string> globalUsings = CodeGen.GetGlobalUsings();
-        string filePath = Path.Combine(StorePath, "GlobalUsings.cs");
+        string filePath = Path.Combine(ApplicationPath, "GlobalUsings.cs");
         // 如果不存在则生成，如果存在，则添加
         if (File.Exists(filePath))
         {
@@ -288,7 +297,7 @@ public class ManagerCommand : CommandBase
         }
         else
         {
-            await GenerateFileAsync(StorePath, "GlobalUsings.cs",
+            await GenerateFileAsync(ApplicationPath, "GlobalUsings.cs",
                 string.Join(Environment.NewLine, globalUsings));
         }
     }
@@ -298,8 +307,8 @@ public class ManagerCommand : CommandBase
     /// </summary>
     public async Task GenerateStoreFilesAsync()
     {
-        string queryStoreDir = Path.Combine(StorePath, "QueryStore");
-        string commandStoreDir = Path.Combine(StorePath, "CommandStore");
+        string queryStoreDir = Path.Combine(ApplicationPath, "QueryStore");
+        string commandStoreDir = Path.Combine(ApplicationPath, "CommandStore");
         string entityName = Path.GetFileNameWithoutExtension(EntityPath);
         string queryStoreContent = CodeGen.GetStoreContent("Query");
         string commandStoreContent = CodeGen.GetStoreContent("Command");
@@ -313,7 +322,7 @@ public class ManagerCommand : CommandBase
     /// </summary>
     public async Task GetDataStoreContextAsync()
     {
-        string implementDir = Path.Combine(StorePath, "Implement");
+        string implementDir = Path.Combine(ApplicationPath, "Implement");
         string storeContext = CodeGen.GetDataStoreContext();
         // 生成仓储上下文
         await GenerateFileAsync(implementDir, "DataStoreContext.cs", storeContext, true);

@@ -9,7 +9,7 @@ namespace Core.Infrastructure.Helper;
 public class AssemblyHelper
 {
     /// <summary>
-    /// 搜索项目文件,直到根目录
+    /// 搜索项目文件.csproj,直到根目录
     /// </summary>
     /// <param name="dir">起始目录</param>
     /// <param name="root">根目录</param>
@@ -118,11 +118,11 @@ public class AssemblyHelper
     }
 
     /// <summary>
-    /// 获取解决方案文件
+    /// 获取解决方案文件，从当前目录向根目录搜索
     /// </summary>
-    /// <param name="dir"></param>
+    /// <param name="dir">当前目录</param>
     /// <param name="searchPattern"></param>
-    /// <param name="root"></param>
+    /// <param name="root">要目录</param>
     /// <returns></returns>
     public static FileInfo? GetSlnFile(DirectoryInfo dir, string searchPattern, DirectoryInfo? root = null)
     {
