@@ -37,7 +37,7 @@ builder.Services.AddCors(options =>
         _ = builder.AllowAnyHeader();
     });
 });
-#if DEBUG
+#if DEBUG 
 builder.Services.AddSwaggerGen(c =>
 {
 
@@ -99,11 +99,6 @@ app.UseExceptionHandler(handler =>
 
 // 初始化
 IServiceScope scope = app.Services.CreateScope();
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
 app.UseCors("default");
 //app.UseHttpsRedirection();

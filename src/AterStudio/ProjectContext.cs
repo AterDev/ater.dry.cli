@@ -15,7 +15,7 @@ public class ProjectContext
 {
     public Guid? ProjectId { get; set; }
     public Project? Project { get; set; }
-    public string? ProjectPath { get; set; }
+    public string? SolutionPath { get; set; }
     public string? SharePath { get; set; }
     public string? ApplicationPath { get; set; }
     public string? EntityPath { get; set; }
@@ -33,17 +33,18 @@ public class ProjectContext
                 if (Project != null)
                 {
                     Const.PROJECT_ID = ProjectId;
-                    ProjectPath = GetProjectRootPath(Project.Path);
-                    var options = ConfigCommand.ReadConfigFile(ProjectPath);
+                    SolutionPath = GetProjectRootPath(Project.Path);
+                    var options = ConfigCommand.ReadConfigFile(SolutionPath);
                     if (options != null)
                     {
                         Config.SetConfig(options);
+                        Config.SolutionPath = SolutionPath;
                     }
 
-                    SharePath = Path.Combine(ProjectPath, Config.DtoPath);
-                    ApplicationPath = Path.Combine(ProjectPath, Config.StorePath);
-                    EntityPath = Path.Combine(ProjectPath, Config.EntityPath);
-                    ApiPath = Path.Combine(ProjectPath, Config.ApiPath);
+                    SharePath = Path.Combine(SolutionPath, Config.DtoPath);
+                    ApplicationPath = Path.Combine(SolutionPath, Config.StorePath);
+                    EntityPath = Path.Combine(SolutionPath, Config.EntityPath);
+                    ApiPath = Path.Combine(SolutionPath, Config.ApiPath);
                 }
             }
         }

@@ -13,6 +13,9 @@ public static class Config
 
     public static string SwaggerPath { get; set; } = "";
     public static string WebAppPath { get; set; } = "";
+
+    public static string SolutionPath { get; set; } = "";
+
     /// <summary>
     /// 是否拆分
     /// </summary>

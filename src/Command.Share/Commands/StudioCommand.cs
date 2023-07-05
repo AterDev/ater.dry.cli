@@ -3,6 +3,7 @@ using System.IO.Compression;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Core.Entities;
+using Core.Infrastructure;
 using LiteDB;
 
 namespace Command.Share.Commands;
@@ -95,28 +96,54 @@ public class StudioCommand
         string appPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
         string userPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
+        // TODO:版本号
         string version = Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
 
-        string targetFramework = "net7.0";
-        string packageId = "ater.droplet.cli";
+        var toolRootPath = Path.Combine(
+            userPath,
+            ".dotnet/tools/.store",
+            Const.PackageId,
+            version,
+            Const.PackageId,
+            version,
+            "tools",
+            Const.NetVersion,
+            "any");
 
-        var toolRootPath = Path.Combine(userPath, ".dotnet/tools/.store", packageId, version, packageId, version, "tools", targetFramework, "any");
         string zipPath = Path.Combine(toolRootPath, "studio.zip");
 
         if (!File.Exists(zipPath))
         {
-            Console.WriteLine("not found studio.zip");
+            Console.WriteLine($"not found studio.zip in:{toolRootPath}");
             return;
         }
+        // 无需更新
+        var studioPath = Path.Combine(appPath, "AterStudio");
+        if (File.Exists(Path.Combine(studioPath, $"{version}.txt")))
+        {
+            Console.WriteLine("😊 Already latest version!");
+            return;
+        }
+
+        // 删除旧文件
+        if (Directory.Exists(studioPath))
+        {
+            Directory.Delete(studioPath, true);
+        }
+
         // 解压
-        ZipFile.ExtractToDirectory(zipPath, Path.Combine(appPath, "AterStudio"), true);
+        ZipFile.ExtractToDirectory(zipPath, studioPath, true);
+
+        // create version file
+        File.Create(Path.Combine(studioPath, $"{version}.txt")).Close();
+
         // copy其他文件以及runtimes目录
         copyFiles.ToList().ForEach(file =>
         {
             var sourceFile = Path.Combine(toolRootPath, file + ".dll");
             if (File.Exists(sourceFile))
             {
-                File.Copy(sourceFile, Path.Combine(appPath, "AterStudio", file + ".dll"), true);
+                File.Copy(sourceFile, Path.Combine(studioPath, file + ".dll"), true);
             }
         });
         await UpdateConfigsAsync();
@@ -130,7 +157,7 @@ public class StudioCommand
     public static void UpdateTemplate()
     {
         // 安装模板
-        if (!ProcessHelper.RunCommand("dotnet", "new list atapi.pro", out string _))
+        if (!ProcessHelper.RunCommand("dotnet", "new list atapi", out string _))
         {
             if (!ProcessHelper.RunCommand("dotnet", "new install ater.web.templates", out _))
             {

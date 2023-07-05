@@ -31,12 +31,12 @@ public class EntityAdvance
     {
         var result = "";
         // get contextbase path 
-        var contextPath = Directory.GetFiles(_projectContext.ProjectPath!, "ContextBase.cs", SearchOption.AllDirectories)
+        var contextPath = Directory.GetFiles(_projectContext.SolutionPath!, "ContextBase.cs", SearchOption.AllDirectories)
             .FirstOrDefault();
         if (contextPath != null)
         {
             // parse context content and get all proporties 
-            var compilation = new CompilationHelper(Path.Combine(_projectContext.ProjectPath!, Config.EntityPath));
+            var compilation = new CompilationHelper(Path.Combine(_projectContext.SolutionPath!, Config.EntityPath));
             compilation.AddSyntaxTree(File.ReadAllText(contextPath));
 
             var propertyTypes = compilation.GetPropertyTypes();
@@ -44,7 +44,7 @@ public class EntityAdvance
             // search entity use propertyType and parse every entity use CompilationHelper
             foreach (var propertyType in propertyTypes)
             {
-                var entityPath = Directory.GetFiles(Path.Combine(_projectContext.ProjectPath!, Config.EntityPath), $"{propertyType}.cs", SearchOption.AllDirectories)
+                var entityPath = Directory.GetFiles(Path.Combine(_projectContext.SolutionPath!, Config.EntityPath), $"{propertyType}.cs", SearchOption.AllDirectories)
                     .FirstOrDefault();
 
                 if (entityPath != null)

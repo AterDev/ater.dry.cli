@@ -36,7 +36,7 @@ public class EntityManager
 
             Config.EntityPath = Config.EntityPath.Replace('\\', Path.DirectorySeparatorChar)
                 .Replace('/', Path.DirectorySeparatorChar);
-            string entityPath = Path.Combine(_projectContext.ProjectPath!, Config.EntityPath, "Entities");
+            string entityPath = Path.Combine(_projectContext.SolutionPath!, Config.EntityPath, "Entities");
             // get files in directory
             List<string> filePaths = Directory.GetFiles(entityPath, "*.cs", SearchOption.AllDirectories).ToList();
 
@@ -49,7 +49,7 @@ public class EntityManager
                     )
                     .ToList();
 
-                var compilation = new CompilationHelper(Path.Combine(_projectContext.ProjectPath!, Config.EntityPath));
+                var compilation = new CompilationHelper(Path.Combine(_projectContext.SolutionPath!, Config.EntityPath));
                 foreach (string? path in filePaths)
                 {
                     FileInfo file = new(path);
@@ -62,11 +62,6 @@ public class EntityManager
                         Path = file.FullName.Replace(entityPath, ""),
                         Content = content
                     };
-                    // 查询生成的dto\manager\api状态
-                    var states = GetEntityStates(_projectContext.ProjectPath!, Path.GetFileNameWithoutExtension(file.Name));
-                    item.HasDto = states.hasDto;
-                    item.HasManager = states.hasManager;
-                    item.HasAPI = states.hasAPI;
 
                     // 解析特性
                     compilation.AddSyntaxTree(content);
@@ -76,6 +71,16 @@ public class EntityManager
                         var argument = moduleAttribution.Last().ArgumentList?.Arguments.FirstOrDefault();
                         item.Module = argument?.Expression.ToString().Trim('"');
                     }
+
+                    // 查询生成的dto\manager\api状态
+                    var (hasDto, hasManager, hasAPI) = GetEntityStates(
+                        _projectContext.SolutionPath!,
+                        Path.GetFileNameWithoutExtension(file.Name),
+                        item.Module);
+
+                    item.HasDto = hasDto;
+                    item.HasManager = hasManager;
+                    item.HasAPI = hasAPI;
 
                     entityFiles.Add(item);
                 }
@@ -95,12 +100,25 @@ public class EntityManager
         return entityFiles;
     }
 
-    private (bool hasDto, bool hasManager, bool hasAPI) GetEntityStates(string path, string entityName)
+    /// <summary>
+    /// 判断生成状态
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="entityName"></param>
+    /// <param name="moduleName"></param>
+    /// <returns></returns>
+    private (bool hasDto, bool hasManager, bool hasAPI) GetEntityStates(string path, string entityName, string? moduleName = null)
     {
         bool hasDto = false; bool hasManager = false; bool hasAPI = false;
         var dtoPath = Path.Combine(path, Config.DtoPath, "Models", $"{entityName}Dtos", $"{entityName}AddDto.cs");
         var managerPath = Path.Combine(path, Config.StorePath, "IManager", $"I{entityName}Manager.cs");
         var apiPath = Path.Combine(path, Config.ApiPath, "Controllers", $"{entityName}Controller.cs");
+
+        if (!string.IsNullOrWhiteSpace(moduleName))
+        {
+            managerPath = Path.Combine(path, "src", "Modules", moduleName, "IManager", $"I{entityName}Manager.cs");
+            apiPath = Path.Combine(path, "src", "Modules", moduleName, "Controllers", $"{entityName}Controller.cs");
+        }
 
         if (File.Exists(dtoPath)) { hasDto = true; }
         if (File.Exists(managerPath)) { hasManager = true; }
@@ -124,7 +142,7 @@ public class EntityManager
             {
                 entityName = entityName.Replace(".cs", "");
             }
-            string dtoPath = Path.Combine(_projectContext.ProjectPath!, Config.DtoPath, "Models", $"{entityName}Dtos");
+            string dtoPath = Path.Combine(_projectContext.SolutionPath!, Config.DtoPath, "Models", $"{entityName}Dtos");
             // get files in directory
             List<string> filePaths = Directory.GetFiles(dtoPath, "*.cs", SearchOption.AllDirectories).ToList();
 
@@ -166,11 +184,11 @@ public class EntityManager
         string? filePath = null;
         if (isManager)
         {
-            filePath = Path.Combine(_projectContext.ProjectPath!, Config.StorePath, "Manager", $"{entityName}Manager.cs");
+            filePath = Path.Combine(_projectContext.SolutionPath!, Config.StorePath, "Manager", $"{entityName}Manager.cs");
         }
         else
         {
-            var entityDir = Path.Combine(_projectContext.ProjectPath!, Config.EntityPath, "Entities");
+            var entityDir = Path.Combine(_projectContext.SolutionPath!, Config.EntityPath, "Entities");
             filePath = Directory.GetFiles(entityDir, $"{entityName}.cs", SearchOption.AllDirectories)
                 .FirstOrDefault();
         }
@@ -199,7 +217,7 @@ public class EntityManager
     /// <returns></returns>
     public bool UpdateDtoContent(Guid projectId, string fileName, string Content)
     {
-        string dtoPath = Path.Combine(_projectContext.ProjectPath!, Config.DtoPath, "Models");
+        string dtoPath = Path.Combine(_projectContext.SolutionPath!, Config.DtoPath, "Models");
         var filePath = Directory.GetFiles(dtoPath, fileName, SearchOption.AllDirectories).FirstOrDefault();
         try
         {
@@ -302,13 +320,13 @@ public class EntityManager
     public async Task GenerateRequestAsync(string webPath, RequestLibType type, string? swaggerPath = null)
     {
         // 更新选项
-        var options = ConfigCommand.ReadConfigFile(_projectContext.ProjectPath!);
+        var options = ConfigCommand.ReadConfigFile(_projectContext.SolutionPath!);
         if (options != null)
         {
             options.WebAppPath = webPath;
             options.SwaggerPath = swaggerPath;
             string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
-            await File.WriteAllTextAsync(Path.Combine(_projectContext.ProjectPath!, Config.ConfigFileName), content, Encoding.UTF8);
+            await File.WriteAllTextAsync(Path.Combine(_projectContext.SolutionPath!, Config.ConfigFileName), content, Encoding.UTF8);
         }
 
         swaggerPath ??= Path.Combine(_projectContext.ApiPath!, "swagger.json");
@@ -331,8 +349,8 @@ public class EntityManager
 
     public async Task GenerateNgModuleAsync(string entityName, string rootPath)
     {
-        var dtoPath = Path.Combine(_projectContext.ProjectPath!, Config.DtoPath);
-        var entityDir = Path.Combine(_projectContext.ProjectPath!, Config.EntityPath, "Entities");
+        var dtoPath = Path.Combine(_projectContext.SolutionPath!, Config.DtoPath);
+        var entityDir = Path.Combine(_projectContext.SolutionPath!, Config.EntityPath, "Entities");
         var entityPath = Directory.GetFiles(entityDir, entityName, SearchOption.AllDirectories)
             .FirstOrDefault();
 

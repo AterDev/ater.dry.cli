@@ -33,7 +33,7 @@ public class FeatureManager
         {
             Directory.CreateDirectory(path);
         }
-        if (!ProcessHelper.RunCommand("dotnet", $"new atapi.pro -o {path}", out _))
+        if (!ProcessHelper.RunCommand("dotnet", $"new atapi -o {path}", out _))
         {
             ErrorMsg = "创建项目失败，请尝试使用空目录创建";
             return false;
@@ -88,7 +88,7 @@ public class FeatureManager
     public List<SubProjectInfo> GetModulesInfo()
     {
         var res = new List<SubProjectInfo>();
-        var paths = ModuleCommand.GetModulesPaths(_projectContext.ProjectPath!);
+        var paths = ModuleCommand.GetModulesPaths(_projectContext.SolutionPath!);
         paths?.ForEach(path =>
         {
             var moduleInfo = new SubProjectInfo
@@ -110,7 +110,7 @@ public class FeatureManager
     {
         try
         {
-            await ModuleCommand.CreateModuleAsync(_projectContext.ProjectPath!, name);
+            await ModuleCommand.CreateModuleAsync(_projectContext.SolutionPath!, name);
         }
         catch (Exception e)
         {

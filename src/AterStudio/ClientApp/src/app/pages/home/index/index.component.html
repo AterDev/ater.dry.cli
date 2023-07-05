@@ -67,20 +67,20 @@
       <form [formGroup]="settingForm" class="d-flex flex-column">
         <mat-form-field>
           <mat-label>实体目录</mat-label>
-          <input matInput placeholder="实体所在项目目录,3-200字符" formControlName="entityPath" required>
+          <input matInput placeholder="实体所在项目目录,1-200字符" formControlName="entityPath" required>
           <mat-hint>实体需要在该项目下的Entities目录中，才会被识别为实体</mat-hint>
         </mat-form-field>
         <mat-form-field>
           <mat-label>Dto目录</mat-label>
-          <input matInput placeholder="Dto所在项目目录,3-200字符" formControlName="dtoPath" required>
+          <input matInput placeholder="Dto所在项目目录,1-200字符" formControlName="dtoPath" required>
         </mat-form-field>
         <mat-form-field>
           <mat-label>应用层目录</mat-label>
-          <input matInput placeholder="应用层所在项目目录,3-200字符" formControlName="storePath" required>
+          <input matInput placeholder="应用层所在项目目录,1-200字符" formControlName="storePath" required>
         </mat-form-field>
         <mat-form-field>
           <mat-label>接口层目录</mat-label>
-          <input matInput placeholder="API接口层所在项目目录,3-200字符" formControlName="apiPath" required>
+          <input matInput placeholder="API接口层所在项目目录,1-200字符" formControlName="apiPath" required>
         </mat-form-field>
         <mat-form-field>
           <mat-label>Id类型</mat-label>

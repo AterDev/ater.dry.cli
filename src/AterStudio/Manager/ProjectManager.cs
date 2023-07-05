@@ -132,10 +132,10 @@ public class ProjectManager
     /// <returns></returns>
     public ConfigOptions? GetConfigOptions()
     {
-        var options = ConfigCommand.ReadConfigFile(_projectContext.ProjectPath!);
+        var options = ConfigCommand.ReadConfigFile(_projectContext.SolutionPath!);
         if (options != null)
         {
-            options.RootPath = _projectContext.ProjectPath!;
+            options.RootPath = _projectContext.SolutionPath!;
         }
         return options;
     }
@@ -147,7 +147,7 @@ public class ProjectManager
     /// <returns></returns>
     public async Task<bool> UpdateConfigAsync(UpdateConfigOptionsDto dto)
     {
-        var options = ConfigCommand.ReadConfigFile(_projectContext.ProjectPath!);
+        var options = ConfigCommand.ReadConfigFile(_projectContext.SolutionPath!);
         if (options == null)
         {
             return false;
@@ -167,7 +167,7 @@ public class ProjectManager
             options.IsSplitController = dto.IsSplitController;
 
         string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
-        await File.WriteAllTextAsync(Path.Combine(_projectContext.ProjectPath!, Config.ConfigFileName), content, Encoding.UTF8);
+        await File.WriteAllTextAsync(Path.Combine(_projectContext.SolutionPath!, Config.ConfigFileName), content, Encoding.UTF8);
         return true;
     }
 

@@ -11,6 +11,10 @@ public class ManagerCommand : CommandBase
     public string ApplicationPath { get; set; }
     public string DtoPath { get; set; }
     public ManagerGenerate CodeGen { get; set; }
+    /// <summary>
+    /// 对应模块名
+    /// </summary>
+    public string? ModuleName { get; set; }
 
     public ManagerCommand(string entityPath, string dtoPath, string servicePath, string? contextName = null)
     {
@@ -45,22 +49,45 @@ public class ManagerCommand : CommandBase
             // 是否为模块
             var compilation = new CompilationHelper(ApplicationPath, "Core");
             var content = File.ReadAllText(EntityPath);
+            compilation.AddSyntaxTree(content);
+            var attributes = compilation.GetClassAttribution("Module");
+            if (attributes != null && attributes.Any())
+            {
+                ModuleName = attributes.First().ArgumentList!.Arguments[0].ToString().Trim('"');
+            }
+            // 生成到模块项目中
+            if (!string.IsNullOrWhiteSpace(ModuleName))
+            {
+                ApplicationPath = Path.Combine(ApplicationPath, "..", "Modules", ModuleName);
+                if (!Directory.Exists(ApplicationPath))
+                {
+                    Console.WriteLine($"⚠️ module {ModuleName} not exist, please create first!");
+                    return;
+                }
 
-            Console.WriteLine(Instructions[0]);
-            await GenerateCommonFilesAsync();
-            Console.WriteLine(Instructions[1]);
-            await GenerateStoreFilesAsync();
+                Console.WriteLine(Instructions[2]);
+                await GenerateMangerAsync(force);
+                Console.WriteLine(Instructions[5]);
+                await GenerateGlobalUsingsFilesAsync();
+            }
+            else
+            {
+                Console.WriteLine(Instructions[0]);
+                await GenerateCommonFilesAsync();
+                Console.WriteLine(Instructions[1]);
+                await GenerateStoreFilesAsync();
 
-            Console.WriteLine(Instructions[2]);
-            await GenerateMangerAsync(force);
-            Console.WriteLine(Instructions[3]);
-            await GenerateMangerTestAsync(force);
+                Console.WriteLine(Instructions[2]);
+                await GenerateMangerAsync(force);
 
-            //Console.WriteLine(Instructions[4]);
-            //await GenerateServicesAsync();
+                Console.WriteLine(Instructions[3]);
+                await GenerateMangerTestAsync(force);
 
-            Console.WriteLine(Instructions[5]);
-            await GenerateGlobalUsingsFilesAsync();
+                Console.WriteLine(Instructions[5]);
+                await GenerateGlobalUsingsFilesAsync();
+            }
+
+
 
             Console.WriteLine("😀 Manager generate completed!" + Environment.NewLine);
         }
@@ -68,9 +95,6 @@ public class ManagerCommand : CommandBase
         {
             await Console.Out.WriteLineAsync(ex.Message + ex.StackTrace);
         }
-
-
-
     }
 
     /// <summary>
@@ -82,7 +106,7 @@ public class ManagerCommand : CommandBase
         {
             // 更新扩展方法
             string updateContent = "";
-            Console.WriteLine("🆕 need update base infrastructure.");
+            Console.WriteLine("⬆️ update base infrastructure.");
             string whereNotNullString = """
                     public static IQueryable<TSource> WhereNotNull<TSource>(this IQueryable<TSource> source, object? field, Expression<Func<TSource, bool>> expression)
                     {
@@ -90,7 +114,8 @@ public class ManagerCommand : CommandBase
                     }
                 """;
             // update extension class
-            string extensionPath = Path.Combine(ApplicationPath, "..", Config.EntityPath, "Utils", "Extensions.cs");
+            string path = ApplicationPath.Replace(Config.StorePath, "");
+            string extensionPath = Path.Combine(path, Config.EntityPath, "Utils", "Extensions.cs");
 
             if (File.Exists(extensionPath))
             {
@@ -292,7 +317,6 @@ public class ManagerCommand : CommandBase
             {
                 globalUsings.Insert(0, Environment.NewLine);
                 File.AppendAllLines(filePath, globalUsings);
-
             }
         }
         else
