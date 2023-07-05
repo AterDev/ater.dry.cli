@@ -13,11 +13,19 @@ public class StudioCommand
     {
         Console.WriteLine("🙌 welcome ater studio!");
         string appPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-
         var studioPath = Path.Combine(appPath, "AterStudio");
 
+        int sleepTime = 1500;
         // 检查并更新
-        await UpdateAsync();
+        string version = Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
+        if (File.Exists(Path.Combine(studioPath, $"{version}.txt")))
+        {
+            Console.WriteLine("😊 Already latest version!");
+        }
+        else
+        {
+            await UpdateAsync();
+        }
 
         Console.WriteLine("🚀 start studio...");
         // 运行
@@ -39,7 +47,7 @@ public class StudioCommand
             },
         };
         process.Start();
-        Thread.Sleep(2000);
+        Thread.Sleep(sleepTime);
         // 启动浏览器
         try
         {
@@ -117,14 +125,7 @@ public class StudioCommand
             Console.WriteLine($"not found studio.zip in:{toolRootPath}");
             return;
         }
-        // 无需更新
         var studioPath = Path.Combine(appPath, "AterStudio");
-        if (File.Exists(Path.Combine(studioPath, $"{version}.txt")))
-        {
-            Console.WriteLine("😊 Already latest version!");
-            return;
-        }
-
         // 删除旧文件
         if (Directory.Exists(studioPath))
         {

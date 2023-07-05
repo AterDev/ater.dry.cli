@@ -1,0 +1,24 @@
+global using System.Diagnostics;
+global using System.Linq.Expressions;
+global using Application.Const;
+global using Application.Implement;
+global using Application.Interface;
+global using CMS.Infrastructure;
+global using Core.Utils;
+global using Microsoft.AspNetCore.Authorization;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.Logging;
+global using Share.Models;
+
+global using System;
+global using System.Text.Json;
+global using EntityFramework;
+global using Core.Entities;
+global using Core.Models;
+global using Core.Entities.CmsEntities;
+global using Application.QueryStore;
+global using Application.CommandStore;
+global using Application.Manager;
+global using Application.IManager;
+global using Microsoft.Extensions.DependencyInjection;
