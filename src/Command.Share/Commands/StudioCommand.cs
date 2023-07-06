@@ -1,9 +1,7 @@
 ﻿using System.Diagnostics;
 using System.IO.Compression;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using Core.Entities;
-using Core.Infrastructure;
 using LiteDB;
 
 namespace Command.Share.Commands;
@@ -17,7 +15,7 @@ public class StudioCommand
 
         int sleepTime = 1500;
         // 检查并更新
-        string version = Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
+        string version = AssemblyHelper.GetVersion();
         if (File.Exists(Path.Combine(studioPath, $"{version}.txt")))
         {
             Console.WriteLine("😊 Already latest version!");
@@ -101,31 +99,16 @@ public class StudioCommand
             "Datastore"
         };
 
-        string appPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        string userPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-
-        // TODO:版本号
-        string version = Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
-
-        var toolRootPath = Path.Combine(
-            userPath,
-            ".dotnet/tools/.store",
-            Const.PackageId,
-            version,
-            Const.PackageId,
-            version,
-            "tools",
-            Const.NetVersion,
-            "any");
-
-        string zipPath = Path.Combine(toolRootPath, "studio.zip");
+        var version = AssemblyHelper.GetVersion();
+        var toolRootPath = AssemblyHelper.GetToolPath();
+        var zipPath = Path.Combine(toolRootPath, "studio.zip");
 
         if (!File.Exists(zipPath))
         {
             Console.WriteLine($"not found studio.zip in:{toolRootPath}");
             return;
         }
-        var studioPath = Path.Combine(appPath, "AterStudio");
+        var studioPath = AssemblyHelper.GetStudioPath();
         // 删除旧文件
         if (Directory.Exists(studioPath))
         {

@@ -211,10 +211,14 @@ public class AssemblyHelper
             && VersionComparer.Compare(oldVerion, currentVersion, VersionComparison.Version) < 0;
     }
 
-    public class XmlCommentMember
+    /// <summary>
+    /// 获取studio目录
+    /// </summary>
+    /// <returns></returns>
+    public static string GetStudioPath()
     {
-        public string FullName { get; set; } = string.Empty;
-        public string? Summary { get; set; }
+        string appPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        return Path.Combine(appPath, "AterStudio");
     }
 
     /// <summary>
@@ -247,11 +251,39 @@ public class AssemblyHelper
         if (!File.Exists(filePath) || cover)
         {
             await File.WriteAllTextAsync(filePath, content);
-            Console.WriteLine(@$"  🆕 generate file {fileName}.");
+            Console.WriteLine(@$"  ℹ️ generate file {fileName}.");
         }
         else
         {
             Console.WriteLine($"  🦘 Skip exist file: {fileName}.");
         }
     }
+
+    /// <summary>
+    /// 获取dotnet tool 路径
+    /// </summary>
+    /// <returns></returns>
+    public static string GetToolPath()
+    {
+        string userPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        // 版本号
+        string version = Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
+
+        return Path.Combine(
+            userPath,
+            ".dotnet/tools/.store",
+            Const.PackageId,
+            version,
+            Const.PackageId,
+            version,
+            "tools",
+            Const.NetVersion,
+            "any");
+    }
+
+}
+public class XmlCommentMember
+{
+    public string FullName { get; set; } = string.Empty;
+    public string? Summary { get; set; }
 }

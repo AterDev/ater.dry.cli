@@ -159,7 +159,7 @@ public class EntityParseHelper
     /// <returns></returns>
     private string? GetComment()
     {
-        List<AssemblyHelper.XmlCommentMember>? members = AssemblyHelper.GetXmlMembers(ProjectFile.Directory!);
+        List<XmlCommentMember>? members = AssemblyHelper.GetXmlMembers(ProjectFile.Directory!);
         return members?.Where(m => m.FullName.EndsWith(NamespaceName + "." + Name))
                 .Select(s => s.Summary?.Trim())
                 .FirstOrDefault();

@@ -13,4 +13,5 @@ public class Const
     public const string Version = "7.0";
     public const string NetVersion = "net7.0";
     public const string PackageId = "ater.droplet.cli";
+    public const string ModulesZip = "modules.zip";
 }

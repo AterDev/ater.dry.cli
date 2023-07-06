@@ -156,7 +156,7 @@ public class CompilationHelper
 
 
     /// <summary>
-    /// 方法是否存在某个接口中
+    /// 是否存在某方法
     /// </summary>
     /// <param name="methodContent"></param>
     /// <returns></returns>
@@ -165,6 +165,18 @@ public class CompilationHelper
         return SyntaxRoot!.DescendantNodes()
             .Where(n => n is MethodDeclarationSyntax)
             .Any(m => m.ToString().Contains(methodContent));
+    }
+
+    /// <summary>
+    /// 是否存在属性
+    /// </summary>
+    /// <param name="propertyName"></param>
+    /// <returns></returns>
+    public bool PropertyExist(string propertyName)
+    {
+        return SyntaxRoot!.DescendantNodes()
+            .OfType<PropertyDeclarationSyntax>()
+            .Any(m => m.Identifier.Text.Equals(propertyName.Trim()));
     }
 
     /// <summary>
@@ -236,6 +248,10 @@ public class CompilationHelper
         }
     }
 
+    /// <summary>
+    /// 添加基类
+    /// </summary>
+    /// <param name="newImplementContent"></param>
     public void AddClassBaseType(string newImplementContent)
     {
         if (SyntaxTree != null && SyntaxRoot != null)
@@ -260,6 +276,29 @@ public class CompilationHelper
 
         }
     }
+
+    /// <summary>
+    /// 向类中添加属性
+    /// </summary>
+    /// <param name="propertyContent"></param>
+    public void AddClassProperty(string propertyContent)
+    {
+        if (SyntaxTree != null && SyntaxRoot != null)
+        {
+            ClassDeclarationSyntax classNode = SyntaxRoot.DescendantNodes()
+                .OfType<ClassDeclarationSyntax>().First();
+
+            ConstructorDeclarationSyntax constructor = classNode.DescendantNodes().OfType<ConstructorDeclarationSyntax>().First();
+
+            propertyContent = $"    {propertyContent}" + Environment.NewLine;
+            if (SyntaxFactory.ParseMemberDeclaration(propertyContent) is not PropertyDeclarationSyntax propertyNode)
+            {
+                return;
+            }
+            SyntaxRoot = SyntaxRoot.InsertNodesBefore(constructor, new[] { propertyNode });
+        }
+    }
+
     /// <summary>
     /// 获取所有属性类型
     /// </summary>
@@ -291,7 +330,6 @@ public class CompilationHelper
 
         return classNode?.BaseList?.Types.FirstOrDefault()?.ToString();
     }
-
 
     /// <summary>
     /// get class attribution 

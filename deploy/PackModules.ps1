@@ -45,7 +45,7 @@ foreach ($file in $entityFiles) {
     }
     Copy-Item $file $entityDestDir -Force 
     $fileName = [System.IO.Path]::GetFileName($file)
-    write-host "🆕 $fileName to $entityDestDir"
+    write-host "ℹ️ $fileName to $entityDestDir"
 } 
 
 # 模块的copy
