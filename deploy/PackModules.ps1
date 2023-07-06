@@ -5,20 +5,25 @@ param (
     $relativePath = "../../ater.web"
 )
 $OutputEncoding = [System.Console]::OutputEncoding = [System.Console]::InputEncoding = [System.Text.Encoding]::UTF8
+# 路径定义
 $deployPath = Get-Location
+$rootPath = [IO.Path]::GetFullPath("$deployPath/..")
 $templatePath = (Join-Path $deployPath $relativePath)
-
 $entityPath = Join-Path $templatePath "templates" "apistd" "src" "Core" "Entities"
+$commandLinePath = Join-Path $rootPath "src" "CommandLine"
+$destModulesPath = Join-Path $commandLinePath "Modules" 
+
+# 目标目录
+if (!(Test-Path $destModulesPath)) {
+    New-Item -ItemType Directory -Path $destModulesPath | Out-Null
+}
 
 # 获取模块实体文件
 $entityFiles = Get-ChildItem -Path $entityPath -Filter "*.cs" -Recurse |`
     Select-String -Pattern "Module" -List |`
     Select-Object -ExpandProperty Path
 
-# 目标路径
-$destPath = Join-Path $deployPath ".." "src" "CommandLine" "Modules"
-
-# define string array
+# 模块名称
 $modulesNames = @()
 
 # 获取模块名称
@@ -34,33 +39,32 @@ foreach ($file in $entityFiles) {
     }
     
     # 实体的copy
-    $entityDestDir = Join-Path $destPath $moduleName "Entities"
+    $entityDestDir = Join-Path $destModulesPath $moduleName "Entities"
     if (!(Test-Path $entityDestDir)) {
         New-Item -ItemType Directory -Path $entityDestDir | Out-Null
     }
     Copy-Item $file $entityDestDir -Force 
-    write-host "copy $file `nto $entityDestDir"
+    $fileName = [System.IO.Path]::GetFileName($file)
+    write-host "🆕 $fileName to $entityDestDir"
 } 
 
 # 模块的copy
 foreach ($moduleName in $modulesNames) {
     $modulePath = Join-Path $templatePath "templates" "apistd" "src" "Modules" $moduleName
-    $destModulePath = Join-Path $destPath $moduleName
-
-    Write-Host $modulePath $destModulePath
-    Copy-Item $modulePath $destModulePath -Recurse -Force
-
+    Copy-Item $modulePath $destModulesPath -Recurse -Force
+    
     # delete obj and bin dir 
+    $destModulePath = Join-Path $destModulesPath $moduleName
     $pathsToRemove = @("obj", "bin") | ForEach-Object { Join-Path $destModulePath $_ }
     Remove-Item $pathsToRemove -Recurse -Force -ErrorAction SilentlyContinue
-
 }
 
+# zip
+$zipPath = Join-Path $commandLinePath "modules.zip"
+Compress-Archive -Path $destModulesPath -DestinationPath $zipPath -CompressionLevel Optimal -Force
+Write-Host "🗜️ $zipPath"
 
-
-
-    
-
-
-
+# remove modules
+Remove-Item $destModulesPath -Recurse -Force -ErrorAction SilentlyContinue
+Write-Host "🗑️ $destModulesPath"
 

@@ -60,7 +60,6 @@ try {
         Compress-Archive -Path .\publish\*  -DestinationPath "../CommandLine/studio.zip" -CompressionLevel Optimal -Force
     }
 
-
     Set-Location $location
     Set-Location ../src/CommandLine
     Write-Host 'build and pack new version...'
