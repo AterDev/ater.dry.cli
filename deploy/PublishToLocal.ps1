@@ -15,12 +15,11 @@ try {
     $Version = $VersionNode.Node.InnerText
     $PackageId = $PackageNode.Node.InnerText
 
-
     # sync studio version
     Set-Location $location
     $xml = [xml](Get-Content ../src/AterStudio/AterStudio.csproj)
     $propertyGroup = $xml.Project.PropertyGroup[0]
-    Write-Host $Version
+    Write-Host "Current Version:"$Version
     if ($null -eq $propertyGroup.Version) {
         $version = $xml.CreateElement("Version")
         
@@ -33,9 +32,11 @@ try {
     $path = Join-Path  $location "../src/AterStudio/AterStudio.csproj"
     $xml.Save($path)
 
+    # pack modules  use PackModules.ps1
+    & "./PackModules.ps1"
 
+    # build web project
     if ($withStudio -eq $true) {
-        # build web project
         Set-Location ../src/AterStudio
         if (Test-Path -Path ".\publish") {
             Remove-Item .\publish -R -Force
