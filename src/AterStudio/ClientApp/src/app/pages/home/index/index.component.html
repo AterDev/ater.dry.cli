@@ -1,7 +1,8 @@
 <!-- project -->
 <div class="container p-2">
   <div class="d-flex flex-row align-items-center">
-    <button *ngIf=" type!='desktop'" mat-raised-button (click)=" addProjectDialog()" color="primary">添加解决方案</button>
+    <button *ngIf=" type!='desktop'" mat-raised-button (click)="addProjectDialog()" matTooltip="添加本地已有项目"
+      color="primary">添加解决方案</button>
     <a *ngIf="type!='desktop'" class="ms-2" mat-mini-fab matTooltip="创建新解决方案" routerLink="/create" color="accent">
       <mat-icon>add</mat-icon>
     </a>

@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { LoginService } from 'src/app/auth/login.service';
-
+import { Project } from 'src/app/share/models/project/project.model';
+import { ProjectStateService } from 'src/app/share/project-state.service';
+import { ProjectService } from 'src/app/share/services/project.service';
+import { MatBottomSheet, MatBottomSheetRef } from '@angular/material/bottom-sheet';
 @Component({
   selector: 'app-layout',
   templateUrl: './layout.component.html',
@@ -12,8 +15,16 @@ export class LayoutComponent implements OnInit {
   isAdmin = false;
   username?: string | null = null;
   type: string | null = null;
+  projects = [] as Project[];
+  projectName = '';
+  @ViewChild("projectSheet", { static: true }) projectSheet!: TemplateRef<{}>;
+  bottomSheetRef!: MatBottomSheetRef<{}>;
+
   constructor(
     private auth: LoginService,
+    private service: ProjectService,
+    private projectState: ProjectStateService,
+    private bottomSheet: MatBottomSheet,
     private router: Router,
     private route: ActivatedRoute
   ) {
@@ -33,7 +44,7 @@ export class LayoutComponent implements OnInit {
         this.type = 'desktop'
       }
     });
-
+    this.projectName = this.projectState.project?.displayName || '';
   }
   ngOnInit(): void {
     this.isLogin = this.auth.isLogin;
@@ -41,7 +52,36 @@ export class LayoutComponent implements OnInit {
     if (this.isLogin) {
       this.username = this.auth.userName!;
     }
+
+    this.getProjects();
   }
+
+  getProjects(): void {
+    this.service.list()
+      .subscribe({
+        next: (res) => {
+          if (res) {
+            this.projects = res;
+          }
+        },
+      });
+  }
+
+  openSolutionSheet() {
+    this.bottomSheetRef = this.bottomSheet.open(this.projectSheet, {});
+  }
+
+  changeSolution(id: string) {
+    const project = this.projects.find(p => p.id == id);
+    if (project) {
+      this.projectState.setProject(project);
+      // reload current page
+      window.location.reload();
+
+      this.bottomSheetRef.dismiss();
+    }
+  }
+
   login(): void {
     this.router.navigateByUrl('/login')
   }

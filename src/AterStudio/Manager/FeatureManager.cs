@@ -70,8 +70,8 @@ public class FeatureManager
                 JsonHelper.AddOrUpdateJsonNode(jsonNode, "ConnectionStrings.CacheInstanceName", dto.CacheInstanceName);
             }
 
+
             jsonString = jsonNode.ToString();
-            await Console.Out.WriteLineAsync(jsonString);
             File.WriteAllText(configFile, jsonString);
         }
         // 模块

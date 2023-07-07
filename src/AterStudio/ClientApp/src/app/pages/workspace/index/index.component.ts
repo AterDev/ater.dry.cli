@@ -83,6 +83,7 @@ export class IndexComponent implements OnInit {
     private loginService: LoginService
   ) {
     if (projectState.project) {
+      this.project = projectState.project;
       this.projectId = projectState.project?.id;
     } else {
       this.projectId = '';

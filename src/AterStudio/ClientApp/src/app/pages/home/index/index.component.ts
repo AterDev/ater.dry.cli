@@ -182,9 +182,7 @@ export class IndexComponent implements OnInit {
   }
   selectProject(id: string): void {
     const project = this.projects.find(p => p.id == id);
-    console.log(project);
     if (project) {
-
       this.projectState.setProject(project);
       this.router.navigateByUrl('/workspace/index');
 

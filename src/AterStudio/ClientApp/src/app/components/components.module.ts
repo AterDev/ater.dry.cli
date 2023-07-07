@@ -37,6 +37,7 @@ import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { AdminLayoutComponent } from './admin-layout/admin-layout.component';
+import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 
 const MaterialModules = [
   MatToolbarModule,
@@ -70,7 +71,8 @@ const MaterialModules = [
   MatSlideToggleModule,
   MatChipsModule,
   MatAutocompleteModule,
-  MatRadioModule
+  MatRadioModule,
+  MatBottomSheetModule,
 ];
 
 @NgModule({

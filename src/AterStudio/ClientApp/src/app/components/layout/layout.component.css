@@ -1,3 +1,11 @@
-.mat-toolbar-single-row{
+.mat-toolbar-single-row {
     height: 48px;
+}
+
+.shortcuts {
+    position: absolute;
+    right: 4px;
+    bottom: 4px;
+    z-index: 2;
+    padding: 4px;
 }

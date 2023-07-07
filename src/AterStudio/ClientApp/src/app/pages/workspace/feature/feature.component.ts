@@ -6,6 +6,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SubProjectInfo } from 'src/app/share/models/feature/sub-project-info.model';
+import { Project } from 'src/app/share/models/project/project.model';
+import { ProjectStateService } from 'src/app/share/project-state.service';
 import { FeatureService } from 'src/app/share/services/feature.service';
 
 @Component({
@@ -26,15 +28,17 @@ export class FeatureComponent {
   addTmpl!: TemplateRef<{}>;
   mydialogForm!: FormGroup;
 
+  project: Project | null = null;
   pageSizeOption = [12, 20, 50];
   constructor(
     private service: FeatureService,
+    private projectSrv: ProjectStateService,
     private snb: MatSnackBar,
     private dialog: MatDialog,
     private route: ActivatedRoute,
     private router: Router,
   ) {
-
+    this.project = this.projectSrv.project;
   }
 
   get name() { return this.mydialogForm.get('name'); }
@@ -81,7 +85,7 @@ export class FeatureComponent {
         .subscribe({
           next: (res) => {
             if (res) {
-              
+
               this.snb.open('添加成功');
               this.getList();
             } else {
