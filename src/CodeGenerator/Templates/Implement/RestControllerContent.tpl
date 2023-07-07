@@ -1,5 +1,4 @@
-﻿using Core.Const;
-using ${ShareNamespace}.Models.${EntityName}Dtos;
+﻿using ${ShareNamespace}.Models.${EntityName}Dtos;
 namespace ${Namespace}.Controllers;
 
 ${Comment}

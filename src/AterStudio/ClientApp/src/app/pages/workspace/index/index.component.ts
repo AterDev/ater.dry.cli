@@ -69,6 +69,7 @@ export class IndexComponent implements OnInit {
   isBatch = false;
   isCopied = false;
   isLogin = false;
+  showModuleEntity = true;
   config: ConfigOptions | null = null;
 
   editor: any;
@@ -93,7 +94,6 @@ export class IndexComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
     this.projectSrv.getConfigOptions()
       .subscribe({
         next: (res) => {
@@ -126,6 +126,16 @@ export class IndexComponent implements OnInit {
       return;
     }
     this.selection.select(...this.dataSource.data);
+  }
+
+  toggleModule() {
+    this.showModuleEntity = !this.showModuleEntity;
+    if (this.showModuleEntity) {
+      this.dataSource.data = this.entityFiles;
+    } else {
+      this.dataSource.data = this.entityFiles.filter(e => e.module === null || e.module === '');
+    }
+
   }
 
   initEditor(editor: any): void {
@@ -257,7 +267,6 @@ export class IndexComponent implements OnInit {
     this.router.navigateByUrl('/workspace/entity');
   }
   applyFilter(event: Event) {
-
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
@@ -325,9 +334,6 @@ export class IndexComponent implements OnInit {
     }
   }
 
-  addEntity(): void {
-    // TODO:获取实体内容
-  }
   openGenerateDialog(type: CommandType, element: EntityFile | null): void {
     this.isBatch = element === null;
     this.currentEntity = element;

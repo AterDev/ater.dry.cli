@@ -1,6 +1,6 @@
 <div class="page" *ngIf="this.type!='desktop'">
   <mat-toolbar color="primary">
-    <a mat-button [routerLink]="['/index']" routerLinkActive="active">解决方案</a>
+    <button mat-button [routerLink]="['/index']" routerLinkActive="active">解决方案</button>
     <span style="display:flex;flex:1 1 auto"></span>
     <span *ngIf="isLogin">
       <button [matMenuTriggerFor]="appMenu" mat-button style="flex-direction: row-reverse;">
@@ -14,9 +14,9 @@
         </button>
       </mat-menu>
     </span>
-    <span *ngIf="!isLogin">
+    <!-- <span *ngIf="!isLogin">
       <button mat-button (click)="login()" matTooltip="无需登录即可使用">登录</button>
-    </span>
+    </span> -->
   </mat-toolbar>
 </div>
 

@@ -30,10 +30,8 @@ public class EntityManager
     public List<EntityFile> GetEntityFiles(string? name)
     {
         List<EntityFile> entityFiles = new();
-        //var project = await _context.Projects.FindAsync(projectId);
         try
         {
-
             Config.EntityPath = Config.EntityPath.Replace('\\', Path.DirectorySeparatorChar)
                 .Replace('/', Path.DirectorySeparatorChar);
             string entityPath = Path.Combine(_projectContext.SolutionPath!, Config.EntityPath, "Entities");
@@ -89,8 +87,15 @@ public class EntityManager
             // 名称筛选
             if (!string.IsNullOrWhiteSpace(name))
             {
-                entityFiles = entityFiles.Where(f => f.Name.ToLower().Contains(name.ToLower())).ToList();
+                entityFiles = entityFiles.Where(f => f.Name.ToLower().Contains(name.ToLower()))
+                    .ToList();
             }
+
+            // 排序
+            entityFiles = entityFiles
+                .OrderByDescending(e => e.Module)
+                .ThenBy(e => e.Name)
+                .ToList();
         }
         catch (Exception)
         {

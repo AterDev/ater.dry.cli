@@ -27,10 +27,15 @@
     </mat-menu>
   </mat-toolbar>
 
-  <div class="d-flex align-items-center mt-2">
+  <div class="d-flex align-items-center mt-2 gap-1">
     <mat-form-field style="min-width: 300px;">
       <input matInput placeholder="搜索实体类" [(ngModel)]="searchKey" (keyup)="applyFilter($event)">
     </mat-form-field>
+
+    <button mat-icon-button [matTooltip]="showModuleEntity?'隐藏模块实体':'显示模块实体'" (click)="toggleModule()">
+      <mat-icon [color]="showModuleEntity?'primary':''">visibility_off</mat-icon>
+    </button>
+
     <span class="example-spacer"></span>
     <button mat-icon-button matTooltip="添加实体" color="primary" (click)="openAddEntity()" *ngIf="isLogin">
       <mat-icon>add_circle_outline</mat-icon>
@@ -254,6 +259,6 @@
   </mat-dialog-content>
   <mat-dialog-actions class="justify-content-end">
     <button mat-button mat-dialog-close>取消</button>
-    <button mat-button (click)="addEntity()" color="primary" [disabled]="isSync">添加</button>
+    <button mat-button color="primary" [disabled]="isSync">添加</button>
   </mat-dialog-actions>
 </ng-template>
