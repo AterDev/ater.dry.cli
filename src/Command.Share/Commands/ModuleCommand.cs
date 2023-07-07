@@ -8,14 +8,17 @@ namespace Command.Share.Commands;
 /// </summary>
 public class ModuleCommand
 {
+    public const string ModuleUserLogs = "UserLogs";
+    public const string ModuleCMS = "CMS";
+    public const string ModuleSystemLogs = "SystemLogs";
+    public const string ModuleConfiguration = "Configuration";
     public static List<string> ModuleNames { get; } = new()
     {
-        "CMS",
-        "SystemLog",
-        "UserLog",
-        "Configuration"
+        ModuleCMS,
+        ModuleSystemLogs,
+        ModuleUserLogs,
+        ModuleConfiguration
     };
-
 
     /// <summary>
     /// 创建模块
@@ -200,6 +203,12 @@ public class ModuleCommand
         InitModulesCodes();
         var studioPath = AssemblyHelper.GetStudioPath();
         var sourcePath = Path.Combine(studioPath, "Modules", moduleName);
+        if (!Directory.Exists(sourcePath))
+        {
+            Console.WriteLine($"🦘 no default {moduleName}, just init it!");
+            return;
+        }
+
         var databasePath = Path.Combine(solutionPath, "src", "Database", "EntityFramework");
 
         var entityPath = Path.Combine(solutionPath, Config.EntityPath, "Entities", $"{moduleName}Entities");
@@ -216,6 +225,7 @@ public class ModuleCommand
 
         var compilation = new CompilationHelper(databasePath);
         compilation.AddSyntaxTree(dbContextContent);
+
         var entityFiles = new DirectoryInfo(Path.Combine(sourcePath, "Entities")).GetFiles("*.cs").ToList();
 
         entityFiles.ForEach(file =>

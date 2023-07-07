@@ -4,7 +4,7 @@ public class CommandBase
 {
     protected List<string> Instructions = new();
 
-    public virtual async Task GenerateFileAsync(string dir, string fileName, string content, bool cover = false)
+    public static async Task GenerateFileAsync(string dir, string fileName, string content, bool cover = false)
     {
         if (!Directory.Exists(dir))
         {
@@ -13,7 +13,7 @@ public class CommandBase
         string filePath = Path.Combine(dir, fileName);
         if (!File.Exists(filePath) || cover)
         {
-            await File.WriteAllTextAsync(filePath, content);
+            await File.WriteAllTextAsync(filePath, content, Encoding.UTF8);
             Console.WriteLine(@$"  ℹ️ generate file {fileName}.");
         }
         else

@@ -74,10 +74,22 @@ public class FeatureManager
             await Console.Out.WriteLineAsync(jsonString);
             File.WriteAllText(configFile, jsonString);
         }
+        // 模块
+        if (dto.HasUserLogsFeature)
+        {
+            await ModuleCommand.CreateModuleAsync(path, ModuleCommand.ModuleUserLogs);
+        }
+        if (dto.HasSystemLogsFeature)
+        {
+            await ModuleCommand.CreateModuleAsync(path, ModuleCommand.ModuleSystemLogs);
+        }
+        if (dto.HasCmsFeature)
+        {
+            await ModuleCommand.CreateModuleAsync(path, ModuleCommand.ModuleCMS);
+        }
 
         // 添加项目
-        //await _projectManager.AddProjectAsync(dto.Name, dto.Path);
-
+        await _projectManager.AddProjectAsync(dto.Name, path);
         return true;
     }
 

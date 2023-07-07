@@ -105,69 +105,15 @@ public class ManagerCommand : CommandBase
         if (AssemblyHelper.NeedUpdate(Const.Version))
         {
             // 更新扩展方法
-            string updateContent = "";
-            Console.WriteLine("⬆️ update base infrastructure.");
-            string whereNotNullString = """
-                    public static IQueryable<TSource> WhereNotNull<TSource>(this IQueryable<TSource> source, object? field, Expression<Func<TSource, bool>> expression)
-                    {
-                        return field != null ? source.Where(expression) : source;
-                    }
-                """;
+            Console.WriteLine("⬆️ Update base infrastructure.");
             // update extension class
-            string path = ApplicationPath.Replace(Config.StorePath, "");
-            string extensionPath = Path.Combine(path, Config.EntityPath, "Utils", "Extensions.cs");
+            await UpdateManager.UpdateExtensionAsync7(Config.SolutionPath);
+            // 更新Const 常量
+            UpdateManager.UpdateConst7(ApplicationPath);
 
-            if (File.Exists(extensionPath))
-            {
-                CompilationHelper compilation = new(Path.Combine(EntityPath, ".."));
-                compilation.AddSyntaxTree(File.ReadAllText(extensionPath));
-                if (!compilation.MethodExist("public static IQueryable<TSource> WhereNotNull<TSource>(this IQueryable<TSource> source, object? field, Expression<Func<TSource, bool>> expression)"))
-                {
-                    compilation.InsertClassMethod(whereNotNullString);
+            UpdateManager.UpdateCustomizeAttributionAsync7(Config.SolutionPath);
 
-                    string newClassContent = compilation.SyntaxRoot!.ToString();
-                    await GenerateFileAsync(Path.Combine(extensionPath, ".."), $"Extensions.cs", newClassContent, true);
-
-                    updateContent += "👉 add [WhereNotNull] method to Extension.cs!" + Environment.NewLine;
-                }
-            }
-            else
-            {
-                Console.WriteLine($"⚠️ can't find {extensionPath}");
-            }
-            // 更新Error Const 常量
-            string errorMsgPath = Path.Combine(ApplicationPath, "Const", "ErrorMsg.cs");
-            if (!File.Exists(errorMsgPath))
-            {
-                if (!Directory.Exists(Path.Combine(ApplicationPath, "Const")))
-                {
-                    _ = Directory.CreateDirectory(Path.Combine(ApplicationPath, "Const"));
-                }
-
-                File.WriteAllText(errorMsgPath, """
-                    namespace Application.Const;
-                    /// <summary>
-                    /// 错误信息
-                    /// </summary>
-                    public static class ErrorMsg
-                    {
-                        /// <summary>
-                        /// 未找到该用户
-                        /// </summary>
-                        public const string NotFoundUser = "未找到该用户!";
-                        /// <summary>
-                        /// 未找到的资源
-                        /// </summary>
-                        public const string NotFoundResource = "未找到的资源!";
-                    }
-
-                    """);
-
-                updateContent += "👉 add ErrorMsg.cs!" + Environment.NewLine;
-            }
-
-            updateContent += "update finish!";
-            Console.WriteLine(updateContent);
+            Console.WriteLine("✅ Update finish!");
         }
     }
 

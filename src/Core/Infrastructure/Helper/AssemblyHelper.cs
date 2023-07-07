@@ -281,6 +281,20 @@ public class AssemblyHelper
             "any");
     }
 
+
+    public static void RemoveModuleEntityFiles(string solutionPath)
+    {
+        var entityPath = Path.Combine(solutionPath, Config.EntityPath, "Entities");
+        // remove files which cotains "Module[]"
+        string moduleSign = "[Module(";
+        var files = Directory.GetFiles(entityPath, "*.cs", SearchOption.AllDirectories)
+            .Where(s => File.ReadAllText(s).Contains(moduleSign))
+            .ToList();
+        files.ForEach(file =>
+        {
+            File.Delete(file);
+        });
+    }
 }
 public class XmlCommentMember
 {
