@@ -6,14 +6,14 @@
 <div *ngIf="!isLoading">
   <mat-toolbar class="d-flex align-items-center">
     <mat-form-field>
-      <mat-select placeholder="选择接口" [(ngModel)]="currentDoc" (selectionChange)="getDocContent()">
+      <mat-select placeholder="选择Swagger文档" [(ngModel)]="currentDoc" (selectionChange)="getDocContent()">
         <mat-option *ngFor="let item of docs" [value]="item">
           {{item.name}}
         </mat-option>
       </mat-select>
     </mat-form-field>
     <span>
-      <button mat-icon-button matTooltip="添加文档" color="primary" (click)="openAddDocDialog()">
+      <button mat-icon-button matTooltip="添加Swagger文档" color="primary" (click)="openAddDocDialog()">
         <mat-icon>note_add</mat-icon>
       </button>
       <button *ngIf="docs.length>0" mat-icon-button matTooltip="编辑文档" color="primary" (click)="openEditDocDialog()">

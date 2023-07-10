@@ -1,4 +1,4 @@
-export interface TemplateFileUpsert {
+﻿export interface TemplateFileUpsert {
   /**
    * 名称
    */

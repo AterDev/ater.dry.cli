@@ -190,8 +190,10 @@ export class IndexComponent implements OnInit {
           this.dataSource = new MatTableDataSource<EntityFile>(this.entityFiles);
 
           this.dataSource.filterPredicate = (data, filter: string) => {
-            if (data.name)
-              return data.name.toLowerCase().indexOf(filter) > -1;
+            if (data.name) {
+              return data.name.toLowerCase().indexOf(filter) > -1
+                || data.module?.toLowerCase() === filter;
+            }
             return false;
           }
         }

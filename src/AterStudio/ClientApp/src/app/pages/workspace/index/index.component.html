@@ -9,9 +9,6 @@
     <button mat-icon-button matTooltip="停止监听实体" color="primary" [disabled]="!isListening" (click)="stopWatch()">
       <mat-icon>stop_circle</mat-icon>
     </button> -->
-    <button mat-button color="primary" (click)="openSyncDialog()">
-      生成页面
-    </button>
     <button mat-button color="primary" [matMenuTriggerFor]="menu">批量操作</button>
     <mat-menu #menu="matMenu">
       <button mat-menu-item (click)="openGenerateDialog(CommandType.Dto,null)" matTooltip="生成dto,不会覆盖原内容"
@@ -29,7 +26,10 @@
 
   <div class="d-flex align-items-center mt-2 gap-1">
     <mat-form-field style="min-width: 300px;">
-      <input matInput placeholder="搜索实体类" [(ngModel)]="searchKey" (keyup)="applyFilter($event)">
+      <mat-label>
+        搜索实体
+      </mat-label>
+      <input matInput placeholder="类名或模块名" [(ngModel)]="searchKey" (keyup)="applyFilter($event)">
     </mat-form-field>
 
     <button mat-icon-button [matTooltip]="showModuleEntity?'隐藏模块实体':'显示模块实体'" (click)="toggleModule()">
@@ -197,11 +197,10 @@
   </mat-dialog-actions>
 </ng-template>
 
-
 <ng-template #ngPagesDialog>
   <h2 mat-dialog-title>生成Ng页面组件(Material)</h2>
-  <mat-dialog-content class="py-2">
-    <p>注：页面依赖模型和服务，可在接口文档中成前端请求服务！</p>
+  <mat-dialog-content class="pb-2">
+    <p>注：页面依赖ts模型和请求服务，可在Swagger中生成对应的TS代码!</p>
     <mat-form-field class="w-100">
       <mat-label>前端项目根目录</mat-label>
       <input matInput placeholder="路径" [(ngModel)]="webPath" required>
