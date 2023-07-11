@@ -1,4 +1,4 @@
-﻿import { RestApiInfo } from './rest-api-info.model';
+import { RestApiInfo } from './rest-api-info.model';
 /**
  * 接口分组信息
  */

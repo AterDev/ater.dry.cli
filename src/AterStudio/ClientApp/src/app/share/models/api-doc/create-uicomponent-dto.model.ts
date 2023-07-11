@@ -1,4 +1,4 @@
-﻿import { UIType } from '../enum/uitype.model';
+import { UIType } from '../enum/uitype.model';
 import { ComponentType } from '../enum/component-type.model';
 import { EntityInfo } from '../entity-info.model';
 /**

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 模板内容
  */
 export interface TemplateFile {
