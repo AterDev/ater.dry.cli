@@ -2,7 +2,6 @@
 using AterStudio.Manager;
 using AterStudio.Models;
 using Core.Entities;
-using Core.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AterStudio.Controllers;
@@ -22,10 +21,24 @@ public class ProjectController : ControllerBase
         _advace = advace;
     }
 
+    /// <summary>
+    /// 获取解决方案列表
+    /// </summary>
+    /// <returns></returns>
     [HttpGet]
     public List<Project> List()
     {
         return _manager.GetProjects();
+    }
+
+    /// <summary>
+    /// 获取工具版本
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("verison")]
+    public string GetVersion()
+    {
+        return _manager.GetToolVersion();
     }
 
     /// <summary>
@@ -34,9 +47,9 @@ public class ProjectController : ControllerBase
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpGet("{id}")]
-    public Project? Project([FromRoute] Guid id)
+    public async Task<Project?> ProjectAsync([FromRoute] Guid id)
     {
-        return _manager.GetProjectAsync(id);
+        return await _manager.GetProjectAsync(id);
     }
 
     [HttpGet("sub/{id}")]
@@ -144,9 +157,9 @@ public class ProjectController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet("watcher/{id}")]
-    public ActionResult<bool> GetWatcherStatus([FromRoute] Guid id)
+    public async Task<ActionResult<bool>> GetWatcherStatusAsync([FromRoute] Guid id)
     {
-        var project = _manager.GetProjectAsync(id);
+        var project = await _manager.GetProjectAsync(id);
         if (project == null)
         {
             return NotFound("不存在该项目");
@@ -154,40 +167,4 @@ public class ProjectController : ControllerBase
         return _manager.GetWatcherStatus(project);
     }
 
-    /// <summary>
-    /// 开启监测
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    [HttpPost("watcher/{id}")]
-    public ActionResult<bool> StartWatcher([FromRoute] Guid id)
-    {
-        var project = _manager.GetProjectAsync(id);
-        if (project == null)
-        {
-            return NotFound("不存在该项目");
-        }
-
-        Const.PROJECT_ID = project.ProjectId;
-        _manager.StartWatcher(project);
-        return true;
-    }
-
-    /// <summary>
-    /// 停止监测
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    [HttpDelete("watcher/{id}")]
-    public ActionResult<bool> StopWatcher([FromRoute] Guid id)
-    {
-        var project = _manager.GetProjectAsync(id);
-        if (project == null)
-        {
-            return NotFound("不存在该项目");
-        }
-        Const.PROJECT_ID = project.ProjectId;
-        _manager.StopWatcher(project);
-        return true;
-    }
 }

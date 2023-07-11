@@ -25,15 +25,24 @@ public class ProjectManager
         _projectContext = projectContext;
     }
 
+    public string GetToolVersion()
+    {
+        return AssemblyHelper.GetCurrentToolVersion();
+    }
+
     public List<Project> GetProjects()
     {
         var projects = _db.Projects.FindAll().ToList();
         projects.ForEach(async p =>
         {
-            var configFilePath = Path.Combine(p.Path, "..", Config.ConfigFileName);
-            string configJson = await File.ReadAllTextAsync(configFilePath);
-            ConfigOptions? config = JsonSerializer.Deserialize<ConfigOptions>(configJson);
-            p.Version = config!.Version;
+            if (string.IsNullOrWhiteSpace(p.Version))
+            {
+                var configFilePath = Path.Combine(p.Path, "..", Config.ConfigFileName);
+                string configJson = await File.ReadAllTextAsync(configFilePath);
+                ConfigOptions? config = JsonSerializer.Deserialize<ConfigOptions>(configJson);
+                p.Version = config!.Version;
+            }
+
         });
 
         return projects;
@@ -98,10 +107,13 @@ public class ProjectManager
     public async Task<Project> GetProjectAsync(Guid id)
     {
         var project = _db.Projects.FindById(id);
-        var configFilePath = Path.Combine(project.Path, "..", Config.ConfigFileName);
-        string configJson = await File.ReadAllTextAsync(configFilePath);
-        ConfigOptions? config = JsonSerializer.Deserialize<ConfigOptions>(configJson);
-        project.Version = config!.Version;
+        if (string.IsNullOrWhiteSpace(project.Version))
+        {
+            var configFilePath = Path.Combine(project.Path, "..", Config.ConfigFileName);
+            string configJson = await File.ReadAllTextAsync(configFilePath);
+            ConfigOptions? config = JsonSerializer.Deserialize<ConfigOptions>(configJson);
+            project.Version = config!.Version;
+        }
         return project;
     }
 
