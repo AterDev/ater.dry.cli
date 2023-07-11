@@ -1162,6 +1162,7 @@
         "tags": [
           "Project"
         ],
+        "summary": "获取解决方案列表",
         "operationId": "Project_List",
         "responses": {
           "200": {
@@ -1236,6 +1237,37 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Project/verison": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "summary": "获取工具版本",
+        "operationId": "Project_GetVersion",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
                 }
               }
             }
@@ -1674,88 +1706,6 @@
           {
             "name": "id",
             "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Project"
-        ],
-        "summary": "开启监测",
-        "operationId": "Project_StartWatcher",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Project"
-        ],
-        "summary": "停止监测",
-        "operationId": "Project_StopWatcher",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "",
             "required": true,
             "schema": {
               "type": "string",

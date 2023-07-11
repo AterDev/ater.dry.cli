@@ -53,9 +53,9 @@ public class ProjectController : ControllerBase
     }
 
     [HttpGet("sub/{id}")]
-    public List<SubProjectInfo>? GetAllProjectInfos([FromRoute] Guid id)
+    public async Task<List<SubProjectInfo>?> GetAllProjectInfosAsync([FromRoute] Guid id)
     {
-        return _manager.GetAllProjects(id);
+        return await _manager.GetAllProjectsAsync(id);
     }
 
     /// <summary>

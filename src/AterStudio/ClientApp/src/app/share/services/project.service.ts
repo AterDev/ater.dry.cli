@@ -14,7 +14,7 @@ import { TemplateFile } from '../models/project/template-file.model';
 @Injectable({ providedIn: 'root' })
 export class ProjectService extends BaseService {
   /**
-   * list
+   * 获取解决方案列表
    */
   list(): Observable<Project[]> {
     const url = `/api/Project`;
@@ -29,6 +29,14 @@ export class ProjectService extends BaseService {
   add(name: string | null, path: string | null): Observable<Project> {
     const url = `/api/Project?name=${name}&path=${path}`;
     return this.request<Project>('post', url);
+  }
+
+  /**
+   * 获取工具版本
+   */
+  getVersion(): Observable<string> {
+    const url = `/api/Project/verison`;
+    return this.request<string>('get', url);
   }
 
   /**
@@ -120,24 +128,6 @@ export class ProjectService extends BaseService {
   getWatcherStatus(id: string): Observable<boolean> {
     const url = `/api/Project/watcher/${id}`;
     return this.request<boolean>('get', url);
-  }
-
-  /**
-   * 开启监测
-   * @param id 
-   */
-  startWatcher(id: string): Observable<boolean> {
-    const url = `/api/Project/watcher/${id}`;
-    return this.request<boolean>('post', url);
-  }
-
-  /**
-   * 停止监测
-   * @param id 
-   */
-  stopWatcher(id: string): Observable<boolean> {
-    const url = `/api/Project/watcher/${id}`;
-    return this.request<boolean>('delete', url);
   }
 
 }

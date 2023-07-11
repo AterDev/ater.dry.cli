@@ -117,9 +117,9 @@ public class ProjectManager
         return project;
     }
 
-    public List<SubProjectInfo>? GetAllProjects(Guid id)
+    public async Task<List<SubProjectInfo>?> GetAllProjectsAsync(Guid id)
     {
-        var project = GetProjectAsync(id);
+        var project = await GetProjectAsync(id);
         var pathString = Path.Combine(project.Path, "../");
         var res = new List<SubProjectInfo>();
         try
