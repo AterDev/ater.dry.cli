@@ -90,8 +90,9 @@ public class UpdateManager
     /// <summary>
     /// 更新常量文件
     /// </summary>
-    public static void UpdateConst7(string applicationPath)
+    public static void UpdateConst7(string solutionPath)
     {
+        var applicationPath = Path.Combine(solutionPath, Config.ApplicationPath);
         Console.WriteLine("⬆️ Update app const.");
         string errorMsgPath = Path.Combine(applicationPath, "Const", "ErrorMsg.cs");
         string appConstPath = Path.Combine(applicationPath, "Const", "AppConst.cs");
@@ -187,7 +188,6 @@ public class UpdateManager
                 }
             }
             """, Encoding.UTF8);
-
         }
     }
 

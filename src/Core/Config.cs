@@ -8,7 +8,7 @@ public static class Config
     public static string DtoPath { get; set; } = "src/Share";
     public static string EntityPath { get; set; } = "src/Entity";
     public static string DbContextPath { get; set; } = "src/Database/EntityFramework";
-    public static string StorePath { get; set; } = "src/Application";
+    public static string ApplicationPath { get; set; } = "src/Application";
     public static string ApiPath { get; set; } = "src/Http.API";
 
     public static string SwaggerPath { get; set; } = "";
@@ -34,7 +34,7 @@ public static class Config
         IdType = configOptions.IdType;
         IsSplitController = configOptions.IsSplitController;
         EntityPath = configOptions.EntityPath;
-        StorePath = configOptions.StorePath;
+        ApplicationPath = configOptions.StorePath;
         ApiPath = configOptions.ApiPath;
         DtoPath = configOptions.DtoPath;
         CreatedTimeName = configOptions.CreatedTimeName;

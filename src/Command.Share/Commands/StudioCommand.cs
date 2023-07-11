@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
+using System.Text.Json;
 using Core.Entities;
+using Core.Infrastructure;
 using LiteDB;
 
 namespace Command.Share.Commands;
@@ -22,8 +24,11 @@ public class StudioCommand
         }
         else
         {
-            await UpdateAsync();
+            // 更新程序
+            UpdateStudio();
         }
+        // 更新项目信息
+        await UpdateProjectAsync();
 
         Console.WriteLine("🚀 start studio...");
         // 运行
@@ -81,7 +86,7 @@ public class StudioCommand
     /// <summary>
     /// 升级studio
     /// </summary>
-    public static async Task UpdateAsync()
+    public static void UpdateStudio()
     {
         Console.WriteLine($"☑️ check&update studio...");
 
@@ -130,7 +135,6 @@ public class StudioCommand
                 File.Copy(sourceFile, Path.Combine(studioPath, file + ".dll"), true);
             }
         });
-        await UpdateConfigsAsync();
         UpdateTemplate();
         Console.WriteLine("✅ update complete!");
     }
@@ -157,15 +161,17 @@ public class StudioCommand
     }
 
     /// <summary>
-    /// 更新项目配置文件
+    /// 更新项目数据
     /// </summary>
-    public static async Task UpdateConfigsAsync()
+    public static async Task UpdateProjectAsync()
     {
         var localDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AterStudio");
-        var connectionString = $"Filename={Path.Combine(localDir, "droplet.db")};Upgrade=true;initialSize=5MB";
 
+        // 更新数据库
+        var connectionString = $"Filename={Path.Combine(localDir, "droplet.db")};Upgrade=true;initialSize=5MB";
         using var db = new LiteDatabase(connectionString);
-        var projects = db.GetCollection<Project>().FindAll().ToList();
+        var collection = db.GetCollection<Project>();
+        var projects = collection.FindAll().ToList();
         foreach (var project in projects)
         {
             var path = project.Path;
@@ -174,9 +180,49 @@ public class StudioCommand
                 path = Path.Combine(project.Path, "..");
             }
             path = Path.Combine(path, Config.ConfigFileName);
-            await ConfigCommand.UpdateConfigAsync(path);
+
+            if (string.IsNullOrWhiteSpace(project.Version))
+            {
+                string configJson = await File.ReadAllTextAsync(path);
+                ConfigOptions? options = System.Text.Json.JsonSerializer.Deserialize<ConfigOptions>(configJson);
+
+                if (options != null)
+                {
+                    Const.PROJECT_ID = options.ProjectId;
+                    // 添加projectId标识 
+                    if (options.ProjectId == Guid.Empty)
+                    {
+                        options.ProjectId = Guid.NewGuid();
+                        Const.PROJECT_ID = options.ProjectId;
+                    }
+                    // 7.0配置更新
+                    if (options.Version == "7.0.0")
+                    {
+                        options.DtoPath = "src/" + options.DtoPath;
+                        options.EntityPath = "src/" + options.EntityPath;
+                        options.DbContextPath = "src/" + options.DbContextPath;
+                        options.StorePath = "src/" + options.StorePath;
+                        options.ApiPath = "src/" + options.ApiPath;
+
+                        string content = System.Text.Json.JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
+                        await File.WriteAllTextAsync(path, content, Encoding.UTF8);
+                        Console.WriteLine($" Update {project.Name} config file success");
+                    }
+
+                    // 库中版本数据
+                    project.Version = options!.Version;
+                    collection.Update(project);
+                }
+                else
+                {
+                    Console.WriteLine("config file parsing error! : " + path);
+                }
+            }
         }
         db.Dispose();
+
+
+
     }
 
     public static void CopyDirectory(string sourceDir, string destinationDir, bool recursive)

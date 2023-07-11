@@ -41,6 +41,7 @@ public class ProjectManager
                 string configJson = await File.ReadAllTextAsync(configFilePath);
                 ConfigOptions? config = JsonSerializer.Deserialize<ConfigOptions>(configJson);
                 p.Version = config!.Version;
+                _db.Projects.Update(p);
             }
 
         });
@@ -109,10 +110,9 @@ public class ProjectManager
         var project = _db.Projects.FindById(id);
         if (string.IsNullOrWhiteSpace(project.Version))
         {
-            var configFilePath = Path.Combine(project.Path, "..", Config.ConfigFileName);
-            string configJson = await File.ReadAllTextAsync(configFilePath);
-            ConfigOptions? config = JsonSerializer.Deserialize<ConfigOptions>(configJson);
-            project.Version = config!.Version;
+            var solutionPath = Path.Combine(project.Path, "..");
+            var version = await AssemblyHelper.GetSolutionVersionAsync(solutionPath);
+            project.Version = version;
         }
         return project;
     }
@@ -127,7 +127,7 @@ public class ProjectManager
         try
         {
             var path = _projectContext.SolutionPath;
-            var version = AssemblyHelper.GetCurrentToolVersion();
+            var version = await AssemblyHelper.GetSolutionVersionAsync(path!);
             var res = await UpdateManager.UpdateAsync(path!, version);
             return "成功更新到:" + res;
         }

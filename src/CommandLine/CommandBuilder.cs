@@ -40,7 +40,7 @@ public class CommandBuilder
     {
         System.CommandLine.Command studioCommand = new("studio", "studio management");
         var update = new System.CommandLine.Command("update", "update studio");
-        update.SetHandler(StudioCommand.UpdateAsync);
+        update.SetHandler(StudioCommand.UpdateStudio);
         studioCommand.SetHandler(StudioCommand.RunStudioAsync);
 
         studioCommand.AddCommand(update);

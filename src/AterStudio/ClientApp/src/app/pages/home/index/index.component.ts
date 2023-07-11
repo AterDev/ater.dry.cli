@@ -85,6 +85,7 @@ export class IndexComponent implements OnInit {
   }
   openSetting(project: Project): void {
     this.current = project;
+    this.projectState.setProject(project);
     this.isProcessing = true;
     this.service.getConfigOptions()
       .subscribe({
@@ -109,6 +110,7 @@ export class IndexComponent implements OnInit {
 
   openUpdate(project: Project): void {
     this.current = project;
+    this.projectState.setProject(project);
     this.dialogRef = this.dialog.open(this.updateTmpRef, {
       minWidth: 450,
     })
@@ -199,6 +201,7 @@ export class IndexComponent implements OnInit {
         next: (res) => {
           if (res) {
             this.snb.open(res);
+            this.dialogRef.close();
           }
         },
         error: (error) => {

@@ -116,7 +116,7 @@ public class EntityManager
     {
         bool hasDto = false; bool hasManager = false; bool hasAPI = false;
         var dtoPath = Path.Combine(path, Config.DtoPath, "Models", $"{entityName}Dtos", $"{entityName}AddDto.cs");
-        var managerPath = Path.Combine(path, Config.StorePath, "IManager", $"I{entityName}Manager.cs");
+        var managerPath = Path.Combine(path, Config.ApplicationPath, "IManager", $"I{entityName}Manager.cs");
         var apiPath = Path.Combine(path, Config.ApiPath, "Controllers", $"{entityName}Controller.cs");
 
         if (!string.IsNullOrWhiteSpace(moduleName))
@@ -195,7 +195,7 @@ public class EntityManager
         string? filePath;
         if (isManager)
         {
-            filePath = Path.Combine(_projectContext.SolutionPath!, Config.StorePath, "Manager", $"{entityName}Manager.cs");
+            filePath = Path.Combine(_projectContext.SolutionPath!, Config.ApplicationPath, "Manager", $"{entityName}Manager.cs");
 
             if (!string.IsNullOrWhiteSpace(moduleName))
             {

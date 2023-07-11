@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using System.Text.Json;
+using System.Xml.Linq;
 using NuGet.Versioning;
 
 namespace Core.Infrastructure.Helper;
@@ -165,6 +166,19 @@ public class AssemblyHelper
     public static string GetCurrentToolVersion()
     {
         return Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
+    }
+
+    /// <summary>
+    /// 获取解决方案版本
+    /// </summary>
+    /// <param name="solutionPath"></param>
+    /// <returns></returns>
+    public static async Task<string> GetSolutionVersionAsync(string solutionPath)
+    {
+        var configFilePath = Path.Combine(solutionPath, Config.ConfigFileName);
+        string configJson = await File.ReadAllTextAsync(configFilePath);
+        ConfigOptions? config = JsonSerializer.Deserialize<ConfigOptions>(configJson);
+        return config?.Version ?? "7.0";
     }
 
     /// <summary>
