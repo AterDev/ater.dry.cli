@@ -1,8 +1,7 @@
-﻿using System.Globalization;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Text.Json;
-using Core.Infrastructure.Helper;
-using LiteDB;
+
+using Core.Entities;
 
 namespace Core.Models;
 /// <summary>
@@ -34,7 +33,7 @@ public class ConfigOptions
     public string UpdatedTimeName { get; set; } = "UpdatedTime";
 
     /// <summary>
-    /// 是否拆分
+    /// 控制器是否拆分
     /// </summary>
     public bool? IsSplitController { get; set; } = false;
 
@@ -48,6 +47,7 @@ public class ConfigOptions
     /// 前端路径
     /// </summary>
     public string? WebAppPath { get; set; }
+    public SolutionType SolutionType { get; set; }
 }
 
 public class DoubleStringJsonConverter : JsonConverter<string>

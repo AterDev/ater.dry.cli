@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text.Json;
 
+using Core.Entities;
 using Core.Infrastructure;
 
 namespace Command.Share.Commands;
@@ -10,7 +11,7 @@ public class ConfigCommand
     /// <summary>
     /// 初始化配置文件
     /// </summary>
-    public static async Task InitConfigFileAsync(string? configPath = null)
+    public static async Task InitConfigFileAsync(string? configPath = null, SolutionType? solutionType = null)
     {
         configPath ??= GetConfigPath();
         Console.WriteLine("use config path:" + configPath);
@@ -21,18 +22,17 @@ public class ConfigCommand
         {
             ConfigOptions options = new()
             {
-                ProjectId = Guid.NewGuid()
+                ProjectId = Guid.NewGuid(),
             };
+            if (solutionType != null)
+            {
+                options.SolutionType = solutionType.Value;
+            }
 
             Const.PROJECT_ID = options.ProjectId;
             string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
             await File.WriteAllTextAsync(path, content, Encoding.UTF8);
             Console.WriteLine("Init config file success:" + path);
-        }
-        else
-        {
-            // 如果配置格式变了，需要更新
-            await UpdateConfigAsync(path);
         }
     }
 

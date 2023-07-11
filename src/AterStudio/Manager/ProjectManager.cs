@@ -54,6 +54,7 @@ public class ProjectManager
         // 获取并构造参数
         FileInfo projectFile = new(path);
         bool hasProjectFile = true;
+        var solutionType = SolutionType.DotNet;
         // 如果是目录
         if ((projectFile.Attributes & FileAttributes.Directory) != 0)
         {
@@ -71,7 +72,16 @@ public class ProjectManager
                 }
                 else
                 {
-                    hasProjectFile = false;
+                    projectFilePath = Directory.GetFiles(path, "package.json", SearchOption.TopDirectoryOnly).FirstOrDefault();
+                    if (projectFilePath != null)
+                    {
+                        projectFile = new FileInfo(projectFilePath);
+                        solutionType = SolutionType.Node;
+                    }
+                    else
+                    {
+                        hasProjectFile = false;
+                    }
                 }
             }
         }
@@ -79,7 +89,7 @@ public class ProjectManager
         string dir = hasProjectFile ? projectFile.DirectoryName! : projectFile.FullName;
         string configFilePath = Path.Combine(dir!, Config.ConfigFileName);
 
-        await ConfigCommand.InitConfigFileAsync(dir);
+        await ConfigCommand.InitConfigFileAsync(dir, solutionType);
         string configJson = await File.ReadAllTextAsync(configFilePath);
 
         ConfigOptions? config = JsonSerializer.Deserialize<ConfigOptions>(configJson);
@@ -91,7 +101,8 @@ public class ProjectManager
             DisplayName = name,
             Path = projectFile.FullName,
             Name = projectName,
-            Version = config.Version
+            Version = config.Version,
+            SolutionType = solutionType
         };
 
         _db.Projects.EnsureIndex(p => p.ProjectId);
