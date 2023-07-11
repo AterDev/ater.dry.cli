@@ -44,22 +44,30 @@ try {
         
         dotnet publish -c release -o ./publish
         # 移除部分 dll文件，减少体积
-        Remove-Item .\publish\Microsoft.CodeAnalysis.CSharp.dll
-        # Remove-Item .\publish\Swashbuckle.AspNetCore.SwaggerUI.dll
-        Remove-Item .\publish\Microsoft.CodeAnalysis.dll
-        Remove-Item .\publish\LiteDB.dll
-        Remove-Item .\publish\Microsoft.OpenApi.Readers.dll
-        Remove-Item .\publish\Microsoft.OpenApi.dll
-        Remove-Item .\publish\SharpYaml.dll
-        Remove-Item .\publish\AterStudio.exe
+        $pathsToRemove = @(
+            ".\publish\Microsoft.CodeAnalysis.CSharp.dll",
+            # ".\publish\Swashbuckle.AspNetCore.SwaggerUI.dll",
+            ".\publish\Microsoft.CodeAnalysis.dll",
+            ".\publish\LiteDB.dll",
+            ".\publish\Microsoft.OpenApi.Readers.dll",
+            ".\publish\Microsoft.OpenApi.dll",
+            ".\publish\SharpYaml.dll",
+            ".\publish\AterStudio.exe",
+            ".\publish\CodeGenerator.dll",
+            ".\publish\Command.Share.dll",
+            ".\publish\Core.dll",
+            ".\publish\Datastore.dll",
+            ".\publish\NuGet.Versioning.dll",
+            ".\publish\PluralizeService.Core.dll",
+            ".\publish\swagger.json"
+        )
 
-        Remove-Item .\publish\CodeGenerator.dll
-        Remove-Item .\publish\Command.Share.dll
-        Remove-Item .\publish\Core.dll
-        Remove-Item .\publish\Datastore.dll
-        Remove-Item .\publish\NuGet.Versioning.dll
-        Remove-Item .\publish\PluralizeService.Core.dll
-        Remove-Item .\publish\swagger.json
+        foreach ($path in $pathsToRemove) {
+            if (Test-Path $path) {
+                Remove-Item $path -Force
+            }
+        }
+
         Compress-Archive -Path .\publish\*  -DestinationPath "../CommandLine/studio.zip" -CompressionLevel Optimal -Force
     }
 
