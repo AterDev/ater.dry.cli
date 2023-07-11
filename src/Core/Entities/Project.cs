@@ -8,7 +8,7 @@ public class Project : EntityBase
     public required string DisplayName { get; set; }
     public required string Path { get; set; }
     public string? Version { get; set; }
-    public SolutionType SolutionType { get; set; }
+    public SolutionType? SolutionType { get; set; }
 }
 
 public enum SolutionType

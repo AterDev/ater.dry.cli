@@ -4,6 +4,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Route, Router } from '@angular/router';
 import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confirm-dialog.component';
+import { SolutionType } from 'src/app/share/models/enum/solution-type.model';
 import { ConfigOptions } from 'src/app/share/models/project/config-options.model';
 import { Project } from 'src/app/share/models/project/project.model';
 import { UpdateConfigOptionsDto } from 'src/app/share/models/project/update-config-options-dto.model';
@@ -19,7 +20,7 @@ export class IndexComponent implements OnInit {
   @ViewChild("addDialog", { static: true }) dialogTmpRef!: TemplateRef<{}>;
   @ViewChild("settingDialog", { static: true }) settingTmpRef!: TemplateRef<{}>;
   @ViewChild("updateProjectDialog", { static: true }) updateTmpRef!: TemplateRef<{}>;
-
+  SolutionType = SolutionType;
   dialogRef!: MatDialogRef<{}, any>;
   projects = [] as Project[];
   current: Project | null = null;

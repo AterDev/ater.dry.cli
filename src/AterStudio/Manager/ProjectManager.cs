@@ -38,10 +38,13 @@ public class ProjectManager
             if (string.IsNullOrWhiteSpace(p.Version))
             {
                 var configFilePath = Path.Combine(p.Path, "..", Config.ConfigFileName);
-                string configJson = await File.ReadAllTextAsync(configFilePath);
-                ConfigOptions? config = JsonSerializer.Deserialize<ConfigOptions>(configJson);
-                p.Version = config!.Version;
-                _db.Projects.Update(p);
+                if (File.Exists(configFilePath))
+                {
+                    string configJson = await File.ReadAllTextAsync(configFilePath);
+                    ConfigOptions? config = JsonSerializer.Deserialize<ConfigOptions>(configJson);
+                    p.Version = config!.Version;
+                    _db.Projects.Update(p);
+                }
             }
 
         });

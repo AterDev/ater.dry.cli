@@ -47,7 +47,7 @@ public class ConfigOptions
     /// 前端路径
     /// </summary>
     public string? WebAppPath { get; set; }
-    public SolutionType SolutionType { get; set; }
+    public SolutionType? SolutionType { get; set; }
 }
 
 public class DoubleStringJsonConverter : JsonConverter<string>

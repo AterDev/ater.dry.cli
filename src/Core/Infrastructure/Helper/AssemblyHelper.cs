@@ -1,5 +1,8 @@
 ﻿using System.Text.Json;
 using System.Xml.Linq;
+
+using Core.Entities;
+
 using NuGet.Versioning;
 
 namespace Core.Infrastructure.Helper;
@@ -173,12 +176,16 @@ public class AssemblyHelper
     /// </summary>
     /// <param name="solutionPath"></param>
     /// <returns></returns>
-    public static async Task<string> GetSolutionVersionAsync(string solutionPath)
+    public static async Task<string?> GetSolutionVersionAsync(string solutionPath)
     {
         var configFilePath = Path.Combine(solutionPath, Config.ConfigFileName);
-        string configJson = await File.ReadAllTextAsync(configFilePath);
-        ConfigOptions? config = JsonSerializer.Deserialize<ConfigOptions>(configJson);
-        return config?.Version ?? "7.0";
+        if (File.Exists(configFilePath))
+        {
+            string configJson = await File.ReadAllTextAsync(configFilePath);
+            ConfigOptions? config = JsonSerializer.Deserialize<ConfigOptions>(configJson);
+            return config?.Version;
+        }
+        return default;
     }
 
     /// <summary>
@@ -295,7 +302,10 @@ public class AssemblyHelper
             "any");
     }
 
-
+    /// <summary>
+    /// delete module entity files
+    /// </summary>
+    /// <param name="solutionPath"></param>
     public static void RemoveModuleEntityFiles(string solutionPath)
     {
         var entityPath = Path.Combine(solutionPath, Config.EntityPath, "Entities");
@@ -309,6 +319,28 @@ public class AssemblyHelper
             File.Delete(file);
         });
     }
+
+    /// <summary>
+    /// get solution type
+    /// </summary>
+    /// <param name="filePath"></param>
+    /// <returns></returns>
+    public static SolutionType? GetSolutionType(string filePath)
+    {
+        string fileName = Path.GetFileName(filePath);
+        string fileExt = Path.GetExtension(filePath);
+        if (fileName == "package.json") return SolutionType.Node;
+        switch (fileExt)
+        {
+            case ".sln":
+            case ".csproj":
+                return SolutionType.DotNet;
+            default:
+                break;
+        }
+        return default;
+    }
+
 }
 public class XmlCommentMember
 {

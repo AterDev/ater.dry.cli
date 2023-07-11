@@ -18,7 +18,7 @@
           <button mat-icon-button matTooltip="项目路径配置" color="primary" (click)="openSetting(item)">
             <mat-icon>settings</mat-icon>
           </button>
-          <button *ngIf="item.version!==version" mat-icon-button matTooltip="更新提示" color="warn"
+          <button *ngIf="item.solutionType ==SolutionType.DotNet && item.version!==version" mat-icon-button matTooltip="更新提示" color="warn"
             (click)="openUpdate(item)">
             <mat-icon>info</mat-icon>
           </button>

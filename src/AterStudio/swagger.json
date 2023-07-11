@@ -1989,7 +1989,7 @@
           },
           "isSplitController": {
             "type": "boolean",
-            "description": "是否拆分",
+            "description": "控制器是否拆分",
             "nullable": true
           },
           "version": {
@@ -2004,6 +2004,9 @@
             "type": "string",
             "description": "前端路径",
             "nullable": true
+          },
+          "solutionType": {
+            "$ref": "#/components/schemas/SolutionType"
           }
         },
         "additionalProperties": false,
@@ -2341,6 +2344,9 @@
           "version": {
             "type": "string",
             "nullable": true
+          },
+          "solutionType": {
+            "$ref": "#/components/schemas/SolutionType"
           }
         },
         "additionalProperties": false,
@@ -2537,6 +2543,19 @@
         },
         "additionalProperties": false,
         "description": "接口信息"
+      },
+      "SolutionType": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32",
+        "x-enumNames": [
+          "DotNet",
+          "Node"
+        ],
+        "x-enumData": [ ]
       },
       "SubProjectInfo": {
         "type": "object",

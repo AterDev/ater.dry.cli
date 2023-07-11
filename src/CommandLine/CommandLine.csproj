@@ -45,10 +45,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Include="studio.zip">
+		<None Include="studio.zip" Condition="Exists('studio.zip')">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Include="modules.zip">
+		<None Include="modules.zip" Condition="Exists('modules.zip')">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
@@ -61,7 +61,7 @@
 		<None Include="README.md">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
-		</None>
+		</None> 
 		<None Include="logo.jpg">
 			<Pack>True</Pack>
 			<PackagePath></PackagePath>

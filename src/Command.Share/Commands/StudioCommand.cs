@@ -2,9 +2,13 @@
 using System.IO.Compression;
 using System.Runtime.InteropServices;
 using System.Text.Json;
+
 using Core.Entities;
 using Core.Infrastructure;
+
 using LiteDB;
+
+using NuGet.Versioning;
 
 namespace Command.Share.Commands;
 public class StudioCommand
@@ -99,9 +103,11 @@ public class StudioCommand
             "Microsoft.OpenApi",
             "CodeGenerator",
             "Microsoft.OpenApi.Readers",
-            "Entity",
+            "Core",
             "Command.Share",
-            "Datastore"
+            "Datastore",
+            "NuGet.Versioning",
+            "PluralizeService.Core"
         };
 
         var version = AssemblyHelper.GetCurrentToolVersion();
@@ -174,55 +180,56 @@ public class StudioCommand
         var projects = collection.FindAll().ToList();
         foreach (var project in projects)
         {
-            var path = project.Path;
+            var solutionDir = project.Path;
             if (File.Exists(project.Path))
             {
-                path = Path.Combine(project.Path, "..");
+                solutionDir = Path.Combine(project.Path, "..");
             }
-            path = Path.Combine(path, Config.ConfigFileName);
+            solutionDir = Path.Combine(solutionDir, Config.ConfigFileName);
 
-            if (string.IsNullOrWhiteSpace(project.Version))
+            // read config file
+            string configJson = await File.ReadAllTextAsync(solutionDir);
+            ConfigOptions? options = System.Text.Json.JsonSerializer.Deserialize<ConfigOptions>(configJson);
+
+            if (options != null)
             {
-                string configJson = await File.ReadAllTextAsync(path);
-                ConfigOptions? options = System.Text.Json.JsonSerializer.Deserialize<ConfigOptions>(configJson);
-
-                if (options != null)
+                Const.PROJECT_ID = options.ProjectId;
+                // 添加projectId标识 
+                if (options.ProjectId == Guid.Empty)
                 {
+                    options.ProjectId = Guid.NewGuid();
                     Const.PROJECT_ID = options.ProjectId;
-                    // 添加projectId标识 
-                    if (options.ProjectId == Guid.Empty)
-                    {
-                        options.ProjectId = Guid.NewGuid();
-                        Const.PROJECT_ID = options.ProjectId;
-                    }
-                    // 7.0配置更新
-                    if (options.Version == "7.0.0")
-                    {
-                        options.DtoPath = "src/" + options.DtoPath;
-                        options.EntityPath = "src/" + options.EntityPath;
-                        options.DbContextPath = "src/" + options.DbContextPath;
-                        options.StorePath = "src/" + options.StorePath;
-                        options.ApiPath = "src/" + options.ApiPath;
-
-                        string content = System.Text.Json.JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
-                        await File.WriteAllTextAsync(path, content, Encoding.UTF8);
-                        Console.WriteLine($" Update {project.Name} config file success");
-                    }
-
-                    // 库中版本数据
-                    project.Version = options!.Version;
-                    collection.Update(project);
                 }
-                else
+                // 7.0配置更新
+                if (NuGetVersion.Parse(options.Version) == NuGetVersion.Parse("7.0.0"))
                 {
-                    Console.WriteLine("config file parsing error! : " + path);
+                    options.DtoPath = "src/" + options.DtoPath;
+                    options.EntityPath = "src/" + options.EntityPath;
+                    options.DbContextPath = "src/" + options.DbContextPath;
+                    options.StorePath = "src/" + options.StorePath;
+                    options.ApiPath = "src/" + options.ApiPath;
                 }
+                if (options.SolutionType == null)
+                {
+                    var type = AssemblyHelper.GetSolutionType(project.Path);
+                    options.SolutionType = type;
+                }
+
+                string content = System.Text.Json.JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
+                await File.WriteAllTextAsync(solutionDir, content, Encoding.UTF8);
+                Console.WriteLine($" Update {project.Name} config file success");
+
+                // 库中版本数据
+                project.Version = options.Version;
+                project.SolutionType = options.SolutionType;
+                collection.Update(project);
+            }
+            else
+            {
+                Console.WriteLine("config file parsing error! : " + solutionDir);
             }
         }
         db.Dispose();
-
-
-
     }
 
     public static void CopyDirectory(string sourceDir, string destinationDir, bool recursive)

@@ -1,4 +1,5 @@
-﻿/**
+﻿import { SolutionType } from '../enum/solution-type.model';
+/**
  * 项目配置
  */
 export interface ConfigOptions {
@@ -23,7 +24,7 @@ export interface ConfigOptions {
   createdTimeName: string;
   updatedTimeName: string;
   /**
-   * 是否拆分
+   * 控制器是否拆分
    */
   isSplitController?: boolean | null;
   version: string;
@@ -35,5 +36,6 @@ export interface ConfigOptions {
    * 前端路径
    */
   webAppPath?: string | null;
+  solutionType?: SolutionType | null;
 
 }

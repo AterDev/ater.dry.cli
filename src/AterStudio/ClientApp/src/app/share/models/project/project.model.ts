@@ -1,4 +1,5 @@
-﻿/**
+﻿import { SolutionType } from '../enum/solution-type.model';
+/**
  * 项目
  */
 export interface Project {
@@ -8,5 +9,6 @@ export interface Project {
   displayName: string;
   path: string;
   version?: string | null;
+  solutionType?: SolutionType | null;
 
 }
