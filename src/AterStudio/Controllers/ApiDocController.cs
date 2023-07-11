@@ -28,7 +28,7 @@ public class ApiDocController : ControllerBase
     [HttpGet("all/{id}")]
     public ActionResult<List<ApiDocInfo>> List([FromRoute] Guid id)
     {
-        var project = _project.GetProject(id);
+        var project = _project.GetProjectAsync(id);
         return project == null
             ? NotFound("不存在的项目")
             : _manager.FindAll(project);

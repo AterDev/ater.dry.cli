@@ -36,7 +36,7 @@ public class ProjectController : ControllerBase
     [HttpGet("{id}")]
     public Project? Project([FromRoute] Guid id)
     {
-        return _manager.GetProject(id);
+        return _manager.GetProjectAsync(id);
     }
 
     [HttpGet("sub/{id}")]
@@ -146,7 +146,7 @@ public class ProjectController : ControllerBase
     [HttpGet("watcher/{id}")]
     public ActionResult<bool> GetWatcherStatus([FromRoute] Guid id)
     {
-        var project = _manager.GetProject(id);
+        var project = _manager.GetProjectAsync(id);
         if (project == null)
         {
             return NotFound("不存在该项目");
@@ -162,7 +162,7 @@ public class ProjectController : ControllerBase
     [HttpPost("watcher/{id}")]
     public ActionResult<bool> StartWatcher([FromRoute] Guid id)
     {
-        var project = _manager.GetProject(id);
+        var project = _manager.GetProjectAsync(id);
         if (project == null)
         {
             return NotFound("不存在该项目");
@@ -181,7 +181,7 @@ public class ProjectController : ControllerBase
     [HttpDelete("watcher/{id}")]
     public ActionResult<bool> StopWatcher([FromRoute] Guid id)
     {
-        var project = _manager.GetProject(id);
+        var project = _manager.GetProjectAsync(id);
         if (project == null)
         {
             return NotFound("不存在该项目");

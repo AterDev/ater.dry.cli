@@ -27,7 +27,16 @@ public class ProjectManager
 
     public List<Project> GetProjects()
     {
-        return _db.Projects.FindAll().ToList();
+        var projects = _db.Projects.FindAll().ToList();
+        projects.ForEach(async p =>
+        {
+            var configFilePath = Path.Combine(p.Path, "..", Config.ConfigFileName);
+            string configJson = await File.ReadAllTextAsync(configFilePath);
+            ConfigOptions? config = JsonSerializer.Deserialize<ConfigOptions>(configJson);
+            p.Version = config!.Version;
+        });
+
+        return projects;
     }
 
     public async Task<Project?> AddProjectAsync(string name, string path)
@@ -86,14 +95,19 @@ public class ProjectManager
         return _db.Projects.Delete(id);
     }
 
-    public Project GetProject(Guid id)
+    public async Task<Project> GetProjectAsync(Guid id)
     {
-        return _db.Projects.FindById(id);
+        var project = _db.Projects.FindById(id);
+        var configFilePath = Path.Combine(project.Path, "..", Config.ConfigFileName);
+        string configJson = await File.ReadAllTextAsync(configFilePath);
+        ConfigOptions? config = JsonSerializer.Deserialize<ConfigOptions>(configJson);
+        project.Version = config!.Version;
+        return project;
     }
 
     public List<SubProjectInfo>? GetAllProjects(Guid id)
     {
-        var project = GetProject(id);
+        var project = GetProjectAsync(id);
         var pathString = Path.Combine(project.Path, "../");
         var res = new List<SubProjectInfo>();
         try
@@ -263,7 +277,7 @@ public class ProjectManager
     /// <returns></returns>
     public TemplateFile GetTemplate(Guid id, string name)
     {
-        var project = GetProject(id);
+        var project = GetProjectAsync(id);
         // 从库中获取，如果没有，则从模板中读取
         var file = _db.TemplateFile.Query()
             .Where(f => f.Name.Equals(name))

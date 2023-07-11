@@ -2356,6 +2356,10 @@
           },
           "path": {
             "type": "string"
+          },
+          "version": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false,

@@ -7,5 +7,6 @@ export interface Project {
   name: string;
   displayName: string;
   path: string;
+  version?: string | null;
 
 }
