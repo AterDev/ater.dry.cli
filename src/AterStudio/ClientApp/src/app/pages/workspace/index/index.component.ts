@@ -1,5 +1,4 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { splitNsName } from '@angular/compiler';
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -485,25 +484,4 @@ export class IndexComponent implements OnInit {
         }
       })
   }
-
-  startWatch(): void {
-    this.projectSrv.startWatcher(this.projectId)
-      .subscribe(res => {
-        if (res) {
-          this.isListening = true;
-          this.snb.open('已开始监听');
-        }
-      })
-  }
-
-  stopWatch(): void {
-    this.projectSrv.stopWatcher(this.projectId)
-      .subscribe(res => {
-        if (res) {
-          this.isListening = false;
-          this.snb.open('已停止监听');
-        }
-      })
-  }
-
 }

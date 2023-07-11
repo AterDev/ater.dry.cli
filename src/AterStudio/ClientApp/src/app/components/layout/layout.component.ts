@@ -17,6 +17,7 @@ export class LayoutComponent implements OnInit {
   type: string | null = null;
   projects = [] as Project[];
   projectName = '';
+  version: string | null = null;
   @ViewChild("projectSheet", { static: true }) projectSheet!: TemplateRef<{}>;
   bottomSheetRef!: MatBottomSheetRef<{}>;
 
@@ -45,17 +46,30 @@ export class LayoutComponent implements OnInit {
       }
     });
     this.projectName = this.projectState.project?.displayName || '';
+    this.version = this.projectState.version;
   }
+
   ngOnInit(): void {
     this.isLogin = this.auth.isLogin;
     this.isAdmin = this.auth.isAdmin;
     if (this.isLogin) {
       this.username = this.auth.userName!;
     }
-
+    this.getVersion();
     this.getProjects();
   }
 
+  getVersion(): void {
+    this.service.getVersion()
+      .subscribe({
+        next: (res) => {
+          if (res) {
+            this.projectState.setVersion(res);
+            this.version = res;
+          }
+        },
+      });
+  }
   getProjects(): void {
     this.service.list()
       .subscribe({
