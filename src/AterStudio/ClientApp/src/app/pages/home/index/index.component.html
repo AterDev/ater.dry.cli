@@ -18,6 +18,10 @@
           <button mat-icon-button matTooltip="项目路径配置" color="primary" (click)="openSetting(item)">
             <mat-icon>settings</mat-icon>
           </button>
+          <button *ngIf="item.version!==version" mat-icon-button matTooltip="更新提示" color="warn"
+            (click)="openUpdate(item)">
+            <mat-icon>info</mat-icon>
+          </button>
         </mat-card-title>
         <mat-card-subtitle>
           {{item.name}}
@@ -98,4 +102,26 @@
       <button mat-button (click)="saveSetting()" color="primary">提交修改</button>
     </mat-dialog-actions>
   </ng-container>
+</ng-template>
+
+
+
+<ng-template #updateProjectDialog>
+  <h2 mat-dialog-title>更新提示</h2>
+  <mat-dialog-content>
+    <p>项目版本
+      <span>
+        <strong>{{current?.version}}</strong>
+      </span>
+      与Studio版本不一致，请使用相同版本的Studio或升级项目！
+    </p>
+    <p>
+      <strong>⚠️ 注意：升级前请备份项目!</strong>
+    </p>
+    <p>升级后可能存在命名空间引用错误，请按照VS提示修复即可!</p>
+  </mat-dialog-content>
+  <mat-dialog-actions class="justify-content-end ">
+    <button mat-button mat-dialog-close>取消</button>
+    <button mat-button (click)="updateProject()" color="warn">升级项目</button>
+  </mat-dialog-actions>
 </ng-template>

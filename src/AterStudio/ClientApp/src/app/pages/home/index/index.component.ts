@@ -18,6 +18,8 @@ import { ProjectService } from 'src/app/share/services/project.service';
 export class IndexComponent implements OnInit {
   @ViewChild("addDialog", { static: true }) dialogTmpRef!: TemplateRef<{}>;
   @ViewChild("settingDialog", { static: true }) settingTmpRef!: TemplateRef<{}>;
+  @ViewChild("updateProjectDialog", { static: true }) updateTmpRef!: TemplateRef<{}>;
+
   dialogRef!: MatDialogRef<{}, any>;
   projects = [] as Project[];
   current: Project | null = null;
@@ -27,6 +29,7 @@ export class IndexComponent implements OnInit {
   type: string | null = null;
   isLoading = true;
   isProcessing = false;
+  version: string | null;
   constructor(
     private service: ProjectService,
     private projectState: ProjectStateService,
@@ -36,6 +39,7 @@ export class IndexComponent implements OnInit {
     public route: ActivatedRoute
   ) {
     this.type = localStorage.getItem('type');
+    this.version = projectState.version;
   }
 
   ngOnInit(): void {
@@ -101,6 +105,13 @@ export class IndexComponent implements OnInit {
           this.isProcessing = false;
         }
       });
+  }
+
+  openUpdate(project: Project): void {
+    this.current = project;
+    this.dialogRef = this.dialog.open(this.updateTmpRef, {
+      minWidth: 450,
+    })
   }
   buildSettingForm(): void {
     this.settingForm = new FormGroup({
@@ -179,6 +190,10 @@ export class IndexComponent implements OnInit {
           }
         })
     }
+  }
+
+  updateProject(): void {
+
   }
   selectProject(id: string): void {
     const project = this.projects.find(p => p.id == id);
