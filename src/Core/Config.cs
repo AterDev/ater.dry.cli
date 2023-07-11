@@ -4,9 +4,9 @@ public static class Config
 {
     public static string IdType { get; set; } = "Guid";
     public static string CreatedTimeName { get; set; } = "CreatedTime";
-    public static string Version { get; private set; } = "7.1";
+    public static string Version { get; private set; } = "8.0";
     public static string DtoPath { get; set; } = "src/Share";
-    public static string EntityPath { get; set; } = "src/Core";
+    public static string EntityPath { get; set; } = "src/Entity";
     public static string DbContextPath { get; set; } = "src/Database/EntityFramework";
     public static string StorePath { get; set; } = "src/Application";
     public static string ApiPath { get; set; } = "src/Http.API";

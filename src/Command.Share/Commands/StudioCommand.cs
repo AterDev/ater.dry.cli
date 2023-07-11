@@ -94,7 +94,7 @@ public class StudioCommand
             "Microsoft.OpenApi",
             "CodeGenerator",
             "Microsoft.OpenApi.Readers",
-            "Core",
+            "Entity",
             "Command.Share",
             "Datastore"
         };

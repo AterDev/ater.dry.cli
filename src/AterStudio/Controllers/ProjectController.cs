@@ -84,6 +84,17 @@ public class ProjectController : ControllerBase
     }
 
     /// <summary>
+    /// 更新解决方案
+    /// </summary>
+    /// <returns></returns>
+    [HttpPut("solution")]
+    public async Task<string> UpdateSolutionAsync()
+    {
+        return await _manager.UpdateSolutionAsync();
+    }
+
+
+    /// <summary>
     /// 更新配置
     /// </summary>
     /// <param name="dto"></param>

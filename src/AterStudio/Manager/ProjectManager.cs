@@ -117,6 +117,27 @@ public class ProjectManager
         return project;
     }
 
+
+    /// <summary>
+    /// 更新解决方案
+    /// </summary>
+    /// <returns></returns>
+    public async Task<string> UpdateSolutionAsync()
+    {
+        try
+        {
+            var path = _projectContext.SolutionPath;
+            var version = AssemblyHelper.GetCurrentToolVersion();
+            var res = await UpdateManager.UpdateAsync(path!, version);
+            return "成功更新到:" + res;
+        }
+        catch (Exception ex)
+        {
+            await Console.Out.WriteLineAsync(ex.Message + ex.StackTrace);
+            return ex.Message;
+        }
+    }
+
     public async Task<List<SubProjectInfo>?> GetAllProjectsAsync(Guid id)
     {
         var project = await GetProjectAsync(id);

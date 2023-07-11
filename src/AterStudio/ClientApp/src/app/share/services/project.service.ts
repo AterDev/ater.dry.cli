@@ -84,6 +84,14 @@ export class ProjectService extends BaseService {
   }
 
   /**
+   * 更新解决方案
+   */
+  updateSolution(): Observable<string> {
+    const url = `/api/Project/solution`;
+    return this.request<string>('put', url);
+  }
+
+  /**
    * 获取模板名称
    * @param id string
    */

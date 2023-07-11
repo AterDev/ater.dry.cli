@@ -193,7 +193,22 @@ export class IndexComponent implements OnInit {
   }
 
   updateProject(): void {
-
+    this.isProcessing = true;
+    this.service.updateSolution()
+      .subscribe({
+        next: (res) => {
+          if (res) {
+            this.snb.open(res);
+          }
+        },
+        error: (error) => {
+          this.snb.open(error.detail);
+          this.isProcessing = false;
+        },
+        complete: () => {
+          this.isProcessing = false;
+        }
+      });
   }
   selectProject(id: string): void {
     const project = this.projects.find(p => p.id == id);

@@ -9,7 +9,7 @@ $OutputEncoding = [System.Console]::OutputEncoding = [System.Console]::InputEnco
 $deployPath = Get-Location
 $rootPath = [IO.Path]::GetFullPath("$deployPath/..")
 $templatePath = (Join-Path $deployPath $relativePath)
-$entityPath = Join-Path $templatePath "templates" "apistd" "src" "Core" "Entities"
+$entityPath = Join-Path $templatePath "templates" "apistd" "src" "Entity"
 $commandLinePath = Join-Path $rootPath "src" "CommandLine"
 $destModulesPath = Join-Path $commandLinePath "Modules" 
 

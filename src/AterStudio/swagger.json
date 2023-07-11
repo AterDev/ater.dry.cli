@@ -1489,6 +1489,37 @@
         }
       }
     },
+    "/api/Project/solution": {
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "summary": "更新解决方案",
+        "operationId": "Project_UpdateSolution",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Project/tempaltes/{id}": {
       "get": {
         "tags": [

@@ -55,7 +55,7 @@ try {
 
         Remove-Item .\publish\CodeGenerator.dll
         Remove-Item .\publish\Command.Share.dll
-        Remove-Item .\publish\Core.dll
+        Remove-Item .\publish\Entity.dll
         Remove-Item .\publish\Datastore.dll
         Remove-Item .\publish\swagger.json
         Compress-Archive -Path .\publish\*  -DestinationPath "../CommandLine/studio.zip" -CompressionLevel Optimal -Force

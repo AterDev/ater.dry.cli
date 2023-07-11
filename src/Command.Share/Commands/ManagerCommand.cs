@@ -47,7 +47,7 @@ public class ManagerCommand : CommandBase
             await UpdateFilesAsync();
 
             // 是否为模块
-            var compilation = new CompilationHelper(ApplicationPath, "Core");
+            var compilation = new CompilationHelper(ApplicationPath, "Entity");
             var content = File.ReadAllText(EntityPath);
             compilation.AddSyntaxTree(content);
             var attributes = compilation.GetClassAttribution("Module");

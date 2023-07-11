@@ -1,18 +1,20 @@
-﻿using NuGet.Versioning;
+﻿using System.Text.Json;
+using NuGet.Versioning;
 
 namespace Command.Share;
 /// <summary>
 /// 更新管理
 /// </summary>
-internal class UpdateManager
+public class UpdateManager
 {
     /// <summary>
     /// 版本更新
     /// </summary>
     /// <param name="solutionPath"></param>
     /// <param name="currentVersion"></param>
-    public static async Task UpdateAsync(string solutionPath, string currentVersion)
+    public static async Task<string> UpdateAsync(string solutionPath, string currentVersion)
     {
+        var resVersion = currentVersion;
         var version = NuGetVersion.Parse(currentVersion);
         // 7.0->7.1
         if (version == NuGetVersion.Parse("7.0.0"))
@@ -20,12 +22,30 @@ internal class UpdateManager
             await UpdateExtensionAsync7(solutionPath);
             UpdateConst7(solutionPath);
             UpdateCustomizeAttributionAsync7(solutionPath);
+            resVersion = "7.1.0";
         }
 
         if (version == NuGetVersion.Parse("7.1.0"))
         {
-
+            resVersion = "8.0.0";
         }
+
+        // 更新配置文件
+        if (resVersion != currentVersion)
+        {
+            var configFilePath = Path.Combine(solutionPath, Config.ConfigFileName);
+            if (File.Exists(configFilePath))
+            {
+                var config = JsonSerializer.Deserialize<ConfigOptions>(File.ReadAllText(configFilePath));
+                if (config != null)
+                {
+                    config.Version = resVersion;
+                    File.WriteAllText(configFilePath, JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true }));
+                }
+            }
+        }
+
+        return resVersion;
     }
 
     #region 7.0->7.1更新
@@ -176,7 +196,7 @@ internal class UpdateManager
 
     #region 7.1更新到8.0
     /// <summary>
-    /// 
+    /// 升级到8.0
     /// </summary>
     /// <param name="solutionPath"></param>
     public static void UpdateTo8(string solutionPath)
