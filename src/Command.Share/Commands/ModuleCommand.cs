@@ -168,7 +168,7 @@ public class ModuleCommand
     private static void InitModulesCodes()
     {
         var studioPath = AssemblyHelper.GetStudioPath();
-        var version = AssemblyHelper.GetVersion();
+        var version = AssemblyHelper.GetCurrentToolVersion();
         // 仅当版本无更新，并且没有模块时解压
         if (File.Exists(Path.Combine(studioPath, $"{version}.txt")) &&
             File.Exists(Path.Combine(studioPath, "Modules")))

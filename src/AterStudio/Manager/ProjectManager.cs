@@ -72,6 +72,7 @@ public class ProjectManager
             DisplayName = name,
             Path = projectFile.FullName,
             Name = projectName,
+            Version = config.Version
         };
 
         _db.Projects.EnsureIndex(p => p.ProjectId);

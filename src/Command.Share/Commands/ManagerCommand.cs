@@ -87,8 +87,6 @@ public class ManagerCommand : CommandBase
                 await GenerateGlobalUsingsFilesAsync();
             }
 
-
-
             Console.WriteLine("😀 Manager generate completed!" + Environment.NewLine);
         }
         catch (Exception ex)

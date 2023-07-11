@@ -4,6 +4,7 @@ using System.Text.Json.Nodes;
 using CodeGenerator.Generate;
 using Core.Infrastructure.Helper;
 using Microsoft.OpenApi.Readers;
+using NuGet.Versioning;
 
 namespace CodeGenerator.Test;
 public class FunctionTest
@@ -128,6 +129,18 @@ public class FunctionTest
         JsonHelper.AddOrUpdateJsonNode(jsonNode, "AllowedHosts", "111");
 
         Console.WriteLine();
+
+    }
+
+    [Fact]
+    public void Should_Version()
+    {
+        var v70 = NuGetVersion.Parse("7.0");
+        var v700 = NuGetVersion.Parse("7.0.0");
+        var v71 = NuGetVersion.Parse("7.1");
+        var equal = (VersionComparer.Compare(v70, v700, VersionComparison.Version) == 0);
+
+        Assert.True(equal);
 
     }
 }

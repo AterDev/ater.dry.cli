@@ -15,7 +15,7 @@ public class StudioCommand
 
         int sleepTime = 1500;
         // 检查并更新
-        string version = AssemblyHelper.GetVersion();
+        string version = AssemblyHelper.GetCurrentToolVersion();
         if (File.Exists(Path.Combine(studioPath, $"{version}.txt")))
         {
             Console.WriteLine("😊 Already latest version!");
@@ -99,7 +99,7 @@ public class StudioCommand
             "Datastore"
         };
 
-        var version = AssemblyHelper.GetVersion();
+        var version = AssemblyHelper.GetCurrentToolVersion();
         var toolRootPath = AssemblyHelper.GetToolPath();
         var zipPath = Path.Combine(toolRootPath, "studio.zip");
 

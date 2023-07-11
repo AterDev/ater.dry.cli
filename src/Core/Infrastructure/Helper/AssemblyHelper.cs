@@ -159,10 +159,10 @@ public class AssemblyHelper
     }
 
     /// <summary>
-    /// 获取版本
+    /// 获取当前工具运行版本
     /// </summary>
     /// <returns></returns>
-    public static string GetVersion()
+    public static string GetCurrentToolVersion()
     {
         return Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
     }
@@ -204,7 +204,7 @@ public class AssemblyHelper
     {
         var minVersion = NuGetVersion.Parse(minVersionStr);
         var oldVerion = NuGetVersion.Parse(Config.Version);
-        var currentVersion = NuGetVersion.Parse(GetVersion());
+        var currentVersion = NuGetVersion.Parse(GetCurrentToolVersion());
 
         Console.WriteLine($"project version:{oldVerion}; studio version:{currentVersion}");
         return VersionComparer.Compare(oldVerion, minVersion, VersionComparison.Version) >= 0
