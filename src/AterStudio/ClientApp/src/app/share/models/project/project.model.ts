@@ -1,4 +1,4 @@
-import { SolutionType } from '../enum/solution-type.model';
+﻿import { SolutionType } from '../enum/solution-type.model';
 /**
  * 项目
  */

@@ -89,7 +89,12 @@ public class FeatureManager
         }
 
         // 添加项目
-        await _projectManager.AddProjectAsync(dto.Name, path);
+        var addRes = await _projectManager.AddProjectAsync(dto.Name, path);
+        if (addRes != null)
+        {
+            ErrorMsg = addRes;
+            return false;
+        }
         return true;
     }
 

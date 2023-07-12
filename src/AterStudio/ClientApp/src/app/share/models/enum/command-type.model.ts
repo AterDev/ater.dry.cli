@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 命令类型
  */
 export enum CommandType {

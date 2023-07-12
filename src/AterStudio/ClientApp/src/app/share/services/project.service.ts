@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+﻿import { Injectable } from '@angular/core';
 import { BaseService } from './base.service';
 import { Observable } from 'rxjs';
 import { UpdateConfigOptionsDto } from '../models/project/update-config-options-dto.model';
@@ -26,9 +26,9 @@ export class ProjectService extends BaseService {
    * @param name 
    * @param path 
    */
-  add(name: string | null, path: string | null): Observable<Project> {
+  add(name: string | null, path: string | null): Observable<string> {
     const url = `/api/Project?name=${name}&path=${path}`;
-    return this.request<Project>('post', url);
+    return this.request<string>('post', url);
   }
 
   /**

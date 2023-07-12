@@ -15,11 +15,12 @@
           <span>
             {{item.displayName}}
           </span>
-          <button mat-icon-button matTooltip="项目路径配置" color="primary" (click)="openSetting(item)">
+          <button *ngIf="item.solutionType==SolutionType.DotNet" mat-icon-button matTooltip="项目路径配置" color="primary"
+            (click)="openSetting(item)">
             <mat-icon>settings</mat-icon>
           </button>
-          <button *ngIf="item.solutionType ==SolutionType.DotNet && item.version!==version" mat-icon-button matTooltip="更新提示" color="warn"
-            (click)="openUpdate(item)">
+          <button *ngIf="item.solutionType==SolutionType.DotNet && item.version!==version" mat-icon-button
+            matTooltip="更新提示" color="warn" (click)="openUpdate(item)">
             <mat-icon>info</mat-icon>
           </button>
         </mat-card-title>
@@ -44,7 +45,10 @@
 </div>
 
 <ng-template #addDialog>
-  <h2 mat-dialog-title>添加项目</h2>
+  <h2 mat-dialog-title>添加项目或解决方案</h2>
+  <mat-card-subtitle>
+    仅支持.NET或Node类型项目
+  </mat-card-subtitle>
   <mat-dialog-content>
     <form [formGroup]="addForm" class="d-flex flex-column">
       <mat-form-field>
@@ -53,7 +57,7 @@
       </mat-form-field>
       <mat-form-field>
         <mat-label>项目路径</mat-label>
-        <input matInput placeholder="本地项目根目录" formControlName="path">
+        <input matInput placeholder="项目根目录路径，非文件路径" formControlName="path">
       </mat-form-field>
     </form>
   </mat-dialog-content>

@@ -121,10 +121,10 @@ public class StudioCommand
         }
         var studioPath = AssemblyHelper.GetStudioPath();
         // 删除旧文件
-        if (Directory.Exists(studioPath))
-        {
-            Directory.Delete(studioPath, true);
-        }
+        //if (Directory.Exists(studioPath))
+        //{
+        //    Directory.Delete(studioPath, true);
+        //}
 
         // 解压
         ZipFile.ExtractToDirectory(zipPath, studioPath, true);

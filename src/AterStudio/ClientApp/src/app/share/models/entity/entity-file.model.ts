@@ -1,4 +1,4 @@
-export interface EntityFile {
+﻿export interface EntityFile {
   name: string;
   /**
    * 注释说明

@@ -1,4 +1,4 @@
-export enum OperationType {
+﻿export enum OperationType {
   Get = 0,
   Put = 1,
   Post = 2,

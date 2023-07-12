@@ -52,47 +52,24 @@ public class ProjectManager
         return projects;
     }
 
-    public async Task<Project?> AddProjectAsync(string name, string path)
+    public async Task<string?> AddProjectAsync(string name, string path)
     {
         // 获取并构造参数
         FileInfo projectFile = new(path);
-        bool hasProjectFile = true;
-        var solutionType = SolutionType.DotNet;
-        // 如果是目录
-        if ((projectFile.Attributes & FileAttributes.Directory) != 0)
+        var projectFilePath = Directory.GetFiles(path, "*.sln", SearchOption.TopDirectoryOnly).FirstOrDefault();
+
+        projectFilePath ??= Directory.GetFiles(path, "*.csproj", SearchOption.TopDirectoryOnly).FirstOrDefault();
+        projectFilePath ??= Directory.GetFiles(path, "package.json", SearchOption.TopDirectoryOnly).FirstOrDefault();
+
+        if (projectFilePath == null)
         {
-            var projectFilePath = Directory.GetFiles(path, "*.sln", SearchOption.TopDirectoryOnly).FirstOrDefault();
-            if (projectFilePath != null)
-            {
-                projectFile = new FileInfo(projectFilePath);
-            }
-            else
-            {
-                projectFilePath = Directory.GetFiles(path, "*.csproj", SearchOption.TopDirectoryOnly).FirstOrDefault();
-                if (projectFilePath != null)
-                {
-                    projectFile = new FileInfo(projectFilePath);
-                }
-                else
-                {
-                    projectFilePath = Directory.GetFiles(path, "package.json", SearchOption.TopDirectoryOnly).FirstOrDefault();
-                    if (projectFilePath != null)
-                    {
-                        projectFile = new FileInfo(projectFilePath);
-                        solutionType = SolutionType.Node;
-                    }
-                    else
-                    {
-                        hasProjectFile = false;
-                    }
-                }
-            }
+            return "未找到有效的项目";
         }
+        var solutionType = AssemblyHelper.GetSolutionType(projectFilePath);
 
-        string dir = hasProjectFile ? projectFile.DirectoryName! : projectFile.FullName;
-        string configFilePath = Path.Combine(dir!, Config.ConfigFileName);
+        string configFilePath = Path.Combine(path!, Config.ConfigFileName);
 
-        await ConfigCommand.InitConfigFileAsync(dir, solutionType);
+        await ConfigCommand.InitConfigFileAsync(path, solutionType);
         string configJson = await File.ReadAllTextAsync(configFilePath);
 
         ConfigOptions? config = JsonSerializer.Deserialize<ConfigOptions>(configJson);
@@ -111,7 +88,7 @@ public class ProjectManager
         _db.Projects.EnsureIndex(p => p.ProjectId);
         _db.Projects.Insert(project);
 
-        return project;
+        return default;
     }
 
     public bool DeleteProject(Guid id)

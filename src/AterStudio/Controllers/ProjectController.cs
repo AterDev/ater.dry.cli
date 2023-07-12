@@ -65,11 +65,18 @@ public class ProjectController : ControllerBase
     /// <param name="path"></param>
     /// <returns></returns>
     [HttpPost]
-    public async Task<ActionResult<Project?>> AddAsync(string name, string path)
+    public async Task<ActionResult<string?>> AddAsync(string name, string path)
     {
-        return (!System.IO.File.Exists(path) && !Directory.Exists(path))
-            ? Problem("未找到该路径")
-            : await _manager.AddProjectAsync(name, path);
+        if (!Directory.Exists(path))
+        {
+            return Problem("未找到该路径");
+        }
+        var res = await _manager.AddProjectAsync(name, path);
+        if (res != null)
+        {
+            return Problem(res);
+        }
+        return Ok("添加成功");
     }
 
     /// <summary>
