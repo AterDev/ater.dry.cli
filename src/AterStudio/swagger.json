@@ -2078,6 +2078,9 @@
           "hasSystemLogsFeature": {
             "type": "boolean",
             "description": "系统日志模块"
+          },
+          "projectType": {
+            "$ref": "#/components/schemas/ProjectType"
           }
         },
         "additionalProperties": false,
@@ -2357,7 +2360,9 @@
           0,
           1,
           2,
-          3
+          3,
+          4,
+          5
         ],
         "type": "integer",
         "format": "int32",
@@ -2365,7 +2370,9 @@
           "Web",
           "Console",
           "Lib",
-          "Module"
+          "Module",
+          "WebAPI",
+          "GRPC"
         ],
         "x-enumData": [ ]
       },

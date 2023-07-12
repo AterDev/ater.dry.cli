@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CacheType } from 'src/app/share/models/enum/cache-type.model';
 import { DBType } from 'src/app/share/models/enum/dbtype.model';
+import { ProjectType } from 'src/app/share/models/enum/project-type.model';
 import { CreateSolutionDto } from 'src/app/share/models/feature/create-solution-dto.model';
 import { FeatureService } from 'src/app/share/services/feature.service';
 
@@ -17,6 +18,7 @@ export class CreateComponent {
   isProcess = false;
   DBType = DBType;
   CacheType = CacheType;
+  ProjectType = ProjectType;
 
   constructor(
     private service: FeatureService,
@@ -39,6 +41,7 @@ export class CreateComponent {
   get hasCmsFeature() { return this.addForm.get('hasCmsFeature'); }
   get hasUserLogsFeature() { return this.addForm.get('hasUserLogsFeature'); }
   get hasSystemLogsFeature() { return this.addForm.get('hasSystemLogsFeature'); }
+  get projectType() { return this.addForm.get('projectType'); }
 
   ngOnInit(): void {
     this.initForm();
@@ -60,6 +63,7 @@ export class CreateComponent {
       hasCmsFeature: new FormControl(false, []),
       hasUserLogsFeature: new FormControl(false, []),
       hasSystemLogsFeature: new FormControl(false, []),
+      projectType: new FormControl(ProjectType.WebAPI, [Validators.required])
     });
   }
 

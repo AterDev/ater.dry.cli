@@ -3,7 +3,7 @@
   <form [formGroup]="addForm" class="d-flex  flex-column">
     <div class="d-flex flex-column">
       <h2>基本信息 (必填项)</h2>
-      <div class="d-flex flex-row gap-1">
+      <div class="d-flex flex-row gap-1 align-items-center ">
         <mat-form-field>
           <mat-label>解决方案名称</mat-label>
           <input matInput placeholder="解决方案名称" formControlName="name" required maxlength="50" />
@@ -18,6 +18,13 @@
             路径不能为空
           </mat-error>
         </mat-form-field>
+      </div>
+      <div class="d-flex gap-1 align-items-center ">
+        <label for="">项目类型:</label>
+        <mat-radio-group aria-label="项目类型" formControlName="projectType">
+          <mat-radio-button [value]="ProjectType.WebAPI">WebAPI</mat-radio-button>
+          <mat-radio-button [value]="ProjectType.GRPC">gRPC</mat-radio-button>
+        </mat-radio-group>
       </div>
       <p *ngIf="path?.value">
         <span>生成路径: {{path?.value}}\{{name?.value}} </span>

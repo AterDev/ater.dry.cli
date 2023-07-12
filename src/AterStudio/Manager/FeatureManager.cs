@@ -29,11 +29,14 @@ public class FeatureManager
     {
         // 生成项目
         var path = Path.Combine(dto.Path, dto.Name);
+        var projectType = dto.ProjectType == ProjectType.GRPC ? "-g" : "";
+        var apiName = dto.ProjectType == ProjectType.GRPC ? "Grpc.API" : "Http.API";
+
         if (!Directory.Exists(dto.Path))
         {
             Directory.CreateDirectory(path);
         }
-        if (!ProcessHelper.RunCommand("dotnet", $"new atapi -o {path}", out _))
+        if (!ProcessHelper.RunCommand("dotnet", $"new atapi -o {path} {projectType}", out _))
         {
             ErrorMsg = "创建项目失败，请尝试使用空目录创建";
             return false;
@@ -41,7 +44,7 @@ public class FeatureManager
         await Console.Out.WriteLineAsync($"✅ create new solution {path}");
 
         // 修改配置文件
-        var configFile = Path.Combine(path, "src", "Http.API", "appsettings.json");
+        var configFile = Path.Combine(path, "src", apiName, "appsettings.json");
         var jsonString = File.ReadAllText(configFile);
         var jsonNode = JsonNode.Parse(jsonString, documentOptions: new JsonDocumentOptions
         {

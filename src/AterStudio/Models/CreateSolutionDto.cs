@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Core.Entities;
 
 namespace AterStudio.Models;
 
@@ -74,6 +75,11 @@ public class CreateSolutionDto
     /// 系统日志模块
     /// </summary>
     public bool HasSystemLogsFeature { get; set; } = false;
+
+    /// <summary>
+    /// 项目类型
+    /// </summary>
+    public ProjectType ProjectType { get; set; } = ProjectType.WebAPI;
 }
 
 public enum DBType

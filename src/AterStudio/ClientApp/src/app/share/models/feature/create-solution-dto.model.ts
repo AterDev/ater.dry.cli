@@ -1,5 +1,6 @@
 ﻿import { DBType } from '../enum/dbtype.model';
 import { CacheType } from '../enum/cache-type.model';
+import { ProjectType } from '../enum/project-type.model';
 /**
  * 创建解决方案dto
  */
@@ -54,5 +55,6 @@ export interface CreateSolutionDto {
    * 系统日志模块
    */
   hasSystemLogsFeature: boolean;
+  projectType?: ProjectType | null;
 
 }

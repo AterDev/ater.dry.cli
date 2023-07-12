@@ -27,5 +27,13 @@ public enum ProjectType
     /// <summary>
     /// 模块
     /// </summary>
-    Module
+    Module,
+    /// <summary>
+    /// 接口服务
+    /// </summary>
+    WebAPI,
+    /// <summary>
+    /// gPRC服务
+    /// </summary>
+    GRPC
 }
