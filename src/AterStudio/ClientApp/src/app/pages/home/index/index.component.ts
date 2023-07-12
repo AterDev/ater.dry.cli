@@ -55,7 +55,7 @@ export class IndexComponent implements OnInit {
   }
   addProjectDialog(): void {
     this.dialogRef = this.dialog.open(this.dialogTmpRef, {
-      minWidth: 300
+      minWidth: 360
     });
   }
 

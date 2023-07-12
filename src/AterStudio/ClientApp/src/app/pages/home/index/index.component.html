@@ -2,7 +2,7 @@
 <div class="container p-2">
   <div class="d-flex flex-row align-items-center">
     <button *ngIf=" type!='desktop'" mat-raised-button (click)="addProjectDialog()" matTooltip="添加本地已有项目"
-      color="primary">添加解决方案</button>
+      color="primary">添加项目</button>
     <a *ngIf="type!='desktop'" class="ms-2" mat-mini-fab matTooltip="创建新解决方案" routerLink="/create" color="accent">
       <mat-icon>add</mat-icon>
     </a>
@@ -11,8 +11,11 @@
   <div class="d-flex gap-1 flex-wrap mt-2" *ngIf="!isLoading">
     <mat-card *ngFor="let item of projects" class="col">
       <mat-card-header>
-        <mat-card-title class="d-flex align-items-center">
-          <span>
+        <mat-card-title class="d-flex align-items-center " style="height: 48px;">
+          <!-- insert svg icon -->
+          <img *ngIf="item.solutionType==SolutionType.DotNet" src="assets/images/dotnet.svg" height="30" width="30">
+          <img *ngIf="item.solutionType==SolutionType.Node" src="assets/images/nodejs.svg" height="30" width="30">
+          <span class="ms-1">
             {{item.displayName}}
           </span>
           <button *ngIf="item.solutionType==SolutionType.DotNet" mat-icon-button matTooltip="项目路径配置" color="primary"
@@ -24,21 +27,20 @@
             <mat-icon>info</mat-icon>
           </button>
         </mat-card-title>
-        <mat-card-subtitle>
+        <mat-card-subtitle style="font-size: 1rem;">
           {{item.name}}
         </mat-card-subtitle>
       </mat-card-header>
-      <mat-card-content style="word-break: break-all;">
-        <div>本地路径</div>
-        <span>
+      <mat-card-content style="word-break: break-all;" class="d-flex align-items-center">
+        <div class="">
           {{item.path}}
-        </span>
+        </div>
       </mat-card-content>
-      <mat-card-actions>
-        <button mat-button (click)="selectProject(item.id)" color="primary">进入工作台</button>
+      <mat-card-actions class="justify-content-end" style="height: 32px;">
         <button mat-icon-button matTooltip="删除项目" class="delete-action" (click)="deleteConfirm(item.id)">
-          <mat-icon color="warn">delete</mat-icon>
+          <mat-icon color="warn" fontSet="material-icons-outlined">delete</mat-icon>
         </button>
+        <button mat-button (click)="selectProject(item.id)" color="primary">进入工作台</button>
       </mat-card-actions>
     </mat-card>
   </div>
@@ -46,10 +48,10 @@
 
 <ng-template #addDialog>
   <h2 mat-dialog-title>添加项目或解决方案</h2>
-  <mat-card-subtitle>
-    仅支持.NET或Node类型项目
-  </mat-card-subtitle>
   <mat-dialog-content>
+    <p>
+      仅支持.NET或Node类型项目
+    </p>
     <form [formGroup]="addForm" class="d-flex flex-column">
       <mat-form-field>
         <mat-label>项目名称</mat-label>
@@ -61,7 +63,7 @@
       </mat-form-field>
     </form>
   </mat-dialog-content>
-  <mat-dialog-actions>
+  <mat-dialog-actions class="justify-content-end">
     <button mat-button mat-dialog-close>取消</button>
     <button mat-button (click)="addProject()" color="primary">确认添加</button>
   </mat-dialog-actions>
