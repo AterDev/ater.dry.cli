@@ -52,10 +52,14 @@ public class ModuleCommand
         usingsContent = usingsContent.Replace("${Module}", moduleName);
         await AssemblyHelper.GenerateFileAsync(projectPath, "GlobalUsings.cs", usingsContent);
 
-        // csproject 
         // get target version 
-        string? targetVersion = AssemblyHelper.GetTargetFramework(Path.Combine(solutionPath, "src", "Http.API", "Http.API.csproj"));
-        string csprojContent = GetCsProjectContent(targetVersion ?? "7.0");
+        string targetVersion = "7.0";
+        var csprojFiles = Directory.GetFiles(Path.Combine(solutionPath, Config.ApiPath), "*.csproj", SearchOption.TopDirectoryOnly).FirstOrDefault();
+        if (csprojFiles != null)
+        {
+            targetVersion = AssemblyHelper.GetTargetFramework(csprojFiles) ?? "7.0";
+        }
+        string csprojContent = GetCsProjectContent(targetVersion);
         await AssemblyHelper.GenerateFileAsync(projectPath, $"{moduleName}.csproj", csprojContent);
 
         try
@@ -151,11 +155,11 @@ public class ModuleCommand
                 Console.WriteLine("✅ add project ➡️ solution!");
             }
         }
-        var apiFile = Path.Combine(dirPath, Config.ApiPath, "Http.API.csproj");
-        if (File.Exists(apiFile))
+        var csprojFiles = Directory.GetFiles(Path.Combine(dirPath, Config.ApiPath), "*.csproj", SearchOption.TopDirectoryOnly).FirstOrDefault();
+        if (File.Exists(csprojFiles))
         {
             // 添加到主服务
-            if (!ProcessHelper.RunCommand("dotnet", $"add {apiFile} reference {projectPath}", out string error))
+            if (!ProcessHelper.RunCommand("dotnet", $"add {csprojFiles} reference {projectPath}", out string error))
             {
                 Console.WriteLine("add project reference failed:" + error);
             }
