@@ -201,7 +201,11 @@ public class UpdateManager
     /// <param name="solutionPath"></param>
     public static void UpdateTo8(string solutionPath)
     {
-
+        // 添加Infrastructure
+        // 迁移原Core到新Entity
+        // Application修改
+        // Share修改
+        // 其他
     }
     #endregion
 }
