@@ -34,17 +34,19 @@ public class EntityManager
         {
             Config.EntityPath = Config.EntityPath.Replace('\\', Path.DirectorySeparatorChar)
                 .Replace('/', Path.DirectorySeparatorChar);
-            string entityPath = Path.Combine(_projectContext.SolutionPath!, Config.EntityPath, "Entities");
+            string entityPath = Path.Combine(_projectContext.SolutionPath!, Config.EntityPath);
             // get files in directory
             List<string> filePaths = Directory.GetFiles(entityPath, "*.cs", SearchOption.AllDirectories).ToList();
 
             if (filePaths.Any())
             {
-                filePaths = filePaths.Where(f => !f.EndsWith(".g.cs")
-                    && !f.EndsWith(".AssemblyAttributes.cs")
-                    && !f.EndsWith(".AssemblyInfo.cs")
-                    && !f.EndsWith("EntityBase.cs")
-                    )
+                filePaths = filePaths.Where(f => !(f.EndsWith(".g.cs")
+                    || f.EndsWith(".AssemblyAttributes.cs")
+                    || f.EndsWith(".AssemblyInfo.cs")
+                    || f.EndsWith("GlobalUsings.cs")
+                    || f.EndsWith("Base.cs"))
+                    ).Where(f => Path.GetDirectoryName(f)!.EndsWith("Entities")
+                    || Path.GetDirectoryName(f)!.EndsWith("Entity"))
                     .ToList();
 
                 var compilation = new CompilationHelper(Path.Combine(_projectContext.SolutionPath!, Config.EntityPath));
