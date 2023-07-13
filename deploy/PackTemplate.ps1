@@ -1,3 +1,5 @@
+# 打包模板中的内容，主要包含模块以及基础设施项目
+
 [CmdletBinding()]
 param (
     [Parameter()]
@@ -11,11 +13,13 @@ $rootPath = [IO.Path]::GetFullPath("$deployPath/..")
 $templatePath = (Join-Path $deployPath $relativePath)
 $entityPath = Join-Path $templatePath "templates" "apistd" "src" "Entity"
 $commandLinePath = Join-Path $rootPath "src" "CommandLine"
-$destModulesPath = Join-Path $commandLinePath "Modules" 
+$destPath = Join-Path $commandLinePath "template"
+$destModulesPath = Join-Path $destPath "Modules" 
+$destInfrastructure = Join-Path $destPath "Infrastructure"
 
 # 目标目录
 if (!(Test-Path $destModulesPath)) {
-    New-Item -ItemType Directory -Path $destModulesPath | Out-Null
+    New-Item -ItemType Directory -Path $destModulesPath -Force | Out-Null
 }
 
 # 获取模块实体文件
@@ -59,12 +63,18 @@ foreach ($moduleName in $modulesNames) {
     Remove-Item $pathsToRemove -Recurse -Force -ErrorAction SilentlyContinue
 }
 
+# copy Infrastructure
+$infrastructurePath = Join-Path $templatePath "templates" "apistd" "src" "Infrastructure"
+Copy-Item $infrastructurePath $destInfrastructure -Recurse -Force
+Remove-Item "$destInfrastructure/**/obj" -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item "$destInfrastructure/**/bin" -Recurse -Force -ErrorAction SilentlyContinue
+
 # zip
-$zipPath = Join-Path $commandLinePath "modules.zip"
-Compress-Archive -Path $destModulesPath -DestinationPath $zipPath -CompressionLevel Optimal -Force
+$zipPath = Join-Path $commandLinePath "template.zip"
+Compress-Archive -Path $destModulesPath, $destInfrastructure -DestinationPath $zipPath -CompressionLevel Optimal -Force
 Write-Host "🗜️ $zipPath"
 
 # remove modules
-Remove-Item $destModulesPath -Recurse -Force -ErrorAction SilentlyContinue
-Write-Host "🗑️ $destModulesPath"
+Remove-Item $destPath -Recurse -Force -ErrorAction SilentlyContinue
+Write-Host "🗑️ $destPath"
 

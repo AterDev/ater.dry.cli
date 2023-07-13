@@ -4,6 +4,7 @@
 /// </summary>
 public class Project : EntityBase
 {
+
     public required string Name { get; set; }
     public required string DisplayName { get; set; }
     public required string Path { get; set; }

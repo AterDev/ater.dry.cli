@@ -33,7 +33,7 @@ try {
     $xml.Save($path)
 
     # pack modules  use PackModules.ps1
-    & "./PackModules.ps1"
+    & "./PackTemplate.ps1"
 
     # build web project
     if ($withStudio -eq $true) {
