@@ -48,7 +48,7 @@
 		<None Include="studio.zip" Condition="Exists('studio.zip')">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Include="modules.zip" Condition="Exists('modules.zip')">
+		<None Include="template.zip" Condition="Exists('template.zip')">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>

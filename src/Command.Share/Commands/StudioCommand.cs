@@ -112,7 +112,8 @@ public class StudioCommand
 
         var version = AssemblyHelper.GetCurrentToolVersion();
         var toolRootPath = AssemblyHelper.GetToolPath();
-        var zipPath = Path.Combine(toolRootPath, "studio.zip");
+        var zipPath = Path.Combine(toolRootPath, Const.StudioZip);
+        var templatePath = Path.Combine(toolRootPath, Const.TemplateZip);
 
         if (!File.Exists(zipPath))
         {
@@ -127,11 +128,13 @@ public class StudioCommand
         }
 
         // 解压
+        if (File.Exists(templatePath))
+        {
+            ZipFile.ExtractToDirectory(templatePath, studioPath, true);
+        }
         ZipFile.ExtractToDirectory(zipPath, studioPath, true);
-
         // create version file
         File.Create(Path.Combine(studioPath, $"{version}.txt")).Close();
-
         // copy其他文件以及runtimes目录
         copyFiles.ToList().ForEach(file =>
         {

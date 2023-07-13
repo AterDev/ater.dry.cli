@@ -1,5 +1,4 @@
-﻿using System.IO.Compression;
-using Core.Infrastructure;
+﻿using Core.Infrastructure;
 using PluralizeService.Core;
 
 namespace Command.Share.Commands;
@@ -27,7 +26,6 @@ public class ModuleCommand
     /// <param name="moduleName"></param>
     public static async Task CreateModuleAsync(string solutionPath, string moduleName)
     {
-        InitModulesCodes();
         var moduleDir = Path.Combine(solutionPath, "src", "Modules");
 
         if (!Directory.Exists(moduleDir))
@@ -167,33 +165,6 @@ public class ModuleCommand
     }
 
     /// <summary>
-    /// 初始化模块源代码
-    /// </summary>
-    private static void InitModulesCodes()
-    {
-        var studioPath = AssemblyHelper.GetStudioPath();
-        var version = AssemblyHelper.GetCurrentToolVersion();
-        // 仅当版本无更新，并且没有模块时解压
-        if (File.Exists(Path.Combine(studioPath, $"{version}.txt")) &&
-            File.Exists(Path.Combine(studioPath, "Modules")))
-        {
-            return;
-        }
-
-        var toolPath = AssemblyHelper.GetToolPath();
-        var moduleFile = Path.Combine(toolPath, Const.ModulesZip);
-        if (File.Exists(moduleFile))
-        {
-            // 清理原内容
-            if (Directory.Exists(Path.Combine(studioPath, "Modules")))
-            {
-                Directory.Delete(Path.Combine(studioPath, "Modules"), true);
-            }
-            ZipFile.ExtractToDirectory(moduleFile, studioPath, true);
-        }
-    }
-
-    /// <summary>
     /// 添加默认模块
     /// </summary>
     /// <param name="moduleName"></param>
@@ -204,7 +175,6 @@ public class ModuleCommand
         {
             return;
         }
-        InitModulesCodes();
         var studioPath = AssemblyHelper.GetStudioPath();
         var sourcePath = Path.Combine(studioPath, "Modules", moduleName);
         if (!Directory.Exists(sourcePath))
