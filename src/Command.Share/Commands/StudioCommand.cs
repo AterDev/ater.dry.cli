@@ -235,7 +235,7 @@ public class StudioCommand
         db.Dispose();
     }
 
-    public static void CopyDirectory(string sourceDir, string destinationDir, bool recursive)
+    public static void CopyDirectory(string sourceDir, string destinationDir, bool recursive = true)
     {
         var dir = new DirectoryInfo(sourceDir);
 

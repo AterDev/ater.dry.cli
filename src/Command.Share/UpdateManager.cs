@@ -202,6 +202,25 @@ public class UpdateManager
     public static void UpdateTo8(string solutionPath)
     {
         // 添加Infrastructure
+        var studioPath = AssemblyHelper.GetStudioPath();
+        var fromDir = Path.Combine(studioPath, "Infrastructure");
+        var destDir = Path.Combine(solutionPath, "src", "Infrastructure");
+        // copy Infrastructure
+        if (Directory.Exists(fromDir))
+        {
+            if (Directory.Exists(destDir))
+            {
+                Directory.Delete(destDir, true);
+            }
+            Directory.CreateDirectory(destDir);
+            StudioCommand.CopyDirectory(fromDir, destDir);
+        }
+        else
+        {
+            Console.WriteLine($"⚠️ can't find {fromDir}");
+        }
+
+
         // 迁移原Core到新Entity
         // Application修改
         // Share修改

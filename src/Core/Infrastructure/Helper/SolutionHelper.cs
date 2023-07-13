@@ -21,6 +21,47 @@ public class SolutionHelper : IDisposable
     }
 
 
+    /// <summary>
+    /// 添加项目
+    /// </summary>
+    /// <param name="projectPath"></param>
+    /// <returns></returns>
+    public async Task AddExistProject(string projectPath)
+    {
+        var file = new FileInfo(projectPath);
+        var project = await Workspace.OpenProjectAsync(file.FullName);
+
+        var projectInfo = ProjectInfo.Create(ProjectId.CreateNewId(), VersionStamp.Create(), project.Name, project.AssemblyName, project.Language, projectPath, project.OutputFilePath);
+        Solution = Workspace.CurrentSolution.AddProject(projectInfo);
+
+    }
+
+    /// <summary>
+    /// 添加项目引用
+    /// </summary>
+    /// <param name="currentProject"></param>
+    /// <param name="referenceProject"></param>
+    public void AddProjectRefrence(Project currentProject, Project referenceProject)
+    {
+        _ = Workspace.CurrentSolution.AddProjectReference(currentProject.Id, new ProjectReference(referenceProject.Id));
+    }
+
+
+    public void RenameNamespace(string oldName, string newName, string? projectName = null)
+    {
+
+    }
+
+    public void RemoveProject(string projectPath)
+    {
+
+    }
+
+    public void RemoveProjectReference(Project currentProject, Project referenceProjectPath)
+    {
+
+    }
+
 
     public void Dispose()
     {
