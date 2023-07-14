@@ -18,9 +18,18 @@ public class SolutionHelper : IDisposable
             throw new FileNotFoundException("解决方案文件不存在");
         }
 
-        Workspace = MSBuildWorkspace.Create();
-        Solution = Workspace.OpenSolutionAsync(path).Result;
-        Projects = Solution.Projects.ToList();
+        try
+        {
+            Workspace = MSBuildWorkspace.Create();
+            Solution = Workspace.OpenSolutionAsync(path).Result;
+            Projects = Solution.Projects.ToList();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            throw;
+        }
+
     }
 
 
@@ -133,6 +142,11 @@ public class SolutionHelper : IDisposable
             // update document to solution
             Solution = Solution.WithDocumentSyntaxRoot(document.Id, document.GetSyntaxRootAsync().Result!);
         }
+    }
+
+    public bool Save()
+    {
+        return Workspace.TryApplyChanges(Solution);
     }
 
     public void Dispose()

@@ -46,8 +46,13 @@ try {
         # 移除部分 dll文件，减少体积
         $pathsToRemove = @(
             ".\publish\Microsoft.CodeAnalysis.CSharp.dll",
-            # ".\publish\Swashbuckle.AspNetCore.SwaggerUI.dll",
+            ".\publish\Microsoft.CodeAnalysis.Workspaces.dll",
             ".\publish\Microsoft.CodeAnalysis.dll",
+            ".\publish\Microsoft.CodeAnalysis.CSharp.Workspaces.dll",
+            ".\publish\Microsoft.CodeAnalysis.Workspaces.MSBuild.dll"
+            ".\publish\Microsoft.Build.dll",
+            ".\publish\Microsoft.Build.Framework.dll",
+            ".\publish\Humanizer.dll",
             ".\publish\LiteDB.dll",
             ".\publish\Microsoft.OpenApi.Readers.dll",
             ".\publish\Microsoft.OpenApi.dll",

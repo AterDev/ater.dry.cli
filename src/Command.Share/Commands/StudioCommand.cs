@@ -96,8 +96,14 @@ public class StudioCommand
 
         var copyFiles = new string[]
         {
-            "Microsoft.CodeAnalysis.CSharp",
             "Microsoft.CodeAnalysis",
+            "Microsoft.CodeAnalysis.CSharp",
+            "Microsoft.CodeAnalysis.Workspaces",
+            "Microsoft.CodeAnalysis.Workspaces.MSBuild",
+            "Microsoft.CodeAnalysis.CSharp.Workspaces",
+            "Microsoft.Build",
+            "Microsoft.Build.Framework",
+            "Humanizer",
             "LiteDB",
             "SharpYaml",
             "Microsoft.OpenApi",

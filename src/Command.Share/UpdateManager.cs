@@ -37,11 +37,12 @@ public class UpdateManager
 
         if (version == NuGetVersion.Parse("7.1.0"))
         {
-            await UpdateTo8Async(solutionPath);
-            return "8.0.0";
+            var res = await UpdateTo8Async(solutionPath);
+            if (res)
+            {
+                return "8.0.0";
+            }
         }
-
-
 
         return version.ToString();
     }
@@ -239,7 +240,15 @@ public class UpdateManager
 
 
             // 迁移原Core到新Entity
-            solution.RemoveProject(Path.Combine(studioPath, Config.EntityPath));
+            var coreProjectFilePath = Directory.GetFiles(Path.Combine(solutionPath, Config.EntityPath), "*.csproj", SearchOption.TopDirectoryOnly).FirstOrDefault();
+
+            if (coreProjectFilePath == null)
+            {
+                Console.WriteLine($"Orignal Core project not found:{0}", coreProjectFilePath);
+                return false;
+            }
+            solution.RemoveProject(coreProjectFilePath);
+
             var entitiesDir = Path.Combine(solutionPath, Config.EntityPath, "Entities");
             destDir = Path.Combine(solutionPath, "src", "Entity");
             Directory.Move(entitiesDir, destDir);
@@ -279,7 +288,6 @@ public class UpdateManager
             });
 
             // Application修改
-
             // 结构调整
             var applicationDir = Path.Combine(solutionPath, Config.ApplicationPath);
             var appAssemblyName = Config.ApplicationPath.Split('/').Last();
@@ -361,6 +369,13 @@ public class UpdateManager
             solution.AddProjectRefrence(dtoProject, entityProject);
             solution.AddProjectRefrence(entityFrameworkProject, entityProject);
             solution.AddProjectRefrence(applicationProject, aterAbstractureProject);
+
+            var saved = solution.Save();
+            if (!saved)
+            {
+                await Console.Out.WriteLineAsync("Save solution failed!");
+                return false;
+            }
 
             // 配置文件等
             var configFile = Path.Combine(solutionPath, Config.ConfigFileName);

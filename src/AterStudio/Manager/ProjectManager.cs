@@ -122,7 +122,7 @@ public class ProjectManager
         try
         {
             var path = _projectContext.Project.Path;
-            var version = await AssemblyHelper.GetSolutionVersionAsync(path!);
+            var version = await AssemblyHelper.GetSolutionVersionAsync(_projectContext.SolutionPath!);
             var res = await UpdateManager.UpdateAsync(path!, version);
             return "成功更新到:" + res;
         }
