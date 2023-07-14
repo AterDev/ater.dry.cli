@@ -7,7 +7,9 @@ namespace Core.Infrastructure.Helper;
 public class SolutionHelper : IDisposable
 {
     public MSBuildWorkspace Workspace { get; set; }
-    public Solution Solution { get; set; }
+    protected Solution Solution { get; set; }
+
+    public List<Project> Projects { get; set; }
 
     public SolutionHelper(string path)
     {
@@ -18,6 +20,7 @@ public class SolutionHelper : IDisposable
 
         Workspace = MSBuildWorkspace.Create();
         Solution = Workspace.OpenSolutionAsync(path).Result;
+        Projects = Solution.Projects.ToList();
     }
 
 

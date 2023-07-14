@@ -95,15 +95,17 @@ public class ModuleCommand
             global using System.Diagnostics;
             global using System.Linq.Expressions;
             global using Application.Const;
+            global using Application.IManager;
             global using Application.Implement;
-            global using Application.Interface;
             global using ${Module}.Infrastructure;
-            global using Core.Utils;
+            global using Entity.{Module}Entities;
+            global using Ater.Web.Core.Models;
+            global using Ater.Web.Core.Utils;
             global using Microsoft.AspNetCore.Authorization;
             global using Microsoft.AspNetCore.Mvc;
             global using Microsoft.EntityFrameworkCore;
             global using Microsoft.Extensions.Logging;
-            global using Share.Models;
+            
             """;
     }
 

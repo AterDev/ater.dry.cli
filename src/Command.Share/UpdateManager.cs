@@ -10,11 +10,11 @@ public class UpdateManager
     /// <summary>
     /// 版本更新
     /// </summary>
-    /// <param name="solutionPath"></param>
-    /// <param name="currentVersion"></param>
-    public static async Task<string> UpdateAsync(string solutionPath, string currentVersion)
+    /// <param name="solutionFilePath"></param>
+    /// <param name="currentVersion"></param>11
+    public static async Task<string> UpdateAsync(string solutionFilePath, string currentVersion)
     {
-        var resVersion = currentVersion;
+        var solutionPath = Path.GetDirectoryName(solutionFilePath)!;
         var version = NuGetVersion.Parse(currentVersion);
         // 7.0->7.1
         if (version == NuGetVersion.Parse("7.0.0"))
@@ -22,30 +22,28 @@ public class UpdateManager
             await UpdateExtensionAsync7(solutionPath);
             UpdateConst7(solutionPath);
             UpdateCustomizeAttributionAsync7(solutionPath);
-            resVersion = "7.1.0";
-        }
-
-        if (version == NuGetVersion.Parse("7.1.0"))
-        {
-            resVersion = "8.0.0";
-        }
-
-        // 更新配置文件
-        if (resVersion != currentVersion)
-        {
             var configFilePath = Path.Combine(solutionPath, Config.ConfigFileName);
             if (File.Exists(configFilePath))
             {
                 var config = JsonSerializer.Deserialize<ConfigOptions>(File.ReadAllText(configFilePath));
                 if (config != null)
                 {
-                    config.Version = resVersion;
+                    config.Version = "7.1.0";
                     File.WriteAllText(configFilePath, JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true }));
                 }
+                return "7.1.0";
             }
         }
 
-        return resVersion;
+        if (version == NuGetVersion.Parse("7.1.0"))
+        {
+            await UpdateTo8Async(solutionPath);
+            return "8.0.0";
+        }
+
+
+
+        return version.ToString();
     }
 
     #region 7.0->7.1更新
@@ -167,7 +165,10 @@ public class UpdateManager
 
         if (!File.Exists(path))
         {
-            File.Delete(oldFile);
+            if (File.Exists(oldFile))
+            {
+                File.Delete(oldFile);
+            }
             File.WriteAllTextAsync(path, """
             namespace Core;
 
@@ -193,19 +194,22 @@ public class UpdateManager
 
     #endregion
 
-
     #region 7.1更新到8.0
     /// <summary>
     /// 升级到8.0
     /// </summary>
     /// <param name="solutionPath"></param>
-    public static async Task UpdateTo8Async(string solutionPath)
+    public static async Task<bool> UpdateTo8Async(string solutionPath)
     {
         var solutionFilePath = Directory.GetFiles(solutionPath, "*.sln", SearchOption.TopDirectoryOnly).FirstOrDefault();
+
+        var aterCoreName = "Ater.Web.Core";
+        var aterAbstracture = "Ater.Web.Abstracture";
+
         if (solutionFilePath == null)
         {
             Console.WriteLine("⚠️ can't find sln file");
-            return;
+            return false;
         }
         try
         {
@@ -225,8 +229,8 @@ public class UpdateManager
                 Directory.CreateDirectory(destDir);
                 StudioCommand.CopyDirectory(fromDir, destDir);
                 // add to solution
-                await solution.AddExistProjectAsync(Path.Combine(destDir, "Ater.Web.Core", "Ater.Web.Core.csproj"));
-                await solution.AddExistProjectAsync(Path.Combine(destDir, "Ater.Web.Abstracture", "Ater.Web.Abstracture.csproj"));
+                await solution.AddExistProjectAsync(Path.Combine(destDir, aterCoreName, $"{aterCoreName}.csproj"));
+                await solution.AddExistProjectAsync(Path.Combine(destDir, aterAbstracture, $"{aterAbstracture}.csproj"));
             }
             else
             {
@@ -322,9 +326,6 @@ public class UpdateManager
                 var commands = packageNames.Select(p => $"dotnet remove {appProjectFile} package " + p).ToArray();
                 ProcessHelper.ExecuteCommands(commands);
             }
-            //
-
-            // TODO:配置文件等
 
             // rename namespace
             solution.RenameNamespace("Core.Entities", "Entity");
@@ -334,10 +335,55 @@ public class UpdateManager
 
             // 重构项目依赖关系
 
+            var entityProject = solution.Projects.FirstOrDefault(p => p.Name == "Entity");
+            var aterCoreProject = solution.Projects.FirstOrDefault(p => p.Name == aterCoreName);
+
+            var applicationProject = solution.Projects.FirstOrDefault(p => p.Name == appAssemblyName);
+            var aterAbstractureProject = solution.Projects.FirstOrDefault(p => p.Name == aterAbstracture);
+
+            var dtoProject = solution.Projects.FirstOrDefault(p => p.Name == "Share");
+            var entityFrameworkProject = solution.Projects.FirstOrDefault(p => p.Name == "EntityFramework");
+
+            if (entityProject == null || aterCoreProject == null || applicationProject == null || aterAbstractureProject == null || dtoProject == null || entityFrameworkProject == null)
+            {
+                Console.WriteLine("⚠️ 项目依赖关系重构失败，缺失的项目关系:" +
+                    "\nentityProject:" + entityProject?.Name +
+                    "\naterCoreProject:" + aterCoreProject?.Name +
+                    "\napplicationProject:" + applicationProject?.Name +
+                    "\naterAbstractureProject:" + aterAbstractureProject?.Name +
+                    "\ndtoProject:" + dtoProject?.Name +
+                    "\nentityFrameworkProject:" + entityFrameworkProject?.Name
+                    );
+                return false;
+            }
+
+            solution.AddProjectRefrence(entityProject, aterCoreProject);
+            solution.AddProjectRefrence(dtoProject, entityProject);
+            solution.AddProjectRefrence(entityFrameworkProject, entityProject);
+            solution.AddProjectRefrence(applicationProject, aterAbstractureProject);
+
+            // 配置文件等
+            var configFile = Path.Combine(solutionPath, Config.ConfigFileName);
+            var config = JsonSerializer.Deserialize<ConfigOptions>(File.ReadAllText(configFile));
+            if (config != null)
+            {
+                config.EntityPath = "src/Entity";
+                config.Version = "8.0.0";
+                config.SolutionType = Core.Entities.SolutionType.DotNet;
+
+                File.WriteAllText(configFile, JsonSerializer.Serialize(config, new JsonSerializerOptions()
+                {
+                    WriteIndented = true
+                }));
+                return true;
+            }
+            return false;
+
         }
         catch (Exception ex)
         {
             Console.WriteLine("error when update solution:" + ex.Message);
+            return false;
         }
 
     }

@@ -74,12 +74,12 @@ public class ProjectManager
 
         ConfigOptions? config = JsonSerializer.Deserialize<ConfigOptions>(configJson);
 
-        string projectName = Path.GetFileNameWithoutExtension(projectFile.FullName);
+        string projectName = Path.GetFileNameWithoutExtension(projectFilePath);
         Project project = new()
         {
             ProjectId = config!.ProjectId,
             DisplayName = name,
-            Path = projectFile.FullName,
+            Path = projectFilePath,
             Name = projectName,
             Version = config.Version,
             SolutionType = solutionType
@@ -115,9 +115,13 @@ public class ProjectManager
     /// <returns></returns>
     public async Task<string> UpdateSolutionAsync()
     {
+        if (_projectContext.Project == null)
+        {
+            return "未找到有效的项目";
+        }
         try
         {
-            var path = _projectContext.SolutionPath;
+            var path = _projectContext.Project.Path;
             var version = await AssemblyHelper.GetSolutionVersionAsync(path!);
             var res = await UpdateManager.UpdateAsync(path!, version);
             return "成功更新到:" + res;
