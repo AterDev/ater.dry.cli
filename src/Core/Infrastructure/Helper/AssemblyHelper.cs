@@ -341,6 +341,24 @@ public class AssemblyHelper
         return default;
     }
 
+    /// <summary>
+    /// 移除项目包
+    /// </summary>
+    /// <param name="projectPath"></param>
+    /// <param name="packageNames"></param>
+    public static void RemovePackageReference(string projectPath, string[] packageNames)
+    {
+        packageNames.ToList().ForEach(package =>
+        {
+            if (!ProcessHelper.RunCommand("dotnet", $"remove {projectPath} package {string.Join(" ", packageNames)}", out string error))
+            {
+                Console.WriteLine("dotnet remove error:" + error);
+            }
+        });
+
+
+    }
+
 }
 public class XmlCommentMember
 {

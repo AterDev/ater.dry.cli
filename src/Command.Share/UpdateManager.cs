@@ -199,32 +199,147 @@ public class UpdateManager
     /// 升级到8.0
     /// </summary>
     /// <param name="solutionPath"></param>
-    public static void UpdateTo8(string solutionPath)
+    public static async Task UpdateTo8Async(string solutionPath)
     {
-        // 添加Infrastructure
-        var studioPath = AssemblyHelper.GetStudioPath();
-        var fromDir = Path.Combine(studioPath, "Infrastructure");
-        var destDir = Path.Combine(solutionPath, "src", "Infrastructure");
-        // copy Infrastructure
-        if (Directory.Exists(fromDir))
+        var solutionFilePath = Directory.GetFiles(solutionPath, "*.sln", SearchOption.TopDirectoryOnly).FirstOrDefault();
+        if (solutionFilePath == null)
         {
-            if (Directory.Exists(destDir))
+            Console.WriteLine("⚠️ can't find sln file");
+            return;
+        }
+        try
+        {
+            var solution = new SolutionHelper(solutionFilePath);
+
+            // 添加Infrastructure
+            var studioPath = AssemblyHelper.GetStudioPath();
+            var fromDir = Path.Combine(studioPath, "Infrastructure");
+            var destDir = Path.Combine(solutionPath, "src", "Infrastructure");
+            // copy Infrastructure
+            if (Directory.Exists(fromDir))
             {
-                Directory.Delete(destDir, true);
+                if (Directory.Exists(destDir))
+                {
+                    Directory.Delete(destDir, true);
+                }
+                Directory.CreateDirectory(destDir);
+                StudioCommand.CopyDirectory(fromDir, destDir);
+                // add to solution
+                await solution.AddExistProjectAsync(Path.Combine(destDir, "Ater.Web.Core", "Ater.Web.Core.csproj"));
+                await solution.AddExistProjectAsync(Path.Combine(destDir, "Ater.Web.Abstracture", "Ater.Web.Abstracture.csproj"));
             }
-            Directory.CreateDirectory(destDir);
-            StudioCommand.CopyDirectory(fromDir, destDir);
+            else
+            {
+                Console.WriteLine($"⚠️ can't find {fromDir}");
+            }
+
+
+            // 迁移原Core到新Entity
+            solution.RemoveProject(Path.Combine(studioPath, Config.EntityPath));
+            var entitiesDir = Path.Combine(solutionPath, Config.EntityPath, "Entities");
+            destDir = Path.Combine(solutionPath, "src", "Entity");
+            Directory.Move(entitiesDir, destDir);
+            // move .csproj
+            var sourceProjectFile = Directory.GetFiles(Path.Combine(solutionPath, Config.EntityPath), "*.csproj", SearchOption.TopDirectoryOnly)
+                .FirstOrDefault();
+            if (sourceProjectFile != null)
+            {
+                var destProjectFile = Path.Combine(destDir, "Entity.csproj");
+                File.Move(sourceProjectFile, destProjectFile);
+                await solution.AddExistProjectAsync(destProjectFile);
+            }
+
+            // create globaUsings
+            var globalUsingPath = Path.Combine(destDir, "GlobalUsings.cs");
+            File.WriteAllText(globalUsingPath, $"""
+                global using System.ComponentModel;
+                global using System.ComponentModel.DataAnnotations;
+                global using Ater.Web.Core.Attributes;
+                global using Ater.Web.Core.Models;
+                global using Microsoft.EntityFrameworkCore;
+                """, Encoding.UTF8);
+            // delete old project
+            Directory.Delete(Path.Combine(solutionPath, Config.EntityPath), true);
+
+            // Share修改
+            new List<string>() {
+                "Models/PageList.cs",
+                "Models/FilterBase.cs"
+            }.ForEach(f =>
+            {
+                File.Delete(Path.Combine(solutionPath, Config.DtoPath, f));
+            });
+            var globalFilePath = Path.Combine(solutionPath, Config.DtoPath, "GlobalUsings.cs");
+            File.AppendAllLines(globalFilePath, new List<string>() {
+                "global using Ater.Web.Core.Models;"
+            });
+
+            // Application修改
+
+            // 结构调整
+            var applicationDir = Path.Combine(solutionPath, Config.ApplicationPath);
+            var appAssemblyName = Config.ApplicationPath.Split('/').Last();
+            await solution.MoveDocumentAsync(
+                appAssemblyName,
+                Path.Combine(applicationDir, "Interface", "IDomainManager.cs"),
+                Path.Combine(applicationDir, "IManager", "IDomainManager.cs"),
+                $"{appAssemblyName}.IManager");
+
+            await solution.MoveDocumentAsync(
+                appAssemblyName,
+                Path.Combine(applicationDir, "Implement", "DataStoreContext.cs"),
+                Path.Combine(applicationDir, "DataStoreContext.cs"),
+                $"{appAssemblyName}");
+
+            await solution.MoveDocumentAsync(
+                appAssemblyName,
+                Path.Combine(applicationDir, "Interface", "IUserContext.cs"),
+                Path.Combine(applicationDir, "IUserContext.cs"),
+                $"{appAssemblyName}");
+
+            Directory.Delete(Path.Combine(applicationDir, "Interface"), true);
+
+            // remove package reference
+            string[] packageNames = new string[] {
+                "Microsoft.IdentityModel.Tokens",
+                "Microsoft.AspNetCore.Http.Abstractions",
+                "System.IdentityModel.Tokens.Jwt",
+                "Microsoft.EntityFrameworkCore.SqlServer",
+                "Npgsql.EntityFrameworkCore.PostgreSQL",
+                "Microsoft.Extensions.Caching.StackExchangeRedis",
+                "OpenTelemetry",
+                "OpenTelemetry.Exporter.Console",
+                "OpenTelemetry.Exporter.OpenTelemetryProtocol",
+                "OpenTelemetry.Exporter.OpenTelemetryProtocol.Logs",
+                "OpenTelemetry.Extensions.Hosting",
+                "OpenTelemetry.Instrumentation.AspNetCore",
+                "OpenTelemetry.Instrumentation.Http",
+                "OpenTelemetry.Instrumentation.SqlClient"
+            };
+            var appProjectFile = Directory.GetFiles(applicationDir, "*.csproj", SearchOption.TopDirectoryOnly).FirstOrDefault();
+            if (appProjectFile != null)
+            {
+                var commands = packageNames.Select(p => $"dotnet remove {appProjectFile} package " + p).ToArray();
+                ProcessHelper.ExecuteCommands(commands);
+            }
+            //
+
+            // TODO:配置文件等
+
+            // rename namespace
+            solution.RenameNamespace("Core.Entities", "Entity");
+            solution.RenameNamespace("Core.Models", "Ater.Web.Core.Models");
+            solution.RenameNamespace("Core.Utils", "Ater.Web.Core.Utils");
+            solution.RenameNamespace("Application.Interface", string.Empty);
+
+            // 重构项目依赖关系
+
         }
-        else
+        catch (Exception ex)
         {
-            Console.WriteLine($"⚠️ can't find {fromDir}");
+            Console.WriteLine("error when update solution:" + ex.Message);
         }
 
-
-        // 迁移原Core到新Entity
-        // Application修改
-        // Share修改
-        // 其他
     }
     #endregion
 }

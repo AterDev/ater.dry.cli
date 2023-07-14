@@ -1,5 +1,4 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.MSBuild;
+﻿using Microsoft.CodeAnalysis.MSBuild;
 
 namespace Core.Infrastructure.Helper;
 /// <summary>
@@ -27,14 +26,13 @@ public class SolutionHelper : IDisposable
     /// </summary>
     /// <param name="projectPath"></param>
     /// <returns></returns>
-    public async Task AddExistProject(string projectPath)
+    public async Task AddExistProjectAsync(string projectPath)
     {
         var file = new FileInfo(projectPath);
         var project = await Workspace.OpenProjectAsync(file.FullName);
 
         var projectInfo = ProjectInfo.Create(ProjectId.CreateNewId(), VersionStamp.Create(), project.Name, project.AssemblyName, project.Language, projectPath, project.OutputFilePath);
         Solution = Workspace.CurrentSolution.AddProject(projectInfo);
-
     }
 
     /// <summary>
@@ -51,7 +49,7 @@ public class SolutionHelper : IDisposable
     /// 重命名Namesapce
     /// </summary>
     /// <param name="oldName"></param>
-    /// <param name="newName"></param>
+    /// <param name="newName">为空时，则删除原名称</param>
     /// <param name="projectName"></param>
     public void RenameNamespace(string oldName, string newName, string? projectName = null)
     {
@@ -64,18 +62,16 @@ public class SolutionHelper : IDisposable
         {
             Parallel.ForEach(p.Documents, d =>
             {
-                var root = d.GetSyntaxRootAsync().Result;
-                var newRoot = root.ReplaceNodes(root.DescendantNodes().OfType<NamespaceDeclarationSyntax>(), (oldNode, newNode) =>
+                if (d.FilePath != null)
                 {
-                    var node = (NamespaceDeclarationSyntax)oldNode;
-                    if (node.Name.ToString() == oldName)
-                    {
-                        return node.WithName(SyntaxFactory.ParseName(newName));
-                    }
-                    return node;
-                });
-                var newDocument = d.WithSyntaxRoot(newRoot);
-                Workspace.TryApplyChanges(newDocument.Project.Solution);
+                    var content = File.ReadAllText(d.FilePath);
+
+                    var newNamespace = string.IsNullOrWhiteSpace(newName) ? string.Empty : "namespace " + newName;
+                    var newUsing = string.IsNullOrWhiteSpace(newName) ? string.Empty : "using " + newName;
+                    content = content.Replace("namespace " + oldName, newNamespace)
+                                     .Replace("using " + oldName, newUsing);
+                    File.WriteAllText(d.FilePath, content, Encoding.UTF8);
+                }
             });
         });
     }
@@ -101,6 +97,40 @@ public class SolutionHelper : IDisposable
         _ = Workspace.CurrentSolution.RemoveProjectReference(currentProject.Id, new ProjectReference(referenceProjectPath.Id));
     }
 
+
+    /// <summary>
+    /// 移动文件
+    /// </summary>
+    /// <param name="projectName"></param>
+    /// <param name="documentPath"></param>
+    /// <param name="newPath"></param>
+    /// <param name="namespaceName"></param>
+    /// <returns></returns>
+    public async Task MoveDocumentAsync(string projectName, string documentPath, string newPath, string? namespaceName = null)
+    {
+        var project = Solution.Projects.FirstOrDefault(p => p.Name == projectName);
+        if (project == null)
+        {
+            await Console.Out.WriteLineAsync(" can't find project:" + projectName);
+            return;
+        }
+        var document = project?.Documents.FirstOrDefault(d => d.FilePath == documentPath);
+        if (document != null)
+        {
+            document = document.WithFilePath(newPath);
+            var syntaxTree = await document.GetSyntaxTreeAsync();
+            var unitRoot = syntaxTree!.GetCompilationUnitRoot();
+
+            namespaceName ??= project!.Name;
+            var qualifiedName = SyntaxFactory.ParseName(namespaceName);
+            var usingDirective = SyntaxFactory.UsingDirective(qualifiedName);
+            unitRoot = unitRoot.AddUsings(usingDirective);
+            document = document.WithSyntaxRoot(unitRoot);
+
+            // update document to solution
+            Solution = Solution.WithDocumentSyntaxRoot(document.Id, document.GetSyntaxRootAsync().Result!);
+        }
+    }
 
     public void Dispose()
     {
