@@ -143,7 +143,6 @@
 		<EmbeddedResource Include="Templates\RequestService\GlobalUsings.tpl" />
 		<EmbeddedResource Include="Templates\RequestService\service.ts" />
 	</ItemGroup>
-	
 	<ItemGroup>
 	  <ProjectReference Include="..\Core\Core.csproj" />
 	  <ProjectReference Include="..\Datastore\Datastore.csproj" />

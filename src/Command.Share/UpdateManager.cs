@@ -225,10 +225,11 @@ public class UpdateManager
             {
                 if (Directory.Exists(destDir))
                 {
+                    // TODO: 备份？
                     Directory.Delete(destDir, true);
                 }
                 Directory.CreateDirectory(destDir);
-                StudioCommand.CopyDirectory(fromDir, destDir);
+                IOHelper.CopyDirectory(fromDir, destDir);
                 // add to solution
                 await solution.AddExistProjectAsync(Path.Combine(destDir, aterCoreName, $"{aterCoreName}.csproj"));
                 await solution.AddExistProjectAsync(Path.Combine(destDir, aterAbstracture, $"{aterAbstracture}.csproj"));
@@ -247,18 +248,21 @@ public class UpdateManager
                 Console.WriteLine($"Orignal Core project not found:{0}", coreProjectFilePath);
                 return false;
             }
-            solution.RemoveProject(coreProjectFilePath);
+            solution.RemoveProject(Path.GetFileNameWithoutExtension(coreProjectFilePath));
 
             var entitiesDir = Path.Combine(solutionPath, Config.EntityPath, "Entities");
             destDir = Path.Combine(solutionPath, "src", "Entity");
-            Directory.Move(entitiesDir, destDir);
+
+            // TODO:备份
+            IOHelper.MoveDirectory(entitiesDir, destDir);
+
             // move .csproj
             var sourceProjectFile = Directory.GetFiles(Path.Combine(solutionPath, Config.EntityPath), "*.csproj", SearchOption.TopDirectoryOnly)
                 .FirstOrDefault();
             if (sourceProjectFile != null)
             {
                 var destProjectFile = Path.Combine(destDir, "Entity.csproj");
-                File.Move(sourceProjectFile, destProjectFile);
+                File.Move(sourceProjectFile, destProjectFile, true);
                 await solution.AddExistProjectAsync(destProjectFile);
             }
 
@@ -397,7 +401,7 @@ public class UpdateManager
         }
         catch (Exception ex)
         {
-            Console.WriteLine("error when update solution:" + ex.Message);
+            Console.WriteLine(ex.Message + ex.StackTrace);
             return false;
         }
 

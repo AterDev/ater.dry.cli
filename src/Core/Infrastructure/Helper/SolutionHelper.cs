@@ -91,12 +91,14 @@ public class SolutionHelper : IDisposable
     /// <summary>
     /// 从解决方案中移除项目
     /// </summary>
-    /// <param name="projectPath"></param>
-    public async void RemoveProject(string projectPath)
+    /// <param name="projectName"></param>
+    public void RemoveProject(string projectName)
     {
-        var file = new FileInfo(projectPath);
-        var project = await Workspace.OpenProjectAsync(file.FullName);
-        _ = Workspace.CurrentSolution.RemoveProject(project.Id);
+        var project = Projects.FirstOrDefault(p => p.Name == projectName);
+        if (project != null)
+        {
+            Workspace.CurrentSolution.RemoveProject(project.Id);
+        }
     }
 
     /// <summary>
