@@ -126,6 +126,6 @@
   </mat-dialog-content>
   <mat-dialog-actions class="justify-content-end ">
     <button mat-button mat-dialog-close>取消</button>
-    <button mat-button (click)="updateProject()" color="warn">升级项目</button>
+    <button mat-button (click)="updateProject()" [disabled]="isProcessing" color="warn">升级项目</button>
   </mat-dialog-actions>
 </ng-template>

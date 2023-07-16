@@ -7,9 +7,9 @@ namespace Core.Infrastructure.Helper;
 public class SolutionHelper : IDisposable
 {
     public MSBuildWorkspace Workspace { get; set; }
-    protected Solution Solution { get; set; }
+    protected Solution Solution { get; private set; }
+    public List<Project> Projects { get; private set; }
 
-    public List<Project> Projects { get; set; }
 
     public SolutionHelper(string path)
     {
@@ -17,7 +17,6 @@ public class SolutionHelper : IDisposable
         {
             throw new FileNotFoundException("解决方案文件不存在");
         }
-
         try
         {
             Workspace = MSBuildWorkspace.Create();
@@ -29,7 +28,6 @@ public class SolutionHelper : IDisposable
             Console.WriteLine(ex.Message);
             throw;
         }
-
     }
 
 
@@ -38,13 +36,19 @@ public class SolutionHelper : IDisposable
     /// </summary>
     /// <param name="projectPath"></param>
     /// <returns></returns>
-    public async Task AddExistProjectAsync(string projectPath)
+    public async Task<bool> AddExistProjectAsync(string projectPath)
     {
-        var file = new FileInfo(projectPath);
-        var project = await Workspace.OpenProjectAsync(file.FullName);
-
-        var projectInfo = ProjectInfo.Create(ProjectId.CreateNewId(), VersionStamp.Create(), project.Name, project.AssemblyName, project.Language, projectPath, project.OutputFilePath);
-        Solution = Workspace.CurrentSolution.AddProject(projectInfo);
+        if (!File.Exists(projectPath))
+        {
+            throw new FileNotFoundException("项目文件不存在:" + projectPath);
+        }
+        if (!ProcessHelper.RunCommand("dotnet", $"sln {Solution.FilePath} add {projectPath}", out string _))
+        {
+            return false;
+        }
+        Solution = await Workspace.OpenSolutionAsync(Solution.FilePath!);
+        Projects = Solution.Projects.ToList();
+        return true;
     }
 
     /// <summary>
@@ -54,7 +58,8 @@ public class SolutionHelper : IDisposable
     /// <param name="referenceProject"></param>
     public void AddProjectRefrence(Project currentProject, Project referenceProject)
     {
-        _ = Workspace.CurrentSolution.AddProjectReference(currentProject.Id, new ProjectReference(referenceProject.Id));
+        Solution = Solution.AddProjectReference(currentProject.Id, new ProjectReference(referenceProject.Id));
+        Projects = Solution.Projects.ToList();
     }
 
     /// <summary>
@@ -97,7 +102,8 @@ public class SolutionHelper : IDisposable
         var project = Projects.FirstOrDefault(p => p.Name == projectName);
         if (project != null)
         {
-            Workspace.CurrentSolution.RemoveProject(project.Id);
+            Solution = Solution.RemoveProject(project.Id);
+            Projects = Solution.Projects.ToList();
         }
     }
 
@@ -108,7 +114,7 @@ public class SolutionHelper : IDisposable
     /// <param name="referenceProjectPath"></param>
     public void RemoveProjectReference(Project currentProject, Project referenceProjectPath)
     {
-        _ = Workspace.CurrentSolution.RemoveProjectReference(currentProject.Id, new ProjectReference(referenceProjectPath.Id));
+        Solution = Solution.RemoveProjectReference(currentProject.Id, new ProjectReference(referenceProjectPath.Id));
     }
 
 

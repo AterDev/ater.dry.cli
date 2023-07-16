@@ -43,9 +43,6 @@ public class ManagerCommand : CommandBase
         }
         try
         {
-            // 版本更新基础文件
-            await UpdateFilesAsync();
-
             // 是否为模块
             var compilation = new CompilationHelper(ApplicationPath, "Entity");
             var content = File.ReadAllText(EntityPath);
@@ -95,25 +92,6 @@ public class ManagerCommand : CommandBase
         }
     }
 
-    /// <summary>
-    /// 待更新的内容
-    /// </summary>
-    private async Task UpdateFilesAsync()
-    {
-        if (AssemblyHelper.NeedUpdate(Const.Version))
-        {
-            // 更新扩展方法
-            Console.WriteLine("⬆️ Update base infrastructure.");
-            // update extension class
-            await UpdateManager.UpdateExtensionAsync7(Config.SolutionPath);
-            // 更新Const 常量
-            UpdateManager.UpdateConst7(ApplicationPath);
-
-            UpdateManager.UpdateCustomizeAttribution7(Config.SolutionPath);
-
-            Console.WriteLine("✅ Update finish!");
-        }
-    }
 
     /// <summary>
     /// 生成接口和实现类
