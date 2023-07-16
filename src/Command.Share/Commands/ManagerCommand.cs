@@ -109,7 +109,7 @@ public class ManagerCommand : CommandBase
             // 更新Const 常量
             UpdateManager.UpdateConst7(ApplicationPath);
 
-            UpdateManager.UpdateCustomizeAttributionAsync7(Config.SolutionPath);
+            UpdateManager.UpdateCustomizeAttribution7(Config.SolutionPath);
 
             Console.WriteLine("✅ Update finish!");
         }

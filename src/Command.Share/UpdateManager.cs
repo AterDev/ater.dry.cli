@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+
 using NuGet.Versioning;
 
 namespace Command.Share;
@@ -12,16 +13,17 @@ public class UpdateManager
     /// </summary>
     /// <param name="solutionFilePath"></param>
     /// <param name="currentVersion"></param>11
-    public static async Task<string> UpdateAsync(string solutionFilePath, string currentVersion)
+    public static bool UpdateInfrastructure(string solutionFilePath, string currentVersion, out string newVersion)
     {
         var solutionPath = Path.GetDirectoryName(solutionFilePath)!;
+        newVersion = currentVersion;
         var version = NuGetVersion.Parse(currentVersion);
         // 7.0->7.1
         if (version == NuGetVersion.Parse("7.0.0"))
         {
-            await UpdateExtensionAsync7(solutionPath);
+            UpdateExtensionAsync7(solutionPath).Wait();
             UpdateConst7(solutionPath);
-            UpdateCustomizeAttributionAsync7(solutionPath);
+            UpdateCustomizeAttribution7(solutionPath);
             var configFilePath = Path.Combine(solutionPath, Config.ConfigFileName);
             if (File.Exists(configFilePath))
             {
@@ -31,20 +33,21 @@ public class UpdateManager
                     config.Version = "7.1.0";
                     File.WriteAllText(configFilePath, JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true }));
                 }
-                return "7.1.0";
+                newVersion = "7.1.0";
+                return true;
             }
         }
 
         if (version == NuGetVersion.Parse("7.1.0"))
         {
-            var res = await UpdateTo8Async(solutionPath);
+            var res = UpdateTo8Async(solutionPath).Result;
             if (res)
             {
-                return "8.0.0";
+                newVersion = "8.0.0";
+                return true;
             }
         }
-
-        return version.ToString();
+        return false;
     }
 
     #region 7.0->7.1更新
@@ -54,7 +57,7 @@ public class UpdateManager
     /// </summary>
     /// <param name="solutionPath"></param>
     /// <returns></returns>
-    public static async Task UpdateExtensionAsync7(string solutionPath)
+    private static async Task UpdateExtensionAsync7(string solutionPath)
     {
         var extensionPath = Path.Combine(solutionPath, Config.EntityPath, "Utils", "Extensions.cs");
         if (File.Exists(extensionPath))
@@ -89,7 +92,7 @@ public class UpdateManager
     /// <summary>
     /// 更新常量文件
     /// </summary>
-    public static void UpdateConst7(string solutionPath)
+    private static void UpdateConst7(string solutionPath)
     {
         var applicationPath = Path.Combine(solutionPath, Config.ApplicationPath);
         Console.WriteLine("⬆️ Update app const.");
@@ -158,7 +161,7 @@ public class UpdateManager
     /// 自定义特性文件
     /// </summary>
     /// <param name="solutionPath"></param>
-    public static void UpdateCustomizeAttributionAsync7(string solutionPath)
+    private static void UpdateCustomizeAttribution7(string solutionPath)
     {
         Console.WriteLine("⬆️ Update customize attributes.");
         var path = Path.Combine(solutionPath, Config.EntityPath, "CustomizeAttribute.cs");

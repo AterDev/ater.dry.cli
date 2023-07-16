@@ -22,19 +22,19 @@ public class IOHelper
             string backPath = $"{target}.bak";
             if (Directory.Exists(backPath))
             {
-                Directory.Delete(backPath);
+                Directory.Delete(backPath, true);
             }
             if (Directory.Exists(target))
             {
                 Directory.Move(target, backPath);
-                Directory.Delete(target);
+                Directory.Delete(target, true);
             }
         }
         else
         {
             if (Directory.Exists(target))
             {
-                Directory.Delete(target);
+                Directory.Delete(target, true);
             }
         }
         Directory.Move(source, target);
