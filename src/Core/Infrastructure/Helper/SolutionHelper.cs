@@ -56,14 +56,14 @@ public class SolutionHelper : IDisposable
     /// </summary>
     /// <param name="currentProject"></param>
     /// <param name="referenceProject"></param>
-    public void AddProjectRefrence(Project currentProject, Project referenceProject)
+    public void AddProjectReference(Project currentProject, Project referenceProject)
     {
         Solution = Solution.AddProjectReference(currentProject.Id, new ProjectReference(referenceProject.Id));
         Projects = Solution.Projects.ToList();
     }
 
     /// <summary>
-    /// 重命名Namesapce
+    /// 重命名Namespace
     /// </summary>
     /// <param name="oldName"></param>
     /// <param name="newName">为空时，则删除原名称</param>

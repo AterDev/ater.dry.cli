@@ -372,10 +372,10 @@ public class UpdateManager
                 return false;
             }
 
-            solution.AddProjectRefrence(entityProject, aterCoreProject);
-            solution.AddProjectRefrence(dtoProject, entityProject);
-            solution.AddProjectRefrence(entityFrameworkProject, entityProject);
-            solution.AddProjectRefrence(applicationProject, aterAbstractureProject);
+            solution.AddProjectReference(entityProject, aterCoreProject);
+            solution.AddProjectReference(dtoProject, entityProject);
+            solution.AddProjectReference(entityFrameworkProject, entityProject);
+            solution.AddProjectReference(applicationProject, aterAbstractureProject);
 
             var saved = solution.Save();
             if (!saved)
