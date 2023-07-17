@@ -102,6 +102,11 @@ public class SolutionHelper : IDisposable
                 if (d.FilePath != null)
                 {
                     var path = d.FilePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+
+                    if (!File.Exists(path))
+                    {
+                        return;
+                    }
                     var content = File.ReadAllText(path);
 
                     var newNamespace = string.IsNullOrWhiteSpace(newName) ? string.Empty : "namespace " + newName;
@@ -193,20 +198,33 @@ public class SolutionHelper : IDisposable
         }
     }
 
-    public async Task RemoveFileAsync(string projectName, string documentPath)
+    /// <summary>
+    /// 删除文件
+    /// </summary>
+    /// <param name="projectName"></param>
+    /// <param name="documentPaths"></param>
+    /// <returns></returns>
+    public async Task RemoveFileAsync(string projectName, string[] documentPaths)
     {
+        if (documentPaths.Length == 0)
+        {
+            return;
+        }
         var project = Solution.Projects.FirstOrDefault(p => p.Name == projectName);
         if (project == null)
         {
             await Console.Out.WriteLineAsync(" can't find project:" + projectName);
             return;
         }
-        var document = project?.Documents.FirstOrDefault(d => d.FilePath == documentPath);
-        if (document != null)
+        foreach (var documentPath in documentPaths)
         {
-            project = project!.RemoveDocument(document.Id);
-            Solution = project.Solution;
-            File.Delete(documentPath);
+            var document = project?.Documents.FirstOrDefault(d => d.FilePath == documentPath);
+            if (document != null)
+            {
+                project = project!.RemoveDocument(document.Id);
+                Solution = project.Solution;
+                File.Delete(documentPath);
+            }
         }
     }
 

@@ -281,13 +281,11 @@ public class UpdateManager
 
             // Share修改
             var dtoAssemblyName = Config.DtoPath.Split(Path.DirectorySeparatorChar).Last();
-            new List<string>() {
-                "Models/PageList.cs",
-                "Models/FilterBase.cs"
-            }.ForEach(async f =>
-            {
-                await solution.RemoveFileAsync(dtoAssemblyName, Path.Combine(solutionPath, Config.DtoPath, f));
-            });
+            var deleteFiles = new string[] {
+                 Path.Combine(solutionPath, Config.DtoPath,"Models","PageList.cs"),
+                 Path.Combine(solutionPath, Config.DtoPath,"Models","FilterBase.cs"),
+            };
+            await solution.RemoveFileAsync(dtoAssemblyName, deleteFiles);
             var globalFilePath = Path.Combine(solutionPath, Config.DtoPath, "GlobalUsings.cs");
             File.AppendAllLines(globalFilePath, new List<string>() {
                 "global using Ater.Web.Core.Models;"
@@ -315,7 +313,12 @@ public class UpdateManager
                 Path.Combine(applicationDir, "IUserContext.cs"),
                 $"{appAssemblyName}");
 
-            Directory.Delete(Path.Combine(applicationDir, "Interface"), true);
+            deleteFiles = Directory.GetFiles(
+                Path.Combine(applicationDir, "Interface"),
+                "*.cs",
+                SearchOption.AllDirectories);
+
+            await solution.RemoveFileAsync(appAssemblyName, deleteFiles ?? Array.Empty<string>());
 
             // remove package reference
             string[] packageNames = new string[] {
