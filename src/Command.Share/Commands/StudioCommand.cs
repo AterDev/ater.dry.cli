@@ -212,11 +212,11 @@ public class StudioCommand
                 // 7.0配置更新
                 if (NuGetVersion.Parse(options.Version) == NuGetVersion.Parse("7.0.0"))
                 {
-                    options.DtoPath = "src/" + options.DtoPath;
-                    options.EntityPath = "src/" + options.EntityPath;
-                    options.DbContextPath = "src/" + options.DbContextPath;
-                    options.ApplicationPath = "src/" + options.ApplicationPath;
-                    options.ApiPath = "src/" + options.ApiPath;
+                    options.DtoPath = "src" + Path.DirectorySeparatorChar + options.DtoPath;
+                    options.EntityPath = "src" + Path.DirectorySeparatorChar + options.EntityPath;
+                    options.DbContextPath = "src" + Path.DirectorySeparatorChar + options.DbContextPath;
+                    options.ApplicationPath = "src" + Path.DirectorySeparatorChar + options.ApplicationPath;
+                    options.ApiPath = "src" + Path.DirectorySeparatorChar + options.ApiPath;
                 }
                 if (options.SolutionType == null)
                 {

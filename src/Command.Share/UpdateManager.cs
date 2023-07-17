@@ -381,7 +381,7 @@ public class UpdateManager
             var config = JsonSerializer.Deserialize<ConfigOptions>(File.ReadAllText(configFile));
             if (config != null)
             {
-                config.EntityPath = "src/Entity";
+                config.EntityPath = $"src{Path.DirectorySeparatorChar}Entity";
                 config.Version = "8.0.0";
                 config.SolutionType = Core.Entities.SolutionType.DotNet;
 
