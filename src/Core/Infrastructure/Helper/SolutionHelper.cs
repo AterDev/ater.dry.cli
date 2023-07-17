@@ -1,4 +1,5 @@
 ﻿using Microsoft.Build.Locator;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.MSBuild;
 
 namespace Core.Infrastructure.Helper;
@@ -20,7 +21,10 @@ public class SolutionHelper : IDisposable
         }
         try
         {
-            MSBuildLocator.RegisterDefaults();
+            if (!MSBuildLocator.IsRegistered)
+            {
+                MSBuildLocator.RegisterDefaults();
+            }
             Workspace = MSBuildWorkspace.Create();
             Solution = Workspace.OpenSolutionAsync(path).Result;
 
@@ -164,15 +168,19 @@ public class SolutionHelper : IDisposable
         var document = project?.Documents.FirstOrDefault(d => d.FilePath == documentPath);
         if (document != null)
         {
-            document = document.WithFilePath(newPath);
-            var syntaxTree = await document.GetSyntaxTreeAsync();
-            var unitRoot = syntaxTree!.GetCompilationUnitRoot();
-
             namespaceName ??= project!.Name;
-            var qualifiedName = SyntaxFactory.ParseName(namespaceName);
-            var usingDirective = SyntaxFactory.UsingDirective(qualifiedName);
-            unitRoot = unitRoot.AddUsings(usingDirective);
+            var unitRoot = await document.GetSyntaxRootAsync();
+
+            var namespaceSyntax = unitRoot!.DescendantNodes().OfType<FileScopedNamespaceDeclarationSyntax>().FirstOrDefault();
+
+            if (namespaceSyntax != null)
+            {
+                var newNamespaceSyntax = namespaceSyntax.WithName(SyntaxFactory.ParseName(namespaceName));
+                unitRoot = unitRoot.ReplaceNode(namespaceSyntax, newNamespaceSyntax);
+            }
+
             document = document.WithSyntaxRoot(unitRoot);
+            document = document.WithFilePath(newPath);
 
             // update document to solution
             Solution = Solution.WithDocumentSyntaxRoot(document.Id, document.GetSyntaxRootAsync().Result!);
@@ -191,5 +199,6 @@ public class SolutionHelper : IDisposable
     public void Dispose()
     {
         Workspace.Dispose();
+        MSBuildLocator.Unregister();
     }
 }
