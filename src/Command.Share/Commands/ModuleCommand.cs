@@ -58,13 +58,13 @@ public class ModuleCommand
             targetVersion = AssemblyHelper.GetTargetFramework(csprojFiles) ?? "7.0";
         }
         string csprojContent = GetCsProjectContent(targetVersion);
-        await AssemblyHelper.GenerateFileAsync(projectPath, $"{moduleName}.csproj", csprojContent);
+        await AssemblyHelper.GenerateFileAsync(projectPath, $"{moduleName}{Const.CSharpProjectExtention}", csprojContent);
 
         try
         {
             AddDefaultModule(solutionPath, moduleName);
             // update solution file
-            UpdateSolutionFile(solutionPath, Path.Combine(projectPath, $"{moduleName}.csproj"));
+            UpdateSolutionFile(solutionPath, Path.Combine(projectPath, $"{moduleName}{Const.CSharpProjectExtention}"));
         }
         catch (Exception ex)
         {

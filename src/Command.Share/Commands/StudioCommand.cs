@@ -215,7 +215,7 @@ public class StudioCommand
                     options.DtoPath = "src/" + options.DtoPath;
                     options.EntityPath = "src/" + options.EntityPath;
                     options.DbContextPath = "src/" + options.DbContextPath;
-                    options.StorePath = "src/" + options.StorePath;
+                    options.ApplicationPath = "src/" + options.ApplicationPath;
                     options.ApiPath = "src/" + options.ApiPath;
                 }
                 if (options.SolutionType == null)

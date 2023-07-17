@@ -294,8 +294,9 @@ public class UpdateManager
 
             // Application修改
             // 结构调整
+
             var applicationDir = Path.Combine(solutionPath, Config.ApplicationPath);
-            var appAssemblyName = Config.ApplicationPath.Split('/').Last();
+            var appAssemblyName = Config.ApplicationPath.Split(Path.DirectorySeparatorChar).Last();
             await solution.MoveDocumentAsync(
                 appAssemblyName,
                 Path.Combine(applicationDir, "Interface", "IDomainManager.cs"),

@@ -85,9 +85,12 @@ public class SolutionHelper : IDisposable
         }
         Parallel.ForEach(projects, p =>
         {
-            var project = Workspace.OpenProjectAsync(p.FilePath).Result;
-            Parallel.ForEach(project.Documents, d =>
+            Parallel.ForEach(p.Documents, d =>
             {
+                if (d.Folders.Count > 0 && d.Folders[0].Equals("obj"))
+                {
+                    return;
+                }
                 if (d.FilePath != null)
                 {
                     var content = File.ReadAllText(d.FilePath);
@@ -156,7 +159,7 @@ public class SolutionHelper : IDisposable
             await Console.Out.WriteLineAsync(" can't find project:" + projectName);
             return;
         }
-        project = await Workspace.OpenProjectAsync(project.FilePath);
+
         var document = project?.Documents.FirstOrDefault(d => d.FilePath == documentPath);
         if (document != null)
         {

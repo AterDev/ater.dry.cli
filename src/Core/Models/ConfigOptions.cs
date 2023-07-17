@@ -12,17 +12,16 @@ public class ConfigOptions
     /// <summary>
     /// 项目根目录 
     /// </summary>
-    public string RootPath { get; set; } = "./";
-
+    public string RootPath { get; set; } = Path.Combine("./");
     public Guid ProjectId { get; set; }
     /// <summary>
     /// dto项目目录
     /// </summary>
-    public string DtoPath { get; set; } = "src/Share";
-    public string EntityPath { get; set; } = "src/Entity";
-    public string DbContextPath { get; set; } = "src/Database/EntityFramework";
-    public string StorePath { get; set; } = "src/Application";
-    public string ApiPath { get; set; } = "src/Http.API";
+    public string DtoPath { get; set; } = Path.Combine("src", "Share");
+    public string EntityPath { get; set; } = Path.Combine("src", "Entity");
+    public string DbContextPath { get; set; } = Path.Combine("src", "Database", "EntityFramework");
+    public string ApplicationPath { get; set; } = Path.Combine("src", "Application");
+    public string ApiPath { get; set; } = Path.Combine("src", "Http.API");
 
     /// <summary>
     /// NameId/Id

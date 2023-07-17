@@ -202,7 +202,7 @@ public class ProjectManager
         if (dto.EntityPath != null)
             options.EntityPath = dto.EntityPath;
         if (dto.StorePath != null)
-            options.StorePath = dto.StorePath;
+            options.ApplicationPath = dto.StorePath;
         if (dto.DtoPath != null)
             options.DtoPath = dto.DtoPath;
         if (dto.ApiPath != null)

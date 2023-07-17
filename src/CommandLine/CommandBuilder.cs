@@ -142,7 +142,7 @@ public class CommandBuilder
         dtoOption.SetDefaultValue(Path.Combine(ConfigOptions!.RootPath, ConfigOptions.DtoPath));
         Option<string> storeOption = new(new[] { "--manager", "-m" },
             "application project directory");
-        storeOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.StorePath));
+        storeOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.ApplicationPath));
         Option<string> typeOption = new(new[] { "--type", "-t" },
             "api type, valid values:rest/grpc/graph");
         Option<bool> forceOption = new(new[] { "--force", "-f" },
@@ -175,7 +175,7 @@ public class CommandBuilder
 
         Option<string> managerOption = new(new[] { "--manager", "-m" },
             "manager and datastore project directory");
-        managerOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.StorePath));
+        managerOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.ApplicationPath));
 
         Option<string> apiOption = new(new[] { "--output", "-o" },
             "api controller project directory");
