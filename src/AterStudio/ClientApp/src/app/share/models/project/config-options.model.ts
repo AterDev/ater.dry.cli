@@ -14,7 +14,7 @@ export interface ConfigOptions {
   dtoPath: string;
   entityPath: string;
   dbContextPath: string;
-  storePath: string;
+  applicationPath: string;
   apiPath: string;
   /**
    * NameId/Id

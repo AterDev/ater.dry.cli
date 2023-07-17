@@ -120,7 +120,7 @@ export class IndexComponent implements OnInit {
     this.settingForm = new FormGroup({
       dtoPath: new FormControl(this.config?.dtoPath, [Validators.required, Validators.minLength(1), Validators.maxLength(200)]),
       entityPath: new FormControl(this.config?.entityPath, [Validators.required, Validators.minLength(1), Validators.maxLength(200)]),
-      storePath: new FormControl(this.config?.storePath, [Validators.required, Validators.minLength(1), Validators.maxLength(200)]),
+      storePath: new FormControl(this.config?.applicationPath, [Validators.required, Validators.minLength(1), Validators.maxLength(200)]),
       apiPath: new FormControl(this.config?.apiPath, [Validators.required, Validators.minLength(1), Validators.maxLength(200)]),
       idType: new FormControl(this.config?.idType ?? "Guid", [Validators.required, Validators.minLength(2), Validators.maxLength(20)]),
       isSplitController: new FormControl<boolean>(this.config?.isSplitController ?? false)

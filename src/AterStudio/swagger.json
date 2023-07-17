@@ -1968,7 +1968,7 @@
           "dbContextPath": {
             "type": "string"
           },
-          "storePath": {
+          "applicationPath": {
             "type": "string"
           },
           "apiPath": {

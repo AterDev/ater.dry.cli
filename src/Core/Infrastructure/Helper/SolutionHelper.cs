@@ -93,7 +93,8 @@ public class SolutionHelper : IDisposable
                 }
                 if (d.FilePath != null)
                 {
-                    var content = File.ReadAllText(d.FilePath);
+                    var path = d.FilePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+                    var content = File.ReadAllText(path);
 
                     var newNamespace = string.IsNullOrWhiteSpace(newName) ? string.Empty : "namespace " + newName;
                     var newUsing = string.IsNullOrWhiteSpace(newName) ? string.Empty : "using " + newName;

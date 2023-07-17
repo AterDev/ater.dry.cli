@@ -218,6 +218,14 @@ public class StudioCommand
                     options.ApplicationPath = "src" + Path.DirectorySeparatorChar + options.ApplicationPath;
                     options.ApiPath = "src" + Path.DirectorySeparatorChar + options.ApiPath;
                 }
+                else if (NuGetVersion.Parse(options.Version) >= NuGetVersion.Parse("7.1.0"))
+                {
+                    options.DtoPath = options.DtoPath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+                    options.EntityPath = options.EntityPath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+                    options.DbContextPath = options.DbContextPath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+                    options.ApplicationPath = options.ApplicationPath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+                    options.ApiPath = options.ApiPath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+                }
                 if (options.SolutionType == null)
                 {
                     var type = AssemblyHelper.GetSolutionType(project.Path);

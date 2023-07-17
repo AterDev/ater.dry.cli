@@ -65,4 +65,19 @@ public class IOHelper
             CopyDirectory(subDir.FullName, newDestinationDir);
         }
     }
+
+    /// <summary>
+    /// 获取代码文件
+    /// </summary>
+    public static string[] GetCodeFiles(string dirPath)
+    {
+        return Directory.GetFiles(
+             dirPath,
+             $"*.cs",
+             SearchOption.AllDirectories)
+            .Where(f => !f.Replace(dirPath, "").StartsWith("/obj")
+                && !f.Replace(dirPath, "").StartsWith("/bin")
+                && !f.EndsWith(".Assembly.cs"))
+            .ToArray();
+    }
 }
