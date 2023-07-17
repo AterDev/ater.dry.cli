@@ -280,12 +280,13 @@ public class UpdateManager
             Directory.Delete(Path.Combine(solutionPath, Config.EntityPath), true);
 
             // Share修改
+            var dtoAssemblyName = Config.DtoPath.Split(Path.DirectorySeparatorChar).Last();
             new List<string>() {
                 "Models/PageList.cs",
                 "Models/FilterBase.cs"
-            }.ForEach(f =>
+            }.ForEach(async f =>
             {
-                File.Delete(Path.Combine(solutionPath, Config.DtoPath, f));
+                await solution.RemoveFileAsync(dtoAssemblyName, Path.Combine(solutionPath, Config.DtoPath, f));
             });
             var globalFilePath = Path.Combine(solutionPath, Config.DtoPath, "GlobalUsings.cs");
             File.AppendAllLines(globalFilePath, new List<string>() {
@@ -294,7 +295,6 @@ public class UpdateManager
 
             // Application修改
             // 结构调整
-
             var applicationDir = Path.Combine(solutionPath, Config.ApplicationPath);
             var appAssemblyName = Config.ApplicationPath.Split(Path.DirectorySeparatorChar).Last();
             await solution.MoveDocumentAsync(
@@ -349,14 +349,12 @@ public class UpdateManager
 
             // 重构项目依赖关系
 
-            var entityProject = solution.Projects.FirstOrDefault(p => p.Name == "Entity");
-            var aterCoreProject = solution.Projects.FirstOrDefault(p => p.Name == aterCoreName);
-
-            var applicationProject = solution.Projects.FirstOrDefault(p => p.Name == appAssemblyName);
-            var aterAbstractureProject = solution.Projects.FirstOrDefault(p => p.Name == aterAbstracture);
-
-            var dtoProject = solution.Projects.FirstOrDefault(p => p.Name == "Share");
-            var entityFrameworkProject = solution.Projects.FirstOrDefault(p => p.Name == "EntityFramework");
+            var entityProject = solution.GetProject("Entity");
+            var aterCoreProject = solution.GetProject(aterCoreName);
+            var applicationProject = solution.GetProject(appAssemblyName);
+            var aterAbstractureProject = solution.GetProject(aterAbstracture);
+            var dtoProject = solution.GetProject(dtoAssemblyName);
+            var entityFrameworkProject = solution.GetProject("EntityFramework");
 
             if (entityProject == null || aterCoreProject == null || applicationProject == null || aterAbstractureProject == null || dtoProject == null || entityFrameworkProject == null)
             {

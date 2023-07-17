@@ -10,8 +10,6 @@ public class SolutionHelper : IDisposable
 {
     public MSBuildWorkspace Workspace { get; set; }
     protected Solution Solution { get; private set; }
-    public List<Project> Projects { get; private set; }
-
 
     public SolutionHelper(string path)
     {
@@ -27,8 +25,6 @@ public class SolutionHelper : IDisposable
             }
             Workspace = MSBuildWorkspace.Create();
             Solution = Workspace.OpenSolutionAsync(path).Result;
-
-            Projects = Solution.Projects.ToList();
         }
         catch (Exception ex)
         {
@@ -37,6 +33,15 @@ public class SolutionHelper : IDisposable
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="projectName"></param>
+    /// <returns></returns>
+    public Project? GetProject(string projectName)
+    {
+        return Solution.Projects.FirstOrDefault(p => p.Name == projectName);
+    }
 
     /// <summary>
     /// 添加项目
@@ -54,7 +59,6 @@ public class SolutionHelper : IDisposable
             return false;
         }
         Solution = await Workspace.OpenSolutionAsync(Solution.FilePath!);
-        Projects = Solution.Projects.ToList();
         return true;
     }
 
@@ -70,7 +74,6 @@ public class SolutionHelper : IDisposable
             return false;
         }
         Solution = Solution.AddProjectReference(currentProject.Id, new ProjectReference(referenceProject.Id));
-        Projects = Solution.Projects.ToList();
         return true;
     }
 
@@ -82,7 +85,8 @@ public class SolutionHelper : IDisposable
     /// <param name="projectName"></param>
     public void RenameNamespace(string oldName, string newName, string? projectName = null)
     {
-        var projects = Solution.Projects;
+        var projects = Solution.Projects.GroupBy(p => p.AssemblyName)
+            .Select(g => g.First());
         if (projectName != null)
         {
             projects = projects.Where(p => p.Name == projectName);
@@ -116,7 +120,7 @@ public class SolutionHelper : IDisposable
     /// <param name="projectName"></param>
     public async Task<bool> RemoveProjectAsync(string projectName)
     {
-        var project = Projects.FirstOrDefault(p => p.Name == projectName);
+        var project = Solution.Projects.FirstOrDefault(p => p.Name == projectName);
         if (project != null)
         {
             if (!ProcessHelper.RunCommand("dotnet", $"sln {Solution.FilePath} remove {project.FilePath}", out string _))
@@ -124,7 +128,6 @@ public class SolutionHelper : IDisposable
                 return false;
             }
             Solution = await Workspace.OpenSolutionAsync(Solution.FilePath!);
-            Projects = Solution.Projects.ToList();
             return true;
         }
         return false;
@@ -143,7 +146,6 @@ public class SolutionHelper : IDisposable
         }
 
         Solution = Solution.RemoveProjectReference(currentProject.Id, new ProjectReference(referenceProject.Id));
-        Projects = Solution.Projects.ToList();
         return true;
     }
 
@@ -191,6 +193,24 @@ public class SolutionHelper : IDisposable
         }
     }
 
+    public async Task RemoveFileAsync(string projectName, string documentPath)
+    {
+        var project = Solution.Projects.FirstOrDefault(p => p.Name == projectName);
+        if (project == null)
+        {
+            await Console.Out.WriteLineAsync(" can't find project:" + projectName);
+            return;
+        }
+        var document = project?.Documents.FirstOrDefault(d => d.FilePath == documentPath);
+        if (document != null)
+        {
+            project = project!.RemoveDocument(document.Id);
+            Solution = project.Solution;
+            File.Delete(documentPath);
+        }
+    }
+
+
     public bool Save()
     {
         return Workspace.TryApplyChanges(Solution);
@@ -201,4 +221,5 @@ public class SolutionHelper : IDisposable
         Workspace.Dispose();
         MSBuildLocator.Unregister();
     }
+
 }
