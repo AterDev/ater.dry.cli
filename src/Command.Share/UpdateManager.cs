@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-
+using Core.Infrastructure;
 using NuGet.Versioning;
 
 namespace Command.Share;
@@ -205,6 +205,7 @@ public class UpdateManager
     /// <param name="solutionPath"></param>
     public static async Task<bool> UpdateTo8Async(string solutionPath)
     {
+
         var solutionFilePath = Directory.GetFiles(solutionPath, "*.sln", SearchOption.TopDirectoryOnly).FirstOrDefault();
 
         var aterCoreName = "Ater.Web.Core";
@@ -228,43 +229,40 @@ public class UpdateManager
             {
                 if (Directory.Exists(destDir))
                 {
-                    // TODO: 备份？
                     Directory.Delete(destDir, true);
                 }
                 Directory.CreateDirectory(destDir);
                 IOHelper.CopyDirectory(fromDir, destDir);
                 // add to solution
-                await solution.AddExistProjectAsync(Path.Combine(destDir, aterCoreName, $"{aterCoreName}.csproj"));
-                await solution.AddExistProjectAsync(Path.Combine(destDir, aterAbstracture, $"{aterAbstracture}.csproj"));
+                await solution.AddExistProjectAsync(Path.Combine(destDir, aterCoreName, $"{aterCoreName}{Const.CSharpProjectExtention}"));
+                await solution.AddExistProjectAsync(Path.Combine(destDir, aterAbstracture, $"{aterAbstracture}{Const.CSharpProjectExtention}"));
             }
             else
             {
                 Console.WriteLine($"⚠️ can't find {fromDir}");
             }
 
-
             // 迁移原Core到新Entity
-            var coreProjectFilePath = Directory.GetFiles(Path.Combine(solutionPath, Config.EntityPath), "*.csproj", SearchOption.TopDirectoryOnly).FirstOrDefault();
+            var coreProjectFilePath = Directory.GetFiles(Path.Combine(solutionPath, Config.EntityPath), $"*{Const.CSharpProjectExtention}", SearchOption.TopDirectoryOnly).FirstOrDefault();
 
             if (coreProjectFilePath == null)
             {
                 Console.WriteLine($"Orignal Core project not found:{0}", coreProjectFilePath);
                 return false;
             }
-            solution.RemoveProject(Path.GetFileNameWithoutExtension(coreProjectFilePath));
+            await solution.RemoveProjectAsync(Path.GetFileNameWithoutExtension(coreProjectFilePath));
 
             var entitiesDir = Path.Combine(solutionPath, Config.EntityPath, "Entities");
             destDir = Path.Combine(solutionPath, "src", "Entity");
 
-            // TODO:备份
             IOHelper.MoveDirectory(entitiesDir, destDir);
 
             // move .csproj
-            var sourceProjectFile = Directory.GetFiles(Path.Combine(solutionPath, Config.EntityPath), "*.csproj", SearchOption.TopDirectoryOnly)
+            var sourceProjectFile = Directory.GetFiles(Path.Combine(solutionPath, Config.EntityPath), $"*{Const.CSharpProjectExtention}", SearchOption.TopDirectoryOnly)
                 .FirstOrDefault();
             if (sourceProjectFile != null)
             {
-                var destProjectFile = Path.Combine(destDir, "Entity.csproj");
+                var destProjectFile = Path.Combine(destDir, $"Entity{Const.CSharpProjectExtention}");
                 File.Move(sourceProjectFile, destProjectFile, true);
                 await solution.AddExistProjectAsync(destProjectFile);
             }
@@ -335,7 +333,7 @@ public class UpdateManager
                 "OpenTelemetry.Instrumentation.Http",
                 "OpenTelemetry.Instrumentation.SqlClient"
             };
-            var appProjectFile = Directory.GetFiles(applicationDir, "*.csproj", SearchOption.TopDirectoryOnly).FirstOrDefault();
+            var appProjectFile = Directory.GetFiles(applicationDir, $"*{Const.CSharpProjectExtention}", SearchOption.TopDirectoryOnly).FirstOrDefault();
             if (appProjectFile != null)
             {
                 var commands = packageNames.Select(p => $"dotnet remove {appProjectFile} package " + p).ToArray();
@@ -376,13 +374,6 @@ public class UpdateManager
             solution.AddProjectReference(dtoProject, entityProject);
             solution.AddProjectReference(entityFrameworkProject, entityProject);
             solution.AddProjectReference(applicationProject, aterAbstractureProject);
-
-            var saved = solution.Save();
-            if (!saved)
-            {
-                await Console.Out.WriteLineAsync("Save solution failed!");
-                return false;
-            }
 
             // 配置文件等
             var configFile = Path.Combine(solutionPath, Config.ConfigFileName);

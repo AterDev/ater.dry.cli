@@ -58,7 +58,7 @@ public class ProjectManager
         FileInfo projectFile = new(path);
         var projectFilePath = Directory.GetFiles(path, "*.sln", SearchOption.TopDirectoryOnly).FirstOrDefault();
 
-        projectFilePath ??= Directory.GetFiles(path, "*.csproj", SearchOption.TopDirectoryOnly).FirstOrDefault();
+        projectFilePath ??= Directory.GetFiles(path, $"*{Const.CSharpProjectExtention}", SearchOption.TopDirectoryOnly).FirstOrDefault();
         projectFilePath ??= Directory.GetFiles(path, "package.json", SearchOption.TopDirectoryOnly).FirstOrDefault();
 
         if (projectFilePath == null)
@@ -141,7 +141,7 @@ public class ProjectManager
         var res = new List<SubProjectInfo>();
         try
         {
-            var subProjectFiles = new DirectoryInfo(pathString).GetFiles("*.csproj", SearchOption.AllDirectories).ToList();
+            var subProjectFiles = new DirectoryInfo(pathString).GetFiles($"*{Const.CSharpProjectExtention}", SearchOption.AllDirectories).ToList();
 
             if (subProjectFiles.Any())
             {

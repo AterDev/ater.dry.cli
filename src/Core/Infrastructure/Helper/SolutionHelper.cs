@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis.MSBuild;
+﻿using Microsoft.Build.Locator;
+using Microsoft.CodeAnalysis.MSBuild;
 
 namespace Core.Infrastructure.Helper;
 /// <summary>
@@ -19,8 +20,10 @@ public class SolutionHelper : IDisposable
         }
         try
         {
+            MSBuildLocator.RegisterDefaults();
             Workspace = MSBuildWorkspace.Create();
             Solution = Workspace.OpenSolutionAsync(path).Result;
+
             Projects = Solution.Projects.ToList();
         }
         catch (Exception ex)
@@ -56,10 +59,15 @@ public class SolutionHelper : IDisposable
     /// </summary>
     /// <param name="currentProject"></param>
     /// <param name="referenceProject"></param>
-    public void AddProjectReference(Project currentProject, Project referenceProject)
+    public bool AddProjectReference(Project currentProject, Project referenceProject)
     {
+        if (!ProcessHelper.RunCommand("dotnet", $"add {currentProject.FilePath} reference {referenceProject.FilePath}", out string _))
+        {
+            return false;
+        }
         Solution = Solution.AddProjectReference(currentProject.Id, new ProjectReference(referenceProject.Id));
         Projects = Solution.Projects.ToList();
+        return true;
     }
 
     /// <summary>
@@ -77,7 +85,8 @@ public class SolutionHelper : IDisposable
         }
         Parallel.ForEach(projects, p =>
         {
-            Parallel.ForEach(p.Documents, d =>
+            var project = Workspace.OpenProjectAsync(p.FilePath).Result;
+            Parallel.ForEach(project.Documents, d =>
             {
                 if (d.FilePath != null)
                 {
@@ -97,24 +106,37 @@ public class SolutionHelper : IDisposable
     /// 从解决方案中移除项目
     /// </summary>
     /// <param name="projectName"></param>
-    public void RemoveProject(string projectName)
+    public async Task<bool> RemoveProjectAsync(string projectName)
     {
         var project = Projects.FirstOrDefault(p => p.Name == projectName);
         if (project != null)
         {
-            Solution = Solution.RemoveProject(project.Id);
+            if (!ProcessHelper.RunCommand("dotnet", $"sln {Solution.FilePath} remove {project.FilePath}", out string _))
+            {
+                return false;
+            }
+            Solution = await Workspace.OpenSolutionAsync(Solution.FilePath!);
             Projects = Solution.Projects.ToList();
+            return true;
         }
+        return false;
     }
 
     /// <summary>
     /// 删除项目引用
     /// </summary>
     /// <param name="currentProject"></param>
-    /// <param name="referenceProjectPath"></param>
-    public void RemoveProjectReference(Project currentProject, Project referenceProjectPath)
+    /// <param name="referenceProject"></param>
+    public bool RemoveProjectReference(Project currentProject, Project referenceProject)
     {
-        Solution = Solution.RemoveProjectReference(currentProject.Id, new ProjectReference(referenceProjectPath.Id));
+        if (!ProcessHelper.RunCommand("dotnet", $"remove {currentProject.FilePath} reference {referenceProject.FilePath}", out string _))
+        {
+            return false;
+        }
+
+        Solution = Solution.RemoveProjectReference(currentProject.Id, new ProjectReference(referenceProject.Id));
+        Projects = Solution.Projects.ToList();
+        return true;
     }
 
 
@@ -134,6 +156,7 @@ public class SolutionHelper : IDisposable
             await Console.Out.WriteLineAsync(" can't find project:" + projectName);
             return;
         }
+        project = await Workspace.OpenProjectAsync(project.FilePath);
         var document = project?.Documents.FirstOrDefault(d => d.FilePath == documentPath);
         if (document != null)
         {
@@ -149,6 +172,10 @@ public class SolutionHelper : IDisposable
 
             // update document to solution
             Solution = Solution.WithDocumentSyntaxRoot(document.Id, document.GetSyntaxRootAsync().Result!);
+
+            // move file
+            File.Delete(documentPath);
+            await File.WriteAllTextAsync(newPath, document.GetTextAsync().Result!.ToString(), Encoding.UTF8);
         }
     }
 

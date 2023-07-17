@@ -15,4 +15,7 @@ public class Const
     public const string PackageId = "ater.droplet.cli";
     public const string TemplateZip = "template.zip";
     public const string StudioZip = "studio.zip";
+
+    public const string SolutionExtention = ".sln";
+    public const string CSharpProjectExtention = ".csproj";
 }

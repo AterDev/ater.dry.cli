@@ -52,7 +52,7 @@ public class ModuleCommand
 
         // get target version 
         string targetVersion = "7.0";
-        var csprojFiles = Directory.GetFiles(Path.Combine(solutionPath, Config.ApiPath), "*.csproj", SearchOption.TopDirectoryOnly).FirstOrDefault();
+        var csprojFiles = Directory.GetFiles(Path.Combine(solutionPath, Config.ApiPath), $"*{Const.CSharpProjectExtention}", SearchOption.TopDirectoryOnly).FirstOrDefault();
         if (csprojFiles != null)
         {
             targetVersion = AssemblyHelper.GetTargetFramework(csprojFiles) ?? "7.0";
@@ -85,7 +85,7 @@ public class ModuleCommand
         {
             return default;
         }
-        List<string> files = Directory.GetFiles(modulesPath, "*.csproj", SearchOption.AllDirectories).ToList();
+        List<string> files = Directory.GetFiles(modulesPath, $"*{Const.CSharpProjectExtention}", SearchOption.AllDirectories).ToList();
         return files.Any() ? files : default;
     }
 
@@ -155,7 +155,7 @@ public class ModuleCommand
                 Console.WriteLine("✅ add project ➡️ solution!");
             }
         }
-        var csprojFiles = Directory.GetFiles(Path.Combine(dirPath, Config.ApiPath), "*.csproj", SearchOption.TopDirectoryOnly).FirstOrDefault();
+        var csprojFiles = Directory.GetFiles(Path.Combine(dirPath, Config.ApiPath), $"*{Const.CSharpProjectExtention}", SearchOption.TopDirectoryOnly).FirstOrDefault();
         if (File.Exists(csprojFiles))
         {
             // 添加到主服务
