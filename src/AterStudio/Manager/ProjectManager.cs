@@ -121,6 +121,7 @@ public class ProjectManager
         {
             var path = _projectContext.Project.Path;
             var version = await AssemblyHelper.GetSolutionVersionAsync(_projectContext.SolutionPath!);
+            if (version == null) return "未找到项目配置文件，无法进行更新";
             var res = UpdateManager.UpdateInfrastructure(path!, version, out string newVersion);
 
             // update version to db

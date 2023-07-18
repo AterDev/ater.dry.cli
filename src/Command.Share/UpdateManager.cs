@@ -388,6 +388,11 @@ public class UpdateManager
             solution.AddProjectReference(entityProject, aterCoreProject);
             solution.AddProjectReference(applicationProject, aterAbstractureProject);
 
+            globalFilePath = Path.Combine(solutionPath, Config.ApplicationPath, "GlobalUsings.cs");
+            File.AppendAllLines(globalFilePath, new List<string>() {
+                "global using Ater.Web.Abstracture.Interface;"
+            });
+
             // 配置文件等
             var configFile = Path.Combine(solutionPath, Config.ConfigFileName);
             var config = JsonSerializer.Deserialize<ConfigOptions>(File.ReadAllText(configFile));

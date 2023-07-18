@@ -120,7 +120,8 @@ public class SolutionHelper : IDisposable
                     var newNamespace = string.IsNullOrWhiteSpace(newName) ? string.Empty : "namespace " + newName;
                     var newUsing = string.IsNullOrWhiteSpace(newName) ? string.Empty : "using " + newName;
                     content = content.Replace("namespace " + oldName, newNamespace)
-                                     .Replace("using " + oldName, newUsing);
+                                     .Replace("using " + oldName, newUsing)
+                                     .Replace("cref=\"" + oldName, "cref=\"" + newName);
                     File.WriteAllText(d.FilePath, content, new UTF8Encoding(false));
                 }
             });
@@ -256,12 +257,13 @@ public class SolutionHelper : IDisposable
                 var newNamespaceSyntax = namespaceSyntax.WithName(SyntaxFactory.ParseName(namespaceName));
                 unitRoot = unitRoot.ReplaceNode(namespaceSyntax, newNamespaceSyntax);
             }
-
-            document = document.WithSyntaxRoot(unitRoot);
-            document = document.WithFilePath(newPath);
+            document = document.WithSyntaxRoot(unitRoot)
+                .WithFilePath(newPath);
 
             // update document to solution
-            Solution = Solution.WithDocumentSyntaxRoot(document.Id, document.GetSyntaxRootAsync().Result!);
+
+            Solution = Solution.WithDocumentSyntaxRoot(document.Id, unitRoot)
+                .WithDocumentFilePath(document.Id, newPath);
 
             // move file
             File.Delete(documentPath);
