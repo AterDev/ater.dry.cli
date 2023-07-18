@@ -245,13 +245,12 @@ public class UpdateManager
 
             // 迁移原Core到新Entity
             var coreProjectFilePath = Directory.GetFiles(Path.Combine(solutionPath, Config.EntityPath), $"*{Const.CSharpProjectExtention}", SearchOption.TopDirectoryOnly).FirstOrDefault();
-
+            var coreName = Config.EntityPath.Split(Path.DirectorySeparatorChar).Last();
             if (coreProjectFilePath == null)
             {
                 Console.WriteLine($"Orignal Core project not found:{0}", coreProjectFilePath);
                 return false;
             }
-            solution.RemoveProject(Path.GetFileNameWithoutExtension(coreProjectFilePath));
 
             var entitiesDir = Path.Combine(solutionPath, Config.EntityPath, "Entities");
             destDir = Path.Combine(solutionPath, "src", "Entity");
@@ -351,21 +350,23 @@ public class UpdateManager
             solution.RenameNamespace("Core.Entities", "Entity");
             solution.RenameNamespace("Core.Models", "Ater.Web.Core.Models");
             solution.RenameNamespace("Core.Utils", "Ater.Web.Core.Utils");
-            solution.RenameNamespace("Application.Interface", string.Empty);
+            solution.RenameNamespace("Application.Interface", "Application");
 
             // 重构项目依赖关系
-
             var entityProject = solution.GetProject("Entity");
+            var coreProject = solution.GetProject(coreName);
             var aterCoreProject = solution.GetProject(aterCoreName);
             var applicationProject = solution.GetProject(appAssemblyName);
             var aterAbstractureProject = solution.GetProject(aterAbstracture);
             var dtoProject = solution.GetProject(dtoAssemblyName);
             var entityFrameworkProject = solution.GetProject("EntityFramework");
 
-            if (entityProject == null || aterCoreProject == null || applicationProject == null || aterAbstractureProject == null || dtoProject == null || entityFrameworkProject == null)
+            if (entityProject == null || aterCoreProject == null || applicationProject == null || aterAbstractureProject == null || dtoProject == null || entityFrameworkProject == null
+                || coreProject == null)
             {
                 Console.WriteLine("⚠️ 项目依赖关系重构失败，缺失的项目关系:" +
                     "\nentityProject:" + entityProject?.Name +
+                    "\ncoreProject:" + coreProject?.Name +
                     "\naterCoreProject:" + aterCoreProject?.Name +
                     "\napplicationProject:" + applicationProject?.Name +
                     "\naterAbstractureProject:" + aterAbstractureProject?.Name +
@@ -375,9 +376,16 @@ public class UpdateManager
                 return false;
             }
 
+            // 原依赖Core的改成Entity
+            var originProjects = solution.GetReferenceProject(coreName);
+            originProjects?.ForEach(p =>
+            {
+                solution.RemoveProjectReference(p, coreProject);
+                solution.AddProjectReference(p, entityProject);
+            });
+            // 其他依赖
+            solution.RemoveProject(Path.GetFileNameWithoutExtension(coreProjectFilePath));
             solution.AddProjectReference(entityProject, aterCoreProject);
-            solution.AddProjectReference(dtoProject, entityProject);
-            solution.AddProjectReference(entityFrameworkProject, entityProject);
             solution.AddProjectReference(applicationProject, aterAbstractureProject);
 
             // 配置文件等

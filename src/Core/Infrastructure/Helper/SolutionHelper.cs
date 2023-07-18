@@ -142,9 +142,10 @@ public class SolutionHelper : IDisposable
                     .DescendantNodes().OfType<AttributeSyntax>()
                     .Where(a => a.Name.ToString() == attributeName);
 
+                if (nodes == null) { return; }
                 foreach (var node in nodes)
                 {
-                    ReplaceNodeUsing(editor, node, _ => SyntaxFactory.ParseExpression(""));
+                    editor.RemoveNode(node);
                 }
                 var newContent = FormatChanges(editor.GetChangedRoot());
 
@@ -192,6 +193,20 @@ public class SolutionHelper : IDisposable
             return true;
         }
         return false;
+    }
+
+    /// <summary>
+    /// get projects which reference the give project name
+    /// </summary>
+    /// <param name="pName"></param>
+    /// <returns></returns>
+    public List<Project>? GetReferenceProject(string pName)
+    {
+        var project = Solution.Projects.FirstOrDefault(p => p.AssemblyName == pName);
+        if (project == null) return default;
+        var projects = Solution.Projects.Where(p => p.AllProjectReferences.Any(r => r.ProjectId == project.Id))
+            .ToList();
+        return projects;
     }
 
     /// <summary>
