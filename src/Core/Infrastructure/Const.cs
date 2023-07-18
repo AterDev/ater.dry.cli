@@ -18,4 +18,6 @@ public class Const
 
     public const string SolutionExtention = ".sln";
     public const string CSharpProjectExtention = ".csproj";
+    public const string CoreLibName = "Ater.Web.Core";
+    public const string AbstractureLibName = "Ater.Web.Abstracture";
 }

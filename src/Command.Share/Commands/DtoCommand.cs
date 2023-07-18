@@ -1,5 +1,3 @@
-using Datastore;
-
 namespace Command.Share.Commands;
 
 public class DtoCommand : CommandBase
@@ -59,10 +57,6 @@ public class DtoCommand : CommandBase
     public async void GenerateCommonFiles()
     {
         await GenerateFileAsync(DtoPath, "GlobalUsings.cs", CodeGen.GetDtoUsings());
-        await GenerateFileAsync("FilterBase.cs", CodeGen.GetFilterBase());
-        await GenerateFileAsync("PageList.cs", CodeGen.GetPageList());
-        await GenerateFileAsync("BatchUpdate.cs", CodeGen.GetBatchUpdate());
-        //await GenerateFileAsync("EntityBase.cs", CodeGen.GetEntityBase());
     }
 
     public async Task GenerateFileAsync(string fileName, string content)

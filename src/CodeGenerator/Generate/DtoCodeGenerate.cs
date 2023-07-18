@@ -405,10 +405,13 @@ public class DtoCodeGenerate : GenerateBase
 
     public string GetDtoUsings()
     {
-        return @$"global using System.ComponentModel.DataAnnotations;
-global using {AssemblyName}.Models;
-global using {AssemblyName}.Entities;
-global using {EntityInfo!.AssemblyName}.Models;";
+        return $"""
+        global using System;
+        global using System.ComponentModel.DataAnnotations;
+        global using {AssemblyName}.Models;
+        global using Ater.Web.Core.Models;
+        global using Entity;
+        """;
     }
     public string GetFilterBase()
     {

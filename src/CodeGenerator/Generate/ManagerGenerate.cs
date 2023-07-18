@@ -192,23 +192,8 @@ public class ManagerGenerate : GenerateBase
 
         return new List<string>
         {
-            "global using System;",
-            "global using System.Text.Json;",
-            "global using EntityFramework;",
-            "global using Microsoft.EntityFrameworkCore;",
-            "global using Microsoft.Extensions.Logging;",
-            $"global using {entityProjectNamespace}.Utils;",
-            $"global using {entityProjectNamespace}.Entities;",
-            $"global using {entityProjectNamespace}.Models;",
+            $"global using {entityProjectNamespace};",
             $"global using {entityNamespace};",
-            $"global using {ShareNamespace}.Models;",
-            $"global using {ServiceNamespace}.Interface;",
-            $"global using {ServiceNamespace}.{Const.QUERY_STORE};",
-            $"global using {ServiceNamespace}.{Const.COMMAND_STORE};",
-            $"global using {ServiceNamespace}.Implement;",
-            $"global using {ServiceNamespace}.Manager;",
-            $"global using {ServiceNamespace}.IManager;",
-            "global using Microsoft.Extensions.DependencyInjection;",
         };
     }
 
@@ -535,14 +520,11 @@ public class ManagerGenerate : GenerateBase
 
                 entityClassNames.Add(propGeneric);
 
-                //string row = $"{oneTab}public {propType}<{propGeneric}> {propName} {{ get; init; }}";
-                //props += row + Environment.NewLine;
                 // 构造函数参数
                 string row = $"{twoTab}{fileName} {propName.ToCamelCase()},";
                 ctorParams += row + Environment.NewLine;
                 // 构造函数赋值
-                //row = $"{twoTab}{propName} = {propName.ToCamelCase()};";
-                //ctorAssign += row + Environment.NewLine;
+
                 ctorAssign += $"{twoTab}AddCache({propName.ToCamelCase()});" + Environment.NewLine;
             });
             // 关联模型需要引入的命名空间

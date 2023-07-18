@@ -1,4 +1,4 @@
-﻿namespace ${Namespace}.Implement;
+﻿namespace ${Namespace};
 public class DataStoreContext
 {
     public QueryDbContext QueryContext { get; init; }

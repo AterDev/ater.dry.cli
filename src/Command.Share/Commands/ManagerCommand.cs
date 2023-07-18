@@ -98,52 +98,27 @@ public class ManagerCommand : CommandBase
     /// </summary>
     public async Task GenerateCommonFilesAsync()
     {
-        // 生成Utils 扩展类
-        DirectoryInfo? dir = new FileInfo(EntityPath).Directory;
-        FileInfo? projectFile = AssemblyHelper.FindProjectFile(dir!, dir!.Root);
-        if (projectFile != null)
-        {
-            string entityDir = Path.Combine(projectFile.Directory!.FullName, "Utils");
-            string content = CodeGen.GetExtensions();
-            await GenerateFileAsync(entityDir, GenConst.EXTIONSIONS_NAME, content);
-        }
-
         // 目录
-        string interfaceDir = Path.Combine(ApplicationPath, "Interface");
         string implementDir = Path.Combine(ApplicationPath, "Implement");
 
         // 文件
-        string[] interfaceFiles = new string[] { "ICommandStore", "ICommandStoreExt", "IQueryStore", "IQueryStoreExt", "IDomainManager", "IUserContext" };
-
         string[] implementFiles = new string[] { "CommandStoreBase", "QueryStoreBase", "ManagerBase", "DomainManagerBase" };
+
         string userClass = CodeGen.GetUserContextClass();
-
-        // 生成接口文件
-        foreach (string name in interfaceFiles)
-        {
-            string content = CodeGen.GetInterfaceFile(name);
-
-            bool cover;
-            // 更新需要覆盖的文件
-            if (AssemblyHelper.NeedUpdate("7.0.0")
-                && name == "IDomainManager")
-            {
-                cover = true;
-            }
-            else
-            {
-                // 不可覆盖的文件
-                cover = name != "IUserContext";
-            }
-            await GenerateFileAsync(interfaceDir, $"{name}.cs", content, cover);
-        }
+        string content;
         // 生成实现文件
         foreach (string name in implementFiles)
         {
-            string content = CodeGen.GetImplementFile(name);
+            content = CodeGen.GetImplementFile(name);
             bool isCover = name is not "DomainManagerBase";
             await GenerateFileAsync(implementDir, $"{name}.cs", content, isCover);
         }
+
+        content = CodeGen.GetInterfaceFile("IDomainManager");
+        await GenerateFileAsync(Path.Combine(ApplicationPath, "IManager"), "IDomainManager.cs", content, true);
+
+        content = CodeGen.GetInterfaceFile("IUserContext");
+        await GenerateFileAsync(ApplicationPath, "IUserContext.cs", content);
         // 生成user上下文
         await GenerateFileAsync(implementDir, "UserContext.cs", userClass);
 
@@ -168,32 +143,31 @@ public class ManagerCommand : CommandBase
             && AssemblyHelper.NeedUpdate(Const.Version))
         {
             // update files
-            CompilationHelper compilation = new(ApplicationPath);
-            string content = await File.ReadAllTextAsync(iManagerPath);
-            compilation.AddSyntaxTree(content);
-            // 构造更新的内容
-            string[] methods = new string[]{
-                $"Task<{entityName}?> GetCurrentAsync(Guid id, params string[] navigations);",
-                $"Task<{entityName}> AddAsync({entityName} entity);",
-                $"Task<{entityName}> UpdateAsync({entityName} entity, {entityName}UpdateDto dto);",
-                $"Task<{entityName}?> FindAsync(Guid id);",
-                $"Task<TDto?> FindAsync<TDto>(Expression<Func<{entityName}, bool>>? whereExp) where TDto : class;",
-                $"Task<List<TDto>> ListAsync<TDto>(Expression<Func<{entityName}, bool>>? whereExp) where TDto : class;",
-                $"Task<PageList<{entityName}ItemDto>> FilterAsync({entityName}FilterDto filter);",
-                $"Task<{entityName}?> DeleteAsync({entityName} entity, bool softDelete = true);",
-                $"Task<bool> ExistAsync(Guid id);",
-            };
+            //CompilationHelper compilation = new(ApplicationPath);
+            //string content = await File.ReadAllTextAsync(iManagerPath);
+            //compilation.AddSyntaxTree(content);
+            //string[] methods = new string[]{
+            //    $"Task<{entityName}?> GetCurrentAsync(Guid id, params string[] navigations);",
+            //    $"Task<{entityName}> AddAsync({entityName} entity);",
+            //    $"Task<{entityName}> UpdateAsync({entityName} entity, {entityName}UpdateDto dto);",
+            //    $"Task<{entityName}?> FindAsync(Guid id);",
+            //    $"Task<TDto?> FindAsync<TDto>(Expression<Func<{entityName}, bool>>? whereExp) where TDto : class;",
+            //    $"Task<List<TDto>> ListAsync<TDto>(Expression<Func<{entityName}, bool>>? whereExp) where TDto : class;",
+            //    $"Task<PageList<{entityName}ItemDto>> FilterAsync({entityName}FilterDto filter);",
+            //    $"Task<{entityName}?> DeleteAsync({entityName} entity, bool softDelete = true);",
+            //    $"Task<bool> ExistAsync(Guid id);",
+            //};
 
-            foreach (string method in methods)
-            {
-                if (!compilation.MethodExist(method))
-                {
-                    compilation.InsertInterfaceMethod(method);
-                }
-            }
-            compilation.ReplaceInterfaceImplement($"IDomainManager<{entityName}>");
-            interfaceContent = compilation.SyntaxRoot!.ToString();
-            await GenerateFileAsync(iManagerDir, $"I{entityName}Manager.cs", interfaceContent, true);
+            //foreach (string method in methods)
+            //{
+            //    if (!compilation.MethodExist(method))
+            //    {
+            //        compilation.InsertInterfaceMethod(method);
+            //    }
+            //}
+            //compilation.ReplaceInterfaceImplement($"IDomainManager<{entityName}>");
+            //interfaceContent = compilation.SyntaxRoot!.ToString();
+            //await GenerateFileAsync(iManagerDir, $"I{entityName}Manager.cs", interfaceContent, true);
         }
         else
         {
@@ -268,9 +242,8 @@ public class ManagerCommand : CommandBase
     /// </summary>
     public async Task GetDataStoreContextAsync()
     {
-        string implementDir = Path.Combine(ApplicationPath, "Implement");
         string storeContext = CodeGen.GetDataStoreContext();
         // 生成仓储上下文
-        await GenerateFileAsync(implementDir, "DataStoreContext.cs", storeContext, true);
+        await GenerateFileAsync(ApplicationPath, "DataStoreContext.cs", storeContext, true);
     }
 }
