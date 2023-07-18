@@ -46,9 +46,7 @@ public class ProjectManager
                     _db.Projects.Update(p);
                 }
             }
-
         });
-
         return projects;
     }
 
@@ -124,6 +122,10 @@ public class ProjectManager
             var path = _projectContext.Project.Path;
             var version = await AssemblyHelper.GetSolutionVersionAsync(_projectContext.SolutionPath!);
             var res = UpdateManager.UpdateInfrastructure(path!, version, out string newVersion);
+
+            // update version to db
+            _projectContext.Project.Version = newVersion;
+            _db.Projects.Update(_projectContext.Project);
 
             return res ? "成功更新到:" + newVersion : "更新失败，请手动恢复到之前版本";
         }
