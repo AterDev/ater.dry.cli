@@ -1,4 +1,4 @@
-﻿namespace ${Namespace}.Implement;
+﻿namespace ${Namespace}.Infrastructure;
 
 public static partial class StoreServicesExtensions
 {
@@ -10,7 +10,6 @@ ${StoreServices}
 
     public static void AddManager(this IServiceCollection services)
     {
-        services.AddTransient<IUserContext, UserContext>();
 ${ManagerServices}
     }
 }

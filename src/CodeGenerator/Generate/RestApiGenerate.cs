@@ -91,10 +91,7 @@ public class RestApiGenerate : GenerateBase
             "global using Microsoft.EntityFrameworkCore;",
             "global using Http.API.Infrastructure;",
             $"global using {EntityInfo.NamespaceName};",
-            $"global using {EntityNamespace}.Utils;",
             $"global using {EntityNamespace}.Models;",
-            $"global using {ShareNamespace}.Models;",
-            $"global using {ServiceNamespace}.Interface;",
             $"global using {ServiceNamespace}.IManager;",
             $"global using {ServiceNamespace}.Const;",
         };

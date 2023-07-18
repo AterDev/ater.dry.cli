@@ -99,10 +99,11 @@ public class ApiCommand : CommandBase
                 .Replace(CodeGen.ApiNamespace + ".Controllers", CodeGen.ApiNamespace + ".Controllers.AdminControllers");
             await GenerateFileAsync(adminDir, $"{entityName}{Suffix}.cs", adminContent, force);
         }
+
         string clientContent = apiContent
             .Replace("RestControllerBase", "ClientControllerBase");
-        await GenerateFileAsync(apiDir, $"{entityName}{Suffix}.cs", clientContent, force);
 
+        await GenerateFileAsync(apiDir, $"{entityName}{Suffix}.cs", clientContent, force);
     }
 
     /// <summary>
@@ -122,7 +123,6 @@ public class ApiCommand : CommandBase
         string infrastructureDir = Path.Combine(ApiPath, "Infrastructure");
         string interfaceContent = CodeGen.GetRestApiInterface();
         string apiBaseContent = CodeGen.GetRestApiBase();
-        await GenerateFileAsync(infrastructureDir, GenConst.IRESTAPI_BASE_NAME, interfaceContent);
         await GenerateFileAsync(infrastructureDir, GenConst.RESTAPI_BASE_NAME, apiBaseContent);
     }
 }
