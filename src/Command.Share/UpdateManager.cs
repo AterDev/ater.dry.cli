@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Core.Infrastructure;
+using Microsoft.CodeAnalysis;
 using NuGet.Versioning;
 
 namespace Command.Share;
@@ -216,10 +217,10 @@ public class UpdateManager
             Console.WriteLine("⚠️ can't find sln file");
             return false;
         }
+
+        var solution = new SolutionHelper(solutionFilePath);
         try
         {
-            var solution = new SolutionHelper(solutionFilePath);
-
             // 添加Infrastructure
             var studioPath = AssemblyHelper.GetStudioPath();
             var fromDir = Path.Combine(studioPath, "Infrastructure");
@@ -234,8 +235,8 @@ public class UpdateManager
                 Directory.CreateDirectory(destDir);
                 IOHelper.CopyDirectory(fromDir, destDir);
                 // add to solution
-                await solution.AddExistProjectAsync(Path.Combine(destDir, aterCoreName, $"{aterCoreName}{Const.CSharpProjectExtention}"));
-                await solution.AddExistProjectAsync(Path.Combine(destDir, aterAbstracture, $"{aterAbstracture}{Const.CSharpProjectExtention}"));
+                solution.AddExistProject(Path.Combine(destDir, aterCoreName, $"{aterCoreName}{Const.CSharpProjectExtention}"));
+                solution.AddExistProject(Path.Combine(destDir, aterAbstracture, $"{aterAbstracture}{Const.CSharpProjectExtention}"));
             }
             else
             {
@@ -250,7 +251,7 @@ public class UpdateManager
                 Console.WriteLine($"Orignal Core project not found:{0}", coreProjectFilePath);
                 return false;
             }
-            await solution.RemoveProjectAsync(Path.GetFileNameWithoutExtension(coreProjectFilePath));
+            solution.RemoveProject(Path.GetFileNameWithoutExtension(coreProjectFilePath));
 
             var entitiesDir = Path.Combine(solutionPath, Config.EntityPath, "Entities");
             destDir = Path.Combine(solutionPath, "src", "Entity");
@@ -264,7 +265,7 @@ public class UpdateManager
             {
                 var destProjectFile = Path.Combine(destDir, $"Entity{Const.CSharpProjectExtention}");
                 File.Move(sourceProjectFile, destProjectFile, true);
-                await solution.AddExistProjectAsync(destProjectFile);
+                solution.AddExistProject(destProjectFile);
             }
 
             // create globaUsings
@@ -278,6 +279,8 @@ public class UpdateManager
                 """, new UTF8Encoding(false));
             // delete old project
             Directory.Delete(Path.Combine(solutionPath, Config.EntityPath), true);
+            // remove attributes
+            solution.RemoveAttributes("Entity", "NgPage");
 
             // Share修改
             var dtoAssemblyName = Config.DtoPath.Split(Path.DirectorySeparatorChar).Last();
@@ -390,15 +393,20 @@ public class UpdateManager
                 {
                     WriteIndented = true
                 }));
+                solution.Dispose();
                 return true;
             }
+            solution.Dispose();
             return false;
-
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message + ex.StackTrace);
             return false;
+        }
+        finally
+        {
+            solution.Dispose();
         }
 
     }

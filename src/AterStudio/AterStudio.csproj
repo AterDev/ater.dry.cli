@@ -38,7 +38,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Command.Share\Command.Share.csproj" />
     <ProjectReference Include="..\Datastore\Datastore.csproj" />
-    <ProjectReference Include="..\..\..\dusi.dev\src\Infrastructure\Ater.Web.Core\Ater.Web.Core.csproj" />
   </ItemGroup>
   <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->

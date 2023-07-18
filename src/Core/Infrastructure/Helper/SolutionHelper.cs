@@ -1,5 +1,7 @@
 ﻿using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Editing;
+using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.MSBuild;
 
 namespace Core.Infrastructure.Helper;
@@ -48,7 +50,7 @@ public class SolutionHelper : IDisposable
     /// </summary>
     /// <param name="projectPath"></param>
     /// <returns></returns>
-    public async Task<bool> AddExistProjectAsync(string projectPath)
+    public bool AddExistProject(string projectPath)
     {
         if (!File.Exists(projectPath))
         {
@@ -58,8 +60,13 @@ public class SolutionHelper : IDisposable
         {
             return false;
         }
+        if (Solution.Projects.Any(p => p.FilePath!.Equals(projectPath)))
+        {
+            return false;
+        }
         var project = Workspace.OpenProjectAsync(projectPath).Result;
-        Solution = Solution.AddProject(project.Id, project.Name, project.AssemblyName, project.Language);
+        // add opened project to solution
+        Solution = project.Solution;
         return true;
     }
 
@@ -120,11 +127,59 @@ public class SolutionHelper : IDisposable
         });
     }
 
+    public void RemoveAttributes(string projectName, string attributeName)
+    {
+        var project = Solution.Projects.FirstOrDefault(p => p.AssemblyName == projectName);
+        if (project != null)
+        {
+            DocumentEditor editor;
+            var documents = project.Documents.Where(d => d.FilePath != null && d.FilePath.EndsWith(".cs")).ToList();
+
+            documents.ForEach(document =>
+            {
+                editor = DocumentEditor.CreateAsync(document).Result;
+                var nodes = editor.OriginalRoot
+                    .DescendantNodes().OfType<AttributeSyntax>()
+                    .Where(a => a.Name.ToString() == attributeName);
+
+                foreach (var node in nodes)
+                {
+                    ReplaceNodeUsing(editor, node, _ => SyntaxFactory.ParseExpression(""));
+                }
+                var newContent = FormatChanges(editor.GetChangedRoot());
+
+                File.WriteAllText(document.FilePath!, newContent, new UTF8Encoding(false));
+            });
+        }
+    }
+
+    private string FormatChanges(SyntaxNode node)
+    {
+        var workspace = new AdhocWorkspace();
+        var options = workspace.Options
+            // change these values to fit your environment / preferences 
+            .WithChangedOption(FormattingOptions.UseTabs, LanguageNames.CSharp, value: true)
+            .WithChangedOption(FormattingOptions.NewLine, LanguageNames.CSharp, value: "\r\n");
+        return Formatter.Format(node, workspace, options).ToFullString();
+    }
+
+    /// <summary>
+    /// 内容节点编辑
+    /// </summary>
+    /// <typeparam name="TNode"></typeparam>
+    /// <param name="editor"></param>
+    /// <param name="node"></param>
+    /// <param name="replacementNode"></param>
+    public void ReplaceNodeUsing<TNode>(DocumentEditor editor, TNode node, Func<TNode, SyntaxNode> replacementNode) where TNode : SyntaxNode
+    {
+        editor.ReplaceNode(node, (n, _) => replacementNode((TNode)n));
+    }
+
     /// <summary>
     /// 从解决方案中移除项目
     /// </summary>
     /// <param name="projectName"></param>
-    public async Task<bool> RemoveProjectAsync(string projectName)
+    public bool RemoveProject(string projectName)
     {
         var project = Solution.Projects.FirstOrDefault(p => p.AssemblyName == projectName);
         if (project != null)
@@ -133,7 +188,7 @@ public class SolutionHelper : IDisposable
             {
                 return false;
             }
-            Solution = await Workspace.OpenSolutionAsync(Solution.FilePath!);
+            Solution = Solution.RemoveProject(project.Id);
             return true;
         }
         return false;
