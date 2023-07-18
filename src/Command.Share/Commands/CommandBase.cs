@@ -13,7 +13,7 @@ public class CommandBase
         string filePath = Path.Combine(dir, fileName);
         if (!File.Exists(filePath) || cover)
         {
-            await File.WriteAllTextAsync(filePath, content, Encoding.UTF8);
+            await File.WriteAllTextAsync(filePath, content, new UTF8Encoding(false));
             Console.WriteLine(@$"  ℹ️ generate file {fileName}.");
         }
         else

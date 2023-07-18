@@ -31,7 +31,7 @@ public class ConfigCommand
 
             Const.PROJECT_ID = options.ProjectId;
             string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
-            await File.WriteAllTextAsync(path, content, Encoding.UTF8);
+            await File.WriteAllTextAsync(path, content, new UTF8Encoding(false));
             Console.WriteLine("Init config file success:" + path);
         }
     }

@@ -40,7 +40,7 @@ public class SolutionHelper : IDisposable
     /// <returns></returns>
     public Project? GetProject(string projectName)
     {
-        return Solution.Projects.FirstOrDefault(p => p.Name == projectName);
+        return Solution.Projects.FirstOrDefault(p => p.AssemblyName == projectName);
     }
 
     /// <summary>
@@ -58,7 +58,8 @@ public class SolutionHelper : IDisposable
         {
             return false;
         }
-        Solution = await Workspace.OpenSolutionAsync(Solution.FilePath!);
+        var project = Workspace.OpenProjectAsync(projectPath).Result;
+        Solution = Solution.AddProject(project.Id, project.Name, project.AssemblyName, project.Language);
         return true;
     }
 
@@ -89,7 +90,7 @@ public class SolutionHelper : IDisposable
             .Select(g => g.First());
         if (projectName != null)
         {
-            projects = projects.Where(p => p.Name == projectName);
+            projects = projects.Where(p => p.AssemblyName == projectName);
         }
         Parallel.ForEach(projects, p =>
         {
@@ -113,7 +114,7 @@ public class SolutionHelper : IDisposable
                     var newUsing = string.IsNullOrWhiteSpace(newName) ? string.Empty : "using " + newName;
                     content = content.Replace("namespace " + oldName, newNamespace)
                                      .Replace("using " + oldName, newUsing);
-                    File.WriteAllText(d.FilePath, content, Encoding.UTF8);
+                    File.WriteAllText(d.FilePath, content, new UTF8Encoding(false));
                 }
             });
         });
@@ -125,7 +126,7 @@ public class SolutionHelper : IDisposable
     /// <param name="projectName"></param>
     public async Task<bool> RemoveProjectAsync(string projectName)
     {
-        var project = Solution.Projects.FirstOrDefault(p => p.Name == projectName);
+        var project = Solution.Projects.FirstOrDefault(p => p.AssemblyName == projectName);
         if (project != null)
         {
             if (!ProcessHelper.RunCommand("dotnet", $"sln {Solution.FilePath} remove {project.FilePath}", out string _))
@@ -165,7 +166,7 @@ public class SolutionHelper : IDisposable
     /// <returns></returns>
     public async Task MoveDocumentAsync(string projectName, string documentPath, string newPath, string? namespaceName = null)
     {
-        var project = Solution.Projects.FirstOrDefault(p => p.Name == projectName);
+        var project = Solution.Projects.FirstOrDefault(p => p.AssemblyName == projectName);
         if (project == null)
         {
             await Console.Out.WriteLineAsync(" can't find project:" + projectName);
@@ -194,7 +195,7 @@ public class SolutionHelper : IDisposable
 
             // move file
             File.Delete(documentPath);
-            await File.WriteAllTextAsync(newPath, document.GetTextAsync().Result!.ToString(), Encoding.UTF8);
+            await File.WriteAllTextAsync(newPath, document.GetTextAsync().Result!.ToString(), new UTF8Encoding(false));
         }
     }
 
@@ -210,7 +211,7 @@ public class SolutionHelper : IDisposable
         {
             return;
         }
-        var project = Solution.Projects.FirstOrDefault(p => p.Name == projectName);
+        var project = Solution.Projects.FirstOrDefault(p => p.AssemblyName == projectName);
         if (project == null)
         {
             await Console.Out.WriteLineAsync(" can't find project:" + projectName);

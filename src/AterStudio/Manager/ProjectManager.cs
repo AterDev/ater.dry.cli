@@ -211,7 +211,7 @@ public class ProjectManager
             options.IsSplitController = dto.IsSplitController;
 
         string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
-        await File.WriteAllTextAsync(Path.Combine(_projectContext.SolutionPath!, Config.ConfigFileName), content, Encoding.UTF8);
+        await File.WriteAllTextAsync(Path.Combine(_projectContext.SolutionPath!, Config.ConfigFileName), content, new UTF8Encoding(false));
         return true;
     }
 

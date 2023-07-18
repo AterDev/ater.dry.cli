@@ -240,7 +240,7 @@ public class EntityManager
         {
             if (filePath != null)
             {
-                File.WriteAllTextAsync(filePath, Content, Encoding.UTF8);
+                File.WriteAllTextAsync(filePath, Content, new UTF8Encoding(false));
                 return true;
             }
 
@@ -343,7 +343,7 @@ public class EntityManager
             options.WebAppPath = webPath;
             options.SwaggerPath = swaggerPath;
             string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
-            await File.WriteAllTextAsync(Path.Combine(_projectContext.SolutionPath!, Config.ConfigFileName), content, Encoding.UTF8);
+            await File.WriteAllTextAsync(Path.Combine(_projectContext.SolutionPath!, Config.ConfigFileName), content, new UTF8Encoding(false));
         }
 
         swaggerPath ??= Path.Combine(_projectContext.ApiPath!, "swagger.json");

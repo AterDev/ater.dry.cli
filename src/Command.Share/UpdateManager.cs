@@ -122,7 +122,7 @@ public class UpdateManager
                         /// </summary>
                         public const string NotFoundResource = "未找到的资源!";
                     }
-                    """, Encoding.UTF8);
+                    """, new UTF8Encoding(false));
             }
             if (!File.Exists(appConstPath))
             {
@@ -150,7 +150,7 @@ public class UpdateManager
                         /// </summary>
                         public const string Version = "Version";
                     }
-                    """, Encoding.UTF8);
+                    """, new UTF8Encoding(false));
             }
 
             Console.WriteLine("🔔 App Const move to Application, please remove it from Core!");
@@ -192,7 +192,7 @@ public class UpdateManager
                     Name = name;
                 }
             }
-            """, Encoding.UTF8);
+            """, new UTF8Encoding(false));
         }
     }
 
@@ -275,7 +275,7 @@ public class UpdateManager
                 global using Ater.Web.Core.Attributes;
                 global using Ater.Web.Core.Models;
                 global using Microsoft.EntityFrameworkCore;
-                """, Encoding.UTF8);
+                """, new UTF8Encoding(false));
             // delete old project
             Directory.Delete(Path.Combine(solutionPath, Config.EntityPath), true);
 

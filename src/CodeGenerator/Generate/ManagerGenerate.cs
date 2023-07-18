@@ -186,7 +186,7 @@ public class ManagerGenerate : GenerateBase
         string? entityProjectNamespace = AssemblyHelper.GetNamespaceName(projectFile!.Directory!);
 
         CompilationHelper compilationHelper = new(projectFile.Directory!.FullName);
-        string content = File.ReadAllText(fileInfo.FullName, Encoding.UTF8);
+        string content = File.ReadAllText(fileInfo.FullName, new UTF8Encoding(false));
         compilationHelper.AddSyntaxTree(content);
         string? entityNamespace = compilationHelper.GetNamesapce();
 

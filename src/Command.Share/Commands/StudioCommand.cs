@@ -233,7 +233,7 @@ public class StudioCommand
                 }
 
                 string content = System.Text.Json.JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
-                await File.WriteAllTextAsync(solutionDir, content, Encoding.UTF8);
+                await File.WriteAllTextAsync(solutionDir, content, new UTF8Encoding(false));
                 Console.WriteLine($" Update {project.Name} config file success");
 
                 // 库中版本数据

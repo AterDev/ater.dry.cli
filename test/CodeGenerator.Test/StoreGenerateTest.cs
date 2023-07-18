@@ -48,7 +48,7 @@ public class StoreGenerateTest
         FileInfo? projectFile = AssemblyHelper.FindProjectFile(fileInfo.Directory!, fileInfo.Directory!.Root);
 
         CompilationHelper compilationHelper = new(projectFile!.Directory!.FullName);
-        string content = File.ReadAllText(fileInfo.FullName, Encoding.UTF8);
+        string content = File.ReadAllText(fileInfo.FullName, new UTF8Encoding(false));
         compilationHelper.AddSyntaxTree(content);
         string? entityNamespace = compilationHelper.GetNamesapce();
 
