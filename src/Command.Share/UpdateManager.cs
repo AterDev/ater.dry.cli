@@ -50,6 +50,7 @@ public class UpdateManager
                     File.WriteAllText(configFilePath, JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true }));
                 }
                 AfterVersion = "7.1.0";
+                Console.WriteLine("🙌 Updated successed!");
                 return true;
             }
         }
