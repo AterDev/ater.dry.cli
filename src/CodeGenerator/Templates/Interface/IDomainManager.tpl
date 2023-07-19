@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Infrastructure;
-namespace ${Namespace}.Interface;
+namespace ${Namespace}.IManager;
 
 /// <summary>
 /// 仓储数据管理接口

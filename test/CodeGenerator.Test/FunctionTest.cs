@@ -1,8 +1,11 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Text.Json.Nodes;
+using System.Threading.Tasks;
 using CodeGenerator.Generate;
 using Core.Infrastructure.Helper;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.OpenApi.Readers;
 using NuGet.Versioning;
 
@@ -141,6 +144,17 @@ public class FunctionTest
         var equal = (VersionComparer.Compare(v70, v700, VersionComparison.Version) == 0);
 
         Assert.True(equal);
+
+    }
+
+    [Fact]
+    public async Task Should_Analysis_CodeAsync()
+    {
+        var content = File.ReadAllText(@"D:\codes\v7.0\src\Application\IManager\ISystemRoleManager.cs");
+        var tree = CSharpSyntaxTree.ParseText(content);
+        var mscorlib = MetadataReference.CreateFromFile(typeof(object).Assembly.Location);
+        var compilation = CSharpCompilation.Create("MyCompilation", syntaxTrees: new[] { tree }, references: new[] { mscorlib });
+        await CSharpAnalysisHelper.GetBaseInterfaceInfoAsync(compilation, tree);
 
     }
 }

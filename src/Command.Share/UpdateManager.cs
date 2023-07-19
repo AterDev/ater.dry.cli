@@ -1,6 +1,9 @@
 ﻿using System.Text.Json;
 using Core.Infrastructure;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Editing;
 using NuGet.Versioning;
 
 namespace Command.Share;
@@ -427,31 +430,118 @@ public class UpdateManager
     /// <summary>
     /// 更新用户业务代码逻辑
     /// </summary>
-    private static void UpdateUserCodes(Solution solution)
+    private static async Task UpdateUserCodes8Async(SolutionHelper helper)
     {
+        var solution = helper.Solution;
+        var appName = Config.ApplicationPath.Split(Path.DirectorySeparatorChar).Last();
+        var appPath = Path.Combine(solution.FilePath!, "../", Config.ApplicationPath);
+
         // IDomainManager相关内容
-        var managerInterfaceContent = """
-            using Microsoft.EntityFrameworkCore.Infrastructure;
-            namespace Application.IManager;
+        var content = GenerateBase.GetTplContent("Interface.IDomainManager.tpl");
+        content = content.Replace("${Namespace}", appName);
+        await IOHelper.WriteToFileAsync(Path.Combine(appPath, "IManager", "IDomainManager.cs"), content);
 
-            /// <summary>
-            /// 仓储数据管理接口
-            /// </summary>
-            public interface IDomainManager<TEntity>
-                where TEntity : EntityBase
+        content = GenerateBase.GetTplContent("Implement.ManagerBase.tpl");
+        await IOHelper.WriteToFileAsync(Path.Combine(appPath, "Implement", "ManagerBase.cs"), content);
+
+        var appProject = helper.GetProject(appName);
+
+        // ManagerBase调整
+        var document = appProject?.Documents
+            .Where(d => d.Name.Equals("DomainManagerBase"))
+            .FirstOrDefault();
+        if (document != null && document.FilePath != null)
+        {
+            var root = await document.GetSyntaxRootAsync();
+            var classNode = root?.DescendantNodes()
+                .OfType<ClassDeclarationSyntax>()
+                .FirstOrDefault();
+
+            if (classNode != null)
             {
-                DataStoreContext Stores { get; init; }
-                QuerySet<TEntity> Query { get; init; }
-                CommandSet<TEntity> Command { get; init; }
-                public IQueryable<TEntity> Queryable { get; set; }
-                public bool AutoSave { get; set; }
-                public DatabaseFacade Database { get; init; }
+                var rightBase = classNode.BaseList?.Types
+                    .Any(t => t.Type.ToString().Equals("ManagerBase")) ?? false;
+                if (!rightBase)
+                {
+                    content = GenerateBase.GetTplContent("Implement.DomainManagerBase.tpl");
+                    await IOHelper.WriteToFileAsync(document.FilePath!, content);
+                }
             }
-            """;
+        }
+        // IManager调整
+        var documents = appProject?.Documents
+            .Where(d => d.Folders[0].Equals("IManager"))
+            .ToList();
+        var compilation = CSharpCompilation.Create("tmp");
+        documents?.ForEach(async document =>
+        {
+            var tree = await document.GetSyntaxTreeAsync();
+            var root = await document.GetSyntaxRootAsync();
+            if (tree != null && root != null)
+            {
+                compilation.AddSyntaxTrees(tree);
+                var baseInterface = await CSharpAnalysisHelper.GetBaseInterfaceInfoAsync(compilation, tree);
+                if (baseInterface != null && baseInterface.Name == "IDomainManager")
+                {
+                    // 旧接口，需要继承的接口
+                    if (baseInterface.TypeArguments.Length > 1)
+                    {
+                        var editor = await DocumentEditor.CreateAsync(document);
+                        var interfaceDeclaration = root.DescendantNodes()
+                            .OfType<InterfaceDeclarationSyntax>()
+                            .FirstOrDefault();
+                        var oldBaseList = interfaceDeclaration!.DescendantNodes()
+                            .OfType<BaseListSyntax>()
+                            .Single();
 
-        var a = managerInterfaceContent;
+                        var firstTypeName = baseInterface.TypeArguments[0].Name;
+                        var typeName = SyntaxFactory.ParseTypeName($"IDomainManager<{firstTypeName}>");
+                        var baseType = SyntaxFactory.SimpleBaseType(typeName);
+                        var newColonToken = SyntaxFactory.Token(SyntaxKind.ColonToken)
+                          .WithTrailingTrivia(SyntaxFactory.Space);
+                        var newBaseList = SyntaxFactory.BaseList(
+                          SyntaxFactory.SingletonSeparatedList<BaseTypeSyntax>(baseType))
+                              .WithTrailingTrivia(SyntaxFactory.LineFeed)
+                              .WithColonToken(newColonToken);
 
+                        editor.ReplaceNode(oldBaseList, newBaseList);
 
+                        // 插入接口方法
+                        var entityName = firstTypeName;
+                        string[] methods = new string[]{
+                            $"Task<{entityName}?> GetCurrentAsync(Guid id, params string[] navigations);",
+                            $"Task<{entityName}> AddAsync({entityName} entity);",
+                            $"Task<{entityName}> UpdateAsync({entityName} entity, {entityName}UpdateDto dto);",
+                            $"Task<{entityName}?> FindAsync(Guid id);",
+                            $"Task<TDto?> FindAsync<TDto>(Expression<Func<{entityName}, bool>>? whereExp) where TDto : class;",
+                            $"Task<List<TDto>> ListAsync<TDto>(Expression<Func<{entityName}, bool>>? whereExp) where TDto : class;",
+                            $"Task<PageList<{entityName}ItemDto>> FilterAsync({entityName}FilterDto filter);",
+                            $"Task<{entityName}?> DeleteAsync({entityName} entity, bool softDelete = true);",
+                            $"Task<bool> ExistAsync(Guid id);",
+                        };
+
+                        foreach (string method in methods)
+                        {
+                            // 如果已有接口中的方法，则不再添加
+                            if (root.DescendantNodes().Where(r => r is MethodDeclarationSyntax)
+                                .Any(m => m.ToString().Contains(method)))
+                            {
+                                continue;
+                            }
+
+                            if (SyntaxFactory.ParseMemberDeclaration(method) is MethodDeclarationSyntax methodNode)
+                            {
+                                interfaceDeclaration = interfaceDeclaration.AddMembers(methodNode);
+                            }
+                        }
+                        editor.ReplaceNode(root, interfaceDeclaration);
+
+                        var newRoot = editor.GetChangedRoot();
+                        await IOHelper.WriteToFileAsync(document.FilePath!, newRoot.ToFullString());
+                    }
+                }
+            }
+        });
     }
 
     #endregion

@@ -142,32 +142,6 @@ public class ManagerCommand : CommandBase
             && File.Exists(iManagerPath)
             && AssemblyHelper.NeedUpdate(Const.Version))
         {
-            // update files
-            //CompilationHelper compilation = new(ApplicationPath);
-            //string content = await File.ReadAllTextAsync(iManagerPath);
-            //compilation.AddSyntaxTree(content);
-            //string[] methods = new string[]{
-            //    $"Task<{entityName}?> GetCurrentAsync(Guid id, params string[] navigations);",
-            //    $"Task<{entityName}> AddAsync({entityName} entity);",
-            //    $"Task<{entityName}> UpdateAsync({entityName} entity, {entityName}UpdateDto dto);",
-            //    $"Task<{entityName}?> FindAsync(Guid id);",
-            //    $"Task<TDto?> FindAsync<TDto>(Expression<Func<{entityName}, bool>>? whereExp) where TDto : class;",
-            //    $"Task<List<TDto>> ListAsync<TDto>(Expression<Func<{entityName}, bool>>? whereExp) where TDto : class;",
-            //    $"Task<PageList<{entityName}ItemDto>> FilterAsync({entityName}FilterDto filter);",
-            //    $"Task<{entityName}?> DeleteAsync({entityName} entity, bool softDelete = true);",
-            //    $"Task<bool> ExistAsync(Guid id);",
-            //};
-
-            //foreach (string method in methods)
-            //{
-            //    if (!compilation.MethodExist(method))
-            //    {
-            //        compilation.InsertInterfaceMethod(method);
-            //    }
-            //}
-            //compilation.ReplaceInterfaceImplement($"IDomainManager<{entityName}>");
-            //interfaceContent = compilation.SyntaxRoot!.ToString();
-            //await GenerateFileAsync(iManagerDir, $"I{entityName}Manager.cs", interfaceContent, true);
         }
         else
         {

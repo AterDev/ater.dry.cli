@@ -80,4 +80,15 @@ public class IOHelper
                 && !f.EndsWith(".Assembly.cs"))
             .ToArray();
     }
+
+    /// <summary>
+    /// use UTF8 without bom as default
+    /// </summary>
+    /// <param name="filePath"></param>
+    /// <param name="content"></param>
+    /// <returns></returns>
+    public static async Task WriteToFileAsync(string filePath, string content)
+    {
+        await File.WriteAllTextAsync(filePath, content, new UTF8Encoding(false));
+    }
 }

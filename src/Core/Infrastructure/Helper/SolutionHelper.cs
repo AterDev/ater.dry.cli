@@ -1,7 +1,6 @@
 ﻿using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
-using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.MSBuild;
 
 namespace Core.Infrastructure.Helper;
@@ -11,7 +10,7 @@ namespace Core.Infrastructure.Helper;
 public class SolutionHelper : IDisposable
 {
     public MSBuildWorkspace Workspace { get; set; }
-    protected Solution Solution { get; private set; }
+    public Solution Solution { get; private set; }
 
     public SolutionHelper(string path)
     {
@@ -148,33 +147,11 @@ public class SolutionHelper : IDisposable
                 {
                     editor.RemoveNode(node);
                 }
-                var newContent = FormatChanges(editor.GetChangedRoot());
+                var newContent = CSharpAnalysisHelper.FormatChanges(editor.GetChangedRoot());
 
                 File.WriteAllText(document.FilePath!, newContent, new UTF8Encoding(false));
             });
         }
-    }
-
-    private string FormatChanges(SyntaxNode node)
-    {
-        var workspace = new AdhocWorkspace();
-        var options = workspace.Options
-            // change these values to fit your environment / preferences 
-            .WithChangedOption(FormattingOptions.UseTabs, LanguageNames.CSharp, value: true)
-            .WithChangedOption(FormattingOptions.NewLine, LanguageNames.CSharp, value: "\r\n");
-        return Formatter.Format(node, workspace, options).ToFullString();
-    }
-
-    /// <summary>
-    /// 内容节点编辑
-    /// </summary>
-    /// <typeparam name="TNode"></typeparam>
-    /// <param name="editor"></param>
-    /// <param name="node"></param>
-    /// <param name="replacementNode"></param>
-    public void ReplaceNodeUsing<TNode>(DocumentEditor editor, TNode node, Func<TNode, SyntaxNode> replacementNode) where TNode : SyntaxNode
-    {
-        editor.ReplaceNode(node, (n, _) => replacementNode((TNode)n));
     }
 
     /// <summary>

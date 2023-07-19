@@ -2,9 +2,6 @@
 
 public class GenerateBase
 {
-    public GenerateBase()
-    {
-    }
     /// <summary>
     /// 获取模板内容
     /// </summary>
