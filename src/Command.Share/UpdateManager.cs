@@ -48,6 +48,7 @@ public class UpdateManager
             if (res)
             {
                 newVersion = "8.0.0";
+                // 
                 return true;
             }
         }
@@ -396,6 +397,9 @@ public class UpdateManager
                 "global using Ater.Web.Abstracture.Interface;"
             });
 
+            // 业务代码关联修改
+            await UpdateUserCodes8Async(solution);
+
             // 配置文件等
             var configFile = Path.Combine(solutionPath, Config.ConfigFileName);
             var config = JsonSerializer.Deserialize<ConfigOptions>(File.ReadAllText(configFile));
@@ -409,6 +413,8 @@ public class UpdateManager
                 {
                     WriteIndented = true
                 }));
+
+                Config.SetConfig(config);
                 solution.Dispose();
                 return true;
             }
@@ -535,7 +541,6 @@ public class UpdateManager
                             }
                         }
                         editor.ReplaceNode(root, interfaceDeclaration);
-
                         var newRoot = editor.GetChangedRoot();
                         await IOHelper.WriteToFileAsync(document.FilePath!, newRoot.ToFullString());
                     }
@@ -543,6 +548,5 @@ public class UpdateManager
             }
         });
     }
-
     #endregion
 }

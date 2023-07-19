@@ -114,14 +114,13 @@ public class ApiCommand : CommandBase
         string implementDir = Path.Combine(ApiPath, "Infrastructure");
         string storeService = CodeGen.GetStoreService();
 
-        // 生成仓储上下文
+        // manager注入服务
         await GenerateFileAsync(implementDir, "StoreServicesExtensions.cs", storeService, true);
     }
 
     private async Task GenerateCommonFilesAsync()
     {
         string infrastructureDir = Path.Combine(ApiPath, "Infrastructure");
-        string interfaceContent = CodeGen.GetRestApiInterface();
         string apiBaseContent = CodeGen.GetRestApiBase();
         await GenerateFileAsync(infrastructureDir, GenConst.RESTAPI_BASE_NAME, apiBaseContent);
     }

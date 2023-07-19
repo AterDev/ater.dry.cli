@@ -490,7 +490,7 @@ public class ManagerGenerate : GenerateBase
     /// store上下文
     /// </summary>
     /// <returns></returns>
-    public string GetDataStoreContext()
+    public static string GetDataStoreContext(string? nspName = null)
     {
         string queryPath = Path.Combine(StorePath, $"{Const.QUERY_STORE}");
         string[] queryFiles = Directory.GetFiles(queryPath, $"*{Const.QUERY_STORE}.cs", SearchOption.TopDirectoryOnly);
@@ -539,7 +539,7 @@ public class ManagerGenerate : GenerateBase
         }
         // 构建服务
         string content = GetTplContent("Implement.DataStoreContext.tpl");
-        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace)
+        content = content.Replace(TplConst.NAMESPACE, nspName)
             .Replace(TplConst.STORECONTEXT_PROPS, "")
             .Replace(TplConst.STORECONTEXT_PARAMS, ctorParams)
             .Replace(TplConst.STORECONTEXT_ASSIGN, ctorAssign);

@@ -27,7 +27,7 @@ public class ManagerCommand : CommandBase
         Instructions.Add($"  🔹 generate {entityName} DataStore.");
         Instructions.Add($"  🔹 generate Manager files.");
         Instructions.Add($"  🔹 generate Manager test files.");
-        Instructions.Add($"  🔹 generate Services inject files.");
+        Instructions.Add($"  🔹 generate DataStoreContext files.");
         Instructions.Add($"  🔹 update Globalusings files.");
     }
 
@@ -80,6 +80,8 @@ public class ManagerCommand : CommandBase
                 Console.WriteLine(Instructions[3]);
                 await GenerateMangerTestAsync(force);
 
+                Console.WriteLine(Instructions[4]);
+                await GetDataStoreContextAsync();
                 Console.WriteLine(Instructions[5]);
                 await GenerateGlobalUsingsFilesAsync();
             }
