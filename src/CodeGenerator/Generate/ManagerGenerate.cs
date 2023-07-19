@@ -493,11 +493,11 @@ public class ManagerGenerate : GenerateBase
     /// store上下文
     /// </summary>
     /// <returns></returns>
-    public string GetDataStoreContext(string? nspName = null)
+    public static string GetDataStoreContext(string applicationPath, string nspName)
     {
-        string queryPath = Path.Combine(StorePath, $"{Const.QUERY_STORE}");
+        string queryPath = Path.Combine(applicationPath, $"{Const.QUERY_STORE}");
         string[] queryFiles = Directory.GetFiles(queryPath, $"*{Const.QUERY_STORE}.cs", SearchOption.TopDirectoryOnly);
-        string commandPath = Path.Combine(StorePath, $"{Const.COMMAND_STORE}");
+        string commandPath = Path.Combine(applicationPath, $"{Const.COMMAND_STORE}");
         string[] commandFiles = Directory.GetFiles(commandPath, $"*{Const.COMMAND_STORE}.cs", SearchOption.TopDirectoryOnly);
         IEnumerable<string> allDataStores = queryFiles.Concat(commandFiles);
 
@@ -507,7 +507,7 @@ public class ManagerGenerate : GenerateBase
         string usings = "";
         if (allDataStores.Any())
         {
-            var compilationHelper = new CompilationHelper(SharePath);
+            var compilationHelper = new CompilationHelper(applicationPath);
             var entityClassNames = new List<string>();
 
             allDataStores.ToList().ForEach(filePath =>
@@ -542,7 +542,7 @@ public class ManagerGenerate : GenerateBase
         }
         // 构建服务
         string content = GetTplContent("Implement.DataStoreContext.tpl");
-        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace)
+        content = content.Replace(TplConst.NAMESPACE, nspName)
             .Replace(TplConst.STORECONTEXT_PROPS, "")
             .Replace(TplConst.STORECONTEXT_PARAMS, ctorParams)
             .Replace(TplConst.STORECONTEXT_ASSIGN, ctorAssign);

@@ -122,13 +122,16 @@ public class ProjectManager
             var path = _projectContext.Project.Path;
             var version = await AssemblyHelper.GetSolutionVersionAsync(_projectContext.SolutionPath!);
             if (version == null) return "未找到项目配置文件，无法进行更新";
-            var res = UpdateManager.UpdateInfrastructure(path!, version, out string newVersion);
+            var updateManager = new UpdateManager(path!, version);
+            var res = await updateManager.UpdateInfrastructureAsync();
+            if (res)
+            {
+                // update version to db
+                _projectContext.Project.Version = updateManager.AfterVersion;
+                _db.Projects.Update(_projectContext.Project);
+            }
 
-            // update version to db
-            _projectContext.Project.Version = newVersion;
-            _db.Projects.Update(_projectContext.Project);
-
-            return res ? "成功更新到:" + newVersion : "更新失败，请手动恢复到之前版本";
+            return res ? "成功更新到:" + updateManager.AfterVersion : "更新失败，请手动恢复到之前版本";
         }
         catch (Exception ex)
         {

@@ -218,7 +218,7 @@ public class ManagerCommand : CommandBase
     /// </summary>
     public async Task GetDataStoreContextAsync()
     {
-        string storeContext = CodeGen.GetDataStoreContext();
+        string storeContext = ManagerGenerate.GetDataStoreContext(ApplicationPath, "Application");
         // 生成仓储上下文
         await GenerateFileAsync(ApplicationPath, "DataStoreContext.cs", storeContext, true);
     }

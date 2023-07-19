@@ -12,16 +12,28 @@ namespace Command.Share;
 /// </summary>
 public class UpdateManager
 {
+    public static string? ErrorMsg { get; private set; }
+    public string SolutionFilePath { get; set; }
+    public bool Success { get; set; } = false;
+    public string AfterVersion { get; set; }
+    public string CurrentVersion { get; set; }
+
+    public UpdateManager(string solutionFilPath, string currentVersion)
+    {
+        SolutionFilePath = solutionFilPath;
+        CurrentVersion = currentVersion;
+        AfterVersion = currentVersion;
+    }
+
     /// <summary>
     /// 版本更新
     /// </summary>
     /// <param name="solutionFilePath"></param>
     /// <param name="currentVersion"></param>11
-    public static bool UpdateInfrastructure(string solutionFilePath, string currentVersion, out string newVersion)
+    public async Task<bool> UpdateInfrastructureAsync()
     {
-        var solutionPath = Path.GetDirectoryName(solutionFilePath)!;
-        newVersion = currentVersion;
-        var version = NuGetVersion.Parse(currentVersion);
+        var solutionPath = Path.GetDirectoryName(SolutionFilePath)!;
+        var version = NuGetVersion.Parse(CurrentVersion);
         // 7.0->7.1
         if (version == NuGetVersion.Parse("7.0.0"))
         {
@@ -37,29 +49,45 @@ public class UpdateManager
                     config.Version = "7.1.0";
                     File.WriteAllText(configFilePath, JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true }));
                 }
-                newVersion = "7.1.0";
+                AfterVersion = "7.1.0";
                 return true;
             }
         }
 
         if (version == NuGetVersion.Parse("7.1.0"))
         {
-            var res = UpdateTo8Async(solutionPath).Result;
+            // 备份
+            Console.WriteLine($"🗃️ backup solution to {solutionPath}.origin.bak");
+            IOHelper.CopyDirectory(solutionPath, $"{solutionPath}.origin.bak");
+            Console.WriteLine($"🚀 Start to update to 8.0.0");
+            var res = await UpdateTo8Async(solutionPath);
             if (res)
             {
-                newVersion = "8.0.0";
+                AfterVersion = "8.0.0";
                 // 重新生成相关代码
+                var appDir = Path.Combine(solutionPath, Config.ApplicationPath);
+                var applicationName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(appDir));
+                ManagerGenerate.GetDataStoreContext(appDir, applicationName!);
 
-                var cmd = new ManagerCommand(
-                    Path.Combine(solutionPath, Config.EntityPath),
-                    Path.Combine(solutionPath, Config.DtoPath),
-                    Path.Combine(solutionPath, Config.ApplicationPath)
-                    );
-
-
+                Console.WriteLine("🙌 Updated successed!");
                 return true;
             }
+            else
+            {
+                // 恢复
+                Console.WriteLine($"🥹 Update version failed, try to recover files!");
+                try
+                {
+                    Directory.Delete(solutionPath, true);
+                    Directory.Move($"{solutionPath}.origin.bak", solutionPath);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Recover failed:{0}, try to close the solution and try again!", ex.Message);
+                }
+            }
         }
+        Console.WriteLine("⚠️ Update completed:we encountered some errors!");
         return false;
     }
 
@@ -218,7 +246,6 @@ public class UpdateManager
     /// <param name="solutionPath"></param>
     public static async Task<bool> UpdateTo8Async(string solutionPath)
     {
-
         var solutionFilePath = Directory.GetFiles(solutionPath, "*.sln", SearchOption.TopDirectoryOnly).FirstOrDefault();
 
         var aterCoreName = "Ater.Web.Core";
