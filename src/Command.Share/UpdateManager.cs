@@ -48,7 +48,15 @@ public class UpdateManager
             if (res)
             {
                 newVersion = "8.0.0";
-                // 
+                // 重新生成相关代码
+
+                var cmd = new ManagerCommand(
+                    Path.Combine(solutionPath, Config.EntityPath),
+                    Path.Combine(solutionPath, Config.DtoPath),
+                    Path.Combine(solutionPath, Config.ApplicationPath)
+                    );
+
+
                 return true;
             }
         }

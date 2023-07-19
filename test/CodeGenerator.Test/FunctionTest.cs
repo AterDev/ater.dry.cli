@@ -129,7 +129,7 @@ public class FunctionTest
             
             """;
         var jsonNode = JsonNode.Parse(jsonString);
-        JsonHelper.AddOrUpdateJsonNode(jsonNode, "AllowedHosts", "111");
+        JsonHelper.AddOrUpdateJsonNode(jsonNode!, "AllowedHosts", "111");
 
         Console.WriteLine();
 

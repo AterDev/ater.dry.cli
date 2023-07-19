@@ -16,12 +16,12 @@ public class ManagerCommand : CommandBase
     /// </summary>
     public string? ModuleName { get; set; }
 
-    public ManagerCommand(string entityPath, string dtoPath, string servicePath, string? contextName = null)
+    public ManagerCommand(string entityPath, string dtoPath, string applicationPath, string? contextName = null)
     {
         EntityPath = entityPath;
-        ApplicationPath = servicePath;
+        ApplicationPath = applicationPath;
         DtoPath = dtoPath;
-        CodeGen = new ManagerGenerate(entityPath, dtoPath, servicePath, contextName);
+        CodeGen = new ManagerGenerate(entityPath, dtoPath, applicationPath, contextName);
         string entityName = Path.GetFileNameWithoutExtension(entityPath);
         Instructions.Add($"  🔹 generate interface & base class.");
         Instructions.Add($"  🔹 generate {entityName} DataStore.");

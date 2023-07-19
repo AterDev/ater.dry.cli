@@ -28,6 +28,6 @@ public class DbContext : IDisposable
 
     public void Dispose()
     {
-        ((IDisposable)LiteDb).Dispose();
+        LiteDb?.Dispose();
     }
 }

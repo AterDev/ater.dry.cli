@@ -28,7 +28,7 @@ public static class JsonHelper
                 else
                 {
                     // add new node with path 
-                    current.AsObject()!.Append(new KeyValuePair<string, JsonNode>(paths[i], ""));
+                    current.AsObject()!.Append(new KeyValuePair<string, JsonNode?>(paths[i], ""));
                     current = current[paths[i]];
                 }
 

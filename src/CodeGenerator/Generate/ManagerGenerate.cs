@@ -25,7 +25,7 @@ public class ManagerGenerate : GenerateBase
     /// </summary>
     public string? ShareNamespace { get; set; }
     public string? ServiceNamespace { get; set; }
-    public readonly EntityInfo EntityInfo;
+    public readonly EntityInfo? EntityInfo;
     public ManagerGenerate(string entityPath, string dtoPath, string servicePath, string? contextName = null)
     {
         EntityPath = entityPath;
@@ -34,8 +34,11 @@ public class ManagerGenerate : GenerateBase
         ContextName = contextName;
         ShareNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(SharePath));
         ServiceNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(StorePath));
-        EntityParseHelper entityHelper = new(entityPath);
-        EntityInfo = entityHelper.GetEntity();
+        if (File.Exists(entityPath))
+        {
+            EntityParseHelper entityHelper = new(entityPath);
+            EntityInfo = entityHelper.GetEntity();
+        }
     }
 
     /// <summary>
@@ -87,12 +90,12 @@ public class ManagerGenerate : GenerateBase
     private string GenManagerAddTest()
     {
         // 解析add dto
-        var addDtoPath = Path.Combine(SharePath, "Models", EntityInfo.Name + "Dtos", EntityInfo.Name + "AddDto.cs");
+        var addDtoPath = Path.Combine(SharePath, "Models", EntityInfo?.Name + "Dtos", EntityInfo?.Name + "AddDto.cs");
         var entityHelper = new EntityParseHelper(addDtoPath);
         entityHelper.Parse();
         // 构造内容
         string content = $$"""
-                    var dto = new {{EntityInfo.Name}}AddDto()
+                    var dto = new {{EntityInfo?.Name}}AddDto()
                     {
 
             """;
@@ -127,12 +130,12 @@ public class ManagerGenerate : GenerateBase
     private string GenManagerUpdateTest()
     {
         // 解析add dto
-        var addDtoPath = Path.Combine(SharePath, "Models", EntityInfo.Name + "Dtos", EntityInfo.Name + "AddDto.cs");
+        var addDtoPath = Path.Combine(SharePath, "Models", EntityInfo?.Name + "Dtos", EntityInfo?.Name + "AddDto.cs");
         var entityHelper = new EntityParseHelper(addDtoPath);
         entityHelper.Parse();
         // 构造内容
         string content = $$"""
-                    var dto = new {{EntityInfo.Name}}UpdateDto()
+                    var dto = new {{EntityInfo?.Name}}UpdateDto()
                     {
 
             """;
@@ -247,7 +250,7 @@ public class ManagerGenerate : GenerateBase
         string additionManagerDI = "";
         string additionManagerInit = "";
 
-        var navigations = EntityInfo.PropertyInfos.Where(p => p.IsNavigation && p.HasMany == true)
+        var navigations = EntityInfo?.PropertyInfos.Where(p => p.IsNavigation && p.HasMany == true)
             .ToList();
         navigations?.ForEach(navigation =>
         {
@@ -271,20 +274,20 @@ public class ManagerGenerate : GenerateBase
 
         tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName)
             .Replace(TplConst.ID_TYPE, Config.IdType)
-            .Replace(TplConst.COMMENT, EntityInfo.Comment)
+            .Replace(TplConst.COMMENT, EntityInfo?.Comment)
             .Replace(TplConst.NAMESPACE, ServiceNamespace);
         return tplContent;
     }
 
     public string GetAddMethodContent()
     {
-        string entityName = EntityInfo.Name;
+        string entityName = EntityInfo?.Name ?? "";
         string content = $$"""
                     var entity = dto.MapTo<{{entityName}}AddDto, {{entityName}}>();
 
             """;
         // 包含的关联内容
-        var navigations = EntityInfo.PropertyInfos.Where(p => p.IsNavigation && p.HasMany == true)
+        var navigations = EntityInfo?.PropertyInfos.Where(p => p.IsNavigation && p.HasMany == true)
           .ToList();
         navigations?.ForEach(nav =>
         {
@@ -303,7 +306,7 @@ public class ManagerGenerate : GenerateBase
             """;
         });
         // 所属的关联内容
-        var requiredNavigations = EntityInfo.GetRequiredNavigation();
+        var requiredNavigations = EntityInfo?.GetRequiredNavigation();
         requiredNavigations?.ForEach(nav =>
         {
             var name = nav.NavigationName ?? nav.Type;
@@ -336,7 +339,7 @@ public class ManagerGenerate : GenerateBase
     {
         string content = "";
         // 包含的关联内容
-        var navigations = EntityInfo.PropertyInfos.Where(p => p.IsNavigation && p.HasMany == true)
+        var navigations = EntityInfo?.PropertyInfos.Where(p => p.IsNavigation && p.HasMany == true)
           .ToList();
         navigations?.ForEach(nav =>
         {
@@ -360,8 +363,8 @@ public class ManagerGenerate : GenerateBase
     public string GetFilterMethodContent()
     {
         string content = "";
-        string entityName = EntityInfo.Name;
-        var props = EntityInfo.PropertyInfos.Where(p => !p.IsList)
+        string entityName = EntityInfo?.Name ?? "";
+        var props = EntityInfo?.PropertyInfos.Where(p => !p.IsList)
             .Where(p => p.IsRequired && !p.IsNullable
               || p.IsEnum
               || p.Type.StartsWith("bool") && p.Name != "IsDeleted")
@@ -369,7 +372,7 @@ public class ManagerGenerate : GenerateBase
             .Where(p => p.MaxLength is not (not null and >= 200))
             .ToList();
 
-        if (props.Any())
+        if (props != null && props.Any())
         {
             content += """
                     Queryable = Queryable
@@ -490,7 +493,7 @@ public class ManagerGenerate : GenerateBase
     /// store上下文
     /// </summary>
     /// <returns></returns>
-    public static string GetDataStoreContext(string? nspName = null)
+    public string GetDataStoreContext(string? nspName = null)
     {
         string queryPath = Path.Combine(StorePath, $"{Const.QUERY_STORE}");
         string[] queryFiles = Directory.GetFiles(queryPath, $"*{Const.QUERY_STORE}.cs", SearchOption.TopDirectoryOnly);
@@ -539,7 +542,7 @@ public class ManagerGenerate : GenerateBase
         }
         // 构建服务
         string content = GetTplContent("Implement.DataStoreContext.tpl");
-        content = content.Replace(TplConst.NAMESPACE, nspName)
+        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace)
             .Replace(TplConst.STORECONTEXT_PROPS, "")
             .Replace(TplConst.STORECONTEXT_PARAMS, ctorParams)
             .Replace(TplConst.STORECONTEXT_ASSIGN, ctorAssign);
