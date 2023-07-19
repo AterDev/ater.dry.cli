@@ -413,42 +413,4 @@ public class DtoCodeGenerate : GenerateBase
         global using Entity;
         """;
     }
-    public string GetFilterBase()
-    {
-        string content = GetTplContent("FilterBase.tpl");
-        if (content.NotNull())
-        {
-            content = content.Replace(TplConst.NAMESPACE, AssemblyName);
-        }
-        return content;
-    }
-    public string GetEntityBase()
-    {
-        string content = GetTplContent("EntityBase.tpl");
-        if (content.NotNull())
-        {
-            content = content.Replace(TplConst.NAMESPACE, AssemblyName)
-                .Replace(TplConst.ID_TYPE, Config.IdType)
-                .Replace(TplConst.CREATEDTIME_NAME, Config.CreatedTimeName);
-        }
-        return content;
-    }
-    public string GetBatchUpdate()
-    {
-        string content = GetTplContent("BatchUpdate.tpl");
-        if (content.NotNull())
-        {
-            content = content.Replace(TplConst.NAMESPACE, AssemblyName);
-        }
-        return content;
-    }
-    public string GetPageList()
-    {
-        string content = GetTplContent("PageList.tpl");
-        if (content.NotNull())
-        {
-            content = content.Replace(TplConst.NAMESPACE, AssemblyName);
-        }
-        return content;
-    }
 }

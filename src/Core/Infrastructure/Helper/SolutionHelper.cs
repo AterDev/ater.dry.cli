@@ -309,6 +309,7 @@ public class SolutionHelper : IDisposable
 
     public void Dispose()
     {
+        Workspace.CloseSolution();
         Workspace.Dispose();
         MSBuildLocator.Unregister();
     }

@@ -423,5 +423,36 @@ public class UpdateManager
         }
 
     }
+
+    /// <summary>
+    /// 更新用户业务代码逻辑
+    /// </summary>
+    private static void UpdateUserCodes(Solution solution)
+    {
+        // IDomainManager相关内容
+        var managerInterfaceContent = """
+            using Microsoft.EntityFrameworkCore.Infrastructure;
+            namespace Application.IManager;
+
+            /// <summary>
+            /// 仓储数据管理接口
+            /// </summary>
+            public interface IDomainManager<TEntity>
+                where TEntity : EntityBase
+            {
+                DataStoreContext Stores { get; init; }
+                QuerySet<TEntity> Query { get; init; }
+                CommandSet<TEntity> Command { get; init; }
+                public IQueryable<TEntity> Queryable { get; set; }
+                public bool AutoSave { get; set; }
+                public DatabaseFacade Database { get; init; }
+            }
+            """;
+
+        var a = managerInterfaceContent;
+
+
+    }
+
     #endregion
 }
