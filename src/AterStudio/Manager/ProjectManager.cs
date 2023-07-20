@@ -107,7 +107,6 @@ public class ProjectManager
         return project;
     }
 
-
     /// <summary>
     /// 更新解决方案
     /// </summary>
@@ -124,15 +123,16 @@ public class ProjectManager
             var version = await AssemblyHelper.GetSolutionVersionAsync(_projectContext.SolutionPath!);
             if (version == null) return "未找到项目配置文件，无法进行更新";
             var updateManager = new UpdateManager(path!, version);
-            var res = await updateManager.UpdateInfrastructureAsync();
-            if (res)
+            var isSuccess = await updateManager.UpdateInfrastructureAsync();
+
+            var res = updateManager.GetUpdateNotes(isSuccess);
+            if (isSuccess)
             {
                 // update version to db
-                _projectContext.Project.Version = updateManager.AfterVersion;
+                _projectContext.Project.Version = updateManager.TargetVersion;
                 _db.Projects.Update(_projectContext.Project);
             }
-
-            return res ? "成功更新到:" + updateManager.AfterVersion : "更新失败，请手动恢复到之前版本";
+            return res;
         }
         catch (Exception ex)
         {

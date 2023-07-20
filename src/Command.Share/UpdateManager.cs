@@ -15,14 +15,14 @@ public class UpdateManager
     public static string? ErrorMsg { get; private set; }
     public string SolutionFilePath { get; set; }
     public bool Success { get; set; } = false;
-    public string AfterVersion { get; set; }
+    public string TargetVersion { get; set; }
     public string CurrentVersion { get; set; }
 
     public UpdateManager(string solutionFilPath, string currentVersion)
     {
         SolutionFilePath = solutionFilPath;
         CurrentVersion = currentVersion;
-        AfterVersion = currentVersion;
+        TargetVersion = currentVersion;
     }
 
     /// <summary>
@@ -37,6 +37,7 @@ public class UpdateManager
         // 7.0->7.1
         if (version == NuGetVersion.Parse("7.0.0"))
         {
+            TargetVersion = "7.1.0";
             // 临时修正路径
             Config.EntityPath = "src" + Path.DirectorySeparatorChar + Config.EntityPath;
             Config.DtoPath = "src" + Path.DirectorySeparatorChar + Config.DtoPath;
@@ -63,7 +64,6 @@ public class UpdateManager
 
                     File.WriteAllText(configFilePath, JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true }));
                 }
-                AfterVersion = "7.1.0";
                 Console.WriteLine("🙌 Updated successed!");
                 return true;
             }
@@ -71,11 +71,11 @@ public class UpdateManager
 
         if (version == NuGetVersion.Parse("7.1.0"))
         {
+            TargetVersion = "8.0.0";
             Console.WriteLine($"🚀 Start to update to 8.0.0");
             var res = await UpdateTo8Async(solutionPath);
             if (res)
             {
-                AfterVersion = "8.0.0";
                 // 重新生成相关代码
                 var appDir = Path.Combine(solutionPath, Config.ApplicationPath);
                 var applicationName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(appDir));
@@ -490,7 +490,7 @@ public class UpdateManager
     {
         var solution = helper.Solution;
         var appName = Config.ApplicationPath.Split(Path.DirectorySeparatorChar).Last();
-        var appPath = Path.Combine(solution.FilePath!, "../", Config.ApplicationPath);
+        var appPath = Path.Combine(solution.FilePath!, "..", Config.ApplicationPath);
 
         // IDomainManager相关内容
         var content = GenerateBase.GetTplContent("Interface.IDomainManager.tpl");
@@ -534,7 +534,7 @@ public class UpdateManager
 
         // Controllers调整
         var apiName = Config.ApiPath.Split(Path.DirectorySeparatorChar).Last();
-        var apiPath = Path.Combine(solution.FilePath!, "../", Config.ApiPath);
+        var apiPath = Path.Combine(solution.FilePath!, "..", Config.ApiPath);
         var apiProject = helper.GetProject(apiName);
         var controllers = appProject?.Documents
             .Where(d => d.Folders.Any() && d.Folders[0].Equals("Controllers"))
@@ -656,6 +656,33 @@ public class UpdateManager
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// 更新结果 
+    /// </summary>
+    /// <param name="isSuccess">是否成功</param>
+    public string GetUpdateNotes(bool isSuccess)
+    {
+        var content = $"""
+            ## 版本
+
+            当前版本:{CurrentVersion}
+
+            目标版本:{TargetVersion}
+
+            ## 结果
+
+            {(isSuccess ? "👍 更新成功" : "😢 更新失败")}
+
+            ## 后续步骤
+
+            {(isSuccess ?
+            "请查看控制台错误信息，并将更新错误信息反馈到 [Github Issue](https://github.com/AterDev/ater.droplet.cli/issues)。" :
+            "请查看`Program.cs`与`appsettings.json` 更新内容，新版本支持更简洁和灵活的配置。")}
+            
+            """;
+        return content;
     }
     #endregion
 }
