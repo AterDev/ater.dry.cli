@@ -14,6 +14,7 @@ export interface ConfigOptions {
   dtoPath: string;
   entityPath: string;
   dbContextPath: string;
+  storePath?: string | null;
   applicationPath: string;
   apiPath: string;
   /**

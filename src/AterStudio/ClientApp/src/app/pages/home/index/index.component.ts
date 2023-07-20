@@ -203,6 +203,7 @@ export class IndexComponent implements OnInit {
           if (res) {
             this.snb.open(res);
             this.dialogRef.close();
+            this.getProjects();
           }
         },
         error: (error) => {

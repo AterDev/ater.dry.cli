@@ -20,9 +20,12 @@ public class ConfigOptions
     public string DtoPath { get; set; } = Path.Combine("src", "Share");
     public string EntityPath { get; set; } = Path.Combine("src", "Entity");
     public string DbContextPath { get; set; } = Path.Combine("src", "Database", "EntityFramework");
+    /// <summary>
+    /// 废弃属性
+    /// </summary>
+    public string? StorePath { get; set; }
     public string ApplicationPath { get; set; } = Path.Combine("src", "Application");
     public string ApiPath { get; set; } = Path.Combine("src", "Http.API");
-
     /// <summary>
     /// NameId/Id
     /// </summary>

@@ -216,6 +216,10 @@ public class StudioCommand
                     options.EntityPath = "src" + Path.DirectorySeparatorChar + options.EntityPath;
                     options.DbContextPath = "src" + Path.DirectorySeparatorChar + options.DbContextPath;
                     options.ApplicationPath = "src" + Path.DirectorySeparatorChar + options.ApplicationPath;
+                    if (options.StorePath != null)
+                    {
+                        options.ApplicationPath = "src" + Path.DirectorySeparatorChar + options.StorePath;
+                    }
                     options.ApiPath = "src" + Path.DirectorySeparatorChar + options.ApiPath;
                 }
                 else if (NuGetVersion.Parse(options.Version) >= NuGetVersion.Parse("7.1.0"))
@@ -223,7 +227,12 @@ public class StudioCommand
                     options.DtoPath = options.DtoPath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
                     options.EntityPath = options.EntityPath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
                     options.DbContextPath = options.DbContextPath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+
                     options.ApplicationPath = options.ApplicationPath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+                    if (options.StorePath != null)
+                    {
+                        options.ApplicationPath = options.StorePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+                    }
                     options.ApiPath = options.ApiPath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
                 }
                 if (options.SolutionType == null)

@@ -84,6 +84,7 @@ public class UpdateManager
                 var applicationName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(appDir));
                 ManagerGenerate.GetDataStoreContext(appDir, applicationName!);
 
+                Directory.Delete($"{solutionPath}.origin.bak", true);
                 Console.WriteLine("🙌 Updated successed!");
                 return true;
             }

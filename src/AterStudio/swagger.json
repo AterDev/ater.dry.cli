@@ -1968,6 +1968,10 @@
           "dbContextPath": {
             "type": "string"
           },
+          "storePath": {
+            "type": "string",
+            "nullable": true
+          },
           "applicationPath": {
             "type": "string"
           },
