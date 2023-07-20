@@ -59,7 +59,7 @@
       </mat-form-field>
       <mat-form-field>
         <mat-label>项目路径</mat-label>
-        <input matInput placeholder="项目根目录路径，非文件路径" formControlName="path">
+        <input matInput placeholder="项目根目录路径，非文件路径" formControlName="path" (keyup.enter)="addProject()">
       </mat-form-field>
     </form>
   </mat-dialog-content>
@@ -124,7 +124,7 @@
       请使用对应版本的Studio，或者选择升级项目。
     </p>
     <h2 style="color: black;">升级说明</h2>
-    <p>如果跨主版本升级，请先更新到对应的.NET版本，然后再点击升级项目；</p>
+    <p>如果跨主版本升级，请先更新对应的.NET版本以及相关包，然后再点击升级项目；</p>
     <p>升级时建议关闭占用项目代码的程序，如VS等；</p>
     <p>升级后根据VS提示修复相关错误即可；</p>
     <p>
@@ -133,6 +133,6 @@
   </mat-dialog-content>
   <mat-dialog-actions class="justify-content-end ">
     <button mat-button mat-dialog-close>取消</button>
-    <button mat-button (click)="updateProject()" [disabled]="isProcessing" color="warn">升级项目</button>
+    <button mat-button (click)="updateProject()" [disabled]="isProcessing" color="warn" matTooltip="务必做好备份">升级项目</button>
   </mat-dialog-actions>
 </ng-template>

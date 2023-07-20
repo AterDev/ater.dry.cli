@@ -357,11 +357,23 @@ public class UpdateManager
                 Path.Combine(applicationDir, "IUserContext.cs"),
                 $"{appAssemblyName}");
 
+            // 模板内容更新
+            var content = GenerateBase.GetTplContent("Implement.CommandStoreBase.tpl");
+            content = content.Replace("${Namespace}", appAssemblyName);
+            await IOHelper.WriteToFileAsync(Path.Combine(applicationDir, "Implement", "CommandStoreBase.cs"), content);
+            content = GenerateBase.GetTplContent("Implement.QueryStoreBase.tpl");
+            content = content.Replace("${Namespace}", appAssemblyName);
+            await IOHelper.WriteToFileAsync(Path.Combine(applicationDir, "Implement", "QueryStoreBase.cs"), content);
+
+            content = GenerateBase.GetTplContent("ServiceExtension.tpl");
+            content = content.Replace("${Namespace}", appAssemblyName);
+            await IOHelper.WriteToFileAsync(Path.Combine(applicationDir, "QueryStoreBase.cs"), content);
+
+            // remove files
             deleteFiles = Directory.GetFiles(
                 Path.Combine(applicationDir, "Interface"),
                 "*.cs",
                 SearchOption.AllDirectories);
-
             await solution.RemoveFileAsync(appAssemblyName, deleteFiles ?? Array.Empty<string>());
 
             // remove package reference
@@ -489,7 +501,6 @@ public class UpdateManager
         await IOHelper.WriteToFileAsync(Path.Combine(appPath, "Implement", "ManagerBase.cs"), content);
 
         var appProject = helper.GetProject(appName);
-
         // ManagerBase调整
         var document = appProject?.Documents
             .Where(d => d.Name.Equals("DomainManagerBase.cs"))
@@ -516,12 +527,65 @@ public class UpdateManager
         var documents = appProject?.Documents
             .Where(d => d.Folders.Any() && d.Folders[0].Equals("IManager"))
             .ToList();
+        if (documents != null)
+        {
+            await RefactorIManagers(appPath, documents);
+        }
 
+        // Controllers调整
+        var apiName = Config.ApiPath.Split(Path.DirectorySeparatorChar).Last();
+        var apiPath = Path.Combine(solution.FilePath!, "../", Config.ApiPath);
+        var apiProject = helper.GetProject(apiName);
+        var controllers = appProject?.Documents
+            .Where(d => d.Folders.Any() && d.Folders[0].Equals("Controllers"))
+            .Where(d => d.FilePath != null && d.FilePath.EndsWith("Controller.cs"))
+            .ToList();
+        if (controllers != null)
+        {
+
+            await RefactorControllersAsync(apiPath, controllers);
+        }
+
+        // Program.cs 调整
+    }
+
+    /// <summary>
+    /// 重构Controller内容
+    /// </summary>
+    /// <param name="apiPath"></param>
+    /// <param name="documents"></param>
+    private static async Task RefactorControllersAsync(string apiPath, List<Document> documents)
+    {
+        var dlls = Directory.EnumerateFiles(apiPath, "*.dll", SearchOption.AllDirectories);
+        var compilation = CSharpCompilation.Create("tmp")
+            .AddReferences(dlls.Select(dll => MetadataReference.CreateFromFile(dll)))
+            .WithOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+        foreach (var item in documents)
+        {
+            var tree = await item.GetSyntaxTreeAsync();
+            var root = await item.GetSyntaxRootAsync();
+            if (tree != null && root != null)
+            {
+                var content = root.ToFullString();
+                content = content.Replace("await manager.GetCurrent(", "await manager.GetCurrentAsync(");
+                await IOHelper.WriteToFileAsync(item.FilePath!, content);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 重构Manager接口
+    /// </summary>
+    /// <param name="appPath"></param>
+    /// <param name="documents"></param>
+    /// <returns></returns>
+    private static async Task RefactorIManagers(string appPath, List<Document> documents)
+    {
         var dlls = Directory.EnumerateFiles(appPath, "*.dll", SearchOption.AllDirectories);
         var compilation = CSharpCompilation.Create("tmp")
             .AddReferences(dlls.Select(dll => MetadataReference.CreateFromFile(dll)))
             .WithOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
-        if (documents == null) return;
         foreach (var item in documents)
         {
             var tree = await item.GetSyntaxTreeAsync();
