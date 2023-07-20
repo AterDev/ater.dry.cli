@@ -11,6 +11,7 @@ public class CSharpAnalysisHelper
     public static async Task<INamedTypeSymbol?> GetBaseInterfaceInfoAsync(CSharpCompilation compilation, SyntaxTree tree)
     {
         var root = await tree.GetRootAsync();
+        compilation = compilation.AddSyntaxTrees(tree);
         var semanticModel = compilation.GetSemanticModel(tree);
 
         var interfaceDeclaration = root?.DescendantNodes().OfType<InterfaceDeclarationSyntax>()

@@ -71,9 +71,6 @@ public class UpdateManager
 
         if (version == NuGetVersion.Parse("7.1.0"))
         {
-            // 备份
-            Console.WriteLine($"🗃️ backup solution to {solutionPath}.origin.bak");
-            IOHelper.CopyDirectory(solutionPath, $"{solutionPath}.origin.bak");
             Console.WriteLine($"🚀 Start to update to 8.0.0");
             var res = await UpdateTo8Async(solutionPath);
             if (res)
@@ -84,23 +81,13 @@ public class UpdateManager
                 var applicationName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(appDir));
                 ManagerGenerate.GetDataStoreContext(appDir, applicationName!);
 
-                Directory.Delete($"{solutionPath}.origin.bak", true);
                 Console.WriteLine("🙌 Updated successed!");
                 return true;
             }
             else
             {
                 // 恢复
-                Console.WriteLine($"🥹 Update version failed, try to recover files!");
-                try
-                {
-                    Directory.Delete(solutionPath, true);
-                    Directory.Move($"{solutionPath}.origin.bak", solutionPath);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Recover failed:{0}, try to close the solution and try again!", ex.Message);
-                }
+                Console.WriteLine($"🥹 Update version failed, try to close the solution and try again!");
             }
         }
         Console.WriteLine("⚠️ Update completed:we encountered some errors!");
@@ -480,8 +467,8 @@ public class UpdateManager
         finally
         {
             solution.Dispose();
+            GC.Collect();
         }
-
     }
 
     /// <summary>
@@ -527,16 +514,20 @@ public class UpdateManager
         }
         // IManager调整
         var documents = appProject?.Documents
-            .Where(d => d.Folders[0].Equals("IManager"))
+            .Where(d => d.Folders.Any() && d.Folders[0].Equals("IManager"))
             .ToList();
-        var compilation = CSharpCompilation.Create("tmp");
+
+        var dlls = Directory.EnumerateFiles(appPath, "*.dll", SearchOption.AllDirectories);
+        var compilation = CSharpCompilation.Create("tmp")
+            .AddReferences(dlls.Select(dll => MetadataReference.CreateFromFile(dll)))
+            .WithOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
         documents?.ForEach(async document =>
         {
             var tree = await document.GetSyntaxTreeAsync();
             var root = await document.GetSyntaxRootAsync();
             if (tree != null && root != null)
             {
-                compilation.AddSyntaxTrees(tree);
+
                 var baseInterface = await CSharpAnalysisHelper.GetBaseInterfaceInfoAsync(compilation, tree);
                 if (baseInterface != null && baseInterface.Name == "IDomainManager")
                 {
