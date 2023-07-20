@@ -37,6 +37,13 @@ public class UpdateManager
         // 7.0->7.1
         if (version == NuGetVersion.Parse("7.0.0"))
         {
+            // 临时修正路径
+            Config.EntityPath = "src" + Path.DirectorySeparatorChar + Config.EntityPath;
+            Config.DtoPath = "src" + Path.DirectorySeparatorChar + Config.DtoPath;
+            Config.DbContextPath = "src" + Path.DirectorySeparatorChar + Config.DbContextPath;
+            Config.ApplicationPath = "src" + Path.DirectorySeparatorChar + Config.ApplicationPath;
+            Config.ApiPath = "src" + Path.DirectorySeparatorChar + Config.ApiPath;
+
             UpdateExtensionAsync7(solutionPath).Wait();
             UpdateConst7(solutionPath);
             UpdateCustomizeAttribution7(solutionPath);
@@ -47,6 +54,13 @@ public class UpdateManager
                 if (config != null)
                 {
                     config.Version = "7.1.0";
+                    // update path 
+                    config.EntityPath = Config.EntityPath;
+                    config.DtoPath = Config.DtoPath;
+                    config.DbContextPath = Config.DbContextPath;
+                    config.ApplicationPath = Config.ApplicationPath;
+                    config.ApiPath = Config.ApiPath;
+
                     File.WriteAllText(configFilePath, JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true }));
                 }
                 AfterVersion = "7.1.0";
