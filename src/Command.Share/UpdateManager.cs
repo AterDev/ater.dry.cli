@@ -659,6 +659,24 @@ public class UpdateManager
     }
 
     /// <summary>
+    /// 配置文件更新
+    /// </summary>
+    /// <param name="solutionPath"></param>
+    private static void UpdateAppsettings(string solutionPath)
+    {
+
+    }
+
+    /// <summary>
+    /// 入口程序更新
+    /// </summary>
+    /// <param name="solutionPath"></param>
+    private static void UpdateProgram(string solutionPath)
+    {
+
+    }
+
+    /// <summary>
     /// 更新结果 
     /// </summary>
     /// <param name="isSuccess">是否成功</param>
