@@ -492,7 +492,7 @@ public class UpdateManager
 
         // ManagerBase调整
         var document = appProject?.Documents
-            .Where(d => d.Name.Equals("DomainManagerBase"))
+            .Where(d => d.Name.Equals("DomainManagerBase.cs"))
             .FirstOrDefault();
         if (document != null && document.FilePath != null)
         {
@@ -521,10 +521,11 @@ public class UpdateManager
         var compilation = CSharpCompilation.Create("tmp")
             .AddReferences(dlls.Select(dll => MetadataReference.CreateFromFile(dll)))
             .WithOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
-        documents?.ForEach(async document =>
+        if (documents == null) return;
+        foreach (var item in documents)
         {
-            var tree = await document.GetSyntaxTreeAsync();
-            var root = await document.GetSyntaxRootAsync();
+            var tree = await item.GetSyntaxTreeAsync();
+            var root = await item.GetSyntaxRootAsync();
             if (tree != null && root != null)
             {
 
@@ -534,10 +535,12 @@ public class UpdateManager
                     // 旧接口，需要继承的接口
                     if (baseInterface.TypeArguments.Length > 1)
                     {
-                        var editor = await DocumentEditor.CreateAsync(document);
-                        var interfaceDeclaration = root.DescendantNodes()
+                        var editor = await DocumentEditor.CreateAsync(item);
+                        var originInterfaceDeclaration = root.DescendantNodes()
                             .OfType<InterfaceDeclarationSyntax>()
                             .FirstOrDefault();
+
+                        var interfaceDeclaration = originInterfaceDeclaration;
                         var oldBaseList = interfaceDeclaration!.DescendantNodes()
                             .OfType<BaseListSyntax>()
                             .Single();
@@ -552,7 +555,7 @@ public class UpdateManager
                               .WithTrailingTrivia(SyntaxFactory.LineFeed)
                               .WithColonToken(newColonToken);
 
-                        editor.ReplaceNode(oldBaseList, newBaseList);
+                        interfaceDeclaration = interfaceDeclaration.ReplaceNode(oldBaseList, newBaseList);
 
                         // 插入接口方法
                         var entityName = firstTypeName;
@@ -576,19 +579,19 @@ public class UpdateManager
                             {
                                 continue;
                             }
-
-                            if (SyntaxFactory.ParseMemberDeclaration(method) is MethodDeclarationSyntax methodNode)
+                            var methodContent = method + Environment.NewLine;
+                            if (SyntaxFactory.ParseMemberDeclaration(methodContent) is MethodDeclarationSyntax methodNode)
                             {
                                 interfaceDeclaration = interfaceDeclaration.AddMembers(methodNode);
                             }
                         }
-                        editor.ReplaceNode(root, interfaceDeclaration);
+                        editor.ReplaceNode(originInterfaceDeclaration!, interfaceDeclaration);
                         var newRoot = editor.GetChangedRoot();
-                        await IOHelper.WriteToFileAsync(document.FilePath!, newRoot.ToFullString());
+                        await IOHelper.WriteToFileAsync(item.FilePath!, CSharpAnalysisHelper.FormatChanges(newRoot));
                     }
                 }
             }
-        });
+        }
     }
     #endregion
 }

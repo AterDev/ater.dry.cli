@@ -35,17 +35,18 @@ public class ProjectManager
         var projects = _db.Projects.FindAll().ToList();
         projects.ForEach(async p =>
         {
-            if (string.IsNullOrWhiteSpace(p.Version))
+            var configFilePath = Path.Combine(p.Path, "..", Config.ConfigFileName);
+            if (File.Exists(configFilePath))
             {
-                var configFilePath = Path.Combine(p.Path, "..", Config.ConfigFileName);
-                if (File.Exists(configFilePath))
+                string configJson = await File.ReadAllTextAsync(configFilePath);
+                ConfigOptions? config = JsonSerializer.Deserialize<ConfigOptions>(configJson);
+                if (string.IsNullOrWhiteSpace(p.Version))
                 {
-                    string configJson = await File.ReadAllTextAsync(configFilePath);
-                    ConfigOptions? config = JsonSerializer.Deserialize<ConfigOptions>(configJson);
-                    p.Version = config!.Version;
                     _db.Projects.Update(p);
                 }
+                p.Version = config!.Version;
             }
+
         });
         return projects;
     }

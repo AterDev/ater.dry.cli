@@ -113,15 +113,22 @@
 <ng-template #updateProjectDialog>
   <h2 mat-dialog-title>更新提示</h2>
   <mat-dialog-content>
-    <p>项目版本
-      <span>
-        <strong>{{current?.version}}</strong>
-      </span>
-      与Studio版本不一致，请使用相同版本的Studio或升级项目！
-    </p>
-    <p>升级后按照VS提示修复相关错误即可!</p>
     <p>
-      <strong>⚠️ 注意：升级前请备份项目!</strong>
+      <strong>
+        Studio{{version}}
+      </strong>
+      不兼容
+      <span>
+        <strong>{{current?.version}}的项目，</strong>
+      </span>
+      请使用对应版本的Studio，或者选择升级项目。
+    </p>
+    <h2 style="color: black;">升级说明</h2>
+    <p>如果跨主版本升级，请先更新到对应的.NET版本，然后再点击升级项目；</p>
+    <p>升级时建议关闭占用项目代码的程序，如VS等；</p>
+    <p>升级后根据VS提示修复相关错误即可；</p>
+    <p>
+      <strong>⚠️ 注意：如果不使用源代码管理，请确保在升级之前备份项目!</strong>
     </p>
   </mat-dialog-content>
   <mat-dialog-actions class="justify-content-end ">
