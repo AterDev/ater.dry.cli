@@ -1,3 +1,5 @@
+using Core.Infrastructure;
+
 namespace Command.Share.Commands;
 
 /// <summary>
@@ -109,7 +111,7 @@ public class ManagerCommand : CommandBase
         // 生成实现文件
         foreach (string name in implementFiles)
         {
-            string content = CodeGen.GetImplementFile(name);
+            content = CodeGen.GetImplementFile(name);
             content = content.Replace("${IdType}", Config.IdType);
             isCover = name != "DomainManagerBase" && isCover;
             await GenerateFileAsync(implementDir, $"{name}.cs", content, isCover);

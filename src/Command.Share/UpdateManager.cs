@@ -450,6 +450,8 @@ public class UpdateManager
 
             // 业务代码关联修改
             await UpdateUserCodes8Async(solution);
+            UpdateAppsettings(solutionPath);
+
 
             // 配置文件等
             var configFile = Path.Combine(solutionPath, Config.ConfigFileName);
@@ -543,11 +545,42 @@ public class UpdateManager
             .ToList();
         if (controllers != null)
         {
-
             await RefactorControllersAsync(apiPath, controllers);
         }
+        // RestControllerBase更新
+        var baseFile = Path.Combine(apiPath, "Infrastructure", "RestControllerBase.cs");
+        content = await File.ReadAllTextAsync(baseFile);
+        if (!content.Contains("public class ClientControllerBase<TManager>"))
+        {
+            content = content + Environment.NewLine +
+                """
+                /// <summary>
+                /// 用户端权限控制器
+                /// </summary>
+                /// <typeparam name="TManager"></typeparam>
+                [Authorize(AppConst.User)]
+                [ApiExplorerSettings(GroupName = "client")]
+                public class ClientControllerBase<TManager> : RestControllerBase
+                     where TManager : class
+                {
+                    protected readonly TManager manager;
+                    protected readonly ILogger _logger;
+                    protected readonly IUserContext _user;
 
-        // Program.cs 调整
+                    public ClientControllerBase(
+                        TManager manager,
+                        IUserContext user,
+                        ILogger logger
+                        )
+                    {
+                        this.manager = manager;
+                        _user = user;
+                        _logger = logger;
+                    }
+                }
+                """;
+        }
+        await IOHelper.WriteToFileAsync(baseFile, content);
     }
 
     /// <summary>
@@ -700,12 +733,28 @@ public class UpdateManager
     }
 
     /// <summary>
-    /// 入口程序更新
+    /// TODO:入口程序更新
     /// </summary>
-    /// <param name="solutionPath"></param>
-    private static void UpdateProgram(string solutionPath)
+    public static void UpdateProgram(string apiPath)
     {
+        var programPath = Path.Combine(apiPath, "Program.cs");
+        var compilation = CSharpCompilation.Create(
+            "tmp", syntaxTrees: new[] { CSharpSyntaxTree.ParseText(File.ReadAllText(programPath)) },
+            references: new[] { MetadataReference.CreateFromFile(typeof(object).Assembly.Location) },
+            options: new CSharpCompilationOptions(OutputKind.ConsoleApplication));
 
+        var tree = compilation.SyntaxTrees[0];
+        var root = tree.GetCompilationUnitRoot();
+        var model = compilation.GetSemanticModel(tree);
+
+        // 添加或删除的方法  services.AddTransient<IUserContext, UserContext>();
+        var addServices = new List<string>() { "AddAppComponents", "AddWebComponent", "AddHttpContextAccessor" };
+        var removeServices = new string[]
+        {
+            "AddDbContextPool","AddOpenTelemetry",
+            "AddStackExchangeRedisCache","AddAuthentication",
+            "AddSwaggerGen","AddEndpointsApiExplorer"
+        };
     }
 
     /// <summary>
@@ -727,9 +776,44 @@ public class UpdateManager
 
             ## 后续步骤
 
-            {(isSuccess ?
+            {(!isSuccess ?
             "请查看控制台错误信息，并将更新错误信息反馈到 [Github Issue](https://github.com/AterDev/ater.droplet.cli/issues)。" :
-            "查看`Program.cs`与`appsettings.json`的变更，更新并配置`Components`节点内容。更多信息查看官方文档！")}
+            """
+            更新完成后，你可能需要处理以下内容：
+
+            对于Web接口项目
+
+            - 你可能需要在`Program.cs`中添加服务注册
+
+                ```csharp
+                services.AddHttpContextAccessor(); 
+                services.AddTransient<IUserContext, UserContext>();
+                ```
+
+            - 你可以使用新的扩展方法注入服务组件，如
+
+                ```csharp
+                services.AddAppComponents(builder.Configuration);
+                services.AddWebComponent(builder.Configuration);
+                ```
+
+                以替代并简化
+                `AddStackExchangeRedisCache`,
+                `AddAuthentication`,
+                `AddEndpointsApiExplorer`,
+                `AddSwaggerGen`
+                等方法。
+
+            - 你可以在`Infrastructure/ServiceExtension.cs`配置相应的服务。
+            - 查看`appsettings.json`的变更，更新并配置`Components`节点内容。
+
+            其他项目
+
+            - 根据IDE的提示修复其他命名或引用问题。
+
+            更多信息查看官方文档[模板]相关的说明。
+            
+            """)}
             
             """;
         return content;
