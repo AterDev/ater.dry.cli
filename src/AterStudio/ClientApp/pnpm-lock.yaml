@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 dependencies:
   '@angular/animations':
     specifier: ^16.0.0
@@ -44,8 +48,8 @@ dependencies:
     specifier: ^0.33.0
     version: 0.33.0
   ngx-markdown:
-    specifier: ^15.0.1
-    version: 15.1.0(@angular/common@16.0.0)(@angular/core@16.0.0)(@angular/platform-browser@16.0.0)(@types/marked@4.0.8)(marked@4.3.0)(rxjs@7.5.6)(zone.js@0.13.0)
+    specifier: ^16.0.0
+    version: 16.0.0(@angular/common@16.0.0)(@angular/core@16.0.0)(@angular/platform-browser@16.0.0)(@types/marked@4.3.1)(marked@4.3.0)(rxjs@7.5.6)(zone.js@0.13.0)
   ngx-monaco-editor-v2:
     specifier: ^15.0.1
     version: 15.0.1(@angular/common@16.0.0)(@angular/core@16.0.0)(monaco-editor@0.33.0)
@@ -2971,8 +2975,8 @@ packages:
     resolution: {integrity: sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ==}
     dev: true
 
-  /@types/marked@4.0.8:
-    resolution: {integrity: sha512-HVNzMT5QlWCOdeuBsgXP8EZzKUf0+AXzN+sLmjvaB3ZlLqO+e4u0uXrdw9ub69wBKFs+c6/pA4r9sy6cCDvImw==}
+  /@types/marked@4.3.1:
+    resolution: {integrity: sha512-vSSbKZFbNktrQ15v7o1EaH78EbWV+sPQbPjHG+Cp8CaNcPFUEfjZ0Iml/V0bFDwsTlYe8o6XC5Hfdp91cqPV2g==}
     dev: false
 
   /@types/mime@3.0.1:
@@ -6274,24 +6278,24 @@ packages:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
     dev: true
 
-  /ngx-markdown@15.1.0(@angular/common@16.0.0)(@angular/core@16.0.0)(@angular/platform-browser@16.0.0)(@types/marked@4.0.8)(marked@4.3.0)(rxjs@7.5.6)(zone.js@0.13.0):
-    resolution: {integrity: sha512-BmbhIY9O4ldPxEymjrCUHgwWPphfY2nO36QoNU8UCzFThkbxcgsfWmyM3fBm81W1BbOPt6mxz6PVx6MaOinB9A==}
+  /ngx-markdown@16.0.0(@angular/common@16.0.0)(@angular/core@16.0.0)(@angular/platform-browser@16.0.0)(@types/marked@4.3.1)(marked@4.3.0)(rxjs@7.5.6)(zone.js@0.13.0):
+    resolution: {integrity: sha512-/rlbXi+HBscJCDdwaTWIUrRkvwJicPnuAgeugOCZa0UbZ4VCWV3U0+uB1Zv6krRDF6FXJNXNLTUrMZV7yH8I6A==}
     peerDependencies:
-      '@angular/common': ^15.0.0
-      '@angular/core': ^15.0.0
-      '@angular/platform-browser': ^15.0.0
-      '@types/marked': ^4.0.3
-      marked: ^4.0.17
+      '@angular/common': ^16.0.0
+      '@angular/core': ^16.0.0
+      '@angular/platform-browser': ^16.0.0
+      '@types/marked': ^4.3.0
+      marked: ^4.3.0
       rxjs: ^6.5.3 || ^7.4.0
-      zone.js: ~0.11.4 || ~0.12.0
+      zone.js: ~0.13.0
     dependencies:
       '@angular/common': 16.0.0(@angular/core@16.0.0)(rxjs@7.5.6)
       '@angular/core': 16.0.0(rxjs@7.5.6)(zone.js@0.13.0)
       '@angular/platform-browser': 16.0.0(@angular/animations@16.0.0)(@angular/common@16.0.0)(@angular/core@16.0.0)
-      '@types/marked': 4.0.8
+      '@types/marked': 4.3.1
       marked: 4.3.0
       rxjs: 7.5.6
-      tslib: 2.4.0
+      tslib: 2.5.0
       zone.js: 0.13.0
     optionalDependencies:
       clipboard: 2.0.11
