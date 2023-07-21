@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Nodes;
 using Core.Infrastructure;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -664,7 +665,38 @@ public class UpdateManager
     /// <param name="solutionPath"></param>
     private static void UpdateAppsettings(string solutionPath)
     {
+        var apiPath = Path.Combine(solutionPath, Config.ApiPath);
+        var appSettingPath = Path.Combine(apiPath, "appsettings.json");
+        var content = File.ReadAllText(appSettingPath);
+        var root = JsonNode.Parse(content, documentOptions: new JsonDocumentOptions
+        {
+            CommentHandling = JsonCommentHandling.Skip
+        });
 
+        if (root != null)
+        {
+            // 原内容
+            var connectionNode = JsonHelper.GetSectionNode(root, "ConnectionStrings");
+            if (connectionNode != null)
+            {
+                var dbConnectionString = JsonHelper.GetValue<string>(connectionNode, "Default");
+                var redisConnectionString = JsonHelper.GetValue<string>(connectionNode, "Redis");
+                var redisInstanceName = JsonHelper.GetValue<string>(connectionNode, "RedisInstanceName");
+
+                var defaultDbConnectionString = "Server=localhost;Port=5432;Database=MyProjectName;User Id=postgres;Password=root;";
+                JsonHelper.AddOrUpdateJsonNode(root, "ConnectionStrings:CommandDb", dbConnectionString ?? defaultDbConnectionString);
+                JsonHelper.AddOrUpdateJsonNode(root, "ConnectionStrings:QueryDb", dbConnectionString ?? defaultDbConnectionString);
+
+                JsonHelper.AddOrUpdateJsonNode(root, "ConnectionStrings:Cache", redisConnectionString ?? "localhost:6379");
+                JsonHelper.AddOrUpdateJsonNode(root, "ConnectionStrings:CacheInstanceName", redisInstanceName ?? "Dev");
+                JsonHelper.AddOrUpdateJsonNode(root, "ConnectionStrings:Logging", "http://localhost:4317");
+            }
+            JsonHelper.AddOrUpdateJsonNode(root, "Components:Database", "postgresql");
+            JsonHelper.AddOrUpdateJsonNode(root, "Components:Cache", "redis");
+            JsonHelper.AddOrUpdateJsonNode(root, "Components:Logging", "none");
+            JsonHelper.AddOrUpdateJsonNode(root, "Components:Swagger", true);
+            JsonHelper.AddOrUpdateJsonNode(root, "Components:Jwt", true);
+        }
     }
 
     /// <summary>
@@ -697,7 +729,7 @@ public class UpdateManager
 
             {(isSuccess ?
             "请查看控制台错误信息，并将更新错误信息反馈到 [Github Issue](https://github.com/AterDev/ater.droplet.cli/issues)。" :
-            "请查看`Program.cs`与`appsettings.json` 更新内容，新版本支持更简洁和灵活的配置。")}
+            "查看`Program.cs`与`appsettings.json`的变更，更新并配置`Components`节点内容。更多信息查看官方文档！")}
             
             """;
         return content;
