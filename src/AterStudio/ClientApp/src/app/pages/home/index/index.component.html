@@ -112,7 +112,7 @@
 
 <ng-template #updateProjectDialog>
   <h2 mat-dialog-title>更新提示</h2>
-  <mat-dialog-content *ngIf="!isUpdating">
+  <mat-dialog-content *ngIf="!isUpdating&&!updated">
     <p>
       <strong>
         Studio{{version}}
@@ -132,19 +132,17 @@
     </p>
   </mat-dialog-content>
   <mat-dialog-content *ngIf="isUpdating">
-    <p>正在分析和更新解决方案，请稍等</p>
-    <ng-container *ngIf="updated; else elseTemplate">
-      <!-- 更新完成显示内容 -->
-      {{updateResult}}
-    </ng-container>
-    <ng-template #elseTemplate>
-      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-    </ng-template>
-
-
+    <p>正在分析和更新解决方案，预计不超过1分钟</p>
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </mat-dialog-content>
-  <mat-dialog-actions class="justify-content-end ">
-    <button mat-button mat-dialog-close>取消</button>
-    <button mat-button (click)="updateProject()" [disabled]="isUpdating" color="warn" matTooltip="务必做好备份">升级项目</button>
+
+  <mat-dialog-content *ngIf="!isUpdating&&updated">
+    <markdown *ngIf="updateResult" [data]="updateResult" lineNumbers [start]="1">
+    </markdown>
+  </mat-dialog-content>
+  <mat-dialog-actions class="justify-content-end">
+    <button mat-button mat-dialog-close [disabled]="isUpdating">取消</button>
+    <button mat-button (click)="updateProject()" *ngIf="!updated" [disabled]="isUpdating" color="warn"
+      matTooltip="务必做好备份">升级项目</button>
   </mat-dialog-actions>
 </ng-template>

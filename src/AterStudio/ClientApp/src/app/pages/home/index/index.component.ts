@@ -11,6 +11,10 @@ import { UpdateConfigOptionsDto } from 'src/app/share/models/project/update-conf
 import { ProjectStateService } from 'src/app/share/project-state.service';
 import { ProjectService } from 'src/app/share/services/project.service';
 
+import 'prismjs/plugins/line-numbers/prism-line-numbers.js';
+import 'prismjs/components/prism-markup.min.js';
+import 'prismjs/components/prism-csharp.min.js';
+
 @Component({
   selector: 'app-index',
   templateUrl: './index.component.html',
@@ -204,11 +208,15 @@ export class IndexComponent implements OnInit {
   updateProject(): void {
     this.isUpdating = true;
     this.updated = false;
+
     this.service.updateSolution()
       .subscribe({
         next: (res) => {
+          this.isUpdating = false;
+          this.updated = true;
           this.updateResult = res;
           this.dialogRef.afterClosed().subscribe(_ => {
+            this.updated = false;
             this.getProjects();
           });
         },

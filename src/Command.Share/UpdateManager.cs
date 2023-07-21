@@ -764,11 +764,11 @@ public class UpdateManager
     public string GetUpdateNotes(bool isSuccess)
     {
         var content = $"""
-            ## 版本
+            ## 更新结果
 
-            当前版本:{CurrentVersion}
+            更新前版本:{CurrentVersion}
 
-            目标版本:{TargetVersion}
+            更新后版本:{TargetVersion}
 
             ## 结果
 
@@ -777,7 +777,11 @@ public class UpdateManager
             ## 后续步骤
 
             {(!isSuccess ?
-            "请查看控制台错误信息，并将更新错误信息反馈到 [Github Issue](https://github.com/AterDev/ater.droplet.cli/issues)。" :
+            """
+            - 清理或回滚更新产生的变更！
+            - 查看控制台错误信息，并将更新错误信息反馈到 [Github Issue](https://github.com/AterDev/ater.droplet.cli/issues)。
+            """
+            :
             """
             更新完成后，你可能需要处理以下内容：
 
@@ -807,8 +811,8 @@ public class UpdateManager
             - 你可以在`Infrastructure/ServiceExtension.cs`配置相应的服务。
             - 查看`appsettings.json`的变更，更新并配置`Components`节点内容。
 
-            其他项目
-
+            所有项目
+            - 如果跨主版本更新，如7.x->8.0，需要升级到对应的.NET版本以及依赖包版本。
             - 根据IDE的提示修复其他命名或引用问题。
 
             更多信息查看官方文档[模板]相关的说明。
