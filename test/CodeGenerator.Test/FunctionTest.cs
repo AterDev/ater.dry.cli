@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using CodeGenerator.Generate;
@@ -116,7 +117,7 @@ public class FunctionTest
     public void Test_JsonNode()
     {
         var jsonString = """
-                        {
+            {
               "Logging": {
                 "LogLevel": {
                   "Default": "Information",
@@ -124,15 +125,39 @@ public class FunctionTest
                   "Microsoft.Hosting.Lifetime": "Information"
                 }
               },
+                // 应用组件配置
+                "Components": {
+                  // 数据支持: pgsql/sqlserver
+                  "Database": "postgresql",
+                  // 缓存支持: redis/memory/none
+                  "Cache": "redis",
+                  // 日志支持: otlp/none
+                  "Logging": "none",
+                  // 是否使用swagger
+                  "Swagger": true,
+                  // 是否使用 jwt 验证
+                  "Jwt": true
+                },
+                "ConnectionStrings": {
+                  "Default": "Server=localhost;Port=5432;Database=v7._0;User Id=postgres;Password=root;",
+                  "Redis": "localhost:6379",
+                  "RedisInstanceName": "Dev"
+                },
               "AllowedHosts": "*"
             }
             
             """;
-        var jsonNode = JsonNode.Parse(jsonString);
+        var jsonNode = JsonNode.Parse(jsonString, documentOptions: new JsonDocumentOptions
+        {
+            CommentHandling = JsonCommentHandling.Skip
+        });
+        var section = JsonHelper.GetSectionNode(jsonNode!, "ConnectionStrings");
+
+        var value = JsonHelper.GetValue<string>(section, "RedisInstanceName");
         JsonHelper.AddOrUpdateJsonNode(jsonNode!, "AllowedHosts", "111");
-
-        Console.WriteLine();
-
+        var changeValaue = JsonHelper.GetValue<string>(jsonNode!, "AllowedHosts");
+        Assert.Equal("Dev", value);
+        Assert.Equal("111", changeValaue);
     }
 
     [Fact]

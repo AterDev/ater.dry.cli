@@ -47,16 +47,16 @@ public static class JsonHelper
     /// 获取值
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="root"></param>
+    /// <param name="node"></param>
     /// <param name="keyPath"></param>
     /// <returns></returns>
-    public static T? GetValue<T>(JsonNode root, string keyPath) where T : class
+    public static T? GetValue<T>(JsonNode node, string keyPath) where T : class
     {
         var paths = keyPath.Split('.');
-        var current = root;
+        var current = node;
         if (current == null) return default;
 
-        for (int i = 0; i < paths.Length - 1; i++)
+        for (int i = 0; i < paths.Length; i++)
         {
             if (current!.AsObject().ContainsKey(paths[i]))
             {
@@ -82,7 +82,7 @@ public static class JsonHelper
         var current = root;
         if (current == null) return default;
 
-        for (int i = 0; i < paths.Length - 1; i++)
+        for (int i = 0; i < paths.Length; i++)
         {
             if (current!.AsObject().ContainsKey(paths[i]))
             {
