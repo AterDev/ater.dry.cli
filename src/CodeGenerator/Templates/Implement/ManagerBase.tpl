@@ -60,7 +60,7 @@ public partial class ManagerBase<TEntity, TUpdate, TFilter, TItem>
     /// <param name="id"></param>
     /// <param name="navigations">include navigations</param>
     /// <returns></returns>
-    public virtual async Task<TEntity?> GetCurrentAsync(Guid id, params string[]? navigations)
+    public virtual async Task<TEntity?> GetCurrentAsync(${IdType} id, params string[]? navigations)
     {
         return await Command.FindAsync(e => e.Id == id, navigations);
     }
@@ -88,7 +88,7 @@ public partial class ManagerBase<TEntity, TUpdate, TFilter, TItem>
         return res;
     }
 
-    public virtual async Task<TEntity?> FindAsync(Guid id)
+    public virtual async Task<TEntity?> FindAsync(${IdType} id)
     {
         return await Query.FindAsync(q => q.Id == id);
     }
@@ -102,7 +102,7 @@ public partial class ManagerBase<TEntity, TUpdate, TFilter, TItem>
     /// </summary>
     /// <param name="id">主键id</param>
     /// <returns></returns>
-    public async Task<bool> ExistAsync(Guid id)
+    public async Task<bool> ExistAsync(${IdType} id)
     {
         return await Query.Db.AnyAsync(q => q.Id == id);
     }

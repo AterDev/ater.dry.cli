@@ -1,5 +1,3 @@
-using Core.Infrastructure;
-
 namespace Command.Share.Commands;
 
 /// <summary>
@@ -70,7 +68,7 @@ public class ManagerCommand : CommandBase
             else
             {
                 Console.WriteLine(Instructions[0]);
-                await GenerateCommonFilesAsync();
+                await GenerateCommonFilesAsync(force);
                 Console.WriteLine(Instructions[1]);
                 await GenerateStoreFilesAsync();
 
@@ -98,7 +96,7 @@ public class ManagerCommand : CommandBase
     /// <summary>
     /// 生成接口和实现类
     /// </summary>
-    public async Task GenerateCommonFilesAsync()
+    public async Task GenerateCommonFilesAsync(bool isCover = false)
     {
         // 目录
         string implementDir = Path.Combine(ApplicationPath, "Implement");
@@ -111,8 +109,9 @@ public class ManagerCommand : CommandBase
         // 生成实现文件
         foreach (string name in implementFiles)
         {
-            content = CodeGen.GetImplementFile(name);
-            bool isCover = name is not "DomainManagerBase";
+            string content = CodeGen.GetImplementFile(name);
+            content = content.Replace("${IdType}", Config.IdType);
+            isCover = name != "DomainManagerBase" && isCover;
             await GenerateFileAsync(implementDir, $"{name}.cs", content, isCover);
         }
 

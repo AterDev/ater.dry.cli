@@ -131,25 +131,11 @@ public partial class CommandStoreBase<TContext, TEntity> : ICommandStore<TEntity
     }
 
     /// <summary>
-    /// 条件更新
-    /// </summary>
-    /// <typeparam name="TUpdate"></typeparam>
-    /// <param name="whereExp"></param>
-    /// <param name="dto"></param>
-    /// <returns></returns>
-    [Obsolete("Not Implement")]
-    public virtual Task<int> UpdateRangeAsync<TUpdate>(Expression<Func<TEntity, bool>> whereExp, TUpdate dto)
-    {
-        //return await _db.Where(whereExp).ExecuteUpdateAsync(d => d.SetProperty(d => d.Id, d => Guid.NewGuid()));
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// 批量删除
     /// </summary>
     /// <param name="ids"></param>
     /// <returns></returns>
-    public virtual async Task<int> DeleteRangeAsync(List<Guid> ids)
+    public virtual async Task<int> DeleteRangeAsync(List<${IdType}> ids)
     {
         return await _db.Where(d => ids.Contains(d.Id)).ExecuteDeleteAsync();
     }
