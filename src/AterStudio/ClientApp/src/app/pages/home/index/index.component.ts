@@ -30,6 +30,9 @@ export class IndexComponent implements OnInit {
   type: string | null = null;
   isLoading = true;
   isProcessing = false;
+  isUpdating = false;
+  updated = false;
+  updateResult: string | null = null;
   version: string | null;
   constructor(
     private service: ProjectService,
@@ -114,6 +117,9 @@ export class IndexComponent implements OnInit {
     this.projectState.setProject(project);
     this.dialogRef = this.dialog.open(this.updateTmpRef, {
       minWidth: 450,
+      hasBackdrop: true,
+      closeOnNavigation: false,
+      disableClose: true
     })
   }
   buildSettingForm(): void {
@@ -196,22 +202,24 @@ export class IndexComponent implements OnInit {
   }
 
   updateProject(): void {
-    this.isProcessing = true;
+    this.isUpdating = true;
+    this.updated = false;
     this.service.updateSolution()
       .subscribe({
         next: (res) => {
-          if (res) {
-            this.snb.open(res);
-            this.dialogRef.close();
+          this.updateResult = res;
+          this.dialogRef.afterClosed().subscribe(_ => {
             this.getProjects();
-          }
+          });
         },
         error: (error) => {
           this.snb.open(error.detail);
-          this.isProcessing = false;
+          this.isUpdating = false;
+          this.updated = true;
         },
         complete: () => {
-          this.isProcessing = false;
+          this.isUpdating = false;
+          this.updated = true;
         }
       });
   }
