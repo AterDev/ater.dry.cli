@@ -10,6 +10,11 @@ public class DtoCommand : CommandBase
     /// dto项目目录
     /// </summary>
     public string DtoPath { get; set; }
+    /// <summary>
+    /// 对应模块名
+    /// </summary>
+    public string? ModuleName { get; private set; }
+
     public DtoCodeGenerate CodeGen { get; set; }
 
     public DtoCommand(string entityPath, string dtoPath)
@@ -37,21 +42,38 @@ public class DtoCommand : CommandBase
             Console.WriteLine("🛑 Dto project not exist!");
             return;
         }
-
         if (CodeGen.EntityInfo == null)
         {
             Console.WriteLine("🛑 Entity parse failed!");
         }
         else
         {
+            // 是否为模块
+            var compilation = new CompilationHelper(DtoPath, "Entity");
+            var content = File.ReadAllText(EntityPath);
+            compilation.AddSyntaxTree(content);
+            var attributes = compilation.GetClassAttribution("Module");
+            if (attributes != null && attributes.Any())
+            {
+                ModuleName = attributes.First().ArgumentList!.Arguments[0].ToString().Trim('"');
+            }
+            if (!string.IsNullOrWhiteSpace(ModuleName))
+            {
+                DtoPath = Path.Combine(DtoPath, "..", "Modules", ModuleName);
+            }
             Console.WriteLine(Instructions[0]);
             await SaveToFileAsync("Add", CodeGen.GetAddDto(), cover);
             await SaveToFileAsync("Update", CodeGen.GetUpdateDto(), cover);
             await SaveToFileAsync("Filter", CodeGen.GetFilterDto(), cover);
             await SaveToFileAsync("Item", CodeGen.GetItemDto(), cover);
             await SaveToFileAsync("Short", CodeGen.GetShortDto(), cover);
-            GenerateCommonFiles();
+
+            if (string.IsNullOrWhiteSpace(ModuleName))
+            {
+                GenerateCommonFiles();
+            }
             Console.WriteLine("😀 Dto generate completed!" + Environment.NewLine);
+
         }
     }
     public async void GenerateCommonFiles()

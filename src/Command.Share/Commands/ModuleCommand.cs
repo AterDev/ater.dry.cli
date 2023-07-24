@@ -187,7 +187,7 @@ public class ModuleCommand
 
         var databasePath = Path.Combine(solutionPath, "src", "Database", "EntityFramework");
 
-        var entityPath = Path.Combine(solutionPath, Config.EntityPath, "Entities", $"{moduleName}Entities");
+        var entityPath = Path.Combine(solutionPath, Config.EntityPath, $"{moduleName}Entities");
         var modulePath = Path.Combine(solutionPath, "src", "Modules", moduleName);
 
         Console.WriteLine("🚀 copy module files");
@@ -222,7 +222,7 @@ public class ModuleCommand
     /// <summary>
     /// 复制模块文件
     /// </summary>
-    /// <param name="sourceDir"></param>
+    /// <param name="sourceDir"></param>`
     /// <param name="destinationDir"></param>
     /// <param name="recursive"></param>
     private static void CopyModuleFiles(string sourceDir, string destinationDir)

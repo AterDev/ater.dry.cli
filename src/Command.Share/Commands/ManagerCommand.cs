@@ -14,7 +14,7 @@ public class ManagerCommand : CommandBase
     /// <summary>
     /// 对应模块名
     /// </summary>
-    public string? ModuleName { get; set; }
+    public string? ModuleName { get; private set; }
 
     public ManagerCommand(string entityPath, string dtoPath, string applicationPath, string? contextName = null)
     {
