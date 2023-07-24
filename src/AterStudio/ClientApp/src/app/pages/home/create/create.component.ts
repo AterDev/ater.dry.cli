@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CacheType } from 'src/app/share/models/enum/cache-type.model';
 import { DBType } from 'src/app/share/models/enum/dbtype.model';
 import { ProjectType } from 'src/app/share/models/enum/project-type.model';
@@ -22,7 +23,8 @@ export class CreateComponent {
 
   constructor(
     private service: FeatureService,
-    private snb: MatSnackBar
+    private snb: MatSnackBar,
+    private router: Router
   ) {
 
   }
@@ -76,6 +78,7 @@ export class CreateComponent {
           next: (res) => {
             if (res) {
               this.snb.open('创建成功');
+              this.router.navigateByUrl('/');
             } else {
               this.snb.open('');
             }
