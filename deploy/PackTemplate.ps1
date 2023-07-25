@@ -1,21 +1,57 @@
 # 打包模板中的内容，主要包含模块以及基础设施项目
-
 [CmdletBinding()]
 param (
     [Parameter()]
     [System.String]
     $relativePath = "../../ater.web"
 )
-$OutputEncoding = [System.Console]::OutputEncoding = [System.Console]::InputEncoding = [System.Text.Encoding]::UTF8
 # 路径定义
 $deployPath = Get-Location
 $rootPath = [IO.Path]::GetFullPath("$deployPath/..")
-$templatePath = (Join-Path $deployPath $relativePath)
+$templatePath = Join-Path $deployPath $relativePath
 $entityPath = Join-Path $templatePath "templates" "apistd" "src" "Entity"
 $commandLinePath = Join-Path $rootPath "src" "CommandLine"
 $destPath = Join-Path $commandLinePath "template"
 $destModulesPath = Join-Path $destPath "Modules" 
 $destInfrastructure = Join-Path $destPath "Infrastructure"
+
+# 移动模块到临时目录
+function CopyModule([string]$solutionPath, [string]$moduleName, [string]$destModulesPath) {
+    Write-Host "copy module files:"$moduleName
+
+    # 实体的copy
+    $entityDestDir = Join-Path $destModulesPath $moduleName "Entities"
+    if (!(Test-Path $entityDestDir)) {
+        New-Item -ItemType Directory -Path $entityDestDir | Out-Null
+    }
+
+    $entityPath = Join-Path $solutionPath "./src/Entity" $moduleName"Entities"
+    Copy-Item -Path $entityPath\* -Destination $entityDestDir -Force
+
+    # move store to tmp
+    $applicationPath = Join-Path $solutionPath "./src/Application"
+    $applicationDestDir = Join-Path $destModulesPath $moduleName "Application"
+    
+    if (!(Test-Path $applicationDestDir)) {
+        New-Item -Path $applicationDestDir -ItemType Directory -Force | Out-Null
+    }
+    
+    $entityNames = Get-ChildItem -Path $entityPath -Filter "*.cs" | ForEach-Object { $_.BaseName }
+    foreach ($entityName in $entityNames) {
+        $queryStorePath = Join-Path $applicationPath "QueryStore" $entityName"QueryStore.cs"
+        $commandStorePath = Join-Path $applicationPath "CommandStore" $entityName"CommandStore.cs"
+
+        if ((Test-Path $queryStorePath)) {
+            Copy-Item -Path $queryStorePath -Destination $applicationDestDir -Force
+        }
+        if ((Test-Path $commandStorePath)) {
+            Copy-Item -Path $commandStorePath -Destination $applicationDestDir -Force
+        }
+    }
+}
+
+
+$OutputEncoding = [System.Console]::OutputEncoding = [System.Console]::InputEncoding = [System.Text.Encoding]::UTF8
 
 # 目标目录
 if (!(Test-Path $destModulesPath)) {
@@ -24,7 +60,7 @@ if (!(Test-Path $destModulesPath)) {
 
 # 获取模块实体文件
 $entityFiles = Get-ChildItem -Path $entityPath -Filter "*.cs" -Recurse |`
-    Select-String -Pattern "Module" -List |`
+    Select-String -Pattern "\[Module" -List |`
     Select-Object -ExpandProperty Path
 
 # 模块名称
@@ -41,19 +77,12 @@ foreach ($file in $entityFiles) {
     if ($modulesNames -notcontains $moduleName) {
         $modulesNames += $moduleName
     }
-    
-    # 实体的copy
-    $entityDestDir = Join-Path $destModulesPath $moduleName "Entities"
-    if (!(Test-Path $entityDestDir)) {
-        New-Item -ItemType Directory -Path $entityDestDir | Out-Null
-    }
-    Copy-Item $file $entityDestDir -Force 
-    $fileName = [System.IO.Path]::GetFileName($file)
-    write-host "ℹ️ $fileName to $entityDestDir"
 } 
 
 # 模块的copy
 foreach ($moduleName in $modulesNames) {
+    Write-Host "copy module:"$moduleName
+
     $modulePath = Join-Path $templatePath "templates" "apistd" "src" "Modules" $moduleName
     Copy-Item $modulePath $destModulesPath -Recurse -Force
     
@@ -61,6 +90,11 @@ foreach ($moduleName in $modulesNames) {
     $destModulePath = Join-Path $destModulesPath $moduleName
     $pathsToRemove = @("obj", "bin") | ForEach-Object { Join-Path $destModulePath $_ }
     Remove-Item $pathsToRemove -Recurse -Force -ErrorAction SilentlyContinue
+
+
+    # copy module entity and store
+    $solutionPath = Join-Path $templatePath "templates" "apistd"
+    CopyModule $solutionPath $moduleName $destModulesPath
 }
 
 # copy Infrastructure
