@@ -1,4 +1,4 @@
-﻿// 该文件自动生成，会被覆盖更新
+// 该文件自动生成，会被覆盖更新
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
