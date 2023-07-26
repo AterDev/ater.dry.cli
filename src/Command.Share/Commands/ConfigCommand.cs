@@ -55,7 +55,7 @@ public class ConfigCommand
         FileInfo file = new(Path.Combine(configPath, Config.ConfigFileName));
         if (!file.Exists)
         {
-            Console.WriteLine($"config file not found , please run droplet confing init");
+            Console.WriteLine($"config file not found , please run dry confing init");
             return default;
         }
         string path = file.FullName;
@@ -70,7 +70,7 @@ public class ConfigCommand
         FileInfo file = new(Path.Combine(configPath, Config.ConfigFileName));
         if (file == null)
         {
-            Console.WriteLine($"config file not found , please run droplet confing init");
+            Console.WriteLine($"config file not found , please run dry confing init");
             return;
         }
         string path = file.FullName;

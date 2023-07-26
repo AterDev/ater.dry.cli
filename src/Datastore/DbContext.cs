@@ -15,7 +15,7 @@ public class DbContext : IDisposable
     {
         string path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
         var localDir = Path.Combine(path, "AterStudio");
-        var connectionString = $"Filename={Path.Combine(localDir, "droplet.db")};Upgrade=true;initialSize=5MB";
+        var connectionString = $"Filename={Path.Combine(localDir, "dry.db")};Upgrade=true;initialSize=5MB";
 
         LiteDb ??= new LiteDatabase(connectionString);
         LiteDb.Mapper.EmptyStringToNull = false;

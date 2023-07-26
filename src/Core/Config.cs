@@ -21,7 +21,7 @@ public static class Config
     /// </summary>
     public static bool? IsSplitController { get; set; } = false;
 
-    public static readonly string ConfigFileName = ".droplet-config.json";
+    public static readonly string ConfigFileName = ".dry-config.json";
     public static readonly string StudioFileName = "AterStudio.dll";
     /// <summary>
     /// 存储ts枚举类

@@ -183,7 +183,7 @@ public class StudioCommand
         var localDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AterStudio");
 
         // 更新数据库
-        var connectionString = $"Filename={Path.Combine(localDir, "droplet.db")};Upgrade=true;initialSize=5MB";
+        var connectionString = $"Filename={Path.Combine(localDir, "dry.db")};Upgrade=true;initialSize=5MB";
         using var db = new LiteDatabase(connectionString);
         var collection = db.GetCollection<Project>();
         var projects = collection.FindAll().ToList();

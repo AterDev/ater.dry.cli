@@ -1,4 +1,4 @@
-# Droplet CLI
+# DRY CLI
 >
 > This is a code assistance tool that provides code generation functions for `ASP.NET Core` projects and `Typescript front-end` projects, and supports command line and graphical interface operations. It is recommended to use the [Ater.web](https://github.com/AterDev/ater.web) template to create projects
 
@@ -43,12 +43,12 @@
 如果你想单独使用，请使用`dotnet tool`命令安装，如：
 
 ```pwsh
-dotnet tool install --global ater.droplet.cli
+dotnet tool install --global ater.dry.cli
 ```
 
-> please use the latest version from [nuget](https://www.nuget.org/packages/ater.droplet.cli)!
+> please use the latest version from [nuget](https://www.nuget.org/packages/ater.dry.cli)!
 
-请到[nuget](https://www.nuget.org/packages/ater.droplet.cli)中查询最新版本！
+请到[nuget](https://www.nuget.org/packages/ater.dry.cli)中查询最新版本！
 
 ## Usage(使用)
 
@@ -59,7 +59,7 @@ dotnet tool install --global ater.droplet.cli
 一条命令启动UI界面!
 
 ```pwsh
-droplet studio
+dry studio
 ```
 
 > Show entities and generate codes!
@@ -88,14 +88,14 @@ droplet studio
 
 ### Use command line(使用命令行)
 
-> You can also use `droplet --help` to view command help information.
+> You can also use `dry --help` to view command help information.
 >
-> Use `droplet [command] --help` to view specific command help information.
+> Use `dry [command] --help` to view specific command help information.
 >
-> You can also view [Online Documentation](https://docs.dusi.dev/zh/droplet/%E6%A6%82%E8%BF%B0.html).
+> You can also view [Online Documentation](https://docs.dusi.dev/zh/dry/%E6%A6%82%E8%BF%B0.html).
 
-你可以使用`droplet --help` 查看命令帮助信息。
+你可以使用`dry --help` 查看命令帮助信息。
 
-或者使用`droplet [command] --help` 查看具体命令帮助信息。
+或者使用`dry [command] --help` 查看具体命令帮助信息。
 
-也可以查看[在线文档](https://docs.dusi.dev/zh/droplet/%E6%A6%82%E8%BF%B0.html)。
+也可以查看[在线文档](https://docs.dusi.dev/zh/dry/%E6%A6%82%E8%BF%B0.html)。

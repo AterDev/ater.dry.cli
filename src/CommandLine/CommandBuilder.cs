@@ -9,9 +9,9 @@ public class CommandBuilder
 
     public CommandBuilder()
     {
-        RootCommand = new RootCommand("Welcome use droplet cli, a tool to help you generate source code!")
+        RootCommand = new RootCommand("Welcome use dry cli, a tool to help you generate source code!")
         {
-            Name = "droplet"
+            Name = "dry"
         };
         ConfigOptions = ConfigCommand.ReadConfigFile();
         if (ConfigOptions != null)
