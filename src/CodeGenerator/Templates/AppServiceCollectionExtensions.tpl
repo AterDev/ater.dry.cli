@@ -32,7 +32,7 @@ public static class AppSetting
 /// <summary>
 /// 服务注册扩展
 /// </summary>
-public static class ServiceExtension
+public static class AppServiceCollectionExtensions
 {
 
     /// <summary>

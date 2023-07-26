@@ -218,26 +218,6 @@ public class RestApiGenerate : GenerateBase
     }
 
     /// <summary>
-    /// 生成仓储的注入服务
-    /// </summary>
-    public void GenerateRepositoryServicesDI()
-    {
-        // 获取services中所有Repository仓储类
-        DirectoryInfo dir = new(Path.Combine(StorePath, "Repositories"));
-        Console.WriteLine("搜索目录:" + dir.FullName);
-        FileInfo[] files = dir.GetFiles("*Repository.cs", SearchOption.TopDirectoryOnly);
-        List<FileInfo> classes = files.Where(f => f.Name != "Repository.cs").ToList();
-        Console.WriteLine("共找到" + classes.Count + "个仓储");
-        string content = string.Join(string.Empty, classes.Select(c => "            services.AddScoped(typeof(" + Path.GetFileNameWithoutExtension(c.FullName) + "));\r\n").ToArray());
-        // 替换模板文件并写入
-        string tplContent = GetTplContent("RepositoryServiceExtensions.tpl");
-        string replaceSign = "// {$TobeAddRepository}";
-        tplContent = tplContent.Replace(replaceSign, content);
-        File.WriteAllText(Path.Combine(ApiPath, "RepositoryServiceExtensions.cs"), tplContent);
-        Console.WriteLine("create file:" + Path.Combine(ApiPath, "RepositoryServiceExtensions.cs") + "\r\n" + "写入仓储注册服务完成");
-    }
-
-    /// <summary>
     /// get user DbContext name
     /// </summary>
     /// <param name="contextName"></param>

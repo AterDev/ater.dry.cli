@@ -36,6 +36,7 @@
 		<None Remove="Templates\angular\module.ts" />
 		<None Remove="Templates\angular\navigation.html.tpl" />
 		<None Remove="Templates\angular\routing.module.ts" />
+		<None Remove="Templates\AppServiceCollectionExtensions.tpl" />
 		<None Remove="Templates\Extensions.tpl" />
 		<None Remove="Templates\Implement\CommandStoreBase.tpl" />
 		<None Remove="Templates\Implement\CommandStoreContent.tpl" />
@@ -65,7 +66,6 @@
 		<None Remove="Templates\RequestService\CsharpeBaseService.tpl" />
 		<None Remove="Templates\RequestService\GlobalUsings.tpl" />
 		<None Remove="Templates\RequestService\service.ts" />
-		<None Remove="Templates\ServiceExtension.tpl" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="Templates\angular\component\form.component.html.tpl" />
@@ -76,7 +76,7 @@
 		<EmbeddedResource Include="Templates\angular\navigation.html.tpl" />
 		<EmbeddedResource Include="Templates\angular\group.module.ts" />
 		<EmbeddedResource Include="Templates\angular\group.routing.module.ts" />
-		<EmbeddedResource Include="Templates\ServiceExtension.tpl" />
+		<EmbeddedResource Include="Templates\AppServiceCollectionExtensions.tpl" />
 		<EmbeddedResource Include="Templates\Implement\CommandStoreBase.tpl" />
 		<EmbeddedResource Include="Templates\Implement\DataStoreContext.tpl" />
 		<EmbeddedResource Include="Templates\Implement\DomainManagerBase.tpl" />

@@ -366,9 +366,18 @@ public class UpdateManager
             content = content.Replace("${Namespace}", appAssemblyName);
             await IOHelper.WriteToFileAsync(Path.Combine(applicationDir, "Implement", "QueryStoreBase.cs"), content);
 
-            content = GenerateBase.GetTplContent("ServiceExtension.tpl");
+            content = GenerateBase.GetTplContent("AppServiceCollectionExtensions.tpl");
             content = content.Replace("${Namespace}", appAssemblyName);
-            await IOHelper.WriteToFileAsync(Path.Combine(applicationDir, "QueryStoreBase.cs"), content);
+            await IOHelper.WriteToFileAsync(Path.Combine(applicationDir, "AppServiceCollectionExtensions.cs"), content);
+            var oldFile = Path.Combine(applicationDir, "ServiceExtension.cs");
+            if (File.Exists(oldFile))
+            {
+                File.Delete(oldFile);
+            }
+
+            content = GenerateBase.GetTplContent("Implement.ManagerServiceCollectionExtensions.tpl");
+            content = content.Replace("${Namespace}", appAssemblyName);
+            await IOHelper.WriteToFileAsync(Path.Combine(applicationDir, "ManagerServiceCollectionExtensions.cs"), content);
 
             // remove files
             deleteFiles = Directory.GetFiles(
@@ -808,7 +817,7 @@ public class UpdateManager
                 `AddSwaggerGen`
                 等方法。
 
-            - 你可以在`Infrastructure/ServiceExtension.cs`配置相应的服务。
+            - 你可以在`Infrastructure/ServiceCollectionExtension.cs`配置相应的服务。
             - 查看`appsettings.json`的变更，更新并配置`Components`节点内容。
 
             所有项目
