@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Text.Encodings.Web;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using Core.Infrastructure;
 using Microsoft.CodeAnalysis;
@@ -740,6 +741,13 @@ public class UpdateManager
             JsonHelper.AddOrUpdateJsonNode(root, "Components:Logging", "none");
             JsonHelper.AddOrUpdateJsonNode(root, "Components:Swagger", true);
             JsonHelper.AddOrUpdateJsonNode(root, "Components:Jwt", true);
+
+            content = root.ToJsonString(new JsonSerializerOptions
+            {
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                WriteIndented = true
+            });
+            File.WriteAllText(appSettingPath, content);
         }
     }
 
@@ -821,6 +829,7 @@ public class UpdateManager
 
             - 你可以在`Infrastructure/ServiceCollectionExtension.cs`配置相应的服务。
             - 查看`appsettings.json`的变更，更新并配置`Components`节点内容。
+            - 依据`appsettings.json`中的内容，更新开发和生产的配置文件。
 
             所有项目
             - 如果跨主版本更新，如7.x->8.0，需要升级到对应的.NET版本以及依赖包版本。

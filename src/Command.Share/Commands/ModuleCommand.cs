@@ -65,6 +65,7 @@ public class ModuleCommand
             AddDefaultModule(solutionPath, moduleName);
             // update solution file
             UpdateSolutionFile(solutionPath, Path.Combine(projectPath, $"{moduleName}{Const.CSharpProjectExtention}"));
+
         }
         catch (Exception ex)
         {
@@ -186,14 +187,31 @@ public class ModuleCommand
         }
 
         var databasePath = Path.Combine(solutionPath, "src", "Database", "EntityFramework");
-
         var entityPath = Path.Combine(solutionPath, Config.EntityPath, $"{moduleName}Entities");
         var modulePath = Path.Combine(solutionPath, "src", "Modules", moduleName);
 
         Console.WriteLine("🚀 copy module files");
+        // copy entities
         CopyModuleFiles(Path.Combine(sourcePath, "Entities"), entityPath);
+        // copy module files
         CopyModuleFiles(sourcePath, modulePath);
-
+        // copy datastore
+        var storeFiles = Directory.GetFiles(Path.Combine(sourcePath, "Application"), "*.cs")
+            .ToList();
+        var queryStorePath = Path.Combine(solutionPath, Config.ApplicationPath, "QueryStore");
+        var commandStorePath = Path.Combine(solutionPath, Config.ApplicationPath, "CommandStore");
+        storeFiles.ForEach(file =>
+        {
+            var filename = Path.GetFileName(file);
+            if (filename.EndsWith("QueryStore.cs"))
+            {
+                File.Copy(file, Path.Combine(queryStorePath, filename));
+            }
+            else if (file.EndsWith("CommandStore.cs"))
+            {
+                File.Copy(file, Path.Combine(commandStorePath, filename));
+            }
+        });
 
         Console.WriteLine("🚀 update ContextBase DbSet");
         var dbContextFile = Path.Combine(databasePath, "ContextBase.cs");
@@ -217,6 +235,9 @@ public class ModuleCommand
         });
         dbContextContent = compilation.SyntaxRoot!.ToFullString();
         File.WriteAllText(dbContextFile, dbContextContent);
+
+        // TODO:重新生成DataStore和依赖注入服务
+
     }
 
     /// <summary>
