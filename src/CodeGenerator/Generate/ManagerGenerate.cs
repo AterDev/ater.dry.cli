@@ -406,36 +406,6 @@ public class ManagerGenerate : GenerateBase
         return content;
     }
 
-    /// <summary>
-    /// 服务注册
-    /// </summary>
-    /// <param name="dataStores">all store names</param>
-    /// <returns></returns>
-    public string GetStoreServiceAfterBuild()
-    {
-        string storeServiceDIContent = "";
-        // 获取所有继承了 DataStoreBase 的类
-        string? assemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(StorePath));
-        CompilationHelper cpl = new(StorePath, assemblyName);
-        IEnumerable<INamedTypeSymbol> classes = cpl.AllClass;
-        if (classes != null)
-        {
-            IEnumerable<INamedTypeSymbol> allDataStores = CompilationHelper.GetClassNameByBaseType(classes, "DataStoreBase");
-            if (allDataStores.Any())
-            {
-                allDataStores.ToList().ForEach(dataStore =>
-                {
-                    string row = $"        services.AddScoped(typeof({dataStore.Name}));";
-                    storeServiceDIContent += row + Environment.NewLine;
-                });
-            }
-        }
-        // 构建服务
-        string content = GetTplContent("Implement.DataStoreExtensioins.tpl");
-        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace);
-        content = content.Replace(TplConst.SERVICE_STORES, storeServiceDIContent);
-        return content;
-    }
 
     /// <summary>
     /// get user DbContext name
@@ -473,20 +443,6 @@ public class ManagerGenerate : GenerateBase
         }
         Console.WriteLine("the contextName:" + name);
         return name;
-    }
-
-    /// <summary>
-    /// 添加依赖注入扩展方法
-    /// </summary>
-    /// <returns></returns>
-    public string GetExtensions()
-    {
-        DirectoryInfo entityDir = new FileInfo(EntityPath).Directory!;
-        FileInfo? entityProjectFile = AssemblyHelper.FindProjectFile(entityDir, entityDir.Root);
-        string? entityNamespace = AssemblyHelper.GetNamespaceName(entityProjectFile!.Directory!);
-        string tplContent = GetTplContent("Extensions.tpl");
-        tplContent = tplContent.Replace(TplConst.NAMESPACE, entityNamespace);
-        return tplContent;
     }
 
     /// <summary>
@@ -547,5 +503,59 @@ public class ManagerGenerate : GenerateBase
             .Replace(TplConst.STORECONTEXT_PARAMS, ctorParams)
             .Replace(TplConst.STORECONTEXT_ASSIGN, ctorAssign);
         return usings + content;
+    }
+
+    /// <summary>
+    /// 服务注册代码
+    /// </summary>
+    /// <returns></returns>
+    public string GetManagerDIExtensions()
+    {
+        string storeServiceContent = "";
+        string managerServiceContent = "";
+
+        // 获取所有data stores
+        string storeDir = Path.Combine(StorePath, "DataStore");
+        string[] files = Array.Empty<string>();
+
+        if (Directory.Exists(storeDir))
+        {
+            files = Directory.GetFiles(storeDir, "*DataStore.cs", SearchOption.TopDirectoryOnly);
+        }
+
+        string[] queryFiles = Directory.GetFiles(Path.Combine(StorePath, $"{Const.QUERY_STORE}"), $"*{Const.QUERY_STORE}.cs", SearchOption.TopDirectoryOnly);
+        string[] commandFiles = Directory.GetFiles(Path.Combine(StorePath, $"{Const.COMMAND_STORE}"), $"*{Const.COMMAND_STORE}.cs", SearchOption.TopDirectoryOnly);
+
+        files = files.Concat(queryFiles).Concat(commandFiles).ToArray();
+
+        files?.ToList().ForEach(file =>
+        {
+            object name = Path.GetFileNameWithoutExtension(file);
+            string row = $"        services.AddScoped(typeof({name}));";
+            storeServiceContent += row + Environment.NewLine;
+        });
+
+        // 获取所有manager
+        string managerDir = Path.Combine(StorePath, "Manager");
+        if (!Directory.Exists(managerDir))
+        {
+            return string.Empty;
+        }
+
+        files = Directory.GetFiles(managerDir, "*Manager.cs", SearchOption.TopDirectoryOnly);
+
+        files?.ToList().ForEach(file =>
+        {
+            object name = Path.GetFileNameWithoutExtension(file);
+            string row = $"        services.AddScoped<I{name}, {name}>();";
+            managerServiceContent += row + Environment.NewLine;
+        });
+
+        // 构建服务
+        string content = GetTplContent("Implement.ManagerServiceCollectionExtensions.tpl");
+        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace);
+        content = content.Replace(TplConst.SERVICE_STORES, storeServiceContent);
+        content = content.Replace(TplConst.SERVICE_MANAGER, managerServiceContent);
+        return content;
     }
 }

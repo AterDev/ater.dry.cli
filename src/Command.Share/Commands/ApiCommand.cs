@@ -46,7 +46,6 @@ public class ApiCommand : CommandBase
         }
         Console.WriteLine(Instructions[0]);
         await GenerateCommonFilesAsync();
-        await GenerateServicesAsync();
 
         Console.WriteLine(Instructions[1]);
         await GenerateRestApiAsync(force);
@@ -104,18 +103,6 @@ public class ApiCommand : CommandBase
             .Replace("RestControllerBase", "ClientControllerBase");
 
         await GenerateFileAsync(apiDir, $"{entityName}{Suffix}.cs", clientContent, force);
-    }
-
-    /// <summary>
-    /// 生成注入服务
-    /// </summary>
-    public async Task GenerateServicesAsync()
-    {
-        string implementDir = Path.Combine(ApiPath, "Infrastructure");
-        string storeService = CodeGen.GetStoreService();
-
-        // manager注入服务
-        await GenerateFileAsync(implementDir, "StoreServicesExtensions.cs", storeService, true);
     }
 
     private async Task GenerateCommonFilesAsync()

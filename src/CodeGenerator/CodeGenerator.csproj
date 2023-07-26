@@ -44,11 +44,11 @@
 		<None Remove="Templates\Implement\IManager.tpl" />
 		<None Remove="Templates\Implement\Manager.tpl" />
 		<None Remove="Templates\Implement\ManagerBase.tpl" />
+		<None Remove="Templates\Implement\ManagerServiceCollectionExtensions.tpl" />
 		<None Remove="Templates\Implement\ManagerTest.tpl" />
 		<None Remove="Templates\Implement\QueryStoreBase.tpl" />
 		<None Remove="Templates\Implement\QueryStoreContent.tpl" />
 		<None Remove="Templates\Implement\RestControllerContent.tpl" />
-		<None Remove="Templates\Implement\StoreServicesExtensions.tpl" />
 		<None Remove="Templates\Implement\UserContext.tpl" />
 		<None Remove="Templates\Interface\ICommandStore.tpl" />
 		<None Remove="Templates\Interface\ICommandStoreExt.tpl" />
@@ -111,7 +111,7 @@
 		<EmbeddedResource Include="Templates\angular\routing.module.ts" />
 		<EmbeddedResource Include="Templates\Extensions.tpl" />
 		<EmbeddedResource Include="Templates\Implement\RestControllerContent.tpl" />
-		<EmbeddedResource Include="Templates\Implement\StoreServicesExtensions.tpl" />
+		<EmbeddedResource Include="Templates\Implement\ManagerServiceCollectionExtensions.tpl" />
 		<EmbeddedResource Include="Templates\Implement\CommandStoreContent.tpl" />
 		<EmbeddedResource Include="Templates\Implement\QueryStoreContent.tpl" />
 		<EmbeddedResource Include="Templates\Implement\UserContext.tpl" />

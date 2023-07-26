@@ -82,6 +82,8 @@ public class ManagerCommand : CommandBase
 
                 Console.WriteLine(Instructions[4]);
                 await GetDataStoreContextAsync();
+                await GenerateDIExtensionsAsync();
+
                 Console.WriteLine(Instructions[5]);
                 await GenerateGlobalUsingsFilesAsync();
             }
@@ -222,5 +224,11 @@ public class ManagerCommand : CommandBase
         string storeContext = ManagerGenerate.GetDataStoreContext(ApplicationPath, "Application");
         // 生成仓储上下文
         await GenerateFileAsync(ApplicationPath, "DataStoreContext.cs", storeContext, true);
+    }
+
+    public async Task GenerateDIExtensionsAsync()
+    {
+        var content = CodeGen.GetManagerDIExtensions();
+        await GenerateFileAsync(ApplicationPath, "ManagerServiceCollectionExtensions.cs", content, true);
     }
 }
