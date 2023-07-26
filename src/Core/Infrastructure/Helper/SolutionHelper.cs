@@ -225,20 +225,35 @@ public class SolutionHelper : IDisposable
         if (document != null)
         {
             namespaceName ??= project!.Name;
+            var oldClassName = Path.GetFileNameWithoutExtension(documentPath);
+            var newClassName = Path.GetFileNameWithoutExtension(newPath);
+
             var unitRoot = await document.GetSyntaxRootAsync();
 
-            var namespaceSyntax = unitRoot!.DescendantNodes().OfType<FileScopedNamespaceDeclarationSyntax>().FirstOrDefault();
+            // 同步命名空间
+            var namespaceSyntax = unitRoot!.DescendantNodes()
+                .OfType<FileScopedNamespaceDeclarationSyntax>().FirstOrDefault();
 
             if (namespaceSyntax != null)
             {
                 var newNamespaceSyntax = namespaceSyntax.WithName(SyntaxFactory.ParseName(namespaceName));
                 unitRoot = unitRoot.ReplaceNode(namespaceSyntax, newNamespaceSyntax);
             }
+
+            // 同步文件类名
+            var classSyntax = unitRoot!.DescendantNodes()
+                .OfType<ClassDeclarationSyntax>().FirstOrDefault();
+            if (classSyntax != null && oldClassName != newClassName)
+            {
+                // use newClassName replace the oldClassName
+                var newClassSyntax = classSyntax.WithIdentifier(SyntaxFactory.Identifier(newClassName));
+                unitRoot = unitRoot.ReplaceNode(classSyntax, newClassSyntax);
+            }
+
             document = document.WithSyntaxRoot(unitRoot)
                 .WithFilePath(newPath);
 
             // update document to solution
-
             Solution = Solution.WithDocumentSyntaxRoot(document.Id, unitRoot)
                 .WithDocumentFilePath(document.Id, newPath);
 

@@ -354,6 +354,12 @@ public class UpdateManager
 
             await solution.MoveDocumentAsync(
                 appAssemblyName,
+                Path.Combine(applicationDir, "Implement", "StoreServicesExtensions.cs"),
+                Path.Combine(applicationDir, "ManagerServiceCollectionExtensions.cs"),
+                $"{appAssemblyName}");
+
+            await solution.MoveDocumentAsync(
+                appAssemblyName,
                 Path.Combine(applicationDir, "Interface", "IUserContext.cs"),
                 Path.Combine(applicationDir, "IUserContext.cs"),
                 $"{appAssemblyName}");
@@ -374,10 +380,6 @@ public class UpdateManager
             {
                 File.Delete(oldFile);
             }
-
-            content = GenerateBase.GetTplContent("Implement.ManagerServiceCollectionExtensions.tpl");
-            content = content.Replace("${Namespace}", appAssemblyName);
-            await IOHelper.WriteToFileAsync(Path.Combine(applicationDir, "ManagerServiceCollectionExtensions.cs"), content);
 
             // remove files
             deleteFiles = Directory.GetFiles(
