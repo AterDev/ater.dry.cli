@@ -1,4 +1,4 @@
-<div *ngIf="isLoading" class="loading">
+<div *ngIf="isLoading" class="d-flex justify-content-center align-items-center">
   <mat-spinner [value]="100">
   </mat-spinner>
 </div>
@@ -339,7 +339,7 @@
       </mat-form-field>
     </form>
   </mat-dialog-content>
-  <mat-dialog-actions>
+  <mat-dialog-actions class="justify-content-end">
     <button mat-button mat-dialog-close>取消</button>
     <button mat-button (click)="addDoc()" color="primary" [disabled]="isOccupying">添加</button>
   </mat-dialog-actions>
@@ -363,7 +363,7 @@
       </mat-form-field>
     </form>
   </mat-dialog-content>
-  <mat-dialog-actions>
+  <mat-dialog-actions class="justify-content-end">
     <button mat-button mat-dialog-close>取消</button>
     <button mat-button (click)="editDoc()" color="primary" [disabled]="isOccupying">更新</button>
   </mat-dialog-actions>
@@ -404,7 +404,7 @@
       <tr mat-row *matRowDef="let row; columns: tableColumns" class="example-element-row" (click)="showModel(row)"></tr>
     </table>
   </mat-dialog-content>
-  <mat-dialog-actions>
+  <mat-dialog-actions class="justify-content-end ">
     <button mat-button mat-dialog-close>关闭</button>
   </mat-dialog-actions>
 </ng-template>
@@ -434,7 +434,7 @@
       </mat-form-field>
     </form>
   </mat-dialog-content>
-  <mat-dialog-actions>
+  <mat-dialog-actions class="justify-content-end">
     <button mat-button mat-dialog-close>取消</button>
     <button mat-button (click)="generateRequest()" color="primary" [disabled]="isSync">生成</button>
   </mat-dialog-actions>
@@ -462,7 +462,7 @@
       </mat-form-field>
     </form>
   </mat-dialog-content>
-  <mat-dialog-actions>
+  <mat-dialog-actions class="justify-content-end">
     <button mat-button mat-dialog-close>取消</button>
     <button mat-button (click)="generateClientRequest()" color="primary" [disabled]="isSync">生成</button>
   </mat-dialog-actions>

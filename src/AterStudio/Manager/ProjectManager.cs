@@ -46,7 +46,12 @@ public class ProjectManager
                 }
                 p.Version = config!.Version;
             }
-
+            // 移除不存在的项目
+            if (!File.Exists(p.Path))
+            {
+                _db.Projects.Delete(p.Id);
+                projects.Remove(p);
+            }
         });
         return projects;
     }

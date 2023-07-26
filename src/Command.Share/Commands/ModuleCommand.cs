@@ -62,7 +62,7 @@ public class ModuleCommand
 
         try
         {
-            AddDefaultModuleAsync(solutionPath, moduleName);
+            await AddDefaultModuleAsync(solutionPath, moduleName);
             // update solution file
             UpdateSolutionFile(solutionPath, Path.Combine(projectPath, $"{moduleName}{Const.CSharpProjectExtention}"));
 

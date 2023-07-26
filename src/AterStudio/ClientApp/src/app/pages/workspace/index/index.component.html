@@ -140,7 +140,7 @@
       </mat-form-field>
     </form>
   </mat-dialog-content>
-  <mat-dialog-actions>
+  <mat-dialog-actions class="justify-content-end">
     <button mat-button mat-dialog-close>取消</button>
     <button mat-button (click)="generateRequest()" color="primary" [disabled]="isSync">生成</button>
   </mat-dialog-actions>
@@ -224,7 +224,7 @@
     </mat-selection-list>
     <mat-slide-toggle [(ngModel)]="this.force" class="mt-2">覆盖现有代码</mat-slide-toggle>
   </mat-dialog-content>
-  <mat-dialog-actions>
+  <mat-dialog-actions class="justify-content-end">
     <button mat-button mat-dialog-close>取消</button>
     <button mat-button (click)="batch(CommandType.API)" color="primary" [disabled]="isSync">生成</button>
   </mat-dialog-actions>
