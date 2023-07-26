@@ -509,13 +509,13 @@ public class ManagerGenerate : GenerateBase
     /// 服务注册代码
     /// </summary>
     /// <returns></returns>
-    public string GetManagerDIExtensions()
+    public static string GetManagerDIExtensions(string applicationPath, string nspName)
     {
         string storeServiceContent = "";
         string managerServiceContent = "";
 
         // 获取所有data stores
-        string storeDir = Path.Combine(StorePath, "DataStore");
+        string storeDir = Path.Combine(applicationPath, "DataStore");
         string[] files = Array.Empty<string>();
 
         if (Directory.Exists(storeDir))
@@ -523,8 +523,8 @@ public class ManagerGenerate : GenerateBase
             files = Directory.GetFiles(storeDir, "*DataStore.cs", SearchOption.TopDirectoryOnly);
         }
 
-        string[] queryFiles = Directory.GetFiles(Path.Combine(StorePath, $"{Const.QUERY_STORE}"), $"*{Const.QUERY_STORE}.cs", SearchOption.TopDirectoryOnly);
-        string[] commandFiles = Directory.GetFiles(Path.Combine(StorePath, $"{Const.COMMAND_STORE}"), $"*{Const.COMMAND_STORE}.cs", SearchOption.TopDirectoryOnly);
+        string[] queryFiles = Directory.GetFiles(Path.Combine(applicationPath, $"{Const.QUERY_STORE}"), $"*{Const.QUERY_STORE}.cs", SearchOption.TopDirectoryOnly);
+        string[] commandFiles = Directory.GetFiles(Path.Combine(applicationPath, $"{Const.COMMAND_STORE}"), $"*{Const.COMMAND_STORE}.cs", SearchOption.TopDirectoryOnly);
 
         files = files.Concat(queryFiles).Concat(commandFiles).ToArray();
 
@@ -536,7 +536,7 @@ public class ManagerGenerate : GenerateBase
         });
 
         // 获取所有manager
-        string managerDir = Path.Combine(StorePath, "Manager");
+        string managerDir = Path.Combine(applicationPath, "Manager");
         if (!Directory.Exists(managerDir))
         {
             return string.Empty;
@@ -553,7 +553,7 @@ public class ManagerGenerate : GenerateBase
 
         // 构建服务
         string content = GetTplContent("Implement.ManagerServiceCollectionExtensions.tpl");
-        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace);
+        content = content.Replace(TplConst.NAMESPACE, nspName);
         content = content.Replace(TplConst.SERVICE_STORES, storeServiceContent);
         content = content.Replace(TplConst.SERVICE_MANAGER, managerServiceContent);
         return content;

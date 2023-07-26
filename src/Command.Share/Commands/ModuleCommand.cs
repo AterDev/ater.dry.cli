@@ -62,7 +62,7 @@ public class ModuleCommand
 
         try
         {
-            AddDefaultModule(solutionPath, moduleName);
+            AddDefaultModuleAsync(solutionPath, moduleName);
             // update solution file
             UpdateSolutionFile(solutionPath, Path.Combine(projectPath, $"{moduleName}{Const.CSharpProjectExtention}"));
 
@@ -172,7 +172,7 @@ public class ModuleCommand
     /// </summary>
     /// <param name="moduleName"></param>
     /// <param name="solutionPath"></param>
-    private static void AddDefaultModule(string solutionPath, string moduleName)
+    private static async Task AddDefaultModuleAsync(string solutionPath, string moduleName)
     {
         if (!ModuleNames.Contains(moduleName))
         {
@@ -236,7 +236,13 @@ public class ModuleCommand
         dbContextContent = compilation.SyntaxRoot!.ToFullString();
         File.WriteAllText(dbContextFile, dbContextContent);
 
-        // TODO:重新生成DataStore和依赖注入服务
+        // 重新生成DataStore和依赖注入服务
+        var applicationPath = Path.Combine(solutionPath, Config.ApplicationPath);
+        var applicationName = Config.ApplicationPath.Split(Path.DirectorySeparatorChar).Last();
+        var content = ManagerGenerate.GetDataStoreContext(applicationPath, applicationName);
+        await IOHelper.WriteToFileAsync(Path.Combine(applicationPath, "DataStoreContext.cs"), content);
+        content = ManagerGenerate.GetManagerDIExtensions(applicationPath, applicationName);
+        await IOHelper.WriteToFileAsync(Path.Combine(applicationPath, "ManagerServiceCollectionExtensions.cs"), content);
 
     }
 
