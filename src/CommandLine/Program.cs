@@ -8,12 +8,12 @@ internal class Program
     private static async Task<int> Main(string[] args)
     {
         Console.OutputEncoding = Encoding.UTF8;
+        ShowLogo();
         if (args.Length == 0)
         {
             return 0;
         }
 
-        ShowLogo();
         await ConfigCommand.InitConfigFileAsync();
         RootCommand root = new CommandBuilder().Build();
         return await root.InvokeAsync(args);
@@ -30,6 +30,7 @@ internal class Program
             |_____/  |_|  \_\    |_|
 
                      -- for freedom --
+
             """;
 
         Console.WriteLine(logo);
