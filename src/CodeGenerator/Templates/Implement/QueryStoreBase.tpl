@@ -190,10 +190,13 @@ public partial class QueryStoreBase<TContext, TEntity> :
         {
             _query = _query.OrderBy(order);
         }
+        else
+        {
+            _query = _query.OrderByDescending(t => t.CreatedTime)
+        }
         int count = _query.Count();
         List<TItem> data = await _query
             .AsNoTracking()
-            .OrderByDescending(t => t.CreatedTime)
             .Skip((pageIndex - 1) * pageSize)
             .Take(pageSize)
             .ProjectTo<TItem>()
