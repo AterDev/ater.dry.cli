@@ -73,7 +73,7 @@ public class ManagerCommand : CommandBase
             else
             {
                 Console.WriteLine(Instructions[0]);
-                await GenerateCommonFilesAsync();
+                await GenerateCommonFilesAsync(force);
                 Console.WriteLine(Instructions[1]);
                 await GenerateStoreFilesAsync();
 
@@ -120,7 +120,7 @@ public class ManagerCommand : CommandBase
     /// <summary>
     /// 生成接口和实现类
     /// </summary>
-    public async Task GenerateCommonFilesAsync()
+    public async Task GenerateCommonFilesAsync(bool isCover = false)
     {
         // 生成Utils 扩展类
         DirectoryInfo? dir = new FileInfo(EntityPath).Directory;
@@ -165,7 +165,8 @@ public class ManagerCommand : CommandBase
         foreach (string name in implementFiles)
         {
             string content = CodeGen.GetImplementFile(name);
-            bool isCover = name is not "DomainManagerBase";
+            content = content.Replace("${IdType}", Config.IdType);
+            isCover = name != "DomainManagerBase" && isCover;
             await GenerateFileAsync(implementDir, $"{name}.cs", content, isCover);
         }
         // 生成user上下文

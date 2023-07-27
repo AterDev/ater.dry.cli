@@ -46,7 +46,7 @@ public partial class QueryStoreBase<TContext, TEntity> :
             : _db.IgnoreQueryFilters().AsQueryable();
     }
 
-    public virtual async Task<TEntity?> FindAsync(Guid id)
+    public virtual async Task<TEntity?> FindAsync(${IdType} id)
     {
         TEntity? res = await _query.Where(d => d.Id == id)
             .AsNoTracking()
@@ -55,7 +55,7 @@ public partial class QueryStoreBase<TContext, TEntity> :
         return res;
     }
 
-    public virtual async Task<TDto?> FindAsync<TDto>(Guid id)
+    public virtual async Task<TDto?> FindAsync<TDto>(${IdType} id)
         where TDto : class
     {
         TDto? res = await _query.Where(d => d.Id == id)
