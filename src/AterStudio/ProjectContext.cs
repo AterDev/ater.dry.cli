@@ -43,7 +43,7 @@ public class ProjectContext
                         Config.SolutionPath = SolutionPath;
                     }
 
-                    SharePath = Path.Combine(SolutionPath, Config.DtoPath);
+                    SharePath = Path.Combine(SolutionPath, Config.SharePath);
                     ApplicationPath = Path.Combine(SolutionPath, Config.ApplicationPath);
                     EntityPath = Path.Combine(SolutionPath, Config.EntityPath);
                     ApiPath = Path.Combine(SolutionPath, Config.ApiPath);

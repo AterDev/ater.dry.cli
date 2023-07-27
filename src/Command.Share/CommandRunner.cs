@@ -124,7 +124,7 @@ public static class CommandRunner
             DtoCommand dtoCmd = new(path, dtoPath);
             await dtoCmd.RunAsync(force);
             Console.WriteLine("🚀 Generate store");
-            ManagerCommand storeCmd = new(path, dtoPath, servicePath, suffix);
+            ManagerCommand storeCmd = new(path, dtoPath, servicePath);
             await storeCmd.RunAsync(force);
 
             Console.WriteLine("🚀 Generate rest api");
@@ -222,7 +222,7 @@ public static class CommandRunner
         {
             // 更新 依赖注入
             var entityFilePath = Directory.GetFiles(Path.Combine(entityPath, "Entities"), EntityName + ".cs", SearchOption.AllDirectories).First();
-            var managerCmd = new ManagerCommand(entityFilePath, sharePath, applicationPath, apiPath);
+            var managerCmd = new ManagerCommand(entityFilePath, sharePath, applicationPath);
             await managerCmd.GenerateDIExtensionsAsync();
 
             await Console.Out.WriteLineAsync("✔️ update manager service extention");

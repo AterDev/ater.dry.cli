@@ -7,22 +7,48 @@ namespace Command.Share.Commands;
 /// </summary>
 public class ManagerCommand : CommandBase
 {
-    public string EntityPath { get; set; }
-    public string ApplicationPath { get; set; }
-    public string DtoPath { get; set; }
+    public string EntityFilePath { get; }
+    public string ApplicationPath { get; private set; }
+    public string SharePath { get; }
+    public string StorePath { get; }
+    public string SolutionPath { get; }
     public ManagerGenerate CodeGen { get; set; }
     /// <summary>
     /// 对应模块名
     /// </summary>
     public string? ModuleName { get; private set; }
 
-    public ManagerCommand(string entityPath, string dtoPath, string applicationPath, string? contextName = null)
+    public ManagerCommand(string entityFilePath, string solutionPath)
     {
-        EntityPath = entityPath;
+        SolutionPath = solutionPath;
+        EntityFilePath = entityFilePath;
+        ApplicationPath = Path.Combine(solutionPath, Config.ApplicationPath);
+        SharePath = Path.Combine(solutionPath, Config.SharePath);
+        StorePath = Path.Combine(solutionPath, Config.DbContextPath);
+
+        CodeGen = new ManagerGenerate(EntityFilePath, SharePath, ApplicationPath);
+        string entityName = Path.GetFileNameWithoutExtension(EntityFilePath);
+        Instructions.Add($"  🔹 generate interface & base class.");
+        Instructions.Add($"  🔹 generate {entityName} DataStore.");
+        Instructions.Add($"  🔹 generate Manager files.");
+        Instructions.Add($"  🔹 generate Manager test files.");
+        Instructions.Add($"  🔹 generate DataStoreContext files.");
+        Instructions.Add($"  🔹 update Globalusings files.");
+    }
+
+    public ManagerCommand(string entityFilePath, string dtoPath, string applicationPath)
+    {
+        EntityFilePath = entityFilePath;
         ApplicationPath = applicationPath;
-        DtoPath = dtoPath;
-        CodeGen = new ManagerGenerate(entityPath, dtoPath, applicationPath, contextName);
-        string entityName = Path.GetFileNameWithoutExtension(entityPath);
+        SharePath = dtoPath;
+        var currentDir = new DirectoryInfo(applicationPath);
+        var solutionFile = AssemblyHelper.GetSlnFile(currentDir, "*.sln", currentDir.Root)
+            ?? throw new Exception("not found solution file");
+
+        SolutionPath = solutionFile.DirectoryName!;
+        StorePath = Path.Combine(SolutionPath, Config.DbContextPath);
+        CodeGen = new ManagerGenerate(entityFilePath, dtoPath, applicationPath);
+        string entityName = Path.GetFileNameWithoutExtension(entityFilePath);
         Instructions.Add($"  🔹 generate interface & base class.");
         Instructions.Add($"  🔹 generate {entityName} DataStore.");
         Instructions.Add($"  🔹 generate Manager files.");
@@ -36,16 +62,16 @@ public class ManagerCommand : CommandBase
     /// </summary>
     public async Task RunAsync(bool force)
     {
-        if (!File.Exists(EntityPath))
+        if (!File.Exists(EntityFilePath))
         {
-            Console.WriteLine($"the {EntityPath} not exist");
+            Console.WriteLine($"the {EntityFilePath} not exist");
             return;
         }
         try
         {
             // 是否为模块
             var compilation = new CompilationHelper(ApplicationPath, "Entity");
-            var content = File.ReadAllText(EntityPath);
+            var content = File.ReadAllText(EntityFilePath);
             compilation.AddSyntaxTree(content);
             var attributes = compilation.GetClassAttribution("Module");
             if (attributes != null && attributes.Any())
@@ -96,7 +122,6 @@ public class ManagerCommand : CommandBase
         }
     }
 
-
     /// <summary>
     /// 生成接口和实现类
     /// </summary>
@@ -116,7 +141,15 @@ public class ManagerCommand : CommandBase
             content = CodeGen.GetImplementFile(name);
             content = content.Replace("${IdType}", Config.IdType);
             isCover = name != "DomainManagerBase" && isCover;
-            await GenerateFileAsync(implementDir, $"{name}.cs", content, isCover);
+            if (name is "CommandStoreBase" or "QueryStoreBase")
+            {
+                var path = Path.Combine(StorePath, name.Replace("Base", ""));
+                await GenerateFileAsync(path, $"{name}.cs", content, isCover);
+            }
+            else
+            {
+                await GenerateFileAsync(implementDir, $"{name}.cs", content, isCover);
+            }
         }
 
         content = CodeGen.GetInterfaceFile("IDomainManager");
@@ -136,7 +169,7 @@ public class ManagerCommand : CommandBase
     {
         string iManagerDir = Path.Combine(ApplicationPath, "IManager");
         string managerDir = Path.Combine(ApplicationPath, "Manager");
-        string entityName = Path.GetFileNameWithoutExtension(EntityPath);
+        string entityName = Path.GetFileNameWithoutExtension(EntityFilePath);
 
         string interfaceContent = CodeGen.GetIManagerContent();
         string managerContent = CodeGen.GetManagerContent();
@@ -164,7 +197,7 @@ public class ManagerCommand : CommandBase
         if (Directory.Exists(testProjectPath))
         {
             string testDir = Path.Combine(testProjectPath, "Managers");
-            string entityName = Path.GetFileNameWithoutExtension(EntityPath);
+            string entityName = Path.GetFileNameWithoutExtension(EntityFilePath);
             if (Directory.Exists(testDir))
             {
                 _ = Directory.CreateDirectory(testDir);
@@ -206,9 +239,9 @@ public class ManagerCommand : CommandBase
     /// </summary>
     public async Task GenerateStoreFilesAsync()
     {
-        string queryStoreDir = Path.Combine(ApplicationPath, "QueryStore");
-        string commandStoreDir = Path.Combine(ApplicationPath, "CommandStore");
-        string entityName = Path.GetFileNameWithoutExtension(EntityPath);
+        string queryStoreDir = Path.Combine(StorePath, "QueryStore");
+        string commandStoreDir = Path.Combine(StorePath, "CommandStore");
+        string entityName = Path.GetFileNameWithoutExtension(EntityFilePath);
         string queryStoreContent = CodeGen.GetStoreContent("Query");
         string commandStoreContent = CodeGen.GetStoreContent("Command");
 
@@ -217,15 +250,19 @@ public class ManagerCommand : CommandBase
     }
 
     /// <summary>
-    /// 生成注入服务
+    /// 生成DataStore上下文
     /// </summary>
     public async Task GetDataStoreContextAsync()
     {
-        string storeContext = ManagerGenerate.GetDataStoreContext(ApplicationPath, "Application");
+        string storeContext = ManagerGenerate.GetDataStoreContext(StorePath, "EntityFramework");
         // 生成仓储上下文
-        await GenerateFileAsync(ApplicationPath, "DataStoreContext.cs", storeContext, true);
+        await GenerateFileAsync(StorePath, "DataStoreContext.cs", storeContext, true);
     }
 
+    /// <summary>
+    /// 生成注入服务
+    /// </summary>
+    /// <returns></returns>
     public async Task GenerateDIExtensionsAsync()
     {
         var content = ManagerGenerate.GetManagerDIExtensions(ApplicationPath, "Application");

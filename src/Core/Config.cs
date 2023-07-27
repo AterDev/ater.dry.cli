@@ -5,7 +5,7 @@ public static class Config
     public static string IdType { get; set; } = "Guid";
     public static string CreatedTimeName { get; set; } = "CreatedTime";
     public static string Version { get; private set; } = "8.0";
-    public static string DtoPath { get; set; } = Path.Combine("src", "Share");
+    public static string SharePath { get; set; } = Path.Combine("src", "Share");
     public static string EntityPath { get; set; } = Path.Combine("src", "Entity");
     public static string DbContextPath { get; set; } = Path.Combine("src", "Database", "EntityFramework");
     public static string ApplicationPath { get; set; } = Path.Combine("src", "Application");
@@ -36,7 +36,7 @@ public static class Config
         EntityPath = configOptions.EntityPath;
         ApplicationPath = configOptions.ApplicationPath;
         ApiPath = configOptions.ApiPath;
-        DtoPath = configOptions.DtoPath;
+        SharePath = configOptions.DtoPath;
         CreatedTimeName = configOptions.CreatedTimeName;
         Version = configOptions.Version;
         WebAppPath = configOptions.WebAppPath ?? "";

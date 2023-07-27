@@ -39,7 +39,7 @@ public class CommandTest
     [Fact]
     public async Task Should_generate_store_filesAsync()
     {
-        ManagerCommand cmd = new(EntityPath, StorePath, StorePath, "DocsContext");
+        ManagerCommand cmd = new(EntityPath, StorePath, StorePath);
         await cmd.RunAsync(true);
         string storeInterfaceFile = Path.Combine(StorePath, "Interface", "IDataStore.cs");
         string userInterfaceFile = Path.Combine(StorePath, "Interface", "IUserContext.cs");

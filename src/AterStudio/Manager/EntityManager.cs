@@ -117,7 +117,7 @@ public class EntityManager
     private (bool hasDto, bool hasManager, bool hasAPI) GetEntityStates(string path, string entityName, string? moduleName = null)
     {
         bool hasDto = false; bool hasManager = false; bool hasAPI = false;
-        var dtoPath = Path.Combine(path, Config.DtoPath, "Models", $"{entityName}Dtos", $"{entityName}AddDto.cs");
+        var dtoPath = Path.Combine(path, Config.SharePath, "Models", $"{entityName}Dtos", $"{entityName}AddDto.cs");
         var managerPath = Path.Combine(path, Config.ApplicationPath, "IManager", $"I{entityName}Manager.cs");
         var apiPath = Path.Combine(path, Config.ApiPath, "Controllers", $"{entityName}Controller.cs");
 
@@ -149,7 +149,7 @@ public class EntityManager
             {
                 entityName = entityName.Replace(".cs", "");
             }
-            string dtoPath = Path.Combine(_projectContext.SolutionPath!, Config.DtoPath, "Models", $"{entityName}Dtos");
+            string dtoPath = Path.Combine(_projectContext.SolutionPath!, Config.SharePath, "Models", $"{entityName}Dtos");
             // get files in directory
             List<string> filePaths = Directory.GetFiles(dtoPath, "*.cs", SearchOption.AllDirectories).ToList();
 
@@ -234,7 +234,7 @@ public class EntityManager
     /// <returns></returns>
     public bool UpdateDtoContent(string fileName, string Content)
     {
-        string dtoPath = Path.Combine(_projectContext.SolutionPath!, Config.DtoPath, "Models");
+        string dtoPath = Path.Combine(_projectContext.SolutionPath!, Config.SharePath, "Models");
         var filePath = Directory.GetFiles(dtoPath, fileName, SearchOption.AllDirectories).FirstOrDefault();
         try
         {
@@ -366,7 +366,7 @@ public class EntityManager
 
     public async Task GenerateNgModuleAsync(string entityName, string rootPath)
     {
-        var dtoPath = Path.Combine(_projectContext.SolutionPath!, Config.DtoPath);
+        var dtoPath = Path.Combine(_projectContext.SolutionPath!, Config.SharePath);
         var entityDir = Path.Combine(_projectContext.SolutionPath!, Config.EntityPath, "Entities");
         var entityPath = Directory.GetFiles(entityDir, entityName, SearchOption.AllDirectories)
             .FirstOrDefault();

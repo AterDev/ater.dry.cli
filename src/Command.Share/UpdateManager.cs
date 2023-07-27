@@ -42,7 +42,7 @@ public class UpdateManager
             TargetVersion = "7.1.0";
             // 临时修正路径
             Config.EntityPath = "src" + Path.DirectorySeparatorChar + Config.EntityPath;
-            Config.DtoPath = "src" + Path.DirectorySeparatorChar + Config.DtoPath;
+            Config.SharePath = "src" + Path.DirectorySeparatorChar + Config.SharePath;
             Config.DbContextPath = "src" + Path.DirectorySeparatorChar + Config.DbContextPath;
             Config.ApplicationPath = "src" + Path.DirectorySeparatorChar + Config.ApplicationPath;
             Config.ApiPath = "src" + Path.DirectorySeparatorChar + Config.ApiPath;
@@ -59,7 +59,7 @@ public class UpdateManager
                     config.Version = "7.1.0";
                     // update path 
                     config.EntityPath = Config.EntityPath;
-                    config.DtoPath = Config.DtoPath;
+                    config.DtoPath = Config.SharePath;
                     config.DbContextPath = Config.DbContextPath;
                     config.ApplicationPath = Config.ApplicationPath;
                     config.ApiPath = Config.ApiPath;
@@ -326,13 +326,13 @@ public class UpdateManager
             solution.RemoveAttributes("Entity", "NgPage");
 
             // Share修改
-            var dtoAssemblyName = Config.DtoPath.Split(Path.DirectorySeparatorChar).Last();
+            var dtoAssemblyName = Config.SharePath.Split(Path.DirectorySeparatorChar).Last();
             var deleteFiles = new string[] {
-                 Path.Combine(solutionPath, Config.DtoPath,"Models","PageList.cs"),
-                 Path.Combine(solutionPath, Config.DtoPath,"Models","FilterBase.cs"),
+                 Path.Combine(solutionPath, Config.SharePath,"Models","PageList.cs"),
+                 Path.Combine(solutionPath, Config.SharePath,"Models","FilterBase.cs"),
             };
             await solution.RemoveFileAsync(dtoAssemblyName, deleteFiles);
-            var globalFilePath = Path.Combine(solutionPath, Config.DtoPath, "GlobalUsings.cs");
+            var globalFilePath = Path.Combine(solutionPath, Config.SharePath, "GlobalUsings.cs");
             File.AppendAllLines(globalFilePath, new List<string>() {
                 "global using Ater.Web.Core.Models;"
             });

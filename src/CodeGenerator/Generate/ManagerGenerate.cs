@@ -10,7 +10,7 @@ public class ManagerGenerate : GenerateBase
     /// <summary>
     /// Entity 文件路径
     /// </summary>
-    public string EntityPath { get; set; }
+    public string EntityFilePath { get; set; }
     /// <summary>
     /// DataStroe所在项目目录路径
     /// </summary>
@@ -19,24 +19,22 @@ public class ManagerGenerate : GenerateBase
     /// DTO 所在项目目录路径
     /// </summary>
     public string SharePath { get; set; }
-    public string? ContextName { get; set; }
     /// <summary>
     /// DataStore 项目的命名空间
     /// </summary>
     public string? ShareNamespace { get; set; }
     public string? ServiceNamespace { get; set; }
     public readonly EntityInfo? EntityInfo;
-    public ManagerGenerate(string entityPath, string dtoPath, string servicePath, string? contextName = null)
+    public ManagerGenerate(string entityFilePath, string dtoPath, string servicePath)
     {
-        EntityPath = entityPath;
+        EntityFilePath = entityFilePath;
         SharePath = dtoPath;
         StorePath = servicePath;
-        ContextName = contextName;
         ShareNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(SharePath));
         ServiceNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(StorePath));
-        if (File.Exists(entityPath))
+        if (File.Exists(entityFilePath))
         {
-            EntityParseHelper entityHelper = new(entityPath);
+            EntityParseHelper entityHelper = new(entityFilePath);
             EntityInfo = entityHelper.GetEntity();
         }
     }
@@ -73,11 +71,11 @@ public class ManagerGenerate : GenerateBase
     public string GetManagerTestContent()
     {
         string tplContent = GetTplContent($"Implement.ManagerTest.tpl");
-        var entityHelper = new EntityParseHelper(EntityPath);
+        var entityHelper = new EntityParseHelper(EntityFilePath);
         entityHelper.Parse();
         tplContent = tplContent.Replace(TplConst.ENTITY_NAMESPACE, entityHelper.NamespaceName)
             .Replace(TplConst.NAMESPACE, ServiceNamespace);
-        string entityName = Path.GetFileNameWithoutExtension(EntityPath);
+        string entityName = Path.GetFileNameWithoutExtension(EntityFilePath);
         tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName);
 
         var addContent = GenManagerAddTest();
@@ -184,7 +182,7 @@ public class ManagerGenerate : GenerateBase
     /// <returns></returns>
     public List<string> GetGlobalUsings()
     {
-        FileInfo fileInfo = new(EntityPath);
+        FileInfo fileInfo = new(EntityFilePath);
         FileInfo? projectFile = AssemblyHelper.FindProjectFile(fileInfo.Directory!, fileInfo.Directory!.Root);
         string? entityProjectNamespace = AssemblyHelper.GetNamespaceName(projectFile!.Directory!);
 
@@ -212,7 +210,7 @@ public class ManagerGenerate : GenerateBase
             throw new ArgumentException("不允许的参数");
         }
         string contextName = queryOrCommand + "DbContext";
-        string entityName = Path.GetFileNameWithoutExtension(EntityPath);
+        string entityName = Path.GetFileNameWithoutExtension(EntityFilePath);
         // 生成基础仓储实现类，替换模板变量并写入文件
         string tplContent = GetTplContent($"Implement.{queryOrCommand}StoreContent.tpl");
         tplContent = tplContent.Replace(TplConst.NAMESPACE, ServiceNamespace);
@@ -228,7 +226,7 @@ public class ManagerGenerate : GenerateBase
     /// <returns></returns>
     public string GetIManagerContent()
     {
-        string entityName = Path.GetFileNameWithoutExtension(EntityPath);
+        string entityName = Path.GetFileNameWithoutExtension(EntityFilePath);
         string tplContent = GetTplContent($"Implement.IManager.tpl");
         tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName)
             .Replace(TplConst.ID_TYPE, Config.IdType)
@@ -242,7 +240,7 @@ public class ManagerGenerate : GenerateBase
     /// <returns></returns>
     public string GetManagerContent()
     {
-        string entityName = Path.GetFileNameWithoutExtension(EntityPath);
+        string entityName = Path.GetFileNameWithoutExtension(EntityFilePath);
         string tplContent = GetTplContent($"Implement.Manager.tpl");
 
         // 依赖注入
@@ -449,11 +447,11 @@ public class ManagerGenerate : GenerateBase
     /// store上下文
     /// </summary>
     /// <returns></returns>
-    public static string GetDataStoreContext(string applicationPath, string nspName)
+    public static string GetDataStoreContext(string path, string nspName)
     {
-        string queryPath = Path.Combine(applicationPath, $"{Const.QUERY_STORE}");
+        string queryPath = Path.Combine(path, $"{Const.QUERY_STORE}");
         string[] queryFiles = Directory.GetFiles(queryPath, $"*{Const.QUERY_STORE}.cs", SearchOption.TopDirectoryOnly);
-        string commandPath = Path.Combine(applicationPath, $"{Const.COMMAND_STORE}");
+        string commandPath = Path.Combine(path, $"{Const.COMMAND_STORE}");
         string[] commandFiles = Directory.GetFiles(commandPath, $"*{Const.COMMAND_STORE}.cs", SearchOption.TopDirectoryOnly);
         IEnumerable<string> allDataStores = queryFiles.Concat(commandFiles);
 
@@ -463,7 +461,7 @@ public class ManagerGenerate : GenerateBase
         string usings = "";
         if (allDataStores.Any())
         {
-            var compilationHelper = new CompilationHelper(applicationPath);
+            var compilationHelper = new CompilationHelper(path);
             var entityClassNames = new List<string>();
 
             allDataStores.ToList().ForEach(filePath =>
