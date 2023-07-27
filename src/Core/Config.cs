@@ -7,7 +7,7 @@ public static class Config
     public static string Version { get; private set; } = "8.0";
     public static string SharePath { get; set; } = Path.Combine("src", "Share");
     public static string EntityPath { get; set; } = Path.Combine("src", "Entity");
-    public static string DbContextPath { get; set; } = Path.Combine("src", "Database", "EntityFramework");
+    public static string EntityFrameworkPath { get; set; } = Path.Combine("src", "Database", "EntityFramework");
     public static string ApplicationPath { get; set; } = Path.Combine("src", "Application");
     public static string ApiPath { get; set; } = Path.Combine("src", "Http.API");
 

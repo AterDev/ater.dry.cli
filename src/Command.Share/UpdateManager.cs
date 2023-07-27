@@ -43,7 +43,7 @@ public class UpdateManager
             // 临时修正路径
             Config.EntityPath = "src" + Path.DirectorySeparatorChar + Config.EntityPath;
             Config.SharePath = "src" + Path.DirectorySeparatorChar + Config.SharePath;
-            Config.DbContextPath = "src" + Path.DirectorySeparatorChar + Config.DbContextPath;
+            Config.EntityFrameworkPath = "src" + Path.DirectorySeparatorChar + Config.EntityFrameworkPath;
             Config.ApplicationPath = "src" + Path.DirectorySeparatorChar + Config.ApplicationPath;
             Config.ApiPath = "src" + Path.DirectorySeparatorChar + Config.ApiPath;
 
@@ -60,7 +60,7 @@ public class UpdateManager
                     // update path 
                     config.EntityPath = Config.EntityPath;
                     config.DtoPath = Config.SharePath;
-                    config.DbContextPath = Config.DbContextPath;
+                    config.DbContextPath = Config.EntityFrameworkPath;
                     config.ApplicationPath = Config.ApplicationPath;
                     config.ApiPath = Config.ApiPath;
 
@@ -261,6 +261,11 @@ public class UpdateManager
             Console.WriteLine("⚠️ can't find sln file");
             return false;
         }
+        // 先移动文件
+        var applicationDir = Path.Combine(solutionPath, Config.ApplicationPath);
+        var entityFrameworkDir = Path.Combine(solutionPath, Config.EntityFrameworkPath);
+        IOHelper.MoveDirectory(Path.Combine(applicationDir, "QueryStore"), Path.Combine(entityFrameworkDir, "QueryStore"));
+        IOHelper.MoveDirectory(Path.Combine(applicationDir, "CommandStore"), Path.Combine(entityFrameworkDir, "CommandStore"));
 
         var solution = new SolutionHelper(solutionFilePath);
         try
@@ -339,8 +344,8 @@ public class UpdateManager
 
             // Application修改
             // 结构调整
-            var applicationDir = Path.Combine(solutionPath, Config.ApplicationPath);
             var appAssemblyName = Config.ApplicationPath.Split(Path.DirectorySeparatorChar).Last();
+            var dbAseemblyName = Config.EntityFrameworkPath.Split(Path.DirectorySeparatorChar).Last();
             await solution.MoveDocumentAsync(
                 appAssemblyName,
                 Path.Combine(applicationDir, "Interface", "IDomainManager.cs"),
@@ -350,8 +355,8 @@ public class UpdateManager
             await solution.MoveDocumentAsync(
                 appAssemblyName,
                 Path.Combine(applicationDir, "Implement", "DataStoreContext.cs"),
-                Path.Combine(applicationDir, "DataStoreContext.cs"),
-                $"{appAssemblyName}");
+                Path.Combine(entityFrameworkDir, "DataStoreContext.cs"),
+                $"{dbAseemblyName}");
 
             await solution.MoveDocumentAsync(
                 appAssemblyName,
@@ -418,6 +423,8 @@ public class UpdateManager
             solution.RenameNamespace("Core.Models", "Ater.Web.Core.Models");
             solution.RenameNamespace("Core.Utils", "Ater.Web.Core.Utils");
             solution.RenameNamespace("Application.Interface", "Application");
+            solution.RenameNamespace("Application.QueryStore", "EntityFramework.QueryStore");
+            solution.RenameNamespace("Application.CommandStore", "EntityFramework.CommandStore");
 
             // 重构项目依赖关系
             var entityProject = solution.GetProject("Entity");

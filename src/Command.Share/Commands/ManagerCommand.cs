@@ -24,7 +24,7 @@ public class ManagerCommand : CommandBase
         EntityFilePath = entityFilePath;
         ApplicationPath = Path.Combine(solutionPath, Config.ApplicationPath);
         SharePath = Path.Combine(solutionPath, Config.SharePath);
-        StorePath = Path.Combine(solutionPath, Config.DbContextPath);
+        StorePath = Path.Combine(solutionPath, Config.EntityFrameworkPath);
 
         CodeGen = new ManagerGenerate(EntityFilePath, SharePath, ApplicationPath);
         string entityName = Path.GetFileNameWithoutExtension(EntityFilePath);
@@ -46,7 +46,7 @@ public class ManagerCommand : CommandBase
             ?? throw new Exception("not found solution file");
 
         SolutionPath = solutionFile.DirectoryName!;
-        StorePath = Path.Combine(SolutionPath, Config.DbContextPath);
+        StorePath = Path.Combine(SolutionPath, Config.EntityFrameworkPath);
         CodeGen = new ManagerGenerate(entityFilePath, dtoPath, applicationPath);
         string entityName = Path.GetFileNameWithoutExtension(entityFilePath);
         Instructions.Add($"  🔹 generate interface & base class.");
