@@ -541,7 +541,7 @@
         "operationId": "Entity_GetDtos",
         "parameters": [
           {
-            "name": "entityName",
+            "name": "entityFilePath",
             "in": "query",
             "description": "",
             "schema": {

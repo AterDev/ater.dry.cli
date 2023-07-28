@@ -31,12 +31,16 @@ public class EntityController : ControllerBase
     /// <summary>s
     /// 获取dtos
     /// </summary>
-    /// <param name="entityName"></param>
+    /// <param name="entityFilePath"></param>
     /// <returns></returns>
     [HttpGet("dtos")]
-    public List<EntityFile> GetDtos(string entityName)
+    public ActionResult<List<EntityFile>> GetDtos(string entityFilePath)
     {
-        return _manager.GetDtos(entityName);
+        if (!System.IO.File.Exists(entityFilePath))
+        {
+            return NotFound("不存在的文件");
+        }
+        return _manager.GetDtos(entityFilePath);
     }
 
     /// <summary>

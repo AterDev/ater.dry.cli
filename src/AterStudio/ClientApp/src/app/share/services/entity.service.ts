@@ -26,10 +26,10 @@ export class EntityService extends BaseService {
   /**
    * s
             获取dtos
-   * @param entityName 
+   * @param entityFilePath 
    */
-  getDtos(entityName: string | null): Observable<EntityFile[]> {
-    const url = `/api/Entity/dtos?entityName=${entityName}`;
+  getDtos(entityFilePath: string | null): Observable<EntityFile[]> {
+    const url = `/api/Entity/dtos?entityFilePath=${entityFilePath}`;
     return this.request<EntityFile[]>('get', url);
   }
 

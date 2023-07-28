@@ -1,5 +1,5 @@
 ﻿using System.Text;
-
+using System.Text.RegularExpressions;
 using Command.Share;
 using Command.Share.Commands;
 
@@ -123,6 +123,7 @@ public class EntityManager
 
         if (!string.IsNullOrWhiteSpace(moduleName))
         {
+            dtoPath = Path.Combine(path, "src", "Modules", moduleName, "Models", $"{entityName}Dtos", $"{entityName}AddDto.cs");
             managerPath = Path.Combine(path, "src", "Modules", moduleName, "IManager", $"I{entityName}Manager.cs");
             apiPath = Path.Combine(path, "src", "Modules", moduleName, "Controllers", $"{entityName}Controller.cs");
         }
@@ -137,19 +138,26 @@ public class EntityManager
     /// <summary>
     /// 获取实体对应的dto
     /// </summary>
-    /// <param name="entityName"></param>
+    /// <param name="entityFilePath"></param>
     /// <returns></returns>
-    public List<EntityFile> GetDtos(string entityName)
+    public List<EntityFile> GetDtos(string entityFilePath)
     {
         List<EntityFile> dtoFiles = new();
         try
         {
-            // dto目录
-            if (entityName.EndsWith(".cs"))
+            var content = File.ReadAllText(entityFilePath);
+            string? moduleName = null;
+            var match = Regex.Match(content, @"\[Module\(""(.+?)""\)\]");
+            if (match.Success)
             {
-                entityName = entityName.Replace(".cs", "");
+                moduleName = match.Groups[1].Value;
             }
-            string dtoPath = Path.Combine(_projectContext.SolutionPath!, Config.SharePath, "Models", $"{entityName}Dtos");
+            var entityName = Path.GetFileNameWithoutExtension(entityFilePath);
+
+            string dtoPath = moduleName == null ?
+                Path.Combine(_projectContext.SolutionPath!, Config.SharePath, "Models", $"{entityName}Dtos") :
+                Path.Combine(_projectContext.SolutionPath!, "src", "Modules", moduleName, "Models", $"{entityName}Dtos");
+
             // get files in directory
             List<string> filePaths = Directory.GetFiles(dtoPath, "*.cs", SearchOption.AllDirectories).ToList();
 

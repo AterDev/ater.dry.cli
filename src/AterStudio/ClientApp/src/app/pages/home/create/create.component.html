@@ -102,8 +102,9 @@
       </div>
     </div>
 
-    <div class="mt-2">
+    <div class="mt-2 d-flex gap-1 align-items-center">
       <button mat-flat-button color="primary" (click)="addSolution()" [disabled]="isProcess">创建</button>
+      <mat-spinner *ngIf="isProcess" style="width: 26px;height:26px"></mat-spinner>
     </div>
   </form>
 </div>
