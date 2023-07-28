@@ -507,10 +507,13 @@ public class ManagerGenerate : GenerateBase
     /// 服务注册代码
     /// </summary>
     /// <returns></returns>
-    public static string GetManagerDIExtensions(string applicationPath, string nspName)
+    public static string GetManagerDIExtensions(string solutionPath, string nspName)
     {
         string storeServiceContent = "";
         string managerServiceContent = "";
+
+        var applicationPath = Path.Combine(solutionPath, Config.ApplicationPath);
+        var entityFrameworkPath = Path.Combine(solutionPath, Config.EntityFrameworkPath);
 
         // 获取所有data stores
         string storeDir = Path.Combine(applicationPath, "DataStore");
@@ -521,8 +524,8 @@ public class ManagerGenerate : GenerateBase
             files = Directory.GetFiles(storeDir, "*DataStore.cs", SearchOption.TopDirectoryOnly);
         }
 
-        string[] queryFiles = Directory.GetFiles(Path.Combine(applicationPath, $"{Const.QUERY_STORE}"), $"*{Const.QUERY_STORE}.cs", SearchOption.TopDirectoryOnly);
-        string[] commandFiles = Directory.GetFiles(Path.Combine(applicationPath, $"{Const.COMMAND_STORE}"), $"*{Const.COMMAND_STORE}.cs", SearchOption.TopDirectoryOnly);
+        string[] queryFiles = Directory.GetFiles(Path.Combine(entityFrameworkPath, $"{Const.QUERY_STORE}"), $"*{Const.QUERY_STORE}.cs", SearchOption.TopDirectoryOnly);
+        string[] commandFiles = Directory.GetFiles(Path.Combine(entityFrameworkPath, $"{Const.COMMAND_STORE}"), $"*{Const.COMMAND_STORE}.cs", SearchOption.TopDirectoryOnly);
 
         files = files.Concat(queryFiles).Concat(commandFiles).ToArray();
 

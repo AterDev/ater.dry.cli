@@ -22,7 +22,7 @@
             (click)="openSetting(item)">
             <mat-icon>settings</mat-icon>
           </button>
-          <button *ngIf="item.solutionType==SolutionType.DotNet && item.version!==version" mat-icon-button
+          <button *ngIf="item.solutionType==SolutionType.DotNet && needUpdate(item.version!)" mat-icon-button
             matTooltip="更新提示" color="warn" (click)="openUpdate(item)">
             <mat-icon>info</mat-icon>
           </button>
@@ -32,7 +32,7 @@
         </mat-card-subtitle>
       </mat-card-header>
       <mat-card-content style="word-break: break-all;" class="d-flex align-items-center">
-        <div class="">
+        <div class="d-flex align-items-center ">
           {{item.path}}
         </div>
       </mat-card-content>

@@ -238,10 +238,13 @@ public class ModuleCommand
 
         // 重新生成DataStore和依赖注入服务
         var applicationPath = Path.Combine(solutionPath, Config.ApplicationPath);
+        var entityFrameworkPath = Path.Combine(solutionPath, Config.EntityFrameworkPath);
         var applicationName = Config.ApplicationPath.Split(Path.DirectorySeparatorChar).Last();
-        var content = ManagerGenerate.GetDataStoreContext(applicationPath, applicationName);
-        await IOHelper.WriteToFileAsync(Path.Combine(applicationPath, "DataStoreContext.cs"), content);
-        content = ManagerGenerate.GetManagerDIExtensions(applicationPath, applicationName);
+        var entityFrameworkName = Config.EntityFrameworkPath.Split(Path.DirectorySeparatorChar).Last();
+        var content = ManagerGenerate.GetDataStoreContext(entityFrameworkPath, entityFrameworkName);
+        await IOHelper.WriteToFileAsync(Path.Combine(entityFrameworkPath, "DataStoreContext.cs"), content);
+
+        content = ManagerGenerate.GetManagerDIExtensions(solutionPath, applicationName);
         await IOHelper.WriteToFileAsync(Path.Combine(applicationPath, "ManagerServiceCollectionExtensions.cs"), content);
 
     }

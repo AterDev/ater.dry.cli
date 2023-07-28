@@ -265,7 +265,7 @@ public class ManagerCommand : CommandBase
     /// <returns></returns>
     public async Task GenerateDIExtensionsAsync()
     {
-        var content = ManagerGenerate.GetManagerDIExtensions(ApplicationPath, "Application");
+        var content = ManagerGenerate.GetManagerDIExtensions(SolutionPath, "Application");
         await GenerateFileAsync(ApplicationPath, "ManagerServiceCollectionExtensions.cs", content, true);
     }
 }

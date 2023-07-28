@@ -60,6 +60,11 @@ export class IndexComponent implements OnInit {
       path: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(100)])
     })
   }
+
+  needUpdate(currentVersion: string | null): boolean {
+    if (currentVersion == null || this.version == null) return false;
+    return !this.version.includes(currentVersion!);
+  }
   addProjectDialog(): void {
     this.dialogRef = this.dialog.open(this.dialogTmpRef, {
       minWidth: 360
@@ -173,9 +178,10 @@ export class IndexComponent implements OnInit {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       hasBackdrop: true,
       disableClose: false,
+      minWidth: 300,
       data: {
-        title: '删除',
-        content: '是否确定删除?'
+        title: '删除项目',
+        content: '将项目从工具中删除(不会删除本地文件)，是否确定?'
       }
     });
 
