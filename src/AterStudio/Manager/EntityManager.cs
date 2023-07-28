@@ -116,7 +116,9 @@ public class EntityManager
     /// <returns></returns>
     private (bool hasDto, bool hasManager, bool hasAPI) GetEntityStates(string path, string entityName, string? moduleName = null)
     {
-        bool hasDto = false; bool hasManager = false; bool hasAPI = false;
+        bool hasDto = false;
+        bool hasManager = false;
+        bool hasAPI = false;
         var dtoPath = Path.Combine(path, Config.SharePath, "Models", $"{entityName}Dtos", $"{entityName}AddDto.cs");
         var managerPath = Path.Combine(path, Config.ApplicationPath, "IManager", $"I{entityName}Manager.cs");
         var apiPath = Path.Combine(path, Config.ApiPath, "Controllers", $"{entityName}Controller.cs");

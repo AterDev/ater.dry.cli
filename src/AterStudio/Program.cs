@@ -76,6 +76,7 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         options.JsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
+        options.JsonSerializerOptions.ReadCommentHandling = JsonCommentHandling.Skip;
     });
 WebApplication app = builder.Build();
 
