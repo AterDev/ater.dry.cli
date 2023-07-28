@@ -235,6 +235,16 @@ public class ModuleCommand
         });
         dbContextContent = compilation.SyntaxRoot!.ToFullString();
         File.WriteAllText(dbContextFile, dbContextContent);
+        // update globalusings.cs
+        var globalUsingsFile = Path.Combine(databasePath, "GlobalUsings.cs");
+        var globalUsingsContent = File.ReadAllText(globalUsingsFile);
+        var newLine = @$"global using Entity.{moduleName}Entities;";
+        if (!globalUsingsContent.Contains(newLine))
+        {
+            Console.WriteLine($"  ℹ️ add new using {newLine} ➡️ GlobalUsings");
+            globalUsingsContent = globalUsingsContent.Replace("global using Entity;", $"global using Entity;{Environment.NewLine}{newLine}");
+            File.WriteAllText(globalUsingsFile, globalUsingsContent);
+        }
 
         // 重新生成DataStore和依赖注入服务
         var applicationPath = Path.Combine(solutionPath, Config.ApplicationPath);

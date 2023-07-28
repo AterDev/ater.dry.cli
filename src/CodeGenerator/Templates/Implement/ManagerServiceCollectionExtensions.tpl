@@ -1,5 +1,5 @@
 ﻿// 本文件由ater.dry工具自动生成.
-namespace ${Namespace}.Infrastructure;
+namespace ${Namespace};
 
 public static partial class ManagerServiceCollectionExtensions
 {
