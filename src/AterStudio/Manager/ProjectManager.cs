@@ -30,11 +30,13 @@ public class ProjectManager
         return AssemblyHelper.GetCurrentToolVersion();
     }
 
-    public List<Project> GetProjects()
+    public async Task<List<Project>> GetProjectsAsync()
     {
         var projects = _db.Projects.FindAll().ToList();
-        projects.ForEach(async p =>
+
+        for (int i = 0; i < projects.Count; i++)
         {
+            var p = projects[i];
             var configFilePath = Path.Combine(p.Path, "..", Config.ConfigFileName);
             if (File.Exists(configFilePath))
             {
@@ -52,7 +54,7 @@ public class ProjectManager
                 _db.Projects.Delete(p.Id);
                 projects.Remove(p);
             }
-        });
+        }
         return projects;
     }
 

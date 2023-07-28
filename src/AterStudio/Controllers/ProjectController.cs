@@ -26,9 +26,9 @@ public class ProjectController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet]
-    public List<Project> List()
+    public async Task<List<Project>> ListAsync()
     {
-        return _manager.GetProjects();
+        return await _manager.GetProjectsAsync();
     }
 
     /// <summary>

@@ -1,4 +1,4 @@
-import { EntityInfo } from './entity-info.model';
+﻿import { EntityInfo } from './entity-info.model';
 export interface PropertyInfo {
   id: string;
   projectId: string;

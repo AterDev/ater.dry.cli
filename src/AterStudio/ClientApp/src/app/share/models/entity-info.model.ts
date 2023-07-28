@@ -1,4 +1,4 @@
-import { EntityKeyType } from './enum/entity-key-type.model';
+﻿import { EntityKeyType } from './enum/entity-key-type.model';
 import { PropertyInfo } from './property-info.model';
 /**
  * defined entity model
