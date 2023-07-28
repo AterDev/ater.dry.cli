@@ -60,11 +60,7 @@ public class ConfigCommand
         }
         string path = file.FullName;
         string config = File.ReadAllText(path);
-        ConfigOptions? options = JsonSerializer.Deserialize<ConfigOptions>(config,
-            new JsonSerializerOptions
-            {
-                ReadCommentHandling = JsonCommentHandling.Skip
-            });
+        ConfigOptions? options = ConfigOptions.ParseJson(config);
         return options;
     }
 

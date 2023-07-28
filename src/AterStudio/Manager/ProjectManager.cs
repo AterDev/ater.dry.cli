@@ -41,7 +41,7 @@ public class ProjectManager
             if (File.Exists(configFilePath))
             {
                 string configJson = await File.ReadAllTextAsync(configFilePath);
-                ConfigOptions? config = JsonSerializer.Deserialize<ConfigOptions>(configJson, new JsonSerializerOptions { ReadCommentHandling = JsonCommentHandling.Skip });
+                ConfigOptions? config = ConfigOptions.ParseJson(configJson);
                 if (string.IsNullOrWhiteSpace(p.Version))
                 {
                     _db.Projects.Update(p);
@@ -78,10 +78,7 @@ public class ProjectManager
         await ConfigCommand.InitConfigFileAsync(path, solutionType);
         string configJson = await File.ReadAllTextAsync(configFilePath);
 
-        ConfigOptions? config = JsonSerializer.Deserialize<ConfigOptions>(configJson, new JsonSerializerOptions
-        {
-            ReadCommentHandling = JsonCommentHandling.Skip
-        });
+        ConfigOptions? config = ConfigOptions.ParseJson(configJson);
 
         string projectName = Path.GetFileNameWithoutExtension(projectFilePath);
         Project project = new()

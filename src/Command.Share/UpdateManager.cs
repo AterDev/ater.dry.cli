@@ -53,7 +53,7 @@ public class UpdateManager
             var configFilePath = Path.Combine(solutionPath, Config.ConfigFileName);
             if (File.Exists(configFilePath))
             {
-                var config = JsonSerializer.Deserialize<ConfigOptions>(File.ReadAllText(configFilePath));
+                var config = ConfigOptions.ParseJson(File.ReadAllText(configFilePath));
                 if (config != null)
                 {
                     config.Version = "7.1.0";
@@ -474,7 +474,7 @@ public class UpdateManager
 
             // 配置文件等
             var configFile = Path.Combine(solutionPath, Config.ConfigFileName);
-            var config = JsonSerializer.Deserialize<ConfigOptions>(File.ReadAllText(configFile));
+            var config = ConfigOptions.ParseJson(File.ReadAllText(configFile));
             if (config != null)
             {
                 config.EntityPath = $"src{Path.DirectorySeparatorChar}Entity";

@@ -50,6 +50,11 @@ public class ConfigOptions
     /// </summary>
     public string? WebAppPath { get; set; }
     public SolutionType? SolutionType { get; set; }
+
+    public static ConfigOptions? ParseJson(string jsonString)
+    {
+        return JsonSerializer.Deserialize<ConfigOptions>(jsonString, new JsonSerializerOptions { ReadCommentHandling = JsonCommentHandling.Skip });
+    }
 }
 
 public class DoubleStringJsonConverter : JsonConverter<string>

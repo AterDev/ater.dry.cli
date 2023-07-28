@@ -198,7 +198,7 @@ public class StudioCommand
 
             // read config file
             string configJson = await File.ReadAllTextAsync(solutionDir);
-            ConfigOptions? options = System.Text.Json.JsonSerializer.Deserialize<ConfigOptions>(configJson);
+            ConfigOptions? options = ConfigOptions.ParseJson(configJson);
 
             if (options != null)
             {

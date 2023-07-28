@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 
 using Core.Entities;
 
@@ -182,7 +181,7 @@ public class AssemblyHelper
         if (File.Exists(configFilePath))
         {
             string configJson = await File.ReadAllTextAsync(configFilePath);
-            ConfigOptions? config = JsonSerializer.Deserialize<ConfigOptions>(configJson, new JsonSerializerOptions { ReadCommentHandling = JsonCommentHandling.Skip });
+            ConfigOptions? config = ConfigOptions.ParseJson(configJson);
             return config?.Version;
         }
         return default;
