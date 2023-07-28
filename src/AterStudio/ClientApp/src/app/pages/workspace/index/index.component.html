@@ -95,8 +95,8 @@
           <button mat-menu-item (click)="openSelectProjectDialog(CommandType.Protobuf,element)"
             matTooltip="生成proto协议文件">生成Protobuf</button>
         </mat-menu>
-        <button mat-icon-button matTooltip="编辑DTO" matTooltipPosition="below" color="primary"
-          [routerLink]="['/workspace/dto/',element.name]" [disabled]="!element.hasDto">
+        <button mat-icon-button matTooltip="编辑DTO" matTooltipPosition="below" color="primary" (click)="goToDto(element)"
+          [disabled]="!element.hasDto">
           <mat-icon>code</mat-icon>
         </button>
 

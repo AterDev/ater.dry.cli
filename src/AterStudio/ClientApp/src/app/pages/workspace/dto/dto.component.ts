@@ -49,8 +49,9 @@ export class DtoComponent implements OnInit {
 
   }
   getDtos(): void {
-    if (this.projectId && this.name) {
-      this.service.getDtos(this.name)
+    if (this.projectId && this.name && this.projectState.currentEntity) {
+      const path = this.projectState.currentEntity.baseDirPath + this.projectState.currentEntity.path;
+      this.service.getDtos(path)
         .subscribe({
           next: (res) => {
             if (res) {

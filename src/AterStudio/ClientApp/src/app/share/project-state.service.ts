@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Project } from './models/project/project.model';
+import { EntityInfo } from './models/entity-info.model';
+import { EntityFile } from './models/entity/entity-file.model';
 
 @Injectable({
   providedIn: 'root'
@@ -8,6 +10,7 @@ import { Project } from './models/project/project.model';
 export class ProjectStateService {
   project: Project | null = null;
   version: string | null = null;
+  currentEntity: EntityFile | null = null;
   constructor() {
     this.getProject();
     this.getVersion();
