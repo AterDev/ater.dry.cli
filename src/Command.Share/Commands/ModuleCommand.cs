@@ -96,10 +96,11 @@ public class ModuleCommand
             global using System.Diagnostics;
             global using System.Linq.Expressions;
             global using Application.Const;
+            global using Application;
             global using Application.IManager;
             global using Application.Implement;
             global using ${Module}.Infrastructure;
-            global using Entity.{Module}Entities;
+            global using Entity.${Module}Entities;
             global using Ater.Web.Core.Models;
             global using Ater.Web.Core.Utils;
             global using Microsoft.AspNetCore.Authorization;
@@ -193,25 +194,31 @@ public class ModuleCommand
         Console.WriteLine("🚀 copy module files");
         // copy entities
         CopyModuleFiles(Path.Combine(sourcePath, "Entities"), entityPath);
+
+        // copy datastore
+        var applicationDir = Path.Combine(solutionPath, "Application");
+        if (Directory.Exists(applicationDir))
+        {
+            var storeFiles = Directory.GetFiles(applicationDir, "*.cs")
+                .ToList();
+            var queryStorePath = Path.Combine(solutionPath, Config.ApplicationPath, "QueryStore");
+            var commandStorePath = Path.Combine(solutionPath, Config.ApplicationPath, "CommandStore");
+            storeFiles.ForEach(file =>
+            {
+                var filename = Path.GetFileName(file);
+                if (filename.EndsWith("QueryStore.cs"))
+                {
+                    File.Copy(file, Path.Combine(queryStorePath, filename));
+                }
+                else if (file.EndsWith("CommandStore.cs"))
+                {
+                    File.Copy(file, Path.Combine(commandStorePath, filename));
+                }
+            });
+        }
+
         // copy module files
         CopyModuleFiles(sourcePath, modulePath);
-        // copy datastore
-        var storeFiles = Directory.GetFiles(Path.Combine(sourcePath, "Application"), "*.cs")
-            .ToList();
-        var queryStorePath = Path.Combine(solutionPath, Config.ApplicationPath, "QueryStore");
-        var commandStorePath = Path.Combine(solutionPath, Config.ApplicationPath, "CommandStore");
-        storeFiles.ForEach(file =>
-        {
-            var filename = Path.GetFileName(file);
-            if (filename.EndsWith("QueryStore.cs"))
-            {
-                File.Copy(file, Path.Combine(queryStorePath, filename));
-            }
-            else if (file.EndsWith("CommandStore.cs"))
-            {
-                File.Copy(file, Path.Combine(commandStorePath, filename));
-            }
-        });
 
         Console.WriteLine("🚀 update ContextBase DbSet");
         var dbContextFile = Path.Combine(databasePath, "ContextBase.cs");
@@ -289,7 +296,8 @@ public class ModuleCommand
 
         foreach (DirectoryInfo subDir in dirs)
         {
-            if (subDir.Name == "Entities")
+            // 过滤不必要的目录
+            if (subDir.Name is "Entities" or "Application")
             {
                 continue;
             }
