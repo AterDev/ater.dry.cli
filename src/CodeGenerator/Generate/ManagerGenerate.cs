@@ -213,7 +213,8 @@ public class ManagerGenerate : GenerateBase
         string entityName = Path.GetFileNameWithoutExtension(EntityFilePath);
         // 生成基础仓储实现类，替换模板变量并写入文件
         string tplContent = GetTplContent($"Implement.{queryOrCommand}StoreContent.tpl");
-        tplContent = tplContent.Replace(TplConst.NAMESPACE, ServiceNamespace);
+        var entityFrameworkNsp = Config.EntityFrameworkPath.Split(Path.DirectorySeparatorChar).Last();
+        tplContent = tplContent.Replace(TplConst.NAMESPACE, entityFrameworkNsp);
         //tplContent = tplContent.Replace(TplConst.SHARE_NAMESPACE, ShareNamespace);
         tplContent = tplContent.Replace(TplConst.DBCONTEXT_NAME, contextName);
         tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName);

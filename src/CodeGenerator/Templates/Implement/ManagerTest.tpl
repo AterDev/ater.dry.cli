@@ -1,6 +1,6 @@
 ﻿using ${Namespace}.IManager;
 using ${EntityNamespace};
-using Core.Utils;
+using Ater.Web.Core.Utils;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Share.Models.${EntityName}Dtos;

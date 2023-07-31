@@ -214,22 +214,43 @@ public class ManagerCommand : CommandBase
     public async Task GenerateGlobalUsingsFilesAsync()
     {
         List<string> globalUsings = CodeGen.GetGlobalUsings();
+
         string filePath = Path.Combine(ApplicationPath, "GlobalUsings.cs");
         // 如果不存在则生成，如果存在，则添加
         if (File.Exists(filePath))
         {
             string content = File.ReadAllText(filePath);
-            globalUsings = globalUsings.Where(g => !content.Contains(g))
+            var newUsings = globalUsings.Where(g => !content.Contains(g))
                 .ToList();
-            if (globalUsings.Any())
+            if (newUsings.Any())
             {
-                globalUsings.Insert(0, Environment.NewLine);
-                File.AppendAllLines(filePath, globalUsings);
+                newUsings.Insert(0, Environment.NewLine);
+                File.AppendAllLines(filePath, newUsings);
             }
         }
         else
         {
             await GenerateFileAsync(ApplicationPath, "GlobalUsings.cs",
+                string.Join(Environment.NewLine, globalUsings));
+        }
+
+        var entityFrameworkPath = Path.Combine(SolutionPath, Config.EntityFrameworkPath);
+        filePath = Path.Combine(entityFrameworkPath, "GlobalUsings.cs");
+        // 如果不存在则生成，如果存在，则添加
+        if (File.Exists(filePath))
+        {
+            string content = File.ReadAllText(filePath);
+            var newUsings = globalUsings.Where(g => !content.Contains(g))
+                .ToList();
+            if (newUsings.Any())
+            {
+                newUsings.Insert(0, Environment.NewLine);
+                File.AppendAllLines(filePath, newUsings);
+            }
+        }
+        else
+        {
+            await GenerateFileAsync(entityFrameworkPath, "GlobalUsings.cs",
                 string.Join(Environment.NewLine, globalUsings));
         }
     }
