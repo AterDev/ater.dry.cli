@@ -100,6 +100,20 @@ public class ProjectController : ControllerBase
         return await _manager.UpdateSolutionAsync();
     }
 
+    /// <summary>
+    /// 打开解决方案，仅支持sln
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    [HttpPost("open")]
+    public ActionResult<string> OpenSolution(string path)
+    {
+        if (path.EndsWith(".sln"))
+        {
+            return _manager.OpenSolution(path);
+        }
+        return Problem("不支持的解决方案文件");
+    }
 
     /// <summary>
     /// 更新配置

@@ -1520,6 +1520,47 @@
         }
       }
     },
+    "/api/Project/open": {
+      "post": {
+        "tags": [
+          "Project"
+        ],
+        "summary": "打开解决方案，仅支持sln",
+        "operationId": "Project_OpenSolution",
+        "parameters": [
+          {
+            "name": "path",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Project/tempaltes/{id}": {
       "get": {
         "tags": [

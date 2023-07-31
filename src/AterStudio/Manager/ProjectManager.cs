@@ -115,6 +115,17 @@ public class ProjectManager
     }
 
     /// <summary>
+    /// 打开项目
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    public string OpenSolution(string path)
+    {
+        var res = ProcessHelper.ExecuteCommands($"start {path}");
+        return res;
+    }
+
+    /// <summary>
     /// 更新解决方案
     /// </summary>
     /// <returns></returns>

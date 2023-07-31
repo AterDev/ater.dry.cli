@@ -96,6 +96,22 @@ export class IndexComponent implements OnInit {
       this.snb.open('输入有误，请查检');
     }
   }
+
+  openSolution(path: string): void {
+    this.service.openSolution(path)
+      .subscribe({
+        next: (res) => {
+          if (res) {
+          } else {
+            this.snb.open('打开失败');
+          }
+        },
+        error: (error) => {
+          this.snb.open(error.detail);
+        }
+      });
+  }
+
   openSetting(project: Project): void {
     this.current = project;
     this.projectState.setProject(project);

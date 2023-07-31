@@ -1,7 +1,7 @@
 ﻿using System.CommandLine;
 using System.Text;
 
-namespace Droplet.CommandLine;
+namespace CommandLine;
 
 internal class Program
 {

@@ -37,16 +37,16 @@ public static class ProcessHelper
     }
 
     /// <summary>
-    /// 执行一组命令
+    /// 执行命令，使用cmd/bash
     /// </summary>
     /// <param name="commands"></param>
     /// <returns></returns>
-    public static string ExecuteCommands(string[] commands)
+    public static string ExecuteCommands(params string[] commands)
     {
         string shell, argument;
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            shell = "cmd.exe";
+            shell = "pwsh";
             argument = "/c";
         }
         else

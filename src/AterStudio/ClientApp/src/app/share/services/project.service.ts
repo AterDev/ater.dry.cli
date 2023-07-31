@@ -92,6 +92,15 @@ export class ProjectService extends BaseService {
   }
 
   /**
+   * 打开解决方案，仅支持sln
+   * @param path 
+   */
+  openSolution(path: string | null): Observable<string> {
+    const url = `/api/Project/open?path=${path}`;
+    return this.request<string>('post', url);
+  }
+
+  /**
    * 获取模板名称
    * @param id string
    */

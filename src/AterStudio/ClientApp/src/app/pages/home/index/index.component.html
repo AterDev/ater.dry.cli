@@ -32,8 +32,10 @@
         </mat-card-subtitle>
       </mat-card-header>
       <mat-card-content style="word-break: break-all;" class="d-flex align-items-center">
-        <div class="d-flex align-items-center ">
+        <div class="d-flex align-items-center gap-1">
           {{item.path}}
+          <mat-icon *ngIf="item.solutionType==SolutionType.DotNet" color="primary" matTooltip="打开项目" class="clickable"
+            (click)="openSolution(item.path)">launch</mat-icon>
         </div>
       </mat-card-content>
       <mat-card-actions class="justify-content-end" style="height: 32px;">

@@ -1,6 +1,7 @@
 ﻿using System.CommandLine;
 using System.Text.Json;
-namespace Droplet.CommandLine;
+
+namespace CommandLine;
 
 public class CommandBuilder
 {
@@ -34,7 +35,6 @@ public class CommandBuilder
         AddStudio();
         return RootCommand;
     }
-
 
     public void AddStudio()
     {
