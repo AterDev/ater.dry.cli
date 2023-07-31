@@ -60,6 +60,11 @@ public class ModuleCommand
         string csprojContent = GetCsProjectContent(targetVersion);
         await AssemblyHelper.GenerateFileAsync(projectPath, $"{moduleName}{Const.CSharpProjectExtention}", csprojContent);
 
+        // create dirs
+        Directory.CreateDirectory(Path.Combine(projectPath, "Models"));
+        Directory.CreateDirectory(Path.Combine(projectPath, "IManager"));
+        Directory.CreateDirectory(Path.Combine(projectPath, "Manager"));
+
         try
         {
             await AddDefaultModuleAsync(solutionPath, moduleName);
@@ -100,7 +105,6 @@ public class ModuleCommand
             global using Application.IManager;
             global using Application.Implement;
             global using ${Module}.Infrastructure;
-            global using Entity.${Module}Entities;
             global using Ater.Web.Core.Models;
             global using Ater.Web.Core.Utils;
             global using Microsoft.AspNetCore.Authorization;
@@ -196,16 +200,17 @@ public class ModuleCommand
         CopyModuleFiles(Path.Combine(sourcePath, "Entities"), entityPath);
 
         // copy datastore
-        var applicationDir = Path.Combine(solutionPath, "Application");
-        if (Directory.Exists(applicationDir))
+        var sourceApplicationDir = Path.Combine(sourcePath, "Application");
+        if (Directory.Exists(sourceApplicationDir))
         {
-            var storeFiles = Directory.GetFiles(applicationDir, "*.cs")
+            var storeFiles = Directory.GetFiles(sourceApplicationDir, "*.cs")
                 .ToList();
-            var queryStorePath = Path.Combine(solutionPath, Config.ApplicationPath, "QueryStore");
-            var commandStorePath = Path.Combine(solutionPath, Config.ApplicationPath, "CommandStore");
+            var queryStorePath = Path.Combine(solutionPath, Config.EntityFrameworkPath, "QueryStore");
+            var commandStorePath = Path.Combine(solutionPath, Config.EntityFrameworkPath, "CommandStore");
             storeFiles.ForEach(file =>
             {
                 var filename = Path.GetFileName(file);
+                Console.WriteLine($" ℹ️ copy {filename} to EntityFramework project");
                 if (filename.EndsWith("QueryStore.cs"))
                 {
                     File.Copy(file, Path.Combine(queryStorePath, filename));

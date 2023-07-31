@@ -29,7 +29,7 @@ function CopyModule([string]$solutionPath, [string]$moduleName, [string]$destMod
     Copy-Item -Path $entityPath\* -Destination $entityDestDir -Force
 
     # move store to tmp
-    $applicationPath = Join-Path $solutionPath "./src/Application"
+    $entityFrameworkPath = Join-Path $solutionPath "./src/Database/EntityFramework"
     $applicationDestDir = Join-Path $destModulesPath $moduleName "Application"
     
     if (!(Test-Path $applicationDestDir)) {
@@ -38,8 +38,8 @@ function CopyModule([string]$solutionPath, [string]$moduleName, [string]$destMod
     
     $entityNames = Get-ChildItem -Path $entityPath -Filter "*.cs" | ForEach-Object { $_.BaseName }
     foreach ($entityName in $entityNames) {
-        $queryStorePath = Join-Path $applicationPath "QueryStore" $entityName"QueryStore.cs"
-        $commandStorePath = Join-Path $applicationPath "CommandStore" $entityName"CommandStore.cs"
+        $queryStorePath = Join-Path $entityFrameworkPath "QueryStore" $entityName"QueryStore.cs"
+        $commandStorePath = Join-Path $entityFrameworkPath "CommandStore" $entityName"CommandStore.cs"
 
         if ((Test-Path $queryStorePath)) {
             Copy-Item -Path $queryStorePath -Destination $applicationDestDir -Force
@@ -90,7 +90,6 @@ foreach ($moduleName in $modulesNames) {
     $destModulePath = Join-Path $destModulesPath $moduleName
     $pathsToRemove = @("obj", "bin") | ForEach-Object { Join-Path $destModulePath $_ }
     Remove-Item $pathsToRemove -Recurse -Force -ErrorAction SilentlyContinue
-
 
     # copy module entity and store
     $solutionPath = Join-Path $templatePath "templates" "apistd"
