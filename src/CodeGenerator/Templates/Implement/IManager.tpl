@@ -43,7 +43,9 @@ public interface I${EntityName}Manager : IDomainManager<${EntityName}>
     /// <typeparam name="TDto"></typeparam>
     /// <param name="whereExp"></param>
     /// <returns></returns>
-    Task<List<TDto>> ListAsync<TDto>(Expression<Func<${EntityName}, bool>>? whereExp) where TDto : class;
+    Task<List<TDto>> ListAsync<TDto>(Expression<Func<${EntityName}, bool>>? whereExp = null) where TDto : class;
+
+    Task<List<${EntityName}>> ListAsync(Expression<Func<${EntityName}, bool>>? whereExp = null);
     /// <summary>
     /// 分页查询
     /// </summary>
