@@ -16,7 +16,11 @@ public partial class CommandStoreBase<TContext, TEntity> : ICommandStore<TEntity
     /// </summary>
     protected readonly DbSet<TEntity> _db;
     public DbSet<TEntity> Db => _db;
-    public TContext Context { get; }
+    /// <summary>
+    /// use DataStoreContext.CommandContext to access writable DbContext
+    /// this will be not avaliable in the future
+    /// </summary>
+    protected TContext Context { get; }
     public DatabaseFacade Database { get; init; }
     public bool EnableSoftDelete { get; set; } = true;
 
@@ -55,7 +59,7 @@ public partial class CommandStoreBase<TContext, TEntity> : ICommandStore<TEntity
     /// </summary>
     /// <param name="whereExp"></param>
     /// <returns></returns>
-    public virtual async Task<List<TEntity>> ListAsync(Expression<Func<TEntity, bool>>? whereExp)
+    public virtual async Task<List<TEntity>> ListAsync(Expression<Func<TEntity, bool>>? whereExp = null)
     {
         Expression<Func<TEntity, bool>> exp = e => true;
         whereExp ??= exp;
@@ -102,6 +106,24 @@ public partial class CommandStoreBase<TContext, TEntity> : ICommandStore<TEntity
             _ = _db.Remove(entity!);
         }
         return entity;
+    }
+    /// <summary>
+    /// 移除实体
+    /// </summary>
+    /// <param name="entities"></param>
+    public virtual void RemoveRange(List<TEntity> entities)
+    {
+        if (EnableSoftDelete)
+        {
+            foreach (var entity in entities)
+            {
+                entity.IsDeleted = true;
+            }
+        }
+        else
+        {
+            _db.RemoveRange(entities);
+        }
     }
 
     /// <summary>

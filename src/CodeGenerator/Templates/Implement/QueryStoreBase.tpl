@@ -18,6 +18,7 @@ public partial class QueryStoreBase<TContext, TEntity> :
     /// </summary>
     protected readonly DbSet<TEntity> _db;
     public DbSet<TEntity> Db => _db;
+    [Obsolete("use DataStoreContext.QueryContext")]
     public TContext Context { get; }
     public DatabaseFacade Database { get; init; }
     public IQueryable<TEntity> _query { get; set; }
