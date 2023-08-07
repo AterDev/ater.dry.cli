@@ -37,7 +37,7 @@ public partial class ManagerBase<TEntity, TUpdate, TFilter, TItem>
         Stores = storeContext;
         Query = Stores.QuerySet<TEntity>();
         Command = Stores.CommandSet<TEntity>();
-        Queryable = Query._query;
+        Queryable = Query.Queryable;
         Database = Command.Database;
     }
 
@@ -140,5 +140,4 @@ public partial class ManagerBase<TEntity, TUpdate, TFilter, TItem>
     {
         return await Query.FilterAsync<TItem>(Queryable, filter.PageIndex, filter.PageSize, filter.OrderBy);
     }
-
 }

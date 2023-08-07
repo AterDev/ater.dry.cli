@@ -21,7 +21,8 @@ public partial class QueryStoreBase<TContext, TEntity> :
     [Obsolete("use DataStoreContext.QueryContext")]
     public TContext Context { get; }
     public DatabaseFacade Database { get; init; }
-    public IQueryable<TEntity> _query { get; set; }
+    private IQueryable<TEntity> _query;
+    public IQueryable<TEntity> Queryable => _query;
 
     /// <summary>
     ///  是否开户全局筛选
@@ -38,7 +39,6 @@ public partial class QueryStoreBase<TContext, TEntity> :
             : _db.IgnoreQueryFilters().AsQueryable();
         Database = Context.Database;
     }
-
 
     private void ResetQuery()
     {

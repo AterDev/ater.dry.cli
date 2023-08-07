@@ -38,7 +38,7 @@ public class DtoInfo
         string tpl = $@"using {NamespaceName};
 namespace {projectName}.Models.{entityName}Dtos;
 {Comment}
-/// <inheritdoc cref=""{EntityNamespace}""/>
+/// <see cref=""{EntityNamespace}""/>
 public class {Name}{baseType}
 {{
 {propStrings}    
