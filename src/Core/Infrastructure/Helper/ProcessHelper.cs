@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using System.Net;
+using System.Net.Sockets;
 using System.Runtime.InteropServices;
 
 namespace Core.Infrastructure.Helper;
@@ -73,4 +75,30 @@ public static class ProcessHelper
         process.WaitForExit();
         return output;
     }
+
+
+    /// <summary>
+    /// 获取可用端口
+    /// </summary>
+    /// <returns></returns>
+    public static int GetAvailablePort(int alternative = 19160)
+    {
+        string hostname = "localhost";
+        int port = 9160;
+        IPAddress ipa = Dns.GetHostAddresses(hostname)[0];
+        TcpClient tcpClient = new TcpClient();
+        try
+        {
+            tcpClient.Connect(ipa, port);
+
+            tcpClient.Close();
+            tcpClient.Dispose();
+            return port;
+        }
+        catch (SocketException)
+        {
+            return alternative;
+        }
+    }
+
 }
