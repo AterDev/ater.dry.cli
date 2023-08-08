@@ -302,6 +302,7 @@ public class ManagerGenerate : GenerateBase
                             entity.{{nav.Name}} = {{variable}};
                         }
                     }
+
             """;
         });
         // 所属的关联内容
@@ -354,6 +355,7 @@ public class ManagerGenerate : GenerateBase
                             entity.{{nav.Name}} = {{variable}};
                         }
                     }
+
             """;
         });
         content += "return await base.UpdateAsync(entity, dto);".Indent(2);

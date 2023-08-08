@@ -42,7 +42,7 @@ public class ManagerCommand : CommandBase
         ApplicationPath = applicationPath;
         SharePath = dtoPath;
         var currentDir = new DirectoryInfo(applicationPath);
-        var solutionFile = AssemblyHelper.GetSlnFile(currentDir, "*.sln", currentDir.Root)
+        var solutionFile = AssemblyHelper.GetSlnFile(currentDir, currentDir.Root)
             ?? throw new Exception("not found solution file");
 
         SolutionPath = solutionFile.DirectoryName!;

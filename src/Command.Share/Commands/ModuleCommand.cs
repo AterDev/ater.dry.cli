@@ -148,7 +148,7 @@ public class ModuleCommand
     /// <param name="projectPath"></param>
     private static void UpdateSolutionFile(string dirPath, string projectPath)
     {
-        var slnFile = AssemblyHelper.GetSlnFile(new DirectoryInfo(dirPath), "*.sln");
+        var slnFile = AssemblyHelper.GetSlnFile(new DirectoryInfo(dirPath));
         if (slnFile != null)
         {
             // 添加到解决方案

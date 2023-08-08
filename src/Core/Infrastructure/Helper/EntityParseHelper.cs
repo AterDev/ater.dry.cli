@@ -202,10 +202,14 @@ public class EntityParseHelper
 
         // 如果指定父类名称
         parentClassName ??= GetParentClassName();
+
         List<PropertyInfo>? parentProperties = new();
         if (parentClassName != null)
         {
-            string? filePath = AssemblyHelper.FindFileInProject(ProjectFile!.FullName, parentClassName + ".cs");
+            var solutionFile = AssemblyHelper.GetSlnFile(ProjectFile.Directory!, ProjectFile.Directory!.Root);
+            string? filePath = solutionFile?.Directory?.GetFiles("*.cs", SearchOption.AllDirectories)
+                .FirstOrDefault(f => f.Name == parentClassName + ".cs")?.FullName;
+
             if (filePath != null)
             {
                 EntityParseHelper entity = new(filePath);
@@ -234,6 +238,7 @@ public class EntityParseHelper
         {
             properties.AddRange(parentProperties);
         }
+
 
         return properties.GroupBy(p => p.Name)
              .Select(s => s.FirstOrDefault()!)

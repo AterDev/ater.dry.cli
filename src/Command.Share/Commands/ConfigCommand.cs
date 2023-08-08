@@ -97,7 +97,7 @@ public class ConfigCommand
     public static string GetConfigPath()
     {
         DirectoryInfo currentDir = new(Environment.CurrentDirectory);
-        FileInfo? solutionPath = AssemblyHelper.GetSlnFile(currentDir, "*.sln", currentDir.Root);
+        FileInfo? solutionPath = AssemblyHelper.GetSlnFile(currentDir, currentDir.Root);
         string configPath;
         if (solutionPath == null)
         {

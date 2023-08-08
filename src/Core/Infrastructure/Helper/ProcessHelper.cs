@@ -83,7 +83,7 @@ public static class ProcessHelper
     /// <returns></returns>
     public static int GetAvailablePort(int alternative = 19160)
     {
-        string hostname = "localhost";
+        string hostname = "127.0.0.1";
         int port = 9160;
         IPAddress ipa = Dns.GetHostAddresses(hostname)[0];
         TcpClient tcpClient = new TcpClient();
@@ -95,8 +95,9 @@ public static class ProcessHelper
             tcpClient.Dispose();
             return port;
         }
-        catch (SocketException)
+        catch (SocketException ex)
         {
+            Console.WriteLine(ex.Message);
             return alternative;
         }
     }

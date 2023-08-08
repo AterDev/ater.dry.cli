@@ -24,9 +24,10 @@ public class DtoGenerateTest
     public void Shoud_parse_entity_and_properties()
     {
         string filePath = PathHelper.GetProjectFilePath(@"Entity\Blog.cs");
-        //filePath = @"C:\self\DevPlatform\src\Core\Identity\Account.cs";
+        //filePath = @"D:\codes\ater.web\templates\apistd\src\Entity\SystemEntities\SystemPermission.cs";
         EntityParseHelper entityHelper = new(filePath);
         entityHelper.Parse();
+
         Assert.Equal("Blog", entityHelper.Name);
         string assembly = typeof(Blog).Assembly.ManifestModule.Name;
         Assert.Equal(assembly, entityHelper.AssemblyName + ".dll");
@@ -72,7 +73,7 @@ public class DtoGenerateTest
     public void Shoud_generate_dto_content()
     {
         string filePath = PathHelper.GetProjectFilePath(@"Entity\Blog.cs");
-        //var filePath = PathHelper.GetProjectFilePath(@"D:\codes\DevPlatform\src\Microservice\DocAPI\Models\DocsCatalog.cs");
+        filePath = @"D:\codes\ater.web\templates\apistd\src\Entity\SystemEntities\SystemPermission.cs";
         string dtoPath = PathHelper.GetProjectPath();
         DtoCodeGenerate gen = new(filePath, dtoPath, new Datastore.DbContext());
         string? addDto = gen.GetAddDto();

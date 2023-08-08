@@ -86,7 +86,7 @@ public class CommandTest
     public void Should_Config()
     {
         DirectoryInfo currentDir = new(ProjectPath);
-        _ = AssemblyHelper.GetSlnFile(currentDir, "*.sln", currentDir.Root);
+        _ = AssemblyHelper.GetSlnFile(currentDir, currentDir.Root);
 
         System.Console.WriteLine("");
     }

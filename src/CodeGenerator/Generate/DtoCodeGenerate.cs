@@ -96,52 +96,6 @@ public class DtoCodeGenerate : GenerateBase
     }
 
     /// <summary>
-    /// 合并更新后的属性
-    /// </summary>
-    /// <param name="dtoPath">dto文件的完整路径</param>
-    /// <returns></returns>
-    public List<PropertyInfo> MergeProperties(string dtoPath)
-    {
-        if (!File.Exists(dtoPath))
-        {
-            Console.WriteLine("not found:" + dtoPath);
-            return EntityInfo.PropertyInfos;
-        }
-
-        var entityHelper = new EntityParseHelper(dtoPath);
-        var entityInfo = entityHelper.GetEntity();
-        var props = entityInfo.PropertyInfos;
-
-        //Console.WriteLine("before change:" + string.Join(",", props.Select(p => p.Name).ToArray()));
-
-        // 1 移除删除的内容
-        var deletePropNames = PropertyChanges.Where(c => c.Type == ChangeType.Delete)
-            .Select(c => c.Name).ToList();
-        props = props.Where(p => !deletePropNames.Contains(p.Name)).ToList();
-
-        // 2 要更新的属性
-        var updatePropNames = PropertyChanges.Where(c => c.Type != ChangeType.Delete)
-            .Select(c => c.Name).ToList();
-
-        var updateProps = EntityInfo.PropertyInfos.Where(p => updatePropNames.Contains(p.Name)).ToList();
-        updateProps.ForEach(p =>
-        {
-            var index = props.FindIndex(item => item.Name == p.Name);
-            if (index > -1)
-            {
-                props[index] = p;
-            }
-            else
-            {
-                props.Add(p);
-            }
-        });
-
-        //Console.WriteLine("after change:" + string.Join(",", props.Select(p => p.Name).ToArray()));
-        return props;
-    }
-
-    /// <summary>
     /// 注释内容替换
     /// </summary>
     /// <param name="comment"></param>
@@ -186,7 +140,8 @@ public class DtoCodeGenerate : GenerateBase
 
         dto.Properties = dto.Properties?.Where(
             (p => p.Name != "Content"
-                && p.Name != "IsDeleted"
+                && p.Name != "UpdatedTime"
+                && p.Name != "CreatedTime"
                 && (p.MaxLength < 2000 || p.MaxLength == null)
                 && !(p.IsList && p.IsNavigation))
             )
@@ -201,6 +156,7 @@ public class DtoCodeGenerate : GenerateBase
         {
             return default;
         }
+
         DtoInfo dto = new()
         {
             EntityNamespace = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
@@ -214,8 +170,10 @@ public class DtoCodeGenerate : GenerateBase
                 .ToList()
         };
 
-        dto.Properties = dto.Properties?.Where(p => !p.IsList
-        && (p.MaxLength <= 1000 || p.MaxLength == null)
+        dto.Properties = dto.Properties?
+            .Where(p => !p.IsList
+                && (p.MaxLength <= 1000 || p.MaxLength == null)
+                && p.Name != "UpdatedTime"
                 && !p.IsNavigation).ToList();
 
         return dto.ToDtoContent(AssemblyName, EntityInfo.Name);

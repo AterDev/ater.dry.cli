@@ -38,7 +38,7 @@ public class EntityInfo : EntityBase
     /// <summary>
     /// 属性
     /// </summary>
-    public List<PropertyInfo> PropertyInfos { get; set; } = new List<PropertyInfo>();
+    public IReadOnlyList<PropertyInfo> PropertyInfos { get; set; } = new List<PropertyInfo>();
 
     /// <summary>
     /// 获取导航属性

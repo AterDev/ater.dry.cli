@@ -85,7 +85,7 @@ public class NgPageGenerate : GenerateBase
     public static NgComponentInfo GenFormComponent(EntityInfo modelInfo, string serviceName)
     {
 
-        var props = modelInfo.PropertyInfos;
+        var props = modelInfo.PropertyInfos.ToList();
         var modelName = modelInfo.Name;
 
         // 生成.ts
