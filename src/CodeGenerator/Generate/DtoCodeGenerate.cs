@@ -336,13 +336,6 @@ public class DtoCodeGenerate : GenerateBase
 
         dto.Properties = properties?.Copy() ?? new List<PropertyInfo>();
 
-        foreach (PropertyInfo item in dto.Properties)
-        {
-            if (!item.IsRequired)
-            {
-                item.IsNullable = true;
-            }
-        }
         referenceProps?.ForEach(item =>
         {
             if (!dto.Properties.Any(p => p.Name.Equals(item.Name)))
@@ -353,10 +346,7 @@ public class DtoCodeGenerate : GenerateBase
 
         foreach (PropertyInfo item in dto.Properties)
         {
-            if (!item.IsRequired)
-            {
-                item.IsNullable = true;
-            }
+            item.IsNullable = true;
         }
         return dto.ToDtoContent(AssemblyName, EntityInfo.Name);
     }
