@@ -323,8 +323,8 @@ public class ManagerGenerate : GenerateBase
             else
             {
                 content += $$"""
-                        Command.Db.Entry(entity).Property("{{idName}}").CurrentValue = _userContext.UserId!.Value;
-                        // or entity.{{idName}} = _userContext.UserId!.Value;
+                        Command.Db.Entry(entity).Property("{{idName}}").CurrentValue = _userContext!.UserId!.Value;
+                        // or entity.{{idName}} = _userContext!.UserId!.Value;
 
                 """;
             }
