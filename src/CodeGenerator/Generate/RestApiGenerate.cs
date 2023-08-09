@@ -197,15 +197,16 @@ public class RestApiGenerate : GenerateBase
 
         requiredNavigations?.ForEach(nav =>
         {
-            var manager = "_" + nav.Type.ToCamelCase() + "Manager";
-            var variable = nav.Type.ToCamelCase();
-            if (!nav.Type.Equals("User") && !nav.Type.Equals("SystemUser"))
+            string name = nav.Type;
+            var manager = "_" + name.ToCamelCase() + "Manager";
+            var variable = name.ToCamelCase();
+            if (!name.Equals("User") && !name.Equals("SystemUser"))
             {
                 content += $$"""
-                        if (current.{{nav.Name}}.Id != dto.{{nav.Type}}Id)
+                        if (dto.{{name}}Ids != null && current.{{nav.Name}}.Id != dto.{{name}}Id)
                         {
-                            var {{variable}} = await {{manager}}.GetCurrentAsync(dto.{{nav.Type}}Id);
-                            if ({{variable}} == null) { return NotFound("不存在的{{nav.CommentSummary ?? nav.Type}}"); }
+                            var {{variable}} = await {{manager}}.GetCurrentAsync(dto.{{name}}Id.Value);
+                            if ({{variable}} == null) { return NotFound("不存在的{{nav.CommentSummary ?? name}}"); }
                             current.{{nav.Name}} = {{variable}};
                         }
 
