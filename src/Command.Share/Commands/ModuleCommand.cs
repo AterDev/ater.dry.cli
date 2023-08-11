@@ -7,15 +7,13 @@ namespace Command.Share.Commands;
 /// </summary>
 public class ModuleCommand
 {
-    public const string ModuleUserLogs = "UserLogs";
     public const string ModuleCMS = "CMS";
-    public const string ModuleSystemLogs = "AuditLogs";
+    public const string FileManager = "FileManager";
     public const string ModuleConfiguration = "Configuration";
     public static List<string> ModuleNames { get; } = new()
     {
         ModuleCMS,
-        ModuleSystemLogs,
-        ModuleUserLogs,
+        FileManager,
         ModuleConfiguration
     };
 

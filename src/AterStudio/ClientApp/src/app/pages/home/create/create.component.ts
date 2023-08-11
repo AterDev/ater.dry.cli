@@ -47,6 +47,10 @@ export class CreateComponent {
 
   ngOnInit(): void {
     this.initForm();
+    this.name?.valueChanges.subscribe(val => {
+      this.commandDbConnStrings?.setValue(`Server=localhost;Port=5432;Database=${val};User Id=postgres;Password=root;`);
+      this.queryDbConnStrings?.setValue(`Server=localhost;Port=5432;Database=${val};User Id=postgres;Password=root;`);
+    });
   }
 
   initForm(): void {
