@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
-using System.Net;
-using System.Net.Sockets;
+using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 
 namespace Core.Infrastructure.Helper;
@@ -83,23 +82,27 @@ public static class ProcessHelper
     /// <returns></returns>
     public static int GetAvailablePort(int alternative = 19160)
     {
-        string hostname = "127.0.0.1";
-        int port = 9160;
-        IPAddress ipa = Dns.GetHostAddresses(hostname)[0];
-        TcpClient tcpClient = new TcpClient();
-        try
-        {
-            tcpClient.Connect(ipa, port);
+        var defaultPort = 9160;
+        var properties = IPGlobalProperties.GetIPGlobalProperties();
 
-            tcpClient.Close();
-            tcpClient.Dispose();
-            return port;
-        }
-        catch (SocketException ex)
+        var connections = properties.GetActiveTcpConnections();
+        foreach (var connection in connections)
         {
-            Console.WriteLine(ex.Message);
-            return alternative;
+            if (connection.LocalEndPoint.Port == defaultPort) return alternative;
         }
+
+        var endPointsTcp = properties.GetActiveTcpListeners();
+        foreach (var endPoint in endPointsTcp)
+        {
+            if (endPoint.Port == defaultPort) return alternative;
+        }
+
+        var endPointsUdp = properties.GetActiveUdpListeners();
+        foreach (var endPoint in endPointsUdp)
+        {
+            if (endPoint.Port == defaultPort) return alternative;
+        }
+        return defaultPort;
     }
 
 }
