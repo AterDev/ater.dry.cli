@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
+
 using Command.Share;
 using Command.Share.Commands;
 
@@ -7,6 +8,7 @@ using Core;
 using Core.Entities;
 using Core.Infrastructure;
 using Core.Infrastructure.Helper;
+
 using Datastore;
 using Datastore.Models;
 
@@ -60,7 +62,8 @@ public class EntityManager
                         Name = file.Name,
                         BaseDirPath = entityPath,
                         Path = file.FullName.Replace(entityPath, ""),
-                        Content = content
+                        Content = content,
+                        Comment = Regex.Match(content, @"/// <summary>([\s\S]*?)/// <\/summary>")?.Groups[1]?.Value.Trim(),
                     };
 
                     // 解析特性
@@ -390,6 +393,4 @@ public class EntityManager
             throw new FileNotFoundException($"未找到实体文件:{entityPath}");
         }
     }
-
-
 }
