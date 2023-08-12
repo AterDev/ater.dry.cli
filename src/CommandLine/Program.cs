@@ -14,7 +14,6 @@ internal class Program
             return 0;
         }
 
-        await ConfigCommand.InitConfigFileAsync();
         RootCommand root = new CommandBuilder().Build();
         return await root.InvokeAsync(args);
     }

@@ -287,6 +287,7 @@ public class AssemblyHelper
         string userPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         // 版本号
         string version = Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
+        version = version.Split("+")[0];
 
         return Path.Combine(
             userPath,
