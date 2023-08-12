@@ -28,7 +28,7 @@ internal class Program
             | |__| | | | \ \     | |   
             |_____/  |_|  \_\    |_|
 
-                     -- for freedom --
+                   -- for freedom 🗽 --
 
             """;
 
