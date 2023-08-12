@@ -70,11 +70,7 @@ public class CreateSolutionDto
     /// <summary>
     /// 用户日志模块
     /// </summary>
-    public bool HasUserLogsFeature { get; set; } = false;
-    /// <summary>
-    /// 系统日志模块
-    /// </summary>
-    public bool HasSystemLogsFeature { get; set; } = false;
+    public bool HasFileManagerFeatur { get; set; } = false;
 
     /// <summary>
     /// 项目类型

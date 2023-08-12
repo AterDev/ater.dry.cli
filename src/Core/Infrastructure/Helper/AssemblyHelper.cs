@@ -124,7 +124,6 @@ public class AssemblyHelper
     /// 获取解决方案文件，从当前目录向根目录搜索
     /// </summary>
     /// <param name="dir">当前目录</param>
-    /// <param name="searchPattern"></param>
     /// <param name="root">要目录</param>
     /// <returns></returns>
     public static FileInfo? GetSlnFile(DirectoryInfo dir, DirectoryInfo? root = null)

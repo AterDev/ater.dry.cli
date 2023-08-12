@@ -1,6 +1,9 @@
 ﻿using System.Text.Json.Nodes;
+
 using AterStudio.Models;
+
 using Command.Share.Commands;
+
 using Core.Infrastructure.Helper;
 
 namespace AterStudio.Manager;
@@ -78,14 +81,11 @@ public class FeatureManager
             File.WriteAllText(configFile, jsonString);
         }
         // 模块
-        if (dto.HasUserLogsFeature)
+        if (dto.HasFileManagerFeatur)
         {
-            await ModuleCommand.CreateModuleAsync(path, ModuleCommand.ModuleUserLogs);
+            await ModuleCommand.CreateModuleAsync(path, ModuleCommand.FileManager);
         }
-        if (dto.HasSystemLogsFeature)
-        {
-            await ModuleCommand.CreateModuleAsync(path, ModuleCommand.ModuleSystemLogs);
-        }
+
         if (dto.HasCmsFeature)
         {
             await ModuleCommand.CreateModuleAsync(path, ModuleCommand.ModuleCMS);

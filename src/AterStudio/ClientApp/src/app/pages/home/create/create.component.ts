@@ -41,8 +41,7 @@ export class CreateComponent {
   get cacheConnStrings() { return this.addForm.get('cacheConnStrings'); }
   get cacheInstanceName() { return this.addForm.get('cacheInstanceName'); }
   get hasCmsFeature() { return this.addForm.get('hasCmsFeature'); }
-  get hasUserLogsFeature() { return this.addForm.get('hasUserLogsFeature'); }
-  get hasSystemLogsFeature() { return this.addForm.get('hasSystemLogsFeature'); }
+  get hasFileManagerFeature() { return this.addForm.get('hasFileManagerFeature'); }
   get projectType() { return this.addForm.get('projectType'); }
 
   ngOnInit(): void {
@@ -67,8 +66,7 @@ export class CreateComponent {
       cacheConnStrings: new FormControl('localhost:6379', [Validators.maxLength(200)]),
       cacheInstanceName: new FormControl('Dev', [Validators.maxLength(60)]),
       hasCmsFeature: new FormControl(false, []),
-      hasUserLogsFeature: new FormControl(false, []),
-      hasSystemLogsFeature: new FormControl(false, []),
+      hasFileManagerFeature: new FormControl(false, []),
       projectType: new FormControl(ProjectType.WebAPI, [Validators.required])
     });
   }
