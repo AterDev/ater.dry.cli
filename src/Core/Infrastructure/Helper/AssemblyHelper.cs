@@ -166,7 +166,8 @@ public class AssemblyHelper
     /// <returns></returns>
     public static string GetCurrentToolVersion()
     {
-        return Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
+        var version = Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
+        return version.Split('+')[0];
     }
 
     /// <summary>
@@ -279,16 +280,14 @@ public class AssemblyHelper
     }
 
     /// <summary>
-    /// 获取dotnet tool 路径
+    /// 获取 dotnet tool 路径
     /// </summary>
     /// <returns></returns>
     public static string GetToolPath()
     {
         string userPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         // 版本号
-        string version = Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
-        version = version.Split("+")[0];
-
+        string version = GetCurrentToolVersion();
         return Path.Combine(
             userPath,
             ".dotnet/tools/.store",
