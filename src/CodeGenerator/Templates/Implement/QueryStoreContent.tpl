@@ -5,5 +5,3 @@ public class ${EntityName}QueryStore : QuerySet<${EntityName}>
     {
     }
 }
-
-

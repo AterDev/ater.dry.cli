@@ -18,14 +18,14 @@ public class ${EntityName}ManagerTest : BaseTest
         RandomString = DateTime.Now.ToString("MMddmmss");
     }
     [Fact]
-    public async Task ${EntityName}_Should_Pass()
+    public async Task ${EntityName}ShouldPass()
     {
-        await Shoud_AddAsync();
+        await Should_AddAsync();
         await Should_UpdateAsync();
         await Should_QueryAsync();
     }
 
-    async internal Task Shoud_AddAsync()
+    async internal Task Should_AddAsync()
     {
 ${AddContent}
     }
