@@ -2117,13 +2117,9 @@
             "type": "boolean",
             "description": "内容管理模块"
           },
-          "hasUserLogsFeature": {
+          "hasFileManagerFeatur": {
             "type": "boolean",
             "description": "用户日志模块"
-          },
-          "hasSystemLogsFeature": {
-            "type": "boolean",
-            "description": "系统日志模块"
           },
           "projectType": {
             "$ref": "#/components/schemas/ProjectType"

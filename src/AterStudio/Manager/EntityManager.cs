@@ -57,13 +57,17 @@ public class EntityManager
                     FileInfo file = new(path);
 
                     var content = File.ReadAllText(path);
+
+                    var comment = Regex.Match(content, @"/// <summary>([\s\S]*?)/// <\/summary>")?.Groups[1]?.Value.Trim();
+                    comment = comment?.Replace("/", "").Trim();
+
                     EntityFile item = new()
                     {
                         Name = file.Name,
                         BaseDirPath = entityPath,
                         Path = file.FullName.Replace(entityPath, ""),
                         Content = content,
-                        Comment = Regex.Match(content, @"/// <summary>([\s\S]*?)/// <\/summary>")?.Groups[1]?.Value.Trim(),
+                        Comment = comment
                     };
 
                     // 解析特性

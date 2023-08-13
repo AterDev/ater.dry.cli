@@ -48,9 +48,9 @@ export interface CreateSolutionDto {
    */
   hasCmsFeature: boolean;
   /**
-   * 文件管理模块
+   * 用户日志模块
    */
-  hasFileManagerFeature: boolean;
+  hasFileManagerFeatur: boolean;
   projectType?: ProjectType | null;
 
 }

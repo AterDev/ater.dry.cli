@@ -61,7 +61,7 @@
     </ng-container>
 
     <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef>类名</th>
+      <th mat-header-cell *matHeaderCellDef>文件名</th>
       <td mat-cell *matCellDef="let element">
         <button mat-button color="primary" (click)="openPreviewDialog(element,false)">
           {{element.name}}
@@ -69,6 +69,13 @@
         </button>
       </td>
     </ng-container>
+    <ng-container matColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef>说明</th>
+      <td mat-cell *matCellDef="let element">
+        {{element.comment}}
+      </td>
+    </ng-container>
+
     <ng-container matColumnDef="path">
       <th mat-header-cell *matHeaderCellDef>路径 {{baseEntityPath}}</th>
       <td mat-cell *matCellDef="let element">
