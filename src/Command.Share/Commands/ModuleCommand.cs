@@ -1,4 +1,5 @@
 ﻿using Core.Infrastructure;
+
 using PluralizeService.Core;
 
 namespace Command.Share.Commands;
@@ -189,7 +190,7 @@ public class ModuleCommand
             return;
         }
 
-        var databasePath = Path.Combine(solutionPath, "src", "Database", "EntityFramework");
+        var databasePath = Path.Combine(solutionPath, Config.EntityFrameworkPath);
         var entityPath = Path.Combine(solutionPath, Config.EntityPath, $"{moduleName}Entities");
         var modulePath = Path.Combine(solutionPath, "src", "Modules", moduleName);
 

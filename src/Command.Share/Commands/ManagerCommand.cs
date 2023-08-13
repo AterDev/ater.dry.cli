@@ -1,5 +1,7 @@
 using Core.Infrastructure;
 
+using PluralizeService.Core;
+
 namespace Command.Share.Commands;
 
 /// <summary>
@@ -69,6 +71,7 @@ public class ManagerCommand : CommandBase
         }
         try
         {
+            AddToDbContext();
             // 是否为模块
             var compilation = new CompilationHelper(ApplicationPath, "Entity");
             var content = File.ReadAllText(EntityFilePath);
@@ -160,6 +163,32 @@ public class ManagerCommand : CommandBase
         // 生成user上下文
         await GenerateFileAsync(implementDir, "UserContext.cs", userClass);
 
+    }
+
+    /// <summary>
+    /// 添加实体到数据库上下文
+    /// </summary>
+    /// <returns></returns>
+    public void AddToDbContext()
+    {
+        var databasePath = Path.Combine(SolutionPath, Config.EntityFrameworkPath);
+        Console.WriteLine("🚀 update ContextBase DbSet");
+        var dbContextFile = Path.Combine(databasePath, "ContextBase.cs");
+        var dbContextContent = File.ReadAllText(dbContextFile);
+
+        var compilation = new CompilationHelper(databasePath);
+        compilation.AddSyntaxTree(dbContextContent);
+
+        var entityName = Path.GetFileNameWithoutExtension(EntityFilePath);
+        var plural = PluralizationProvider.Pluralize(entityName);
+        var propertyString = $@"public DbSet<{entityName}> {plural} {{ get; set; }}";
+        if (!compilation.PropertyExist(plural))
+        {
+            Console.WriteLine($"  ℹ️ add new property {plural} ➡️ ContextBase");
+            compilation.AddClassProperty(propertyString);
+        }
+        dbContextContent = compilation.SyntaxRoot!.ToFullString();
+        File.WriteAllText(dbContextFile, dbContextContent);
     }
 
     /// <summary>
