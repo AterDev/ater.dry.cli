@@ -203,7 +203,7 @@ public class RestApiGenerate : GenerateBase
             if (!name.Equals("User") && !name.Equals("SystemUser"))
             {
                 content += $$"""
-                        if (dto.{{name}}Ids != null && current.{{nav.Name}}.Id != dto.{{name}}Id)
+                        if (dto.{{name}}Id != null && current.{{nav.Name}}.Id != dto.{{name}}Id)
                         {
                             var {{variable}} = await {{manager}}.GetCurrentAsync(dto.{{name}}Id.Value);
                             if ({{variable}} == null) { return NotFound("不存在的{{nav.CommentSummary ?? name}}"); }
