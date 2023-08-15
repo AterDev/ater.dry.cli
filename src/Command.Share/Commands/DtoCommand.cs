@@ -1,5 +1,3 @@
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-
 namespace Command.Share.Commands;
 
 public class DtoCommand : CommandBase
@@ -58,14 +56,7 @@ public class DtoCommand : CommandBase
             if (attributes != null && attributes.Any())
             {
                 var argument = attributes.First().ArgumentList!.Arguments[0];
-                if (argument.Expression is LiteralExpressionSyntax literal)
-                {
-                    ModuleName = literal.Token.ValueText;
-                }
-                else if (argument.Expression is MemberAccessExpressionSyntax memberAccess)
-                {
-                    ModuleName = memberAccess.Name.Identifier.ValueText;
-                }
+                ModuleName = compilation.GetArgumentValue(argument);
             }
             if (!string.IsNullOrWhiteSpace(ModuleName))
             {

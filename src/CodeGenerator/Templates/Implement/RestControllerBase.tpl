@@ -35,6 +35,7 @@ public class RestControllerBase<TManager> : RestControllerBase
     */
 
     // TODO:角色权限
+    [NonAction]
     public virtual bool HasPermission()
     {
         return true;

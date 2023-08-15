@@ -12,6 +12,8 @@ public class CompilationHelper
     public IEnumerable<INamedTypeSymbol> AllClass { get; set; }
     public CompilationUnitSyntax? SyntaxRoot { get; set; }
 
+    public string EntityPath { get; set; }
+
     /// <summary>
     /// 
     /// </summary>
@@ -21,7 +23,7 @@ public class CompilationHelper
     {
         string suffix = DateTime.Now.ToString("HHmmss");
         Compilation = CSharpCompilation.Create("tmp" + suffix);
-
+        EntityPath = path;
         AddDllReferences(path, dllFilter);
         AllClass = GetAllClasses();
     }
@@ -348,4 +350,39 @@ public class CompilationHelper
         }
         return classAttribution;
     }
+
+
+    /// <summary>
+    /// 获取特性参数值
+    /// </summary>
+    /// <param name="argument"></param>
+    /// <returns></returns>
+    public string? GetArgumentValue(AttributeArgumentSyntax argument)
+    {
+
+        string? name = null;
+        if (argument.Expression is LiteralExpressionSyntax literal)
+        {
+            name = literal.Token.ValueText;
+        }
+        // 常量特殊处理，获取常量值
+        else if (argument.Expression is MemberAccessExpressionSyntax memberAccess)
+        {
+            var className = ((IdentifierNameSyntax)memberAccess.Expression).Identifier.Text;
+            var varName = memberAccess.Name.ToString();
+
+            var constClass = GetClass(className);
+
+            if (constClass != null)
+            {
+                var field = constClass.GetMembers()
+                    .Where(m => m.Name == varName)
+                    .FirstOrDefault();
+                name = (field as IFieldSymbol)?.ConstantValue?.ToString();
+            }
+        }
+        return name;
+    }
+
+
 }

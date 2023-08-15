@@ -76,7 +76,10 @@ public class EntityManager
                     if (moduleAttribution != null && moduleAttribution.Any())
                     {
                         var argument = moduleAttribution.Last().ArgumentList?.Arguments.FirstOrDefault();
-                        item.Module = argument?.Expression.ToString().Trim('"');
+                        if (argument != null)
+                        {
+                            item.Module = compilation.GetArgumentValue(argument);
+                        }
                     }
 
                     // 查询生成的dto\manager\api状态

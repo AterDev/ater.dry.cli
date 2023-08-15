@@ -67,7 +67,7 @@ $entityFiles = Get-ChildItem -Path $entityPath -Filter "*.cs" -Recurse |`
     Select-Object -ExpandProperty Path
 
 # 模块名称
-$modulesNames = @("CMS", "FileManager")
+$modulesNames = @("CMSMod", "FileManagerMod")
 
 # 获取模块名称
 $regex = '\[Module\("(.+?)"\)\]';
