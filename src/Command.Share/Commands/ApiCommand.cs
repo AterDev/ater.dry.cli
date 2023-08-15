@@ -1,4 +1,5 @@
 using Core.Infrastructure;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Command.Share.Commands;
 
@@ -10,28 +11,39 @@ public class ApiCommand : CommandBase
     /// <summary>
     /// 实体文件路径
     /// </summary>
-    public string EntityPath { get; }
+    public string EntityFilePath { get; }
     public string DtoPath { get; set; }
     /// <summary>
     /// service项目路径
     /// </summary>
-    public string StorePath { get; }
+    public string ApplicationPath { get; }
     /// <summary>
     /// Http API路径
     /// </summary> 
     public string ApiPath { get; }
+    public string SolutionPath { get; }
 
     public string Suffix { get; set; }
-    public RestApiGenerate CodeGen { get; set; }
+    /// <summary>
+    /// 对应模块名
+    /// </summary>
+    public string? ModuleName { get; private set; }
+    public RestApiGenerate? CodeGen { get; set; }
 
-    public ApiCommand(string entityPath, string dtoPath, string servicePath, string apiPath, string? suffix = null)
+    public ApiCommand(string entityPath, string dtoPath, string applicationPath, string apiPath, string? suffix = null)
     {
-        EntityPath = entityPath;
+        EntityFilePath = entityPath;
         DtoPath = dtoPath;
-        StorePath = servicePath;
+        ApplicationPath = applicationPath;
         ApiPath = apiPath;
+
+        var currentDir = new DirectoryInfo(apiPath);
+        var solutionFile = AssemblyHelper.GetSlnFile(currentDir, currentDir.Root)
+            ?? throw new Exception("not found solution file");
+
+        SolutionPath = solutionFile.DirectoryName!;
+
         Suffix = suffix ?? "Controller";
-        CodeGen = new RestApiGenerate(entityPath, dtoPath, servicePath, apiPath, Suffix);
         string entityName = Path.GetFileNameWithoutExtension(entityPath);
         Instructions.Add("  🔹 generate interface & base class.");
         Instructions.Add($"  🔹 generate {entityName} RestApi.");
@@ -39,11 +51,39 @@ public class ApiCommand : CommandBase
     }
     public async Task RunAsync(bool force = false)
     {
-        if (!File.Exists(EntityPath))
+        if (!File.Exists(EntityFilePath))
         {
-            Console.WriteLine($"the {EntityPath} not exist");
+            Console.WriteLine($"the {EntityFilePath} not exist");
             return;
         }
+
+        // 是否为模块
+        var compilation = new CompilationHelper(ApplicationPath, "Entity");
+        var content = File.ReadAllText(EntityFilePath);
+        compilation.AddSyntaxTree(content);
+        var attributes = compilation.GetClassAttribution("Module");
+        if (attributes != null && attributes.Any())
+        {
+            var argument = attributes.First().ArgumentList!.Arguments[0];
+            if (argument.Expression is LiteralExpressionSyntax literal)
+            {
+                ModuleName = literal.Token.ValueText;
+            }
+            else if (argument.Expression is MemberAccessExpressionSyntax memberAccess)
+            {
+                ModuleName = memberAccess.Name.Identifier.ValueText;
+            }
+        }
+        if (!string.IsNullOrWhiteSpace(ModuleName))
+        {
+            var apiPath = Path.Combine(SolutionPath, "src", "Modules", ModuleName);
+            CodeGen = new RestApiGenerate(EntityFilePath, DtoPath, ApplicationPath, apiPath, Suffix);
+        }
+        else
+        {
+            CodeGen = new RestApiGenerate(EntityFilePath, DtoPath, ApplicationPath, ApiPath, Suffix);
+        }
+
         Console.WriteLine(Instructions[0]);
         await GenerateCommonFilesAsync();
 
@@ -58,7 +98,7 @@ public class ApiCommand : CommandBase
 
     private async Task GenerateGlobalUsingsFilesAsync()
     {
-        List<string> globalUsings = CodeGen.GetGlobalUsings();
+        List<string> globalUsings = CodeGen!.GetGlobalUsings();
         string filePath = Path.Combine(ApiPath, "GlobalUsings.cs");
         // 如果不存在则生成，如果存在，则添加
         if (File.Exists(filePath))
@@ -89,8 +129,8 @@ public class ApiCommand : CommandBase
             Directory.CreateDirectory(adminDir);
         }
 
-        string entityName = Path.GetFileNameWithoutExtension(EntityPath);
-        string apiContent = CodeGen.GetRestApiContent();
+        string entityName = Path.GetFileNameWithoutExtension(EntityFilePath);
+        string apiContent = CodeGen!.GetRestApiContent();
 
         if (Config.IsSplitController == true)
         {
@@ -108,7 +148,7 @@ public class ApiCommand : CommandBase
     private async Task GenerateCommonFilesAsync()
     {
         string infrastructureDir = Path.Combine(ApiPath, "Infrastructure");
-        string apiBaseContent = CodeGen.GetRestApiBase();
+        string apiBaseContent = CodeGen!.GetRestApiBase();
         await GenerateFileAsync(infrastructureDir, GenConst.RESTAPI_BASE_NAME, apiBaseContent);
     }
 }
