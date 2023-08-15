@@ -208,8 +208,8 @@ public class ManagerCommand : CommandBase
         string managerDir = Path.Combine(ApplicationPath, "Manager");
         string entityName = Path.GetFileNameWithoutExtension(EntityFilePath);
 
-        string interfaceContent = CodeGen.GetIManagerContent();
-        string managerContent = CodeGen.GetManagerContent();
+        string interfaceContent = CodeGen.GetIManagerContent(ModuleName);
+        string managerContent = CodeGen.GetManagerContent(ModuleName);
 
         // 如果文件已经存在，并且没有选择覆盖，并且符合更新要求，则进行更新
         string iManagerPath = Path.Combine(iManagerDir, $"I{entityName}Manager.cs");

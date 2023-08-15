@@ -70,6 +70,7 @@ public class DtoCommand : CommandBase
             if (!string.IsNullOrWhiteSpace(ModuleName))
             {
                 DtoPath = Path.Combine(DtoPath, "..", "Modules", ModuleName);
+                CodeGen.AssemblyName = ModuleName;
             }
             Console.WriteLine(Instructions[0]);
             await SaveToFileAsync("Item", CodeGen.GetItemDto(), cover);

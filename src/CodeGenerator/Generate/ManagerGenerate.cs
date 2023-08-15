@@ -225,13 +225,14 @@ public class ManagerGenerate : GenerateBase
     /// Manager接口内容
     /// </summary>
     /// <returns></returns>
-    public string GetIManagerContent()
+    public string GetIManagerContent(string? nsp = null)
     {
+        nsp ??= ServiceNamespace;
         string entityName = Path.GetFileNameWithoutExtension(EntityFilePath);
         string tplContent = GetTplContent($"Implement.IManager.tpl");
         tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName)
             .Replace(TplConst.ID_TYPE, Config.IdType)
-            .Replace(TplConst.NAMESPACE, ServiceNamespace);
+            .Replace(TplConst.NAMESPACE, nsp);
         return tplContent;
     }
 
@@ -239,8 +240,10 @@ public class ManagerGenerate : GenerateBase
     /// Manager默认代码内容
     /// </summary>
     /// <returns></returns>
-    public string GetManagerContent()
+    public string GetManagerContent(string? nsp = null)
     {
+        nsp ??= ServiceNamespace;
+
         string entityName = Path.GetFileNameWithoutExtension(EntityFilePath);
         string tplContent = GetTplContent($"Implement.Manager.tpl");
 
@@ -274,7 +277,7 @@ public class ManagerGenerate : GenerateBase
         tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName)
             .Replace(TplConst.ID_TYPE, Config.IdType)
             .Replace(TplConst.COMMENT, EntityInfo?.Comment)
-            .Replace(TplConst.NAMESPACE, ServiceNamespace);
+            .Replace(TplConst.NAMESPACE, nsp);
         return tplContent;
     }
 
