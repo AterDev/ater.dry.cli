@@ -1,5 +1,5 @@
 using Core.Infrastructure;
-
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PluralizeService.Core;
 
 namespace Command.Share.Commands;
@@ -79,7 +79,15 @@ public class ManagerCommand : CommandBase
             var attributes = compilation.GetClassAttribution("Module");
             if (attributes != null && attributes.Any())
             {
-                ModuleName = attributes.First().ArgumentList!.Arguments[0].ToString().Trim('"');
+                var argument = attributes.First().ArgumentList!.Arguments[0];
+                if (argument.Expression is LiteralExpressionSyntax literal)
+                {
+                    ModuleName = literal.Token.ValueText;
+                }
+                else if (argument.Expression is MemberAccessExpressionSyntax memberAccess)
+                {
+                    ModuleName = memberAccess.Name.Identifier.ValueText;
+                }
             }
             // 生成到模块项目中
             if (!string.IsNullOrWhiteSpace(ModuleName))

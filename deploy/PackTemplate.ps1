@@ -26,26 +26,29 @@ function CopyModule([string]$solutionPath, [string]$moduleName, [string]$destMod
     }
 
     $entityPath = Join-Path $solutionPath "./src/Entity" $moduleName"Entities"
-    Copy-Item -Path $entityPath\* -Destination $entityDestDir -Force
 
-    # move store to tmp
-    $entityFrameworkPath = Join-Path $solutionPath "./src/Database/EntityFramework"
-    $applicationDestDir = Join-Path $destModulesPath $moduleName "Application"
-    
-    if (!(Test-Path $applicationDestDir)) {
-        New-Item -Path $applicationDestDir -ItemType Directory -Force | Out-Null
-    }
-    
-    $entityNames = Get-ChildItem -Path $entityPath -Filter "*.cs" | ForEach-Object { $_.BaseName }
-    foreach ($entityName in $entityNames) {
-        $queryStorePath = Join-Path $entityFrameworkPath "QueryStore" $entityName"QueryStore.cs"
-        $commandStorePath = Join-Path $entityFrameworkPath "CommandStore" $entityName"CommandStore.cs"
+    if (Test-Path $entityPath) {
+        Copy-Item -Path $entityPath\* -Destination $entityDestDir -Force
 
-        if ((Test-Path $queryStorePath)) {
-            Copy-Item -Path $queryStorePath -Destination $applicationDestDir -Force
+        # move store to tmp
+        $entityFrameworkPath = Join-Path $solutionPath "./src/Database/EntityFramework"
+        $applicationDestDir = Join-Path $destModulesPath $moduleName "Application"
+    
+        if (!(Test-Path $applicationDestDir)) {
+            New-Item -Path $applicationDestDir -ItemType Directory -Force | Out-Null
         }
-        if ((Test-Path $commandStorePath)) {
-            Copy-Item -Path $commandStorePath -Destination $applicationDestDir -Force
+    
+        $entityNames = Get-ChildItem -Path $entityPath -Filter "*.cs" | ForEach-Object { $_.BaseName }
+        foreach ($entityName in $entityNames) {
+            $queryStorePath = Join-Path $entityFrameworkPath "QueryStore" $entityName"QueryStore.cs"
+            $commandStorePath = Join-Path $entityFrameworkPath "CommandStore" $entityName"CommandStore.cs"
+
+            if ((Test-Path $queryStorePath)) {
+                Copy-Item -Path $queryStorePath -Destination $applicationDestDir -Force
+            }
+            if ((Test-Path $commandStorePath)) {
+                Copy-Item -Path $commandStorePath -Destination $applicationDestDir -Force
+            }
         }
     }
 }
@@ -64,13 +67,16 @@ $entityFiles = Get-ChildItem -Path $entityPath -Filter "*.cs" -Recurse |`
     Select-Object -ExpandProperty Path
 
 # 模块名称
-$modulesNames = @()
+$modulesNames = @("CMS", "FileManager")
 
 # 获取模块名称
 $regex = '\[Module\("(.+?)"\)\]';
 foreach ($file in $entityFiles) {
     $content = Get-Content $file
     $match = $content | Select-String -Pattern $regex -AllMatches | Select-Object -ExpandProperty Matches
+    if ($match.Count -eq 0) {
+        continue
+    }
     $moduleName = $match.Groups[1].Value
 
     # add modulename  to modulesNames if not exist 
