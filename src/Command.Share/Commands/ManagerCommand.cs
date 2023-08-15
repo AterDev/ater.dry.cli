@@ -11,10 +11,10 @@ public class ManagerCommand : CommandBase
 {
     public string EntityFilePath { get; }
     public string ApplicationPath { get; private set; }
-    public string SharePath { get; }
+    public string SharePath { get; private set; }
     public string StorePath { get; }
     public string SolutionPath { get; }
-    public ManagerGenerate CodeGen { get; set; }
+    public ManagerGenerate? CodeGen { get; set; }
     /// <summary>
     /// 对应模块名
     /// </summary>
@@ -28,7 +28,6 @@ public class ManagerCommand : CommandBase
         SharePath = Path.Combine(solutionPath, Config.SharePath);
         StorePath = Path.Combine(solutionPath, Config.EntityFrameworkPath);
 
-        CodeGen = new ManagerGenerate(EntityFilePath, SharePath, ApplicationPath);
         string entityName = Path.GetFileNameWithoutExtension(EntityFilePath);
         Instructions.Add($"  🔹 generate interface & base class.");
         Instructions.Add($"  🔹 generate {entityName} DataStore.");
@@ -98,6 +97,10 @@ public class ManagerCommand : CommandBase
                     Console.WriteLine($"⚠️ module {ModuleName} not exist, please create first!");
                     return;
                 }
+                SharePath = Path.Combine(SolutionPath, "src", "Modules", ModuleName);
+                ApplicationPath = SharePath;
+
+                CodeGen = new ManagerGenerate(EntityFilePath, SharePath, ApplicationPath);
 
                 Console.WriteLine(Instructions[2]);
                 await GenerateMangerAsync(force);
@@ -106,6 +109,7 @@ public class ManagerCommand : CommandBase
             }
             else
             {
+                CodeGen = new ManagerGenerate(EntityFilePath, SharePath, ApplicationPath);
                 Console.WriteLine(Instructions[0]);
                 await GenerateCommonFilesAsync(force);
                 Console.WriteLine(Instructions[1]);

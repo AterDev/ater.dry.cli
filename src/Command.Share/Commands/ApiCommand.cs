@@ -12,15 +12,15 @@ public class ApiCommand : CommandBase
     /// 实体文件路径
     /// </summary>
     public string EntityFilePath { get; }
-    public string DtoPath { get; set; }
+    public string DtoPath { get; private set; }
     /// <summary>
     /// service项目路径
     /// </summary>
-    public string ApplicationPath { get; }
+    public string ApplicationPath { get; private set; }
     /// <summary>
     /// Http API路径
     /// </summary> 
-    public string ApiPath { get; }
+    public string ApiPath { get; private set; }
     public string SolutionPath { get; }
 
     public string Suffix { get; set; }
@@ -76,13 +76,12 @@ public class ApiCommand : CommandBase
         }
         if (!string.IsNullOrWhiteSpace(ModuleName))
         {
-            var apiPath = Path.Combine(SolutionPath, "src", "Modules", ModuleName);
-            CodeGen = new RestApiGenerate(EntityFilePath, DtoPath, ApplicationPath, apiPath, Suffix);
+            ApiPath = Path.Combine(SolutionPath, "src", "Modules", ModuleName);
+            DtoPath = ApiPath;
+            ApplicationPath = ApiPath;
         }
-        else
-        {
-            CodeGen = new RestApiGenerate(EntityFilePath, DtoPath, ApplicationPath, ApiPath, Suffix);
-        }
+
+        CodeGen = new RestApiGenerate(EntityFilePath, DtoPath, ApplicationPath, ApiPath, Suffix);
 
         Console.WriteLine(Instructions[0]);
         await GenerateCommonFilesAsync();

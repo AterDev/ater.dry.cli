@@ -1,6 +1,5 @@
-﻿using ${Namespace}.Implement;
-using ${Namespace}.IManager;
-using Share.Models.${EntityName}Dtos;
+﻿using ${Namespace}.IManager;
+using ${ShareNamespace}.Models.${EntityName}Dtos;
 
 namespace ${Namespace}.Manager;
 ${Comment}

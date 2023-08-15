@@ -88,7 +88,7 @@ public class FeatureManager
 
         if (dto.HasCmsFeature)
         {
-            await ModuleCommand.CreateModuleAsync(path, ModuleCommand.ModuleCMS);
+            await ModuleCommand.CreateModuleAsync(path, ModuleCommand.CMS);
         }
 
         // 添加项目

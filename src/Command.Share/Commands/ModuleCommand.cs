@@ -8,14 +8,16 @@ namespace Command.Share.Commands;
 /// </summary>
 public class ModuleCommand
 {
-    public const string ModuleCMS = "CMS";
-    public const string FileManager = "FileManager";
-    public const string ModuleConfiguration = "Configuration";
+    public const string CMS = "CMSMod";
+    public const string FileManager = "FileManagerMod";
+    public const string Order = "OrderMod";
+    public const string Configuration = "ConfigurationMod";
     public static List<string> ModuleNames { get; } = new()
     {
-        ModuleCMS,
+        CMS,
+        Order,
         FileManager,
-        ModuleConfiguration
+        Configuration
     };
 
     /// <summary>
@@ -25,6 +27,11 @@ public class ModuleCommand
     /// <param name="moduleName"></param>
     public static async Task CreateModuleAsync(string solutionPath, string moduleName)
     {
+        if (!moduleName.EndsWith("Mod") || !moduleName.EndsWith("Module"))
+        {
+            moduleName += "Mod";
+        }
+
         var moduleDir = Path.Combine(solutionPath, "src", "Modules");
 
         if (!Directory.Exists(moduleDir))
@@ -97,6 +104,7 @@ public class ModuleCommand
     private static string GetGlobalUsings()
     {
         return """
+            global using System.ComponentModel.DataAnnotations;
             global using System.Diagnostics;
             global using System.Linq.Expressions;
             global using Application.Const;

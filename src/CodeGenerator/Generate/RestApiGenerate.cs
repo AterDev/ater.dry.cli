@@ -18,7 +18,7 @@ public class RestApiGenerate : GenerateBase
     /// <summary>
     /// service项目目录路径
     /// </summary>
-    public string StorePath { get; }
+    public string ApplicationPath { get; }
     /// <summary>
     /// api项目目录路径
     /// </summary>
@@ -36,11 +36,11 @@ public class RestApiGenerate : GenerateBase
     public string? ApiNamespace { get; set; }
     public readonly EntityInfo EntityInfo;
 
-    public RestApiGenerate(string entityPath, string dtoPath, string servicePath, string apiPath, string? suffix = null)
+    public RestApiGenerate(string entityPath, string dtoPath, string applicationPath, string apiPath, string? suffix = null)
     {
         EntityPath = entityPath;
         SharePath = dtoPath;
-        StorePath = servicePath;
+        ApplicationPath = applicationPath;
         ApiPath = apiPath;
         Suffix = suffix;
         DirectoryInfo entityDir = new FileInfo(entityPath).Directory!;
@@ -52,7 +52,7 @@ public class RestApiGenerate : GenerateBase
 
         EntityNamespace = AssemblyHelper.GetNamespaceName(entityProjectFile.Directory!);
         ShareNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(SharePath));
-        ServiceNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(StorePath));
+        ServiceNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(ApplicationPath));
         ApiNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(ApiPath));
 
         EntityParseHelper entityHelper = new(entityPath);
@@ -227,8 +227,8 @@ public class RestApiGenerate : GenerateBase
     public string GetContextName(string? contextName = null)
     {
         string name = "ContextBase";
-        string? assemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(StorePath));
-        CompilationHelper cpl = new(StorePath, assemblyName);
+        string? assemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(ApplicationPath));
+        CompilationHelper cpl = new(ApplicationPath, assemblyName);
         IEnumerable<INamedTypeSymbol> classes = cpl.AllClass;
         if (classes != null)
         {

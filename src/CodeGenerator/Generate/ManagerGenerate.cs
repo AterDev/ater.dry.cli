@@ -232,6 +232,7 @@ public class ManagerGenerate : GenerateBase
         string tplContent = GetTplContent($"Implement.IManager.tpl");
         tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName)
             .Replace(TplConst.ID_TYPE, Config.IdType)
+            .Replace(TplConst.SHARE_NAMESPACE, ShareNamespace)
             .Replace(TplConst.NAMESPACE, nsp);
         return tplContent;
     }
@@ -274,9 +275,11 @@ public class ManagerGenerate : GenerateBase
             .Replace("${UpdateActionBlock}", GetUpdateMethodContent())
             .Replace("${FilterActionBlock}", GetFilterMethodContent());
 
+
         tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName)
             .Replace(TplConst.ID_TYPE, Config.IdType)
             .Replace(TplConst.COMMENT, EntityInfo?.Comment)
+            .Replace(TplConst.SHARE_NAMESPACE, ShareNamespace)
             .Replace(TplConst.NAMESPACE, nsp);
         return tplContent;
     }
