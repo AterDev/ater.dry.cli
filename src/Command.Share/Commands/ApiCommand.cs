@@ -100,7 +100,6 @@ public class ApiCommand : CommandBase
 
             if (globalUsings.Any())
             {
-                globalUsings.Insert(0, Environment.NewLine);
                 File.AppendAllLines(filePath, globalUsings);
             }
         }

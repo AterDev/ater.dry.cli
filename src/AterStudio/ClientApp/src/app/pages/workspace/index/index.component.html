@@ -222,13 +222,13 @@
 
 <ng-template #apiDialog>
   <h2 mat-dialog-title>生成REST API</h2>
-  <mat-dialog-content class="py-2">
-    <p>请选择项目</p>
+  <mat-dialog-content>
+    <!-- <p>请选择项目，模块实体则忽略</p>
     <mat-selection-list (selectionChange)="selectProject($event)">
       <mat-list-option *ngFor="let project of webProjects" [value]="project.path">
         {{project.name}}
       </mat-list-option>
-    </mat-selection-list>
+    </mat-selection-list> -->
     <mat-slide-toggle [(ngModel)]="this.force" class="mt-2">覆盖现有代码</mat-slide-toggle>
   </mat-dialog-content>
   <mat-dialog-actions class="justify-content-end">
