@@ -5,12 +5,13 @@ using Command.Share;
 using Command.Share.Commands;
 
 using Core;
-using Core.Entities;
 using Core.Infrastructure;
 using Core.Infrastructure.Helper;
 
 using Datastore;
 using Datastore.Models;
+using Microsoft.CodeAnalysis;
+using Project = Core.Entities.Project;
 
 namespace AterStudio.Manager;
 
@@ -157,13 +158,22 @@ public class EntityManager
         List<EntityFile> dtoFiles = new();
         try
         {
-            var content = File.ReadAllText(entityFilePath);
+            // 解析特性
             string? moduleName = null;
-            var match = Regex.Match(content, @"\[Module\(""(.+?)""\)\]");
-            if (match.Success)
+            var content = File.ReadAllText(entityFilePath);
+            var compilation = new CompilationHelper(Path.Combine(_projectContext.SolutionPath!, Config.EntityPath));
+
+            compilation.AddSyntaxTree(content);
+            var moduleAttribution = compilation.GetClassAttribution("Module");
+            if (moduleAttribution != null && moduleAttribution.Any())
             {
-                moduleName = match.Groups[1].Value;
+                var argument = moduleAttribution.Last().ArgumentList?.Arguments.FirstOrDefault();
+                if (argument != null)
+                {
+                    moduleName = compilation.GetArgumentValue(argument);
+                }
             }
+
             var entityName = Path.GetFileNameWithoutExtension(entityFilePath);
 
             string dtoPath = moduleName == null ?
