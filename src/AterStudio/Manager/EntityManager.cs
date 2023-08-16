@@ -393,7 +393,7 @@ public class EntityManager
     public async Task GenerateNgModuleAsync(string entityName, string rootPath)
     {
         var dtoPath = Path.Combine(_projectContext.SolutionPath!, Config.SharePath);
-        var entityDir = Path.Combine(_projectContext.SolutionPath!, Config.EntityPath, "Entities");
+        var entityDir = Path.Combine(_projectContext.SolutionPath!, Config.EntityPath);
         var entityPath = Directory.GetFiles(entityDir, entityName, SearchOption.AllDirectories)
             .FirstOrDefault();
 
