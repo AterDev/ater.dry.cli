@@ -1,3 +1,7 @@
+<div *ngIf="isLoading" class="d-flex mt-2 justify-content-center align-items-center">
+  <mat-spinner [value]="100">
+  </mat-spinner>
+</div>
 <div class="container" *ngIf="!isLoading">
   <mat-toolbar>
     <span>{{project.displayName}}</span>
