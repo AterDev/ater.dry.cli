@@ -28,7 +28,8 @@ public class StudioCommand
         Console.WriteLine("🚀 start studio...");
         // 运行
         string shell = "dotnet";
-        var url = "http://localhost:9160";
+        var port = ProcessHelper.GetAvailablePort();
+        var url = $"http://localhost:{port}";
         Process process = new()
         {
             StartInfo = new ProcessStartInfo

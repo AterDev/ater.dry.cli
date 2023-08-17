@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Net.NetworkInformation;
 
 namespace Core.Infrastructure.Helper;
 /// <summary>
@@ -34,4 +35,34 @@ public static class ProcessHelper
             return false;
         }
     }
+
+    /// <summary>
+    /// 获取可用端口
+    /// </summary>
+    /// <returns></returns>
+    public static int GetAvailablePort(int alternative = 19160)
+    {
+        var defaultPort = 9160;
+        var properties = IPGlobalProperties.GetIPGlobalProperties();
+
+        var connections = properties.GetActiveTcpConnections();
+        foreach (var connection in connections)
+        {
+            if (connection.LocalEndPoint.Port == defaultPort) return alternative;
+        }
+
+        var endPointsTcp = properties.GetActiveTcpListeners();
+        foreach (var endPoint in endPointsTcp)
+        {
+            if (endPoint.Port == defaultPort) return alternative;
+        }
+
+        var endPointsUdp = properties.GetActiveUdpListeners();
+        foreach (var endPoint in endPointsUdp)
+        {
+            if (endPoint.Port == defaultPort) return alternative;
+        }
+        return defaultPort;
+    }
+
 }
