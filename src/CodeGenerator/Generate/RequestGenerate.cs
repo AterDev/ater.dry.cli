@@ -201,10 +201,12 @@ public class RequestGenerate : GenerateBase
         }
 
         var sb = new StringBuilder();
+
+        TabConst.TabSize = 2;
         sb.AppendLine($"case '{enumType}':");
-        sb.AppendLine("{");
-        sb.AppendLine($"  switch (value)");
-        sb.AppendLine("  {");
+        sb.AppendLine("{".Indent(4));
+        sb.AppendLine($"  switch (value)".Indent(5));
+        sb.AppendLine("{".Indent(4));
 
         if (enumData.Value is OpenApiArray array)
         {
@@ -212,16 +214,16 @@ public class RequestGenerate : GenerateBase
             {
                 var item = ((OpenApiObject)array[i]);
 
-                string caseString = string.Format("    case {0}: result = '{1}'; break;", ((OpenApiInteger)item["value"]).Value, ((OpenApiString)item["description"]).Value);
+                string caseString = string.Format("case {0}: result = '{1}'; break;".Indent(6), ((OpenApiInteger)item["value"]).Value, ((OpenApiString)item["description"]).Value);
 
                 sb.AppendLine(caseString);
             }
-            sb.AppendLine("    default: '默认'; break;");
+            sb.AppendLine("default: '默认'; break;".Indent(6));
         }
 
-        sb.AppendLine("  }");
-        sb.AppendLine("}");
-        sb.AppendLine("break;");
+        sb.AppendLine("}".Indent(5));
+        sb.AppendLine("}".Indent(4));
+        sb.AppendLine("break;".Indent(4));
         return sb.ToString();
     }
 
