@@ -83,6 +83,9 @@ public class ManagerCommand : CommandBase
                 Console.WriteLine(Instructions[3]);
                 await GenerateMangerTestAsync(force);
 
+                Console.WriteLine(Instructions[4]);
+                await GetDataStoreContextAsync();
+
                 Console.WriteLine(Instructions[5]);
                 await GenerateGlobalUsingsFilesAsync();
             }

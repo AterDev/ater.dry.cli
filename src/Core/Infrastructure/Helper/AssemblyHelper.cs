@@ -206,7 +206,6 @@ public class AssemblyHelper
         var oldVerion = NuGetVersion.Parse(Config.Version);
         var currentVersion = NuGetVersion.Parse(GetVersion());
 
-        Console.WriteLine($"project version:{oldVerion}; studio version:{currentVersion}");
         return VersionComparer.Compare(oldVerion, minVersion, VersionComparison.Version) >= 0
             && VersionComparer.Compare(oldVerion, currentVersion, VersionComparison.Version) < 0;
     }
