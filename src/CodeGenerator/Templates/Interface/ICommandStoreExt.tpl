@@ -10,14 +10,6 @@ public interface ICommandStoreExt<TId, TEntity>
     /// <returns></returns>
     Task<List<TEntity>> CreateRangeAsync(List<TEntity> entities, int? chunk = 50);
 
-    /// <summary>
-    /// 条件更新
-    /// </summary>
-    /// <typeparam name="TUpdate"></typeparam>
-    /// <param name="whereExp"></param>
-    /// <param name="dto"></param>
-    /// <returns></returns>
-    Task<int> UpdateRangeAsync<TUpdate>(Expression<Func<TEntity, bool>> whereExp, TUpdate dto);
 
     /// <summary>
     /// 批量删除
