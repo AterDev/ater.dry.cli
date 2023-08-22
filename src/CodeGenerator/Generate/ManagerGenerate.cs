@@ -255,13 +255,6 @@ public class ManagerGenerate : GenerateBase
             .ToList();
         navigations?.ForEach(navigation =>
         {
-            var name = navigation.NavigationName ?? navigation.Type;
-
-            additionManagerProps += $"    private readonly I{name}Manager _{name.ToCamelCase()}Manager;" + Environment.NewLine;
-
-            additionManagerDI += $",{Environment.NewLine}        I{name}Manager {name.ToCamelCase()}Manager";
-            //_catalogManager = catalogManager;
-            additionManagerInit += $"        _{name.ToCamelCase()}Manager = {name.ToCamelCase()}Manager;" + Environment.NewLine;
         });
         tplContent = tplContent.Replace("${AdditionManagersProps}", additionManagerProps)
             .Replace("${AdditionManagersDI}", additionManagerDI)
@@ -295,12 +288,11 @@ public class ManagerGenerate : GenerateBase
         navigations?.ForEach(nav =>
         {
             var name = nav.NavigationName ?? nav.Type;
-            var manager = "_" + name.ToCamelCase() + "Manager";
             var variable = nav.Name.ToCamelCase();
             content += $$"""
                     if (dto.{{name}}Ids != null && dto.{{name}}Ids.Any())
                     {
-                        var {{variable}} = await {{manager}}.Command.Db.Where(t => dto.{{name}}Ids.Contains(t.Id)).ToListAsync();
+                        var {{variable}} = await Stores.CommandSet<{{name}}>().Where(t => dto.{{name}}Ids.Contains(t.Id)).ToListAsync();
                         if ({{variable}} != null)
                         {
                             entity.{{nav.Name}} = {{variable}};
@@ -348,12 +340,11 @@ public class ManagerGenerate : GenerateBase
         navigations?.ForEach(nav =>
         {
             var name = nav.NavigationName ?? nav.Type;
-            var manager = "_" + name.ToCamelCase() + "Manager";
             var variable = nav.Name.ToCamelCase();
             content += $$"""
                     if (dto.{{name}}Ids != null && dto.{{name}}Ids.Any())
                     {
-                        var {{variable}} = await {{manager}}.Command.Db.Where(t => dto.{{name}}Ids.Contains(t.Id)).ToListAsync();
+                        var {{variable}} = await Stores.CommandSet<{{name}}>().Where(t => dto.{{name}}Ids.Contains(t.Id)).ToListAsync();
                         if ({{variable}} != null)
                         {
                             entity.{{nav.Name}} = {{variable}};

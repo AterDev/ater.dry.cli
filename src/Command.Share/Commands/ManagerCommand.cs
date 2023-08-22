@@ -101,7 +101,7 @@ public class ManagerCommand : CommandBase
 
                 Console.WriteLine(Instructions[4]);
                 await GetDataStoreContextAsync();
-
+                await GenerateDIExtensionsAsync();
                 await GenerateModuleDIExtensionsAsync();
 
                 Console.WriteLine(Instructions[5]);
