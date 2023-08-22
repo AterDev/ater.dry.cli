@@ -3,20 +3,21 @@ namespace Command.Share.Commands;
 public class ViewCommand : CommandBase
 {
     public string Type { get; set; } = "angular";
-    public string EntityPath { get; set; } = default!;
+    public string EntityFilePath { get; set; } = default!;
     public string EntityName { get; set; } = default!;
     public string DtoPath { get; set; } = default!;
     public string OutputPath { get; set; } = default!;
     public string? ModuleName { get; set; }
     public string? Route { get; set; }
     public string? EntityComment { get; set; }
+    public string SolutionPath { get; }
+    public NgPageGenerate? Gen { get; set; }
     /// <summary>
     /// 模块与子模块路由map
     /// </summary>
     public List<KeyValuePair<string, string>> ModuleRouteMap { get; } = new();
     public List<KeyValuePair<string, string>> RouteNameMap { get; } = new();
 
-    public NgPageGenerate Gen { get; set; }
 
     public ViewCommand(string dtoPath, string outputPath)
     {
@@ -24,29 +25,38 @@ public class ViewCommand : CommandBase
         OutputPath = outputPath;
         Instructions.Add($"  🔹 generate module,routing and menu.");
         Instructions.Add($"  🔹 generate pages.");
-        Gen = new NgPageGenerate(EntityName, dtoPath, outputPath);
+
+        var currentDir = new DirectoryInfo(dtoPath);
+        var solutionFile = AssemblyHelper.GetSlnFile(currentDir, currentDir.Root)
+            ?? throw new Exception("not found solution file");
+
+        SolutionPath = solutionFile.DirectoryName!;
     }
 
 
     public ViewCommand(string entityPath, string dtoPath, string outputPath)
     {
-        EntityPath = entityPath;
+        if (!File.Exists(entityPath))
+        {
+            throw new FileNotFoundException();
+        }
+        EntityFilePath = entityPath;
         DtoPath = dtoPath;
         OutputPath = outputPath;
         Instructions.Add($"  🔹 generate module, routing.");
         Instructions.Add($"  🔹 generate pages.");
 
-        if (!File.Exists(entityPath))
-        {
-            throw new FileNotFoundException();
-        }
         EntityName = Path.GetFileNameWithoutExtension(entityPath);
-        Gen = new NgPageGenerate(EntityName, dtoPath, outputPath);
+        var currentDir = new DirectoryInfo(dtoPath);
+        var solutionFile = AssemblyHelper.GetSlnFile(currentDir, currentDir.Root)
+            ?? throw new Exception("not found solution file");
+
+        SolutionPath = solutionFile.DirectoryName!;
     }
 
     public void SetEntityPath(string entityPath)
     {
-        EntityPath = entityPath;
+        EntityFilePath = entityPath;
 
         if (!File.Exists(entityPath))
         {
@@ -58,6 +68,24 @@ public class ViewCommand : CommandBase
 
     public async Task RunAsync()
     {
+        // 是否为模块
+        var compilation = new CompilationHelper(DtoPath, "Entity");
+        var content = File.ReadAllText(EntityFilePath);
+        compilation.AddSyntaxTree(content);
+        var attributes = compilation.GetClassAttribution("Module");
+        var moduleName = string.Empty;
+        if (attributes != null && attributes.Any())
+        {
+            var argument = attributes.First().ArgumentList!.Arguments[0];
+            moduleName = compilation.GetArgumentValue(argument);
+        }
+        if (!string.IsNullOrWhiteSpace(moduleName))
+        {
+            DtoPath = Path.Combine(SolutionPath, "src", "Modules", moduleName);
+        }
+
+        Gen = new NgPageGenerate(EntityName, DtoPath, OutputPath);
+
         Console.WriteLine(Instructions[0]);
         await GenerateModuleWithRoutingAsync();
         Console.WriteLine(Instructions[1]);

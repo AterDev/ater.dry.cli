@@ -13,8 +13,6 @@ public class NgPageGenerate : GenerateBase
     public string Output { get; }
     public string DtoDirName { get; set; }
 
-
-
     public NgPageGenerate(string entityName, string dtoPath, string output)
     {
         EntityName = entityName;

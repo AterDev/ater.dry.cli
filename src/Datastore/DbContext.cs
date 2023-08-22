@@ -24,7 +24,6 @@ public class DbContext : IDisposable
         ApiDocInfos = LiteDb.GetCollection<ApiDocInfo>();
         TemplateFile = LiteDb.GetCollection<TemplateFile>();
     }
-    ~DbContext() => Dispose();
 
     public void Dispose()
     {
