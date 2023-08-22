@@ -11,27 +11,25 @@ public class ManagerGenerate : GenerateBase
     /// Entity 文件路径
     /// </summary>
     public string EntityFilePath { get; set; }
-    /// <summary>
-    /// DataStroe所在项目目录路径
-    /// </summary>
-    public string StorePath { get; set; }
+
+    public string ApplicationPath { get; set; }
     /// <summary>
     /// DTO 所在项目目录路径
     /// </summary>
-    public string SharePath { get; set; }
+    public string DtoPath { get; set; }
     /// <summary>
     /// DataStore 项目的命名空间
     /// </summary>
     public string? ShareNamespace { get; set; }
     public string? ServiceNamespace { get; set; }
     public readonly EntityInfo? EntityInfo;
-    public ManagerGenerate(string entityFilePath, string dtoPath, string servicePath)
+    public ManagerGenerate(string entityFilePath, string dtoPath, string applicationPath)
     {
         EntityFilePath = entityFilePath;
-        SharePath = dtoPath;
-        StorePath = servicePath;
-        ShareNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(SharePath));
-        ServiceNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(StorePath));
+        DtoPath = dtoPath;
+        ApplicationPath = applicationPath;
+        ShareNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(DtoPath));
+        ServiceNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(ApplicationPath));
         if (File.Exists(entityFilePath))
         {
             EntityParseHelper entityHelper = new(entityFilePath);
@@ -88,7 +86,7 @@ public class ManagerGenerate : GenerateBase
     private string GenManagerAddTest()
     {
         // 解析add dto
-        var addDtoPath = Path.Combine(SharePath, "Models", EntityInfo?.Name + "Dtos", EntityInfo?.Name + "AddDto.cs");
+        var addDtoPath = Path.Combine(DtoPath, "Models", EntityInfo?.Name + "Dtos", EntityInfo?.Name + "AddDto.cs");
         var entityHelper = new EntityParseHelper(addDtoPath);
         entityHelper.Parse();
         // 构造内容
@@ -128,7 +126,7 @@ public class ManagerGenerate : GenerateBase
     private string GenManagerUpdateTest()
     {
         // 解析add dto
-        var addDtoPath = Path.Combine(SharePath, "Models", EntityInfo?.Name + "Dtos", EntityInfo?.Name + "AddDto.cs");
+        var addDtoPath = Path.Combine(DtoPath, "Models", EntityInfo?.Name + "Dtos", EntityInfo?.Name + "AddDto.cs");
         var entityHelper = new EntityParseHelper(addDtoPath);
         entityHelper.Parse();
         // 构造内容
@@ -422,8 +420,8 @@ public class ManagerGenerate : GenerateBase
     public string GetContextName(string? contextName = null)
     {
         string name = "ContextBase";
-        string? assemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(StorePath));
-        CompilationHelper cpl = new(StorePath, assemblyName);
+        string? assemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(ApplicationPath));
+        CompilationHelper cpl = new(ApplicationPath, assemblyName);
         IEnumerable<INamedTypeSymbol> classes = cpl.AllClass;
         if (classes != null)
         {
@@ -434,7 +432,6 @@ public class ManagerGenerate : GenerateBase
                 allDbContexts = CompilationHelper.GetClassNameByBaseType(classes, "DbContext");
             }
 
-            //Console.WriteLine("find dbcontext:" + allDbContexts.FirstOrDefault().Name);
             if (allDbContexts.Any())
             {
                 if (string.IsNullOrEmpty(contextName))
@@ -513,25 +510,20 @@ public class ManagerGenerate : GenerateBase
     }
 
     /// <summary>
-    /// 服务注册代码
+    /// 生成注入服务
     /// </summary>
+    /// <param name="solutionPath"></param>
+    /// <param name="nspName"></param>
     /// <returns></returns>
     public static string GetManagerDIExtensions(string solutionPath, string nspName)
     {
         string storeServiceContent = "";
         string managerServiceContent = "";
 
-        var applicationPath = Path.Combine(solutionPath, Config.ApplicationPath);
         var entityFrameworkPath = Path.Combine(solutionPath, Config.EntityFrameworkPath);
 
         // 获取所有data stores
-        string storeDir = Path.Combine(applicationPath, "DataStore");
         string[] files = Array.Empty<string>();
-
-        if (Directory.Exists(storeDir))
-        {
-            files = Directory.GetFiles(storeDir, "*DataStore.cs", SearchOption.TopDirectoryOnly);
-        }
 
         string[] queryFiles = Directory.GetFiles(Path.Combine(entityFrameworkPath, $"{Const.QUERY_STORE}"), $"*{Const.QUERY_STORE}.cs", SearchOption.TopDirectoryOnly);
         string[] commandFiles = Directory.GetFiles(Path.Combine(entityFrameworkPath, $"{Const.COMMAND_STORE}"), $"*{Const.COMMAND_STORE}.cs", SearchOption.TopDirectoryOnly);
@@ -546,7 +538,8 @@ public class ManagerGenerate : GenerateBase
         });
 
         // 获取所有manager
-        string managerDir = Path.Combine(applicationPath, "Manager");
+        var application = Path.Combine(solutionPath, Config.ApplicationPath);
+        string managerDir = Path.Combine(application, "Manager");
         if (!Directory.Exists(managerDir))
         {
             return string.Empty;
@@ -565,6 +558,41 @@ public class ManagerGenerate : GenerateBase
         string content = GetTplContent("Implement.ManagerServiceCollectionExtensions.tpl");
         content = content.Replace(TplConst.NAMESPACE, nspName);
         content = content.Replace(TplConst.SERVICE_STORES, storeServiceContent);
+        content = content.Replace(TplConst.SERVICE_MANAGER, managerServiceContent);
+        return content;
+    }
+
+    /// <summary>
+    /// 生成模块的注入服务
+    /// </summary>
+    /// <param name="solutionPath"></param>
+    /// <param name="ModuleName">模块名称</param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public static string GetManagerModuleDIExtensions(string solutionPath, string ModuleName)
+    {
+        // 获取所有manager
+        var modulePath = Path.Combine(solutionPath, "src", "Modules", ModuleName);
+        string managerDir = Path.Combine(modulePath, "Manager");
+        if (!Directory.Exists(managerDir))
+        {
+            return string.Empty;
+        }
+
+        string[] files = Array.Empty<string>();
+        var managerServiceContent = "";
+
+        files = Directory.GetFiles(managerDir, "*Manager.cs", SearchOption.TopDirectoryOnly);
+        files?.ToList().ForEach(file =>
+        {
+            object name = Path.GetFileNameWithoutExtension(file);
+            string row = $"        services.AddScoped<I{name}, {name}>();";
+            managerServiceContent += row + Environment.NewLine;
+        });
+
+        // 构建服务
+        string content = GetTplContent("Implement.ModuleManagerServiceCollectionExtensions.tpl");
+        content = content.Replace(TplConst.NAMESPACE, ModuleName);
         content = content.Replace(TplConst.SERVICE_MANAGER, managerServiceContent);
         return content;
     }

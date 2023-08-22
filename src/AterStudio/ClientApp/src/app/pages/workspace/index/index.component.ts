@@ -34,7 +34,7 @@ export class IndexComponent implements OnInit {
   projectId: string;
   entityFiles = [] as EntityFile[];
   baseEntityPath = '';
-  columns: string[] = ['select', 'name', 'description','path', 'actions'];
+  columns: string[] = ['select', 'name', 'description', 'path', 'actions'];
   dataSource!: MatTableDataSource<EntityFile>;
   isLoading = true;
   requestForm!: FormGroup;
@@ -372,6 +372,7 @@ export class IndexComponent implements OnInit {
     }
   }
   generate(): void {
+    this.isSync = true;
     if (this.isBatch) {
       this.batch(this.currentType!);
     } else {
@@ -393,7 +394,11 @@ export class IndexComponent implements OnInit {
               }
             },
             error: (error) => {
+              this.isSync = false;
               this.snb.open(error.detail);
+            },
+            complete: () => {
+              this.isSync = false;
             }
           });
 
@@ -487,7 +492,7 @@ export class IndexComponent implements OnInit {
 
   goToDto(entity: EntityFile): void {
     console.log(entity);
-    
+
     this.projectState.currentEntity = entity;
     this.router.navigate(['../dto', entity.name], { relativeTo: this.route });
   }

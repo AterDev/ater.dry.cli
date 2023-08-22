@@ -161,7 +161,7 @@ public class ViewCommand : CommandBase
         string? routeName = Route?.ToPascalCase().ToHyphen();
         string dir = Path.Combine(OutputPath, moduleName, routeName ?? "");
 
-        string module = Gen.GetModule(Route?.ToPascalCase());
+        string module = Gen!.GetModule(Route?.ToPascalCase());
         string routing = Gen.GetRoutingModule(moduleName, Route?.ToPascalCase());
         string moduleFilename = routeName ?? moduleName + ".module.ts";
         string routingFilename = routeName ?? moduleName + "-routing.module.ts";
@@ -184,7 +184,7 @@ public class ViewCommand : CommandBase
         string moduleName = ModuleName ?? EntityName.ToHyphen();
         string dir = Path.Combine(OutputPath, moduleName, Route?.ToPascalCase().ToHyphen() ?? "");
 
-        NgComponentInfo addComponent = Gen.BuildAddPage();
+        NgComponentInfo addComponent = Gen!.BuildAddPage();
         NgComponentInfo editComponent = Gen.BuildEditPage();
         NgComponentInfo indexComponent = Gen.BuildIndexPage();
         NgComponentInfo detailComponent = Gen.BuildDetailPage();

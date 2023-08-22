@@ -7,7 +7,7 @@ public class DataStoreContext
 ${Properties}
 
     /// <summary>
-    /// 绑在对象
+    /// 字典缓存
     /// </summary>
     private readonly Dictionary<string, object> StoreCache = new();
 

@@ -1,4 +1,4 @@
-﻿// 本文件由ater.dry工具自动生成.
+﻿// 本文件由 ater.dry工具自动生成.
 namespace ${Namespace};
 
 public static partial class ManagerServiceCollectionExtensions
