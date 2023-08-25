@@ -200,6 +200,29 @@ export class IndexComponent implements OnInit {
       })
   }
 
+  clean(): void {
+    this.isSync = true;
+    this.service.cleanSolution()
+      .subscribe({
+        next: (res) => {
+          if (res) {
+            this.snb.open('清理成功');
+
+            this.getEntity();
+          } else {
+            this.snb.open('清理失败，请尝试关闭占用程序后重试');
+          }
+        },
+        error: (error) => {
+          this.snb.open(error.detail);
+          this.isSync = false;
+        },
+        complete: () => {
+          this.isSync = false;
+        }
+      });
+  }
+
   openRequestDialog(): void {
     this.dialogRef = this.dialog.open(this.requestTmpRef, {
       minWidth: 400

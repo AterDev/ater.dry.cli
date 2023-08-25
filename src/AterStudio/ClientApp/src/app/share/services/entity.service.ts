@@ -34,6 +34,14 @@ export class EntityService extends BaseService {
   }
 
   /**
+   * 清理解决方案
+   */
+  cleanSolution(): Observable<boolean> {
+    const url = `/api/Entity`;
+    return this.request<boolean>('delete', url);
+  }
+
+  /**
    * 获取文件内容
 entity/manager
    * @param entityName 

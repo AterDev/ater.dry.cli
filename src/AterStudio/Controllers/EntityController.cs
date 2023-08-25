@@ -44,6 +44,16 @@ public class EntityController : ControllerBase
     }
 
     /// <summary>
+    /// 清理解决方案
+    /// </summary>
+    /// <returns></returns>
+    [HttpDelete]
+    public bool CleanSolution()
+    {
+        return _manager.CleanSolution();
+    }
+
+    /// <summary>
     /// 获取文件内容
     /// entity/manager
     /// </summary>

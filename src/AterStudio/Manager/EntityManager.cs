@@ -211,6 +211,38 @@ public class EntityManager
     }
 
     /// <summary>
+    /// 清理解决方案 bin/obj
+    /// </summary>
+    /// <returns></returns>
+    public bool CleanSolution()
+    {
+        // delete all bin/obj dir  in solution path 
+        var dirPaths = new string[] { Config.ApiPath, Config.EntityPath, Config.ApplicationPath, Config.SharePath };
+        var dirs = new string[] { };
+
+        foreach (var path in dirPaths)
+        {
+            var rootPath = Path.Combine(_projectContext.SolutionPath!, path);
+            dirs = dirs.Union(Directory.GetDirectories(rootPath, "bin", SearchOption.TopDirectoryOnly))
+                .Union(Directory.GetDirectories(rootPath, "obj", SearchOption.TopDirectoryOnly))
+                .ToArray();
+        }
+        try
+        {
+            foreach (var dir in dirs)
+            {
+                Directory.Delete(dir, true);
+            }
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ Clean solution occur error:{ex.Message}");
+            return false;
+        }
+    }
+
+    /// <summary>
     /// 获取文件内容
     /// </summary>
     /// <param name="entityName"></param>

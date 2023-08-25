@@ -582,6 +582,37 @@
         }
       }
     },
+    "/api/Entity": {
+      "delete": {
+        "tags": [
+          "Entity"
+        ],
+        "summary": "清理解决方案",
+        "operationId": "Entity_CleanSolution",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Entity/fileContent": {
       "get": {
         "tags": [

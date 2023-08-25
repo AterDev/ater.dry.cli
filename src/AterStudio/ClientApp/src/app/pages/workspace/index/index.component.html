@@ -44,7 +44,12 @@
     <button mat-icon-button matTooltip="添加实体" color="primary" (click)="openAddEntity()" *ngIf="isLogin">
       <mat-icon>add_circle_outline</mat-icon>
     </button>
-    <button mat-icon-button matTooltip="refresh" (click)="getEntity()" color="primary">
+
+    <button mat-icon-button matTooltip="清理项目bin/obj,以保证代码修改可被分析器检测,该操作可能需要你关闭相应的代码编辑器" [disabled]="isSync"
+      (click)="clean()" color="primary">
+      <mat-icon>cleaning_services</mat-icon>
+    </button>
+    <button mat-icon-button matTooltip="刷新" (click)="getEntity()" color="primary">
       <mat-icon>refresh</mat-icon>
     </button>
   </div>
@@ -188,7 +193,10 @@
   </mat-dialog-content>
   <mat-dialog-actions class="justify-content-end">
     <button mat-button mat-dialog-close>取消</button>
-    <button mat-button (click)="generate()" color="primary" [disabled]="isSync">生成</button>
+    <div class="d-flex align-items-center">
+      <button mat-button (click)="generate()" color="primary" [disabled]="isSync">生成</button>
+      <mat-spinner *ngIf="isSync" style="width: 26px;height:26px"></mat-spinner>
+    </div>
   </mat-dialog-actions>
 </ng-template>
 
@@ -237,7 +245,10 @@
   </mat-dialog-content>
   <mat-dialog-actions class="justify-content-end">
     <button mat-button mat-dialog-close>取消</button>
-    <button mat-button (click)="batch(CommandType.API)" color="primary" [disabled]="isSync">生成</button>
+    <div class="d-flex align-items-center">
+      <button mat-button (click)="batch(CommandType.API)" color="primary" [disabled]="isSync">生成</button>
+      <mat-spinner *ngIf="isSync" style="width: 26px;height:26px"></mat-spinner>
+    </div>
   </mat-dialog-actions>
 </ng-template>
 
