@@ -48,9 +48,11 @@ public class EntityController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpDelete]
-    public bool CleanSolution()
+    public string CleanSolution()
     {
-        return _manager.CleanSolution();
+        var res = _manager.CleanSolution(out var errorMsg);
+        return res ? "清理成功" : errorMsg;
+
     }
 
     /// <summary>

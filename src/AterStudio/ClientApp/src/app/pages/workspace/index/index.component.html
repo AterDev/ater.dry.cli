@@ -45,7 +45,7 @@
       <mat-icon>add_circle_outline</mat-icon>
     </button>
 
-    <button mat-icon-button matTooltip="清理项目bin/obj,以保证代码修改可被分析器检测,该操作可能需要你关闭相应的代码编辑器" [disabled]="isSync"
+    <button mat-icon-button matTooltip="清理项目bin/obj,以让分析器可检测到代码修改.如果失败,请尝试关闭占用程序." [disabled]="isSync"
       (click)="clean()" color="primary">
       <mat-icon>cleaning_services</mat-icon>
     </button>

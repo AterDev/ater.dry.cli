@@ -595,17 +595,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "boolean"
+                  "type": "string"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "boolean"
+                  "type": "string"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "boolean"
+                  "type": "string"
                 }
               }
             }

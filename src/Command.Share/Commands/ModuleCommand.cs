@@ -114,6 +114,7 @@ public class ModuleCommand
             global using ${Module}.Infrastructure;
             global using Ater.Web.Core.Models;
             global using Ater.Web.Core.Utils;
+            global using Entity;
             global using EntityFramework;
             global using Microsoft.AspNetCore.Authorization;
             global using Microsoft.AspNetCore.Mvc;

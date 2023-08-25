@@ -206,11 +206,8 @@ export class IndexComponent implements OnInit {
       .subscribe({
         next: (res) => {
           if (res) {
-            this.snb.open('清理成功');
-
+            this.snb.open(res);
             this.getEntity();
-          } else {
-            this.snb.open('清理失败，请尝试关闭占用程序后重试');
           }
         },
         error: (error) => {

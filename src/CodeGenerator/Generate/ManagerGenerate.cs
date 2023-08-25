@@ -292,7 +292,9 @@ public class ManagerGenerate : GenerateBase
             content += $$"""
                     if (dto.{{name}}Ids != null && dto.{{name}}Ids.Any())
                     {
-                        var {{variable}} = await Stores.CommandSet<{{name}}>().Where(t => dto.{{name}}Ids.Contains(t.Id)).ToListAsync();
+                        var {{variable}} = await Stores.CommandSet<{{name}}>().Db
+                            .Where(t => dto.{{name}}Ids.Contains(t.Id))
+                            .ToListAsync();
                         if ({{variable}} != null)
                         {
                             entity.{{nav.Name}} = {{variable}};
@@ -344,7 +346,9 @@ public class ManagerGenerate : GenerateBase
             content += $$"""
                     if (dto.{{name}}Ids != null && dto.{{name}}Ids.Any())
                     {
-                        var {{variable}} = await Stores.CommandSet<{{name}}>().Where(t => dto.{{name}}Ids.Contains(t.Id)).ToListAsync();
+                        var {{variable}} = await Stores.CommandSet<{{name}}>().Db
+                            .Where(t => dto.{{name}}Ids.Contains(t.Id))
+                            .ToListAsync();
                         if ({{variable}} != null)
                         {
                             entity.{{nav.Name}} = {{variable}};

@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Text;
 using System.Text.RegularExpressions;
 
 using Command.Share;
@@ -214,8 +215,9 @@ public class EntityManager
     /// 清理解决方案 bin/obj
     /// </summary>
     /// <returns></returns>
-    public bool CleanSolution()
+    public bool CleanSolution(out string errorMsg)
     {
+        errorMsg = string.Empty;
         // delete all bin/obj dir  in solution path 
         var dirPaths = new string[] { Config.ApiPath, Config.EntityPath, Config.ApplicationPath, Config.SharePath };
         var dirs = new string[] { };
@@ -233,10 +235,27 @@ public class EntityManager
             {
                 Directory.Delete(dir, true);
             }
-            return true;
+            var apiFiePath = Directory.GetFiles(_projectContext.ApiPath, "*.csproj", SearchOption.TopDirectoryOnly).FirstOrDefault();
+
+            if (apiFiePath != null)
+            {
+                Console.WriteLine($"⛏️ build project:{apiFiePath}");
+                var process = Process.Start("dotnet", $"build {apiFiePath}");
+                process.WaitForExit();
+                // if process has error message 
+                if (process.ExitCode != 0)
+                {
+                    errorMsg = "项目构建失败，请检查项目！";
+                    return false;
+                }
+                return true;
+            }
+            errorMsg = "未找到API项目，清理后请手动重新构建项目!";
+            return false;
         }
         catch (Exception ex)
         {
+            errorMsg = "项目清理失败，请尝试关闭占用程序后重试.";
             Console.WriteLine($"❌ Clean solution occur error:{ex.Message}");
             return false;
         }

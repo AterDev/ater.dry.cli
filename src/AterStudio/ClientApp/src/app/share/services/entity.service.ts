@@ -36,9 +36,9 @@ export class EntityService extends BaseService {
   /**
    * 清理解决方案
    */
-  cleanSolution(): Observable<boolean> {
+  cleanSolution(): Observable<string> {
     const url = `/api/Entity`;
-    return this.request<boolean>('delete', url);
+    return this.request<string>('delete', url);
   }
 
   /**
