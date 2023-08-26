@@ -78,7 +78,17 @@ public class NgInputBuilder
             html = $@" <textarea formControlName=""{name}"" rows=""10"" ></textarea>
 ";
         }
-
+        else
+        {
+            html = $@"  <mat-form-field>
+    <mat-label>{Label}</mat-label>
+    <input matInput placeholder=""{Label}"" formControlName=""{name}"" {(IsRequired ? "required" : "")}>
+    <mat-error *ngIf=""{name}?.invalid"">
+    {{{{getValidatorMessage('{name}')}}}}
+    </mat-error>
+  </mat-form-field>
+";
+        }
         return html;
     }
 

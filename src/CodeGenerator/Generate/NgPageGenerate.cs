@@ -163,9 +163,10 @@ public class NgPageGenerate : GenerateBase
                       <ng-container matColumnDef="{{{s.ToCamelCase()}}}">
                         <th mat-header-cell *matHeaderCellDef>path</th>
                         <td mat-cell *matCellDef="let element">
-                          {{element.{{{s.ToCamelCase()}}}{{{pipe}}}  }}
+                          {{element.{{{s.ToCamelCase()}}}{{{pipe}}} }}
                         </td>
                       </ng-container>
+
                 """;
             }).ToArray();
         }
@@ -255,15 +256,14 @@ public class NgPageGenerate : GenerateBase
         EntityParseHelper typeHelper = new(Path.Combine(DtoPath, "models", DtoDirName, EntityName + "ItemDto.cs"));
         typeHelper.Parse();
         // 需要展示的列
-        List<PropertyInfo>? columns = typeHelper.PropertyInfos?.Where(p => !p.IsList && !p.IsNavigation)
+        List<PropertyInfo>? props = typeHelper.PropertyInfos?.Where(p => !p.IsList && !p.IsNavigation)
             .Where(p => p.Name.ToLower() != "id")
-            .Skip(0)
             .ToList();
 
         string[] columnsDef = Array.Empty<string>();
-        if (columns != null && columns.Any())
+        if (props != null && props.Any())
         {
-            columnsDef = columns.Select(p =>
+            columnsDef = props.Select(p =>
             {
                 string? type = p.Type;
                 string pipe = "";
@@ -290,6 +290,7 @@ public class NgPageGenerate : GenerateBase
 
         // 解析属性，并生成相应ts代码
         columnsDef = Array.Empty<string>();
+        List<string>? columns = props?.Select(p => p.Name).ToList();
         if (columns != null && columns.Any())
         {
             columns.Add("actions");
@@ -567,8 +568,8 @@ public class NgPageGenerate : GenerateBase
 ";
             definedValidatorMessage += @$"      case '{name}':
         return this.{name}?.errors?.['required'] ? '{property.Name}必填' :
-          this.{name}?.errors?.['minlength'] ? '{property.Name}长度最少{property.MinLength}位' :
-          this.{name}?.errors?.['maxlength'] ? '{property.Name}长度最多{property.MaxLength}位' : '';
+          this.{name}?.errors?.['minlength'] ? '{property.CommentSummary ?? property.Name}长度最少{property.MinLength}位' :
+          this.{name}?.errors?.['maxlength'] ? '{property.CommentSummary ?? property.Name}长度最多{property.MaxLength}位' : '';
 ";
         }
     }
