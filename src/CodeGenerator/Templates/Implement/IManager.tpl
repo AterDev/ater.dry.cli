@@ -6,13 +6,6 @@ namespace ${Namespace}.IManager;
 /// </summary>
 public interface I${EntityName}Manager : IDomainManager<${EntityName}>
 {
-	/// <summary>
-    /// 当前用户所拥有的对象
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    Task<${EntityName}?> GetOwnedAsync(${IdType} id);
-
     /// <summary>
     /// 创建待添加实体
     /// </summary>

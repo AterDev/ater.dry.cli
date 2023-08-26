@@ -8,7 +8,7 @@
   <div class="d-flex flex-column w-100">
 {$FormControls}
     <div class="d-flex mt-1">
-      <button class="d-flex flex-column" mat-flat-button color="primary" (click)="add()">保存</button>
+      <button class="d-flex flex-column" mat-flat-button color="primary" (click)="add()">添加</button>
     </div>
   </div>
 </form>

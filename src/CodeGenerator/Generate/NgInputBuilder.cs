@@ -34,7 +34,7 @@ public class NgInputBuilder
         {
             "string" => BuildInputText(),
             "DateTimeOffset" or "DateTime" => BuildInputDate(),
-            "short" or "int" or "decimal" or "double" or "float" => BuildInputNumber(),
+            "short" or "int" or "decimal" or "double" or "float" or "uint" or "ushort" => BuildInputNumber(),
             "bool" => BuildSlide(),
             _ => BuildInputText(),
         };
@@ -125,7 +125,7 @@ public class NgInputBuilder
   <mat-label>{Label}</mat-label>
   <mat-select formControlName=""{name}"">
     <mat-option *ngFor=""let item of {list} | toKeyValue"" [value]=""item.value"">
-      {{{{item.key}}}}
+      {{{{item.value | enumText:'{list}'}}}}
     </mat-option>
   </mat-select>
   <mat-error *ngIf=""{name}?.invalid"">
@@ -146,7 +146,7 @@ public class NgInputBuilder
     public string BuildSlide()
     {
         string name = Name.ToCamelCase();
-        string html = @$"    <mat-slide-toggle color=""primary"" formControlName=""{name}"">{Label}</mat-slide-toggle>
+        string html = @$"    <mat-slide-toggle class=""my-2"" color=""primary"" formControlName=""{name}"">{Label}</mat-slide-toggle>
 ";
         return html;
     }

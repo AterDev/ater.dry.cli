@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+
 using PropertyInfo = Core.Models.PropertyInfo;
 
 namespace CodeGenerator.Generate;
@@ -83,8 +84,8 @@ public class NgPageGenerate : GenerateBase
     public static NgComponentInfo GenFormComponent(EntityInfo modelInfo, string serviceName)
     {
 
-        var props = modelInfo.PropertyInfos.ToList();
-        var modelName = modelInfo.Name;
+        List<PropertyInfo>? props = modelInfo.PropertyInfos.ToList();
+        string modelName = modelInfo.Name;
 
         // 生成.ts
         string tplContent = GetTplContent("angular.component.form.component.ts");
@@ -182,7 +183,7 @@ public class NgPageGenerate : GenerateBase
                 return $@"'{s.ToCamelCase()}'";
             }).ToArray();
         }
-        var modelName = modelInfo.Name;
+        string modelName = modelInfo.Name;
         string tplContent = GetTplContent("angular.component.table.component.ts");
         tplContent = tplContent.Replace("{$ModelName}", modelName)
             .Replace("{$ModelPathName}", modelName.ToHyphen())
@@ -254,34 +255,30 @@ public class NgPageGenerate : GenerateBase
         EntityParseHelper typeHelper = new(Path.Combine(DtoPath, "models", DtoDirName, EntityName + "ItemDto.cs"));
         typeHelper.Parse();
         // 需要展示的列
-        List<string>? columns = typeHelper.PropertyInfos?.Where(p => !p.IsList && !p.IsNavigation)
+        List<PropertyInfo>? columns = typeHelper.PropertyInfos?.Where(p => !p.IsList && !p.IsNavigation)
             .Where(p => p.Name.ToLower() != "id")
-            .Select(p => p.Name)
-            .Skip(0).Take(5)
+            .Skip(0)
             .ToList();
 
         string[] columnsDef = Array.Empty<string>();
         if (columns != null && columns.Any())
         {
-            columnsDef = columns.Select(s =>
+            columnsDef = columns.Select(p =>
             {
-                string? type = typeHelper.PropertyInfos?
-                    .Where(p => p.Name.Equals(s))
-                    .Select(p => p.Type)
-                    .FirstOrDefault();
+                string? type = p.Type;
                 string pipe = "";
                 if (type != null)
                 {
                     if (type.Equals("DateTime") || type.Equals("DateTimeOffset"))
                     {
-                        pipe = s.EndsWith("Date") ? " | date: 'yyyy-MM-dd'" : " | date: 'yyy-MM-dd HH:mm:ss'";
+                        pipe = p.Name.EndsWith("Date") ? " | date: 'yyyy-MM-dd'" : " | date: 'yyy-MM-dd HH:mm:ss'";
                     }
                 }
 
-                return $@"  <ng-container matColumnDef=""{s.ToCamelCase()}"">
-    <th mat-header-cell *matHeaderCellDef>{s}</th>
+                return $@"  <ng-container matColumnDef=""{p.Name.ToCamelCase()}"">
+    <th mat-header-cell *matHeaderCellDef>{p.CommentSummary ?? p.Type}</th>
     <td mat-cell *matCellDef=""let element"">
-      {{{{element.{s.ToCamelCase()}{pipe}}}}}
+      {{{{element.{p.Name.ToCamelCase()}{pipe}}}}}
     </td>
   </ng-container>
 ";
@@ -532,7 +529,7 @@ public class NgPageGenerate : GenerateBase
     /// <returns></returns>
     private static string CleanTsTplVariables(string tplContent)
     {
-        var TplVariables = new string[]{
+        string[] TplVariables = new string[]{
             "[@Imports]","[@Declares]","[@DI]","[@Init]","[@Methods]",
             "{$DefinedProperties}","{$DefinedFormControls}","{$DefinedValidatorMessage}"
         };

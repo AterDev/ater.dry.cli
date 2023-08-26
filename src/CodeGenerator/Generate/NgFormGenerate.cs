@@ -76,7 +76,7 @@ public class NgFormGenerate : GenerateBase
         {
             foreach (PropertyInfo input in propertyInfos)
             {
-                NgInputBuilder inputBuilder = new(input.Type, input.Name, input.DisplayName)
+                NgInputBuilder inputBuilder = new(input.Type, input.Name, input.CommentSummary ?? input.DisplayName)
                 {
                     IsDecimal = input.IsDecimal,
                     IsRequired = input.IsRequired,
