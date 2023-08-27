@@ -1,10 +1,8 @@
 <mat-toolbar class="d-flex gap-1">
-  <button color="basic" mat-icon-button matTooltip="返回" (click)="back()">
-    <mat-icon>arrow_back</mat-icon>
-  </button>
-    编辑
+  <mat-icon matTooltip="返回" (click)="back()">arrow_back</mat-icon>
+  <span>编辑</span>
 </mat-toolbar>
-<form class="d-flex" *ngIf="!isLoading" [formGroup]="formGroup">
+<form class="d-flex p-2" *ngIf="!isLoading" [formGroup]="formGroup">
   <div class="d-flex flex-column w-100">
 {$FormControls}
     <div class="d-flex mt-1">
