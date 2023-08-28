@@ -179,7 +179,7 @@ public class CommandBuilder
 
         Option<string> apiOption = new(new[] { "--output", "-o" },
             "api controller project directory");
-        apiOption.SetDefaultValue(Path.Combine(Config.ApiPath);
+        apiOption.SetDefaultValue(Config.ApiPath);
 
         Option<string> suffixOption = new(new[] { "--suffix", "-s" },
             "the controller suffix");
