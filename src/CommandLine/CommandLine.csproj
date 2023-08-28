@@ -7,8 +7,8 @@
     <PackageOutputPath>./nupkg</PackageOutputPath>
     <AssemblyVersion>8.0.0</AssemblyVersion>
     <PackageId>ater.dry</PackageId>
-    <Version>8.0.0-beta1.4</Version>
-    <Description> ater.web 框架代码生成器</Description>
+    <Version>8.0.0-beta1.5</Version>
+    <Description> DRY代码生成助手 </Description>
     <Authors>NilTor</Authors>
     <Company>Atersoft</Company>
     <Copyright>Atersoft</Copyright>
@@ -19,6 +19,7 @@
     <RepositoryUrl>https://github.com/AterDev/cli.git</RepositoryUrl>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <PackageReleaseNotes>
+		    - 基于.NET8 全面升级，所有操作使用Stduio页面完成。
 			- 添加创建新解决方案功能。
 			- 添加了快速切换项目的交互。
 			- 前端添加模型Tab，可据此生成代码片段。
@@ -67,5 +68,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Command.Share\Command.Share.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="nupkg\" />
   </ItemGroup>
 </Project>

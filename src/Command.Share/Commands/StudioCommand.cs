@@ -16,8 +16,7 @@ public class StudioCommand
     public static async Task RunStudioAsync()
     {
         Console.WriteLine("🙌 welcome ater studio!");
-        string appPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        var studioPath = Path.Combine(appPath, "AterStudio");
+        var studioPath = AssemblyHelper.GetStudioPath();
 
         int sleepTime = 1500;
         // 检查并更新
@@ -108,9 +107,9 @@ public class StudioCommand
             "LiteDB",
             "SharpYaml",
             "Microsoft.OpenApi",
-            "CodeGenerator",
             "Microsoft.OpenApi.Readers",
             "Core",
+            "CodeGenerator",
             "Command.Share",
             "Datastore",
             "NuGet.Versioning",
@@ -181,8 +180,7 @@ public class StudioCommand
     /// </summary>
     public static async Task UpdateProjectAsync()
     {
-        var localDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AterStudio");
-
+        var localDir = AssemblyHelper.GetStudioPath();
         // 更新数据库
         var connectionString = $"Filename={Path.Combine(localDir, "dry.db")};Upgrade=true;initialSize=5MB";
         using var db = new LiteDatabase(connectionString);

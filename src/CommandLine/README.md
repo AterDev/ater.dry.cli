@@ -35,8 +35,8 @@
 
 |Package Version|.NET SDK Version|
 |-|-|
-|6.x|6.0|
 |7.x|7.0|
+|8.x|8.0|
 
 > If you want to use it alone, please use the 'dotnet tool' command to install it, such as:
 

@@ -238,7 +238,7 @@ public class AssemblyHelper
     public static string GetStudioPath()
     {
         string appPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        return Path.Combine(appPath, "AterStudio");
+        return Path.Combine(appPath, "DryStudio");
     }
 
     /// <summary>

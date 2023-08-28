@@ -1,5 +1,5 @@
 ﻿using Core.Entities;
-
+using Core.Infrastructure.Helper;
 using LiteDB;
 
 namespace Datastore;
@@ -14,7 +14,7 @@ public class DbContext : IDisposable
     public DbContext()
     {
         string path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        var localDir = Path.Combine(path, "AterStudio");
+        var localDir = AssemblyHelper.GetStudioPath();
         var connectionString = $"Filename={Path.Combine(localDir, "dry.db")};Upgrade=true;initialSize=5MB";
 
         LiteDb ??= new LiteDatabase(connectionString);
