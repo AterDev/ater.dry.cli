@@ -267,7 +267,10 @@ public class ManagerCommand : CommandBase
     public async Task GenerateGlobalUsingsFilesAsync()
     {
         List<string> globalUsings = CodeGen!.GetGlobalUsings();
-
+        if (!string.IsNullOrWhiteSpace(ModuleName))
+        {
+            globalUsings.Add($"global using {ModuleName}.Infrastructure;");
+        }
         string filePath = Path.Combine(ApplicationPath, "GlobalUsings.cs");
         // 如果不存在则生成，如果存在，则添加
         if (File.Exists(filePath))
