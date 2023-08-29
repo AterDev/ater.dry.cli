@@ -14,6 +14,7 @@ import { ProjectService } from 'src/app/share/services/project.service';
 import 'prismjs/plugins/line-numbers/prism-line-numbers.js';
 import 'prismjs/components/prism-markup.min.js';
 import 'prismjs/components/prism-csharp.min.js';
+import { AdvanceService } from 'src/app/share/services/advance.service';
 
 @Component({
   selector: 'app-index',
@@ -24,6 +25,7 @@ export class IndexComponent implements OnInit {
   @ViewChild("addDialog", { static: true }) dialogTmpRef!: TemplateRef<{}>;
   @ViewChild("settingDialog", { static: true }) settingTmpRef!: TemplateRef<{}>;
   @ViewChild("updateProjectDialog", { static: true }) updateTmpRef!: TemplateRef<{}>;
+  @ViewChild("addOpenAiKeyDialog", { static: true }) openAITmpRef!: TemplateRef<{}>;
   SolutionType = SolutionType;
   dialogRef!: MatDialogRef<{}, any>;
   projects = [] as Project[];
@@ -38,9 +40,12 @@ export class IndexComponent implements OnInit {
   updated = false;
   updateResult: string | null = null;
   version: string | null;
+  openAIKey: string | null = null;
+
   constructor(
     private service: ProjectService,
     private projectState: ProjectStateService,
+    private advance: AdvanceService,
     public dialog: MatDialog,
     public snb: MatSnackBar,
     public router: Router,
@@ -53,7 +58,9 @@ export class IndexComponent implements OnInit {
   ngOnInit(): void {
     this.initForm();
     this.getProjects();
+    this.getOpenAIKey();
   }
+
   initForm(): void {
     this.addForm = new FormGroup({
       displayName: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]),
@@ -65,6 +72,21 @@ export class IndexComponent implements OnInit {
     if (currentVersion == null || this.version == null) return false;
     return !this.version.includes(currentVersion!);
   }
+
+  getOpenAIKey(): void {
+    this.advance.getConfig("openAIKey")
+      .subscribe({
+        next: (res) => {
+          if (res) {
+            this.openAIKey = res.value;
+          }
+        },
+        error: (error) => {
+          this.snb.open(error.detail);
+        }
+      });
+  }
+
   addProjectDialog(): void {
     this.dialogRef = this.dialog.open(this.dialogTmpRef, {
       minWidth: 360
@@ -147,6 +169,16 @@ export class IndexComponent implements OnInit {
       disableClose: true
     })
   }
+
+  openOpenAI(): void {
+    this.dialogRef = this.dialog.open(this.openAITmpRef, {
+      minWidth: 450,
+      hasBackdrop: true,
+      closeOnNavigation: false,
+      disableClose: true
+    })
+  }
+
   buildSettingForm(): void {
     this.settingForm = new FormGroup({
       dtoPath: new FormControl(this.config?.dtoPath, [Validators.required, Validators.minLength(1), Validators.maxLength(200)]),
@@ -190,6 +222,23 @@ export class IndexComponent implements OnInit {
     }
   }
 
+  addOpenAiKey(): void {
+    if (this.openAIKey) {
+      this.advance.setConfig("openAIKey", this.openAIKey)
+        .subscribe({
+          next: (res) => {
+            if (res) {
+              this.snb.open('保存成功');
+              this.dialogRef.close();
+            } else {
+            }
+          },
+          error: (error) => {
+            this.snb.open(error.detail);
+          }
+        });
+    }
+  }
   deleteConfirm(item: string): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       hasBackdrop: true,

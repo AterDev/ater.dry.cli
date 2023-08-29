@@ -6,6 +6,12 @@
     <a *ngIf="type!='desktop'" class="ms-2" mat-mini-fab matTooltip="创建新解决方案" routerLink="/create" color="accent">
       <mat-icon>add</mat-icon>
     </a>
+    <div class="d-flex flex-grow-1 "></div>
+    <div>
+      <button mat-icon-button matTooltip="OpenAIKey" (click)="openOpenAI()">
+        <mat-icon color="primary">smart_toy</mat-icon>
+      </button>
+    </div>
   </div>
 
   <div class="d-flex gap-1 flex-wrap mt-2" *ngIf="!isLoading">
@@ -146,5 +152,22 @@
     <button mat-button mat-dialog-close [disabled]="isUpdating">取消</button>
     <button mat-button (click)="updateProject()" *ngIf="!updated" [disabled]="isUpdating" color="warn"
       matTooltip="务必做好备份">升级项目</button>
+  </mat-dialog-actions>
+</ng-template>
+
+<!-- add ng-template dialog -->
+<ng-template #addOpenAiKeyDialog>
+  <h2 mat-dialog-title>设置 OpenAI Key</h2>
+  <mat-dialog-content>
+    <form class="d-flex flex-column">
+      <mat-form-field>
+        <mat-label>APIKey</mat-label>
+        <input type="password" matInput placeholder="输入OpenAI密钥，以使用高级功能" [(ngModel)]="openAIKey">
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions class="justify-content-end">
+    <button mat-button mat-dialog-close>取消</button>
+    <button mat-button (click)="addOpenAiKey()" color="primary">添加</button>
   </mat-dialog-actions>
 </ng-template>

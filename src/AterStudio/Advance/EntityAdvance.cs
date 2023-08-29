@@ -23,7 +23,7 @@ public class EntityAdvance
         _httpClient = httpClient;
         _projectContext = projectContext;
 
-        var key = _dbContext.Configs.Find(c => c.Key == ConfigData.OpenAI).First();
+        var key = _dbContext.Configs.Find(c => c.Key == ConfigData.OpenAI).FirstOrDefault();
         if (key != null)
         {
             _openAI = new OpenAIClient($"{key}.openai.com");
