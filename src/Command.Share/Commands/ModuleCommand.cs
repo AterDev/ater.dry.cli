@@ -27,7 +27,7 @@ public class ModuleCommand
     /// <param name="moduleName"></param>
     public static async Task CreateModuleAsync(string solutionPath, string moduleName)
     {
-        if (!moduleName.EndsWith("Mod") || !moduleName.EndsWith("Module"))
+        if (!moduleName.EndsWith("Mod"))
         {
             moduleName += "Mod";
         }
@@ -259,7 +259,11 @@ public class ModuleCommand
         // update globalusings.cs
         var globalUsingsFile = Path.Combine(databasePath, "GlobalUsings.cs");
         var globalUsingsContent = File.ReadAllText(globalUsingsFile);
-        var newLine = @$"global using Entity.{moduleName}Entities;";
+
+        var moduleNsp = moduleName.EndsWith("Mod")
+            ? moduleName.Replace("Mod", "")
+            : moduleName;
+        var newLine = @$"global using Entity.{moduleNsp}Entities;";
         if (!globalUsingsContent.Contains(newLine))
         {
             Console.WriteLine($"  ℹ️ add new using {newLine} ➡️ GlobalUsings");

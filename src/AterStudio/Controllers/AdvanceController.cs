@@ -80,6 +80,20 @@ public class AdvanceController : ControllerBase
         }
     }
 
+    [HttpGet("test")]
+    public async Task Test()
+    {
+        Response.ContentType = "text/plain";
+        Response.StatusCode = StatusCodes.Status200OK;
+        for (int i = 0; i < 10; i++)
+        {
+            Thread.Sleep(500);
+            await Response.Body.WriteAsync(Encoding.UTF8.GetBytes("content:" + i));
+            await Response.Body.FlushAsync();
+        }
+        //await Response.CompleteAsync();
+    }
+
 
     /// <summary>
     /// 获取token
