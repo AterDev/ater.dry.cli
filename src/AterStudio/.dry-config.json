@@ -1,0 +1,19 @@
+{
+  "RootPath": "./",
+  "ProjectId": "a3969ed6-52c7-47fa-9305-9d6da5b38fcd",
+  "DtoPath": "src\\Share",
+  "EntityPath": "src\\Entity",
+  "DbContextPath": "src\\Database\\EntityFramework",
+  "StorePath": null,
+  "ApplicationPath": "src\\Application",
+  "ApiPath": "src\\Http.API",
+  "IdStyle": "Id",
+  "IdType": "Guid",
+  "CreatedTimeName": "CreatedTime",
+  "UpdatedTimeName": "UpdatedTime",
+  "IsSplitController": false,
+  "Version": "7.0.0",
+  "SwaggerPath": null,
+  "WebAppPath": null,
+  "SolutionType": 0
+}

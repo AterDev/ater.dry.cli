@@ -6,6 +6,101 @@
     "version": "v1"
   },
   "paths": {
+    "/api/Advance/config": {
+      "get": {
+        "tags": [
+          "Advance"
+        ],
+        "summary": "获取配置",
+        "operationId": "Advance_GetConfig",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfigData"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfigData"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfigData"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Advance"
+        ],
+        "summary": "设置配置",
+        "operationId": "Advance_SetConfig",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "value",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Advance/generateEntity": {
+      "post": {
+        "tags": [
+          "Advance"
+        ],
+        "summary": "生成实体",
+        "operationId": "Advance_GenerateEntity",
+        "parameters": [
+          {
+            "name": "content",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/api/Advance/token": {
       "get": {
         "tags": [
@@ -2019,6 +2114,30 @@
         ],
         "x-enumData": [ ]
       },
+      "ConfigData": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "key": {
+            "maxLength": 100,
+            "type": "string",
+            "description": "键"
+          },
+          "value": {
+            "maxLength": 2000,
+            "type": "string",
+            "description": "值"
+          },
+          "valueType": {
+            "$ref": "#/components/schemas/ValueType"
+          }
+        },
+        "additionalProperties": false,
+        "description": "配置"
+      },
       "ConfigOptions": {
         "type": "object",
         "properties": {
@@ -2769,6 +2888,23 @@
           }
         },
         "additionalProperties": false
+      },
+      "ValueType": {
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "integer",
+        "format": "int32",
+        "x-enumNames": [
+          "Integer",
+          "Double",
+          "String",
+          "Boolean"
+        ],
+        "x-enumData": [ ]
       }
     }
   },

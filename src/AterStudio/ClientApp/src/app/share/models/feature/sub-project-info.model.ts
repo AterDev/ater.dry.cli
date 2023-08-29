@@ -1,4 +1,4 @@
-﻿import { ProjectType } from '../enum/project-type.model';
+import { ProjectType } from '../enum/project-type.model';
 /**
  * 项目信息
  */

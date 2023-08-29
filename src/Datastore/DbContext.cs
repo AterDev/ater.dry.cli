@@ -10,6 +10,7 @@ public class DbContext : IDisposable
     public ILiteCollection<EntityInfo> EntityInfos { get; set; }
     public ILiteCollection<ApiDocInfo> ApiDocInfos { get; set; }
     public ILiteCollection<TemplateFile> TemplateFile { get; set; }
+    public ILiteCollection<ConfigData> Configs { get; set; }
 
     public DbContext()
     {
@@ -23,6 +24,7 @@ public class DbContext : IDisposable
         EntityInfos = LiteDb.GetCollection<EntityInfo>();
         ApiDocInfos = LiteDb.GetCollection<ApiDocInfo>();
         TemplateFile = LiteDb.GetCollection<TemplateFile>();
+        Configs = LiteDb.GetCollection<ConfigData>();
     }
 
     public void Dispose()

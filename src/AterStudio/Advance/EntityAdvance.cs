@@ -1,5 +1,7 @@
 ﻿using System.Text;
 using AterStudio.Models;
+using Azure;
+using Azure.AI.OpenAI;
 using Core;
 using Core.Entities;
 using Core.Infrastructure.Helper;
@@ -13,12 +15,79 @@ public class EntityAdvance
     private readonly DbContext _dbContext;
     private readonly DusiHttpClient _httpClient;
     private readonly ProjectContext _projectContext;
+    private readonly OpenAIClient? _openAI;
 
     public EntityAdvance(DbContext dbContext, DusiHttpClient httpClient, ProjectContext projectContext)
     {
         _dbContext = dbContext;
         _httpClient = httpClient;
         _projectContext = projectContext;
+
+        var key = _dbContext.Configs.Find(c => c.Key == ConfigData.OpenAI).First();
+        if (key != null)
+        {
+            _openAI = new OpenAIClient($"{key}.openai.com");
+        }
+    }
+
+
+    /// <summary>
+    /// 设置配置
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
+    public void SetConfig(string key, string value)
+    {
+        var config = _dbContext.Configs.FindOne(c => c.Key == key);
+        if (config != null)
+        {
+            config.Value = value;
+            _dbContext.Configs.Update(config);
+        }
+        else
+        {
+            config = new ConfigData
+            {
+                Key = key,
+                Value = value
+            };
+            _dbContext.Configs.Insert(config);
+        }
+    }
+
+    /// <summary>
+    /// 获取配置
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public ConfigData? GetConfig(string key)
+    {
+        return _dbContext.Configs.FindOne(c => c.Key == key);
+    }
+
+
+    /// <summary>
+    /// 生成实体内容
+    /// </summary>
+    /// <param name="content"></param>
+    /// <returns></returns>
+    public async Task<Response<StreamingChatCompletions>?> GenerateEntityAsync(string content)
+    {
+        if (_openAI != null)
+        {
+            var chatCompletionsOptions = new ChatCompletionsOptions()
+            {
+                Messages =
+                {
+                    new ChatMessage(ChatRole.System, "你是编程助手，为用户提供代码示例"),
+                    new ChatMessage(ChatRole.User, content),
+                    new ChatMessage(ChatRole.Assistant, "根据上面内容，生成C# 模型类，要求带上注释和相关特性;如果有枚举类型，生成枚举类，并带上注释和Description特性"),
+                }
+            };
+
+            return await _openAI.GetChatCompletionsStreamingAsync("gpt-3.5-turbo", chatCompletionsOptions);
+        }
+        return default;
     }
 
 
