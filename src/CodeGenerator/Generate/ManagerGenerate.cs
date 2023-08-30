@@ -193,9 +193,6 @@ public class ManagerGenerate : GenerateBase
         {
             $"global using {entityProjectNamespace};",
             $"global using {entityNamespace};",
-            "global using Application.IManager;",
-            "global using Application.Implement;",
-            "global using EntityFramework;",
             ""
     };
     }

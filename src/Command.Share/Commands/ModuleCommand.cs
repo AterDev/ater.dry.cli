@@ -48,13 +48,13 @@ public class ModuleCommand
         await Console.Out.WriteLineAsync($"🚀 create module:{moduleName} ➡️ {projectPath}");
         string tplContent = GenerateBase.GetTplContent("Implement.RestControllerBase.tpl");
         tplContent = tplContent.Replace(TplConst.NAMESPACE, moduleName);
-        string infrastructruePath = Path.Combine(projectPath, "Infrastructure");
-        await AssemblyHelper.GenerateFileAsync(infrastructruePath, "RestControllerBase.cs", tplContent);
+        string infrastructurePath = Path.Combine(projectPath, "Infrastructure");
+        await AssemblyHelper.GenerateFileAsync(infrastructurePath, "RestControllerBase.cs", tplContent);
 
         // global usings
         string usingsContent = GetGlobalUsings();
         usingsContent = usingsContent.Replace("${Module}", moduleName);
-        await AssemblyHelper.GenerateFileAsync(projectPath, "GlobalUsings.cs", usingsContent);
+        await AssemblyHelper.GenerateFileAsync(projectPath, "GlobalUsings.cs", usingsContent, true);
 
         // get target version 
         string targetVersion = "7.0";
