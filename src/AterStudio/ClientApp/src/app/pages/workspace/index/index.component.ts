@@ -3,6 +3,7 @@ import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSelectionListChange } from '@angular/material/list';
+import { MatSelectChange } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -44,7 +45,7 @@ export class IndexComponent implements OnInit {
   force = false;
   isListening = false;
   isProcessing = false;
-
+  modules: string[] = [];
   entityName: string | null = null;
   entityDescription: string | null = null;
   @ViewChild("requestDialog", { static: true })
@@ -188,6 +189,11 @@ export class IndexComponent implements OnInit {
           this.baseEntityPath = res[0].baseDirPath ?? '';
           this.dataSource = new MatTableDataSource<EntityFile>(this.entityFiles);
 
+          this.modules = this.entityFiles
+            .filter((entity) => entity.module !== null)
+            .map((entity) => entity.module!)
+            .filter((value, index, self) => self.indexOf(value) === index);
+
           this.dataSource.filterPredicate = (data, filter: string) => {
             if (data.name) {
               return data.name.toLowerCase().indexOf(filter) > -1
@@ -287,11 +293,15 @@ export class IndexComponent implements OnInit {
   openAddEntity(): void {
     this.router.navigateByUrl('/workspace/entity');
   }
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+
+  search() {
+    this.dataSource.filter = this.searchKey.trim().toLowerCase();
   }
 
+  applyFilter(event: MatSelectChange) {
+    const filterValue = event.value ?? '';
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
   async openPreviewDialog(item: EntityFile, isManager: boolean) {
     if (isManager) {
       item = await this.getFileContent(item.name!, true, item.module ?? '');

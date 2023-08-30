@@ -33,7 +33,17 @@
       <mat-label>
         搜索实体
       </mat-label>
-      <input matInput placeholder="类名或模块名" [(ngModel)]="searchKey" (keyup)="applyFilter($event)">
+      <input matInput placeholder="类名或模块名" [(ngModel)]="searchKey" (keyup)="search()">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>模块筛选</mat-label>
+      <mat-select placeholder="请选择模块" (selectionChange)="applyFilter($event)">
+        <mat-option [value]="null">全部</mat-option>
+        <mat-option *ngFor="let item of modules" [value]="item">
+          {{item}}
+        </mat-option>
+      </mat-select>
     </mat-form-field>
 
     <button mat-icon-button [matTooltip]="showModuleEntity?'隐藏模块实体':'显示模块实体'" (click)="toggleModule()">
@@ -45,8 +55,8 @@
       <mat-icon>add_circle_outline</mat-icon>
     </button>
 
-    <button mat-icon-button matTooltip="清理项目bin/obj,以让分析器可检测到代码修改.如果失败,请尝试关闭占用程序." [disabled]="isSync"
-      (click)="clean()" color="primary">
+    <button mat-icon-button matTooltip="清理项目bin/obj,以让分析器可检测到代码修改.如果失败,请尝试关闭占用程序." [disabled]="isSync" (click)="clean()"
+      color="primary">
       <mat-icon>cleaning_services</mat-icon>
     </button>
     <button mat-icon-button matTooltip="刷新" (click)="getEntity()" color="primary">
