@@ -164,16 +164,18 @@ public class RequestServiceFunction
         List<string?>? paths = Params?.Where(p => p.InPath).Select(p => p.Name)?.ToList();
         paths?.ForEach(p =>
             {
+                // 路由参数处理
                 string origin = $"{{{p}}}";
                 Path = Path.Replace(origin, "$" + origin);
             });
+
         // 需要拼接的参数,特殊处理文件上传
         List<string?>? reqParams = Params?.Where(p => !p.InPath && p.Type != "FormData")
             .Select(p => p.Name)?.ToList();
         if (reqParams != null)
         {
             string queryParams = "";
-            queryParams = string.Join("&", reqParams.Select(p => { return $"{p}=${{{p}}}"; }).ToArray());
+            queryParams = string.Join("&", reqParams.Select(p => { return $"{p}=${{{p}??''}}"; }).ToArray());
             if (!string.IsNullOrEmpty(queryParams))
             {
                 Path += "?" + queryParams;

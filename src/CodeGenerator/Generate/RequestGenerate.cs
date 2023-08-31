@@ -144,15 +144,42 @@ public class RequestGenerate : GenerateBase
 
             string content = LibType switch
             {
-                RequestLibType.NgHttp => ToNgRequestService(serviceFile),
+                RequestLibType.NgHttp => ToNgRequestBaseService(serviceFile),
                 RequestLibType.Axios => ToAxiosRequestService(serviceFile),
                 _ => ""
             };
 
-            string fileName = currentTag.Name?.ToHyphen() + ".service.ts";
-            GenFileInfo file = new(fileName, content);
+            switch (LibType)
+            {
+                // 同时生成基类和继承类，继承类可自定义
+                case RequestLibType.NgHttp:
+                {
+                    string baseFileName = currentTag.Name?.ToHyphen() + "-base.service.ts";
+                    GenFileInfo file = new(baseFileName, content);
+                    files.Add(file);
 
-            files.Add(file);
+                    string fileName = currentTag.Name?.ToHyphen() + ".service.ts";
+                    content = ToNgRequestService(serviceFile);
+                    file = new(baseFileName, content)
+                    {
+                        CanModify = true
+                    };
+                    files.Add(file);
+                    break;
+                }
+
+                case RequestLibType.Axios:
+                {
+                    string fileName = currentTag.Name?.ToHyphen() + ".service.ts";
+                    GenFileInfo file = new(fileName, content);
+                    files.Add(file);
+                    break;
+                }
+                default:
+                    break;
+            }
+
+
         }
         return files;
     }
@@ -357,7 +384,12 @@ public class RequestGenerate : GenerateBase
         return tplContent;
     }
 
-    public string ToNgRequestService(RequestServiceFile serviceFile)
+    /// <summary>
+    /// 生成angular请求服务基类
+    /// </summary>
+    /// <param name="serviceFile"></param>
+    /// <returns></returns>
+    public string ToNgRequestBaseService(RequestServiceFile serviceFile)
     {
         var functions = serviceFile.Functions;
         string functionstr = "";
@@ -424,10 +456,33 @@ import {{ Observable }} from 'rxjs';
  * {serviceFile.Description}
  */
 @Injectable({{ providedIn: 'root' }})
-export class {serviceFile.Name}Service extends BaseService {{
+export class {serviceFile.Name}BaseService extends BaseService {{
 {functionstr}
 }}
 ";
+        return result;
+    }
+
+    /// <summary>
+    /// 生成ng 请求服务继承类,可自定义
+    /// </summary>
+    /// <param name="serviceFile"></param>
+    /// <returns></returns>
+    public static string ToNgRequestService(RequestServiceFile serviceFile)
+    {
+        string result = $$"""
+import { Injectable } from '@angular/core';
+import { {{serviceFile.Name}}BaseService } from './{{serviceFile.Name.ToHyphen()}}-base.service';
+{importModels}
+/**
+ * {{serviceFile.Description}}
+ */
+@Injectable({providedIn: 'root' })
+export class {{serviceFile.Name}}Service extends {{serviceFile.Name}}BaseService {
+  id: string | null = null;
+  name: string | null = null;
+}
+""";
         return result;
     }
 

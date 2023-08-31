@@ -103,7 +103,7 @@ public class RequestCommand : CommandBase
         foreach (GenFileInfo service in services)
         {
             string dir = Path.Combine(OutputPath, "services");
-            await GenerateFileAsync(dir, service.Name, service.Content, true);
+            await GenerateFileAsync(dir, service.Name, service.Content, !service.CanModify);
         }
 
     }

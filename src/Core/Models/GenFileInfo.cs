@@ -10,6 +10,11 @@ public class GenFileInfo
     /// </summary>
     public string Name { get; set; } = default!;
     public string Content { get; set; }
+
+    /// <summary>
+    /// 是否可被用户编辑，如果可编辑，则不能覆盖用户代码
+    /// </summary>
+    public bool CanModify { get; set; } = false;
     /// <summary>
     /// 相对文件夹名称
     /// </summary>
