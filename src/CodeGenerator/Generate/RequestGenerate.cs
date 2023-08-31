@@ -1,4 +1,5 @@
 using Datastore;
+
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Interfaces;
@@ -160,7 +161,7 @@ public class RequestGenerate : GenerateBase
 
                     string fileName = currentTag.Name?.ToHyphen() + ".service.ts";
                     content = ToNgRequestService(serviceFile);
-                    file = new(baseFileName, content)
+                    file = new(fileName, content)
                     {
                         CanModify = true
                     };
@@ -473,7 +474,7 @@ export class {serviceFile.Name}BaseService extends BaseService {{
         string result = $$"""
 import { Injectable } from '@angular/core';
 import { {{serviceFile.Name}}BaseService } from './{{serviceFile.Name.ToHyphen()}}-base.service';
-{importModels}
+
 /**
  * {{serviceFile.Description}}
  */
