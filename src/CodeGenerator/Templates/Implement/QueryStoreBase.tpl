@@ -193,7 +193,7 @@ public partial class QueryStoreBase<TContext, TEntity> :
         }
         else
         {
-            _query = _query.OrderByDescending(t => t.CreatedTime)
+            _query = _query.OrderByDescending(t => t.CreatedTime);
         }
         int count = _query.Count();
         List<TItem> data = await _query
