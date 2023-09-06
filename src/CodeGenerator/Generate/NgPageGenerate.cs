@@ -86,6 +86,21 @@ public class NgPageGenerate : GenerateBase
 
         List<PropertyInfo>? props = modelInfo.PropertyInfos.ToList();
         string modelName = modelInfo.Name;
+        var entityName = modelName;
+        var suffix = new string[] { "AddDto", "ItemDto", "UpdateDto", "ShortDto", "FilterDto" };
+        foreach (var item in suffix)
+        {
+            if (entityName.EndsWith(item))
+            {
+                entityName = entityName.Replace(item, "");
+                break;
+            }
+            if (serviceName.EndsWith(item))
+            {
+                serviceName = serviceName.Replace(item, "");
+                break;
+            }
+        }
 
         // 生成.ts
         string tplContent = GetTplContent("angular.component.form.component.ts");
@@ -135,6 +150,8 @@ public class NgPageGenerate : GenerateBase
 
     public static NgComponentInfo GenTableComponent(EntityInfo modelInfo, string serviceName)
     {
+
+
         // 需要展示的列
         List<string>? columns = modelInfo.PropertyInfos?.Where(p => !p.IsList && !p.IsNavigation)
             .Where(p => p.Name.ToLower() != "id")
@@ -190,11 +207,17 @@ public class NgPageGenerate : GenerateBase
 
         var entityName = modelName;
         var suffix = new string[] { "AddDto", "ItemDto", "UpdateDto", "ShortDto", "FilterDto" };
+
         foreach (var item in suffix)
         {
             if (entityName.EndsWith(item))
             {
                 entityName = entityName.Replace(item, "");
+                break;
+            }
+            if (serviceName.EndsWith(item))
+            {
+                serviceName = serviceName.Replace(item, "");
                 break;
             }
         }
