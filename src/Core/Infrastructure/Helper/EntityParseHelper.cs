@@ -395,6 +395,13 @@ public class EntityParseHelper
         if (syntax.Initializer != null)
         {
             propertyInfo.DefaultValue = syntax.Initializer.Value.ToFullString();
+
+            if (propertyInfo.DefaultValue.StartsWith("null!")
+                || propertyInfo.DefaultValue.StartsWith("default!"))
+            {
+                propertyInfo.IsRequired = true;
+                propertyInfo.IsNullable = false;
+            }
         }
 
         // 导航属性判断
