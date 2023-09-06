@@ -147,10 +147,11 @@ public class NgPageGenerate : GenerateBase
         {
             columnsDef = columns.Select(s =>
             {
-                string? type = modelInfo.PropertyInfos?
+                var prop = modelInfo.PropertyInfos?
                     .Where(p => p.Name.Equals(s))
-                    .Select(p => p.Type)
                     .FirstOrDefault();
+
+                var type = prop?.Type;
                 string pipe = "";
                 if (type != null)
                 {
@@ -161,7 +162,7 @@ public class NgPageGenerate : GenerateBase
                 }
                 return $$$"""
                       <ng-container matColumnDef="{{{s.ToCamelCase()}}}">
-                        <th mat-header-cell *matHeaderCellDef>path</th>
+                        <th mat-header-cell *matHeaderCellDef>{{{prop?.CommentSummary ?? prop?.Name}}}</th>
                         <td mat-cell *matCellDef="let element">
                           {{element.{{{s.ToCamelCase()}}}{{{pipe}}} }}
                         </td>
@@ -186,7 +187,20 @@ public class NgPageGenerate : GenerateBase
         }
         string modelName = modelInfo.Name;
         string tplContent = GetTplContent("angular.component.table.component.ts");
+
+        var entityName = modelName;
+        var suffix = new string[] { "AddDto", "ItemDto", "UpdateDto", "ShortDto", "FilterDto" };
+        foreach (var item in suffix)
+        {
+            if (entityName.EndsWith(item))
+            {
+                entityName = entityName.Replace(item, "");
+                break;
+            }
+        }
+
         tplContent = tplContent.Replace("{$ModelName}", modelName)
+            .Replace("{$EntityName}", entityName)
             .Replace("{$ModelPathName}", modelName.ToHyphen())
             .Replace("{$ServiceName}", serviceName)
             .Replace("{$ServicePathName}", serviceName.ToHyphen())

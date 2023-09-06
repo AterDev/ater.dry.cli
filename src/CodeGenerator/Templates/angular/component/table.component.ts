@@ -27,7 +27,7 @@ export class IndexComponent implements OnInit {
   @ViewChild('myDialog', { static: true })
   myTmpl!: TemplateRef<{}>;
   mydialogForm!: FormGroup;
-  filter: {$ModelName}FilterDto;
+  filter: {$EntityName}FilterDto;
   pageSizeOption = [12, 20, 50];
   constructor(
     private service: {$ServiceName}Service,
