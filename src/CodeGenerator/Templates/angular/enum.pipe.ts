@@ -5,7 +5,7 @@ import { Pipe, PipeTransform } from '@angular/core';
   name: 'enumText'
 })
 export class EnumTextPipe implements PipeTransform {
-  transform(value: unknown, type: string): unknown {
+  transform(value: unknown, type: string): string {
     let result = '';
     switch (type) {
       ${EnumBlocks}
