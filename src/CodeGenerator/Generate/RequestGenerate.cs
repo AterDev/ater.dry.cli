@@ -231,7 +231,7 @@ public class RequestGenerate : GenerateBase
         var sb = new StringBuilder();
 
         TabConst.TabSize = 2;
-        sb.AppendLine($"case '{enumType}':");
+        sb.AppendLine($"case '{enumType}':".Indent(3));
         sb.AppendLine("{".Indent(4));
         sb.AppendLine($"  switch (value)".Indent(5));
         sb.AppendLine("{".Indent(4));
