@@ -150,8 +150,6 @@ public class NgPageGenerate : GenerateBase
 
     public static NgComponentInfo GenTableComponent(EntityInfo modelInfo, string serviceName)
     {
-
-
         // 需要展示的列
         List<string>? columns = modelInfo.PropertyInfos?.Where(p => !p.IsList && !p.IsNavigation)
             .Where(p => p.Name.ToLower() != "id")
@@ -213,7 +211,6 @@ public class NgPageGenerate : GenerateBase
             if (entityName.EndsWith(item))
             {
                 entityName = entityName.Replace(item, "");
-                break;
             }
             if (serviceName.EndsWith(item))
             {

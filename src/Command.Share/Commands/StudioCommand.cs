@@ -189,9 +189,15 @@ public class StudioCommand
         foreach (var project in projects)
         {
             var solutionDir = project.Path;
+
             if (File.Exists(project.Path))
             {
                 solutionDir = Path.Combine(project.Path, "..");
+            }
+            if (!Directory.Exists(solutionDir))
+            {
+                collection.Delete(project.Id);
+                continue;
             }
             solutionDir = Path.Combine(solutionDir, Config.ConfigFileName);
 
