@@ -962,6 +962,10 @@ public class UpdateManager
                     foreach (Match match in matches)
                     {
                         var oldName = match.Groups[0].Value;
+                        if (oldName == "IDomainManager")
+                        {
+                            continue;
+                        }
                         var newName = match.Groups[1].Value + "Manager";
                         content = content.Replace(oldName, newName);
                         Console.WriteLine($"⛏️ update [{Path.GetFileName(manager.FilePath)}]:{oldName}=>{newName}");
@@ -983,24 +987,44 @@ public class UpdateManager
         });
 
         // 更新 global usings
-        var projects = new string[] { "Application", "Http.API" };
-        var globalUsings = helper.Solution.Projects.Where(p => !projects.Contains(p.Name))
+        var globalUsings = helper.Solution.Projects
             .SelectMany(p => p.Documents)
             .Where(d => d.FilePath != null && d.FilePath.EndsWith("GlobalUsings.cs"))
             .ToList();
 
         foreach (var g in globalUsings)
         {
-
             var root = await g.GetSyntaxRootAsync();
             var content = root!.ToFullString();
 
-            if (!content.Contains("global using Application.Manager;"))
+            var projectName = g.Project.Name;
+            if (projectName is "Http.API" or "Application")
             {
-                content += Environment.NewLine + "global using Application.Manager;";
+                if (!content.Contains("global using Application.Manager;"))
+                {
+                    content += Environment.NewLine + "global using Application.Manager;";
+                }
             }
+            if (g.Project.FilePath != null && g.Project.FilePath.Contains("Modules"))
+            {
+
+                if (!content.Contains("global using Application.Manager;"))
+                {
+                    content += Environment.NewLine + "global using Application.Manager;";
+                }
+
+                var replaceName = projectName + ".IManager;";
+                if (content.Contains(replaceName))
+                {
+                    content = content.Replace(replaceName, projectName + ".Manager;");
+                }
+            }
+
+            await IOHelper.WriteToFileAsync(g.FilePath!, content);
+            Console.WriteLine($"⛏️ update [{Path.GetFileName(g.FilePath)}]");
         }
 
+        // TODO:重新生成注入服务
         return true;
     }
 }
