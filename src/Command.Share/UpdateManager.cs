@@ -2,11 +2,14 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
+
 using Core.Infrastructure;
+
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
+
 using NuGet.Versioning;
 
 namespace Command.Share;
@@ -255,7 +258,7 @@ public class UpdateManager
         var solutionFilePath = Directory.GetFiles(solutionPath, "*.sln", SearchOption.TopDirectoryOnly).FirstOrDefault();
 
         var aterCoreName = "Ater.Web.Core";
-        var aterAbstracture = "Ater.Web.Abstracture";
+        var aterAbstraction = "Ater.Web.Abstraction";
 
         if (solutionFilePath == null)
         {
@@ -286,7 +289,7 @@ public class UpdateManager
                 IOHelper.CopyDirectory(fromDir, destDir);
                 // add to solution
                 solution.AddExistProject(Path.Combine(destDir, aterCoreName, $"{aterCoreName}{Const.CSharpProjectExtention}"));
-                solution.AddExistProject(Path.Combine(destDir, aterAbstracture, $"{aterAbstracture}{Const.CSharpProjectExtention}"));
+                solution.AddExistProject(Path.Combine(destDir, aterAbstraction, $"{aterAbstraction}{Const.CSharpProjectExtention}"));
             }
             else
             {
@@ -432,7 +435,7 @@ public class UpdateManager
             var coreProject = solution.GetProject(coreName);
             var aterCoreProject = solution.GetProject(aterCoreName);
             var applicationProject = solution.GetProject(appAssemblyName);
-            var aterAbstractureProject = solution.GetProject(aterAbstracture);
+            var aterAbstractureProject = solution.GetProject(aterAbstraction);
             var dtoProject = solution.GetProject(dtoAssemblyName);
             var entityFrameworkProject = solution.GetProject("EntityFramework");
 
@@ -1024,7 +1027,27 @@ public class UpdateManager
             Console.WriteLine($"⛏️ update [{Path.GetFileName(g.FilePath)}]");
         }
 
-        // TODO:重新生成注入服务
+        // 重新生成注入服务
+        var serviceContent = ManagerGenerate.GetManagerDIExtensions(solutionPath, "Application");
+        var applicationDir = Path.Combine(solutionPath, Config.ApplicationPath);
+        var filePath = Path.Combine(applicationDir, "ManagerServiceCollectionExtensions.cs");
+        await IOHelper.WriteToFileAsync(filePath, serviceContent);
+
+        var moduleDirs = Directory.GetDirectories(
+            Path.Combine(solutionPath, "src", "Modules"),
+            "*",
+             SearchOption.TopDirectoryOnly)
+            .ToList();
+
+        moduleDirs.ForEach(async module =>
+        {
+            var moduleName = Path.GetDirectoryName(module);
+            serviceContent = ManagerGenerate.GetManagerModuleDIExtensions(solutionPath, moduleName!);
+
+            filePath = Path.Combine(module, "ServiceCollectionExtensions.cs");
+            await IOHelper.WriteToFileAsync(filePath, serviceContent);
+        });
+
         return true;
     }
 }
