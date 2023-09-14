@@ -546,7 +546,7 @@ public class ManagerGenerate : GenerateBase
         files?.ToList().ForEach(file =>
         {
             object name = Path.GetFileNameWithoutExtension(file);
-            string row = $"        services.AddScoped<I{name}, {name}>();";
+            string row = $"        services.AddScoped(typeof({name}));";
             managerServiceContent += row + Environment.NewLine;
         });
 
@@ -582,7 +582,7 @@ public class ManagerGenerate : GenerateBase
         files?.ToList().ForEach(file =>
         {
             object name = Path.GetFileNameWithoutExtension(file);
-            string row = $"        services.AddScoped<I{name}, {name}>();";
+            string row = $"        services.AddScoped(typeof({name}));";
             managerServiceContent += row + Environment.NewLine;
         });
 

@@ -113,8 +113,8 @@ public class RestApiGenerate : GenerateBase
         requiredNavigations?.ForEach(navigation =>
         {
             var name = navigation.Type;
-            additionManagerProps += $"    private readonly I{name}Manager _{name.ToCamelCase()}Manager;" + Environment.NewLine;
-            additionManagerDI += $",{Environment.NewLine}        I{name}Manager {name.ToCamelCase()}Manager";
+            additionManagerProps += $"    private readonly {name}Manager _{name.ToCamelCase()}Manager;" + Environment.NewLine;
+            additionManagerDI += $",{Environment.NewLine}        {name}Manager {name.ToCamelCase()}Manager";
             additionManagerInit += $"        _{name.ToCamelCase()}Manager = {name.ToCamelCase()}Manager;" + Environment.NewLine;
         });
         tplContent = tplContent.Replace("${AdditionManagersProps}", additionManagerProps)

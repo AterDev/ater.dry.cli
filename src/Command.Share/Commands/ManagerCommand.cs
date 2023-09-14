@@ -1,4 +1,3 @@
-using Core.Infrastructure;
 using PluralizeService.Core;
 
 namespace Command.Share.Commands;
@@ -227,37 +226,8 @@ public class ManagerCommand : CommandBase
         string interfaceContent = CodeGen!.GetIManagerContent(ModuleName);
         string managerContent = CodeGen!.GetManagerContent(ModuleName);
 
-        // 如果文件已经存在，并且没有选择覆盖，并且符合更新要求，则进行更新
-        string iManagerPath = Path.Combine(iManagerDir, $"I{entityName}Manager.cs");
-        if (!force
-            && File.Exists(iManagerPath)
-            && AssemblyHelper.NeedUpdate(Const.Version))
-        {
-        }
-        else
-        {
-            // 生成接口
-            await GenerateFileAsync(iManagerDir, $"I{entityName}Manager.cs", interfaceContent, force);
-        }
-
         // 生成manger
         await GenerateFileAsync(managerDir, $"{entityName}Manager.cs", managerContent, force);
-    }
-
-    public async Task GenerateMangerTestAsync(bool force)
-    {
-        string testProjectPath = Path.Combine(ApplicationPath, "..", "..", "test", "Application.Test");
-        if (Directory.Exists(testProjectPath))
-        {
-            string testDir = Path.Combine(testProjectPath, "Managers");
-            string entityName = Path.GetFileNameWithoutExtension(EntityFilePath);
-            if (Directory.Exists(testDir))
-            {
-                _ = Directory.CreateDirectory(testDir);
-            }
-            string managerContent = CodeGen!.GetManagerTestContent();
-            await GenerateFileAsync(testDir, $"{entityName}ManagerTest.cs", managerContent, force);
-        }
     }
 
     /// <summary>
