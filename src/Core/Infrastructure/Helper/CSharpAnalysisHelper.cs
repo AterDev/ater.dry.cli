@@ -8,6 +8,12 @@ namespace Core.Infrastructure.Helper;
 /// </summary>
 public class CSharpAnalysisHelper
 {
+    /// <summary>
+    /// 获取接口类的继承信息
+    /// </summary>
+    /// <param name="compilation"></param>
+    /// <param name="tree"></param>
+    /// <returns></returns>
     public static async Task<INamedTypeSymbol?> GetBaseInterfaceInfoAsync(CSharpCompilation compilation, SyntaxTree tree)
     {
         var root = await tree.GetRootAsync();
@@ -25,6 +31,9 @@ public class CSharpAnalysisHelper
         }
         return default;
     }
+
+
+
 
     public static string FormatChanges(SyntaxNode node)
     {

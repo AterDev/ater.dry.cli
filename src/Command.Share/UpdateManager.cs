@@ -1,6 +1,7 @@
 ﻿using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 using Core.Infrastructure;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -558,7 +559,7 @@ public class UpdateManager
         var apiName = Config.ApiPath.Split(Path.DirectorySeparatorChar).Last();
         var apiPath = Path.Combine(solution.FilePath!, "..", Config.ApiPath);
         var apiProject = helper.GetProject(apiName);
-        var controllers = appProject?.Documents
+        var controllers = apiProject?.Documents
             .Where(d => d.Folders.Any() && d.Folders[0].Equals("Controllers"))
             .Where(d => d.FilePath != null && d.FilePath.EndsWith("Controller.cs"))
             .ToList();
@@ -850,4 +851,156 @@ public class UpdateManager
         return content;
     }
     #endregion
+
+    /// <summary>
+    /// 移除Manager的接口层
+    /// </summary>
+    public static async Task<bool> RemoveManagerInterfaceAsync(string solutionPath)
+    {
+        var solutionFilePath = Directory.GetFiles(solutionPath, "*.sln", SearchOption.TopDirectoryOnly).FirstOrDefault();
+        if (solutionFilePath == null)
+        {
+            Console.WriteLine("⚠️ can't find sln file");
+            return false;
+        }
+
+        var appName = Config.ApplicationPath.Split(Path.DirectorySeparatorChar).Last();
+        var helper = new SolutionHelper(solutionFilePath);
+
+        var appProject = helper.GetProject(appName);
+        var solution = helper.Solution;
+
+        // 更新 controllers
+        var controllerFiles = Directory.GetFiles(solutionPath, "*Controller.cs", SearchOption.AllDirectories)
+            .ToList();
+        controllerFiles.ForEach(file =>
+        {
+            var content = File.ReadAllText(file);
+            var pattern = @"I(\w+)Manager";
+            var matches = Regex.Matches(content, pattern);
+            if (matches.Count > 0)
+            {
+                foreach (Match match in matches)
+                {
+                    var oldName = match.Groups[0].Value;
+                    var newName = match.Groups[1].Value + "Manager";
+                    content = content.Replace(oldName, newName);
+                    Console.WriteLine($"⛏️ update [{Path.GetFileName(file)}]:{oldName}=>{newName}");
+                }
+                File.WriteAllText(file, content);
+            }
+        });
+
+        // 更新 Manager
+        var managers = helper.Solution.Projects.SelectMany(p => p.Documents)
+            .Where(d => d.Folders.Any() && d.Folders.Any(f => f.Equals("Manager")))
+            .Where(d => d.FilePath != null && d.FilePath.EndsWith("Manager.cs"))
+            .ToList();
+
+
+        var dlls = Directory.EnumerateFiles(solutionPath, "*.dll", SearchOption.AllDirectories);
+        var compilation = CSharpCompilation.Create("tmp")
+            .AddReferences(dlls.Select(dll => MetadataReference.CreateFromFile(dll)))
+            .WithOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+        foreach (var manager in managers)
+        {
+            var tree = await manager.GetSyntaxTreeAsync();
+            var root = await manager.GetSyntaxRootAsync();
+            if (tree != null && root != null)
+            {
+                compilation = compilation.AddSyntaxTrees(tree);
+                var classDeclaration = root.DescendantNodes()
+                    .OfType<ClassDeclarationSyntax>()
+                    .FirstOrDefault();
+
+                var entityName = manager.Name.Replace("Manager.cs", "");
+                var oldInterfaceName = $"I{entityName}Manager";
+
+                var semanticModel = compilation.GetSemanticModel(tree);
+                var classSymbol = semanticModel.GetDeclaredSymbol(classDeclaration!);
+                var baseInterfaceType = classSymbol!.Interfaces
+                    .Where(i => i.Name.Equals(oldInterfaceName))
+                    .FirstOrDefault();
+
+                if (baseInterfaceType == null)
+                {
+                    Console.WriteLine($"🦘 skip {manager.Name} ");
+                    continue;
+                }
+
+                var content = root.ToFullString();
+                if (baseInterfaceType != null)
+                {
+                    var editor = await DocumentEditor.CreateAsync(manager);
+
+                    var oldNode = classDeclaration.DescendantNodes().OfType<SimpleBaseTypeSyntax>()
+                        .Where(n => n.Type.ToString().Equals(oldInterfaceName))
+                        .Single();
+
+
+                    var typeName = SyntaxFactory.ParseTypeName($"IDomainManager<{entityName}>");
+                    var baseType = SyntaxFactory.SimpleBaseType(typeName);
+
+
+                    var newNode = baseType.WithTrailingTrivia(SyntaxFactory.LineFeed);
+
+                    var newClassDeclaration = classDeclaration?.ReplaceNode(oldNode, newNode);
+                    if (newClassDeclaration != null)
+                    {
+                        editor.ReplaceNode(classDeclaration!, newClassDeclaration);
+                    }
+                    var newRoot = editor.GetChangedRoot();
+
+                    content = CSharpAnalysisHelper.FormatChanges(newRoot);
+                }
+
+                var pattern = @"I(\w+)Manager";
+                var matches = Regex.Matches(content, pattern);
+                if (matches.Count > 0)
+                {
+                    foreach (Match match in matches)
+                    {
+                        var oldName = match.Groups[0].Value;
+                        var newName = match.Groups[1].Value + "Manager";
+                        content = content.Replace(oldName, newName);
+                        Console.WriteLine($"⛏️ update [{Path.GetFileName(manager.FilePath)}]:{oldName}=>{newName}");
+                    }
+                }
+                await IOHelper.WriteToFileAsync(manager.FilePath!, content);
+            }
+        }
+
+        // 删除所有IManager
+        var imanagerFiles = Directory.GetFiles(solutionPath, "I*Manager.cs", SearchOption.AllDirectories)
+            .ToList();
+        imanagerFiles.ForEach(file =>
+        {
+            if (!file.EndsWith("IDomainManager.cs"))
+            {
+                File.Delete(file);
+            }
+        });
+
+        // 更新 global usings
+        var projects = new string[] { "Application", "Http.API" };
+        var globalUsings = helper.Solution.Projects.Where(p => !projects.Contains(p.Name))
+            .SelectMany(p => p.Documents)
+            .Where(d => d.FilePath != null && d.FilePath.EndsWith("GlobalUsings.cs"))
+            .ToList();
+
+        foreach (var g in globalUsings)
+        {
+
+            var root = await g.GetSyntaxRootAsync();
+            var content = root!.ToFullString();
+
+            if (!content.Contains("global using Application.Manager;"))
+            {
+                content += Environment.NewLine + "global using Application.Manager;";
+            }
+        }
+
+        return true;
+    }
 }

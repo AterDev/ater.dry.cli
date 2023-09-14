@@ -109,9 +109,9 @@ public class ModuleCommand
             global using System.Linq.Expressions;
             global using Application.Const;
             global using Application;
-            global using Application.IManager;
             global using Application.Implement;
             global using ${Module}.Infrastructure;
+            global using ${Module}.Manager;
             global using Ater.Web.Core.Models;
             global using Ater.Web.Core.Utils;
             global using Entity;

@@ -102,4 +102,22 @@ export class FeatureComponent {
         });
     }
   }
+
+  removeIManager(): void {
+    this.service.RemoveIManager()
+      .subscribe({
+        next: (res) => {
+          if (res) {
+            this.snb.open('执行成功');
+          } else {
+            this.snb.open('执行失败');
+          }
+        },
+        error: (error) => {
+          this.snb.open(error.detail);
+        },
+        complete: () => {
+        }
+      });
+  }
 }

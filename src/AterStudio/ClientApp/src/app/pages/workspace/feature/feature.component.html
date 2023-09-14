@@ -5,6 +5,9 @@
         <span>{{project?.displayName}}</span>
         <div class="d-flex flex-grow-1"></div>
         <div class="d-flex">
+          <button mat-icon-button (click)="removeIManager()">
+            <mat-icon>cleaning_services</mat-icon>
+          </button>
           <button mat-raised-button (click)="openModuleDialog()" color="primary">添加模块</button>
         </div>
       </mat-toolbar-row>
