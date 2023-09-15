@@ -104,6 +104,7 @@ export class FeatureComponent {
   }
 
   removeIManager(): void {
+    this.isProcessing = true;
     this.service.RemoveIManager()
       .subscribe({
         next: (res) => {
@@ -115,8 +116,10 @@ export class FeatureComponent {
         },
         error: (error) => {
           this.snb.open(error.detail);
+          this.isProcessing = false;
         },
         complete: () => {
+          this.isProcessing = false;
         }
       });
   }

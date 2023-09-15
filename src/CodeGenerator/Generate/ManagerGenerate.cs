@@ -545,7 +545,7 @@ public class ManagerGenerate : GenerateBase
 
         files?.ToList().ForEach(file =>
         {
-            object name = Path.GetFileNameWithoutExtension(file);
+            string name = Path.GetFileNameWithoutExtension(file);
             string row = $"        services.AddScoped(typeof({name}));";
             managerServiceContent += row + Environment.NewLine;
         });

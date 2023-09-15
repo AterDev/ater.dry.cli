@@ -1032,6 +1032,7 @@ public class UpdateManager
         var applicationDir = Path.Combine(solutionPath, Config.ApplicationPath);
         var filePath = Path.Combine(applicationDir, "ManagerServiceCollectionExtensions.cs");
         await IOHelper.WriteToFileAsync(filePath, serviceContent);
+        Console.WriteLine($"⛏️ update [{filePath}]");
 
         var moduleDirs = Directory.GetDirectories(
             Path.Combine(solutionPath, "src", "Modules"),
@@ -1039,15 +1040,19 @@ public class UpdateManager
              SearchOption.TopDirectoryOnly)
             .ToList();
 
-        moduleDirs.ForEach(async module =>
+        if (moduleDirs.Any())
         {
-            var moduleName = Path.GetDirectoryName(module);
-            serviceContent = ManagerGenerate.GetManagerModuleDIExtensions(solutionPath, moduleName!);
+            foreach (var module in moduleDirs)
+            {
+                var moduleName = Path.GetFileName(module);
+                serviceContent = ManagerGenerate.GetManagerModuleDIExtensions(solutionPath, moduleName!);
 
-            filePath = Path.Combine(module, "ServiceCollectionExtensions.cs");
-            await IOHelper.WriteToFileAsync(filePath, serviceContent);
-        });
+                filePath = Path.Combine(module, "ServiceCollectionExtensions.cs");
+                await IOHelper.WriteToFileAsync(filePath, serviceContent);
+                Console.WriteLine($"⛏️ update [{filePath}]");
 
+            }
+        }
         return true;
     }
 }
