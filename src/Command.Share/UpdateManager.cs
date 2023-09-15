@@ -809,7 +809,7 @@ public class UpdateManager
             {(!isSuccess ?
             """
             - 清理或回滚更新产生的变更！
-            - 查看控制台错误信息，并将更新错误信息反馈到 [Github Issue](https://github.com/AterDev/ater.droplet.cli/issues)。
+            - 查看控制台错误信息，并将更新错误信息反馈到 [Github Issue](https://github.com/AterDev/ater.dry.cli/issues)。
             """
             :
             """
