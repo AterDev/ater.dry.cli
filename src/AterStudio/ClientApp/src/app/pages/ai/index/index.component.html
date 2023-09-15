@@ -1,0 +1,32 @@
+<div class="container ">
+  <div class="d-flex">
+    <!-- 边栏选项 -->
+    <div class="d-flex flex-column" style="min-width: 200px;">
+      <mat-selection-list #shoes [multiple]="false" [hideSingleSelectionIndicator]="true"
+        (selectionChange)="selectTool($event)">
+        <mat-list-option [value]="ToolType.Entity" [selected]="selectedTool=== ToolType.Entity">
+          实体
+        </mat-list-option>
+        <mat-list-option [value]="ToolType.Image" [selected]="selectedTool=== ToolType.Image">
+          图片
+        </mat-list-option>
+      </mat-selection-list>
+
+    </div>
+    <!-- 对话内容 -->
+    <div class="d-flex flex-column flex-fill">
+      <div class="d-flex flex-column dialog">
+        <div class="flex-fill answer-area">
+
+        </div>
+        <div class="fixed-bottom input-block d-flex">
+          <!-- 在一行中，定义一个输入框，和一个发送按钮，按钮固定宽度100px -->
+
+          <textarea matInput type="text" class="flex-grow-1 input-area" placeholder="" row="2"></textarea>
+          <button mat-flat-button color="primary" class="h-100 ">发送</button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

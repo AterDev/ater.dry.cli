@@ -5,7 +5,9 @@ const routes: Routes = [
     { path: '', redirectTo: 'index', pathMatch: 'full' },
     { path: 'index', redirectTo: 'index', pathMatch: 'full' },
     { path: 'login', redirectTo: 'login', pathMatch: 'full' },
+    { path: 'ai', redirectTo: 'ai/index', pathMatch: 'full' },
     { path: '*', redirectTo: '', pathMatch: 'full' },
+
 ];
 
 @NgModule({

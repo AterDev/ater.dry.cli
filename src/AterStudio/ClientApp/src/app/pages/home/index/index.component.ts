@@ -97,18 +97,13 @@ export class IndexComponent implements OnInit {
     if (this.addForm.valid) {
       const name = this.addForm.get('displayName')?.value as string;
       const path = this.addForm.get('path')?.value as string;
-
       this.service.add(name, path)
         .subscribe({
           next: (res) => {
-            if (res) {
-              this.snb.open('添加成功');
-              this.dialogRef.close();
-              this.addForm.reset();
-              this.getProjects();
-            } else {
-              this.snb.open('添加失败');
-            }
+            this.snb.open('添加成功');
+            this.dialogRef.close();
+            this.addForm.reset();
+            this.getProjects();
           },
           error: (error) => {
             this.snb.open(error.detail);

@@ -1,0 +1,24 @@
+.dialog {
+    height: calc(100vh - 70px);
+}
+
+.answer-area {
+    padding: 8px;
+    margin: 4px 0;
+    background-color: #ebeff0a6;
+}
+
+.input-area {
+    padding: 4px;
+    border: 1px solid #aaaaaa;
+    resize: none;
+    overflow-y: auto;
+    font-size: 1.1rem;
+    margin: 0 2px;
+}
+
+.input-block {
+    padding-bottom: 1px;
+    margin-bottom: 1px;
+    height: 88px;
+}
