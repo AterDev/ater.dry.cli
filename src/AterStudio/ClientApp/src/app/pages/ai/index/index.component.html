@@ -20,11 +20,9 @@
 
         </div>
         <div class="fixed-bottom input-block d-flex">
-          <!-- 在一行中，定义一个输入框，和一个发送按钮，按钮固定宽度100px -->
-
-          <textarea matInput type="text" class="flex-grow-1 input-area" placeholder="" row="2"></textarea>
-          <button mat-flat-button color="primary" class="h-100 ">发送</button>
-
+          <textarea matInput type="text" class="flex-grow-1 input-area" placeholder="" [(ngModel)]="content"
+            row="2"></textarea>
+          <button mat-flat-button color="primary" class="h-100" (click)="send()" (keyup.enter)="send()">发送</button>
         </div>
       </div>
     </div>
