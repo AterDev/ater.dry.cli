@@ -17,12 +17,13 @@
     <div class="d-flex flex-column flex-fill">
       <div class="d-flex flex-column dialog">
         <div class="flex-fill answer-area">
-
+          {{answerContent}}
         </div>
         <div class="fixed-bottom input-block d-flex">
           <textarea matInput type="text" class="flex-grow-1 input-area" placeholder="" [(ngModel)]="content"
             row="2"></textarea>
-          <button mat-flat-button color="primary" class="h-100" (click)="send()" (keyup.enter)="send()">发送</button>
+          <button mat-flat-button color="primary" class="h-100" (click)="send()" (keyup.enter)="send()"
+            [disabled]="isProcessing">发送</button>
         </div>
       </div>
     </div>

@@ -222,11 +222,8 @@ export class IndexComponent implements OnInit {
       this.advance.setConfig("openAIKey", this.openAIKey)
         .subscribe({
           next: (res) => {
-            if (res) {
-              this.snb.open('保存成功');
-              this.dialogRef.close();
-            } else {
-            }
+            this.snb.open('保存成功');
+            this.dialogRef.close();
           },
           error: (error) => {
             this.snb.open(error.detail);

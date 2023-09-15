@@ -1,7 +1,11 @@
 ﻿using System.Text;
+
 using AterStudio.Advance;
+
 using Azure.AI.OpenAI;
+
 using Core.Entities;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace AterStudio.Controllers;
@@ -73,6 +77,10 @@ public class AdvanceController : ControllerBase
         {
             await foreach (ChatMessage message in choice.GetMessageStreaming())
             {
+                if (message.Content == null)
+                {
+                    continue;
+                }
                 await Response.Body.WriteAsync(Encoding.UTF8.GetBytes(message.Content));
                 await Response.Body.FlushAsync();
             }

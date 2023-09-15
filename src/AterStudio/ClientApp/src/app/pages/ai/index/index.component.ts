@@ -1,7 +1,9 @@
+import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { MatSelectionListChange } from '@angular/material/list';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, ActivatedRoute } from '@angular/router';
+import { map } from 'rxjs';
 import { AdvanceService } from 'src/app/share/services/advance.service';
 
 export enum ToolType {
@@ -20,6 +22,7 @@ export class IndexComponent {
   ToolType = ToolType;
   content: string | null = null;
   selectedTool: ToolType;
+  answerContent: string | null = null;
   constructor(
     private snb: MatSnackBar,
     private router: Router,
@@ -40,28 +43,32 @@ export class IndexComponent {
   }
 
 
-  send(): void {
+  send() {
     if (this.content != null && this.content != "") {
       this.isProcessing = true;
-      this.service.generateEntity(this.content)
-        .subscribe({
-          next: (res) => {
-            if (res) {
-              console.log(res);
-
+      const url = this.service.baseUrl + `/api/Advance/generateEntity?content=${this.content ?? ''}`;
+      const self = this;
+      fetch(url, { method: 'POST' }).then((response) => {
+        if (!response.ok) {
+          this.snb.open('请求失败');
+        }
+        if (response.body) {
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder('utf-8');
+          reader.read().then(function processText({ done, value }) {
+            if (done) {
+              console.log('Stream finished');
+              return;
             }
-          },
-          error: (error) => {
-            this.snb.open(error.detail);
-            this.isProcessing = false;
-          },
-          complete: () => {
-            this.isProcessing = false;
-          }
-        });
+            const res = decoder.decode(value)
+            self.answerContent += res;
+            reader.read().then(processText);
+          });
+        }
+      });
+
     } else {
       this.snb.open('请输入内容');
     }
-
   }
 }
