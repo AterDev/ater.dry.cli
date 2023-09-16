@@ -1,7 +1,9 @@
 ﻿using AterStudio.Advance;
 using AterStudio.Manager;
 using AterStudio.Models;
+
 using Core.Entities;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace AterStudio.Controllers;
@@ -181,7 +183,7 @@ public class ProjectController : ControllerBase
     [HttpGet("database/{id}")]
     public string GetDatabaseContent([FromRoute] Guid id)
     {
-        return _advace.GetDatabaseStructure(id);
+        return _advace.GetDatabaseStructure();
     }
 
     /// <summary>

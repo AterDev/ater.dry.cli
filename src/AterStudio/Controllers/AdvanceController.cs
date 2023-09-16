@@ -87,19 +87,15 @@ public class AdvanceController : ControllerBase
         }
     }
 
-    [HttpGet("test")]
-    public async Task Test()
+    /// <summary>
+    /// 生成图片
+    /// </summary>
+    /// <param name="content"></param>
+    /// <returns></returns>
+    [HttpGet("Images")]
+    public async Task<List<string>?> GetImages(string content)
     {
-        Response.ContentType = "text/plain";
-        Response.StatusCode = StatusCodes.Status200OK;
-        for (int i = 0; i < 10; i++)
-        {
-            Thread.Sleep(500);
-            await Response.Body.WriteAsync(Encoding.UTF8.GetBytes("content:" + i));
-            await Response.Body.FlushAsync();
-        }
-        //await Response.CompleteAsync();
+        return await _entityAdvance.GenerateImagesAsync(content);
     }
-
 }
 

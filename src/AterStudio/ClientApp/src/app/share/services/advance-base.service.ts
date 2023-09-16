@@ -37,11 +37,12 @@ export class AdvanceBaseService extends BaseService {
   }
 
   /**
-   * test
+   * 生成图片
+   * @param content 
    */
-  test(): Observable<any> {
-    const url = `/api/Advance/test`;
-    return this.request<any>('get', url);
+  getImages(content: string | null): Observable<string[]> {
+    const url = `/api/Advance/Images?content=${content??''}`;
+    return this.request<string[]>('get', url);
   }
 
 }

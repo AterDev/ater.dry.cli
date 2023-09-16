@@ -101,15 +101,52 @@
         }
       }
     },
-    "/api/Advance/test": {
+    "/api/Advance/Images": {
       "get": {
         "tags": [
           "Advance"
         ],
-        "operationId": "Advance_Test",
+        "summary": "生成图片",
+        "operationId": "Advance_GetImages",
+        "parameters": [
+          {
+            "name": "content",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
           }
         }
       }

@@ -17,7 +17,8 @@
     <div class="d-flex flex-column flex-fill">
       <div class="d-flex flex-column dialog">
         <div class="flex-fill answer-area">
-          {{answerContent}}
+          <markdown [data]="answerContent" *ngIf="answerContent" lineNumbers [start]="1" style="display: grid;">
+          </markdown>
         </div>
         <div class="fixed-bottom input-block d-flex">
           <textarea matInput type="text" class="flex-grow-1 input-area" placeholder="" [(ngModel)]="content"

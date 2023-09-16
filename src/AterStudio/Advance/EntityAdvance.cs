@@ -1,9 +1,12 @@
 ﻿using System.Text;
+
 using Azure;
 using Azure.AI.OpenAI;
+
 using Core;
 using Core.Entities;
 using Core.Infrastructure.Helper;
+
 using Datastore;
 
 namespace AterStudio.Advance;
@@ -77,9 +80,9 @@ public class EntityAdvance
             {
                 Messages =
                 {
-                    new ChatMessage(ChatRole.System, "你是编程助手，为用户提供代码示例"),
+                    new ChatMessage(ChatRole.System, "你是一个严谨完善的编程助手，为用户提供代码示例"),
                     new ChatMessage(ChatRole.User, content),
-                    new ChatMessage(ChatRole.Assistant, "根据上面内容，生成C# 模型类，要求带上注释和相关特性;如果有枚举类型，生成枚举类，并带上注释和Description特性"),
+                    new ChatMessage(ChatRole.User, "根据上面内容，生成C#实体模型类，为类和属性添加注释和特性;如果有枚举类型，生成枚举类，并带上注释和Description特性。注释使用C#风格的XML注释，只需要提供模型类即可。"),
                 }
             };
 
@@ -90,19 +93,54 @@ public class EntityAdvance
 
 
     /// <summary>
+    /// 生成图片
+    /// </summary>
+    /// <param name="content"></param>
+    /// <param name="size"></param>
+    public async Task<List<string>?> GenerateImagesAsync(string content, ImageSize size = ImageSize.Middle)
+    {
+        if (_openAI != null)
+        {
+            var imageOptions = new ImageGenerationOptions()
+            {
+                Prompt = content,
+                ImageCount = 1,
+
+            };
+            imageOptions.Size = size switch
+            {
+                ImageSize.Small => Azure.AI.OpenAI.ImageSize.Size256x256,
+                ImageSize.Middle => Azure.AI.OpenAI.ImageSize.Size512x512,
+                ImageSize.Large => Azure.AI.OpenAI.ImageSize.Size1024x1024,
+                _ => Azure.AI.OpenAI.ImageSize.Size512x512
+            };
+
+            var response = await _openAI.GetImageGenerationsAsync(imageOptions);
+            if (response != null)
+            {
+                var images = response.Value.Data.ToList();
+                return images.Select(image => image.Url.ToString()).ToList();
+            }
+
+        }
+        return default;
+    }
+
+
+    /// <summary>
     /// 获取实体表结构
     /// </summary>
-    /// <param name="id">项目id</param>
     /// <returns>markdown format</returns>
-    public string GetDatabaseStructure(Guid id)
+    public string GetDatabaseStructure()
     {
-        var result = "";
+
+        var sb = new StringBuilder();
         // get contextbase path 
         var contextPath = Directory.GetFiles(_projectContext.SolutionPath!, "ContextBase.cs", SearchOption.AllDirectories)
             .FirstOrDefault();
         if (contextPath != null)
         {
-            // parse context content and get all proporties 
+            // parse context content and get all properties 
             var compilation = new CompilationHelper(Path.Combine(_projectContext.SolutionPath!, Config.EntityPath));
             compilation.AddSyntaxTree(File.ReadAllText(contextPath));
 
@@ -118,16 +156,15 @@ public class EntityAdvance
                 {
                     var entityCompilation = new EntityParseHelper(entityPath);
                     var entityInfo = entityCompilation.GetEntity();
-                    result += ToMarkdown(entityInfo);
-
+                    sb.AppendLine(ToMarkdown(entityInfo));
                 }
             }
         }
-        return result;
+        return sb.ToString();
     }
 
     /// <summary>
-    /// 实体转换为markdown table
+    /// 实体转换为 markdown table
     /// </summary>
     /// <param name="entityInfo"></param>
     /// <returns></returns>
@@ -147,6 +184,21 @@ public class EntityAdvance
         }
         return sb.ToString();
     }
+}
 
 
+public enum ImageSize
+{
+    /// <summary>
+    /// 256*256
+    /// </summary>
+    Small,
+    /// <summary>
+    /// 512*512
+    /// </summary>
+    Middle,
+    /// <summary>
+    /// 1024*1024
+    /// </summary>
+    Large
 }

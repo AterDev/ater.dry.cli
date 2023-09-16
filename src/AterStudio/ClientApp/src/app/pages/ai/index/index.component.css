@@ -6,6 +6,7 @@
     padding: 8px;
     margin: 4px 0;
     background-color: #ebeff0a6;
+    overflow-y: auto;
 }
 
 .input-area {
