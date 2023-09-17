@@ -175,7 +175,7 @@ public class RequestServiceFunction
         if (reqParams != null)
         {
             string queryParams = "";
-            queryParams = string.Join("&", reqParams.Select(p => { return $"{p}=${{{p}??''}}"; }).ToArray());
+            queryParams = string.Join("&", reqParams.Select(p => { return $"{p}=${{{p} ?? ''}}"; }).ToArray());
             if (!string.IsNullOrEmpty(queryParams))
             {
                 Path += "?" + queryParams;
