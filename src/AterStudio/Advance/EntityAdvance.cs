@@ -91,6 +91,33 @@ public class EntityAdvance
         return default;
     }
 
+    /// <summary>
+    /// 问答
+    /// </summary>
+    /// <param name="content"></param>
+    /// <returns></returns>
+    public async Task<Response<StreamingChatCompletions>?> GenerateAnswerAsync(string content)
+    {
+        if (_openAI != null)
+        {
+            var prompts = new List<string>()
+            {
+                content
+            };
+
+            var chatCompletionsOptions = new ChatCompletionsOptions()
+            {
+                Messages =
+                {
+                    new ChatMessage(ChatRole.User, content),
+                }
+            };
+
+            return await _openAI.GetChatCompletionsStreamingAsync("gpt-3.5-turbo", chatCompletionsOptions);
+        }
+        return default;
+    }
+
 
     /// <summary>
     /// 生成图片

@@ -88,6 +88,38 @@ public class AdvanceController : ControllerBase
     }
 
     /// <summary>
+    /// 问答
+    /// </summary>
+    /// <param name="content"></param>
+    /// <returns></returns>
+    [HttpGet("answer")]
+    public async Task GetAnswerAsync(string content)
+    {
+        var res = await _entityAdvance.GenerateAnswerAsync(content);
+        if (res == null)
+        {
+            Response.StatusCode = StatusCodes.Status204NoContent;
+            return;
+        }
+
+        Response.ContentType = "text/plain";
+        Response.StatusCode = StatusCodes.Status200OK;
+        await foreach (StreamingChatChoice choice in res.Value.GetChoicesStreaming())
+        {
+            await foreach (ChatMessage message in choice.GetMessageStreaming())
+            {
+                if (message.Content == null)
+                {
+                    continue;
+                }
+                await Response.Body.WriteAsync(Encoding.UTF8.GetBytes(message.Content));
+                await Response.Body.FlushAsync();
+            }
+        }
+    }
+
+
+    /// <summary>
     /// 生成图片
     /// </summary>
     /// <param name="content"></param>

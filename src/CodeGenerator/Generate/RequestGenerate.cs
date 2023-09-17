@@ -583,8 +583,8 @@ export class {{serviceFile.Name}}Service extends {{serviceFile.Name}}BaseService
         }
         string functionString = @$"{comments}
   {Name}({paramsString}): Promise<{ResponseType}> {{
-    const url = `{Path}`;
-    return this.request<{ResponseType}>('{function.Method.ToLower()}', url{dataString});
+    const _url = `{Path}`;
+    return this.request<{ResponseType}>('{function.Method.ToLower()}', _url{dataString});
   }}
 ";
         return functionString;

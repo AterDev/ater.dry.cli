@@ -10,7 +10,8 @@ import 'prismjs/plugins/line-numbers/prism-line-numbers.js';
 import 'prismjs/components/prism-markup.min.js';
 export enum ToolType {
   Entity = 0,
-  Image = 1
+  Image = 1,
+  Answer = 2
 }
 
 @Component({
@@ -47,6 +48,7 @@ export class IndexComponent {
 
   send() {
     if (this.content != null && this.content != "") {
+      this.answerContent += "\n";
       this.isProcessing = true;
       switch (this.selectedTool) {
         case ToolType.Entity:
@@ -55,11 +57,40 @@ export class IndexComponent {
         case ToolType.Image:
           this.generatorImage();
           break;
+        case ToolType.Answer:
+          this.generatorAnswer();
+          break;
       }
     } else {
       this.snb.open('请输入内容');
     }
   }
+
+  generatorAnswer(): void {
+    const url = this.service.baseUrl + `/api/Advance/answer?content=${this.content}`;
+    const self = this;
+    fetch(url, { method: 'GET' }).then((response) => {
+      if (!response.ok) {
+        this.snb.open('请求失败');
+      }
+      if (response.body) {
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder('utf-8');
+        reader.read().then(function processText({ done, value }) {
+          if (done) {
+            self.isProcessing = false;
+            return;
+          }
+          const res = decoder.decode(value);
+          if (res) {
+            self.answerContent += res;
+          }
+          reader.read().then(processText);
+        });
+      }
+    });
+  }
+
   generatorImage(): void {
     this.service.getImages(this.content)
       .subscribe({

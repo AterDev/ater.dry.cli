@@ -37,6 +37,15 @@ export class AdvanceBaseService extends BaseService {
   }
 
   /**
+   * 问答
+   * @param content 
+   */
+  getAnswer(content: string | null): Observable<any> {
+    const url = `/api/Advance/answer?content=${content??''}`;
+    return this.request<any>('get', url);
+  }
+
+  /**
    * 生成图片
    * @param content 
    */

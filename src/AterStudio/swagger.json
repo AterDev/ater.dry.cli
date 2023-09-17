@@ -101,6 +101,30 @@
         }
       }
     },
+    "/api/Advance/answer": {
+      "get": {
+        "tags": [
+          "Advance"
+        ],
+        "summary": "问答",
+        "operationId": "Advance_GetAnswer",
+        "parameters": [
+          {
+            "name": "content",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/api/Advance/Images": {
       "get": {
         "tags": [

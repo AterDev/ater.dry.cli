@@ -189,8 +189,8 @@ public class RequestServiceFunction
 
         string function = @$"{comments}
   {Name}({paramsString}): Observable<{ResponseType}> {{
-    const url = `{Path}`;
-    return this.request<{ResponseType}>('{Method.ToLower()}', url{dataString});
+    const _url = `{Path}`;
+    return this.request<{ResponseType}>('{Method.ToLower()}', _url{dataString});
   }}
 ";
         return function;
