@@ -14,10 +14,10 @@ namespace AterStudio.Controllers;
 public class FeatureController : ControllerBase
 {
     private readonly ProjectManager _manager;
-    private readonly EntityAdvance _advace;
+    private readonly AdvanceManager _advace;
     private readonly FeatureManager _feature;
     private readonly ProjectContext _projectContext;
-    public FeatureController(ProjectManager manager, EntityAdvance advace, FeatureManager feature, ProjectContext projectContext)
+    public FeatureController(ProjectManager manager, AdvanceManager advace, FeatureManager feature, ProjectContext projectContext)
     {
         _manager = manager;
         _advace = advace;

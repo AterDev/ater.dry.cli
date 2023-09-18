@@ -11,14 +11,14 @@ using Datastore;
 
 namespace AterStudio.Advance;
 
-public class EntityAdvance
+public class AdvanceManager
 {
     private readonly DbContext _dbContext;
     private readonly DusiHttpClient _httpClient;
     private readonly ProjectContext _projectContext;
     private readonly OpenAIClient? _openAI;
 
-    public EntityAdvance(DbContext dbContext, DusiHttpClient httpClient, ProjectContext projectContext)
+    public AdvanceManager(DbContext dbContext, DusiHttpClient httpClient, ProjectContext projectContext)
     {
         _dbContext = dbContext;
         _httpClient = httpClient;
@@ -30,7 +30,6 @@ public class EntityAdvance
             _openAI = new OpenAIClient(openAIKey.Value);
         }
     }
-
 
     /// <summary>
     /// 设置配置
@@ -151,6 +150,15 @@ public class EntityAdvance
 
         }
         return default;
+    }
+
+    public void UploadFile(Stream stream)
+    {
+        // use _openAI to upload file 
+        if (_openAI != null)
+        {
+
+        }
     }
 
 

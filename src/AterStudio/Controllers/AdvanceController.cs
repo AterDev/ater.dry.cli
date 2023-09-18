@@ -17,8 +17,8 @@ namespace AterStudio.Controllers;
 [Route("api/[controller]")]
 public class AdvanceController : ControllerBase
 {
-    private readonly EntityAdvance _entityAdvance;
-    public AdvanceController(EntityAdvance entityAdvance)
+    private readonly AdvanceManager _entityAdvance;
+    public AdvanceController(AdvanceManager entityAdvance)
     {
         _entityAdvance = entityAdvance;
     }

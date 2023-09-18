@@ -21,7 +21,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ProjectContext>();
 builder.Services.AddSingleton<DbContext>();
 builder.Services.AddScoped<ProjectManager>();
-builder.Services.AddScoped<EntityAdvance>();
+builder.Services.AddScoped<AdvanceManager>();
 builder.Services.AddScoped<EntityManager>();
 builder.Services.AddScoped<SwaggerManager>();
 builder.Services.AddScoped<FeatureManager>();

@@ -16,8 +16,8 @@ namespace AterStudio.Controllers;
 public class ProjectController : ControllerBase
 {
     private readonly ProjectManager _manager;
-    private readonly EntityAdvance _advace;
-    public ProjectController(ProjectManager manager, EntityAdvance advace)
+    private readonly AdvanceManager _advace;
+    public ProjectController(ProjectManager manager, AdvanceManager advace)
     {
         _manager = manager;
         _advace = advace;
