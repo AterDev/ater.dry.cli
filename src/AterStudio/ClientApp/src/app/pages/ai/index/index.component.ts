@@ -10,7 +10,7 @@ import 'prismjs/plugins/line-numbers/prism-line-numbers.js';
 import 'prismjs/components/prism-markup.min.js';
 export enum ToolType {
   Entity = 0,
-  Image = 1,
+  File = 1,
   Answer = 2
 }
 
