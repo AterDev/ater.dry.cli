@@ -92,7 +92,7 @@ public class RestApiGenerate : GenerateBase
             "global using Ater.Web.Core.Models;",
             "global using Ater.Web.Core.Utils;",
             $"global using {EntityInfo.NamespaceName};",
-            $"global using {ServiceNamespace}.IManager;",
+            $"global using {ServiceNamespace}.Manager;",
         };
     }
 
