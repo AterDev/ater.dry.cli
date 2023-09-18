@@ -39,7 +39,6 @@ $dark-theme: mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
 
 @media (prefers-color-scheme: light) {
     @include mat.all-component-themes($light-theme);
-
     @include mat.toolbar-theme($light-theme);
 
     a {
@@ -49,9 +48,8 @@ $dark-theme: mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
 }
 
 @media (prefers-color-scheme: dark) {
-    @include mat.all-component-themes($dark-theme);
+    @include mat.all-component-colors($dark-theme);
     @include mat.toolbar-theme($dark-theme);
-
     a {
         color: mat-color($dark-primary, 300);
     }

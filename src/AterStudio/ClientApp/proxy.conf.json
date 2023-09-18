@@ -3,6 +3,5 @@
       "target": "http://localhost:5278",
       "changeOrigin": true,
       "secure": false
-    },
-    "logLevel": "debug"
+    }
   }
