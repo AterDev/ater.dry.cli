@@ -18,12 +18,10 @@
 
 .mat-expansion-panel-header {
     padding-left: 8px;
-    background-color: rgb(250, 250, 250);
     height: 48px
 }
 
 .mat-expansion-panel-header-title {
-    color: rgb(65, 65, 65);
     font-weight: bold;
     font-size: 16px;
 }
@@ -32,13 +30,6 @@ tr.example-detail-row {
     height: 0;
 }
 
-tr.example-element-row:hover {
-    background: whitesmoke;
-}
-
-tr.example-element-row:active {
-    background: #efefef;
-}
 
 .example-element-detail {
     overflow: hidden;
@@ -46,9 +37,6 @@ tr.example-element-row:active {
 }
 
 
-.active {
-    background-color: rgb(228, 228, 228);
-}
 
 .request-type {
     font-weight: bold;
@@ -66,8 +54,6 @@ tr.example-element-row:active {
     margin: 8px 0;
     display: flex;
     flex-direction: column;
-    background-color: #fefefe;
-    text-shadow: 0 1px 3px 3px #eee;
 }
 
 .api-list {
@@ -91,7 +77,6 @@ tr.example-element-row:active {
 table {
     min-width: 480px;
     width: max-content;
-    border: 1px solid #e5e5e5;
     border-radius: 4px;
 }
 
@@ -101,7 +86,6 @@ legend {
 }
 
 .select {
-    border: 1px solid #d6d6d6;
     padding: 6px 8px;
     border-radius: 2px;
     min-width: 240px;
