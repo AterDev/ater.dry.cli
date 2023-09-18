@@ -48,13 +48,13 @@ export class IndexComponent {
 
   send() {
     if (this.content != null && this.content != "") {
-      this.answerContent += "\n";
+      this.answerContent += "  \r\n";
       this.isProcessing = true;
       switch (this.selectedTool) {
         case ToolType.Entity:
           this.generateEntity();
           break;
-        case ToolType.Image:
+        case ToolType.File:
           this.generatorImage();
           break;
         case ToolType.Answer:

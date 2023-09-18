@@ -5,7 +5,7 @@
 .answer-area {
     padding: 8px;
     margin: 4px 0;
-    background-color: #ebeff0a6;
+    border: 1px solid #666666;
     overflow-y: auto;
 }
 
