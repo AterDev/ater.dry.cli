@@ -27,18 +27,14 @@
 
 .mat-expansion-panel-header {
     padding: 0 8px;
-    background-color: rgb(245, 245, 245);
 }
 
 .mat-expansion-panel-header-title {
-    color: rgb(65, 65, 65);
     font-weight: bold;
     font-size: 16px;
 }
 
-.active {
-    background-color: rgb(228, 228, 228);
-}
+.active {}
 
 .mat-icon {
     margin-right: 4px;

@@ -85,7 +85,8 @@
               "browserTarget": "AterStudio:build:production"
             },
             "development": {
-              "browserTarget": "AterStudio:build:development"
+              "browserTarget": "AterStudio:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"
