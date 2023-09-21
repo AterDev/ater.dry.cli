@@ -126,10 +126,13 @@ export class IndexComponent {
           }
           const res = decoder.decode(value);
           if (res) {
-            self.answerContent += res;
-          }
-          reader.read().then(processText);
-        });
+            if (res.includes('\n') || res.includes('\r\n')) {
+              self.answerContent += '  ';
+            }
+              self.answerContent += res;
+            }
+            reader.read().then(processText);
+          });
       }
     });
   }
