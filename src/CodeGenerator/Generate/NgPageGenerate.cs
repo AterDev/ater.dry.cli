@@ -172,7 +172,7 @@ public class NgPageGenerate : GenerateBase
                 {
                     if (type.Equals("DateTime") || type.Equals("DateTimeOffset"))
                     {
-                        pipe = s.EndsWith("Date") ? " | date: 'yyyy-MM-dd'" : " | date: 'yyy-MM-dd HH:mm:ss'";
+                        pipe = s.EndsWith("Date") ? " | date: 'yyyy-MM-dd'" : " | date: 'yyy-MM-dd HH:mm'";
                     }
                 }
                 return $$$"""
@@ -309,9 +309,10 @@ public class NgPageGenerate : GenerateBase
                     }
                 }
 
-                return $@"  <ng-container matColumnDef=""{p.Name.ToCamelCase()}"">
+                return $@"
+  <ng-container matColumnDef=""{p.Name.ToCamelCase()}"">
     <th mat-header-cell *matHeaderCellDef>{p.CommentSummary ?? p.Type}</th>
-    <td mat-cell *matCellDef=""let element"">
+    <td mat-cell *matCellDef=""let element;table:table"">
       {{{{element.{p.Name.ToCamelCase()}{pipe}}}}}
     </td>
   </ng-container>
