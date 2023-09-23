@@ -73,6 +73,14 @@ export class IndexComponent implements OnInit {
           this.isLoading = false;
         }
       });
+}
+
+  jumpTo(pageNumber: string): void {
+    const number = parseInt(pageNumber);
+    if (number > 0 && number < this.paginator.getNumberOfPages()) {
+      this.filter.pageIndex = number;
+      this.getList();
+    }
   }
 
   deleteConfirm(item: {$EntityName}ItemDto): void {

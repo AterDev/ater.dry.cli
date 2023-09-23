@@ -47,8 +47,15 @@
       <tr mat-header-row *matHeaderRowDef="columns"></tr>
       <tr mat-row *matRowDef="let row; columns: columns;"></tr>
     </table>
-    <mat-paginator [pageSizeOptions]="pageSizeOption" [pageIndex]="filter.pageIndex!-1" [pageSize]="filter.pageSize"
-      [length]="total" (page)="getList($event)" showFirstLastButtons></mat-paginator>
+    <div class="d-flex justify-content-between bg">
+      <mat-form-field>
+        <mat-label>跳转到</mat-label>
+        <input matInput type="number" [value]="filter.pageIndex" #pageJump (keyup.enter)="jumpTo(pageJump.value)">
+      </mat-form-field>
+      <mat-paginator [pageSizeOptions]="pageSizeOption" [pageIndex]="filter.pageIndex!-1" [pageSize]="filter.pageSize"
+        [length]="total" (page)="getList($event)" showFirstLastButtons>
+      </mat-paginator>
+    </div>
   </ng-template>
 </div>
 
