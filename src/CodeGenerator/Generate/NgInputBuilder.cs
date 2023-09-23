@@ -52,13 +52,14 @@ public class NgInputBuilder
         string html = "";
         if (MaxLength <= 200)
         {
-            html = $@"  <mat-form-field>
-    <mat-label>{Label}</mat-label>
-    <input matInput placeholder=""{Label},不超过{MaxLength}字"" formControlName=""{name}"" {(IsRequired ? "required" : "")} minlength=""{MinLength}"" maxlength=""{MaxLength}"">
-    <mat-error *ngIf=""{name}?.invalid"">
-    {{{{getValidatorMessage('{name}')}}}}
-    </mat-error>
-  </mat-form-field>
+            html = $@"  
+    <mat-form-field>
+      <mat-label>{Label}</mat-label>
+      <input matInput placeholder=""{Label},不超过{MaxLength}字"" formControlName=""{name}"" {(IsRequired ? "required" : "")} minlength=""{MinLength}"" maxlength=""{MaxLength}"">
+      <mat-error *ngIf=""{name}?.invalid"">
+        {{{{getValidatorMessage('{name}')}}}}
+      </mat-error>
+    </mat-form-field>
 ";
         }
         else if (MaxLength <= 1000)
@@ -131,17 +132,18 @@ public class NgInputBuilder
     {
         string name = Name.ToCamelCase();
         string list = IsEnum ? Type.ToPascalCase() : name;
-        string html = @$"<mat-form-field>
-  <mat-label>{Label}</mat-label>
-  <mat-select formControlName=""{name}"">
-    <mat-option *ngFor=""let item of {list} | toKeyValue"" [value]=""item.value"">
-      {{{{item.value | enumText:'{list}'}}}}
-    </mat-option>
-  </mat-select>
-  <mat-error *ngIf=""{name}?.invalid"">
-    {{{{getValidatorMessage('{name}')}}}}
-  </mat-error>
-</mat-form-field>
+        string html = @$"
+    <mat-form-field>
+      <mat-label>{Label}</mat-label>
+      <mat-select formControlName=""{name}"">
+        <mat-option *ngFor=""let item of {list} | toKeyValue"" [value]=""item.value"">
+          {{{{item.value | enumText:'{list}'}}}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf=""{name}?.invalid"">
+        {{{{getValidatorMessage('{name}')}}}}
+      </mat-error>
+    </mat-form-field>
 ";
         return html;
     }

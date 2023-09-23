@@ -1,6 +1,6 @@
 <mat-toolbar class="d-flex gap-1">
   <mat-icon matTooltip="返回" (click)="back()">arrow_back</mat-icon>
-  <span>添加</span
+  <span>添加</span>
 </mat-toolbar>
 <form class="d-flex p-2" *ngIf="!isLoading" [formGroup]="formGroup">
   <div class="d-flex flex-column w-100">
