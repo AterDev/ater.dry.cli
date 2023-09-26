@@ -211,13 +211,6 @@ public static class CommandRunner
             File.Delete(managerPath);
             await Console.Out.WriteLineAsync("✔️ clear manager");
         }
-        managerPath = Path.Combine(applicationPath, "IManager", $"I{EntityName}Manager.cs");
-        if (File.Exists(managerPath))
-        {
-            File.Delete(managerPath);
-            await Console.Out.WriteLineAsync("✔️ clear IManager");
-        }
-
         try
         {
             // 更新 依赖注入

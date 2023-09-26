@@ -81,7 +81,7 @@ public class ManagerCommand : CommandBase
                 await GenerateMangerAsync(force);
 
                 Console.WriteLine(Instructions[3]);
-                await GenerateMangerTestAsync(force);
+                //await GenerateMangerTestAsync(force);
 
                 Console.WriteLine(Instructions[4]);
                 await GetDataStoreContextAsync();
@@ -89,8 +89,6 @@ public class ManagerCommand : CommandBase
                 Console.WriteLine(Instructions[5]);
                 await GenerateGlobalUsingsFilesAsync();
             }
-
-
 
             Console.WriteLine("😀 Manager generate completed!" + Environment.NewLine);
         }
@@ -182,53 +180,9 @@ public class ManagerCommand : CommandBase
     /// </summary>
     public async Task GenerateMangerAsync(bool force)
     {
-        string iManagerDir = Path.Combine(ApplicationPath, "IManager");
         string managerDir = Path.Combine(ApplicationPath, "Manager");
         string entityName = Path.GetFileNameWithoutExtension(EntityPath);
-
-        string interfaceContent = CodeGen.GetIManagerContent();
         string managerContent = CodeGen.GetManagerContent();
-
-        // 如果文件已经存在，并且没有选择覆盖，并且符合更新要求，则进行更新
-        string iManagerPath = Path.Combine(iManagerDir, $"I{entityName}Manager.cs");
-        if (!force
-            && File.Exists(iManagerPath)
-            && AssemblyHelper.NeedUpdate(Const.Version))
-        {
-            // update files
-            CompilationHelper compilation = new(ApplicationPath);
-            string content = await File.ReadAllTextAsync(iManagerPath);
-            compilation.AddSyntaxTree(content);
-            // 构造更新的内容
-            string[] methods = new string[]{
-                $"Task<{entityName}?> GetCurrentAsync(Guid id, params string[] navigations);",
-                $"Task<{entityName}> AddAsync({entityName} entity);",
-                $"Task<{entityName}> UpdateAsync({entityName} entity, {entityName}UpdateDto dto);",
-                $"Task<{entityName}?> FindAsync(Guid id);",
-                $"Task<TDto?> FindAsync<TDto>(Expression<Func<{entityName}, bool>>? whereExp) where TDto : class;",
-                $"Task<List<TDto>> ListAsync<TDto>(Expression<Func<{entityName}, bool>>? whereExp) where TDto : class;",
-                $"Task<PageList<{entityName}ItemDto>> FilterAsync({entityName}FilterDto filter);",
-                $"Task<{entityName}?> DeleteAsync({entityName} entity, bool softDelete = true);",
-                $"Task<bool> ExistAsync(Guid id);",
-            };
-
-            foreach (string method in methods)
-            {
-                if (!compilation.MethodExist(method))
-                {
-                    compilation.InsertInterfaceMethod(method);
-                }
-            }
-            compilation.ReplaceInterfaceImplement($"IDomainManager<{entityName}>");
-            interfaceContent = compilation.SyntaxRoot!.ToString();
-            await GenerateFileAsync(iManagerDir, $"I{entityName}Manager.cs", interfaceContent, true);
-        }
-        else
-        {
-            // 生成接口
-            await GenerateFileAsync(iManagerDir, $"I{entityName}Manager.cs", interfaceContent, force);
-        }
-
         // 生成manger
         await GenerateFileAsync(managerDir, $"{entityName}Manager.cs", managerContent, force);
     }

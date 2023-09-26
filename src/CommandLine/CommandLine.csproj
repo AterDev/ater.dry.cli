@@ -8,7 +8,7 @@
 		<AssemblyVersion>0.1.0.0</AssemblyVersion>
 		<FileVersion>0.1.0.0</FileVersion>
 		<PackageId>ater.droplet.cli</PackageId>
-		<Version>7.1.5</Version>
+		<Version>7.2.0</Version>
 		<Description> ater.web 框架代码生成器</Description>
 		<Authors>NilTor</Authors>
 		<Company>Atersoft</Company>
@@ -20,7 +20,7 @@
 		<RepositoryUrl>https://github.com/AterDev/cli.git</RepositoryUrl>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<PackageReleaseNotes>
-			1 完善和修复生成的模板内容
+			1 注意：本版本移除了IManager接口层，改为直接使用Manager类!
 		</PackageReleaseNotes>
 		<PackageIcon>logo.jpg</PackageIcon>
 		<ImplicitUsings>enable</ImplicitUsings>

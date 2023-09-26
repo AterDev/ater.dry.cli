@@ -95,7 +95,6 @@ public class RestApiGenerate : GenerateBase
             $"global using {EntityNamespace}.Models;",
             $"global using {ShareNamespace}.Models;",
             $"global using {ServiceNamespace}.Interface;",
-            $"global using {ServiceNamespace}.IManager;",
             $"global using {ServiceNamespace}.Const;",
         };
     }
@@ -118,9 +117,9 @@ public class RestApiGenerate : GenerateBase
         {
             var name = navigation.Type;
 
-            additionManagerProps += $"    private readonly I{name}Manager _{name.ToCamelCase()}Manager;" + Environment.NewLine;
+            additionManagerProps += $"    private readonly {name}Manager _{name.ToCamelCase()}Manager;" + Environment.NewLine;
 
-            additionManagerDI += $",{Environment.NewLine}        I{name}Manager {name.ToCamelCase()}Manager";
+            additionManagerDI += $",{Environment.NewLine}        {name}Manager {name.ToCamelCase()}Manager";
             //_catalogManager = catalogManager;
             additionManagerInit += $"        _{name.ToCamelCase()}Manager = {name.ToCamelCase()}Manager;" + Environment.NewLine;
         });
@@ -324,7 +323,7 @@ public class RestApiGenerate : GenerateBase
         files?.ToList().ForEach(file =>
         {
             object name = Path.GetFileNameWithoutExtension(file);
-            string row = $"        services.AddScoped<I{name}, {name}>();";
+            string row = $"        services.AddScoped(typeof({name}));";
             managerServiceContent += row + Environment.NewLine;
         });
 

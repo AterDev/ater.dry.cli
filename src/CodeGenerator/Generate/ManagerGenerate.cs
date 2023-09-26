@@ -207,7 +207,6 @@ public class ManagerGenerate : GenerateBase
             $"global using {ServiceNamespace}.{Const.COMMAND_STORE};",
             $"global using {ServiceNamespace}.Implement;",
             $"global using {ServiceNamespace}.Manager;",
-            $"global using {ServiceNamespace}.IManager;",
             "global using Microsoft.Extensions.DependencyInjection;",
         };
     }
@@ -235,20 +234,6 @@ public class ManagerGenerate : GenerateBase
     }
 
     /// <summary>
-    /// Manager接口内容
-    /// </summary>
-    /// <returns></returns>
-    public string GetIManagerContent()
-    {
-        string entityName = Path.GetFileNameWithoutExtension(EntityPath);
-        string tplContent = GetTplContent($"Implement.IManager.tpl");
-        tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName)
-            .Replace(TplConst.ID_TYPE, Config.IdType)
-            .Replace(TplConst.NAMESPACE, ServiceNamespace);
-        return tplContent;
-    }
-
-    /// <summary>
     /// Manager默认代码内容
     /// </summary>
     /// <returns></returns>
@@ -268,9 +253,9 @@ public class ManagerGenerate : GenerateBase
         {
             var name = navigation.NavigationName ?? navigation.Type;
 
-            additionManagerProps += $"    private readonly I{name}Manager _{name.ToCamelCase()}Manager;" + Environment.NewLine;
+            additionManagerProps += $"    private readonly {name}Manager _{name.ToCamelCase()}Manager;" + Environment.NewLine;
 
-            additionManagerDI += $",{Environment.NewLine}        I{name}Manager {name.ToCamelCase()}Manager";
+            additionManagerDI += $",{Environment.NewLine}        {name}Manager {name.ToCamelCase()}Manager";
             //_catalogManager = catalogManager;
             additionManagerInit += $"        _{name.ToCamelCase()}Manager = {name.ToCamelCase()}Manager;" + Environment.NewLine;
         });

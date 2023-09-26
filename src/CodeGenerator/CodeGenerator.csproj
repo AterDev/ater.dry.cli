@@ -44,10 +44,8 @@
 		<None Remove="Templates\Implement\CommandStoreContent.tpl" />
 		<None Remove="Templates\Implement\DataStoreContext.tpl" />
 		<None Remove="Templates\Implement\DomainManagerBase.tpl" />
-		<None Remove="Templates\Implement\IManager.tpl" />
 		<None Remove="Templates\Implement\Manager.tpl" />
 		<None Remove="Templates\Implement\ManagerBase.tpl" />
-		<None Remove="Templates\Implement\ManagerTest.tpl" />
 		<None Remove="Templates\Implement\QueryStoreBase.tpl" />
 		<None Remove="Templates\Implement\QueryStoreContent.tpl" />
 		<None Remove="Templates\Implement\RestApi.tpl" />
@@ -87,8 +85,6 @@
 		<EmbeddedResource Include="Templates\Implement\DomainManagerBase.tpl" />
 		<EmbeddedResource Include="Templates\Implement\ManagerBase.tpl" />
 		<EmbeddedResource Include="Templates\Implement\Manager.tpl" />
-		<EmbeddedResource Include="Templates\Implement\IManager.tpl" />
-		<EmbeddedResource Include="Templates\Implement\ManagerTest.tpl" />
 		<EmbeddedResource Include="Templates\Implement\QueryStoreBase.tpl" />
 	</ItemGroup>
 	<ItemGroup>

@@ -116,12 +116,12 @@ public class EntityManager
     {
         bool hasDto = false; bool hasManager = false; bool hasAPI = false;
         var dtoPath = Path.Combine(path, Config.DtoPath, "Models", $"{entityName}Dtos", $"{entityName}AddDto.cs");
-        var managerPath = Path.Combine(path, Config.StorePath, "IManager", $"I{entityName}Manager.cs");
+        var managerPath = Path.Combine(path, Config.StorePath, "Manager", $"{entityName}Manager.cs");
         var apiPath = Path.Combine(path, Config.ApiPath, "Controllers", $"{entityName}Controller.cs");
 
         if (!string.IsNullOrWhiteSpace(moduleName))
         {
-            managerPath = Path.Combine(path, "src", "Modules", moduleName, "IManager", $"I{entityName}Manager.cs");
+            managerPath = Path.Combine(path, "src", "Modules", moduleName, "Manager", $"{entityName}Manager.cs");
             apiPath = Path.Combine(path, "src", "Modules", moduleName, "Controllers", $"{entityName}Controller.cs");
         }
 
