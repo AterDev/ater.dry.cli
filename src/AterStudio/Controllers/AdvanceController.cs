@@ -121,6 +121,7 @@ public class AdvanceController : ControllerBase
 
     /// <summary>
     /// 生成图片
+    /// 
     /// </summary>
     /// <param name="content"></param>
     /// <returns></returns>
