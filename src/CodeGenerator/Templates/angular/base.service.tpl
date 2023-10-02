@@ -8,7 +8,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class BaseService {
-  private baseUrl: string | null;
+  public baseUrl: string | null;
   private isMobile = false;
   constructor(
     protected http: HttpClient,

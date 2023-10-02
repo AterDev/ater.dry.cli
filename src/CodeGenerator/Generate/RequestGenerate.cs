@@ -280,6 +280,7 @@ public class RequestGenerate : GenerateBase
                 type = "boolean";
                 break;
             case "integer":
+            case "number":
                 // 看是否为enum
                 if (schema.Enum.Count > 0)
                 {
