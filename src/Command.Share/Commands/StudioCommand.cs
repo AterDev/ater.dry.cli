@@ -127,9 +127,16 @@ public class StudioCommand
             return;
         }
         var studioPath = AssemblyHelper.GetStudioPath();
+        var dbFile = Path.Combine(studioPath, "dry.db");
+        var tempDbFile = Path.Combine(Path.GetTempPath(), "dry.db");
+
         // 删除旧文件
         if (Directory.Exists(studioPath))
         {
+            if (File.Exists(dbFile))
+            {
+                File.Copy(dbFile, tempDbFile, true);
+            }
             Directory.Delete(studioPath, true);
         }
 
@@ -141,7 +148,13 @@ public class StudioCommand
         ZipFile.ExtractToDirectory(zipPath, studioPath, true);
         // create version file
         File.Create(Path.Combine(studioPath, $"{version}.txt")).Close();
-        // copy其他文件以及runtimes目录
+
+        if (File.Exists(tempDbFile))
+        {
+            File.Copy(tempDbFile, dbFile, true);
+        }
+
+        // copy其他文件以
         copyFiles.ToList().ForEach(file =>
         {
             var sourceFile = Path.Combine(toolRootPath, file + ".dll");
@@ -208,7 +221,7 @@ public class StudioCommand
             if (options != null)
             {
                 Const.PROJECT_ID = options.ProjectId;
-                // 添加projectId标识 
+                // 添加 projectId标识 
                 if (options.ProjectId == Guid.Empty)
                 {
                     options.ProjectId = Guid.NewGuid();
