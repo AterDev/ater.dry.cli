@@ -41,10 +41,7 @@ public class ConfigOptions
 
     [JsonConverter(typeof(DoubleStringJsonConverter))]
     public string Version { get; set; } = "7.0.0";
-    /// <summary>
-    /// swagger地址
-    /// </summary>
-    public string? SwaggerPath { get; set; }
+
     /// <summary>
     /// 前端路径
     /// </summary>

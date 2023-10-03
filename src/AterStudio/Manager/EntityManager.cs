@@ -11,7 +11,9 @@ using Core.Infrastructure.Helper;
 
 using Datastore;
 using Datastore.Models;
+
 using Microsoft.CodeAnalysis;
+
 using Project = Core.Entities.Project;
 
 namespace AterStudio.Manager;
@@ -235,7 +237,7 @@ public class EntityManager
             {
                 Directory.Delete(dir, true);
             }
-            var apiFiePath = Directory.GetFiles(_projectContext.ApiPath, "*.csproj", SearchOption.TopDirectoryOnly).FirstOrDefault();
+            var apiFiePath = Directory.GetFiles(_projectContext.ApiPath!, "*.csproj", SearchOption.TopDirectoryOnly).FirstOrDefault();
 
             if (apiFiePath != null)
             {
@@ -413,16 +415,6 @@ public class EntityManager
 
     public async Task GenerateRequestAsync(string webPath, RequestLibType type, string? swaggerPath = null)
     {
-        // 更新选项
-        var options = ConfigCommand.ReadConfigFile(_projectContext.SolutionPath!);
-        if (options != null)
-        {
-            options.WebAppPath = webPath;
-            options.SwaggerPath = swaggerPath;
-            string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
-            await File.WriteAllTextAsync(Path.Combine(_projectContext.SolutionPath!, Config.ConfigFileName), content, new UTF8Encoding(false));
-        }
-
         swaggerPath ??= Path.Combine(_projectContext.ApiPath!, "swagger.json");
         await CommandRunner.GenerateRequestAsync(swaggerPath, webPath, type);
     }

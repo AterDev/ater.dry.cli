@@ -10,8 +10,6 @@ public static class Config
     public static string EntityFrameworkPath { get; set; } = Path.Combine("src", "Database", "EntityFramework");
     public static string ApplicationPath { get; set; } = Path.Combine("src", "Application");
     public static string ApiPath { get; set; } = Path.Combine("src", "Http.API");
-
-    public static string SwaggerPath { get; set; } = "";
     public static string WebAppPath { get; set; } = "";
 
     public static string SolutionPath { get; set; } = "";
@@ -40,6 +38,5 @@ public static class Config
         CreatedTimeName = configOptions.CreatedTimeName;
         Version = configOptions.Version;
         WebAppPath = configOptions.WebAppPath ?? "";
-        SwaggerPath = configOptions.SwaggerPath ?? "";
     }
 }

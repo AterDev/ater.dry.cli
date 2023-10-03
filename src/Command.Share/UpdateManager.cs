@@ -937,7 +937,7 @@ public class UpdateManager
                 {
                     var editor = await DocumentEditor.CreateAsync(manager);
 
-                    var oldNode = classDeclaration.DescendantNodes().OfType<SimpleBaseTypeSyntax>()
+                    var oldNode = classDeclaration!.DescendantNodes().OfType<SimpleBaseTypeSyntax>()
                         .Where(n => n.Type.ToString().Equals(oldInterfaceName))
                         .Single();
 
