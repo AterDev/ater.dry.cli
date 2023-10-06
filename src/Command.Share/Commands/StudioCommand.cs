@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
+
 using Core.Entities;
+
 using LiteDB;
 
 namespace Command.Share.Commands;
@@ -29,6 +31,8 @@ public class StudioCommand
         // 运行
         string shell = "dotnet";
         var port = ProcessHelper.GetAvailablePort();
+        Console.WriteLine("可用端口:" + port);
+
         var url = $"http://localhost:{port}";
         Process process = new()
         {

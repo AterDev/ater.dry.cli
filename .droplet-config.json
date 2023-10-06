@@ -1,17 +1,18 @@
 ﻿{
   "RootPath": "./",
-  "ProjectId": "7d3141bc-1cf8-4735-8125-0cbf7b3bf49a",
-  "DtoPath": "Share",
-  "EntityPath": "Core",
-  "DbContextPath": "Database/EntityFramework",
-  "StorePath": "Application",
-  "ApiPath": "AterStudio",
+  "ProjectId": "4b7f3b6c-7224-4add-990b-459391bc53e4",
+  "DtoPath": "src/Share",
+  "EntityPath": "src/Entity",
+  "DbContextPath": "src/Database/EntityFramework",
+  "StorePath": "src/Application",
+  "ApiPath": "src/Http.API",
   "IdStyle": "Id",
   "IdType": "Guid",
   "CreatedTimeName": "CreatedTime",
   "UpdatedTimeName": "UpdatedTime",
   "IsSplitController": false,
-  "Version": "1",
+  "Version": "7.0.0",
   "SwaggerPath": null,
-  "WebAppPath": null
+  "WebAppPath": null,
+  "SolutionType": null
 }

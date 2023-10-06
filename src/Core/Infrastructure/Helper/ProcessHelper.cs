@@ -40,9 +40,9 @@ public static class ProcessHelper
     /// 获取可用端口
     /// </summary>
     /// <returns></returns>
-    public static int GetAvailablePort(int alternative = 19160)
+    public static int GetAvailablePort(int alternative = 9160)
     {
-        var defaultPort = 9160;
+        var defaultPort = 19160;
         var properties = IPGlobalProperties.GetIPGlobalProperties();
 
         var connections = properties.GetActiveTcpConnections();

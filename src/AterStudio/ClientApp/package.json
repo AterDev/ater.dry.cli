@@ -3,7 +3,7 @@
   "version": "7.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --port 9160",
+    "start": "ng serve --port 19160",
     "build": "ng build",
     "build:ssr": "ng run AterStudio:server:dev",
     "watch": "ng build --watch --configuration development",
