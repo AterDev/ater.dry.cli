@@ -47,7 +47,7 @@
       <tr mat-header-row *matHeaderRowDef="columns"></tr>
       <tr mat-row *matRowDef="let row; columns: columns;"></tr>
     </table>
-    <div class="d-flex justify-content-between bg">
+    <div class="d-flex justify-content-between paginator-bg">
       <mat-form-field>
         <mat-label>跳转到</mat-label>
         <input matInput type="number" [value]="filter.pageIndex" #pageJump (keyup.enter)="jumpTo(pageJump.value)">
