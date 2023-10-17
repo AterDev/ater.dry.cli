@@ -38,19 +38,26 @@ $dark-theme: mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
 
 
 @media (prefers-color-scheme: light) {
-    @include mat.all-component-themes($light-theme);
-    @include mat.toolbar-theme($light-theme);
+  @include mat.all-component-themes($light-theme);
 
-    a {
-        color: mat-color($light-primary, 900);
-    }
+  .active {
+    background-color: mat-color($light-primary, 500) !important;
+  }
+
+  a {
+    color: mat-color($light-primary, 900);
+  }
 
 }
 
 @media (prefers-color-scheme: dark) {
-    @include mat.all-component-themes($dark-theme);
-    @include mat.toolbar-theme($dark-theme);
-    a {
-        color: mat-color($dark-primary, 300);
-    }
+  @include mat.all-component-themes($dark-theme);
+
+  .active {
+    background-color: mat-color($dark-primary, 300) !important;
+  }
+
+  a {
+    color: mat-color($dark-primary, 300);
+  }
 }

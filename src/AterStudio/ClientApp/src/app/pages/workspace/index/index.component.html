@@ -28,15 +28,15 @@
     </mat-menu>
   </mat-toolbar>
 
-  <div class="d-flex align-items-center mt-2 gap-1">
-    <mat-form-field style="min-width: 300px;">
+  <div class="d-flex align-items-center my-2 gap-1">
+    <mat-form-field style="min-width: 300px;" subscriptSizing="dynamic">
       <mat-label>
         搜索实体
       </mat-label>
       <input matInput placeholder="类名或模块名" [(ngModel)]="searchKey" (keyup)="search()">
     </mat-form-field>
 
-    <mat-form-field>
+    <mat-form-field subscriptSizing="dynamic">
       <mat-label>模块筛选</mat-label>
       <mat-select placeholder="请选择模块" (selectionChange)="applyFilter($event)">
         <mat-option [value]="null">全部</mat-option>
