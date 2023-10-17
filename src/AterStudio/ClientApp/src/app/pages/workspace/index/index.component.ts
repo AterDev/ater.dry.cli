@@ -58,9 +58,14 @@ export class IndexComponent implements OnInit {
   @ViewChild('previewDialog', { static: true }) previewTmpl!: TemplateRef<{}>;
   @ViewChild('ngPagesDialog', { static: true }) ngPagesTmpl!: TemplateRef<{}>;
   @ViewChild('addEntityDialog', { static: true }) addEntityTmpl!: TemplateRef<{}>;
+  @ViewChild('contextMenu', { static: true }) contextMenuTmpl!: TemplateRef<{}>;
+  @ViewChild('addDtoDialog', { static: true }) addDtoTmpl!: TemplateRef<{}>;
+
   editorOptions = { theme: 'vs-dark', language: 'csharp', minimap: { enabled: false } };
   webPath: string | null = null;
   previewItem: EntityFile | null = null;
+  newDtoFileName: string = '';
+
   selection = new SelectionModel<EntityFile>(true, []);
   selectedWebProjectIds: string[] = [];
   webProjects: SubProjectInfo[] = [];
@@ -100,6 +105,8 @@ export class IndexComponent implements OnInit {
           if (res) {
             this.config = res;
             this.initForm();
+            this.getProjectInfo();
+
           } else {
             this.snb.open('获取失败');
           }
@@ -108,9 +115,7 @@ export class IndexComponent implements OnInit {
           this.snb.open(error.detail);
         }
       });
-    this.getProjectInfo();
     this.getEntity();
-    // this.getWatchStatus();
     this.getProjects();
   }
 
@@ -137,11 +142,19 @@ export class IndexComponent implements OnInit {
     }
 
   }
+  displayContextMenu(event: any, entity: EntityFile): void {
+    if (event.button === 2) {
+      this.dialog.closeAll();
+      this.dialogRef = this.dialog.open(this.contextMenuTmpl, {
+        position: { top: `${event.pageY}px`, left: `${event.pageX}px` },
+        disableClose: false,
+        data: entity,
+      });
+    }
+  }
 
   initEditor(editor: any): void {
     this.editor = editor;
-    console.log(this.editor);
-    console.log((window as any).monaco);
   }
 
   getProjectInfo(): void {
@@ -242,6 +255,20 @@ export class IndexComponent implements OnInit {
       minWidth: 400
     });
   }
+
+
+  openAddDtoDialog(data: EntityFile): void {
+    this.previewItem = data;
+    this.dialog.closeAll();
+    this.dialogRef = this.dialog.open(this.addDtoTmpl, {
+      minWidth: 400,
+    });
+  }
+
+  openWithVSCode(data: EntityFile): void {
+    window.open(`vscode://file/${data.baseDirPath}${data.path}`)
+  }
+
   clearCodesDialog(): void {
     this.dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
@@ -290,10 +317,10 @@ export class IndexComponent implements OnInit {
         }
       });
   }
+
   openAddEntity(): void {
     this.router.navigateByUrl('/workspace/entity');
   }
-
   search() {
     this.dataSource.filter = this.searchKey.trim().toLowerCase();
   }
@@ -322,6 +349,13 @@ export class IndexComponent implements OnInit {
     setTimeout(() => {
       this.isCopied = false;
     }, 1500);
+  }
+
+  addDto(open: boolean = false): void {
+
+    if (open) {
+
+    }
   }
 
   getProjects(): void {
@@ -521,8 +555,6 @@ export class IndexComponent implements OnInit {
   }
 
   goToDto(entity: EntityFile): void {
-    console.log(entity);
-
     this.projectState.currentEntity = entity;
     this.router.navigate(['../dto', entity.name], { relativeTo: this.route });
   }

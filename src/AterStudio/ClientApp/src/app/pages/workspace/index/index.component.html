@@ -6,13 +6,6 @@
   <mat-toolbar>
     <span>{{project.displayName}}</span>
     <span class="example-spacer"></span>
-    <!-- <button mat-icon-button matTooltip="开启监听实体，会自动更新dto" color="primary" [disabled]="isListening"
-      (click)="startWatch()">
-      <mat-icon>play_arrow</mat-icon>
-    </button>
-    <button mat-icon-button matTooltip="停止监听实体" color="primary" [disabled]="!isListening" (click)="stopWatch()">
-      <mat-icon>stop_circle</mat-icon>
-    </button> -->
     <button mat-button color="primary" [matMenuTriggerFor]="menu">批量操作</button>
     <mat-menu #menu="matMenu">
       <button mat-menu-item (click)="openGenerateDialog(CommandType.Dto,null)" matTooltip="生成dto,不会覆盖原内容"
@@ -81,7 +74,7 @@
 
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef>文件名</th>
-      <td mat-cell *matCellDef="let element">
+      <td mat-cell *matCellDef="let element" (contextmenu)="displayContextMenu($event,element);false">
         <button mat-button color="primary" (click)="openPreviewDialog(element,false)">
           {{element.name}}
           <span *ngIf="element.module" matTooltip="模块标识">({{element.module}})</span>
@@ -275,21 +268,28 @@
   </mat-dialog-actions>
 </ng-template>
 
-<ng-template #addEntityDialog>
-  <h2 mat-dialog-title>添加实体</h2>
-  <mat-dialog-content class="py-2 d-flex flex-column">
-    <p>请描述您的实体</p>
-    <mat-form-field>
-      <mat-label>实体名称</mat-label>
-      <input matInput placeholder="名称" [(ngModel)]="entityName" required>
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>实体描述</mat-label>
-      <input matInput placeholder="描述" [(ngModel)]="entityDescription" required>
-    </mat-form-field>
+<!-- 右键菜单 -->
+<ng-template let-data #contextMenu>
+  <button mat-menu-item (click)="openWithVSCode(data)">
+    <span>使用VSCode打开</span>
+  </button>
+  <button mat-menu-item (click)="openAddDtoDialog(data)">
+    <span>添加DTO</span>
+  </button>
+</ng-template>
+
+<ng-template #addDtoDialog>
+  <h2 mat-dialog-title>创建新DTO</h2>
+  <mat-dialog-content>
+    <div class="d-flex flex-column">
+      <mat-form-field>
+        <mat-label>文件名</mat-label>
+        <input matInput placeholder="Dto文件名称,不用输入.cs后缀" [(ngModel)]="newDtoFileName" name="dtoName">
+      </mat-form-field>
+    </div>
   </mat-dialog-content>
   <mat-dialog-actions class="justify-content-end">
-    <button mat-button mat-dialog-close>取消</button>
-    <button mat-button color="primary" [disabled]="isSync">添加</button>
+    <button mat-button color="primary" (click)="addDto()">创建</button>
+    <button mat-button color="primary" (click)="addDto(true)">创建并打开</button>
   </mat-dialog-actions>
 </ng-template>

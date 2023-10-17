@@ -449,4 +449,69 @@ public class EntityManager
             throw new FileNotFoundException($"未找到实体文件:{entityPath}");
         }
     }
+
+    /// <summary>
+    /// 创建dto
+    /// </summary>
+    /// <param name="entityFilePath"></param>
+    /// <param name="name"></param>
+    /// <param name="summary"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public async Task<string?> CreateDtoAsync(string entityFilePath, string name, string summary)
+    {
+        // 解析特性
+        string? moduleName = null;
+        var content = File.ReadAllText(entityFilePath);
+        var compilation = new CompilationHelper(Path.Combine(_projectContext.SolutionPath!, Config.EntityPath));
+
+        compilation.AddSyntaxTree(content);
+        var moduleAttribution = compilation.GetClassAttribution("Module");
+        if (moduleAttribution != null && moduleAttribution.Any())
+        {
+            var argument = moduleAttribution.Last().ArgumentList?.Arguments.FirstOrDefault();
+            if (argument != null)
+            {
+                moduleName = compilation.GetArgumentValue(argument);
+            }
+        }
+
+        var entityName = Path.GetFileNameWithoutExtension(entityFilePath);
+
+        string dtoPath = moduleName == null ?
+            Path.Combine(_projectContext.SolutionPath!, Config.SharePath, "Models", $"{entityName}Dtos") :
+            Path.Combine(_projectContext.SolutionPath!, "src", "Modules", moduleName, "Models", $"{entityName}Dtos");
+
+        if (Directory.Exists(dtoPath))
+        {
+            if (!name.EndsWith(".cs"))
+            {
+                name = $"{name}.cs";
+            }
+            dtoPath = Path.Combine(dtoPath, name);
+            if (File.Exists(dtoPath))
+            {
+                return dtoPath;
+            }
+            string nspName = moduleName == null ?
+                $"namespace Share.Models.{entityName}Dtos;" :
+                $"namespace {moduleName}.Models.{entityName}Dtos;";
+            content = $$"""
+                {{nspName}}
+                /// <summary>
+                /// {{summary}}
+                /// </summary>
+                /// <see cref="Entity.{{entityName}}Entities.{{entityName}}"/>
+                public class {{name}}
+                {
+                    
+
+                }
+                
+                """;
+            await File.WriteAllTextAsync(dtoPath, content, new UTF8Encoding(false));
+            return dtoPath;
+        }
+        return null;
+    }
 }

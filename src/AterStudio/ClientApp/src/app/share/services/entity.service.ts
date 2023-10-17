@@ -24,8 +24,7 @@ export class EntityService extends BaseService {
   }
 
   /**
-   * s
-            获取dtos
+   * 获取dtos
    * @param entityFilePath 
    */
   getDtos(entityFilePath: string | null): Observable<EntityFile[]> {
