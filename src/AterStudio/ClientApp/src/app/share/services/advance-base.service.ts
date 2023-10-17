@@ -13,8 +13,8 @@ export class AdvanceBaseService extends BaseService {
    * @param key 
    */
   getConfig(key: string | null): Observable<ConfigData> {
-    const url = `/api/Advance/config?key=${key??''}`;
-    return this.request<ConfigData>('get', url);
+    const _url = `/api/Advance/config?key=${key ?? ''}`;
+    return this.request<ConfigData>('get', _url);
   }
 
   /**
@@ -23,8 +23,8 @@ export class AdvanceBaseService extends BaseService {
    * @param value 
    */
   setConfig(key: string | null, value: string | null): Observable<any> {
-    const url = `/api/Advance/config?key=${key??''}&value=${value??''}`;
-    return this.request<any>('put', url);
+    const _url = `/api/Advance/config?key=${key ?? ''}&value=${value ?? ''}`;
+    return this.request<any>('put', _url);
   }
 
   /**
@@ -32,8 +32,8 @@ export class AdvanceBaseService extends BaseService {
    * @param content 
    */
   generateEntity(content: string | null): Observable<any> {
-    const url = `/api/Advance/generateEntity?content=${content??''}`;
-    return this.request<any>('post', url);
+    const _url = `/api/Advance/generateEntity?content=${content ?? ''}`;
+    return this.request<any>('post', _url);
   }
 
   /**
@@ -41,8 +41,8 @@ export class AdvanceBaseService extends BaseService {
    * @param content 
    */
   getAnswer(content: string | null): Observable<any> {
-    const url = `/api/Advance/answer?content=${content??''}`;
-    return this.request<any>('get', url);
+    const _url = `/api/Advance/answer?content=${content ?? ''}`;
+    return this.request<any>('get', _url);
   }
 
   /**
@@ -50,8 +50,8 @@ export class AdvanceBaseService extends BaseService {
    * @param content 
    */
   getImages(content: string | null): Observable<string[]> {
-    const url = `/api/Advance/Images?content=${content??''}`;
-    return this.request<string[]>('get', url);
+    const _url = `/api/Advance/Images?content=${content ?? ''}`;
+    return this.request<string[]>('get', _url);
   }
 
 }

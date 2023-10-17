@@ -161,7 +161,6 @@ export class IndexComponent implements OnInit {
     this.projectSrv.getConfigOptions()
       .subscribe(res => {
         if (res) {
-          this.requestForm.get('swagger')?.setValue(res.swaggerPath);
           this.requestForm.get('path')?.setValue(res.webAppPath);
         }
       });

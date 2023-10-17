@@ -16,8 +16,8 @@ export class ApiDocBaseService extends BaseService {
    * @param id 项目id
    */
   list(id: string): Observable<ApiDocInfo[]> {
-    const url = `/api/ApiDoc/all/${id}`;
-    return this.request<ApiDocInfo[]>('get', url);
+    const _url = `/api/ApiDoc/all/${id}`;
+    return this.request<ApiDocInfo[]>('get', _url);
   }
 
   /**
@@ -25,8 +25,8 @@ export class ApiDocBaseService extends BaseService {
    * @param id 
    */
   getApiDocContent(id: string): Observable<ApiDocContent> {
-    const url = `/api/ApiDoc/${id}`;
-    return this.request<ApiDocContent>('get', url);
+    const _url = `/api/ApiDoc/${id}`;
+    return this.request<ApiDocContent>('get', _url);
   }
 
   /**
@@ -35,8 +35,8 @@ export class ApiDocBaseService extends BaseService {
    * @param data ApiDocInfo
    */
   update(id: string, data: ApiDocInfo): Observable<ApiDocInfo> {
-    const url = `/api/ApiDoc/${id}`;
-    return this.request<ApiDocInfo>('put', url, data);
+    const _url = `/api/ApiDoc/${id}`;
+    return this.request<ApiDocInfo>('put', _url, data);
   }
 
   /**
@@ -44,8 +44,8 @@ export class ApiDocBaseService extends BaseService {
    * @param id 
    */
   delete(id: string): Observable<boolean> {
-    const url = `/api/ApiDoc/${id}`;
-    return this.request<boolean>('delete', url);
+    const _url = `/api/ApiDoc/${id}`;
+    return this.request<boolean>('delete', _url);
   }
 
   /**
@@ -53,8 +53,8 @@ export class ApiDocBaseService extends BaseService {
    * @param data ApiDocInfo
    */
   add(data: ApiDocInfo): Observable<ApiDocInfo> {
-    const url = `/api/ApiDoc`;
-    return this.request<ApiDocInfo>('post', url, data);
+    const _url = `/api/ApiDoc`;
+    return this.request<ApiDocInfo>('post', _url, data);
   }
 
   /**
@@ -62,8 +62,8 @@ export class ApiDocBaseService extends BaseService {
    * @param data CreateUIComponentDto
    */
   createUIComponent(data: CreateUIComponentDto): Observable<NgComponentInfo> {
-    const url = `/api/ApiDoc/component`;
-    return this.request<NgComponentInfo>('post', url, data);
+    const _url = `/api/ApiDoc/component`;
+    return this.request<NgComponentInfo>('post', _url, data);
   }
 
 }

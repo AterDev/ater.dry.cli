@@ -14,16 +14,16 @@ export class FeatureBaseService extends BaseService {
    * @param data CreateSolutionDto
    */
   createNewSolution(data: CreateSolutionDto): Observable<boolean> {
-    const url = `/api/Feature/newSolution`;
-    return this.request<boolean>('post', url, data);
+    const _url = `/api/Feature/newSolution`;
+    return this.request<boolean>('post', _url, data);
   }
 
   /**
    * 获取模块列表
    */
   getModulesInfo(): Observable<SubProjectInfo[]> {
-    const url = `/api/Feature/modules`;
-    return this.request<SubProjectInfo[]>('get', url);
+    const _url = `/api/Feature/modules`;
+    return this.request<SubProjectInfo[]>('get', _url);
   }
 
   /**
@@ -31,16 +31,16 @@ export class FeatureBaseService extends BaseService {
    * @param name 
    */
   createModule(name: string | null): Observable<boolean> {
-    const url = `/api/Feature/createModule?name=${name??''}`;
-    return this.request<boolean>('post', url);
+    const _url = `/api/Feature/createModule?name=${name ?? ''}`;
+    return this.request<boolean>('post', _url);
   }
 
   /**
    * 重构Manager接口
    */
   removeIManager(): Observable<boolean> {
-    const url = `/api/Feature/removeIManager`;
-    return this.request<boolean>('put', url);
+    const _url = `/api/Feature/removeIManager`;
+    return this.request<boolean>('put', _url);
   }
 
 }

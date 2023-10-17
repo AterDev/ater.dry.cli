@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -8,10 +8,10 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class BaseService {
+  public baseUrl: string | null;
   private isMobile = false;
-  public baseUrl: string;
   constructor(
-    public http: HttpClient,
+    protected http: HttpClient,
     @Inject('BASE_URL') baseUrl: string
     // private oidcSecurityService: OidcSecurityService
   ) {
@@ -46,7 +46,6 @@ export class BaseService {
     return new HttpHeaders({
       Accept: 'application/json',
       Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
-      projectId: localStorage.getItem('projectId') ?? ''
     });
   }
   isMoblie(): boolean {
