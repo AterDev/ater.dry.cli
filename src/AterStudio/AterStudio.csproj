@@ -9,7 +9,7 @@
     <SatelliteResourceLanguages>en,zh-cn</SatelliteResourceLanguages>
     <ImplicitUsings>enable</ImplicitUsings>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <Version>7.2.0</Version>
+    <Version>7.2.1</Version>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <NoWarn>1701;1702;1591</NoWarn>
