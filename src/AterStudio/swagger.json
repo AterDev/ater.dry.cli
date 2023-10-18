@@ -2852,7 +2852,8 @@
         "properties": {
           "fileName": {
             "maxLength": 100,
-            "type": "string"
+            "type": "string",
+            "description": "文件完整路径"
           },
           "content": {
             "maxLength": 2000,

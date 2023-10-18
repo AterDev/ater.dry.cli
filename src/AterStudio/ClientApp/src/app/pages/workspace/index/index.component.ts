@@ -65,6 +65,7 @@ export class IndexComponent implements OnInit {
   webPath: string | null = null;
   previewItem: EntityFile | null = null;
   newDtoFileName: string = '';
+  newDtoDescription: string = '';
 
   selection = new SelectionModel<EntityFile>(true, []);
   selectedWebProjectIds: string[] = [];
@@ -258,6 +259,7 @@ export class IndexComponent implements OnInit {
 
   openAddDtoDialog(data: EntityFile): void {
     this.previewItem = data;
+    this.newDtoFileName = data.name.replace('.cs', '') + 'Dto';
     this.dialog.closeAll();
     this.dialogRef = this.dialog.open(this.addDtoTmpl, {
       minWidth: 400,
@@ -265,7 +267,8 @@ export class IndexComponent implements OnInit {
   }
 
   openWithVSCode(data: EntityFile): void {
-    window.open(`vscode://file/${data.baseDirPath}${data.path}`)
+    window.open(`vscode://file/${data.baseDirPath}${data.path}`);
+    this.dialogRef.close();
   }
 
   clearCodesDialog(): void {
@@ -351,9 +354,25 @@ export class IndexComponent implements OnInit {
   }
 
   addDto(open: boolean = false): void {
-
-    if (open) {
-
+    if (this.previewItem?.baseDirPath && this.previewItem?.path) {
+      const path = this.previewItem?.baseDirPath + this.previewItem?.path;
+      this.service.createDto(path, this.newDtoFileName, this.newDtoDescription)
+        .subscribe({
+          next: (res) => {
+            if (res) {
+              this.snb.open('添加成功');
+              this.dialogRef.close();
+              if (open) {
+                window.open(`vscode://file/${res}`);
+              }
+            }
+          },
+          error: (error) => {
+            this.snb.open(error.detail);
+          },
+          complete: () => {
+          }
+        });
     }
   }
 

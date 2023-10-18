@@ -161,27 +161,7 @@ public class EntityManager
         List<EntityFile> dtoFiles = new();
         try
         {
-            // 解析特性
-            string? moduleName = null;
-            var content = File.ReadAllText(entityFilePath);
-            var compilation = new CompilationHelper(Path.Combine(_projectContext.SolutionPath!, Config.EntityPath));
-
-            compilation.AddSyntaxTree(content);
-            var moduleAttribution = compilation.GetClassAttribution("Module");
-            if (moduleAttribution != null && moduleAttribution.Any())
-            {
-                var argument = moduleAttribution.Last().ArgumentList?.Arguments.FirstOrDefault();
-                if (argument != null)
-                {
-                    moduleName = compilation.GetArgumentValue(argument);
-                }
-            }
-
-            var entityName = Path.GetFileNameWithoutExtension(entityFilePath);
-
-            string dtoPath = moduleName == null ?
-                Path.Combine(_projectContext.SolutionPath!, Config.SharePath, "Models", $"{entityName}Dtos") :
-                Path.Combine(_projectContext.SolutionPath!, "src", "Modules", moduleName, "Models", $"{entityName}Dtos");
+            string dtoPath = GetDtoPath(entityFilePath);
 
             // get files in directory
             List<string> filePaths = Directory.GetFiles(dtoPath, "*.cs", SearchOption.AllDirectories).ToList();
@@ -211,6 +191,32 @@ public class EntityManager
             return dtoFiles;
         }
         return dtoFiles;
+    }
+
+    private string GetDtoPath(string entityFilePath)
+    {
+        // 解析特性
+        string? moduleName = null;
+        var content = File.ReadAllText(entityFilePath);
+        var compilation = new CompilationHelper(Path.Combine(_projectContext.SolutionPath!, Config.EntityPath));
+
+        compilation.AddSyntaxTree(content);
+        var moduleAttribution = compilation.GetClassAttribution("Module");
+        if (moduleAttribution != null && moduleAttribution.Any())
+        {
+            var argument = moduleAttribution.Last().ArgumentList?.Arguments.FirstOrDefault();
+            if (argument != null)
+            {
+                moduleName = compilation.GetArgumentValue(argument);
+            }
+        }
+
+        var entityName = Path.GetFileNameWithoutExtension(entityFilePath);
+
+        string dtoPath = moduleName == null ?
+            Path.Combine(_projectContext.SolutionPath!, Config.SharePath, "Models", $"{entityName}Dtos") :
+            Path.Combine(_projectContext.SolutionPath!, "src", "Modules", moduleName, "Models", $"{entityName}Dtos");
+        return dtoPath;
     }
 
     /// <summary>
@@ -312,13 +318,11 @@ public class EntityManager
     /// <summary>
     /// 保存Dto内容
     /// </summary>
-    /// <param name="fileName"></param>
+    /// <param name="filePath"></param>
     /// <param name="Content"></param>
     /// <returns></returns>
-    public bool UpdateDtoContent(string fileName, string Content)
+    public bool UpdateDtoContent(string filePath, string Content)
     {
-        string dtoPath = Path.Combine(_projectContext.SolutionPath!, Config.SharePath, "Models");
-        var filePath = Directory.GetFiles(dtoPath, fileName, SearchOption.AllDirectories).FirstOrDefault();
         try
         {
             if (filePath != null)
@@ -328,8 +332,9 @@ public class EntityManager
             }
 
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            Console.WriteLine(ex);
             return false;
         }
         return false;
@@ -484,11 +489,12 @@ public class EntityManager
 
         if (Directory.Exists(dtoPath))
         {
-            if (!name.EndsWith(".cs"))
+            var fileName = name;
+            if (name.EndsWith(".cs"))
             {
-                name = $"{name}.cs";
+                name = name.Replace(".cs", "");
             }
-            dtoPath = Path.Combine(dtoPath, name);
+            dtoPath = Path.Combine(dtoPath, fileName);
             if (File.Exists(dtoPath))
             {
                 return dtoPath;

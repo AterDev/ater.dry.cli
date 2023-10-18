@@ -9,6 +9,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FormGroup } from '@angular/forms';
+import { AddComponent } from '../add/add.component';
+import { EditComponent } from '../edit/edit.component';
 
 @Component({
   selector: 'app-index',
@@ -82,6 +84,30 @@ export class IndexComponent implements OnInit {
       this.getList();
     }
   }
+
+  openAddDialog(): void {
+    this.dialogRef = this.dialog.open(AddComponent, {
+      minWidth: '400px',
+    })
+      this.dialogRef.afterClosed()
+      .subscribe(res => {
+        if (res)
+          this.getList();
+      });
+  }
+
+  openEditDialog(item: AnnounceItemDto): void {
+    this.dialogRef = this.dialog.open(EditComponent, {
+      minWidth: '400px',
+      data: { id: item.id }
+    })
+      this.dialogRef.afterClosed()
+      .subscribe(res => {
+        if (res)
+          this.getList();
+      });
+  }
+
 
   deleteConfirm(item: {$EntityName}ItemDto): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
