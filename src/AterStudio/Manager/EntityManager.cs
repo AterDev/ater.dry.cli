@@ -463,7 +463,7 @@ public class EntityManager
     /// <param name="summary"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public async Task<string?> CreateDtoAsync(string entityFilePath, string name, string summary)
+    public async Task<string?> CreateDtoAsync(string entityFilePath, string name, string summary = "")
     {
         // 解析特性
         string? moduleName = null;
@@ -480,6 +480,8 @@ public class EntityManager
                 moduleName = compilation.GetArgumentValue(argument);
             }
         }
+        var entityHelper = new EntityParseHelper(entityFilePath);
+        var entityInfo = entityHelper.GetEntity();
 
         var entityName = Path.GetFileNameWithoutExtension(entityFilePath);
 
@@ -490,15 +492,19 @@ public class EntityManager
         if (Directory.Exists(dtoPath))
         {
             var fileName = name;
-            if (name.EndsWith(".cs"))
+            if (!fileName.EndsWith(".cs"))
             {
-                name = name.Replace(".cs", "");
+                fileName += ".cs";
             }
             dtoPath = Path.Combine(dtoPath, fileName);
+
             if (File.Exists(dtoPath))
             {
                 return dtoPath;
             }
+
+            Console.WriteLine($"🆕 Create new Dto:{dtoPath}");
+
             string nspName = moduleName == null ?
                 $"namespace Share.Models.{entityName}Dtos;" :
                 $"namespace {moduleName}.Models.{entityName}Dtos;";
@@ -507,7 +513,7 @@ public class EntityManager
                 /// <summary>
                 /// {{summary}}
                 /// </summary>
-                /// <see cref="Entity.{{entityName}}Entities.{{entityName}}"/>
+                /// <see cref="{{entityInfo.NamespaceName}}.{{entityName}}"/>
                 public class {{name}}
                 {
                     

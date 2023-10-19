@@ -5,7 +5,7 @@
 
 <div *ngIf="!isLoading">
   <mat-toolbar class="d-flex align-items-center">
-    <mat-form-field>
+    <mat-form-field subscriptSizing="dynamic">
       <mat-select placeholder="选择Swagger文档" [(ngModel)]="currentDoc" (selectionChange)="getDocContent()">
         <mat-option *ngFor="let item of docs" [value]="item">
           {{item.name}}
