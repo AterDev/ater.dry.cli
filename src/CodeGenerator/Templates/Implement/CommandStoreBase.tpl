@@ -34,7 +34,7 @@ public partial class CommandStoreBase<TContext, TEntity> : ICommandStore<TEntity
         Database = Context.Database;
     }
 
-    public virtual async Task<int> SaveChangeAsync()
+    public virtual async Task<int> SaveChangesAsync()
     {
         return await Context.SaveChangesAsync();
     }
@@ -147,7 +147,7 @@ public partial class CommandStoreBase<TContext, TEntity> : ICommandStore<TEntity
         else
         {
             await _db.AddRangeAsync(entities);
-            _ = await SaveChangeAsync();
+            _ = await SaveChangesAsync();
         }
         return entities;
     }

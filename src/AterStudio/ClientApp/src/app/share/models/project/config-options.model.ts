@@ -33,10 +33,6 @@ export interface ConfigOptions {
   isSplitController?: boolean | null;
   version: string;
   /**
-   * swagger地址
-   */
-  swaggerPath?: string | null;
-  /**
    * 前端路径
    */
   webAppPath?: string | null;

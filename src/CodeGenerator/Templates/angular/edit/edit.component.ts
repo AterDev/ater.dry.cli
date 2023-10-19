@@ -30,6 +30,8 @@ export class EditComponent implements OnInit {
     // public dialogRef: MatDialogRef<EditComponent>,
     // @Inject(MAT_DIALOG_DATA) public dlgData: { id: '' }
   ) {
+
+    // this.id = dlgData.id;
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.id = id;

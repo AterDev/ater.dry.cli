@@ -19,8 +19,8 @@ export class EntityBaseService extends BaseService {
    * @param name string
    */
   list(id: string, name: string | null): Observable<EntityFile[]> {
-    const url = `/api/Entity/${id}?name=${name??''}`;
-    return this.request<EntityFile[]>('get', url);
+    const _url = `/api/Entity/${id}?name=${name ?? ''}`;
+    return this.request<EntityFile[]>('get', _url);
   }
 
   /**
@@ -29,28 +29,19 @@ export class EntityBaseService extends BaseService {
    * @param entityFilePath 
    */
   getDtos(entityFilePath: string | null): Observable<EntityFile[]> {
-    const url = `/api/Entity/dtos?entityFilePath=${entityFilePath??''}`;
-    return this.request<EntityFile[]>('get', url);
+    const _url = `/api/Entity/dtos?entityFilePath=${entityFilePath ?? ''}`;
+    return this.request<EntityFile[]>('get', _url);
   }
 
   /**
-   * 清理解决方案
+   * 创建DTO
+   * @param entityFilePath 
+   * @param name 
+   * @param summary 
    */
-  cleanSolution(): Observable<string> {
-    const url = `/api/Entity`;
-    return this.request<string>('delete', url);
-  }
-
-  /**
-   * 获取文件内容
-entity/manager
-   * @param entityName 
-   * @param isManager 是否为manager
-   * @param moduleName 
-   */
-  getFileContent(entityName: string | null, isManager: boolean | null, moduleName: string | null): Observable<EntityFile> {
-    const url = `/api/Entity/fileContent?entityName=${entityName??''}&isManager=${isManager??''}&moduleName=${moduleName??''}`;
-    return this.request<EntityFile>('get', url);
+  createDto(entityFilePath: string | null, name: string | null, summary: string | null): Observable<string> {
+    const _url = `/api/Entity/dto?entityFilePath=${entityFilePath ?? ''}&name=${name ?? ''}&summary=${summary ?? ''}`;
+    return this.request<string>('post', _url);
   }
 
   /**
@@ -58,8 +49,27 @@ entity/manager
    * @param data UpdateDtoDto
    */
   updateDtoContent(data: UpdateDtoDto): Observable<boolean> {
-    const url = `/api/Entity/dto`;
-    return this.request<boolean>('put', url, data);
+    const _url = `/api/Entity/dto`;
+    return this.request<boolean>('put', _url, data);
+  }
+
+  /**
+   * 清理解决方案
+   */
+  cleanSolution(): Observable<string> {
+    const _url = `/api/Entity`;
+    return this.request<string>('delete', _url);
+  }
+
+  /**
+   * 获取文件内容 entity/manager
+   * @param entityName 
+   * @param isManager 是否为manager
+   * @param moduleName 
+   */
+  getFileContent(entityName: string | null, isManager: boolean | null, moduleName: string | null): Observable<EntityFile> {
+    const _url = `/api/Entity/fileContent?entityName=${entityName ?? ''}&isManager=${isManager ?? ''}&moduleName=${moduleName ?? ''}`;
+    return this.request<EntityFile>('get', _url);
   }
 
   /**
@@ -67,8 +77,8 @@ entity/manager
    * @param data GenerateDto
    */
   generate(data: GenerateDto): Observable<boolean> {
-    const url = `/api/Entity/generate`;
-    return this.request<boolean>('post', url, data);
+    const _url = `/api/Entity/generate`;
+    return this.request<boolean>('post', _url, data);
   }
 
   /**
@@ -76,8 +86,8 @@ entity/manager
    * @param data BatchGenerateDto
    */
   batchGenerate(data: BatchGenerateDto): Observable<boolean> {
-    const url = `/api/Entity/batch-generate`;
-    return this.request<boolean>('post', url, data);
+    const _url = `/api/Entity/batch-generate`;
+    return this.request<boolean>('post', _url, data);
   }
 
   /**
@@ -88,8 +98,8 @@ entity/manager
    * @param swaggerPath 
    */
   generateRequest(id: string, webPath: string | null, type: RequestLibType | null, swaggerPath: string | null): Observable<boolean> {
-    const url = `/api/Entity/generateRequest/${id}?webPath=${webPath??''}&type=${type??''}&swaggerPath=${swaggerPath??''}`;
-    return this.request<boolean>('get', url);
+    const _url = `/api/Entity/generateRequest/${id}?webPath=${webPath ?? ''}&type=${type ?? ''}&swaggerPath=${swaggerPath ?? ''}`;
+    return this.request<boolean>('get', _url);
   }
 
   /**
@@ -100,8 +110,8 @@ entity/manager
    * @param swaggerPath 
    */
   generateClientRequest(id: string, webPath: string | null, type: LanguageType | null, swaggerPath: string | null): Observable<boolean> {
-    const url = `/api/Entity/generateClientRequest/${id}?webPath=${webPath??''}&type=${type??''}&swaggerPath=${swaggerPath??''}`;
-    return this.request<boolean>('get', url);
+    const _url = `/api/Entity/generateClientRequest/${id}?webPath=${webPath ?? ''}&type=${type ?? ''}&swaggerPath=${swaggerPath ?? ''}`;
+    return this.request<boolean>('get', _url);
   }
 
   /**
@@ -109,8 +119,8 @@ entity/manager
    * @param id 
    */
   generateSync(id: string): Observable<boolean> {
-    const url = `/api/Entity/generateSync/${id}`;
-    return this.request<boolean>('post', url);
+    const _url = `/api/Entity/generateSync/${id}`;
+    return this.request<boolean>('post', _url);
   }
 
   /**
@@ -120,8 +130,8 @@ entity/manager
    * @param rootPath 
    */
   generateNgModule(id: string, entityName: string | null, rootPath: string | null): Observable<boolean> {
-    const url = `/api/Entity/generateNgModule/${id}?entityName=${entityName??''}&rootPath=${rootPath??''}`;
-    return this.request<boolean>('post', url);
+    const _url = `/api/Entity/generateNgModule/${id}?entityName=${entityName ?? ''}&rootPath=${rootPath ?? ''}`;
+    return this.request<boolean>('post', _url);
   }
 
 }

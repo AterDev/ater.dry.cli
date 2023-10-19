@@ -44,6 +44,28 @@ public class EntityController : ControllerBase
     }
 
     /// <summary>
+    /// 创建DTO
+    /// </summary>
+    /// <param name="entityFilePath"></param>
+    /// <param name="name"></param>
+    /// <param name="summary"></param>
+    /// <returns></returns>
+    [HttpPost("dto")]
+    public async Task<ActionResult<string>> CreateDtoAsync(string entityFilePath, string name, string summary)
+    {
+        if (!System.IO.File.Exists(entityFilePath))
+        {
+            return NotFound("不存在的文件");
+        }
+        var res = await _manager.CreateDtoAsync(entityFilePath, name, summary);
+        if (res == null)
+        {
+            return BadRequest("创建失败");
+        }
+        return res;
+    }
+
+    /// <summary>
     /// 清理解决方案
     /// </summary>
     /// <returns></returns>
@@ -56,8 +78,7 @@ public class EntityController : ControllerBase
     }
 
     /// <summary>
-    /// 获取文件内容
-    /// entity/manager
+    /// 获取文件内容 entity/manager
     /// </summary>
     /// <param name="entityName"></param>
     /// <param name="isManager">是否为manager</param>

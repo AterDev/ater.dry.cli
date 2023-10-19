@@ -105,7 +105,7 @@ export class FeatureComponent {
 
   removeIManager(): void {
     this.isProcessing = true;
-    this.service.RemoveIManager()
+    this.service.removeIManager()
       .subscribe({
         next: (res) => {
           if (res) {

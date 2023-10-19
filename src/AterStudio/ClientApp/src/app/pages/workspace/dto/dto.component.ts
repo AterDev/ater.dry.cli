@@ -80,9 +80,11 @@ export class DtoComponent implements OnInit {
   }
 
   save(): void {
-    if (this.currentTabName) {
+    const currentDto = this.dtos.filter((val) => val.name == this.currentTabName)[0];
+    const path = currentDto.baseDirPath + currentDto.path;
+    if (path) {
       this.service.updateDtoContent({
-        fileName: this.currentTabName,
+        fileName: path,
         content: this.code
       }).subscribe({
         next: (res) => {

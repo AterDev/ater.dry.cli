@@ -24,12 +24,12 @@ $light-palette: (
 
 
 $light-primary: mat-palette($mat-blue, 600, 700, 900);
-$light-accent: mat.define-palette(mat.$indigo-palette, A200, A100, A400);
+$light-accent: mat.define-palette($mat-orange, 700,800,900);
 $light-warn: mat.define-palette(mat.$red-palette);
 
 
-$dark-primary: mat-palette($mat-blue, 600, 700, 900);
-$dark-accent: mat-palette($mat-blue, 500, 700, 900);
+$dark-primary: mat-palette($mat-blue, 500, 600, 700);
+$dark-accent: mat-palette($mat-orange, 300, 400, 500);
 $dark-warn: mat.define-palette(mat.$red-palette);
 
 
@@ -38,19 +38,26 @@ $dark-theme: mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
 
 
 @media (prefers-color-scheme: light) {
-    @include mat.all-component-themes($light-theme);
-    @include mat.toolbar-theme($light-theme);
+  @include mat.all-component-themes($light-theme);
 
-    a {
-        color: mat-color($light-primary, 900);
-    }
+  .active {
+    background-color: mat-color($light-primary, 300) !important;
+  }
+
+  a {
+    color: mat-color($light-primary, 900);
+  }
 
 }
 
 @media (prefers-color-scheme: dark) {
-    @include mat.all-component-themes($dark-theme);
-    @include mat.toolbar-theme($dark-theme);
-    a {
-        color: mat-color($dark-primary, 300);
-    }
+  @include mat.all-component-themes($dark-theme);
+
+  .active {
+    background-color: mat-color($dark-primary, 400) !important;
+  }
+
+  a {
+    color: mat-color($dark-primary, 300);
+  }
 }

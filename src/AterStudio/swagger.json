@@ -581,6 +581,112 @@
         }
       }
     },
+    "/api/Entity/dto": {
+      "post": {
+        "tags": [
+          "Entity"
+        ],
+        "summary": "创建DTO",
+        "operationId": "Entity_CreateDto",
+        "parameters": [
+          {
+            "name": "entityFilePath",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "summary",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Entity"
+        ],
+        "summary": "更新内容",
+        "operationId": "Entity_UpdateDtoContent",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDtoDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDtoDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDtoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Entity": {
       "delete": {
         "tags": [
@@ -617,7 +723,7 @@
         "tags": [
           "Entity"
         ],
-        "summary": "获取文件内容\r\nentity/manager",
+        "summary": "获取文件内容 entity/manager",
         "operationId": "Entity_GetFileContent",
         "parameters": [
           {
@@ -662,57 +768,6 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/EntityFile"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Entity/dto": {
-      "put": {
-        "tags": [
-          "Entity"
-        ],
-        "summary": "更新内容",
-        "operationId": "Entity_UpdateDtoContent",
-        "requestBody": {
-          "description": "",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateDtoDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateDtoDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateDtoDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "boolean"
                 }
               }
             }
@@ -2113,11 +2168,6 @@
           "version": {
             "type": "string"
           },
-          "swaggerPath": {
-            "type": "string",
-            "description": "swagger地址",
-            "nullable": true
-          },
           "webAppPath": {
             "type": "string",
             "description": "前端路径",
@@ -2802,7 +2852,8 @@
         "properties": {
           "fileName": {
             "maxLength": 100,
-            "type": "string"
+            "type": "string",
+            "description": "文件完整路径"
           },
           "content": {
             "maxLength": 2000,

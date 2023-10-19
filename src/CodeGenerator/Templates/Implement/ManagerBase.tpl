@@ -26,10 +26,17 @@ public partial class ManagerBase<TEntity, TUpdate, TFilter, TItem>
     /// </summary>
     public CommandSet<TEntity> Command { get; init; }
     public IQueryable<TEntity> Queryable { get; set; }
+    protected CommandDbContext CommandContext { get; set; }
+    protected QueryDbContext QueryDbContext { get; set; }
+
     /// <summary>
     /// 是否自动保存(调用SaveChanges)
     /// </summary>
     public bool AutoSave { get; set; } = true;
+
+    /// <summary>
+    /// Command database
+    /// </summary>
     public DatabaseFacade Database { get; init; }
 
     public ManagerBase(DataStoreContext storeContext)
@@ -37,6 +44,8 @@ public partial class ManagerBase<TEntity, TUpdate, TFilter, TItem>
         Stores = storeContext;
         Query = Stores.QuerySet<TEntity>();
         Command = Stores.CommandSet<TEntity>();
+        CommandContext = Stores.CommandContext;
+        QueryDbContext = Stores.QueryContext;
         Queryable = Query.Queryable;
         Database = Command.Database;
     }
@@ -73,7 +82,7 @@ public partial class ManagerBase<TEntity, TUpdate, TFilter, TItem>
 
     public virtual async Task<TEntity> UpdateAsync(TEntity entity, TUpdate dto)
     {
-        _ = entity.Merge(dto, false);
+        _ = entity.Merge(dto, true);
         entity.UpdatedTime = DateTimeOffset.UtcNow;
         TEntity res = Command.Update(entity);
         await AutoSaveAsync();
@@ -120,15 +129,6 @@ public partial class ManagerBase<TEntity, TUpdate, TFilter, TItem>
     public virtual async Task<List<TEntity>> ListAsync(Expression<Func<TEntity, bool>>? whereExp = null)
     {
         return await Query.ListAsync(whereExp);
-    }
-
-    /// <summary>
-    /// 获取当前查询构造对象
-    /// </summary>
-    /// <returns></returns>
-    public IQueryable<TEntity> GetQueryable()
-    {
-        return Query._query;
     }
 
     /// <summary>

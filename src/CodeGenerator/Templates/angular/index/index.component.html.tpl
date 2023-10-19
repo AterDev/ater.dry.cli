@@ -31,7 +31,7 @@
     {$ColumnsDef}
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef>操作</th>
-        <td mat-cell *matCellDef="let element">
+        <td mat-cell *matCellDef="let element;table:table">
           <button mat-icon-button color="link" [routerLink]="['../detail',element.id]" matTooltip="查看">
             <mat-icon>pages</mat-icon>
           </button>
@@ -43,12 +43,12 @@
           </button>
         </td>
       </ng-container>
-
       <tr mat-header-row *matHeaderRowDef="columns"></tr>
       <tr mat-row *matRowDef="let row; columns: columns;"></tr>
     </table>
-    <div class="d-flex justify-content-between bg">
-      <mat-form-field>
+    <mat-divider></mat-divider>
+    <div class="d-flex justify-content-between paginator-bg">
+      <mat-form-field subscriptSizing="dynamic">
         <mat-label>跳转到</mat-label>
         <input matInput type="number" [value]="filter.pageIndex" #pageJump (keyup.enter)="jumpTo(pageJump.value)">
       </mat-form-field>
