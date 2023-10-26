@@ -26,8 +26,8 @@ public partial class ManagerBase<TEntity, TUpdate, TFilter, TItem>
     /// </summary>
     public CommandSet<TEntity> Command { get; init; }
     public IQueryable<TEntity> Queryable { get; set; }
-    protected CommandDbContext CommandDbContext { get; set; }
-    protected QueryDbContext QueryDbContext { get; set; }
+    protected CommandDbContext CommandContext { get; set; }
+    protected QueryDbContext QueryContext { get; set; }
 
     /// <summary>
     /// 是否自动保存(调用SaveChanges)
