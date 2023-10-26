@@ -45,6 +45,21 @@
           </a>
         </mat-nav-list>
       </mat-expansion-panel>
+      <mat-expansion-panel hideToggle>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>desktop_windows</mat-icon>
+            <span *ngIf="opened">实用工具</span>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <mat-nav-list>
+          <a mat-list-item [matTooltip]="opened?'': 'JsonToClass'" matTooltipPosition="right"
+            routerLink="/workspace/jsonToClass" routerLinkActive="active">
+            <mat-icon color="accent" fontSet="material-icons-outlined">integration_instructions</mat-icon>
+            <span *ngIf="opened">Json转实体</span>
+          </a>
+        </mat-nav-list>
+      </mat-expansion-panel>
     </mat-accordion>
   </mat-sidenav>
   <mat-sidenav-content class="px-2">

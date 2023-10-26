@@ -1,8 +1,8 @@
 <div class="page" *ngIf="this.type!='desktop'">
   <mat-toolbar>
-    <div class="d-flex justify-content-center flex-grow-1 ">
+    <div class="d-flex justify-content-center flex-grow-1 gap-1">
       <button mat-flat-button [routerLink]="['/index']" routerLinkActive="active">解决方案</button>
-      <!-- <button mat-button [routerLink]="['/ai/index']" routerLinkActive="active">AI工具箱</button> -->
+      <button mat-button [routerLink]="['/ai/tools']" routerLinkActive="active">快捷工具</button>
     </div>
     <span *ngIf="isLogin">
       <button [matMenuTriggerFor]="appMenu" mat-button style="flex-direction: row-reverse;">
