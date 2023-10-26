@@ -80,9 +80,9 @@ public partial class ManagerBase<TEntity, TUpdate, TFilter, TItem>
         return res;
     }
 
-    public virtual async Task<TEntity> UpdateAsync(TEntity entity, TUpdate dto)
+    public virtual async Task<TEntity> UpdateAsync(TEntity entity, TUpdate dto, bool ignoreNull = true)
     {
-        _ = entity.Merge(dto, true);
+        _ = entity.Merge(dto, ignoreNull);
         entity.UpdatedTime = DateTimeOffset.UtcNow;
         TEntity res = Command.Update(entity);
         await AutoSaveAsync();
