@@ -96,7 +96,7 @@ export class IndexComponent implements OnInit {
       });
   }
 
-  openEditDialog(item: AnnounceItemDto): void {
+  openEditDialog(item: {$EntityName}ItemDto): void {
     this.dialogRef = this.dialog.open(EditComponent, {
       minWidth: '400px',
       data: { id: item.id }
