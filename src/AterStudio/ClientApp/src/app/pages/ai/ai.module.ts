@@ -4,11 +4,13 @@ import { AiRoutingModule } from './ai-routing.module';
 import { IndexComponent } from './index/index.component';
 import { ShareModule } from 'src/app/share/share.module';
 import { MarkdownModule } from 'ngx-markdown';
+import { ToolsComponent } from './tools/tools.component';
 
 
 @NgModule({
   declarations: [
-    IndexComponent
+    IndexComponent,
+    ToolsComponent
   ],
   imports: [
     ShareModule,

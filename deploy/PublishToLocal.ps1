@@ -72,7 +72,9 @@ try {
                 Remove-Item $path -Force
             }
         }
-
+        if (Test-Path -Path "../CommandLine/studio.zip") {
+            Remove-Item "../CommandLine/studio.zip" -Force
+        }
         Compress-Archive -Path .\publish\*  -DestinationPath "../CommandLine/studio.zip" -CompressionLevel Optimal -Force
     }
 

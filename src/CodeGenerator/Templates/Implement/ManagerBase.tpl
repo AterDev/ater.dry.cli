@@ -27,7 +27,7 @@ public partial class ManagerBase<TEntity, TUpdate, TFilter, TItem>
     public CommandSet<TEntity> Command { get; init; }
     public IQueryable<TEntity> Queryable { get; set; }
     protected CommandDbContext CommandContext { get; set; }
-    protected QueryDbContext QueryDbContext { get; set; }
+    protected QueryDbContext QueryContext { get; set; }
 
     /// <summary>
     /// 是否自动保存(调用SaveChanges)
@@ -80,9 +80,9 @@ public partial class ManagerBase<TEntity, TUpdate, TFilter, TItem>
         return res;
     }
 
-    public virtual async Task<TEntity> UpdateAsync(TEntity entity, TUpdate dto)
+    public virtual async Task<TEntity> UpdateAsync(TEntity entity, TUpdate dto, bool ignoreNull = true)
     {
-        _ = entity.Merge(dto, true);
+        _ = entity.Merge(dto, ignoreNull);
         entity.UpdatedTime = DateTimeOffset.UtcNow;
         TEntity res = Command.Update(entity);
         await AutoSaveAsync();
