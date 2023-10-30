@@ -52,11 +52,11 @@ public class CSharpCovertHelper
             string csharpValue = propertyValue.ValueKind switch
             {
                 JsonValueKind.Number => "int",
-                JsonValueKind.String => "string",
+                JsonValueKind.String => "required string",
                 JsonValueKind.True => "bool",
                 JsonValueKind.False => "bool",
                 JsonValueKind.Object => propertyName,
-                JsonValueKind.Array => $"List<{propertyName}>",
+                JsonValueKind.Array => $"List<{propertyName}>?",
                 JsonValueKind.Null => "object?",
                 _ => "object",
             };
@@ -84,6 +84,10 @@ public class CSharpCovertHelper
                 }
             }
 
+            if (propertyName != propertyName.ToPascalCase())
+            {
+                sb.AppendLine($"    [JsonPropertyName(\"{propertyName}\")]");
+            }
             sb.AppendLine($"    public {csharpValue} {propertyName.ToPascalCase()} {{ get; set; }}");
             if (propertyValue.ValueKind == JsonValueKind.Object)
             {

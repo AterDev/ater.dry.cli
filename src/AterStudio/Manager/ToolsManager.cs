@@ -7,6 +7,7 @@ namespace AterStudio.Manager;
 /// </summary>
 public class ToolsManager
 {
+
     public ToolsManager()
     {
 
@@ -18,7 +19,9 @@ public class ToolsManager
         if (CSharpCovertHelper.CheckJson(json))
         {
             var jsonElement = JsonSerializer.Deserialize<JsonElement>(json);
-
+            var helper = new CSharpCovertHelper();
+            helper.GenerateClass(jsonElement);
+            return helper.ClassCodes;
         }
         return null;
     }
