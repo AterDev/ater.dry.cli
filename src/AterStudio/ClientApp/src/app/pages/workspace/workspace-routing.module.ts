@@ -9,6 +9,7 @@ import { SettingComponent } from './setting/setting.component';
 import { DatabaseComponent } from './database/database.component';
 import { EntityComponent } from './entity/entity.component';
 import { FeatureComponent } from './feature/feature.component';
+import { Json2TypeComponent } from './json2-type/json2-type.component';
 
 const routes: Routes = [
   {
@@ -22,7 +23,8 @@ const routes: Routes = [
       { path: 'database', component: DatabaseComponent },
       { path: 'setting', component: SettingComponent },
       { path: 'dto/:name', component: DtoComponent },
-      { path: 'feature', component: FeatureComponent }
+      { path: 'feature', component: FeatureComponent },
+      { path: 'jsonToType', component: Json2TypeComponent }
     ]
   },
 ];

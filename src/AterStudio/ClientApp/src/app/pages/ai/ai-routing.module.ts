@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { IndexComponent } from './index/index.component';
-import { ToolsComponent } from './tools/tools.component';
 
 const routes: Routes = [
   {
@@ -9,7 +8,6 @@ const routes: Routes = [
     children: [
 
       { path: 'index', component: IndexComponent },
-      { path: 'tools', component: ToolsComponent }
     ]
   }
 ];
