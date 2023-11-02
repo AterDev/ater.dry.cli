@@ -43,7 +43,7 @@ public class SwaggerManager
             if (path.StartsWith("http://") || path.StartsWith("https://"))
             {
                 using HttpClient http = new();
-                http.Timeout = TimeSpan.FromSeconds(5);
+                http.Timeout = TimeSpan.FromSeconds(60);
                 openApiContent = await http.GetStringAsync(path);
             }
             else
