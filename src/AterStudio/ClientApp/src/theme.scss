@@ -1,51 +1,42 @@
 @use '@angular/material' as mat;
-
-@import '@angular/material/theming';
+@import './vars.scss';
 
 @include mat.core();
 
-$dark-primary-text: rgba(black, 0.87);
-$dark-secondary-text: rgba(black, 0.54);
-$dark-disabled-text: rgba(black, 0.38);
-$dark-dividers: rgba(black, 0.12);
-$dark-focused: rgba(black, 0.12);
-$light-primary-text: white;
-$light-secondary-text: rgba(white, 0.7);
-$light-disabled-text: rgba(white, 0.5);
-$light-dividers: rgba(white, 0.12);
-$light-focused: rgba(white, 0.12);
-
-
-$dark-color: #212121;
-
-
-$light-palette: (
-);
-
-
-$light-primary: mat-palette($mat-blue, 600, 700, 900);
-$light-accent: mat.define-palette($mat-orange, 700,800,900);
+$light-primary: mat.define-palette(mat.$blue-palette, 600, 700, 900);
+$light-accent: mat.define-palette(mat.$orange-palette, 700, 800, 900);
 $light-warn: mat.define-palette(mat.$red-palette);
 
-
-$dark-primary: mat-palette($mat-blue, 500, 600, 700);
-$dark-accent: mat-palette($mat-orange, 300, 400, 500);
+$dark-primary: mat.define-palette(mat.$blue-palette, 500, 600, 700);
+$dark-accent: mat.define-palette(mat.$orange-palette, 300, 400, 500);
 $dark-warn: mat.define-palette(mat.$red-palette);
 
+$dark-theme: mat.define-dark-theme((color: (primary: $dark-primary,
+        accent: $dark-accent,
+        warn: $dark-warn,
+      ),
+      typography: mat.define-typography-config(),
+      density: 0,
+    ));
 
-$light-theme: mat-light-theme($light-primary, $light-accent, $light-warn);
-$dark-theme: mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
 
+$light-theme: mat.define-light-theme((color: (primary: $light-primary,
+        accent: $light-accent,
+        warn: $light-warn,
+      ),
+      typography: mat.define-typography-config(),
+      density: 0,
+    ));
 
 @media (prefers-color-scheme: light) {
   @include mat.all-component-themes($light-theme);
 
   .active {
-    background-color: mat-color($light-primary, 300) !important;
+    background-color: mat.get-theme-color($light-theme, primary, 300) !important;
   }
 
   a {
-    color: mat-color($light-primary, 900);
+    color: mat.get-theme-color($light-theme, primary, 900);
   }
 
 }
@@ -54,10 +45,10 @@ $dark-theme: mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
   @include mat.all-component-themes($dark-theme);
 
   .active {
-    background-color: mat-color($dark-primary, 400) !important;
+    background-color: mat.get-theme-color($dark-theme, primary, 400) !important;
   }
 
   a {
-    color: mat-color($dark-primary, 300);
+    color: mat.get-theme-color($dark-theme, primary, 300);
   }
 }

@@ -15,13 +15,14 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser-esbuild",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "progress": false,
             "outputPath": "dist",
             "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
+            "browser": "src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
             "tsConfig": "tsconfig.app.json",
             "allowedCommonJsDependencies": [],
             "assets": [
@@ -65,9 +66,7 @@
               "outputHashing": "all"
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -82,10 +81,10 @@
           },
           "configurations": {
             "production": {
-              "browserTarget": "AterStudio:build:production"
+              "buildTarget": "AterStudio:build:production"
             },
             "development": {
-              "browserTarget": "AterStudio:build:development",
+              "buildTarget": "AterStudio:build:development",
               "proxyConfig": "proxy.conf.json"
             }
           },
@@ -94,7 +93,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "AterStudio:build"
+            "buildTarget": "AterStudio:build"
           }
         },
         "test": {
@@ -143,7 +142,6 @@
       }
     }
   },
-  "defaultProject": "AterStudio",
   "cli": {
     "analytics": false
   }
