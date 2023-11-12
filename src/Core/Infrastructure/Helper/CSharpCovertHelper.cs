@@ -55,8 +55,8 @@ public class CSharpCovertHelper
                 JsonValueKind.String => "required string",
                 JsonValueKind.True => "bool",
                 JsonValueKind.False => "bool",
-                JsonValueKind.Object => propertyName,
-                JsonValueKind.Array => $"List<{propertyName}>?",
+                JsonValueKind.Object => propertyName.ToPascalCase(),
+                JsonValueKind.Array => $"List<{propertyName.ToPascalCase()}>?",
                 JsonValueKind.Null => "object?",
                 _ => "object",
             };
@@ -84,7 +84,7 @@ public class CSharpCovertHelper
                 }
             }
 
-            if (propertyName != propertyName.ToPascalCase())
+            if (propertyName.ToUpperFirst() != propertyName.ToPascalCase())
             {
                 sb.AppendLine($"    [JsonPropertyName(\"{propertyName}\")]");
             }
