@@ -187,10 +187,12 @@ public class RequestServiceFunction
             dataString = $", {file.Name}";
         }
 
+        var method = ResponseType.Equals("Blob") ? "downloadFile" : "request";
+        var generics = ResponseType.Equals("Blob") ? "" : $"<{ResponseType}>";
         string function = @$"{comments}
   {Name}({paramsString}): Observable<{ResponseType}> {{
     const _url = `{Path}`;
-    return this.request<{ResponseType}>('{Method.ToLower()}', _url{dataString});
+    return this.{method}{generics}('{Method.ToLower()}', _url{dataString});
   }}
 ";
         return function;

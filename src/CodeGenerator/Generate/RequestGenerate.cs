@@ -302,7 +302,7 @@ public class RequestGenerate : GenerateBase
             case "string":
                 type = schema.Format switch
                 {
-                    "binary" => "FormData",
+                    "binary" => "Blob",
                     "date-time" => "string",
                     _ => "string",
                 };
