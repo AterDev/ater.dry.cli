@@ -1,4 +1,5 @@
-﻿using AterStudio.Manager;
+﻿using System.Text;
+using AterStudio.Manager;
 using AterStudio.Models;
 using Core.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -48,6 +49,20 @@ public class ApiDocController : ControllerBase
             return Problem(_manager.ErrorMsg);
         }
         return res;
+    }
+
+    /// <summary>
+    /// 导出markdown文档
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpGet("export/{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FileContentResult))]
+    public async Task<ActionResult> ExportAsync([FromRoute] Guid id)
+    {
+        var content = await _manager.ExportDocAsync(id);
+        return File(Encoding.UTF8.GetBytes(content), "application/octet-stream", "api-doc.md");
+
     }
 
 

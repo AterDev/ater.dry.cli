@@ -300,12 +300,16 @@ public class RequestGenerate : GenerateBase
                 type = "FormData";
                 break;
             case "string":
-                type = schema.Format switch
+                type = "string";
+                if (!string.IsNullOrWhiteSpace(schema.Format))
                 {
-                    "binary" => "Blob",
-                    "date-time" => "string",
-                    _ => "string",
-                };
+                    type = schema.Format switch
+                    {
+                        "binary" => "FormData",
+                        "date-time" => "string",
+                        _ => "string",
+                    };
+                }
                 break;
 
             case "array":

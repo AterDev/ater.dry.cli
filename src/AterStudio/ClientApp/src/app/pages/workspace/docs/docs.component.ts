@@ -128,6 +128,8 @@ export class DocsComponent implements OnInit {
     this.getDocs();
   }
 
+
+
   initForm(): void {
     // 添加表单
     this.addForm = new FormGroup({
@@ -183,6 +185,21 @@ export class DocsComponent implements OnInit {
         error: error => {
           this.isLoading = false;
           this.snb.open(error);
+        }
+      });
+  }
+  export(): void {
+    this.service.export(this.currentDoc!.id)
+      .subscribe({
+        next: (res) => {
+          if (res) {
+
+          }
+        },
+        error: (error) => {
+          this.snb.open(error.detail);
+        },
+        complete: () => {
         }
       });
   }
