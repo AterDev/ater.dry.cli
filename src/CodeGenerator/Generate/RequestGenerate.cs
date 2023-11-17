@@ -168,7 +168,6 @@ public class RequestGenerate : GenerateBase
                     files.Add(file);
                     break;
                 }
-
                 case RequestLibType.Axios:
                 {
                     string fileName = currentTag.Name?.ToHyphen() + ".service.ts";

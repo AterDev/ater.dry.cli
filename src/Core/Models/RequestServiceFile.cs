@@ -186,9 +186,15 @@ public class RequestServiceFunction
         {
             dataString = $", {file.Name}";
         }
+        var method = "request";
+        var generics = $"<{ResponseType}>";
+        if (ResponseType.Equals("FormData"))
+        {
+            ResponseType = "Blob";
+            method = "downloadFile";
+            generics = "";
+        }
 
-        var method = ResponseType.Equals("Blob") ? "downloadFile" : "request";
-        var generics = ResponseType.Equals("Blob") ? "" : $"<{ResponseType}>";
         string function = @$"{comments}
   {Name}({paramsString}): Observable<{ResponseType}> {{
     const _url = `{Path}`;

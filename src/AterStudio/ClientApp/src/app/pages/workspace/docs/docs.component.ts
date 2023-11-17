@@ -189,17 +189,18 @@ export class DocsComponent implements OnInit {
       });
   }
   export(): void {
+    this.isSync = true;
     this.service.export(this.currentDoc!.id)
       .subscribe({
         next: (res) => {
-          if (res) {
-
-          }
+          this.service.openFile(res, `${this.currentDoc?.name}.md`);
         },
         error: (error) => {
           this.snb.open(error.detail);
+          this.isSync = false;
         },
         complete: () => {
+          this.isSync = false;
         }
       });
   }
