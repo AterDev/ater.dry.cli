@@ -168,7 +168,6 @@ public class RequestGenerate : GenerateBase
                     files.Add(file);
                     break;
                 }
-
                 case RequestLibType.Axios:
                 {
                     string fileName = currentTag.Name?.ToHyphen() + ".service.ts";
@@ -300,12 +299,16 @@ public class RequestGenerate : GenerateBase
                 type = "FormData";
                 break;
             case "string":
-                type = schema.Format switch
+                type = "string";
+                if (!string.IsNullOrWhiteSpace(schema.Format))
                 {
-                    "binary" => "FormData",
-                    "date-time" => "string",
-                    _ => "string",
-                };
+                    type = schema.Format switch
+                    {
+                        "binary" => "FormData",
+                        "date-time" => "string",
+                        _ => "string",
+                    };
+                }
                 break;
 
             case "array":

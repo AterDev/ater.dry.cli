@@ -207,8 +207,8 @@ public class EntityParseHelper
         if (parentClassName != null)
         {
             var solutionFile = AssemblyHelper.GetSlnFile(ProjectFile.Directory!, ProjectFile.Directory!.Root);
-            string? filePath = solutionFile?.Directory?.GetFiles("*.cs", SearchOption.AllDirectories)
-                .FirstOrDefault(f => f.Name == parentClassName + ".cs")?.FullName;
+            string? filePath = solutionFile?.Directory?.GetFiles($"{parentClassName}.cs", SearchOption.AllDirectories)
+                .FirstOrDefault()?.FullName;
 
             if (filePath != null)
             {

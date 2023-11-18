@@ -24,6 +24,9 @@
       </button>
     </span>
     <span class="example-spacer"></span>
+    <button mat-icon-button matTooltip="导出markdown" color="primary" [disabled]="isSync" (click)="export()">
+      <mat-icon>download_file</mat-icon>
+    </button>
     <button mat-icon-button matTooltip="生成客户端请求" color="primary" [disabled]="isLoading"
       (click)="openClientRequestDialog()">
       <mat-icon>code</mat-icon>

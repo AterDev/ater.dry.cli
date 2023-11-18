@@ -49,6 +49,15 @@ export class ApiDocBaseService extends BaseService {
   }
 
   /**
+   * 导出markdown文档
+   * @param id 
+   */
+  export(id: string): Observable<Blob> {
+    const _url = `/api/ApiDoc/export/${id}`;
+    return this.downloadFile('get', _url);
+  }
+
+  /**
    * 添加
    * @param data ApiDocInfo
    */

@@ -41,6 +41,14 @@ export class BaseService {
     };
     return this.http.request(method, url, options);
   }
+  
+  openFile(blob: Blob, filename: string) {
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  }
 
   getHeaders(): HttpHeaders {
     return new HttpHeaders({

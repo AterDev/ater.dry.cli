@@ -86,7 +86,7 @@ public class OpenApiHelper
                                 {
                                     Name = RequestType,
                                     ProjectId = Const.PROJECT_ID,
-                                    Type = RequestRefType ?? "any",
+                                    Type = RequestRefType ?? RequestType,
                                 }
                             };
                         }
@@ -121,7 +121,7 @@ public class OpenApiHelper
                                 {
                                     Name = ResponseType,
                                     ProjectId = Const.PROJECT_ID,
-                                    Type = ResponseRefType ?? "any",
+                                    Type = ResponseRefType ?? ResponseType,
                                 }
                             };
                         }
@@ -423,7 +423,7 @@ public class OpenApiHelper
             return (string.Empty, string.Empty);
         }
 
-        string? type = "any";
+        string type = "any";
         string? refType = schema.Reference?.Id;
         if (schema.Reference != null)
         {
@@ -455,12 +455,17 @@ public class OpenApiHelper
                 type = "FormData";
                 break;
             case "string":
-                type = schema.Format switch
+                type = "string";
+                if (!string.IsNullOrWhiteSpace(schema.Format))
                 {
-                    "binary" => "FormData",
-                    "date-time" => "string",
-                    _ => "string",
-                };
+                    type = schema.Format switch
+                    {
+                        "binary" => "FormData",
+                        "date-time" => "string",
+                        _ => "string",
+                    };
+                }
+
                 break;
 
             case "array":

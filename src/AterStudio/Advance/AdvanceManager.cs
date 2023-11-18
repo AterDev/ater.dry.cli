@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Concurrent;
+using System.Text;
 
 using Azure;
 using Azure.AI.OpenAI;
@@ -168,7 +169,7 @@ public class AdvanceManager
     /// <returns>markdown format</returns>
     public string GetDatabaseStructure()
     {
-
+        var res = new ConcurrentBag<string>();
         var sb = new StringBuilder();
         // get contextbase path 
         var contextPath = Directory.GetFiles(_projectContext.SolutionPath!, "ContextBase.cs", SearchOption.AllDirectories)
@@ -181,21 +182,24 @@ public class AdvanceManager
 
             var propertyTypes = compilation.GetPropertyTypes();
 
-            // search entity use propertyType and parse every entity use CompilationHelper
-            foreach (var propertyType in propertyTypes)
-            {
-                var entityPath = Directory.GetFiles(Path.Combine(_projectContext.SolutionPath!, Config.EntityPath), $"{propertyType}.cs", SearchOption.AllDirectories)
-                    .FirstOrDefault();
+            var entityFiles = Directory.GetFiles(Path.Combine(_projectContext.SolutionPath!, Config.EntityPath), $"*.cs", SearchOption.AllDirectories).ToList();
 
-                if (entityPath != null)
+            Parallel.ForEach(
+                propertyTypes,
+                new ParallelOptions { MaxDegreeOfParallelism = 5 },
+                propertyType =>
                 {
-                    var entityCompilation = new EntityParseHelper(entityPath);
-                    var entityInfo = entityCompilation.GetEntity();
-                    sb.AppendLine(ToMarkdown(entityInfo));
-                }
-            }
+                    var entityPath = entityFiles.Where(e => e.EndsWith($"{propertyType}.cs")).FirstOrDefault();
+                    if (entityPath != null)
+                    {
+                        var entityCompilation = new EntityParseHelper(entityPath);
+                        var entityInfo = entityCompilation.GetEntity();
+                        res.Add(ToMarkdown(entityInfo));
+                    }
+                });
         }
-        return sb.ToString();
+        GC.Collect();
+        return string.Join(Environment.NewLine, res);
     }
 
     /// <summary>
