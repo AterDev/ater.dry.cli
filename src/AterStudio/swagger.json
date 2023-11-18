@@ -1924,65 +1924,6 @@
           }
         }
       }
-    },
-    "/api/Tools/classModel": {
-      "post": {
-        "tags": [
-          "Tools"
-        ],
-        "summary": "转换成类",
-        "operationId": "Tools_ConvertToClass",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ConvertDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ConvertDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ConvertDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
     }
   },
   "components": {
@@ -2238,20 +2179,6 @@
         },
         "additionalProperties": false,
         "description": "项目配置"
-      },
-      "ConvertDto": {
-        "type": "object",
-        "properties": {
-          "content": {
-            "type": "string"
-          },
-          "className": {
-            "type": "string",
-            "description": "类名称",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
       },
       "CreateSolutionDto": {
         "type": "object",
@@ -2974,10 +2901,6 @@
     {
       "name": "Project",
       "description": "项目"
-    },
-    {
-      "name": "Tools",
-      "description": "Tools"
     }
   ]
 }

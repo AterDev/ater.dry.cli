@@ -3,11 +3,15 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
+
 using CodeGenerator.Generate;
+
 using Core.Infrastructure.Helper;
+
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.OpenApi.Readers;
+
 using NuGet.Versioning;
 
 namespace CodeGenerator.Test;
@@ -152,8 +156,7 @@ public class FunctionTest
             CommentHandling = JsonCommentHandling.Skip
         });
         var section = JsonHelper.GetSectionNode(jsonNode!, "ConnectionStrings");
-
-        var value = JsonHelper.GetValue<string>(section, "RedisInstanceName");
+        var value = JsonHelper.GetValue<string>(section!, "RedisInstanceName");
         JsonHelper.AddOrUpdateJsonNode(jsonNode!, "AllowedHosts", "111");
         var changeValaue = JsonHelper.GetValue<string>(jsonNode!, "AllowedHosts");
         Assert.Equal("Dev", value);
