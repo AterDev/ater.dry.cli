@@ -27,7 +27,7 @@ ${CtorAssign}
         return await CommandContext.SaveChangesAsync();
     }
 
-    public QuerySet<TEntity> QuerySet<TEntity>() where TEntity : EntityBase
+    public QuerySet<TEntity> QuerySet<TEntity>() where TEntity : class, IEntityBase
     {
         var typename = typeof(TEntity).Name + "QueryStore";
         var set = GetSet(typename);
@@ -35,7 +35,7 @@ ${CtorAssign}
             ? throw new ArgumentNullException($"{typename} class object not found") 
             : (QuerySet<TEntity>)set;
     }
-    public CommandSet<TEntity> CommandSet<TEntity>() where TEntity : EntityBase
+    public CommandSet<TEntity> CommandSet<TEntity>() where TEntity : class, IEntityBase
     {
         var typename = typeof(TEntity).Name + "CommandStore";
         var set = GetSet(typename);

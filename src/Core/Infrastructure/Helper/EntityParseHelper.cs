@@ -531,6 +531,7 @@ public class EntityParseHelper
     {
         // 获取当前类名
         ClassDeclarationSyntax? classDeclarationSyntax = RootNodes!.OfType<ClassDeclarationSyntax>().FirstOrDefault();
+        if(classDeclarationSyntax == null) return null;
         var classSymbol = SemanticModel.GetDeclaredSymbol(classDeclarationSyntax!);
         return classSymbol?.BaseType?.Name;
     }

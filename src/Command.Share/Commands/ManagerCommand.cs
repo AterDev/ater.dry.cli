@@ -223,7 +223,7 @@ public class ManagerCommand : CommandBase
         string managerDir = Path.Combine(appPath, "Manager");
         string entityName = Path.GetFileNameWithoutExtension(EntityFilePath);
 
-        string interfaceContent = CodeGen!.GetIManagerContent(ModuleName);
+        //string interfaceContent = CodeGen!.GetIManagerContent(ModuleName);
         string managerContent = CodeGen!.GetManagerContent(ModuleName);
 
         // 生成manger

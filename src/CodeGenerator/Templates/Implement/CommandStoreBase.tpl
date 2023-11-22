@@ -8,7 +8,7 @@ namespace ${Namespace}.Implement;
 /// <typeparam name="TEntity"></typeparam>
 public partial class CommandStoreBase<TContext, TEntity> : ICommandStore<TEntity>, ICommandStoreExt<TEntity>
     where TContext : DbContext
-    where TEntity : EntityBase
+    where TEntity : class, IEntityBase
 {
     protected readonly ILogger _logger;
     /// <summary>
@@ -173,7 +173,7 @@ public partial class CommandStoreBase<TContext, TEntity> : ICommandStore<TEntity
     }
 }
 public class CommandSet<TEntity> : CommandStoreBase<CommandDbContext, TEntity>
-    where TEntity : EntityBase
+    where TEntity : class, IEntityBase
 {
     public CommandSet(CommandDbContext context, ILogger logger) : base(context, logger)
     {

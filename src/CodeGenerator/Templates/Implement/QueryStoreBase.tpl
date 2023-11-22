@@ -11,7 +11,7 @@ namespace EntityFramework.QueryStore;
 public partial class QueryStoreBase<TContext, TEntity> :
     IQueryStore<TEntity>, IQueryStoreExt<TEntity>
     where TContext : DbContext
-    where TEntity : EntityBase
+    where TEntity : class, IEntityBase
 {
     protected readonly ILogger _logger;
 
@@ -213,7 +213,7 @@ public partial class QueryStoreBase<TContext, TEntity> :
 }
 
 public class QuerySet<TEntity> : QueryStoreBase<QueryDbContext, TEntity>
-    where TEntity : EntityBase
+    where TEntity : class, IEntityBase
 {
     public QuerySet(QueryDbContext context, ILogger logger) : base(context, logger)
     {

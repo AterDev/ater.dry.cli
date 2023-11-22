@@ -1,6 +1,6 @@
 ﻿namespace ${Namespace}.Interface;
 public interface ICommandStoreExt<TId, TEntity>
-    where TEntity : EntityBase
+    where TEntity : class, IEntityBase
 {
     /// <summary>
     /// 批量新增
@@ -30,6 +30,6 @@ public interface ICommandStoreExt<TId, TEntity>
 }
 
 public interface ICommandStoreExt<TEntity> : ICommandStoreExt<Guid, TEntity>
-     where TEntity : EntityBase
+     where TEntity : class, IEntityBase
 { }
 

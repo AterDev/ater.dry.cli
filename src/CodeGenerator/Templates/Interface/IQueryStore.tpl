@@ -3,7 +3,7 @@
 /// 基础查询接口
 /// </summary>
 public interface IQueryStore<TId, TEntity>
-    where TEntity : EntityBase
+    where TEntity : class, IEntityBase
 {
     /// <summary>
     /// id查询 
@@ -35,5 +35,5 @@ public interface IQueryStore<TId, TEntity>
 }
 
 public interface IQueryStore<TEntity> : IQueryStore<Guid, TEntity>
-    where TEntity : EntityBase
+    where TEntity : class, IEntityBase
 { }

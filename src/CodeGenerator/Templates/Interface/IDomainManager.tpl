@@ -5,7 +5,7 @@ namespace ${Namespace}.IManager;
 /// 仓储数据管理接口
 /// </summary>
 public interface IDomainManager<TEntity>
-    where TEntity : EntityBase
+    where TEntity : class, IEntityBase
 {
     DataStoreContext Stores { get; init; }
     QuerySet<TEntity> Query { get; init; }

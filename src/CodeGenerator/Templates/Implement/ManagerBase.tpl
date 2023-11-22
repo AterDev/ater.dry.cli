@@ -10,7 +10,7 @@ namespace Application.Implement;
 /// <typeparam name="TFilter"></typeparam>
 /// <typeparam name="TItem"></typeparam>
 public partial class ManagerBase<TEntity, TUpdate, TFilter, TItem>
-    where TEntity : EntityBase
+    where TEntity : class, EntityBase
     where TFilter : FilterBase
 {
     /// <summary>

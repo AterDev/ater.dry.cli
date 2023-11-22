@@ -3,7 +3,7 @@
 namespace Application.Implement;
 
 public partial class DomainManagerBase<TEntity, TUpdate, TFilter, TItem> : ManagerBase<TEntity, TUpdate, TFilter, TItem>
-    where TEntity : EntityBase
+    where TEntity : class ,IEntityBase
     where TFilter : FilterBase
 {
     protected IUserContext? _userContext;
