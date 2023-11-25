@@ -2,6 +2,7 @@
 using System.Text.Json.Serialization;
 
 using Core.Entities;
+using Core.Infrastructure;
 
 namespace Core.Models;
 /// <summary>
@@ -40,7 +41,7 @@ public class ConfigOptions
     public bool? IsSplitController { get; set; } = false;
 
     [JsonConverter(typeof(DoubleStringJsonConverter))]
-    public string Version { get; set; } = "7.0.0";
+    public string Version { get; set; } = Const.Version;
 
     /// <summary>
     /// 前端路径

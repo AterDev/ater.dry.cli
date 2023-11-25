@@ -57,11 +57,11 @@ public class ModuleCommand
         await AssemblyHelper.GenerateFileAsync(projectPath, "GlobalUsings.cs", usingsContent, true);
 
         // get target version 
-        string targetVersion = "7.0";
+        string targetVersion = Const.Version;
         var csprojFiles = Directory.GetFiles(Path.Combine(solutionPath, Config.ApiPath), $"*{Const.CSharpProjectExtention}", SearchOption.TopDirectoryOnly).FirstOrDefault();
         if (csprojFiles != null)
         {
-            targetVersion = AssemblyHelper.GetTargetFramework(csprojFiles) ?? "7.0";
+            targetVersion = AssemblyHelper.GetTargetFramework(csprojFiles) ?? Const.Version;
         }
         string csprojContent = GetCsProjectContent(targetVersion);
         await AssemblyHelper.GenerateFileAsync(projectPath, $"{moduleName}{Const.CSharpProjectExtention}", csprojContent);
@@ -129,7 +129,7 @@ public class ModuleCommand
     /// </summary>
     /// <param name="version"></param>
     /// <returns></returns>
-    private static string GetCsProjectContent(string version = "7.0")
+    private static string GetCsProjectContent(string version = Const.Version)
     {
         return $"""
             <Project Sdk="Microsoft.NET.Sdk">

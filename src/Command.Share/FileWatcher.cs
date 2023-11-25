@@ -1,4 +1,7 @@
 ﻿using System.Diagnostics;
+
+using Core.Infrastructure;
+
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -169,7 +172,7 @@ public class FileWatcher
             StartInfo = new ProcessStartInfo
             {
                 FileName = "dotnet",
-                Arguments = @"swagger tofile --output ./swagger.json .\bin\Debug\net7.0\Http.API.dll v1",
+                Arguments = $@"swagger tofile --output ./swagger.json .\bin\Debug\{Const.NetVersion}\Http.API.dll v1",
                 UseShellExecute = false,
                 CreateNoWindow = true,
                 //RedirectStandardOutput = true,
