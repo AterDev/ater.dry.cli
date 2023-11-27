@@ -291,7 +291,8 @@ public class ManagerGenerate : GenerateBase
             var name = nav.NavigationName ?? nav.Type;
             var variable = nav.Name.ToCamelCase();
             content += $$"""
-                    if (dto.{{name}}Ids != null && dto.{{name}}Ids.Any())
+                    /*
+                    if (dto.{{name}}Ids != null && dto.{{name}}Ids.Count > 0)
                     {
                         var {{variable}} = await Stores.CommandSet<{{name}}>().Db
                             .Where(t => dto.{{name}}Ids.Contains(t.Id))
@@ -301,6 +302,7 @@ public class ManagerGenerate : GenerateBase
                             entity.{{nav.Name}} = {{variable}};
                         }
                     }
+                    */
 
             """;
         });
@@ -345,7 +347,8 @@ public class ManagerGenerate : GenerateBase
             var name = nav.NavigationName ?? nav.Type;
             var variable = nav.Name.ToCamelCase();
             content += $$"""
-                    if (dto.{{name}}Ids != null && dto.{{name}}Ids.Any())
+                    /*
+                    if (dto.{{name}}Ids != null && dto.{{name}}Ids.Count > 0)
                     {
                         var {{variable}} = await Stores.CommandSet<{{name}}>().Db
                             .Where(t => dto.{{name}}Ids.Contains(t.Id))
@@ -355,6 +358,7 @@ public class ManagerGenerate : GenerateBase
                             entity.{{nav.Name}} = {{variable}};
                         }
                     }
+                    */
 
             """;
         });

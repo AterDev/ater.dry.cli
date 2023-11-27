@@ -1,11 +1,24 @@
-<div class="d-flex gap-1">
+<div class="d-flex">
   <mat-toolbar color="">
     <mat-toolbar-row style="font-size:16px">
-      <div class="d-flex">
+      <div class="d-flex gap-1">
         <!-- 筛选 -->
+        <!--<mat-form-field subscriptSizing="dynamic">
+          <mat-label>名称</mat-label>
+          <input matInput placeholder="名称" [(ngModel)]="filter.name" (keyup.enter)="getList()">
+        </mat-form-field> -->
+        <!-- <mat-form-field subscriptSizing="dynamic">
+          <mat-label>筛选示例</mat-label>
+          <mat-select placeholder="筛选示例" [(ngModel)]="filter.language" (selectionChange)="getList()">
+            <mat-option [value]="null">全部</mat-option>
+            <mat-option *ngFor="let item of DictLanguage | toKeyValue" [value]="item.value">
+              {{item.value | enumText:'DictLanguage'}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field> -->
       </div>
       <div class="d-flex flex-grow-1"></div>
-      <button mat-flat-button color="primary" matTooltipPosition="right" [routerLink]="['../add']">
+      <button mat-flat-button color="primary" (click)="openAddDialog()">
         <mat-icon>add</mat-icon>
         添加
       </button>
@@ -35,7 +48,7 @@
           <button mat-icon-button color="link" [routerLink]="['../detail',element.id]" matTooltip="查看">
             <mat-icon>pages</mat-icon>
           </button>
-          <button mat-icon-button color="primary" (click)="edit(element.id)" matTooltip="编辑">
+          <button mat-icon-button color="primary" (click)="openEditDialog(element)" matTooltip="编辑">
             <mat-icon>edit</mat-icon>
           </button>
           <button mat-icon-button color="warn" matTooltip="删除" (click)="deleteConfirm(element)">

@@ -9,25 +9,17 @@ import { AdminLayoutComponent } from 'src/app/components/admin-layout/admin-layo
 
 const routes: Routes = [
   {
-    path: '{$ModulePathName}',
-    component: AdminLayoutComponent,
-    data: {reuse: true},
-    canActivate: [AuthGuard],
-    children:
-      [
-        {
-          path: '{$RoutePathName}',
-          canActivateChild: [AuthGuard],
-          children: [
-            { path: '', pathMatch: 'full', redirectTo: 'index' },
-            { path: 'index', component: IndexComponent },
-            { path: 'add', component: AddComponent },
-            { path: 'detail/:id', component: DetailComponent },
-            { path: 'edit/:id', component: EditComponent },
-          ]
-        }
-      ]
+    path: '{$RoutePathName}',
+    canActivateChild: [AuthGuard],
+    children: [
+      { path: '', pathMatch: 'full', redirectTo: 'index' },
+      { path: 'index', component: IndexComponent },
+      { path: 'add', component: AddComponent },
+      { path: 'detail/:id', component: DetailComponent },
+      { path: 'edit/:id', component: EditComponent },
+    ]
   }
+
 ];
 
 @NgModule({

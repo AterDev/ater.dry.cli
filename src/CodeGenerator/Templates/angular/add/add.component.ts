@@ -6,6 +6,8 @@ import { {$EntityName}AddDto } from 'src/app/share/admin/models/{$EntityPathName
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
+import { MatDialogRef } from '@angular/material/dialog';
+
 [@Imports]
 @Component({
     selector: 'app-add',
@@ -24,8 +26,8 @@ export class AddComponent implements OnInit {
         public snb: MatSnackBar,
         private router: Router,
         private route: ActivatedRoute,
-        private location: Location
-        // public dialogRef: MatDialogRef<AddComponent>,
+        private location: Location,
+         public dialogRef: MatDialogRef<AddComponent>,
         // @Inject(MAT_DIALOG_DATA) public dlgData: { id: '' }
     ) {
 
@@ -62,8 +64,8 @@ export class AddComponent implements OnInit {
         next: (res) => {
           if (res) {
             this.snb.open('添加成功');
-            // this.dialogRef.close(res);
-            this.router.navigate(['../index'], { relativeTo: this.route });
+             this.dialogRef.close(res);
+            //this.router.navigate(['../index'], { relativeTo: this.route });
           }
         },
         error: (error) => {
