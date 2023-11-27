@@ -10,8 +10,8 @@ public class Const
     public const string FilterDto = "FilterDto";
     public const string AddDto = "AddDto";
     public const string UpdateDto = "UpdateDto";
-    public const string Version = "7.0";
-    public const string NetVersion = "net7.0";
+    public const string Version = "8.0";
+    public const string NetVersion = "net8.0";
     public const string PackageId = "ater.dry";
     public const string TemplateZip = "template.zip";
     public const string StudioZip = "studio.zip";
