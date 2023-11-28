@@ -476,7 +476,7 @@ public class UpdateManager
 
             globalFilePath = Path.Combine(solutionPath, Config.ApplicationPath, "GlobalUsings.cs");
             File.AppendAllLines(globalFilePath, new List<string>() {
-                "global using Ater.Web.Abstracture.Interface;"
+                "global using Ater.Web.Abstraction.Interface;"
             });
 
             // 业务代码关联修改

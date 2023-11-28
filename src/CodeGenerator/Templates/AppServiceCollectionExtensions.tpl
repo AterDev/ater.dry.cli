@@ -1,5 +1,5 @@
 ﻿using ${Namespace};
-using Ater.Web.Abstracture;
+using Ater.Web.Abstraction;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using OpenTelemetry.Exporter;
