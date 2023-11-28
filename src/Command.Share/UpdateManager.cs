@@ -24,6 +24,13 @@ public class UpdateManager
     public string TargetVersion { get; set; }
     public string CurrentVersion { get; set; }
 
+    public static JsonSerializerOptions JsonSerializerOptions = new()
+    {
+        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+        WriteIndented = true,
+        TypeInfoResolver = null
+    };
+
     public UpdateManager(string solutionFilPath, string currentVersion)
     {
         SolutionFilePath = solutionFilPath;
@@ -68,7 +75,7 @@ public class UpdateManager
                     config.ApplicationPath = Config.ApplicationPath;
                     config.ApiPath = Config.ApiPath;
 
-                    File.WriteAllText(configFilePath, JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true }));
+                    File.WriteAllText(configFilePath, JsonSerializer.Serialize(config, JsonSerializerOptions));
                 }
                 Console.WriteLine("🙌 Updated successed!");
                 return true;
@@ -83,11 +90,11 @@ public class UpdateManager
             if (res)
             {
                 // 重新生成相关代码
-                var appDir = Path.Combine(solutionPath, Config.ApplicationPath);
+                var appDir = Path.Combine(solutionPath, Config.EntityFrameworkPath);
                 var applicationName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(appDir));
                 ManagerGenerate.GetDataStoreContext(appDir, applicationName!);
 
-                Console.WriteLine("🙌 Updated successed!");
+                Console.WriteLine("🙌 Updated success!");
                 return true;
             }
             else
@@ -297,6 +304,7 @@ public class UpdateManager
             }
 
             // 迁移原Core到新Entity
+            Config.EntityPath = Path.Combine("src", "Core");
             var coreProjectFilePath = Directory.GetFiles(Path.Combine(solutionPath, Config.EntityPath), $"*{Const.CSharpProjectExtention}", SearchOption.TopDirectoryOnly).FirstOrDefault();
             var coreName = Config.EntityPath.Split(Path.DirectorySeparatorChar).Last();
             if (coreProjectFilePath == null)
@@ -485,10 +493,7 @@ public class UpdateManager
                 config.Version = "8.0.0";
                 config.SolutionType = Core.Entities.SolutionType.DotNet;
 
-                File.WriteAllText(configFile, JsonSerializer.Serialize(config, new JsonSerializerOptions()
-                {
-                    WriteIndented = true
-                }));
+                File.WriteAllText(configFile, JsonSerializer.Serialize(config, JsonSerializerOptions));
 
                 Config.SetConfig(config);
                 solution.Dispose();
@@ -753,11 +758,7 @@ public class UpdateManager
             JsonHelper.AddOrUpdateJsonNode(root, "Components:Swagger", true);
             JsonHelper.AddOrUpdateJsonNode(root, "Components:Jwt", true);
 
-            content = root.ToJsonString(new JsonSerializerOptions
-            {
-                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-                WriteIndented = true
-            });
+            content = root.ToJsonString(JsonSerializerOptions);
             File.WriteAllText(appSettingPath, content);
         }
     }

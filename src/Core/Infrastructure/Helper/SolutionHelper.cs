@@ -80,7 +80,7 @@ public class SolutionHelper : IDisposable
         {
             return false;
         }
-        Solution = Solution.AddProjectReference(currentProject.Id, new ProjectReference(referenceProject.Id));
+        //Solution = Solution.AddProjectReference(currentProject.Id, new ProjectReference(referenceProject.Id));
         return true;
     }
 
