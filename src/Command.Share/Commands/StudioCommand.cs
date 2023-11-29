@@ -154,7 +154,7 @@ public class StudioCommand
             File.Copy(tempDbFile, dbFile, true);
         }
 
-        // copy其他文件以
+        // copy其他文件
         copyFiles.ToList().ForEach(file =>
         {
             var sourceFile = Path.Combine(toolRootPath, file + ".dll");

@@ -53,7 +53,7 @@ public class DtoCommand : CommandBase
             var content = File.ReadAllText(EntityPath);
             compilation.AddSyntaxTree(content);
             var attributes = compilation.GetClassAttribution("Module");
-            if (attributes != null && attributes.Any())
+            if (attributes != null && attributes.Count != 0)
             {
                 var argument = attributes.First().ArgumentList!.Arguments[0];
                 ModuleName = compilation.GetArgumentValue(argument);

@@ -98,7 +98,7 @@ public class ModuleCommand
             return default;
         }
         List<string> files = Directory.GetFiles(modulesPath, $"*{Const.CSharpProjectExtention}", SearchOption.AllDirectories).ToList();
-        return files.Any() ? files : default;
+        return files.Count != 0 ? files : default;
     }
 
     private static string GetGlobalUsings()

@@ -74,7 +74,7 @@ public class ViewCommand : CommandBase
         compilation.AddSyntaxTree(content);
         var attributes = compilation.GetClassAttribution("Module");
         var moduleName = string.Empty;
-        if (attributes != null && attributes.Any())
+        if (attributes != null && attributes.Count != 0)
         {
             var argument = attributes.First().ArgumentList!.Arguments[0];
             moduleName = compilation.GetArgumentValue(argument);

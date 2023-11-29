@@ -1035,25 +1035,29 @@ public class UpdateManager
         await IOHelper.WriteToFileAsync(filePath, serviceContent);
         Console.WriteLine($"⛏️ update [{filePath}]");
 
-        var moduleDirs = Directory.GetDirectories(
+        if (Directory.Exists(Path.Combine(solutionPath, "src", "Modules")))
+        {
+            var moduleDirs = Directory.GetDirectories(
             Path.Combine(solutionPath, "src", "Modules"),
             "*",
              SearchOption.TopDirectoryOnly)
             .ToList();
 
-        if (moduleDirs.Any())
-        {
-            foreach (var module in moduleDirs)
+            if (moduleDirs.Count != 0)
             {
-                var moduleName = Path.GetFileName(module);
-                serviceContent = ManagerGenerate.GetManagerModuleDIExtensions(solutionPath, moduleName!);
+                foreach (var module in moduleDirs)
+                {
+                    var moduleName = Path.GetFileName(module);
+                    serviceContent = ManagerGenerate.GetManagerModuleDIExtensions(solutionPath, moduleName!);
 
-                filePath = Path.Combine(module, "ServiceCollectionExtensions.cs");
-                await IOHelper.WriteToFileAsync(filePath, serviceContent);
-                Console.WriteLine($"⛏️ update [{filePath}]");
+                    filePath = Path.Combine(module, "ServiceCollectionExtensions.cs");
+                    await IOHelper.WriteToFileAsync(filePath, serviceContent);
+                    Console.WriteLine($"⛏️ update [{filePath}]");
 
+                }
             }
         }
+
         return true;
     }
 }

@@ -74,7 +74,7 @@ public class ManagerCommand : CommandBase
             var content = File.ReadAllText(EntityFilePath);
             compilation.AddSyntaxTree(content);
             var attributes = compilation.GetClassAttribution("Module");
-            if (attributes != null && attributes.Any())
+            if (attributes != null && attributes.Count != 0)
             {
                 var argument = attributes.First().ArgumentList!.Arguments[0];
                 ModuleName = compilation.GetArgumentValue(argument);
@@ -244,7 +244,7 @@ public class ManagerCommand : CommandBase
             string content = File.ReadAllText(filePath);
             var newUsings = globalUsings.Where(g => !content.Contains(g))
                 .ToList();
-            if (newUsings.Any())
+            if (newUsings.Count != 0)
             {
                 newUsings.Insert(0, Environment.NewLine);
                 File.AppendAllLines(filePath, newUsings);
@@ -264,7 +264,7 @@ public class ManagerCommand : CommandBase
             string content = File.ReadAllText(filePath);
             var newUsings = globalUsings.Where(g => !content.Contains(g))
                 .ToList();
-            if (newUsings.Any())
+            if (newUsings.Count != 0)
             {
                 newUsings.Insert(0, Environment.NewLine);
                 File.AppendAllLines(filePath, newUsings);
