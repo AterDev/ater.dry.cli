@@ -131,13 +131,10 @@
       </span>
       请使用对应版本的Studio，或者选择升级项目。
     </p>
-    <h2 style="color: black;">升级说明</h2>
-    <p>如果跨主版本升级，请先更新对应的.NET版本以及相关包，然后再点击升级项目；</p>
-    <p>升级时建议关闭占用项目代码的程序，如VS等；</p>
-    <p>升级后根据VS提示修复相关错误即可；</p>
-    <p>
-      <strong>⚠️ 注意：如果不使用源代码管理，请确保在升级之前备份项目!</strong>
-    </p>
+    <h3>升级说明</h3>
+    <p>8.0不兼容旧项目，项目结构进行了很多中断性变更。</p>
+    <p>8.0完全基于.NET8进行开发，并且不兼容之前版本。</p>
+    <p>如果你想升级现有项目，建议使用8.0的模板重新创建项目，然后将旧代码迁移过去。</p>
   </mat-dialog-content>
   <mat-dialog-content *ngIf="isUpdating">
     <p>正在分析和更新解决方案，预计不超过1分钟</p>
@@ -149,9 +146,9 @@
     </markdown>
   </mat-dialog-content>
   <mat-dialog-actions class="justify-content-end">
-    <button mat-button mat-dialog-close [disabled]="isUpdating">取消</button>
-    <button mat-button (click)="updateProject()" *ngIf="!updated" [disabled]="isUpdating" color="warn"
-      matTooltip="务必做好备份">升级项目</button>
+    <button mat-button mat-dialog-close [disabled]="isUpdating">了解</button>
+    <!-- <button mat-button (click)="updateProject()" *ngIf="!updated" [disabled]="isUpdating" color="warn"
+      matTooltip="务必做好备份">升级项目</button> -->
   </mat-dialog-actions>
 </ng-template>
 

@@ -4,14 +4,13 @@ public static class Config
 {
     public static string IdType { get; set; } = "Guid";
     public static string CreatedTimeName { get; set; } = "CreatedTime";
+    public static string UpdatedTimeName { get; set; } = "UpdatedTime";
     public static string Version { get; private set; } = "8.0";
-    public static string SharePath { get; set; } = Path.Combine("src", "Share");
-    public static string EntityPath { get; set; } = Path.Combine("src", "Entity");
-    public static string EntityFrameworkPath { get; set; } = Path.Combine("src", "Database", "EntityFramework");
+    public static string SharePath { get; set; } = Path.Combine("src", "Definition", "Share");
+    public static string EntityPath { get; set; } = Path.Combine("src", "Definition", "Entity");
+    public static string EntityFrameworkPath { get; set; } = Path.Combine("src", "Definition", "EntityFramework");
     public static string ApplicationPath { get; set; } = Path.Combine("src", "Application");
     public static string ApiPath { get; set; } = Path.Combine("src", "Http.API");
-    public static string WebAppPath { get; set; } = "";
-
     public static string SolutionPath { get; set; } = "";
 
     /// <summary>
@@ -24,7 +23,7 @@ public static class Config
     /// <summary>
     /// 存储ts枚举类
     /// </summary>
-    public static List<string> EnumModels = new();
+    public static List<string> EnumModels { get; set; } = [];
 
 
     public static void SetConfig(ConfigOptions configOptions)
@@ -37,6 +36,5 @@ public static class Config
         SharePath = configOptions.DtoPath;
         CreatedTimeName = configOptions.CreatedTimeName;
         Version = configOptions.Version;
-        WebAppPath = configOptions.WebAppPath ?? "";
     }
 }

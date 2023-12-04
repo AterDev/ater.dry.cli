@@ -2,7 +2,6 @@
 using System.Text.Json.Serialization;
 
 using Core.Entities;
-using Core.Infrastructure;
 
 namespace Core.Models;
 /// <summary>
@@ -18,22 +17,22 @@ public class ConfigOptions
     /// <summary>
     /// dto项目目录
     /// </summary>
-    public string DtoPath { get; set; } = Path.Combine("src", "Share");
-    public string EntityPath { get; set; } = Path.Combine("src", "Entity");
-    public string DbContextPath { get; set; } = Path.Combine("src", "Database", "EntityFramework");
+    public string DtoPath { get; set; } = Config.SharePath;
+    public string EntityPath { get; set; } = Config.EntityPath;
+    public string DbContextPath { get; set; } = Config.EntityFrameworkPath;
     /// <summary>
     /// 废弃属性
     /// </summary>
     public string? StorePath { get; set; }
-    public string ApplicationPath { get; set; } = Path.Combine("src", "Application");
-    public string ApiPath { get; set; } = Path.Combine("src", "Http.API");
+    public string ApplicationPath { get; set; } = Config.ApplicationPath;
+    public string ApiPath { get; set; } = Config.ApiPath;
     /// <summary>
     /// NameId/Id
     /// </summary>
     public string IdStyle { get; set; } = "Id";
-    public string IdType { get; set; } = "Guid";
-    public string CreatedTimeName { get; set; } = "CreatedTime";
-    public string UpdatedTimeName { get; set; } = "UpdatedTime";
+    public string IdType { get; set; } = Config.IdType;
+    public string CreatedTimeName { get; set; } = Config.CreatedTimeName;
+    public string UpdatedTimeName { get; set; } = Config.UpdatedTimeName;
 
     /// <summary>
     /// 控制器是否拆分
@@ -41,7 +40,7 @@ public class ConfigOptions
     public bool? IsSplitController { get; set; } = false;
 
     [JsonConverter(typeof(DoubleStringJsonConverter))]
-    public string Version { get; set; } = Const.Version;
+    public string Version { get; set; } = Config.Version;
 
     /// <summary>
     /// 前端路径
@@ -59,14 +58,7 @@ public class DoubleStringJsonConverter : JsonConverter<string>
 {
     public override string Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        if (reader.TokenType == JsonTokenType.Number)
-        {
-            return reader.GetDouble().ToString();
-        }
-        else
-        {
-            return reader.GetString() ?? "";
-        }
+        return reader.TokenType == JsonTokenType.Number ? reader.GetDouble().ToString() : reader.GetString() ?? "";
     }
 
 
