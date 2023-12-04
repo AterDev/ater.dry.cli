@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using Core.Entities;
 
 namespace AterStudio.Models;
 
@@ -81,15 +80,16 @@ public class CreateSolutionDto
 public enum DBType
 {
     /// <summary>
-    /// SQLServer
-    /// </summary>
-    [Description("SQLServer")]
-    SQLServer,
-    /// <summary>
     /// PostgreSQL
     /// </summary>
     [Description("PostgreSQL")]
-    PostgreSQL
+    PostgreSQL,
+    /// <summary>
+    /// SQLServer
+    /// </summary>
+    //[Description("SQLServer")]
+    //SQLServer
+
 }
 public enum CacheType
 {
@@ -98,7 +98,7 @@ public enum CacheType
     /// </summary>
     [Description(description: "Redis")]
     Redis,
-    /// <summary>
+    /*/// <summary>
     /// Memory
     /// </summary>
     [Description(description: "Memory")]
@@ -107,5 +107,5 @@ public enum CacheType
     /// None
     /// </summary>
     [Description(description: "None")]
-    None
+    None*/
 }
