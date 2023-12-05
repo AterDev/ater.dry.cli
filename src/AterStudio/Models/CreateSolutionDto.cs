@@ -69,7 +69,10 @@ public class CreateSolutionDto
     /// <summary>
     /// 用户日志模块
     /// </summary>
-    public bool HasFileManagerFeatur { get; set; } = false;
+    public bool HasFileManagerFeature { get; set; } = false;
+
+
+    public bool HasOrderFeature { get; set; } = false;
 
     /// <summary>
     /// 项目类型

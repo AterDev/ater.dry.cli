@@ -50,7 +50,8 @@ export interface CreateSolutionDto {
   /**
    * 用户日志模块
    */
-  hasFileManagerFeatur: boolean;
+  hasFileManagerFeature: boolean;
+  hasOrderFeature: boolean;
   projectType?: ProjectType | null;
 
 }

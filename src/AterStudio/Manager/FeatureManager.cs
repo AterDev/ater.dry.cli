@@ -80,13 +80,21 @@ public class FeatureManager
             File.WriteAllText(configFile, jsonString);
         }
         // 模块
-        if (dto.HasFileManagerFeatur)
+        if (dto.HasFileManagerFeature)
         {
             await ModuleCommand.CreateModuleAsync(path, ModuleCommand.FileManager);
         }
         else
         {
             ModuleCommand.CleanModule(path, ModuleCommand.FileManager);
+        }
+        if (dto.HasOrderFeature)
+        {
+            await ModuleCommand.CreateModuleAsync(path, ModuleCommand.Order);
+        }
+        else
+        {
+            ModuleCommand.CleanModule(path, ModuleCommand.Order);
         }
 
         if (dto.HasCmsFeature)

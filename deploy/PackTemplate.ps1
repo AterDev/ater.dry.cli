@@ -45,11 +45,9 @@ function CopyModule([string]$solutionPath, [string]$moduleName, [string]$destMod
             $commandStorePath = Join-Path $entityFrameworkPath "CommandStore" $entityName"CommandStore.cs"
 
             if ((Test-Path $queryStorePath)) {
-                Write-Host "copy queryStore:"$queryStorePath"=>"$applicationDestDir
                 Copy-Item -Path $queryStorePath -Destination $applicationDestDir -Force
             }
             if ((Test-Path $commandStorePath)) {
-                Write-Host "copy commandStore:"commandStorePath"=>"$applicationDestDir
                 Copy-Item -Path $commandStorePath -Destination $applicationDestDir -Force
             }
         }
@@ -85,10 +83,10 @@ foreach ($moduleName in $modulesNames) {
 }
 
 # remove ModuleContextBase.cs
-# $entityFrameworkPath = Join-Path $templatePath "templates" "apistd" "src" "Definition" "EntityFramework"
-# if (Test-Path "$entityFrameworkPath/ModuleContextBase.cs") {
-#     Remove-Item "$destModulesPath/ModuleContextBase.cs" -Recurse -Force -ErrorAction SilentlyContinue
-# }
+$entityFrameworkPath = Join-Path $templatePath "templates" "apistd" "src" "Definition" "EntityFramework"
+if (Test-Path "$entityFrameworkPath/ModuleContextBase.cs") {
+    Remove-Item "$destModulesPath/ModuleContextBase.cs" -Recurse -Force -ErrorAction SilentlyContinue
+}
 
 # copy Infrastructure
 $infrastructurePath = Join-Path $templatePath "templates" "apistd" "src" "Infrastructure"

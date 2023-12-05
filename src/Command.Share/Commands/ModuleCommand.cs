@@ -119,8 +119,10 @@ public class ModuleCommand
                     File.Delete(commandStore);
                 }
             });
-
             Directory.Delete(entityPath, true);
+
+            // 从解决方案移除项目
+            ProcessHelper.RunCommand("dotnet", $"sln {solutionPath} remove {Path.Combine(solutionPath, "src", "Modules", moduleName + "Mod", $"{moduleName}Mod{Const.CSharpProjectExtention}")}", out string error);
         }
     }
 
@@ -302,7 +304,7 @@ public class ModuleCommand
         var moduleNsp = moduleName.EndsWith("Mod")
             ? moduleName.Replace("Mod", "")
             : moduleName;
-        var newLine = @$"global using Entity.{moduleNsp}Entities;";
+        var newLine = @$"global using Entity.{moduleNsp};";
         if (!globalUsingsContent.Contains(newLine))
         {
             Console.WriteLine($"  ℹ️ add new using {newLine} ➡️ GlobalUsings");

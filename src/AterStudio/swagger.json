@@ -2344,9 +2344,12 @@
             "type": "boolean",
             "description": "内容管理模块"
           },
-          "hasFileManagerFeatur": {
+          "hasFileManagerFeature": {
             "type": "boolean",
             "description": "用户日志模块"
+          },
+          "hasOrderFeature": {
+            "type": "boolean"
           },
           "projectType": {
             "$ref": "#/components/schemas/ProjectType"
