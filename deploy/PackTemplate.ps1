@@ -9,7 +9,7 @@ param (
 $deployPath = Get-Location
 $rootPath = [IO.Path]::GetFullPath("$deployPath/..")
 $templatePath = Join-Path $deployPath $relativePath
-$entityPath = Join-Path $templatePath "templates" "apistd" "src" "Entity"
+$entityPath = Join-Path $templatePath "templates" "apistd" "src" "Definition" "Entity"
 $commandLinePath = Join-Path $rootPath "src" "CommandLine"
 $destPath = Join-Path $commandLinePath "template"
 $destModulesPath = Join-Path $destPath "Modules" 
@@ -25,13 +25,14 @@ function CopyModule([string]$solutionPath, [string]$moduleName, [string]$destMod
         New-Item -ItemType Directory -Path $entityDestDir | Out-Null
     }
 
-    $entityPath = Join-Path $solutionPath "./src/Entity" $moduleName"Entities"
+    $moduleEntityName = $moduleName.Replace("Mod", "")
+    $entityPath = Join-Path $solutionPath "./src/Definition/Entity" $moduleEntityName
 
     if (Test-Path $entityPath) {
         Copy-Item -Path $entityPath\* -Destination $entityDestDir -Force
 
         # move store to tmp
-        $entityFrameworkPath = Join-Path $solutionPath "./src/Database/EntityFramework"
+        $entityFrameworkPath = Join-Path $solutionPath "./src/Definition/EntityFramework"
         $applicationDestDir = Join-Path $destModulesPath $moduleName "Application"
     
         if (!(Test-Path $applicationDestDir)) {
@@ -44,9 +45,11 @@ function CopyModule([string]$solutionPath, [string]$moduleName, [string]$destMod
             $commandStorePath = Join-Path $entityFrameworkPath "CommandStore" $entityName"CommandStore.cs"
 
             if ((Test-Path $queryStorePath)) {
+                Write-Host "copy queryStore:"$queryStorePath"=>"$applicationDestDir
                 Copy-Item -Path $queryStorePath -Destination $applicationDestDir -Force
             }
             if ((Test-Path $commandStorePath)) {
+                Write-Host "copy commandStore:"commandStorePath"=>"$applicationDestDir
                 Copy-Item -Path $commandStorePath -Destination $applicationDestDir -Force
             }
         }
@@ -61,29 +64,8 @@ if (!(Test-Path $destModulesPath)) {
     New-Item -ItemType Directory -Path $destModulesPath -Force | Out-Null
 }
 
-# 获取模块实体文件
-$entityFiles = Get-ChildItem -Path $entityPath -Filter "*.cs" -Recurse |`
-    Select-String -Pattern "\[Module" -List |`
-    Select-Object -ExpandProperty Path
-
 # 模块名称
-$modulesNames = @("CMSMod", "FileManagerMod")
-
-# 获取模块名称
-$regex = '\[Module\("(.+?)"\)\]';
-foreach ($file in $entityFiles) {
-    $content = Get-Content $file
-    $match = $content | Select-String -Pattern $regex -AllMatches | Select-Object -ExpandProperty Matches
-    if ($match.Count -eq 0) {
-        continue
-    }
-    $moduleName = $match.Groups[1].Value
-
-    # add modulename  to modulesNames if not exist 
-    if ($modulesNames -notcontains $moduleName) {
-        $modulesNames += $moduleName
-    }
-} 
+$modulesNames = @("CMSMod", "FileManagerMod", "OrderMod")
 
 # 模块的copy
 foreach ($moduleName in $modulesNames) {
@@ -101,6 +83,12 @@ foreach ($moduleName in $modulesNames) {
     $solutionPath = Join-Path $templatePath "templates" "apistd"
     CopyModule $solutionPath $moduleName $destModulesPath
 }
+
+# remove ModuleContextBase.cs
+# $entityFrameworkPath = Join-Path $templatePath "templates" "apistd" "src" "Definition" "EntityFramework"
+# if (Test-Path "$entityFrameworkPath/ModuleContextBase.cs") {
+#     Remove-Item "$destModulesPath/ModuleContextBase.cs" -Recurse -Force -ErrorAction SilentlyContinue
+# }
 
 # copy Infrastructure
 $infrastructurePath = Join-Path $templatePath "templates" "apistd" "src" "Infrastructure"

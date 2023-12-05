@@ -35,7 +35,7 @@ public class EntityManager
     /// <returns></returns>
     public List<EntityFile> GetEntityFiles(string? name)
     {
-        List<EntityFile> entityFiles = new();
+        List<EntityFile> entityFiles = [];
         try
         {
             Config.EntityPath = Config.EntityPath.Replace('\\', Path.DirectorySeparatorChar)
@@ -46,14 +46,12 @@ public class EntityManager
 
             if (filePaths.Any())
             {
-                filePaths = filePaths.Where(f => !(f.EndsWith(".g.cs")
+                filePaths = (List<string>)filePaths.Where(f => !(f.EndsWith(".g.cs")
                     || f.EndsWith(".AssemblyAttributes.cs")
                     || f.EndsWith(".AssemblyInfo.cs")
                     || f.EndsWith("GlobalUsings.cs")
-                    || f.EndsWith("Base.cs"))
-                    ).Where(f => Path.GetDirectoryName(f)!.EndsWith("Entities")
-                    || Path.GetDirectoryName(f)!.EndsWith("Entity"))
-                    .ToList();
+                    || f.EndsWith("Modules.cs"))
+                    ).ToList();
 
                 var compilation = new CompilationHelper(Path.Combine(_projectContext.SolutionPath!, Config.EntityPath));
                 foreach (string? path in filePaths)
@@ -158,7 +156,7 @@ public class EntityManager
     /// <returns></returns>
     public List<EntityFile> GetDtos(string entityFilePath)
     {
-        List<EntityFile> dtoFiles = new();
+        List<EntityFile> dtoFiles = [];
         try
         {
             string dtoPath = GetDtoPath(entityFilePath);

@@ -12,13 +12,13 @@ public class ModuleCommand
     public const string FileManager = "FileManagerMod";
     public const string Order = "OrderMod";
     public const string Configuration = "ConfigurationMod";
-    public static List<string> ModuleNames { get; } = new()
-    {
+    public static List<string> ModuleNames { get; } =
+    [
         CMS,
         Order,
         FileManager,
         Configuration
-    };
+    ];
 
     /// <summary>
     /// 创建模块
@@ -68,7 +68,6 @@ public class ModuleCommand
 
         // create dirs
         Directory.CreateDirectory(Path.Combine(projectPath, "Models"));
-        Directory.CreateDirectory(Path.Combine(projectPath, "IManager"));
         Directory.CreateDirectory(Path.Combine(projectPath, "Manager"));
 
         try
@@ -83,6 +82,46 @@ public class ModuleCommand
             Console.WriteLine(ex.Message + ex.StackTrace + ex.InnerException);
         }
 
+    }
+
+    public static void CleanModule(string solutionPath, string moduleName)
+    {
+        if (moduleName.EndsWith("Mod"))
+        {
+            moduleName = moduleName.Replace("Mod", "");
+        }
+
+        var entityPath = Path.Combine(solutionPath, Config.EntityPath, moduleName);
+        var entityFrameworkPath = Path.Combine(solutionPath, Config.EntityFrameworkPath);
+
+        if (Directory.Exists(entityPath))
+        {
+            var entityFiles = Directory.GetFiles(entityPath, $"*.cs", SearchOption.AllDirectories).ToList();
+
+            // get entity name
+            var entityNames = entityFiles.Select(file =>
+            {
+                var filename = Path.GetFileNameWithoutExtension(file);
+                return filename;
+            }).ToList();
+
+            entityNames.ForEach(name =>
+            {
+                var queryStore = Path.Combine(entityFrameworkPath, "QueryStore", $"{name}QueryStore.cs");
+                if (File.Exists(queryStore))
+                {
+                    File.Delete(queryStore);
+                }
+
+                var commandStore = Path.Combine(entityFrameworkPath, "CommandStore", $"{name}CommandStore.cs");
+                if (File.Exists(commandStore))
+                {
+                    File.Delete(commandStore);
+                }
+            });
+
+            Directory.Delete(entityPath, true);
+        }
     }
 
     /// <summary>
@@ -201,7 +240,7 @@ public class ModuleCommand
         }
 
         var databasePath = Path.Combine(solutionPath, Config.EntityFrameworkPath);
-        var entityPath = Path.Combine(solutionPath, Config.EntityPath, $"{moduleName}Entities");
+        var entityPath = Path.Combine(solutionPath, Config.EntityPath, $"{moduleName}");
         var modulePath = Path.Combine(solutionPath, "src", "Modules", moduleName);
 
         Console.WriteLine("🚀 copy module files");

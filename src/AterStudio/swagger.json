@@ -2134,32 +2134,18 @@
       },
       "CacheType": {
         "enum": [
-          0,
-          1,
-          2
+          0
         ],
         "type": "integer",
         "format": "int32",
         "x-enumNames": [
-          "Redis",
-          "Memory",
-          "None"
+          "Redis"
         ],
         "x-enumData": [
           {
             "name": "Redis",
             "value": 0,
             "description": "Redis"
-          },
-          {
-            "name": "Memory",
-            "value": 1,
-            "description": "Memory"
-          },
-          {
-            "name": "None",
-            "value": 2,
-            "description": "None"
           }
         ]
       },
@@ -2390,24 +2376,17 @@
       },
       "DBType": {
         "enum": [
-          0,
-          1
+          0
         ],
         "type": "integer",
         "format": "int32",
         "x-enumNames": [
-          "SQLServer",
           "PostgreSQL"
         ],
         "x-enumData": [
           {
-            "name": "SQLServer",
-            "value": 0,
-            "description": "SQLServer"
-          },
-          {
             "name": "PostgreSQL",
-            "value": 1,
+            "value": 0,
             "description": "PostgreSQL"
           }
         ]

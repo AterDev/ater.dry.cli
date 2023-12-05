@@ -56,8 +56,8 @@ public class FeatureManager
 
         if (jsonNode != null)
         {
-            JsonHelper.AddOrUpdateJsonNode(jsonNode, "Components.Database", dto.DBType.ToString().ToLower());
-            JsonHelper.AddOrUpdateJsonNode(jsonNode, "Components.Cache", dto.CacheType.ToString().ToLower());
+            //JsonHelper.AddOrUpdateJsonNode(jsonNode, "Components.Database", dto.DBType.ToString().ToLower());
+            //JsonHelper.AddOrUpdateJsonNode(jsonNode, "Components.Cache", dto.CacheType.ToString().ToLower());
 
             if (!string.IsNullOrWhiteSpace(dto.CommandDbConnStrings))
             {
@@ -76,7 +76,6 @@ public class FeatureManager
                 JsonHelper.AddOrUpdateJsonNode(jsonNode, "ConnectionStrings.CacheInstanceName", dto.CacheInstanceName);
             }
 
-
             jsonString = jsonNode.ToString();
             File.WriteAllText(configFile, jsonString);
         }
@@ -85,10 +84,18 @@ public class FeatureManager
         {
             await ModuleCommand.CreateModuleAsync(path, ModuleCommand.FileManager);
         }
+        else
+        {
+            ModuleCommand.CleanModule(path, ModuleCommand.FileManager);
+        }
 
         if (dto.HasCmsFeature)
         {
             await ModuleCommand.CreateModuleAsync(path, ModuleCommand.CMS);
+        }
+        else
+        {
+            ModuleCommand.CleanModule(path, ModuleCommand.CMS);
         }
 
         // 添加项目

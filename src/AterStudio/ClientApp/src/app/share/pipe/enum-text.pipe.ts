@@ -14,8 +14,6 @@ export class EnumTextPipe implements PipeTransform {
             switch (value)
         {
             case 0: result = 'Redis'; break;
-            case 1: result = 'Memory'; break;
-            case 2: result = 'None'; break;
             default: '默认'; break;
           }
         }
@@ -24,8 +22,7 @@ export class EnumTextPipe implements PipeTransform {
         {
             switch (value)
         {
-            case 0: result = 'SQLServer'; break;
-            case 1: result = 'PostgreSQL'; break;
+            case 0: result = 'PostgreSQL'; break;
             default: '默认'; break;
           }
         }
