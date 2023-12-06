@@ -102,7 +102,7 @@ public class ManagerGenerate : GenerateBase
         var assertContent = "";
         requiredProps?.ForEach(p =>
         {
-            var row = (p.Type) switch
+            var row = p.Type switch
             {
                 "Guid" => $"{p.Name} = new Guid(\"\"),",
                 "string" => $"{p.Name} = \"{p.Name}\" + RandomString,",
@@ -142,7 +142,7 @@ public class ManagerGenerate : GenerateBase
         var assertContent = "";
         requiredProps?.ForEach(p =>
         {
-            var row = (p.Type) switch
+            var row = p.Type switch
             {
                 "Guid" => $"{p.Name} = new Guid(\"\"),",
                 "string" => $"{p.Name} = \"Update{p.Name}\" + RandomString,",
@@ -189,12 +189,12 @@ public class ManagerGenerate : GenerateBase
         compilationHelper.AddSyntaxTree(content);
         string? entityNamespace = compilationHelper.GetNamesapce();
 
-        return new List<string>
-        {
+        return
+        [
             $"global using {entityProjectNamespace};",
             $"global using {entityNamespace};",
             ""
-    };
+    ];
     }
 
     /// <summary>
@@ -217,22 +217,6 @@ public class ManagerGenerate : GenerateBase
         //tplContent = tplContent.Replace(TplConst.SHARE_NAMESPACE, ShareNamespace);
         tplContent = tplContent.Replace(TplConst.DBCONTEXT_NAME, contextName);
         tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName);
-        return tplContent;
-    }
-
-    /// <summary>
-    /// Manager接口内容
-    /// </summary>
-    /// <returns></returns>
-    public string GetIManagerContent(string? nsp = null)
-    {
-        nsp ??= ServiceNamespace;
-        string entityName = Path.GetFileNameWithoutExtension(EntityFilePath);
-        string tplContent = GetTplContent($"Implement.IManager.tpl");
-        tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName)
-            .Replace(TplConst.ID_TYPE, Config.IdType)
-            .Replace(TplConst.SHARE_NAMESPACE, ShareNamespace)
-            .Replace(TplConst.NAMESPACE, nsp);
         return tplContent;
     }
 
@@ -294,7 +278,7 @@ public class ManagerGenerate : GenerateBase
                     /*
                     if (dto.{{name}}Ids != null && dto.{{name}}Ids.Count > 0)
                     {
-                        var {{variable}} = await Stores.CommandSet<{{name}}>().Db
+                        var {{variable}} = await CommandContext.{{nav.Name}}()
                             .Where(t => dto.{{name}}Ids.Contains(t.Id))
                             .ToListAsync();
                         if ({{variable}} != null)
@@ -303,7 +287,6 @@ public class ManagerGenerate : GenerateBase
                         }
                     }
                     */
-
             """;
         });
         // 所属的关联内容
@@ -313,7 +296,7 @@ public class ManagerGenerate : GenerateBase
             var name = nav.NavigationName ?? nav.Type;
             var manager = "_" + name.ToCamelCase() + "Manager";
             var idName = nav.Name + "Id";
-            if (name != "User" && name != "SystemUser")
+            if (name is not "User" and not "SystemUser")
             {
                 content += $$"""
                         Command.Db.Entry(entity).Property("{{idName}}").CurrentValue = dto.{{name}}Id;
@@ -350,7 +333,7 @@ public class ManagerGenerate : GenerateBase
                     /*
                     if (dto.{{name}}Ids != null && dto.{{name}}Ids.Count > 0)
                     {
-                        var {{variable}} = await Stores.CommandSet<{{name}}>().Db
+                        var {{variable}} = await CommandContext.{{nav.Name}}()
                             .Where(t => dto.{{name}}Ids.Contains(t.Id))
                             .ToListAsync();
                         if ({{variable}} != null)
@@ -370,9 +353,9 @@ public class ManagerGenerate : GenerateBase
         string content = "";
         string entityName = EntityInfo?.Name ?? "";
         var props = EntityInfo?.PropertyInfos.Where(p => !p.IsList)
-            .Where(p => p.IsRequired && !p.IsNullable
+            .Where(p => (p.IsRequired && !p.IsNullable)
               || p.IsEnum
-              || p.Type.StartsWith("bool") && p.Name != "IsDeleted")
+              || (p.Type.StartsWith("bool") && p.Name != "IsDeleted"))
             .Where(p => !p.Name.EndsWith("Id"))
             .Where(p => p.MaxLength is not (not null and >= 200))
             .ToList();
@@ -387,7 +370,7 @@ public class ManagerGenerate : GenerateBase
         var last = props?.LastOrDefault();
         props?.ForEach(p =>
         {
-            bool isLast = (p == last);
+            bool isLast = p == last;
             var name = p.Name;
             if (p.IsNavigation)
             {
@@ -517,26 +500,7 @@ public class ManagerGenerate : GenerateBase
     /// <returns></returns>
     public static string GetManagerDIExtensions(string solutionPath, string nspName)
     {
-        string storeServiceContent = "";
         string managerServiceContent = "";
-
-        var entityFrameworkPath = Path.Combine(solutionPath, Config.EntityFrameworkPath);
-
-        // 获取所有data stores
-        string[] files = Array.Empty<string>();
-
-        string[] queryFiles = Directory.GetFiles(Path.Combine(entityFrameworkPath, $"{Const.QUERY_STORE}"), $"*{Const.QUERY_STORE}.cs", SearchOption.TopDirectoryOnly);
-        string[] commandFiles = Directory.GetFiles(Path.Combine(entityFrameworkPath, $"{Const.COMMAND_STORE}"), $"*{Const.COMMAND_STORE}.cs", SearchOption.TopDirectoryOnly);
-
-        files = files.Concat(queryFiles).Concat(commandFiles).ToArray();
-
-        files?.ToList().ForEach(file =>
-        {
-            object name = Path.GetFileNameWithoutExtension(file);
-            string row = $"        services.AddScoped(typeof({name}));";
-            storeServiceContent += row + Environment.NewLine;
-        });
-
         // 获取所有manager
         var application = Path.Combine(solutionPath, Config.ApplicationPath);
         string managerDir = Path.Combine(application, "Manager");
@@ -545,7 +509,7 @@ public class ManagerGenerate : GenerateBase
             return string.Empty;
         }
 
-        files = Directory.GetFiles(managerDir, "*Manager.cs", SearchOption.TopDirectoryOnly);
+        var files = Directory.GetFiles(managerDir, "*Manager.cs", SearchOption.TopDirectoryOnly);
 
         files?.ToList().ForEach(file =>
         {
@@ -557,7 +521,6 @@ public class ManagerGenerate : GenerateBase
         // 构建服务
         string content = GetTplContent("Implement.ManagerServiceCollectionExtensions.tpl");
         content = content.Replace(TplConst.NAMESPACE, nspName);
-        content = content.Replace(TplConst.SERVICE_STORES, storeServiceContent);
         content = content.Replace(TplConst.SERVICE_MANAGER, managerServiceContent);
         return content;
     }

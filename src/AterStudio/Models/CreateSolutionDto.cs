@@ -87,11 +87,11 @@ public enum DBType
     /// </summary>
     [Description("PostgreSQL")]
     PostgreSQL,
-    /// <summary>
+    /*/// <summary>
     /// SQLServer
     /// </summary>
-    //[Description("SQLServer")]
-    //SQLServer
+    [Description("SQLServer")]
+    SQLServer*/
 
 }
 public enum CacheType

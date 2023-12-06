@@ -141,16 +141,9 @@ public class ProjectManager
             var version = await AssemblyHelper.GetSolutionVersionAsync(_projectContext.SolutionPath!);
             if (version == null) return "未找到项目配置文件，无法进行更新";
             var updateManager = new UpdateManager(path!, version);
-            var isSuccess = await updateManager.UpdateInfrastructureAsync();
 
-            var res = updateManager.GetUpdateNotes(isSuccess);
-            if (isSuccess)
-            {
-                // update version to db
-                _projectContext.Project.Version = updateManager.TargetVersion;
-                _db.Projects.Update(_projectContext.Project);
-            }
-            return res;
+
+            return "暂不支持该功能";
         }
         catch (Exception ex)
         {
@@ -274,8 +267,8 @@ public class ProjectManager
     /// <returns></returns>
     public List<TemplateFile> GetTemplateFiles(Guid id)
     {
-        return new List<TemplateFile>
-        {
+        return
+        [
             new TemplateFile()
             {
                 Name = "RequestService.axios.service.tpl",
@@ -288,7 +281,7 @@ public class ProjectManager
                 DisplayName = "Angular请求基础类",
                 ProjectId = id
             },
-        };
+        ];
     }
 
     /// <summary>

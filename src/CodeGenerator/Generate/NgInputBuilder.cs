@@ -25,7 +25,7 @@ public class NgInputBuilder
     public string ToFormControl()
     {
         // 过滤常规字段
-        string[] filterNames = new string[] { "createdtime", "updatedtime", "createtime", "updatetime" };
+        string[] filterNames = ["createdtime", "updatedtime", "createtime", "updatetime"];
         if (filterNames.Contains(Name.ToLower()))
         {
             return string.Empty;

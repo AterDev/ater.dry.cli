@@ -49,11 +49,11 @@ public class EntityParseHelper
     public IEnumerable<SyntaxNode>? RootNodes { get; set; }
     public CompilationHelper CompilationHelper { get; set; }
     public EntityKeyType KeyType { get; set; } = EntityKeyType.Guid;
-    public string[] SpecialTypes = new[] { "DateTime", "DateTimeOffset", "DateOnly", "TimeOnly", "Guid" };
+    public string[] SpecialTypes = ["DateTime", "DateTimeOffset", "DateOnly", "TimeOnly", "Guid"];
     /// <summary>
     /// 可复制的特性
     /// </summary>
-    public string[] ValidAttributes = new[] { "MaxLength", "MinLength", "StringLength" };
+    public string[] ValidAttributes = ["MaxLength", "MinLength", "StringLength"];
 
     public EntityParseHelper(string filePath)
     {
@@ -325,7 +325,7 @@ public class EntityParseHelper
     /// <param name="syntax"></param>
     protected PropertyInfo ParsePropertyType(PropertyDeclarationSyntax syntax)
     {
-        string[] listTypes = new[] { "IList", "List", "ICollection", "IEnumerable" };
+        string[] listTypes = ["IList", "List", "ICollection", "IEnumerable"];
         string type = syntax.Type.ToString();
         string name = syntax.Identifier.ToString();
         Microsoft.CodeAnalysis.TypeInfo typeInfo = SemanticModel.GetTypeInfo(syntax.Type);

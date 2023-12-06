@@ -17,7 +17,7 @@ public class DtoCodeGenerate : GenerateBase
     /// </summary>
     public string? AssemblyName { get; set; } = "Share";
     public string DtoPath { get; init; }
-    public List<PropertyChange> PropertyChanges = new List<PropertyChange>();
+    public List<PropertyChange> PropertyChanges = [];
     public readonly DbContext dbContext;
     public DtoCodeGenerate(string entityPath, string dtoPath, DbContext dbContext)
     {
@@ -139,11 +139,12 @@ public class DtoCodeGenerate : GenerateBase
         };
 
         dto.Properties = dto.Properties?.Where(
-            (p => p.Name != "Content"
+            p => p.Name != "Content"
                 && p.Name != "UpdatedTime"
                 && p.Name != "CreatedTime"
-                && (p.MaxLength < 2000 || p.MaxLength == null)
-                && !(p.IsList && p.IsNavigation))
+                && (p.MaxLength < 1000 || p.MaxLength == null)
+                && p.Name.EndsWith("Id") && p.Name != "Id"
+                && !(p.IsList && p.IsNavigation)
             )
             .ToList();
 
@@ -165,7 +166,7 @@ public class DtoCodeGenerate : GenerateBase
             Comment = FormatComment(EntityInfo.Comment, "列表元素"),
             Tag = EntityInfo.Name,
             Properties = EntityInfo.PropertyInfos?
-                .Where(p => p.Name != "IsDeleted")
+                .Where(p => p.Name is not "IsDeleted" and not "UpdatedTime")
                 .Where(p => !p.IsJsonIgnore)
                 .ToList()
         };
@@ -173,7 +174,7 @@ public class DtoCodeGenerate : GenerateBase
         dto.Properties = dto.Properties?
             .Where(p => !p.IsList
                 && (p.MaxLength <= 1000 || p.MaxLength == null)
-                && p.Name != "UpdatedTime"
+                && p.Name.EndsWith("Id") && p.Name != "Id"
                 && !p.IsNavigation).ToList();
 
         return dto.ToDtoContent(AssemblyName, EntityInfo.Name);
@@ -196,7 +197,7 @@ public class DtoCodeGenerate : GenerateBase
             })
             .ToList();
 
-        string[] filterFields = new string[] { "Id", "CreatedTime", "UpdatedTime", "IsDeleted", "PageSize", "PageIndex" };
+        string[] filterFields = ["Id", "CreatedTime", "UpdatedTime", "IsDeleted", "PageSize", "PageIndex"];
 
         DtoInfo dto = new()
         {
@@ -212,12 +213,12 @@ public class DtoCodeGenerate : GenerateBase
                 .Where(p => (p.IsRequired && !p.IsNavigation)
                     || (!p.IsList
                         && !p.IsNavigation
-                        && !filterFields.Contains(p.Name)
-                     || p.IsEnum)
+                        && !filterFields.Contains(p.Name))
+                     || p.IsEnum
                     )
                 .Where(p => p.MaxLength is not (not null and >= 1000))
                 .ToList();
-        dto.Properties = properties.Copy() ?? new List<PropertyInfo>();
+        dto.Properties = properties.Copy() ?? [];
 
         // 筛选条件调整为可空
         foreach (var item in dto.Properties)
@@ -250,9 +251,7 @@ public class DtoCodeGenerate : GenerateBase
             .Select(s => new PropertyInfo()
             {
                 Name = s.NavigationName + (s.IsList ? "Ids" : "Id"),
-                Type = s.IsList
-                    ? $"List<{KeyType}>" + (s.IsRequired ? "" : "?")
-                    : KeyType,
+                Type = s.IsList ? $"List<{KeyType}>" + (s.IsRequired ? "" : "?") : KeyType,
                 IsRequired = s.IsRequired,
                 IsNullable = s.IsNullable,
                 DefaultValue = "",
@@ -273,7 +272,7 @@ public class DtoCodeGenerate : GenerateBase
                 && p.Name != "CreatedTime"
                 && p.Name != "UpdatedTime"
                 && p.Name != "IsDeleted")
-            .ToList() ?? new List<PropertyInfo>()
+            .ToList() ?? []
         };
 
         // 初次创建
@@ -334,7 +333,7 @@ public class DtoCodeGenerate : GenerateBase
                 && p.Name != "IsDeleted")
             .ToList();
 
-        dto.Properties = properties?.Copy() ?? new List<PropertyInfo>();
+        dto.Properties = properties?.Copy() ?? [];
 
         referenceProps?.ForEach(item =>
         {

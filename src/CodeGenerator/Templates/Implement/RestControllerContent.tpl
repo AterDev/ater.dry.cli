@@ -37,13 +37,13 @@ ${AddActionBlock}
     }
 
     /// <summary>
-    /// 更新
+    /// 部分更新
     /// </summary>
     /// <param name="id"></param>
     /// <param name="dto"></param>
     /// <returns></returns>
-    [HttpPut("{id}")]
-    public async Task<ActionResult<${EntityName}?>> UpdateAsync([FromRoute] ${IdType} id, ${EntityName}UpdateDto dto)
+    [HttpPatch("{id}")]
+    public async Task<ActionResult<${EntityName}?>> UpdateAsync([FromRoute] ${IdType} id, ${EntityName}AddDto dto)
     {
 ${UpdateActionBlock}
     }

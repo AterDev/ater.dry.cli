@@ -35,12 +35,4 @@ export class FeatureBaseService extends BaseService {
     return this.request<boolean>('post', _url);
   }
 
-  /**
-   * 重构Manager接口
-   */
-  removeIManager(): Observable<boolean> {
-    const _url = `/api/Feature/removeIManager`;
-    return this.request<boolean>('put', _url);
-  }
-
 }

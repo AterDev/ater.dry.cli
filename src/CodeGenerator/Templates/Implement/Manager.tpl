@@ -3,13 +3,14 @@ using ${ShareNamespace}.Models.${EntityName}Dtos;
 
 namespace ${Namespace}.Manager;
 ${Comment}
-public class ${EntityName}Manager : DomainManagerBase<${EntityName}, ${EntityName}UpdateDto, ${EntityName}FilterDto, ${EntityName}ItemDto>, IDomainManager<${EntityName}>
+public class ${EntityName}Manager : ManagerBase<${EntityName}, ${EntityName}UpdateDto, ${EntityName}FilterDto, ${EntityName}ItemDto>
 {
+    private readonly IUserContext _userContext;
 ${AdditionManagersProps}
     public ${EntityName}Manager(
-        DataStoreContext storeContext, 
+        DataAccessContext<${EntityName}> dataContext, 
         ILogger<${EntityName}Manager> logger,
-        IUserContext userContext${AdditionManagersDI}) : base(storeContext, logger)
+        IUserContext userContext${AdditionManagersDI}) : base(dataContext, logger)
     {
 ${AdditionManagersInit}
         _userContext = userContext;
@@ -25,7 +26,7 @@ ${AdditionManagersInit}
 ${AddActionBlock}
     }
 
-    public override async Task<${EntityName}> UpdateAsync(${EntityName} entity, ${EntityName}UpdateDto dto)
+    public async Task<${EntityName}> UpdateAsync(${EntityName} entity, ${EntityName}UpdateDto dto)
     {
 ${UpdateActionBlock}
     }

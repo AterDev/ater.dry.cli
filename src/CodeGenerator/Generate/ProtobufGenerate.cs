@@ -181,7 +181,7 @@ service {EntityInfo.Name} {{
 @"    int32 page_size = 1;
     int32 page_index = 2;
 ";
-        string[] filterFields = new string[] { "Id", "CreatedTime", "UpdatedTime", "IsDeleted", "PageSize", "PageIndex" };
+        string[] filterFields = ["Id", "CreatedTime", "UpdatedTime", "IsDeleted", "PageSize", "PageIndex"];
         var properties = EntityInfo.PropertyInfos?
             .Where(p => (p.IsRequired && !p.IsNavigation)
                 || (!p.IsList

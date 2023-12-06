@@ -1,5 +1,3 @@
-using Core.Infrastructure;
-
 namespace Command.Share.Commands;
 
 /// <summary>
@@ -75,9 +73,6 @@ public class ApiCommand : CommandBase
 
         CodeGen = new RestApiGenerate(EntityFilePath, DtoPath, ApplicationPath, ApiPath, Suffix);
 
-        Console.WriteLine(Instructions[0]);
-        await GenerateCommonFilesAsync();
-
         Console.WriteLine(Instructions[1]);
         await GenerateRestApiAsync(force);
         Console.WriteLine(Instructions[2]);
@@ -133,12 +128,5 @@ public class ApiCommand : CommandBase
             .Replace("RestControllerBase", "ClientControllerBase");
 
         await GenerateFileAsync(apiDir, $"{entityName}{Suffix}.cs", clientContent, force);
-    }
-
-    private async Task GenerateCommonFilesAsync()
-    {
-        string infrastructureDir = Path.Combine(ApiPath, "Infrastructure");
-        string apiBaseContent = CodeGen!.GetRestApiBase();
-        await GenerateFileAsync(infrastructureDir, GenConst.RESTAPI_BASE_NAME, apiBaseContent);
     }
 }

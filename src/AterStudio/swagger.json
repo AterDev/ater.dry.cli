@@ -1288,37 +1288,6 @@
         }
       }
     },
-    "/api/Feature/removeIManager": {
-      "put": {
-        "tags": [
-          "Feature"
-        ],
-        "summary": "重构Manager接口",
-        "operationId": "Feature_RemoveIManager",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/Project": {
       "get": {
         "tags": [

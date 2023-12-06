@@ -72,7 +72,7 @@ public class DocGenerate : GenerateBase
             .Replace(Environment.NewLine, "")
             .Replace("\n", ";")
             .Replace(" ", "")
-            .Trim(new char[] { ';' });
+            .Trim([';']);
 
         if (string.IsNullOrEmpty(comments)) { comments = "-"; }
 

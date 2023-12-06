@@ -21,7 +21,7 @@ public class RequestServiceFile
         if (Functions != null)
         {
             functions = string.Join("\n", Functions.Select(f => f.ToNgRequestFunction()).ToArray());
-            string[] baseTypes = new string[] { "string", "string[]", "number", "number[]", "boolean" };
+            string[] baseTypes = ["string", "string[]", "number", "number[]", "boolean"];
             // 获取请求和响应的类型，以便导入
             List<string?> requestRefs = Functions
                 .Where(f => !string.IsNullOrEmpty(f.RequestRefType)

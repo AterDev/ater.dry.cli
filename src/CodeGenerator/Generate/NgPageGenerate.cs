@@ -565,10 +565,10 @@ public class NgPageGenerate : GenerateBase
     /// <returns></returns>
     private static string CleanTsTplVariables(string tplContent)
     {
-        string[] TplVariables = new string[]{
+        string[] TplVariables = [
             "[@Imports]","[@Declares]","[@DI]","[@Init]","[@Methods]",
             "{$DefinedProperties}","{$DefinedFormControls}","{$DefinedValidatorMessage}"
-        };
+        ];
         foreach (string item in TplVariables)
         {
             tplContent = tplContent.Replace(item, "");

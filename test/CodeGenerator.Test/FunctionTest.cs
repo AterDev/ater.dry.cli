@@ -169,7 +169,7 @@ public class FunctionTest
         var v70 = NuGetVersion.Parse("7.0");
         var v700 = NuGetVersion.Parse("7.0.0");
         var v71 = NuGetVersion.Parse("7.1");
-        var equal = (VersionComparer.Compare(v70, v700, VersionComparison.Version) == 0);
+        var equal = VersionComparer.Compare(v70, v700, VersionComparison.Version) == 0;
 
         Assert.True(equal);
 
