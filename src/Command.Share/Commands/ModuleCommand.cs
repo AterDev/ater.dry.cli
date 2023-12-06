@@ -247,30 +247,7 @@ public class ModuleCommand
 
         Console.WriteLine("🚀 copy module files");
         // copy entities
-        CopyModuleFiles(Path.Combine(sourcePath, "Entities"), entityPath);
-
-        // copy datastore
-        var sourceApplicationDir = Path.Combine(sourcePath, "Application");
-        if (Directory.Exists(sourceApplicationDir))
-        {
-            var storeFiles = Directory.GetFiles(sourceApplicationDir, "*.cs")
-                .ToList();
-            var queryStorePath = Path.Combine(solutionPath, Config.EntityFrameworkPath, "QueryStore");
-            var commandStorePath = Path.Combine(solutionPath, Config.EntityFrameworkPath, "CommandStore");
-            storeFiles.ForEach(file =>
-            {
-                var filename = Path.GetFileName(file);
-                Console.WriteLine($" ℹ️ copy {filename} to EntityFramework project");
-                if (filename.EndsWith("QueryStore.cs"))
-                {
-                    File.Copy(file, Path.Combine(queryStorePath, filename));
-                }
-                else if (file.EndsWith("CommandStore.cs"))
-                {
-                    File.Copy(file, Path.Combine(commandStorePath, filename));
-                }
-            });
-        }
+        CopyModuleFiles(Path.Combine(sourcePath, "Entity"), entityPath);
 
         // copy module files
         CopyModuleFiles(sourcePath, modulePath);
@@ -282,7 +259,7 @@ public class ModuleCommand
         var compilation = new CompilationHelper(databasePath);
         compilation.AddSyntaxTree(dbContextContent);
 
-        var entityFiles = new DirectoryInfo(Path.Combine(sourcePath, "Entities")).GetFiles("*.cs").ToList();
+        var entityFiles = new DirectoryInfo(Path.Combine(sourcePath, "Entity")).GetFiles("*.cs").ToList();
 
         entityFiles.ForEach(file =>
         {
@@ -295,6 +272,7 @@ public class ModuleCommand
                 compilation.AddClassProperty(propertyString);
             }
         });
+
         dbContextContent = compilation.SyntaxRoot!.ToFullString();
         File.WriteAllText(dbContextFile, dbContextContent);
         // update globalusings.cs
@@ -304,6 +282,7 @@ public class ModuleCommand
         var moduleNsp = moduleName.EndsWith("Mod")
             ? moduleName.Replace("Mod", "")
             : moduleName;
+
         var newLine = @$"global using Entity.{moduleNsp};";
         if (!globalUsingsContent.Contains(newLine))
         {

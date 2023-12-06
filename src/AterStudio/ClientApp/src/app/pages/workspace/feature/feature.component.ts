@@ -102,25 +102,4 @@ export class FeatureComponent {
         });
     }
   }
-
-  removeIManager(): void {
-    this.isProcessing = true;
-    this.service.removeIManager()
-      .subscribe({
-        next: (res) => {
-          if (res) {
-            this.snb.open('执行成功');
-          } else {
-            this.snb.open('执行失败');
-          }
-        },
-        error: (error) => {
-          this.snb.open(error.detail);
-          this.isProcessing = false;
-        },
-        complete: () => {
-          this.isProcessing = false;
-        }
-      });
-  }
 }

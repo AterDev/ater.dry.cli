@@ -20,7 +20,7 @@ function CopyModule([string]$solutionPath, [string]$moduleName, [string]$destMod
     Write-Host "copy module files:"$moduleName
 
     # 实体的copy
-    $entityDestDir = Join-Path $destModulesPath $moduleName "Entities"
+    $entityDestDir = Join-Path $destModulesPath $moduleName "Entity"
     if (!(Test-Path $entityDestDir)) {
         New-Item -ItemType Directory -Path $entityDestDir | Out-Null
     }
@@ -30,30 +30,8 @@ function CopyModule([string]$solutionPath, [string]$moduleName, [string]$destMod
 
     if (Test-Path $entityPath) {
         Copy-Item -Path $entityPath\* -Destination $entityDestDir -Force
-
-        # move store to tmp
-        $entityFrameworkPath = Join-Path $solutionPath "./src/Definition/EntityFramework"
-        $applicationDestDir = Join-Path $destModulesPath $moduleName "Application"
-    
-        if (!(Test-Path $applicationDestDir)) {
-            New-Item -Path $applicationDestDir -ItemType Directory -Force | Out-Null
-        }
-    
-        $entityNames = Get-ChildItem -Path $entityPath -Filter "*.cs" | ForEach-Object { $_.BaseName }
-        foreach ($entityName in $entityNames) {
-            $queryStorePath = Join-Path $entityFrameworkPath "QueryStore" $entityName"QueryStore.cs"
-            $commandStorePath = Join-Path $entityFrameworkPath "CommandStore" $entityName"CommandStore.cs"
-
-            if ((Test-Path $queryStorePath)) {
-                Copy-Item -Path $queryStorePath -Destination $applicationDestDir -Force
-            }
-            if ((Test-Path $commandStorePath)) {
-                Copy-Item -Path $commandStorePath -Destination $applicationDestDir -Force
-            }
-        }
     }
 }
-
 
 $OutputEncoding = [System.Console]::OutputEncoding = [System.Console]::InputEncoding = [System.Text.Encoding]::UTF8
 
@@ -77,7 +55,7 @@ foreach ($moduleName in $modulesNames) {
     $pathsToRemove = @("obj", "bin") | ForEach-Object { Join-Path $destModulePath $_ }
     Remove-Item $pathsToRemove -Recurse -Force -ErrorAction SilentlyContinue
 
-    # copy module entity and store
+    # copy module entity
     $solutionPath = Join-Path $templatePath "templates" "apistd"
     CopyModule $solutionPath $moduleName $destModulesPath
 }

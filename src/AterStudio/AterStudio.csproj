@@ -9,7 +9,7 @@
     <SatelliteResourceLanguages>en,zh-cn</SatelliteResourceLanguages>
     <ImplicitUsings>enable</ImplicitUsings>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <Version>8.0.0-preview1</Version>
+    <Version>8.0.0-preview2</Version>
     <Trimming>full</Trimming>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
