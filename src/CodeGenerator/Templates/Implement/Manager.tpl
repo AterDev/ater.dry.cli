@@ -26,7 +26,7 @@ ${AdditionManagersInit}
 ${AddActionBlock}
     }
 
-    public async Task<${EntityName}> UpdateAsync(${EntityName} entity, ${EntityName}UpdateDto dto)
+    public override async Task<${EntityName}> UpdateAsync(${EntityName} entity, ${EntityName}UpdateDto dto)
     {
 ${UpdateActionBlock}
     }

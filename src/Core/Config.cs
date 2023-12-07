@@ -34,6 +34,7 @@ public static class Config
         ApplicationPath = configOptions.ApplicationPath;
         ApiPath = configOptions.ApiPath;
         SharePath = configOptions.DtoPath;
+        EntityFrameworkPath = configOptions.DbContextPath;
         CreatedTimeName = configOptions.CreatedTimeName;
         Version = configOptions.Version;
     }

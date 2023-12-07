@@ -173,7 +173,7 @@ public class DtoCodeGenerate : GenerateBase
 
         dto.Properties = dto.Properties?
             .Where(p => !p.IsList
-                && (p.MaxLength <= 1000 || p.MaxLength == null)
+                && p.MaxLength is not (not null and >= 1000)
                 && p.Name.EndsWith("Id") && p.Name != "Id"
                 && !p.IsNavigation).ToList();
 

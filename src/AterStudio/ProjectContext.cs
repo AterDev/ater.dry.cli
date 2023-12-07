@@ -22,7 +22,7 @@ public class ProjectContext
     public string? EntityPath { get; set; }
     public string? ApiPath { get; set; }
     public string? Version { get; set; }
-
+    public string? EntityFrmeworkPath { get; set; }
 
     public ProjectContext(IHttpContextAccessor httpContextAccessor, DbContext context)
     {
@@ -47,6 +47,7 @@ public class ProjectContext
                     ApplicationPath = Path.Combine(SolutionPath, Config.ApplicationPath);
                     EntityPath = Path.Combine(SolutionPath, Config.EntityPath);
                     ApiPath = Path.Combine(SolutionPath, Config.ApiPath);
+                    EntityFrmeworkPath = Path.Combine(SolutionPath, Config.EntityFrameworkPath);
                     Version = AssemblyHelper.GetSolutionVersionAsync(SolutionPath).Result;
                 }
             }
