@@ -14,6 +14,7 @@ export class EnumTextPipe implements PipeTransform {
             switch (value)
         {
             case 0: result = 'Redis'; break;
+            case 1: result = 'Memory'; break;
             default: '默认'; break;
           }
         }

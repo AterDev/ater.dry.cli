@@ -20,13 +20,11 @@
 		<RepositoryUrl>https://github.com/AterDev/cli.git</RepositoryUrl>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<PackageReleaseNotes>
-			- 基于.NET8 全面升级，所有操作使用Stduio页面完成。
-			- 添加创建新解决方案功能。
+			- 基于.NET8 全面升级，全面图形化操作。
+			- 添加创建新解决方案功能，新的模板。
 			- 添加了快速切换项目的交互。
 			- 前端添加模型Tab，可据此生成代码片段。
-			- 添加版本检测功能，提供从7.x升级到8.0的 升级功能，帮助将旧项目模板升级到8.0。
 			- 添加了对模块的支持。现在可以通过工具创建新的模块，以对项目代码进行拆分开发。代码生成也会自动判断是否为模块实体，如果是模块实体，相应的代码生成会生成到模块目录。
-			- 添加了更多基础功能的实现，后续以模块的形式添加更多功能支持，可自由选配。
 		</PackageReleaseNotes>
 		<PackageIcon>logo.jpg</PackageIcon>
 		<ImplicitUsings>enable</ImplicitUsings>

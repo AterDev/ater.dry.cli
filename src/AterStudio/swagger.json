@@ -2103,18 +2103,25 @@
       },
       "CacheType": {
         "enum": [
-          0
+          0,
+          1
         ],
         "type": "integer",
         "format": "int32",
         "x-enumNames": [
-          "Redis"
+          "Redis",
+          "Memory"
         ],
         "x-enumData": [
           {
             "name": "Redis",
             "value": 0,
             "description": "Redis"
+          },
+          {
+            "name": "Memory",
+            "value": 1,
+            "description": "Memory"
           }
         ]
       },
@@ -2315,10 +2322,11 @@
           },
           "hasFileManagerFeature": {
             "type": "boolean",
-            "description": "用户日志模块"
+            "description": "用户文件模块"
           },
           "hasOrderFeature": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "订单模块"
           },
           "projectType": {
             "$ref": "#/components/schemas/ProjectType"

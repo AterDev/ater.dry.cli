@@ -8,14 +8,14 @@
     </a>
     <div class="d-flex flex-grow-1 "></div>
     <div>
-      <button mat-icon-button matTooltip="OpenAIKey" (click)="openOpenAI()">
+      <!-- <button mat-icon-button matTooltip="OpenAIKey" (click)="openOpenAI()">
         <mat-icon color="primary">smart_toy</mat-icon>
-      </button>
+      </button> -->
     </div>
   </div>
 
   <div class="d-flex gap-1 flex-wrap mt-2" *ngIf="!isLoading">
-    <mat-card *ngFor="let item of projects" class="col">
+    <mat-card *ngFor="let item of projects" class="col" style="min-width: 300px;">
       <mat-card-header>
         <mat-card-title class="d-flex align-items-center " style="height: 48px;">
           <!-- insert svg icon -->

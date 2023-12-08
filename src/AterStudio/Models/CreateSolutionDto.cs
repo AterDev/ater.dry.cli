@@ -67,11 +67,13 @@ public class CreateSolutionDto
     /// </summary>
     public bool HasCmsFeature { get; set; } = false;
     /// <summary>
-    /// 用户日志模块
+    /// 用户文件模块
     /// </summary>
     public bool HasFileManagerFeature { get; set; } = false;
 
-
+    /// <summary>
+    /// 订单模块
+    /// </summary>
     public bool HasOrderFeature { get; set; } = false;
 
     /// <summary>
@@ -101,14 +103,9 @@ public enum CacheType
     /// </summary>
     [Description(description: "Redis")]
     Redis,
-    /*/// <summary>
+    /// <summary>
     /// Memory
     /// </summary>
     [Description(description: "Memory")]
-    Memory,
-    /// <summary>
-    /// None
-    /// </summary>
-    [Description(description: "None")]
-    None*/
+    Memory
 }
