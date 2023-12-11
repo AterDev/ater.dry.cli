@@ -11,11 +11,13 @@ public class ModuleCommand
     public const string CMS = "CMSMod";
     public const string FileManager = "FileManagerMod";
     public const string Order = "OrderMod";
+    public const string System = "SystemMod";
     public const string Configuration = "ConfigurationMod";
     public static List<string> ModuleNames { get; } =
     [
         CMS,
         Order,
+        System,
         FileManager,
         Configuration
     ];

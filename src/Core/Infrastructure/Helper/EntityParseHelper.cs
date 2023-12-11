@@ -143,8 +143,8 @@ public class EntityParseHelper
             return string.Empty;
         }
 
-        SyntaxTriviaList trivias = syntax.GetLeadingTrivia();
-        string comment = trivias.ToString().Trim();
+        SyntaxTriviaList triviaList = syntax.GetLeadingTrivia();
+        string comment = triviaList.ToString().Trim();
         if (!string.IsNullOrWhiteSpace(comment)
             && !comment.StartsWith("///"))
         {

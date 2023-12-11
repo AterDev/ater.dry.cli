@@ -8,12 +8,12 @@ public class NgInputBuilder(string type, string name, string? label)
     public string Type { get; } = type;
     public string Name { get; } = name;
     public string? Label { get; set; } = label ?? name ?? type;
-    public bool IsRequired { get; set; } = false;
+    public bool IsRequired { get; set; }
     public int? MinLength { get; set; }
     public int? MaxLength { get; set; }
-    public bool IsDecimal { get; set; } = false;
-    public bool IsList { get; set; } = false;
-    public bool IsEnum { get; set; } = false;
+    public bool IsDecimal { get; set; }
+    public bool IsList { get; set; }
+    public bool IsEnum { get; set; }
 
     public string ToFormControl()
     {

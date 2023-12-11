@@ -9,5 +9,5 @@ public class BatchGenerateDto
     /// 项目路径
     /// </summary>
     public List<string>? ProjectPath { get; set; }
-    public bool Force { get; set; } = false;
+    public bool Force { get; set; }
 }

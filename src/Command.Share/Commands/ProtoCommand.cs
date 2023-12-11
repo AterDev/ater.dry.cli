@@ -17,7 +17,7 @@ public class ProtoCommand(string entityPath, string projectPath) : CommandBase
     public string ProjectPath { get; set; } = projectPath;
     public ProtobufGenerate CodeGen { get; set; } = new ProtobufGenerate(entityPath);
 
-    public string? ErrorMessage { get; set; } = null;
+    public string? ErrorMessage { get; set; }
 
     public async Task RunAsync(bool cover = false)
     {

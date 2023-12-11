@@ -1,9 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Text;
 
-using Azure;
-using Azure.AI.OpenAI;
-
 using Core;
 using Core.Entities;
 using Core.Infrastructure.Helper;
@@ -17,7 +14,6 @@ public class AdvanceManager
     private readonly DbContext _dbContext;
     private readonly DusiHttpClient _httpClient;
     private readonly ProjectContext _projectContext;
-    private readonly OpenAIClient? _openAI;
 
     public AdvanceManager(DbContext dbContext, DusiHttpClient httpClient, ProjectContext projectContext)
     {
@@ -28,7 +24,6 @@ public class AdvanceManager
         var openAIKey = _dbContext.Configs.Find(c => c.Key == ConfigData.OpenAI).FirstOrDefault();
         if (openAIKey != null)
         {
-            _openAI = new OpenAIClient(openAIKey.Value);
         }
     }
 
@@ -65,103 +60,6 @@ public class AdvanceManager
     {
         return _dbContext.Configs.FindOne(c => c.Key == key);
     }
-
-
-    /// <summary>
-    /// 生成实体内容
-    /// </summary>
-    /// <param name="content"></param>
-    /// <returns></returns>
-    public async Task<Response<StreamingChatCompletions>?> GenerateEntityAsync(string content)
-    {
-        if (_openAI != null)
-        {
-            var chatCompletionsOptions = new ChatCompletionsOptions()
-            {
-                Messages =
-                {
-                    new ChatMessage(ChatRole.System, "你是一个严谨完善的编程助手，为用户提供代码示例"),
-                    new ChatMessage(ChatRole.User, content),
-                    new ChatMessage(ChatRole.User, "根据上面内容，生成C#实体模型类，为类和属性添加注释和特性;如果有枚举类型，生成枚举类，并带上注释和Description特性。注释使用C#风格的XML注释，只需要提供模型类即可。"),
-                }
-            };
-
-            return await _openAI.GetChatCompletionsStreamingAsync("gpt-3.5-turbo", chatCompletionsOptions);
-        }
-        return default;
-    }
-
-    /// <summary>
-    /// 问答
-    /// </summary>
-    /// <param name="content"></param>
-    /// <returns></returns>
-    public async Task<Response<StreamingChatCompletions>?> GenerateAnswerAsync(string content)
-    {
-        if (_openAI != null)
-        {
-            var prompts = new List<string>()
-            {
-                content
-            };
-
-            var chatCompletionsOptions = new ChatCompletionsOptions()
-            {
-                Messages =
-                {
-                    new ChatMessage(ChatRole.User, content),
-                }
-            };
-
-            return await _openAI.GetChatCompletionsStreamingAsync("gpt-3.5-turbo", chatCompletionsOptions);
-        }
-        return default;
-    }
-
-
-    /// <summary>
-    /// 生成图片
-    /// </summary>
-    /// <param name="content"></param>
-    /// <param name="size"></param>
-    public async Task<List<string>?> GenerateImagesAsync(string content, ImageSize size = ImageSize.Middle)
-    {
-        if (_openAI != null)
-        {
-            var imageOptions = new ImageGenerationOptions()
-            {
-                Prompt = content,
-                ImageCount = 1,
-
-            };
-            imageOptions.Size = size switch
-            {
-                ImageSize.Small => Azure.AI.OpenAI.ImageSize.Size256x256,
-                ImageSize.Middle => Azure.AI.OpenAI.ImageSize.Size512x512,
-                ImageSize.Large => Azure.AI.OpenAI.ImageSize.Size1024x1024,
-                _ => Azure.AI.OpenAI.ImageSize.Size512x512
-            };
-
-            var response = await _openAI.GetImageGenerationsAsync(imageOptions);
-            if (response != null)
-            {
-                var images = response.Value.Data.ToList();
-                return images.Select(image => image.Url.ToString()).ToList();
-            }
-
-        }
-        return default;
-    }
-
-    public void UploadFile(Stream stream)
-    {
-        // use _openAI to upload file 
-        if (_openAI != null)
-        {
-
-        }
-    }
-
 
     /// <summary>
     /// 获取实体表结构

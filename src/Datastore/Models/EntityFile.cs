@@ -15,7 +15,7 @@ public class EntityFile
     /// </summary>
     public string? Module { get; set; }
 
-    public bool HasDto { get; set; } = false;
-    public bool HasManager { get; set; } = false;
-    public bool HasAPI { get; set; } = false;
+    public bool HasDto { get; set; }
+    public bool HasManager { get; set; }
+    public bool HasAPI { get; set; }
 }

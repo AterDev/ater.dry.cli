@@ -9,7 +9,7 @@ public class UpdateManager(string solutionFilPath, string currentVersion)
 {
     public static string? ErrorMsg { get; private set; }
     public string SolutionFilePath { get; set; } = solutionFilPath;
-    public bool Success { get; set; } = false;
+    public bool Success { get; set; }
     public string TargetVersion { get; set; } = currentVersion;
     public string CurrentVersion { get; set; } = currentVersion;
 

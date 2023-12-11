@@ -444,8 +444,8 @@ public class TsProperty
     public string? Name { get; set; }
     public string? Type { get; set; }
     public string Reference { get; set; } = string.Empty;
-    public bool IsEnum { get; set; } = false;
-    public bool IsNullable { get; set; } = false;
+    public bool IsEnum { get; set; }
+    public bool IsNullable { get; set; }
     public string? Comments { get; set; }
 
     public string ToProperty()

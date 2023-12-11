@@ -40,6 +40,7 @@ export class CreateComponent {
   get queryDbConnStrings() { return this.addForm.get('queryDbConnStrings'); }
   get cacheConnStrings() { return this.addForm.get('cacheConnStrings'); }
   get cacheInstanceName() { return this.addForm.get('cacheInstanceName'); }
+  get hasSystemFeature() { return this.addForm.get('hasSystemFeature'); }
   get hasCmsFeature() { return this.addForm.get('hasCmsFeature'); }
   get hasFileManagerFeature() { return this.addForm.get('hasFileManagerFeature'); }
   get projectType() { return this.addForm.get('projectType'); }
@@ -67,6 +68,7 @@ export class CreateComponent {
       cacheInstanceName: new FormControl('Dev', [Validators.maxLength(60)]),
       hasCmsFeature: new FormControl(false, []),
       hasFileManagerFeature: new FormControl(false, []),
+      hasSystemFeature: new FormControl(false, []),
       projectType: new FormControl(ProjectType.WebAPI, [Validators.required])
     });
   }

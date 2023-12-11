@@ -90,8 +90,12 @@
 
     </div>
     <div class="d-flex flex-column mt-1" *ngIf="projectType?.value==ProjectType.WebAPI">
-      <h2>功能模块</h2>
+      <h2>功能模块
+        <small>(预览)</small>
+      </h2>
       <div class="d-flex gap-2 align-items-center ">
+        <mat-checkbox formControlName="hasSystemFeature" matTooltip="系统管理员、角色、权限相关功能"
+          matTooltipPosition="below">后台管理</mat-checkbox>
         <mat-checkbox formControlName="hasCmsFeature" matTooltip="内容管理基础接口"
           matTooltipPosition="below">内容管理</mat-checkbox>
         <!-- <mat-icon class="ms-1" fontSet="material-icons-outlined">info</mat-icon> -->

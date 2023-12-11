@@ -72,6 +72,11 @@ try {
                 Remove-Item $path -Force
             }
         }
+        # remove pdb and xml files
+        $files = Get-ChildItem -Path .\publish -Recurse -Include *.pdb, *.xml
+        foreach ($file in $files) {
+            Remove-Item $file.FullName -Force
+        }
         if (Test-Path -Path "../CommandLine/studio.zip") {
             Remove-Item "../CommandLine/studio.zip" -Force
         }

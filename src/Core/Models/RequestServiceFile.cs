@@ -217,5 +217,5 @@ public class FunctionParams
     /// <summary>
     /// 是否路由参数
     /// </summary>
-    public bool InPath { get; set; } = false;
+    public bool InPath { get; set; }
 }

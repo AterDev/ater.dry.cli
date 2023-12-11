@@ -41,7 +41,7 @@ if (!(Test-Path $destModulesPath)) {
 }
 
 # 模块名称
-$modulesNames = @("CMSMod", "FileManagerMod", "OrderMod")
+$modulesNames = @("CMSMod", "FileManagerMod", "OrderMod", "SystemMod")
 
 # 模块的copy
 foreach ($moduleName in $modulesNames) {

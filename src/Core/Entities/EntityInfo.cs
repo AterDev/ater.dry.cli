@@ -33,7 +33,7 @@ public class EntityInfo : EntityBase
     /// 是否为枚举类
     /// </summary>
     public bool? IsEnum { get; set; } = false;
-    public bool IsList { get; set; } = false;
+    public bool IsList { get; set; }
 
     /// <summary>
     /// 属性

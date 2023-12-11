@@ -37,11 +37,11 @@ public class CreateSolutionDto
     /// <summary>
     /// 是否包含验证授权服务
     /// </summary>
-    public bool HasIdentityServer { get; set; } = false;
+    public bool HasIdentityServer { get; set; }
     /// <summary>
     /// 是否包含任务管理服务
     /// </summary>
-    public bool HasTaskManager { get; set; } = false;
+    public bool HasTaskManager { get; set; }
     /// <summary>
     /// 写数据库连接字符串
     /// </summary>
@@ -63,18 +63,22 @@ public class CreateSolutionDto
     [MaxLength(60)]
     public string? CacheInstanceName { get; set; }
     /// <summary>
+    /// 系统管理模块
+    /// </summary>
+    public bool HasSystemFeature { get; set; }
+    /// <summary>
     /// 内容管理模块
     /// </summary>
-    public bool HasCmsFeature { get; set; } = false;
+    public bool HasCmsFeature { get; set; }
     /// <summary>
     /// 用户文件模块
     /// </summary>
-    public bool HasFileManagerFeature { get; set; } = false;
+    public bool HasFileManagerFeature { get; set; }
 
     /// <summary>
     /// 订单模块
     /// </summary>
-    public bool HasOrderFeature { get; set; } = false;
+    public bool HasOrderFeature { get; set; }
 
     /// <summary>
     /// 项目类型

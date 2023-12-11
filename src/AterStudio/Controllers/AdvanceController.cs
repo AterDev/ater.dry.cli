@@ -1,8 +1,4 @@
-﻿using System.Text;
-
-using AterStudio.Advance;
-
-using Azure.AI.OpenAI;
+﻿using AterStudio.Advance;
 
 using Core.Entities;
 
@@ -29,14 +25,7 @@ public class AdvanceController(AdvanceManager entityAdvance) : ControllerBase
     public ActionResult<ConfigData> GetConfig(string key)
     {
         var data = _entityAdvance.GetConfig(key);
-        if (data != null)
-        {
-            return data;
-        }
-        else
-        {
-            return Ok();
-        }
+        return data != null ? (ActionResult<ConfigData>)data : (ActionResult<ConfigData>)Ok();
     }
 
     /// <summary>
@@ -50,81 +39,6 @@ public class AdvanceController(AdvanceManager entityAdvance) : ControllerBase
     {
         _entityAdvance.SetConfig(key, value);
         return Ok();
-    }
-
-
-    /// <summary>
-    /// 生成实体
-    /// </summary>
-    /// <param name="content"></param>
-    /// <returns></returns>
-    [HttpPost("generateEntity")]
-    public async Task GenerateEntity(string content)
-    {
-        var res = await _entityAdvance.GenerateEntityAsync(content);
-        if (res == null)
-        {
-            Response.StatusCode = StatusCodes.Status204NoContent;
-            return;
-        }
-        Response.ContentType = "text/plain";
-        Response.StatusCode = StatusCodes.Status200OK;
-        await foreach (StreamingChatChoice choice in res.Value.GetChoicesStreaming())
-        {
-            await foreach (ChatMessage message in choice.GetMessageStreaming())
-            {
-                if (message.Content == null)
-                {
-                    continue;
-                }
-                await Response.Body.WriteAsync(Encoding.UTF8.GetBytes(message.Content));
-                await Response.Body.FlushAsync();
-            }
-        }
-    }
-
-    /// <summary>
-    /// 问答
-    /// </summary>
-    /// <param name="content"></param>
-    /// <returns></returns>
-    [HttpGet("answer")]
-    public async Task GetAnswerAsync(string content)
-    {
-        var res = await _entityAdvance.GenerateAnswerAsync(content);
-        if (res == null)
-        {
-            Response.StatusCode = StatusCodes.Status204NoContent;
-            return;
-        }
-
-        Response.ContentType = "text/plain";
-        Response.StatusCode = StatusCodes.Status200OK;
-        await foreach (StreamingChatChoice choice in res.Value.GetChoicesStreaming())
-        {
-            await foreach (ChatMessage message in choice.GetMessageStreaming())
-            {
-                if (message.Content == null)
-                {
-                    continue;
-                }
-                await Response.Body.WriteAsync(Encoding.UTF8.GetBytes(message.Content));
-                await Response.Body.FlushAsync();
-            }
-        }
-    }
-
-
-    /// <summary>
-    /// 生成图片
-    /// 
-    /// </summary>
-    /// <param name="content"></param>
-    /// <returns></returns>
-    [HttpGet("Images")]
-    public async Task<List<string>?> GetImages(string content)
-    {
-        return await _entityAdvance.GenerateImagesAsync(content);
     }
 }
 

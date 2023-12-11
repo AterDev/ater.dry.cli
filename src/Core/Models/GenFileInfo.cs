@@ -14,7 +14,7 @@ public class GenFileInfo(string name, string content)
     /// <summary>
     /// 是否可被用户编辑，如果可编辑，则不能覆盖用户代码
     /// </summary>
-    public bool CanModify { get; set; } = false;
+    public bool CanModify { get; set; }
     /// <summary>
     /// 相对文件夹名称
     /// </summary>
