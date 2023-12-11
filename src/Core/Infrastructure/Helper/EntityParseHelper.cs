@@ -53,7 +53,7 @@ public class EntityParseHelper
     /// <summary>
     /// 可复制的特性
     /// </summary>
-    public string[] ValidAttributes = ["MaxLength", "MinLength", "StringLength"];
+    public string[] ValidAttributes = ["MaxLength", "MinLength", "StringLength", "Length", "Range", "AllowedValues"];
 
     public EntityParseHelper(string filePath)
     {
@@ -457,9 +457,12 @@ public class EntityParseHelper
                 .FirstOrDefault();
             AttributeArgumentSyntax? stringLength = GetAttributeArguments(attributes, "StringLength")?
                 .FirstOrDefault();
+
+            IEnumerable<AttributeArgumentSyntax>? length = GetAttributeArguments(attributes, "Length");
+            IEnumerable<AttributeArgumentSyntax>? range = GetAttributeArguments(attributes, "Range");
+            IEnumerable<AttributeArgumentSyntax>? allowedValues = GetAttributeArguments(attributes, "AllowedValues");
             IEnumerable<AttributeArgumentSyntax>? required = GetAttributeArguments(attributes, "Required");
             IEnumerable<AttributeArgumentSyntax>? key = GetAttributeArguments(attributes, "Key");
-
             IEnumerable<AttributeArgumentSyntax>? jsonIgnore = GetAttributeArguments(attributes, "JsonIgnore");
 
             if (key != null)
@@ -471,7 +474,6 @@ public class EntityParseHelper
                     _ => EntityKeyType.Guid,
                 };
             }
-
             if (required != null)
             {
                 propertyInfo.IsRequired = true;
@@ -480,7 +482,32 @@ public class EntityParseHelper
             {
                 propertyInfo.IsJsonIgnore = true;
             }
-
+            if (length != null)
+            {
+                if (int.TryParse(length.FirstOrDefault()?.ToString(), out int val))
+                {
+                    propertyInfo.MinLength = val;
+                }
+                if (int.TryParse(length.Skip(1).FirstOrDefault()?.ToString(), out int max))
+                {
+                    propertyInfo.MaxLength = max;
+                }
+            }
+            if (range != null)
+            {
+                if (int.TryParse(range.FirstOrDefault()?.ToString(), out int val))
+                {
+                    propertyInfo.MinLength = val;
+                }
+                if (int.TryParse(range.Skip(1).FirstOrDefault()?.ToString(), out int max))
+                {
+                    propertyInfo.MaxLength = max;
+                }
+            }
+            if (allowedValues != null)
+            {
+                // TODO:
+            }
             if (maxLength != null)
             {
                 if (int.TryParse(maxLength.ToString(), out int val))
@@ -517,7 +544,7 @@ public class EntityParseHelper
         return theSyntax != null
             ? theSyntax.ArgumentList?.Arguments ??
                 new SeparatedSyntaxList<AttributeArgumentSyntax>()
-            : (IEnumerable<AttributeArgumentSyntax>?)default;
+            : default;
     }
     /// <summary>
     /// 获取父类名称
@@ -538,8 +565,7 @@ public class EntityParseHelper
     /// <returns></returns>
     public bool HasBaseType(INamedTypeSymbol? baseType, string baseName)
     {
-        return baseType == null
-            ? false
-            : baseType.Name == baseName ? true : baseType.BaseType != null && HasBaseType(baseType.BaseType, baseName);
+        return baseType != null
+            && (baseType.Name == baseName || (baseType.BaseType != null && HasBaseType(baseType.BaseType, baseName)));
     }
 }
