@@ -6,15 +6,10 @@ using Datastore;
 using Microsoft.OpenApi.Readers;
 
 namespace AterStudio.Manager;
-public class SwaggerManager
+public class SwaggerManager(DbContext dbContext)
 {
-    private readonly DbContext _dbContext;
+    private readonly DbContext _dbContext = dbContext;
     public string? ErrorMsg { get; set; }
-
-    public SwaggerManager(DbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
 
     public ApiDocInfo? Find(Guid id)
     {
@@ -197,16 +192,11 @@ public class SwaggerManager
     /// <returns></returns>
     public NgComponentInfo CreateUIComponent(CreateUIComponentDto dto)
     {
-        switch (dto.ComponentType)
+        return dto.ComponentType switch
         {
-            case ComponentType.Form:
-                return NgPageGenerate.GenFormComponent(dto.ModelInfo, dto.ServiceName);
-
-            case ComponentType.Table:
-                return NgPageGenerate.GenTableComponent(dto.ModelInfo, dto.ServiceName);
-            default:
-                return default!;
-        }
-
+            ComponentType.Form => NgPageGenerate.GenFormComponent(dto.ModelInfo, dto.ServiceName),
+            ComponentType.Table => NgPageGenerate.GenTableComponent(dto.ModelInfo, dto.ServiceName),
+            _ => default!,
+        };
     }
 }

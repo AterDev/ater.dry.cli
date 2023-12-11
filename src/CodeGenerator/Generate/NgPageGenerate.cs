@@ -582,7 +582,7 @@ public class NgPageGenerate : GenerateBase
             string name = property.Name.ToCamelCase();
             definedProperties += $@"    get {name}() {{ return this.formGroup.get('{name}'); }}
 ";
-            List<string> validators = new();
+            List<string> validators = [];
             if (property.IsRequired)
             {
                 validators.Add("Validators.required");

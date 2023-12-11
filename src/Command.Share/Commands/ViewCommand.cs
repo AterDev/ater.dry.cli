@@ -15,8 +15,8 @@ public class ViewCommand : CommandBase
     /// <summary>
     /// 模块与子模块路由map
     /// </summary>
-    public List<KeyValuePair<string, string>> ModuleRouteMap { get; } = new();
-    public List<KeyValuePair<string, string>> RouteNameMap { get; } = new();
+    public List<KeyValuePair<string, string>> ModuleRouteMap { get; } = [];
+    public List<KeyValuePair<string, string>> RouteNameMap { get; } = [];
 
 
     public ViewCommand(string dtoPath, string outputPath)

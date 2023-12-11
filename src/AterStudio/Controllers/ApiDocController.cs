@@ -11,15 +11,10 @@ namespace AterStudio.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-public class ApiDocController : ControllerBase
+public class ApiDocController(SwaggerManager manager, ProjectManager project) : ControllerBase
 {
-    private readonly SwaggerManager _manager;
-    private readonly ProjectManager _project;
-    public ApiDocController(SwaggerManager manager, ProjectManager project)
-    {
-        _manager = manager;
-        _project = project;
-    }
+    private readonly SwaggerManager _manager = manager;
+    private readonly ProjectManager _project = project;
 
     /// <summary>
     /// 获取项目文档

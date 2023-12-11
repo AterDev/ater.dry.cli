@@ -6,7 +6,7 @@ public class ProtobufGenerate : GenerateBase
 {
     public EntityInfo EntityInfo { get; init; }
     public EntityParseHelper EntityHelper { get; init; }
-    public List<string> EnumList { get; set; } = new List<string>();
+    public List<string> EnumList { get; set; } = [];
 
     public ProtobufGenerate(string entityPath)
     {

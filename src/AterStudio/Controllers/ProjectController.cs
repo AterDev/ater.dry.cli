@@ -13,15 +13,10 @@ namespace AterStudio.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-public class ProjectController : ControllerBase
+public class ProjectController(ProjectManager manager, AdvanceManager advace) : ControllerBase
 {
-    private readonly ProjectManager _manager;
-    private readonly AdvanceManager _advace;
-    public ProjectController(ProjectManager manager, AdvanceManager advace)
-    {
-        _manager = manager;
-        _advace = advace;
-    }
+    private readonly ProjectManager _manager = manager;
+    private readonly AdvanceManager _advace = advace;
 
     /// <summary>
     /// 获取解决方案列表

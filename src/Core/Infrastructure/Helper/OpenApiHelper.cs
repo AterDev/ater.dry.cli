@@ -274,7 +274,7 @@ public class OpenApiHelper
     /// <returns></returns>
     public static List<PropertyInfo> ParseProperties(OpenApiSchema schema)
     {
-        List<PropertyInfo> properties = new();
+        List<PropertyInfo> properties = [];
         // 继承的需要递归 从AllOf中获取属性
         if (schema.AllOf.Count > 1)
         {

@@ -17,7 +17,7 @@ public class RequestServiceFile
         string functions = "";
         // import引用的models
         string importModels = "";
-        List<string> refTypes = new();
+        List<string> refTypes = [];
         if (Functions != null)
         {
             functions = string.Join("\n", Functions.Select(f => f.ToNgRequestFunction()).ToArray());

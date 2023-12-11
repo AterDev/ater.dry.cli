@@ -1,11 +1,7 @@
 ﻿namespace Core.Models;
-public class NgComponentInfo
+public class NgComponentInfo(string name)
 {
-    public NgComponentInfo(string name)
-    {
-        Name = name;
-    }
-    public string Name { get; set; } = default!;
+    public string Name { get; set; } = name;
     public string? Routing { get; set; }
     public string? TsContent { get; set; }
     public string? HtmlContent { get; set; }

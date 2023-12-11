@@ -12,13 +12,9 @@ namespace AterStudio.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-public class EntityController : ControllerBase
+public class EntityController(EntityManager manager) : ControllerBase
 {
-    private readonly EntityManager _manager;
-    public EntityController(EntityManager manager)
-    {
-        _manager = manager;
-    }
+    private readonly EntityManager _manager = manager;
 
     [HttpGet("{id}")]
     public ActionResult<List<EntityFile>> List([FromRoute] Guid id, string? name)

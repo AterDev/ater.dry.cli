@@ -10,19 +10,12 @@ namespace AterStudio.Manager;
 /// <summary>
 /// 功能集成
 /// </summary>
-public class FeatureManager
+public class FeatureManager(ProjectContext projectContext, ProjectManager projectManager)
 {
-    private readonly ProjectContext _projectContext;
-    private readonly ProjectManager _projectManager;
+    private readonly ProjectContext _projectContext = projectContext;
+    private readonly ProjectManager _projectManager = projectManager;
 
     public string ErrorMsg { get; set; } = string.Empty;
-
-
-    public FeatureManager(ProjectContext projectContext, ProjectManager projectManager)
-    {
-        _projectContext = projectContext;
-        _projectManager = projectManager;
-    }
 
     /// <summary>
     /// 创建新解决方案

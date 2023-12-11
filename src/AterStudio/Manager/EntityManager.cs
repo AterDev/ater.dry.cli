@@ -18,15 +18,10 @@ using Project = Core.Entities.Project;
 
 namespace AterStudio.Manager;
 
-public class EntityManager
+public class EntityManager(DbContext dbContext, ProjectContext projectContext)
 {
-    private readonly DbContext _dbContext;
-    private readonly ProjectContext _projectContext;
-    public EntityManager(DbContext dbContext, ProjectContext projectContext)
-    {
-        _dbContext = dbContext;
-        _projectContext = projectContext;
-    }
+    private readonly DbContext _dbContext = dbContext;
+    private readonly ProjectContext _projectContext = projectContext;
 
     /// <summary>
     /// 获取实体列表

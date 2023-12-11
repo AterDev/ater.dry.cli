@@ -143,7 +143,7 @@ public class CompilationHelper
     /// <returns></returns>
     protected IEnumerable<INamedTypeSymbol> GetNamespacesClasses(IEnumerable<INamespaceSymbol> namespaces)
     {
-        List<INamedTypeSymbol> classes = new();
+        List<INamedTypeSymbol> classes = [];
         classes = namespaces.SelectMany(n => n.GetTypeMembers()).ToList();
         List<INamespaceSymbol> childNamespaces = namespaces.SelectMany(n => n.GetNamespaceMembers()).ToList();
         if (childNamespaces.Count > 0)

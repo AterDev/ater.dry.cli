@@ -6,21 +6,12 @@ namespace CodeGenerator.Generate;
 /// <summary>
 /// c#请求客户端生成
 /// </summary>
-public class CSHttpClientGenerate : GenerateBase
+public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
 {
-    protected OpenApiPaths PathsPairs { get; }
-    protected List<OpenApiTag> ApiTags { get; }
-    public IDictionary<string, OpenApiSchema> Schemas { get; set; }
-    public OpenApiDocument OpenApi { get; set; }
-
-    public CSHttpClientGenerate(OpenApiDocument openApi)
-    {
-        OpenApi = openApi;
-        PathsPairs = openApi.Paths;
-        Schemas = openApi.Components.Schemas;
-        ApiTags = openApi.Tags.ToList();
-    }
-
+    protected OpenApiPaths PathsPairs { get; } = openApi.Paths;
+    protected List<OpenApiTag> ApiTags { get; } = openApi.Tags.ToList();
+    public IDictionary<string, OpenApiSchema> Schemas { get; set; } = openApi.Components.Schemas;
+    public OpenApiDocument OpenApi { get; set; } = openApi;
 
     public static string GetBaseService(string namespaceName)
     {
@@ -63,7 +54,7 @@ public class CSHttpClientGenerate : GenerateBase
 
     public List<GenFileInfo> GetServices(string namespaceName)
     {
-        List<GenFileInfo> files = new();
+        List<GenFileInfo> files = [];
         List<RequestServiceFunction> functions = GetAllRequestFunctions();
 
         // 先以tag分组
@@ -97,7 +88,7 @@ public class CSHttpClientGenerate : GenerateBase
     {
         var functions = serviceFile.Functions;
         string functionstr = "";
-        List<string> refTypes = new();
+        List<string> refTypes = [];
         if (functions != null)
         {
             functionstr = string.Join("\n", functions.Select(f => ToRequestFunction(f)).ToArray());
@@ -217,7 +208,7 @@ public class CSHttpClientGenerate : GenerateBase
     /// <returns></returns>
     public List<RequestServiceFunction> GetAllRequestFunctions()
     {
-        List<RequestServiceFunction> functions = new();
+        List<RequestServiceFunction> functions = [];
         // 处理所有方法
         foreach (KeyValuePair<string, OpenApiPathItem> path in PathsPairs)
         {

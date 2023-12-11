@@ -6,7 +6,7 @@ namespace Core.Infrastructure.Helper;
 /// </summary>
 public class CSharpCovertHelper
 {
-    public List<string> ClassCodes { get; set; } = new();
+    public List<string> ClassCodes { get; set; } = [];
 
     /// <summary>
     /// 判断是否为合法的 json

@@ -196,14 +196,14 @@ public class EntityParseHelper
     /// <returns></returns>
     public List<PropertyInfo> GetPropertyInfos(string? parentClassName = null)
     {
-        List<PropertyInfo> properties = new();
+        List<PropertyInfo> properties = [];
         CompilationUnitSyntax root = SyntaxTree!.GetCompilationUnitRoot();
         IEnumerable<PropertyDeclarationSyntax> propertySyntax = root.DescendantNodes().OfType<PropertyDeclarationSyntax>();
 
         // 如果指定父类名称
         parentClassName ??= GetParentClassName();
 
-        List<PropertyInfo>? parentProperties = new();
+        List<PropertyInfo>? parentProperties = [];
         if (parentClassName != null)
         {
             var solutionFile = AssemblyHelper.GetSlnFile(ProjectFile.Directory!, ProjectFile.Directory!.Root);
@@ -254,11 +254,7 @@ public class EntityParseHelper
     {
         string pattern = @"\w+?<(?<Type>\w+)>";
         Match match = Regex.Match(type, pattern);
-        if (match.Success)
-        {
-            return match.Groups["Type"]?.Value;
-        }
-        return null;
+        return match.Success ? (match.Groups["Type"]?.Value) : null;
     }
 
     /// <summary>
@@ -300,10 +296,10 @@ public class EntityParseHelper
         if (summary == null) return null;
 
         var contentNode = summary?.ChildNodes().OfType<XmlTextSyntax>().FirstOrDefault();
-        if (contentNode != null)
-            return string.Join(' ', contentNode.TextTokens.Where(x => x.IsKind(SyntaxKind.XmlTextLiteralToken))
-                .Select(x => x.Text.Trim()).Where(x => !string.IsNullOrWhiteSpace(x)).ToList());
-        return null;
+        return contentNode != null
+            ? string.Join(' ', contentNode.TextTokens.Where(x => x.IsKind(SyntaxKind.XmlTextLiteralToken))
+                .Select(x => x.Text.Trim()).Where(x => !string.IsNullOrWhiteSpace(x)).ToList())
+            : null;
     }
 
     /// <summary>
@@ -542,12 +538,8 @@ public class EntityParseHelper
     /// <returns></returns>
     public bool HasBaseType(INamedTypeSymbol? baseType, string baseName)
     {
-        if (baseType == null) return false;
-        if (baseType.Name == baseName) return true;
-        if (baseType.BaseType != null)
-        {
-            return HasBaseType(baseType.BaseType, baseName);
-        }
-        return false;
+        return baseType == null
+            ? false
+            : baseType.Name == baseName ? true : baseType.BaseType != null && HasBaseType(baseType.BaseType, baseName);
     }
 }

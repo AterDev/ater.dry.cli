@@ -14,16 +14,10 @@ using Datastore;
 
 namespace AterStudio.Manager;
 
-public class ProjectManager
+public class ProjectManager(DbContext dbContext, ProjectContext projectContext)
 {
-    private readonly DbContext _db;
-    private readonly ProjectContext _projectContext;
-
-    public ProjectManager(DbContext dbContext, ProjectContext projectContext)
-    {
-        _db = dbContext;
-        _projectContext = projectContext;
-    }
+    private readonly DbContext _db = dbContext;
+    private readonly ProjectContext _projectContext = projectContext;
 
     public string GetToolVersion()
     {

@@ -3,18 +3,12 @@ using ${ShareNamespace}.Models.${EntityName}Dtos;
 
 namespace ${Namespace}.Manager;
 ${Comment}
-public class ${EntityName}Manager : ManagerBase<${EntityName}, ${EntityName}UpdateDto, ${EntityName}FilterDto, ${EntityName}ItemDto>
+public class ${EntityName}Manager(
+    DataAccessContext<${EntityName}> dataContext, 
+    ILogger<${EntityName}Manager> logger,
+    IUserContext userContext) : ManagerBase<${EntityName}, ${EntityName}UpdateDto, ${EntityName}FilterDto, ${EntityName}ItemDto>(dataContext, logger)
 {
-    private readonly IUserContext _userContext;
-${AdditionManagersProps}
-    public ${EntityName}Manager(
-        DataAccessContext<${EntityName}> dataContext, 
-        ILogger<${EntityName}Manager> logger,
-        IUserContext userContext${AdditionManagersDI}) : base(dataContext, logger)
-    {
-${AdditionManagersInit}
-        _userContext = userContext;
-    }
+    private readonly IUserContext _userContext = userContext;
 
     /// <summary>
     /// 创建待添加实体

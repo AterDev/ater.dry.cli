@@ -9,24 +9,16 @@ namespace CodeGenerator.Generate;
 /// <summary>
 /// 请求生成
 /// </summary>
-public class RequestGenerate : GenerateBase
+public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
 {
-    protected OpenApiPaths PathsPairs { get; }
-    protected List<OpenApiTag> ApiTags { get; }
-    public IDictionary<string, OpenApiSchema> Schemas { get; set; }
-    public OpenApiDocument OpenApi { get; set; }
+    protected OpenApiPaths PathsPairs { get; } = openApi.Paths;
+    protected List<OpenApiTag> ApiTags { get; } = openApi.Tags.ToList();
+    public IDictionary<string, OpenApiSchema> Schemas { get; set; } = openApi.Components.Schemas;
+    public OpenApiDocument OpenApi { get; set; } = openApi;
 
     public RequestLibType LibType { get; set; } = RequestLibType.NgHttp;
 
     public List<GenFileInfo>? TsModelFiles { get; set; }
-
-    public RequestGenerate(OpenApiDocument openApi)
-    {
-        OpenApi = openApi;
-        PathsPairs = openApi.Paths;
-        Schemas = openApi.Components.Schemas;
-        ApiTags = openApi.Tags.ToList();
-    }
 
     public static string GetBaseService(RequestLibType libType)
     {
@@ -71,7 +63,7 @@ public class RequestGenerate : GenerateBase
     /// <returns></returns>
     public List<RequestServiceFunction> GetAllRequestFunctions()
     {
-        List<RequestServiceFunction> functions = new();
+        List<RequestServiceFunction> functions = [];
         // 处理所有方法
         foreach (KeyValuePair<string, OpenApiPathItem> path in PathsPairs)
         {
@@ -125,7 +117,7 @@ public class RequestGenerate : GenerateBase
         {
             GetTSInterfaces();
         }
-        List<GenFileInfo> files = new();
+        List<GenFileInfo> files = [];
         List<RequestServiceFunction> functions = GetAllRequestFunctions();
 
         // 先以tag分组
@@ -191,7 +183,7 @@ public class RequestGenerate : GenerateBase
     public List<GenFileInfo> GetTSInterfaces()
     {
         TSModelGenerate tsGen = new(OpenApi);
-        List<GenFileInfo> files = new();
+        List<GenFileInfo> files = [];
         foreach (KeyValuePair<string, OpenApiSchema> item in Schemas)
         {
             files.Add(tsGen.GenerateInterfaceFile(item.Key, item.Value));
@@ -239,7 +231,7 @@ public class RequestGenerate : GenerateBase
         {
             for (int i = 0; i < array.Count; i++)
             {
-                var item = ((OpenApiObject)array[i]);
+                var item = (OpenApiObject)array[i];
 
                 string caseString = string.Format("case {0}: result = '{1}'; break;".Indent(6), ((OpenApiInteger)item["value"]).Value, ((OpenApiString)item["description"]).Value);
 
@@ -400,7 +392,7 @@ public class RequestGenerate : GenerateBase
         string functionstr = "";
         // import引用的models
         string importModels = "";
-        List<string> refTypes = new();
+        List<string> refTypes = [];
         if (functions != null)
         {
             functionstr = string.Join("\n", functions.Select(f => f.ToNgRequestFunction()).ToArray());
@@ -601,7 +593,7 @@ export class {{serviceFile.Name}}Service extends {{serviceFile.Name}}BaseService
     /// <returns></returns>
     protected List<string> GetRefTyeps(List<RequestServiceFunction> functions)
     {
-        List<string> refTypes = new();
+        List<string> refTypes = [];
 
         string[] baseTypes = ["string", "string[]", "number", "number[]", "boolean", "integer"];
         // 获取请求和响应的类型，以便导入

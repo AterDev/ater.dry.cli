@@ -82,8 +82,8 @@ public class RestApiGenerate : GenerateBase
 
     public List<string> GetGlobalUsings()
     {
-        return new List<string>
-        {
+        return
+        [
             "global using Microsoft.Extensions.DependencyInjection;",
             "global using Microsoft.AspNetCore.Mvc;",
             "global using Microsoft.AspNetCore.Authorization;",
@@ -93,7 +93,7 @@ public class RestApiGenerate : GenerateBase
             "global using Ater.Web.Core.Utils;",
             $"global using {EntityInfo.NamespaceName};",
             $"global using {ServiceNamespace}.Manager;",
-        };
+        ];
     }
 
     /// <summary>
@@ -107,19 +107,18 @@ public class RestApiGenerate : GenerateBase
         // 依赖注入
         string additionManagerProps = "";
         string additionManagerDI = "";
-        string additionManagerInit = "";
 
         var requiredNavigations = EntityInfo.GetRequiredNavigation();
         requiredNavigations?.ForEach(navigation =>
         {
             var name = navigation.Type;
-            additionManagerProps += $"    private readonly {name}Manager _{name.ToCamelCase()}Manager;" + Environment.NewLine;
+            additionManagerProps += $"    private readonly {name}Manager _{name.ToCamelCase()}Manager = {name.ToCamelCase()}Manager;" + Environment.NewLine;
             additionManagerDI += $",{Environment.NewLine}        {name}Manager {name.ToCamelCase()}Manager";
-            additionManagerInit += $"        _{name.ToCamelCase()}Manager = {name.ToCamelCase()}Manager;" + Environment.NewLine;
+
         });
         tplContent = tplContent.Replace("${AdditionManagersProps}", additionManagerProps)
-            .Replace("${AdditionManagersDI}", additionManagerDI)
-            .Replace("${AdditionManagersInit}", additionManagerInit);
+            .Replace("${AdditionManagersDI}", additionManagerDI);
+
 
         var addContent = GetAddApiContent();
         var updateContent = GetUpdateApiContent();

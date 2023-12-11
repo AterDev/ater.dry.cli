@@ -8,15 +8,9 @@ namespace AterStudio.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-public class ToolsController : ControllerBase
+public class ToolsController(ToolsManager toolsManager) : ControllerBase
 {
-    private readonly ToolsManager _toolsManager;
-
-
-    public ToolsController(ToolsManager toolsManager)
-    {
-        _toolsManager = toolsManager;
-    }
+    private readonly ToolsManager _toolsManager = toolsManager;
 
     /// <summary>
     /// 转换成类

@@ -8,7 +8,7 @@ namespace CodeGenerator.Generate;
 /// </summary>
 public class TSModelGenerate : GenerateBase
 {
-    public Dictionary<string, string?> ModelDictionary { get; set; } = new Dictionary<string, string?>();
+    public Dictionary<string, string?> ModelDictionary { get; set; } = [];
 
     public TSModelGenerate(OpenApiDocument openApi)
     {
@@ -67,7 +67,7 @@ public class TSModelGenerate : GenerateBase
             return default;
         }
 
-        Dictionary<string, string?> dic = new();
+        Dictionary<string, string?> dic = [];
         // 父类
         if (schema.AllOf != null)
         {
@@ -304,7 +304,7 @@ public class TSModelGenerate : GenerateBase
     /// <returns></returns>
     public static List<TsProperty> GetTsProperties(OpenApiSchema schema)
     {
-        List<TsProperty> tsProperties = new();
+        List<TsProperty> tsProperties = [];
         // 继承的需要递归 从AllOf中获取属性
         if (schema.AllOf.Count > 1)
         {

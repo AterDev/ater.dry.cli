@@ -9,15 +9,10 @@ namespace AterStudio.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-public class FeatureController : ControllerBase
+public class FeatureController(FeatureManager feature, ProjectContext projectContext) : ControllerBase
 {
-    private readonly FeatureManager _feature;
-    private readonly ProjectContext _projectContext;
-    public FeatureController(FeatureManager feature, ProjectContext projectContext)
-    {
-        _feature = feature;
-        _projectContext = projectContext;
-    }
+    private readonly FeatureManager _feature = feature;
+    private readonly ProjectContext _projectContext = projectContext;
 
     /// <summary>
     /// 创建新解决方案

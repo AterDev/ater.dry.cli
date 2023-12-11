@@ -2,17 +2,13 @@
 namespace ${Namespace}.Controllers;
 
 ${Comment}
-public class ${EntityName}${APISuffix} : RestControllerBase<${EntityName}Manager>
+public class ${EntityName}${APISuffix}(
+    IUserContext user,
+    ILogger<${EntityName}${APISuffix}> logger,
+    ${EntityName}Manager manager${AdditionManagersDI}
+    ) : RestControllerBase<${EntityName}Manager>(manager, user, logger)
 {
 ${AdditionManagersProps}
-    public ${EntityName}${APISuffix}(
-        IUserContext user,
-        ILogger<${EntityName}${APISuffix}> logger,
-        ${EntityName}Manager manager${AdditionManagersDI}
-        ) : base(manager, user, logger)
-    {
-${AdditionManagersInit}
-    }
 
     /// <summary>
     /// 筛选

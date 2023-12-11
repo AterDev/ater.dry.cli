@@ -3,24 +3,17 @@
 /// <summary>
 /// angular material 表单生成
 /// </summary>
-public class NgInputBuilder
+public class NgInputBuilder(string type, string name, string? label)
 {
-    public string Type { get; }
-    public string Name { get; }
-    public string? Label { get; set; }
+    public string Type { get; } = type;
+    public string Name { get; } = name;
+    public string? Label { get; set; } = label ?? name ?? type;
     public bool IsRequired { get; set; } = false;
     public int? MinLength { get; set; }
     public int? MaxLength { get; set; }
     public bool IsDecimal { get; set; } = false;
     public bool IsList { get; set; } = false;
     public bool IsEnum { get; set; } = false;
-
-    public NgInputBuilder(string type, string name, string? label)
-    {
-        Type = type;
-        Name = name;
-        Label = label ?? name ?? type;
-    }
 
     public string ToFormControl()
     {

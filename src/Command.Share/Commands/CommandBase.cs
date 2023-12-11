@@ -2,7 +2,7 @@ namespace Command.Share.Commands;
 
 public class CommandBase
 {
-    protected List<string> Instructions = new();
+    protected List<string> Instructions = [];
 
     public static async Task GenerateFileAsync(string dir, string fileName, string content, bool cover = false)
     {

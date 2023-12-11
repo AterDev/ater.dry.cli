@@ -227,24 +227,8 @@ public class ManagerGenerate : GenerateBase
     public string GetManagerContent(string? nsp = null)
     {
         nsp ??= ServiceNamespace;
-
         string entityName = Path.GetFileNameWithoutExtension(EntityFilePath);
         string tplContent = GetTplContent($"Implement.Manager.tpl");
-
-        // 依赖注入
-        string additionManagerProps = "";
-        string additionManagerDI = "";
-        string additionManagerInit = "";
-
-        var navigations = EntityInfo?.PropertyInfos.Where(p => p.IsNavigation && p.HasMany == true)
-            .ToList();
-        navigations?.ForEach(navigation =>
-        {
-        });
-        tplContent = tplContent.Replace("${AdditionManagersProps}", additionManagerProps)
-            .Replace("${AdditionManagersDI}", additionManagerDI)
-            .Replace("${AdditionManagersInit}", additionManagerInit);
-
 
         // 方法内容
         tplContent = tplContent.Replace("${AddActionBlock}", GetAddMethodContent())
@@ -307,8 +291,8 @@ public class ManagerGenerate : GenerateBase
             else
             {
                 content += $$"""
-                        Command.Db.Entry(entity).Property("{{idName}}").CurrentValue = _userContext!.UserId!.Value;
-                        // or entity.{{idName}} = _userContext!.UserId!.Value;
+                        Command.Db.Entry(entity).Property("{{idName}}").CurrentValue = _userContext.UserId;
+                        // or entity.{{idName}} = _userContext.UserId;
 
                 """;
             }
