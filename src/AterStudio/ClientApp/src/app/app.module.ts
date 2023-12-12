@@ -10,7 +10,7 @@ import { MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/snack-bar';
 import { CustomerHttpInterceptor } from './share/customer-http.interceptor';
 import { WorkspaceModule } from './pages/workspace/workspace.module';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
-import { MarkdownModule, MarkedOptions, ClipboardOptions, ClipboardButtonComponent, MarkedRenderer } from 'ngx-markdown';
+import { MarkdownModule, MarkedOptions, ClipboardOptions, ClipboardButtonComponent, MarkedRenderer, CLIPBOARD_OPTIONS, MARKED_OPTIONS } from 'ngx-markdown';
 import { AiModule } from './pages/ai/ai.module';
 
 @NgModule({
@@ -28,11 +28,11 @@ import { AiModule } from './pages/ai/ai.module';
     AiModule,
     MarkdownModule.forRoot({
       markedOptions: {
-        provide: MarkedOptions,
+        provide: MARKED_OPTIONS,
         useFactory: markedOptionsFactory
       },
       clipboardOptions: {
-        provide: ClipboardOptions,
+        provide: CLIPBOARD_OPTIONS,
         useValue: {
           buttonComponent: ClipboardButtonComponent,
         },
@@ -60,8 +60,6 @@ export function markedOptionsFactory(): MarkedOptions {
     renderer: renderer,
     gfm: true,
     breaks: false,
-    pedantic: false,
-    smartLists: true,
-    smartypants: false,
+    pedantic: false
   };
 }

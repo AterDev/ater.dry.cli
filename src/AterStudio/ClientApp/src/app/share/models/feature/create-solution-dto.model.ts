@@ -44,6 +44,10 @@ export interface CreateSolutionDto {
    */
   cacheInstanceName?: string | null;
   /**
+   * 系统管理模块
+   */
+  hasSystemFeature: boolean;
+  /**
    * 内容管理模块
    */
   hasCmsFeature: boolean;

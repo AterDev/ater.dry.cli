@@ -77,104 +77,6 @@
         }
       }
     },
-    "/api/Advance/generateEntity": {
-      "post": {
-        "tags": [
-          "Advance"
-        ],
-        "summary": "生成实体",
-        "operationId": "Advance_GenerateEntity",
-        "parameters": [
-          {
-            "name": "content",
-            "in": "query",
-            "description": "",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/Advance/answer": {
-      "get": {
-        "tags": [
-          "Advance"
-        ],
-        "summary": "问答",
-        "operationId": "Advance_GetAnswer",
-        "parameters": [
-          {
-            "name": "content",
-            "in": "query",
-            "description": "",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/Advance/Images": {
-      "get": {
-        "tags": [
-          "Advance"
-        ],
-        "summary": "生成图片",
-        "operationId": "Advance_GetImages",
-        "parameters": [
-          {
-            "name": "content",
-            "in": "query",
-            "description": "",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/ApiDoc/all/{id}": {
       "get": {
         "tags": [
@@ -2315,6 +2217,10 @@
             "type": "string",
             "description": "缓存实例名称",
             "nullable": true
+          },
+          "hasSystemFeature": {
+            "type": "boolean",
+            "description": "系统管理模块"
           },
           "hasCmsFeature": {
             "type": "boolean",

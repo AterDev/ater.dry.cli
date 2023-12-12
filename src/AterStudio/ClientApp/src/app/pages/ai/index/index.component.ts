@@ -54,9 +54,6 @@ export class IndexComponent {
         case ToolType.Entity:
           this.generateEntity();
           break;
-        case ToolType.File:
-          this.generatorImage();
-          break;
         case ToolType.Answer:
           this.generatorAnswer();
           break;
@@ -91,24 +88,6 @@ export class IndexComponent {
     });
   }
 
-  generatorImage(): void {
-    this.service.getImages(this.content)
-      .subscribe({
-        next: (res) => {
-          const imageUrl = res[0];
-          const imgBLock = `![img](${imageUrl})
-          `;
-          this.answerContent += imgBLock;
-        },
-        error: (error) => {
-          this.snb.open(error.detail);
-          this.isProcessing = false;
-        },
-        complete: () => {
-          this.isProcessing = false;
-        }
-      });
-  }
   generateEntity(): void {
     const url = this.service.baseUrl + `/api/Advance/generateEntity?content=${this.content}`;
     const self = this;
@@ -129,10 +108,10 @@ export class IndexComponent {
             if (res.includes('\n') || res.includes('\r\n')) {
               self.answerContent += '  ';
             }
-              self.answerContent += res;
-            }
-            reader.read().then(processText);
-          });
+            self.answerContent += res;
+          }
+          reader.read().then(processText);
+        });
       }
     });
   }

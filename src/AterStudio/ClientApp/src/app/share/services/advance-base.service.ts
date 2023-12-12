@@ -27,31 +27,4 @@ export class AdvanceBaseService extends BaseService {
     return this.request<any>('put', _url);
   }
 
-  /**
-   * 生成实体
-   * @param content 
-   */
-  generateEntity(content: string | null): Observable<any> {
-    const _url = `/api/Advance/generateEntity?content=${content ?? ''}`;
-    return this.request<any>('post', _url);
-  }
-
-  /**
-   * 问答
-   * @param content 
-   */
-  getAnswer(content: string | null): Observable<any> {
-    const _url = `/api/Advance/answer?content=${content ?? ''}`;
-    return this.request<any>('get', _url);
-  }
-
-  /**
-   * 生成图片
-   * @param content 
-   */
-  getImages(content: string | null): Observable<string[]> {
-    const _url = `/api/Advance/Images?content=${content ?? ''}`;
-    return this.request<string[]>('get', _url);
-  }
-
 }
