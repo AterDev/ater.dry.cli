@@ -1,17 +1,17 @@
-<div class="d-flex flex-column ">
+<div class="d-flex flex-column p-2">
   <div class="d-flex">
-    <div class="d-flex align-items-center ">
+    <div class="d-flex align-items-center">
       <h3>Json转C#类型</h3>
-      <button class="ms-2" mat-flat-button (click)="convert()">
+      <button class="ms-2" color="primary" mat-flat-button (click)="convert()">
         转换
       </button>
     </div>
   </div>
-  <div class="d-flex gap-1">
-    <div class="d-flex col-md-4 col-sm-12">
-      <ngx-monaco-editor class="editor" [options]="jsonEditorOptions" [(ngModel)]="jsonContent"></ngx-monaco-editor>
+  <div class="row m-0">
+    <div class="col-md-4 col-sm-12">
+      <ngx-monaco-editor class="editor" placeholder="json content" [options]="jsonEditorOptions" [(ngModel)]="jsonContent"></ngx-monaco-editor>
     </div>
-    <div class="d-flex col-md-8 col-sm-12">
+    <div class="col-md-8 col-sm-12">
       <ngx-monaco-editor class="editor" [options]="editorOptions" [(ngModel)]="classCode"></ngx-monaco-editor>
     </div>
   </div>
