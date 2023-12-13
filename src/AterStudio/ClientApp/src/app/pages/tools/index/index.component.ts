@@ -20,7 +20,10 @@ export class IndexComponent {
 
   }
   goTo(toolName: string): void {
-
     this.router.navigateByUrl('/tools/' + toolName)
+  }
+
+  openInNewTab(url: string): void {
+    window.open(url, '_blank');
   }
 }

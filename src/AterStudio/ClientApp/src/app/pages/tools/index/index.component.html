@@ -1,4 +1,5 @@
 <div class="container p-0">
+  <h3>工具</h3>
   <div class="d-flex flex-wrap gap-2 mt-2">
     <mat-card class="clickable" (click)="goTo('json2Type')">
       <mat-card-header>
@@ -6,8 +7,39 @@
         <mat-card-subtitle>将json转换成Csharp对象</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
-
       </mat-card-content>
     </mat-card>
   </div>
+  <h3>文档</h3>
+  <div class="d-flex flex-wrap gap-2 mt-2">
+    <mat-card class="clickable"
+      (click)="openInNewTab('https://learn.microsoft.com/zh-cn/aspnet/core/getting-started/')">
+      <mat-card-header>
+        <mat-card-title>ASP.NET Core</mat-card-title>
+        <mat-card-subtitle>微软官方文档</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="clickable" (click)="openInNewTab('https://learn.microsoft.com/zh-cn/ef/core/')">
+      <mat-card-header>
+        <mat-card-title>EF Core</mat-card-title>
+        <mat-card-subtitle>EntityFramework Core官方文档</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="clickable" (click)="openInNewTab('https://learn.microsoft.com/zh-cn/dotnet/aspire/get-started/aspire-overview')">
+      <mat-card-header>
+        <mat-card-title>.NET Aspire</mat-card-title>
+        <mat-card-subtitle>.NET Aspire 官方文档</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+      </mat-card-content>
+    </mat-card>
+    
+  </div>
+
 </div>
