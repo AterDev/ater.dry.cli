@@ -1,10 +1,14 @@
 <div class="page" *ngIf="this.type!='desktop'">
-  <mat-toolbar>
-    <div class="d-flex justify-content-center flex-grow-1 gap-1">
+  <mat-toolbar class="d-flex flex-row">
+    <div class="flex-start">
+      Ater.Dry
+    </div>
+    <div class="d-flex flex-fill justify-content-center flex-grow-1 gap-1">
       <button mat-flat-button [routerLink]="['/index']" routerLinkActive="active">解决方案</button>
       <button mat-button [routerLink]="['/tools']" routerLinkActive="active">快捷工具</button>
     </div>
-    <span *ngIf="isLogin">
+    <div class="flex-end align-items-center align-content-center d-flex">
+      @if(isLogin){
       <button [matMenuTriggerFor]="appMenu" mat-button style="flex-direction: row-reverse;">
         您已登录
         <mat-icon>arrow_drop_down</mat-icon>
@@ -15,10 +19,14 @@
           <mat-icon>exit_to_app</mat-icon>
         </button>
       </mat-menu>
-    </span>
-    <span>
-      <button mat-button matTooltip="Studio版本"> 版本:{{version}}</button>
-    </span>
+      }
+      <a href="https://docs.dusi.dev" target="_blank">
+        <button mat-icon-button matTooltip="文档"><mat-icon>article</mat-icon></button>
+      </a>
+      <button mat-icon-button matTooltip="Studio版本" [matTooltip]="version!">
+        <mat-icon fontSet="material-icons-outlined">info</mat-icon>
+      </button>
+    </div>
     <!-- <span *ngIf="!isLogin">
       <button mat-button (click)="login()" matTooltip="无需登录即可使用">登录</button>
     </span> -->
