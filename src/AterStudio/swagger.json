@@ -2804,6 +2804,10 @@
             "type": "string",
             "nullable": true
           },
+          "entityFrameworkPath": {
+            "type": "string",
+            "nullable": true
+          },
           "storePath": {
             "type": "string",
             "nullable": true

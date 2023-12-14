@@ -213,6 +213,10 @@ public class ProjectManager(DbContext dbContext, ProjectContext projectContext)
             options.IdType = dto.IdType;
         if (dto.EntityPath != null)
             options.EntityPath = dto.EntityPath;
+
+        if (dto.EntityFrameworkPath != null)
+            options.DbContextPath = dto.EntityFrameworkPath;
+
         if (dto.StorePath != null)
             options.ApplicationPath = dto.StorePath;
         if (dto.DtoPath != null)

@@ -1,14 +1,11 @@
 ﻿using System.Diagnostics;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
-using System.Text.Json;
 
 using Core.Entities;
 using Core.Infrastructure;
 
 using LiteDB;
-
-using NuGet.Versioning;
 
 namespace Command.Share.Commands;
 public class StudioCommand
@@ -217,56 +214,8 @@ public class StudioCommand
             // read config file
             string configJson = await File.ReadAllTextAsync(solutionDir);
             ConfigOptions? options = ConfigOptions.ParseJson(configJson);
-
             if (options != null)
             {
-                Const.PROJECT_ID = options.ProjectId;
-                // 添加 projectId标识 
-                if (options.ProjectId == Guid.Empty)
-                {
-                    options.ProjectId = Guid.NewGuid();
-                    Const.PROJECT_ID = options.ProjectId;
-                }
-                // 7.0配置更新
-                if (NuGetVersion.Parse(options.Version) == NuGetVersion.Parse("7.0.0"))
-                {
-                    options.DtoPath = "src" + Path.DirectorySeparatorChar + options.DtoPath;
-                    options.EntityPath = "src" + Path.DirectorySeparatorChar + options.EntityPath;
-                    options.DbContextPath = "src" + Path.DirectorySeparatorChar + options.DbContextPath;
-                    options.ApplicationPath = "src" + Path.DirectorySeparatorChar + options.ApplicationPath;
-                    if (options.StorePath != null)
-                    {
-                        options.ApplicationPath = "src" + Path.DirectorySeparatorChar + options.StorePath;
-                    }
-                    options.ApiPath = "src" + Path.DirectorySeparatorChar + options.ApiPath;
-                }
-                else if (NuGetVersion.Parse(options.Version) >= NuGetVersion.Parse("7.1.0"))
-                {
-                    options.DtoPath = options.DtoPath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-                    options.EntityPath = options.EntityPath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-                    options.DbContextPath = options.DbContextPath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-
-                    options.ApplicationPath = options.ApplicationPath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-                    if (options.StorePath != null)
-                    {
-                        options.ApplicationPath = options.StorePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-                    }
-                    options.ApiPath = options.ApiPath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-                }
-                if (options.SolutionType == null)
-                {
-                    var type = AssemblyHelper.GetSolutionType(project.Path);
-                    options.SolutionType = type;
-                }
-
-                string content = System.Text.Json.JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
-                await File.WriteAllTextAsync(solutionDir, content, new UTF8Encoding(false));
-                Console.WriteLine($" Update {project.Name} config file success");
-
-                // 库中版本数据
-                project.Version = options.Version;
-                project.SolutionType = options.SolutionType;
-                collection.Update(project);
             }
             else
             {

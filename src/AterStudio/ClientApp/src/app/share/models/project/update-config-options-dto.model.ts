@@ -4,6 +4,7 @@ export interface UpdateConfigOptionsDto {
    */
   dtoPath?: string | null;
   entityPath?: string | null;
+  entityFrameworkPath?: string | null;
   storePath?: string | null;
   apiPath?: string | null;
   idType?: string | null;

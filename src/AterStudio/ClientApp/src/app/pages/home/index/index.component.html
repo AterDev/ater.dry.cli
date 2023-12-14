@@ -84,24 +84,28 @@
       <p>也可以直接编辑项目根目录中的.dry-config.json</p>
       <strong>以下路径相对于项目根路径,不用以/开头</strong>
       <form [formGroup]="settingForm" class="d-flex flex-column">
-        <mat-form-field>
+        <mat-form-field appearance="outline">
           <mat-label>实体目录</mat-label>
           <input matInput placeholder="实体所在项目目录,1-200字符" formControlName="entityPath" required>
           <mat-hint>实体需要在该项目下的Entities目录中，才会被识别为实体</mat-hint>
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field appearance="outline" class="mt-2">
+          <mat-label>EntityFramework目录</mat-label>
+          <input matInput placeholder="EntityFramework项目目录,1-200字符" formControlName="entityFrameworkPath" required>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
           <mat-label>Dto目录</mat-label>
           <input matInput placeholder="Dto所在项目目录,1-200字符" formControlName="dtoPath" required>
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field appearance="outline">
           <mat-label>应用层目录</mat-label>
           <input matInput placeholder="应用层所在项目目录,1-200字符" formControlName="storePath" required>
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field appearance="outline">
           <mat-label>接口层目录</mat-label>
           <input matInput placeholder="API接口层所在项目目录,1-200字符" formControlName="apiPath" required>
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field appearance="outline">
           <mat-label>Id类型</mat-label>
           <input matInput placeholder="支持Guid/int" formControlName="idType" required>
         </mat-form-field>
