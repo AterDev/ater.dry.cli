@@ -107,20 +107,6 @@ public class ModuleCommand
                 return filename;
             }).ToList();
 
-            entityNames.ForEach(name =>
-            {
-                var queryStore = Path.Combine(entityFrameworkPath, "QueryStore", $"{name}QueryStore.cs");
-                if (File.Exists(queryStore))
-                {
-                    File.Delete(queryStore);
-                }
-
-                var commandStore = Path.Combine(entityFrameworkPath, "CommandStore", $"{name}CommandStore.cs");
-                if (File.Exists(commandStore))
-                {
-                    File.Delete(commandStore);
-                }
-            });
             Directory.Delete(entityPath, true);
 
             // 从解决方案移除项目
@@ -255,7 +241,7 @@ public class ModuleCommand
         CopyModuleFiles(sourcePath, modulePath);
 
         Console.WriteLine("🚀 update ContextBase DbSet");
-        var dbContextFile = Path.Combine(databasePath, "ContextBase.cs");
+        var dbContextFile = Path.Combine(databasePath, "DBProvider", "ContextBase.cs");
         var dbContextContent = File.ReadAllText(dbContextFile);
 
         var compilation = new CompilationHelper(databasePath);
@@ -298,10 +284,7 @@ public class ModuleCommand
         var entityFrameworkPath = Path.Combine(solutionPath, Config.EntityFrameworkPath);
         var applicationName = Config.ApplicationPath.Split(Path.DirectorySeparatorChar).Last();
         var entityFrameworkName = Config.EntityFrameworkPath.Split(Path.DirectorySeparatorChar).Last();
-        var content = ManagerGenerate.GetDataStoreContext(entityFrameworkPath, entityFrameworkName);
-        await IOHelper.WriteToFileAsync(Path.Combine(entityFrameworkPath, "DataStoreContext.cs"), content);
-
-        content = ManagerGenerate.GetManagerDIExtensions(solutionPath, applicationName);
+        var content = ManagerGenerate.GetManagerDIExtensions(solutionPath, applicationName);
         await IOHelper.WriteToFileAsync(Path.Combine(applicationPath, "ManagerServiceCollectionExtensions.cs"), content);
 
     }
@@ -337,7 +320,7 @@ public class ModuleCommand
         foreach (DirectoryInfo subDir in dirs)
         {
             // 过滤不必要的目录
-            if (subDir.Name is "Entities" or "Application")
+            if (subDir.Name is "Entity" or "Application")
             {
                 continue;
             }

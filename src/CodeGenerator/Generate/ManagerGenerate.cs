@@ -417,66 +417,6 @@ public class ManagerGenerate : GenerateBase
     }
 
     /// <summary>
-    /// store上下文
-    /// </summary>
-    /// <returns></returns>
-    public static string GetDataStoreContext(string path, string nspName)
-    {
-        string queryPath = Path.Combine(path, $"{Const.QUERY_STORE}");
-        string[] queryFiles = Directory.GetFiles(queryPath, $"*{Const.QUERY_STORE}.cs", SearchOption.TopDirectoryOnly);
-        string commandPath = Path.Combine(path, $"{Const.COMMAND_STORE}");
-        string[] commandFiles = Directory.GetFiles(commandPath, $"*{Const.COMMAND_STORE}.cs", SearchOption.TopDirectoryOnly);
-        IEnumerable<string> allDataStores = queryFiles.Concat(commandFiles);
-
-        string ctorParams = "";
-        string ctorAssign = "";
-        string twoTab = "        ";
-        string usings = "";
-        if (allDataStores.Any())
-        {
-            var compilationHelper = new CompilationHelper(path);
-            var entityClassNames = new List<string>();
-
-            allDataStores.ToList().ForEach(filePath =>
-            {
-                string fileName = Path.GetFileNameWithoutExtension(filePath);
-                // 属性名
-                string propName = fileName.Replace("Store", "");
-                // 属性类型
-                string propType = fileName.EndsWith($"{Const.QUERY_STORE}") ? "QuerySet" : "CommandSet";
-                // 属性泛型
-                string propGeneric = fileName.Replace($"{Const.QUERY_STORE}", "")
-                    .Replace($"{Const.COMMAND_STORE}", "");
-
-                entityClassNames.Add(propGeneric);
-
-                // 构造函数参数
-                string row = $"{twoTab}{fileName} {propName.ToCamelCase()},";
-                ctorParams += row + Environment.NewLine;
-                // 构造函数赋值
-
-                ctorAssign += $"{twoTab}AddCache({propName.ToCamelCase()});" + Environment.NewLine;
-            });
-            // 关联模型需要引入的命名空间
-            var importNamespaces = compilationHelper.GetNamespaceNames(entityClassNames);
-            if (importNamespaces.Any())
-            {
-                importNamespaces.ForEach(n =>
-                {
-                    usings += $"using {n};" + Environment.NewLine;
-                });
-            }
-        }
-        // 构建服务
-        string content = GetTplContent("Implement.DataStoreContext.tpl");
-        content = content.Replace(TplConst.NAMESPACE, nspName)
-            .Replace(TplConst.STORECONTEXT_PROPS, "")
-            .Replace(TplConst.STORECONTEXT_PARAMS, ctorParams)
-            .Replace(TplConst.STORECONTEXT_ASSIGN, ctorAssign);
-        return usings + content;
-    }
-
-    /// <summary>
     /// 生成注入服务
     /// </summary>
     /// <param name="solutionPath"></param>

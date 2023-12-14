@@ -290,14 +290,16 @@ public class CompilationHelper
             ClassDeclarationSyntax classNode = SyntaxRoot.DescendantNodes()
                 .OfType<ClassDeclarationSyntax>().First();
 
-            ConstructorDeclarationSyntax constructor = classNode.DescendantNodes().OfType<ConstructorDeclarationSyntax>().First();
-
-            propertyContent = $"    {propertyContent}" + Environment.NewLine;
-            if (SyntaxFactory.ParseMemberDeclaration(propertyContent) is not PropertyDeclarationSyntax propertyNode)
+            var methodDeclaration = classNode.DescendantNodes().OfType<MethodDeclarationSyntax>().FirstOrDefault();
+            if (methodDeclaration != null)
             {
-                return;
+                propertyContent = $"    {propertyContent}" + Environment.NewLine;
+                if (SyntaxFactory.ParseMemberDeclaration(propertyContent) is not PropertyDeclarationSyntax propertyNode)
+                {
+                    return;
+                }
+                SyntaxRoot = SyntaxRoot.InsertNodesBefore(methodDeclaration, new[] { propertyNode });
             }
-            SyntaxRoot = SyntaxRoot.InsertNodesBefore(constructor, new[] { propertyNode });
         }
     }
 
