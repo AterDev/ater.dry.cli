@@ -99,6 +99,15 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
             ModuleCommand.CleanModule(path, ModuleCommand.CMS);
         }
 
+        if (dto.HasSystemFeature)
+        {
+            await ModuleCommand.CreateModuleAsync(path, ModuleCommand.System);
+        }
+        else
+        {
+            ModuleCommand.CleanModule(path, ModuleCommand.System);
+        }
+
         // 添加项目
         var addRes = await _projectManager.AddProjectAsync(dto.Name, path);
         if (addRes != null)
