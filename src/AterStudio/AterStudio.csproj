@@ -27,7 +27,7 @@
   <Target Name="SwaggerPostBuildTarget" AfterTargets="Build" Condition="'$(Configuration)' == 'Debug'">
     <Exec Command="dotnet tool restore" UseUtf8Encoding="Always" />
     <Exec Command="dotnet swagger tofile --output ./swagger.json .\bin\Debug\net7.0\AterStudio.dll v1" UseUtf8Encoding="Always" />
-    <Exec Command="droplet ng .\swagger.json -o .\ClientApp\src\app\share" UseUtf8Encoding="Always" />
+    <Exec Command="dry ng .\swagger.json -o .\ClientApp\src\app\share" UseUtf8Encoding="Always" />
   </Target>
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
