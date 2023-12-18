@@ -12,7 +12,7 @@ public class StudioCommand
 {
     public static async Task RunStudioAsync()
     {
-        Console.WriteLine("🙌 welcome ater studio!");
+        Console.WriteLine("🙌 Welcome Ater studio!");
         var studioPath = AssemblyHelper.GetStudioPath();
 
         int sleepTime = 1500;
