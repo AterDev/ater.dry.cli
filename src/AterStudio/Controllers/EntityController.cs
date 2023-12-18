@@ -17,11 +17,11 @@ public class EntityController(EntityManager manager) : ControllerBase
     private readonly EntityManager _manager = manager;
 
     [HttpGet("{id}")]
-    public ActionResult<List<EntityFile>> List([FromRoute] Guid id, string? name)
+    public ActionResult<List<EntityFile>> List([FromRoute] Guid id, string? serviceName)
     {
         return !_manager.IsExist(id)
             ? NotFound("不存在的项目")
-            : _manager.GetEntityFiles(name);
+            : _manager.GetEntityFiles(serviceName);
     }
 
     /// <summary>s
@@ -32,11 +32,7 @@ public class EntityController(EntityManager manager) : ControllerBase
     [HttpGet("dtos")]
     public ActionResult<List<EntityFile>> GetDtos(string entityFilePath)
     {
-        if (!System.IO.File.Exists(entityFilePath))
-        {
-            return NotFound("不存在的文件");
-        }
-        return _manager.GetDtos(entityFilePath);
+        return !System.IO.File.Exists(entityFilePath) ? NotFound("不存在的文件") : _manager.GetDtos(entityFilePath);
     }
 
     /// <summary>
@@ -54,11 +50,7 @@ public class EntityController(EntityManager manager) : ControllerBase
             return NotFound("不存在的文件");
         }
         var res = await _manager.CreateDtoAsync(entityFilePath, name, summary);
-        if (res == null)
-        {
-            return BadRequest("创建失败");
-        }
-        return res;
+        return res == null ? BadRequest("创建失败") : res;
     }
 
     /// <summary>

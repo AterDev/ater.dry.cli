@@ -439,7 +439,7 @@
             }
           },
           {
-            "name": "name",
+            "name": "serviceName",
             "in": "query",
             "schema": {
               "type": "string"
@@ -1986,6 +1986,11 @@
               "type": "string"
             }
           },
+          "serviceName": {
+            "type": "string",
+            "description": "服务",
+            "nullable": true
+          },
           "commandType": {
             "$ref": "#/components/schemas/CommandType"
           },
@@ -2396,6 +2401,11 @@
           },
           "entityPath": {
             "type": "string"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "服务",
+            "nullable": true
           },
           "commandType": {
             "$ref": "#/components/schemas/CommandType"

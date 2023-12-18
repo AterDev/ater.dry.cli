@@ -63,6 +63,10 @@ public class DtoCommand : CommandBase
                 DtoPath = Path.Combine(DtoPath, "..", "Modules", ModuleName);
                 CodeGen.AssemblyName = ModuleName;
             }
+            if (Config.IsMicroservice)
+            {
+                CodeGen.AssemblyName = Config.ServiceName + ".Definition.Share";
+            }
             Console.WriteLine(Instructions[0]);
             await SaveToFileAsync("Item", CodeGen.GetItemDto(), cover);
             await SaveToFileAsync("Short", CodeGen.GetShortDto(), cover);
@@ -70,7 +74,7 @@ public class DtoCommand : CommandBase
             await SaveToFileAsync("Add", CodeGen.GetAddDto(), cover);
             await SaveToFileAsync("Update", CodeGen.GetUpdateDto(), cover);
 
-            if (string.IsNullOrWhiteSpace(ModuleName))
+            if (string.IsNullOrWhiteSpace(ModuleName) && !Config.IsMicroservice)
             {
                 GenerateCommonFiles();
             }

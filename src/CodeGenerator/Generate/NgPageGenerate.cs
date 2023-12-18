@@ -158,7 +158,7 @@ public class NgPageGenerate : GenerateBase
             .ToList();
 
         string[] columnsDef = Array.Empty<string>();
-        if (columns != null && columns.Any())
+        if (columns != null && columns.Count != 0)
         {
             columnsDef = columns.Select(s =>
             {
@@ -192,7 +192,7 @@ public class NgPageGenerate : GenerateBase
 
         // 解析属性，并生成相应ts代码
         columnsDef = Array.Empty<string>();
-        if (columns != null && columns.Any())
+        if (columns != null && columns.Count != 0)
         {
             columns.Add("actions");
             columnsDef = columns.Select(s =>
@@ -295,7 +295,7 @@ public class NgPageGenerate : GenerateBase
             .ToList();
 
         string[] columnsDef = Array.Empty<string>();
-        if (props != null && props.Any())
+        if (props != null && props.Count != 0)
         {
             columnsDef = props.Select(p =>
             {
@@ -326,7 +326,7 @@ public class NgPageGenerate : GenerateBase
         // 解析属性，并生成相应ts代码
         columnsDef = Array.Empty<string>();
         List<string>? columns = props?.Select(p => p.Name).ToList();
-        if (columns != null && columns.Any())
+        if (columns != null && columns.Count != 0)
         {
             columns.Add("actions");
             columnsDef = columns.Select(s =>

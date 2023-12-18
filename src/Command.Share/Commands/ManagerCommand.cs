@@ -18,15 +18,6 @@ public class ManagerCommand : CommandBase
     /// </summary>
     public string? ModuleName { get; private set; }
 
-    public ManagerCommand(string entityFilePath, string solutionPath)
-    {
-        SolutionPath = solutionPath;
-        EntityFilePath = entityFilePath;
-        ApplicationPath = Path.Combine(solutionPath, Config.ApplicationPath);
-        SharePath = Path.Combine(solutionPath, Config.SharePath);
-        StorePath = Path.Combine(solutionPath, Config.EntityFrameworkPath);
-    }
-
     public ManagerCommand(string entityFilePath, string dtoPath, string applicationPath)
     {
         EntityFilePath = entityFilePath;
@@ -53,8 +44,6 @@ public class ManagerCommand : CommandBase
         }
         try
         {
-            AddToDbContext();
-            // 是否为模块
             var compilation = new CompilationHelper(ApplicationPath, "Entity");
             var content = File.ReadAllText(EntityFilePath);
             compilation.AddSyntaxTree(content);
@@ -122,14 +111,19 @@ public class ManagerCommand : CommandBase
     /// 添加实体到数据库上下文
     /// </summary>
     /// <returns></returns>
-    public void AddToDbContext()
+    public void AddToDbContext(string entityFrameworkPath)
     {
-        var databasePath = Path.Combine(SolutionPath, Config.EntityFrameworkPath);
         Console.WriteLine("🚀 update ContextBase DbSet");
-        var dbContextFile = Path.Combine(databasePath, "ContextBase.cs");
+        var dbContextFile = Path.Combine(entityFrameworkPath, "DBProvider", "ContextBase.cs");
+
+        if (!File.Exists(dbContextFile))
+        {
+            Console.WriteLine($"  ⚠️ Not found:{dbContextFile}");
+            return;
+        }
         var dbContextContent = File.ReadAllText(dbContextFile);
 
-        var compilation = new CompilationHelper(databasePath);
+        var compilation = new CompilationHelper(entityFrameworkPath);
         compilation.AddSyntaxTree(dbContextContent);
 
         var entityName = Path.GetFileNameWithoutExtension(EntityFilePath);
@@ -164,6 +158,8 @@ public class ManagerCommand : CommandBase
     /// <returns></returns>
     public async Task GenerateGlobalUsingsFilesAsync()
     {
+        if (Config.IsMicroservice) { return; }
+
         List<string> globalUsings = CodeGen!.GetGlobalUsings();
         string filePath = Path.Combine(ApplicationPath, "GlobalUsings.cs");
         if (!string.IsNullOrWhiteSpace(ModuleName))
@@ -218,7 +214,8 @@ public class ManagerCommand : CommandBase
     /// <returns></returns>
     public async Task GenerateDIExtensionsAsync()
     {
-        var content = ManagerGenerate.GetManagerDIExtensions(SolutionPath, "Application");
+        var nsp = Config.IsMicroservice ? Config.ServiceName + ".Application" : "Application";
+        var content = ManagerGenerate.GetManagerDIExtensions(ApplicationPath, nsp);
         await GenerateFileAsync(ApplicationPath, "ManagerServiceCollectionExtensions.cs", content, true);
     }
 }

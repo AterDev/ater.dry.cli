@@ -21,15 +21,25 @@ public class ManagerGenerate : GenerateBase
     /// DataStore 项目的命名空间
     /// </summary>
     public string? ShareNamespace { get; set; }
-    public string? ServiceNamespace { get; set; }
+    public string? ApplicationNamespace { get; set; }
     public readonly EntityInfo? EntityInfo;
     public ManagerGenerate(string entityFilePath, string dtoPath, string applicationPath)
     {
         EntityFilePath = entityFilePath;
         DtoPath = dtoPath;
         ApplicationPath = applicationPath;
-        ShareNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(DtoPath));
-        ServiceNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(ApplicationPath));
+
+        if (Config.IsMicroservice)
+        {
+            ShareNamespace = Config.ServiceName + ".Definition.Share";
+            ApplicationNamespace = Config.ServiceName + ".Application";
+        }
+        else
+        {
+            ShareNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(DtoPath));
+            ApplicationNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(ApplicationPath));
+        }
+
         if (File.Exists(entityFilePath))
         {
             EntityParseHelper entityHelper = new(entityFilePath);
@@ -45,7 +55,7 @@ public class ManagerGenerate : GenerateBase
     public string GetInterfaceFile(string tplName)
     {
         string content = GetTplContent($"Interface.{tplName}.tpl");
-        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace);
+        content = content.Replace(TplConst.NAMESPACE, ApplicationNamespace);
         return content;
     }
 
@@ -57,7 +67,7 @@ public class ManagerGenerate : GenerateBase
     public string GetImplementFile(string tplName)
     {
         string content = GetTplContent($"Implement.{tplName}.tpl");
-        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace);
+        content = content.Replace(TplConst.NAMESPACE, ApplicationNamespace);
         return content;
     }
 
@@ -72,7 +82,7 @@ public class ManagerGenerate : GenerateBase
         var entityHelper = new EntityParseHelper(EntityFilePath);
         entityHelper.Parse();
         tplContent = tplContent.Replace(TplConst.ENTITY_NAMESPACE, entityHelper.NamespaceName)
-            .Replace(TplConst.NAMESPACE, ServiceNamespace);
+            .Replace(TplConst.NAMESPACE, ApplicationNamespace);
         string entityName = Path.GetFileNameWithoutExtension(EntityFilePath);
         tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName);
 
@@ -170,7 +180,7 @@ public class ManagerGenerate : GenerateBase
     public string GetUserContextClass()
     {
         string content = GetTplContent("Implement.UserContext.tpl");
-        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace);
+        content = content.Replace(TplConst.NAMESPACE, ApplicationNamespace);
         return content;
     }
 
@@ -226,7 +236,7 @@ public class ManagerGenerate : GenerateBase
     /// <returns></returns>
     public string GetManagerContent(string? nsp = null)
     {
-        nsp ??= ServiceNamespace;
+        nsp ??= ApplicationNamespace;
         string entityName = Path.GetFileNameWithoutExtension(EntityFilePath);
         string tplContent = GetTplContent($"Implement.Manager.tpl");
 
@@ -344,7 +354,7 @@ public class ManagerGenerate : GenerateBase
             .Where(p => p.MaxLength is not (not null and >= 200))
             .ToList();
 
-        if (props != null && props.Any())
+        if (props != null && props.Count != 0)
         {
             content += """
                     Queryable = Queryable
@@ -422,18 +432,16 @@ public class ManagerGenerate : GenerateBase
     /// <param name="solutionPath"></param>
     /// <param name="nspName"></param>
     /// <returns></returns>
-    public static string GetManagerDIExtensions(string solutionPath, string nspName)
+    public static string GetManagerDIExtensions(string managerPath, string nspName)
     {
         string managerServiceContent = "";
         // 获取所有manager
-        var application = Path.Combine(solutionPath, Config.ApplicationPath);
-        string managerDir = Path.Combine(application, "Manager");
-        if (!Directory.Exists(managerDir))
+        if (!Directory.Exists(managerPath))
         {
             return string.Empty;
         }
 
-        var files = Directory.GetFiles(managerDir, "*Manager.cs", SearchOption.TopDirectoryOnly);
+        var files = Directory.GetFiles(managerPath, "*Manager.cs", SearchOption.TopDirectoryOnly);
 
         files?.ToList().ForEach(file =>
         {

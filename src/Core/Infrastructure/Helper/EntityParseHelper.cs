@@ -173,7 +173,7 @@ public class EntityParseHelper
         CompilationUnitSyntax root = SyntaxTree!.GetCompilationUnitRoot();
         ClassDeclarationSyntax? syntax = root.DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
         List<AttributeSyntax> attributesSyntax = syntax!.DescendantNodes().OfType<AttributeSyntax>().ToList();
-        if (attributesSyntax != null && attributesSyntax.Any())
+        if (attributesSyntax != null && attributesSyntax.Count != 0)
         {
             AttributeArgumentSyntax[]? attributes = GetAttributeArguments(attributesSyntax, "NgPage")?.ToArray();
             if (attributes != null)
@@ -448,6 +448,7 @@ public class EntityParseHelper
     /// </summary>
     protected void ParsePropertyAttributes(PropertyDeclarationSyntax syntax, PropertyInfo propertyInfo)
     {
+        propertyInfo.MaxLength = 0;
         List<AttributeSyntax> attributes = syntax.DescendantNodes().OfType<AttributeSyntax>().ToList();
         if (attributes != null && attributes.Count > 0)
         {
@@ -544,7 +545,7 @@ public class EntityParseHelper
         return theSyntax != null
             ? theSyntax.ArgumentList?.Arguments ??
                 new SeparatedSyntaxList<AttributeArgumentSyntax>()
-            : default;
+            : null;
     }
     /// <summary>
     /// 获取父类名称

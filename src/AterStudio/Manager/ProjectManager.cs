@@ -52,6 +52,8 @@ public class ProjectManager(DbContext dbContext, ProjectContext projectContext)
         return projects;
     }
 
+
+
     public async Task<string?> AddProjectAsync(string name, string path)
     {
         // 获取并构造参数
@@ -155,7 +157,7 @@ public class ProjectManager(DbContext dbContext, ProjectContext projectContext)
         {
             var subProjectFiles = new DirectoryInfo(pathString).GetFiles($"*{Const.CSharpProjectExtention}", SearchOption.AllDirectories).ToList();
 
-            if (subProjectFiles.Any())
+            if (subProjectFiles.Count != 0)
             {
                 subProjectFiles.ForEach(f =>
                 {

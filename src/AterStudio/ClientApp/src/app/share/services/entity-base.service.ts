@@ -16,10 +16,10 @@ export class EntityBaseService extends BaseService {
   /**
    * list
    * @param id string
-   * @param name string
+   * @param serviceName string
    */
-  list(id: string, name: string | null): Observable<EntityFile[]> {
-    const _url = `/api/Entity/${id}?name=${name ?? ''}`;
+  list(id: string, serviceName: string | null): Observable<EntityFile[]> {
+    const _url = `/api/Entity/${id}?serviceName=${serviceName ?? ''}`;
     return this.request<EntityFile[]>('get', _url);
   }
 

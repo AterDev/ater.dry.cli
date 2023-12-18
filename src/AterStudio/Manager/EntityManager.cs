@@ -18,7 +18,7 @@ using Project = Core.Entities.Project;
 
 namespace AterStudio.Manager;
 
-public class EntityManager(DbContext dbContext, ProjectContext projectContext)
+public partial class EntityManager(DbContext dbContext, ProjectContext projectContext)
 {
     private readonly DbContext _dbContext = dbContext;
     private readonly ProjectContext _projectContext = projectContext;
@@ -26,20 +26,29 @@ public class EntityManager(DbContext dbContext, ProjectContext projectContext)
     /// <summary>
     /// 获取实体列表
     /// </summary>
-    /// <param name="name"></param>
+    /// <param name="serviceName">服务名称</param>
     /// <returns></returns>
-    public List<EntityFile> GetEntityFiles(string? name)
+    public List<EntityFile> GetEntityFiles(string? serviceName)
     {
         List<EntityFile> entityFiles = [];
         try
         {
             Config.EntityPath = Config.EntityPath.Replace('\\', Path.DirectorySeparatorChar)
                 .Replace('/', Path.DirectorySeparatorChar);
+
+            string servicePath = Path.Combine(_projectContext.SolutionPath!, "src");
             string entityPath = Path.Combine(_projectContext.SolutionPath!, Config.EntityPath);
+            if (!string.IsNullOrWhiteSpace(serviceName))
+            {
+
+                servicePath = Path.Combine(_projectContext.SolutionPath!, Config.MicroservicePath, serviceName);
+                entityPath = Path.Combine(servicePath, "Definition", "Entity");
+            }
+
             // get files in directory
             List<string> filePaths = Directory.GetFiles(entityPath, "*.cs", SearchOption.AllDirectories).ToList();
 
-            if (filePaths.Any())
+            if (filePaths.Count != 0)
             {
                 filePaths = (List<string>)filePaths.Where(f => !(f.EndsWith(".g.cs")
                     || f.EndsWith(".AssemblyAttributes.cs")
@@ -48,14 +57,14 @@ public class EntityManager(DbContext dbContext, ProjectContext projectContext)
                     || f.EndsWith("Modules.cs"))
                     ).ToList();
 
-                var compilation = new CompilationHelper(Path.Combine(_projectContext.SolutionPath!, Config.EntityPath));
+                var compilation = new CompilationHelper(entityPath);
                 foreach (string? path in filePaths)
                 {
                     FileInfo file = new(path);
 
                     var content = File.ReadAllText(path);
 
-                    var comment = Regex.Match(content, @"/// <summary>([\s\S]*?)/// <\/summary>")?.Groups[1]?.Value.Trim();
+                    var comment = SummaryCommentRegex().Match(content)?.Groups[1]?.Value.Trim();
                     comment = comment?.Replace("/", "").Trim();
 
                     EntityFile item = new()
@@ -70,7 +79,7 @@ public class EntityManager(DbContext dbContext, ProjectContext projectContext)
                     // 解析特性
                     compilation.AddSyntaxTree(content);
                     var moduleAttribution = compilation.GetClassAttribution("Module");
-                    if (moduleAttribution != null && moduleAttribution.Any())
+                    if (moduleAttribution != null && moduleAttribution.Count != 0)
                     {
                         var argument = moduleAttribution.Last().ArgumentList?.Arguments.FirstOrDefault();
                         if (argument != null)
@@ -88,16 +97,8 @@ public class EntityManager(DbContext dbContext, ProjectContext projectContext)
                     item.HasDto = hasDto;
                     item.HasManager = hasManager;
                     item.HasAPI = hasAPI;
-
                     entityFiles.Add(item);
                 }
-            }
-
-            // 名称筛选
-            if (!string.IsNullOrWhiteSpace(name))
-            {
-                entityFiles = entityFiles.Where(f => f.Name.ToLower().Contains(name.ToLower()))
-                    .ToList();
             }
 
             // 排序
@@ -117,24 +118,34 @@ public class EntityManager(DbContext dbContext, ProjectContext projectContext)
     /// <summary>
     /// 判断生成状态
     /// </summary>
-    /// <param name="path"></param>
+    /// <param name="serviceName"></param>
     /// <param name="entityName"></param>
     /// <param name="moduleName"></param>
     /// <returns></returns>
-    private (bool hasDto, bool hasManager, bool hasAPI) GetEntityStates(string path, string entityName, string? moduleName = null)
+    private (bool hasDto, bool hasManager, bool hasAPI) GetEntityStates(string entityName, string? serviceName = null, string? moduleName = null)
     {
         bool hasDto = false;
         bool hasManager = false;
         bool hasAPI = false;
-        var dtoPath = Path.Combine(path, Config.SharePath, "Models", $"{entityName}Dtos", $"{entityName}AddDto.cs");
-        var managerPath = Path.Combine(path, Config.ApplicationPath, "Manager", $"{entityName}Manager.cs");
-        var apiPath = Path.Combine(path, Config.ApiPath, "Controllers", $"{entityName}Controller.cs");
+        var dtoPath = Path.Combine(_projectContext.SolutionPath!, Config.SharePath, "Models", $"{entityName}Dtos", $"{entityName}AddDto.cs");
+        var managerPath = Path.Combine(_projectContext.SolutionPath!, Config.ApplicationPath, "Manager", $"{entityName}Manager.cs");
+        var apiPath = Path.Combine(_projectContext.SolutionPath!, Config.ApiPath, "Controllers", $"{entityName}Controller.cs");
+        var servicePath = Path.Combine(_projectContext.SolutionPath!, "src");
+
+        if (!string.IsNullOrWhiteSpace(serviceName))
+        {
+            var serviceOptions = Config.GetServiceConfig(serviceName);
+            dtoPath = Path.Combine(serviceOptions.DtoPath, $"{entityName}Dtos", $"{entityName}AddDto.cs");
+            managerPath = Path.Combine(serviceOptions.ApplicationPath, "Manager", $"{entityName}Manager.cs");
+            apiPath = Path.Combine(serviceOptions.ApiPath, "Controllers", $"{entityName}Controller.cs");
+            servicePath = serviceOptions.RootPath;
+        }
 
         if (!string.IsNullOrWhiteSpace(moduleName))
         {
-            dtoPath = Path.Combine(path, "src", "Modules", moduleName, "Models", $"{entityName}Dtos", $"{entityName}AddDto.cs");
-            managerPath = Path.Combine(path, "src", "Modules", moduleName, "Manager", $"{entityName}Manager.cs");
-            apiPath = Path.Combine(path, "src", "Modules", moduleName, "Controllers", $"{entityName}Controller.cs");
+            dtoPath = Path.Combine(servicePath, "Modules", moduleName, "Models", $"{entityName}Dtos", $"{entityName}AddDto.cs");
+            managerPath = Path.Combine(servicePath, "Modules", moduleName, "Manager", $"{entityName}Manager.cs");
+            apiPath = Path.Combine(servicePath, "Modules", moduleName, "Controllers", $"{entityName}Controller.cs");
         }
 
         if (File.Exists(dtoPath)) { hasDto = true; }
@@ -159,7 +170,7 @@ public class EntityManager(DbContext dbContext, ProjectContext projectContext)
             // get files in directory
             List<string> filePaths = Directory.GetFiles(dtoPath, "*.cs", SearchOption.AllDirectories).ToList();
 
-            if (filePaths.Any())
+            if (filePaths.Count != 0)
             {
                 filePaths = filePaths.Where(f => !f.EndsWith(".g.cs"))
                     .ToList();
@@ -195,7 +206,7 @@ public class EntityManager(DbContext dbContext, ProjectContext projectContext)
 
         compilation.AddSyntaxTree(content);
         var moduleAttribution = compilation.GetClassAttribution("Module");
-        if (moduleAttribution != null && moduleAttribution.Any())
+        if (moduleAttribution != null && moduleAttribution.Count != 0)
         {
             var argument = moduleAttribution.Last().ArgumentList?.Arguments.FirstOrDefault();
             if (argument != null)
@@ -346,16 +357,30 @@ public class EntityManager(DbContext dbContext, ProjectContext projectContext)
     public async Task GenerateAsync(Project project, GenerateDto dto)
     {
         CommandRunner.dbContext = _dbContext;
+        var dtoPath = _projectContext.SharePath!;
+        var applicationPath = _projectContext.ApplicationPath!;
+        var apiPath = _projectContext.ApiPath!;
+
+        if (!string.IsNullOrWhiteSpace(dto.ServiceName))
+        {
+            Config.IsSplitController = false;
+            Config.IsMicroservice = true;
+            Config.ServiceName = dto.ServiceName;
+            var serviceOptions = Config.GetServiceConfig(dto.ServiceName);
+            dtoPath = Path.Combine(_projectContext.SolutionPath!, serviceOptions.DtoPath);
+            applicationPath = Path.Combine(_projectContext.SolutionPath!, serviceOptions.ApplicationPath);
+            apiPath = Path.Combine(_projectContext.SolutionPath!, serviceOptions.ApiPath);
+        }
         switch (dto.CommandType)
         {
             case CommandType.Dto:
-                await CommandRunner.GenerateDtoAsync(dto.EntityPath, _projectContext.SharePath!, dto.Force);
+                await CommandRunner.GenerateDtoAsync(dto.EntityPath, dtoPath, dto.Force);
                 break;
             case CommandType.Manager:
-                await CommandRunner.GenerateManagerAsync(dto.EntityPath, _projectContext.SharePath!, _projectContext.ApplicationPath!, dto.Force);
+                await CommandRunner.GenerateManagerAsync(dto.EntityPath, dtoPath, applicationPath, dto.Force);
                 break;
             case CommandType.API:
-                await CommandRunner.GenerateApiAsync(dto.EntityPath, _projectContext.SharePath!, _projectContext.ApplicationPath!, _projectContext.ApiPath!, "Controller", dto.Force);
+                await CommandRunner.GenerateApiAsync(dto.EntityPath, dtoPath, applicationPath, apiPath, "Controller", dto.Force);
                 break;
             default:
                 break;
@@ -369,25 +394,41 @@ public class EntityManager(DbContext dbContext, ProjectContext projectContext)
     /// <returns></returns>
     public async Task BatchGenerateAsync(BatchGenerateDto dto)
     {
+        var dtoPath = _projectContext.SharePath!;
+        var applicationPath = _projectContext.ApplicationPath!;
+        var apiPath = _projectContext.ApiPath!;
+        var entityPath = _projectContext.EntityPath!;
+
+        if (!string.IsNullOrWhiteSpace(dto.ServiceName))
+        {
+            Config.IsSplitController = false;
+            Config.IsMicroservice = true;
+            Config.ServiceName = dto.ServiceName;
+            var serviceOptions = Config.GetServiceConfig(dto.ServiceName);
+            dtoPath = Path.Combine(_projectContext.SolutionPath!, serviceOptions.DtoPath);
+            applicationPath = Path.Combine(_projectContext.SolutionPath!, serviceOptions.ApplicationPath);
+            apiPath = Path.Combine(_projectContext.SolutionPath!, serviceOptions.ApiPath);
+            entityPath = Path.Combine(_projectContext.SolutionPath!, serviceOptions.EntityPath);
+        }
         switch (dto.CommandType)
         {
             case CommandType.Dto:
                 foreach (string item in dto.EntityPaths)
                 {
-                    await CommandRunner.GenerateDtoAsync(item, _projectContext.SharePath!, dto.Force);
+                    await CommandRunner.GenerateDtoAsync(item, dtoPath, dto.Force);
                 }
                 break;
             case CommandType.Manager:
                 foreach (string item in dto.EntityPaths)
                 {
-                    await CommandRunner.GenerateManagerAsync(item, _projectContext.SharePath!, _projectContext.ApplicationPath!, dto.Force);
+                    await CommandRunner.GenerateManagerAsync(item, dtoPath, applicationPath, dto.Force);
                 }
 
                 break;
             case CommandType.API:
                 foreach (string item in dto.EntityPaths)
                 {
-                    CommandRunner.GenerateApiAsync(item, _projectContext.SharePath!, _projectContext.ApplicationPath!, _projectContext.ApiPath!, "Controller", dto.Force).Wait();
+                    CommandRunner.GenerateApiAsync(item, dtoPath, applicationPath, apiPath, "Controller", dto.Force).Wait();
                 }
                 break;
             case CommandType.Protobuf:
@@ -403,7 +444,7 @@ public class EntityManager(DbContext dbContext, ProjectContext projectContext)
                 foreach (string item in dto.EntityPaths)
                 {
                     var entityName = Path.GetFileNameWithoutExtension(item);
-                    await CommandRunner.ClearCodesAsync(_projectContext.EntityPath!, _projectContext.SharePath!, _projectContext.ApplicationPath!, _projectContext.ApiPath!, entityName);
+                    await CommandRunner.ClearCodesAsync(entityPath, dtoPath, applicationPath, apiPath, entityName);
                 }
                 break;
             default:
@@ -465,7 +506,7 @@ public class EntityManager(DbContext dbContext, ProjectContext projectContext)
 
         compilation.AddSyntaxTree(content);
         var moduleAttribution = compilation.GetClassAttribution("Module");
-        if (moduleAttribution != null && moduleAttribution.Any())
+        if (moduleAttribution != null && moduleAttribution.Count != 0)
         {
             var argument = moduleAttribution.Last().ArgumentList?.Arguments.FirstOrDefault();
             if (argument != null)
@@ -519,4 +560,7 @@ public class EntityManager(DbContext dbContext, ProjectContext projectContext)
         }
         return null;
     }
+
+    [GeneratedRegex(@"/// <summary>([\s\S]*?)/// <\/summary>")]
+    private static partial Regex SummaryCommentRegex();
 }

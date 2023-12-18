@@ -32,7 +32,7 @@ public class RestApiGenerate : GenerateBase
     /// DataStore 项目的命名空间
     /// </summary>
     public string? ShareNamespace { get; set; }
-    public string? ServiceNamespace { get; set; }
+    public string? ApplicationNamespace { get; set; }
     public string? ApiNamespace { get; set; }
     public readonly EntityInfo EntityInfo;
 
@@ -44,16 +44,22 @@ public class RestApiGenerate : GenerateBase
         ApiPath = apiPath;
         Suffix = suffix;
         DirectoryInfo entityDir = new FileInfo(entityPath).Directory!;
-        FileInfo? entityProjectFile = AssemblyHelper.FindProjectFile(entityDir, entityDir.Root);
-        if (entityProjectFile == null)
-        {
-            throw new FileNotFoundException("project file not found!");
-        }
+        FileInfo? entityProjectFile = AssemblyHelper.FindProjectFile(entityDir, entityDir.Root) ?? throw new FileNotFoundException("project file not found!");
 
-        EntityNamespace = AssemblyHelper.GetNamespaceName(entityProjectFile.Directory!);
-        ShareNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(SharePath));
-        ServiceNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(ApplicationPath));
-        ApiNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(ApiPath));
+        if (Config.IsMicroservice)
+        {
+            EntityNamespace = Config.ServiceName + ".Definition.Entity";
+            ShareNamespace = Config.ServiceName + ".Definition.Share";
+            ApplicationNamespace = Config.ServiceName + ".Application";
+            ApiNamespace = Config.ServiceName;
+        }
+        else
+        {
+            EntityNamespace = AssemblyHelper.GetNamespaceName(entityProjectFile.Directory!);
+            ShareNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(SharePath));
+            ApplicationNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(ApplicationPath));
+            ApiNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(ApiPath));
+        }
 
         EntityParseHelper entityHelper = new(entityPath);
         EntityInfo = entityHelper.GetEntity();
@@ -92,7 +98,7 @@ public class RestApiGenerate : GenerateBase
             "global using Ater.Web.Core.Models;",
             "global using Ater.Web.Core.Utils;",
             $"global using {EntityInfo.NamespaceName};",
-            $"global using {ServiceNamespace}.Manager;",
+            $"global using {ApplicationNamespace}.Manager;",
         ];
     }
 
@@ -127,7 +133,7 @@ public class RestApiGenerate : GenerateBase
             .Replace("${UpdateActionBlock}", updateContent);
 
         // add see cref comment
-        var comment = EntityInfo?.Comment + Environment.NewLine + $"/// <see cref=\"{ServiceNamespace}.Manager.{entityName}Manager\"/>";
+        var comment = EntityInfo?.Comment + Environment.NewLine + $"/// <see cref=\"{ApplicationNamespace}.Manager.{entityName}Manager\"/>";
         tplContent = tplContent.Replace(TplConst.NAMESPACE, ApiNamespace)
             .Replace(TplConst.SHARE_NAMESPACE, ShareNamespace)
             .Replace(TplConst.ENTITY_NAME, entityName)
@@ -183,7 +189,7 @@ public class RestApiGenerate : GenerateBase
     {
         string content = """
                     var current = await manager.GetCurrentAsync(id);
-                    if (current == null) { return NotFound(ErrorMsg.NotFoundResource); };
+                    if (current == null) { return NotFound("不存在的资源"); };
 
             """;
         string entityName = EntityInfo.Name;

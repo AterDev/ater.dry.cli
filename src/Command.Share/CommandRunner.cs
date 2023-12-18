@@ -7,7 +7,10 @@ public static class CommandRunner
     /// <summary>
     /// 全局静态唯一
     /// </summary>
-    public static DbContext dbContext = new DbContext();
+    public static DbContext dbContext = new();
+    /// <summary>
+    /// 服务名称
+    /// </summary>
 
     public static async Task GenerateDocAsync(string url = "", string output = "")
     {
@@ -88,6 +91,11 @@ public static class CommandRunner
         Console.WriteLine("🚀 Generating Dtos...");
         DtoCommand cmd = new(entityPath, output);
         await cmd.RunAsync(force);
+
+        if (!string.IsNullOrWhiteSpace(Config.ServiceName))
+        {
+            await UpdateServiceGlobalUsingAsync(Config.ServiceName);
+        }
     }
 
     /// <summary>
@@ -95,45 +103,96 @@ public static class CommandRunner
     /// </summary>
     /// <param name="path">entity path</param>
     /// <param name="dtoPath"></param>
-    /// <param name="servicePath"></param>
+    /// <param name="applicationPath"></param>
     /// <returns></returns>
     public static async Task GenerateManagerAsync(string path, string dtoPath = "",
-            string servicePath = "", bool force = false)
+            string applicationPath = "", bool force = false)
     {
         Console.WriteLine("🚀 Generate dtos");
         DtoCommand dtoCmd = new(path, dtoPath);
         await dtoCmd.RunAsync(force);
         Console.WriteLine("🚀 Generate manager");
-        ManagerCommand storeCmd = new(path, dtoPath, servicePath);
+        ManagerCommand storeCmd = new(path, dtoPath, applicationPath);
         await storeCmd.RunAsync(force);
+        var entityFrameworkPath = Path.Combine(Config.SolutionPath, Config.EntityFrameworkPath);
+        if (!string.IsNullOrWhiteSpace(Config.ServiceName))
+        {
+            entityFrameworkPath = Path.Combine(Config.SolutionPath, Config.GetServiceConfig(Config.ServiceName).DbContextPath);
+
+            await UpdateServiceGlobalUsingAsync(Config.ServiceName);
+        }
+        storeCmd.AddToDbContext(entityFrameworkPath);
     }
 
     /// <summary>
     /// api项目代码生成
     /// </summary>
     /// <param name="path">实体文件路径</param>
-    /// <param name="servicePath">service目录</param>
+    /// <param name="applicationPath">service目录</param>
     /// <param name="apiPath">网站目录</param>
     /// <param name="suffix">控制器后缀名</param>
     public static async Task GenerateApiAsync(string path, string dtoPath = "",
-            string servicePath = "", string apiPath = "", string suffix = "", bool force = false)
+            string applicationPath = "", string apiPath = "", string suffix = "", bool force = false)
     {
         try
         {
             Console.WriteLine("🚀 Generate dtos");
             DtoCommand dtoCmd = new(path, dtoPath);
             await dtoCmd.RunAsync(force);
-            Console.WriteLine("🚀 Generate store");
-            ManagerCommand storeCmd = new(path, dtoPath, servicePath);
+            Console.WriteLine("🚀 Generate manager");
+            ManagerCommand storeCmd = new(path, dtoPath, applicationPath);
             await storeCmd.RunAsync(force);
+            var entityFrameworkPath = Path.Combine(Config.SolutionPath, Config.EntityFrameworkPath);
+            if (!string.IsNullOrWhiteSpace(Config.ServiceName))
+            {
+                entityFrameworkPath = Path.Combine(Config.SolutionPath, Config.GetServiceConfig(Config.ServiceName).DbContextPath);
+                await UpdateServiceGlobalUsingAsync(Config.ServiceName);
+            }
+            storeCmd.AddToDbContext(entityFrameworkPath);
 
             Console.WriteLine("🚀 Generate rest api");
-            ApiCommand apiCmd = new(path, dtoPath, servicePath, apiPath, suffix);
+            ApiCommand apiCmd = new(path, dtoPath, applicationPath, apiPath, suffix);
             await apiCmd.RunAsync(force);
         }
         catch (Exception ex)
         {
             Console.WriteLine("异常:" + ex.Message + Environment.NewLine + ex.StackTrace);
+        }
+    }
+
+    /// <summary>
+    /// 更新引用
+    /// </summary>
+    /// <param name="serviceName"></param>
+    public static async Task UpdateServiceGlobalUsingAsync(string serviceName, string? moduleName = null)
+    {
+        string[] nsp = [
+            "global using System.ComponentModel.DataAnnotations;",
+            $"global using {serviceName}.Definition.Entity;"
+            ];
+
+        var servicePath = Path.Combine(Config.SolutionPath, "src", "Microservice", serviceName);
+        string filePath = Path.Combine(servicePath, "GlobalUsings.cs");
+        if (!string.IsNullOrWhiteSpace(moduleName))
+        {
+            filePath = Path.Combine(servicePath, "Modules", moduleName, "GlobalUsings.cs");
+        }
+
+        // 如果不存在则生成，如果存在，则添加
+        if (File.Exists(filePath))
+        {
+            string content = File.ReadAllText(filePath);
+            var newUsings = nsp.Where(g => !content.Contains(g))
+                .ToList();
+            if (newUsings.Count != 0)
+            {
+                newUsings.Insert(0, Environment.NewLine);
+                File.AppendAllLines(filePath, newUsings);
+            }
+        }
+        else
+        {
+            await File.WriteAllTextAsync(filePath, string.Join(Environment.NewLine, nsp), Encoding.UTF8);
         }
     }
 
@@ -215,7 +274,7 @@ public static class CommandRunner
         try
         {
             // 更新 依赖注入
-            var entityFilePath = Directory.GetFiles(Path.Combine(entityPath, "Entities"), EntityName + ".cs", SearchOption.AllDirectories).First();
+            var entityFilePath = Directory.GetFiles(entityPath, EntityName + ".cs", SearchOption.AllDirectories).First();
             var managerCmd = new ManagerCommand(entityFilePath, sharePath, applicationPath);
             await managerCmd.GenerateDIExtensionsAsync();
 

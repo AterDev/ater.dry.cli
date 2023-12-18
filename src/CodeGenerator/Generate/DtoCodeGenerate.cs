@@ -30,7 +30,6 @@ public class DtoCodeGenerate : GenerateBase
 
         var entityHelper = new EntityParseHelper(entityPath);
         EntityInfo = entityHelper.GetEntity();
-        AssemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(DtoPath));
         KeyType = EntityInfo.KeyType switch
         {
             EntityKeyType.Int => "Int",
@@ -142,8 +141,8 @@ public class DtoCodeGenerate : GenerateBase
             p => p.Name != "Content"
                 && p.Name != "UpdatedTime"
                 && p.Name != "CreatedTime"
-                && (p.MaxLength < 1000 || p.MaxLength == null)
-                && p.Name.EndsWith("Id") && p.Name != "Id"
+                && p.MaxLength < 1000
+                && !p.Name.EndsWith("Id") && p.Name != "Id"
                 && !(p.IsList && p.IsNavigation)
             )
             .ToList();
@@ -173,8 +172,8 @@ public class DtoCodeGenerate : GenerateBase
 
         dto.Properties = dto.Properties?
             .Where(p => !p.IsList
-                && p.MaxLength is not (not null and >= 1000)
-                && p.Name.EndsWith("Id") && p.Name != "Id"
+                && p.MaxLength < 1000
+                && !p.Name.EndsWith("Id") && p.Name != "Id"
                 && !p.IsNavigation).ToList();
 
         return dto.ToDtoContent(AssemblyName, EntityInfo.Name);

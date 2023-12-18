@@ -48,6 +48,7 @@ export class IndexComponent implements OnInit {
   modules: string[] = [];
   entityName: string | null = null;
   entityDescription: string | null = null;
+  selectedService: string | null = null;
   @ViewChild("requestDialog", { static: true })
   requestTmpRef!: TemplateRef<{}>;
   @ViewChild("syncDialog", { static: true })
@@ -167,17 +168,6 @@ export class IndexComponent implements OnInit {
       });
   }
 
-  getWatchStatus(): void {
-    this.projectSrv.getWatcherStatus(this.projectId)
-      .subscribe(res => {
-        if (res) {
-          this.isListening = true;
-        } else {
-          this.isListening = false;
-        }
-      })
-  }
-
   initForm(): void {
     this.requestForm = new FormGroup({
       swagger: new FormControl<string | null>('./swagger.json', []),
@@ -195,17 +185,12 @@ export class IndexComponent implements OnInit {
 
   getEntity(): void {
     this.selection.clear();
-    this.service.list(this.projectId!, this.searchKey)
+    this.service.list(this.projectId!, this.selectedService)
       .subscribe(res => {
         if (res.length > 0) {
           this.entityFiles = res;
           this.baseEntityPath = res[0].baseDirPath ?? '';
           this.dataSource = new MatTableDataSource<EntityFile>(this.entityFiles);
-
-          this.modules = this.entityFiles
-            .filter((entity) => entity.module !== null)
-            .map((entity) => entity.module!)
-            .filter((value, index, self) => self.indexOf(value) === index);
 
           this.dataSource.filterPredicate = (data, filter: string) => {
             if (data.name) {
@@ -214,6 +199,8 @@ export class IndexComponent implements OnInit {
             }
             return false;
           }
+        } else {
+          this.dataSource = new MatTableDataSource<EntityFile>([]);
         }
         this.isLoading = false;
       })
@@ -323,13 +310,16 @@ export class IndexComponent implements OnInit {
   openAddEntity(): void {
     this.router.navigateByUrl('/workspace/entity');
   }
-  search() {
+
+  filterEntity() {
     this.dataSource.filter = this.searchKey.trim().toLowerCase();
   }
 
-  applyFilter(event: MatSelectChange) {
+  searchEntity(event: MatSelectChange) {
     const filterValue = event.value ?? '';
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+    this.selectedService = filterValue;
+    this.getEntity();
+
   }
   async openPreviewDialog(item: EntityFile, isManager: boolean) {
     if (isManager) {
@@ -382,10 +372,15 @@ export class IndexComponent implements OnInit {
         next: (res) => {
           if (res) {
             this.webProjects = res.filter(p => {
-              return p.projectType == ProjectType.Web &&
-                !p.name?.endsWith('Test.csproj')
+              return p.projectType == ProjectType.Web
+                && !p.name?.endsWith('Test.csproj')
+                && (p.path.includes('Microservice'));
             });
 
+            // change webProjects name contont
+            this.webProjects.forEach(p => {
+              p.name = p.name.replace('.csproj', '');
+            });
 
           } else {
             this.snb.open('没有有效的项目');
@@ -463,6 +458,7 @@ export class IndexComponent implements OnInit {
           projectId: this.projectId!,
           entityPath: this.baseEntityPath + this.currentEntity.path,
           commandType: this.currentType,
+          serviceName: this.selectedService,
           force: this.force
         };
         this.service.generate(dto)
@@ -498,6 +494,7 @@ export class IndexComponent implements OnInit {
         projectId: this.projectId!,
         entityPaths: selected.map(s => this.baseEntityPath + s.path),
         commandType: type,
+        serviceName: this.selectedService,
         force: this.force
       };
       // 参数
