@@ -90,8 +90,8 @@ public partial class EntityManager(DbContext dbContext, ProjectContext projectCo
 
                     // 查询生成的dto\manager\api状态
                     var (hasDto, hasManager, hasAPI) = GetEntityStates(
-                        _projectContext.SolutionPath!,
                         Path.GetFileNameWithoutExtension(file.Name),
+                        serviceName,
                         item.Module);
 
                     item.HasDto = hasDto;
@@ -127,6 +127,7 @@ public partial class EntityManager(DbContext dbContext, ProjectContext projectCo
         bool hasDto = false;
         bool hasManager = false;
         bool hasAPI = false;
+
         var dtoPath = Path.Combine(_projectContext.SolutionPath!, Config.SharePath, "Models", $"{entityName}Dtos", $"{entityName}AddDto.cs");
         var managerPath = Path.Combine(_projectContext.SolutionPath!, Config.ApplicationPath, "Manager", $"{entityName}Manager.cs");
         var apiPath = Path.Combine(_projectContext.SolutionPath!, Config.ApiPath, "Controllers", $"{entityName}Controller.cs");
@@ -135,9 +136,9 @@ public partial class EntityManager(DbContext dbContext, ProjectContext projectCo
         if (!string.IsNullOrWhiteSpace(serviceName))
         {
             var serviceOptions = Config.GetServiceConfig(serviceName);
-            dtoPath = Path.Combine(serviceOptions.DtoPath, $"{entityName}Dtos", $"{entityName}AddDto.cs");
-            managerPath = Path.Combine(serviceOptions.ApplicationPath, "Manager", $"{entityName}Manager.cs");
-            apiPath = Path.Combine(serviceOptions.ApiPath, "Controllers", $"{entityName}Controller.cs");
+            dtoPath = Path.Combine(_projectContext.SolutionPath!, serviceOptions.DtoPath, "Models", $"{entityName}Dtos", $"{entityName}AddDto.cs");
+            managerPath = Path.Combine(_projectContext.SolutionPath!, serviceOptions.ApplicationPath, "Manager", $"{entityName}Manager.cs");
+            apiPath = Path.Combine(_projectContext.SolutionPath!, serviceOptions.ApiPath, "Controllers", $"{entityName}Controller.cs");
             servicePath = serviceOptions.RootPath;
         }
 
