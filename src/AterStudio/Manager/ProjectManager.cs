@@ -343,7 +343,7 @@ public class ProjectManager(DbContext dbContext, ProjectContext projectContext)
     {
         try
         {
-            ProjectCommand.CreateService(name);
+            ProjectCommand.CreateService(_projectContext.SolutionPath, name);
             return true;
         }
         catch (Exception)
