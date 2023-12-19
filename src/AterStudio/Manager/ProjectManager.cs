@@ -135,11 +135,7 @@ public class ProjectManager(DbContext dbContext, ProjectContext projectContext)
         {
             var path = _projectContext.Project.Path;
             var version = await AssemblyHelper.GetSolutionVersionAsync(_projectContext.SolutionPath!);
-            if (version == null) return "未找到项目配置文件，无法进行更新";
-            var updateManager = new UpdateManager(path!, version);
-
-
-            return "暂不支持该功能";
+            return version == null ? "未找到项目配置文件，无法进行更新" : "暂不支持该功能";
         }
         catch (Exception ex)
         {
@@ -337,4 +333,23 @@ public class ProjectManager(DbContext dbContext, ProjectContext projectContext)
         return file;
     }
 
+    /// <summary>
+    /// 添加微服务
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public bool AddServiceProject(string name)
+    {
+        try
+        {
+            ProjectCommand.CreateService(name);
+            return true;
+        }
+        catch (Exception)
+        {
+            Console.WriteLine("创建服务失败");
+            return false;
+        }
+    }
 }

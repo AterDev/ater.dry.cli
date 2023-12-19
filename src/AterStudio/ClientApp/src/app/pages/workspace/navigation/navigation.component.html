@@ -23,15 +23,15 @@
             <mat-icon color="accent" fontSet="material-icons-outlined">integration_instructions</mat-icon>
             <span *ngIf="opened">实体管理</span>
           </a>
+          <a mat-list-item [matTooltip]="opened?'': '模块管理'" matTooltipPosition="right" routerLink="/workspace/feature"
+            routerLinkActive="active">
+            <mat-icon color="accent">hive</mat-icon>
+            <span *ngIf="opened">模块管理</span>
+          </a>
           <a mat-list-item [matTooltip]="opened?'': 'Swagger'" matTooltipPosition="right" routerLink="/workspace/docs"
             routerLinkActive="active">
             <mat-icon color="accent">api</mat-icon>
             <span *ngIf="opened">Swagger</span>
-          </a>
-          <a mat-list-item [matTooltip]="opened?'': '功能集成'" matTooltipPosition="right" routerLink="/workspace/feature"
-            routerLinkActive="active">
-            <mat-icon color="accent">hive</mat-icon>
-            <span *ngIf="opened">功能集成</span>
           </a>
           <a mat-list-item [matTooltip]="opened?'': '实体表结构'" matTooltipPosition="right" routerLink="/workspace/database"
             routerLinkActive="active">

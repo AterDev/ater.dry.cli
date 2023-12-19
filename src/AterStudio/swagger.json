@@ -1442,6 +1442,47 @@
         }
       }
     },
+    "/api/Project/service": {
+      "post": {
+        "tags": [
+          "Project"
+        ],
+        "summary": "添加微服务",
+        "operationId": "Project_AddService",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Project/setting": {
       "get": {
         "tags": [

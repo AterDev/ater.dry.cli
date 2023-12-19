@@ -3,11 +3,11 @@
 
 @include mat.core();
 
-$light-primary: mat.define-palette(mat.$blue-palette, 600, 700, 900);
+$light-primary: mat.define-palette(mat.$light_blue-palette, 600, 700, 900);
 $light-accent: mat.define-palette(mat.$orange-palette, 700, 800, 900);
 $light-warn: mat.define-palette(mat.$red-palette);
 
-$dark-primary: mat.define-palette(mat.$blue-palette, 500, 600, 700);
+$dark-primary: mat.define-palette(mat.$light_blue-palette, 400, 500, 600);
 $dark-accent: mat.define-palette(mat.$orange-palette, 300, 400, 500);
 $dark-warn: mat.define-palette(mat.$red-palette);
 

@@ -1,5 +1,5 @@
 <div class="page" *ngIf="this.type!='desktop'">
-  <mat-toolbar class="d-flex flex-row">
+  <mat-toolbar color="primary" class="d-flex flex-row">
     <div class="flex-start">
       Ater.Dry
     </div>
@@ -20,7 +20,7 @@
         </button>
       </mat-menu>
       }
-      <a href="https://docs.dusi.dev" target="_blank">
+      <a href="https://docs.dusi.dev" target="_blank" style="color: inherit;">
         <button mat-icon-button matTooltip="文档"><mat-icon>article</mat-icon></button>
       </a>
       <button mat-icon-button matTooltip="Studio版本" [matTooltip]="version!">

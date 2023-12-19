@@ -67,6 +67,15 @@ export class ProjectBaseService extends BaseService {
   }
 
   /**
+   * 添加微服务
+   * @param name 
+   */
+  addService(name: string | null): Observable<boolean> {
+    const _url = `/api/Project/service?name=${name ?? ''}`;
+    return this.request<boolean>('post', _url);
+  }
+
+  /**
    * 获取项目配置文件内容
    */
   getConfigOptions(): Observable<ConfigOptions> {

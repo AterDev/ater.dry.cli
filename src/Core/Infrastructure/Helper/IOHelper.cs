@@ -67,6 +67,34 @@ public class IOHelper
     }
 
     /// <summary>
+    /// 替换模板名称，文件名及内容
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="templateName"></param>
+    /// <param name="newName"></param>
+    public static void ReplaceTemplate(string path, string templateName, string newName)
+    {
+        if (Directory.Exists(path))
+        {
+            var dir = new DirectoryInfo(path);
+            foreach (var file in dir.GetFiles())
+            {
+                var content = File.ReadAllText(file.FullName);
+                content = content.Replace(templateName, newName);
+                File.WriteAllText(file.FullName, content);
+                // replace file name 
+                var newFileName = file.Name.Replace(templateName, newName);
+                File.Move(file.FullName, Path.Combine(file.DirectoryName!, newFileName));
+            }
+            foreach (var subDir in dir.GetDirectories())
+            {
+                ReplaceTemplate(subDir.FullName, templateName, newName);
+            }
+        }
+
+    }
+
+    /// <summary>
     /// 获取代码文件
     /// </summary>
     public static string[] GetCodeFiles(string dirPath)

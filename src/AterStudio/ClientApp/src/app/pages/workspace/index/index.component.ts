@@ -61,7 +61,9 @@ export class IndexComponent implements OnInit {
   @ViewChild('addEntityDialog', { static: true }) addEntityTmpl!: TemplateRef<{}>;
   @ViewChild('contextMenu', { static: true }) contextMenuTmpl!: TemplateRef<{}>;
   @ViewChild('addDtoDialog', { static: true }) addDtoTmpl!: TemplateRef<{}>;
+  @ViewChild('addsServiceDialog', { static: true }) addServiceTmpl!: TemplateRef<{}>;
 
+  newServiceName: string | null = null;
   editorOptions = { theme: 'vs-dark', language: 'csharp', minimap: { enabled: false } };
   webPath: string | null = null;
   previewItem: EntityFile | null = null;
@@ -392,6 +394,39 @@ export class IndexComponent implements OnInit {
       });
   }
 
+  openInfo(url: string): void {
+    window.open(url, '_blank');
+  }
+  openAddService(): void {
+    this.dialogRef = this.dialog.open(this.addServiceTmpl, {
+      minWidth: 400
+    });
+  }
+
+  addService(): void {
+    if (this.newServiceName) {
+      this.projectSrv.addService(this.newServiceName)
+        .subscribe({
+          next: (res) => {
+            if (res) {
+              this.snb.open('创建成功');
+              this.dialogRef.close();
+            }
+          },
+          error: (error) => {
+            this.snb.open(error.detail);
+            this.isSync = false;
+          },
+          complete: () => {
+            this.isSync = false;
+          }
+        });
+
+    } else {
+      this.snb.open('请输入服务名称');
+    }
+  }
+
   openSelectProjectDialog(type: CommandType, element: EntityFile | null): void {
     this.currentEntity = element;
     this.currentType = type;
@@ -449,11 +484,11 @@ export class IndexComponent implements OnInit {
     }
   }
   generate(): void {
-    this.isSync = true;
     if (this.isBatch) {
       this.batch(this.currentType!);
     } else {
       if (this.currentEntity && this.currentType !== null) {
+        this.isSync = true;
         const dto: GenerateDto = {
           projectId: this.projectId!,
           entityPath: this.baseEntityPath + this.currentEntity.path,
@@ -481,6 +516,7 @@ export class IndexComponent implements OnInit {
           });
 
       } else {
+        this.snb.open('未选择任何实体');
       }
     }
   }

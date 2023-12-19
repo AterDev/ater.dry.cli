@@ -11,6 +11,7 @@ namespace AterStudio.Controllers;
 /// <summary>
 /// 项目
 /// </summary>
+/// <see cref="ProjectManager"/>
 [ApiController]
 [Route("api/[controller]")]
 public class ProjectController(ProjectManager manager, AdvanceManager advace) : ControllerBase
@@ -69,11 +70,19 @@ public class ProjectController(ProjectManager manager, AdvanceManager advace) : 
             return Problem("未找到该路径");
         }
         var res = await _manager.AddProjectAsync(name, path);
-        if (res != null)
-        {
-            return Problem(res);
-        }
-        return Ok("添加成功");
+        return res != null ? (ActionResult<string?>)Problem(res) : (ActionResult<string?>)Ok("添加成功");
+    }
+
+    /// <summary>
+    /// 添加微服务
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    [HttpPost("service")]
+    public ActionResult<bool> AddService(string name)
+    {
+        var res = _manager.AddServiceProject(name);
+        return res;
     }
 
     /// <summary>
@@ -105,11 +114,7 @@ public class ProjectController(ProjectManager manager, AdvanceManager advace) : 
     [HttpPost("open")]
     public ActionResult<string> OpenSolution(string path)
     {
-        if (path.EndsWith(".sln"))
-        {
-            return _manager.OpenSolution(path);
-        }
-        return Problem("不支持的解决方案文件");
+        return path.EndsWith(".sln") ? (ActionResult<string>)_manager.OpenSolution(path) : (ActionResult<string>)Problem("不支持的解决方案文件");
     }
 
     /// <summary>
@@ -189,11 +194,7 @@ public class ProjectController(ProjectManager manager, AdvanceManager advace) : 
     public async Task<ActionResult<bool>> GetWatcherStatusAsync([FromRoute] Guid id)
     {
         var project = await _manager.GetProjectAsync(id);
-        if (project == null)
-        {
-            return NotFound("不存在该项目");
-        }
-        return _manager.GetWatcherStatus(project);
+        return project == null ? (ActionResult<bool>)NotFound("不存在该项目") : (ActionResult<bool>)_manager.GetWatcherStatus(project);
     }
 
 }
