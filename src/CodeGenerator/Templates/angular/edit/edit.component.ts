@@ -6,6 +6,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { {$EntityName}UpdateDto } from 'src/app/share/admin/models/{$EntityPathName}/{$EntityPathName}-update-dto.model';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Location } from '@angular/common';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+
 [@Imports]
 @Component({
   selector: 'app-edit',
@@ -26,15 +28,17 @@ export class EditComponent implements OnInit {
     private snb: MatSnackBar,
     private router: Router,
     private route: ActivatedRoute,
-    private location: Location
-    // public dialogRef: MatDialogRef<EditComponent>,
-    // @Inject(MAT_DIALOG_DATA) public dlgData: { id: '' }
+    private location: Location,
+    public dialogRef: MatDialogRef<EditComponent>,
+    @Inject(MAT_DIALOG_DATA) public dlgData: { id: '' }
   ) {
+
+    
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.id = id;
     } else {
-      // TODO: id为空
+      this.id = dlgData.id;
     }
   }
 
@@ -87,8 +91,8 @@ export class EditComponent implements OnInit {
           next: (res) => {
             if(res){
               this.snb.open('修改成功');
-              // this.dialogRef.close(res);
-              this.router.navigate(['../../index'], { relativeTo: this.route });
+              this.dialogRef.close(res);
+              // this.router.navigate(['../../index'], { relativeTo: this.route });
             }
           },
           error: (error) => {

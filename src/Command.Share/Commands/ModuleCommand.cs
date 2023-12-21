@@ -1,5 +1,5 @@
-﻿using System.IO.Compression;
-using Core.Infrastructure;
+﻿using Core.Infrastructure;
+
 using PluralizeService.Core;
 
 namespace Command.Share.Commands;
@@ -8,17 +8,19 @@ namespace Command.Share.Commands;
 /// </summary>
 public class ModuleCommand
 {
-    public const string ModuleUserLogs = "UserLogs";
-    public const string ModuleCMS = "CMS";
-    public const string ModuleSystemLogs = "SystemLogs";
-    public const string ModuleConfiguration = "Configuration";
-    public static List<string> ModuleNames { get; } = new()
-    {
-        ModuleCMS,
-        ModuleSystemLogs,
-        ModuleUserLogs,
-        ModuleConfiguration
-    };
+    public const string CMS = "CMSMod";
+    public const string FileManager = "FileManagerMod";
+    public const string Order = "OrderMod";
+    public const string System = "SystemMod";
+    public const string Configuration = "ConfigurationMod";
+    public static List<string> ModuleNames { get; } =
+    [
+        CMS,
+        Order,
+        System,
+        FileManager,
+        Configuration
+    ];
 
     /// <summary>
     /// 创建模块
@@ -27,7 +29,11 @@ public class ModuleCommand
     /// <param name="moduleName"></param>
     public static async Task CreateModuleAsync(string solutionPath, string moduleName)
     {
-        InitModulesCodes();
+        if (!moduleName.EndsWith("Mod"))
+        {
+            moduleName += "Mod";
+        }
+
         var moduleDir = Path.Combine(solutionPath, "src", "Modules");
 
         if (!Directory.Exists(moduleDir))
@@ -44,31 +50,68 @@ public class ModuleCommand
         await Console.Out.WriteLineAsync($"🚀 create module:{moduleName} ➡️ {projectPath}");
         string tplContent = GenerateBase.GetTplContent("Implement.RestControllerBase.tpl");
         tplContent = tplContent.Replace(TplConst.NAMESPACE, moduleName);
-        string infrastructruePath = Path.Combine(projectPath, "Infrastructure");
-        await AssemblyHelper.GenerateFileAsync(infrastructruePath, "RestControllerBase.cs", tplContent);
+        string infrastructurePath = Path.Combine(projectPath, "Infrastructure");
+        await AssemblyHelper.GenerateFileAsync(infrastructurePath, "RestControllerBase.cs", tplContent);
 
         // global usings
         string usingsContent = GetGlobalUsings();
         usingsContent = usingsContent.Replace("${Module}", moduleName);
-        await AssemblyHelper.GenerateFileAsync(projectPath, "GlobalUsings.cs", usingsContent);
+        await AssemblyHelper.GenerateFileAsync(projectPath, "GlobalUsings.cs", usingsContent, true);
 
-        // csproject 
         // get target version 
-        string? targetVersion = AssemblyHelper.GetTargetFramework(Path.Combine(solutionPath, "src", "Http.API", "Http.API.csproj"));
-        string csprojContent = GetCsProjectContent(targetVersion ?? "7.0");
-        await AssemblyHelper.GenerateFileAsync(projectPath, $"{moduleName}.csproj", csprojContent);
+        string targetVersion = Const.Version;
+        var csprojFiles = Directory.GetFiles(Path.Combine(solutionPath, Config.ApiPath), $"*{Const.CSharpProjectExtention}", SearchOption.TopDirectoryOnly).FirstOrDefault();
+        if (csprojFiles != null)
+        {
+            targetVersion = AssemblyHelper.GetTargetFramework(csprojFiles) ?? Const.Version;
+        }
+        string csprojContent = GetCsProjectContent(targetVersion);
+        await AssemblyHelper.GenerateFileAsync(projectPath, $"{moduleName}{Const.CSharpProjectExtention}", csprojContent);
+
+        // create dirs
+        Directory.CreateDirectory(Path.Combine(projectPath, "Models"));
+        Directory.CreateDirectory(Path.Combine(projectPath, "Manager"));
 
         try
         {
-            AddDefaultModule(solutionPath, moduleName);
+            await AddDefaultModuleAsync(solutionPath, moduleName);
             // update solution file
-            UpdateSolutionFile(solutionPath, Path.Combine(projectPath, $"{moduleName}.csproj"));
+            UpdateSolutionFile(solutionPath, Path.Combine(projectPath, $"{moduleName}{Const.CSharpProjectExtention}"));
+
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message + ex.StackTrace + ex.InnerException);
         }
 
+    }
+
+    public static void CleanModule(string solutionPath, string moduleName)
+    {
+        if (moduleName.EndsWith("Mod"))
+        {
+            moduleName = moduleName.Replace("Mod", "");
+        }
+
+        var entityPath = Path.Combine(solutionPath, Config.EntityPath, moduleName);
+        var entityFrameworkPath = Path.Combine(solutionPath, Config.EntityFrameworkPath);
+
+        if (Directory.Exists(entityPath))
+        {
+            var entityFiles = Directory.GetFiles(entityPath, $"*.cs", SearchOption.AllDirectories).ToList();
+
+            // get entity name
+            var entityNames = entityFiles.Select(file =>
+            {
+                var filename = Path.GetFileNameWithoutExtension(file);
+                return filename;
+            }).ToList();
+
+            Directory.Delete(entityPath, true);
+
+            // 从解决方案移除项目
+            ProcessHelper.RunCommand("dotnet", $"sln {solutionPath} remove {Path.Combine(solutionPath, "src", "Modules", moduleName + "Mod", $"{moduleName}Mod{Const.CSharpProjectExtention}")}", out string error);
+        }
     }
 
     /// <summary>
@@ -83,25 +126,30 @@ public class ModuleCommand
         {
             return default;
         }
-        List<string> files = Directory.GetFiles(modulesPath, "*.csproj", SearchOption.AllDirectories).ToList();
-        return files.Any() ? files : default;
+        List<string> files = Directory.GetFiles(modulesPath, $"*{Const.CSharpProjectExtention}", SearchOption.AllDirectories).ToList();
+        return files.Count != 0 ? files : default;
     }
 
     private static string GetGlobalUsings()
     {
         return """
+            global using System.ComponentModel.DataAnnotations;
             global using System.Diagnostics;
             global using System.Linq.Expressions;
             global using Application.Const;
+            global using Application;
             global using Application.Implement;
-            global using Application.Interface;
             global using ${Module}.Infrastructure;
-            global using Core.Utils;
+            global using ${Module}.Manager;
+            global using Ater.Web.Core.Models;
+            global using Ater.Web.Core.Utils;
+            global using Entity;
+            global using EntityFramework;
             global using Microsoft.AspNetCore.Authorization;
             global using Microsoft.AspNetCore.Mvc;
             global using Microsoft.EntityFrameworkCore;
             global using Microsoft.Extensions.Logging;
-            global using Share.Models;
+            
             """;
     }
 
@@ -110,7 +158,7 @@ public class ModuleCommand
     /// </summary>
     /// <param name="version"></param>
     /// <returns></returns>
-    private static string GetCsProjectContent(string version = "7.0")
+    private static string GetCsProjectContent(string version = Const.Version)
     {
         return $"""
             <Project Sdk="Microsoft.NET.Sdk">
@@ -138,7 +186,7 @@ public class ModuleCommand
     /// <param name="projectPath"></param>
     private static void UpdateSolutionFile(string dirPath, string projectPath)
     {
-        var slnFile = AssemblyHelper.GetSlnFile(new DirectoryInfo(dirPath), "*.sln");
+        var slnFile = AssemblyHelper.GetSlnFile(new DirectoryInfo(dirPath));
         if (slnFile != null)
         {
             // 添加到解决方案
@@ -151,41 +199,14 @@ public class ModuleCommand
                 Console.WriteLine("✅ add project ➡️ solution!");
             }
         }
-        var apiFile = Path.Combine(dirPath, Config.ApiPath, "Http.API.csproj");
-        if (File.Exists(apiFile))
+        var csprojFiles = Directory.GetFiles(Path.Combine(dirPath, Config.ApiPath), $"*{Const.CSharpProjectExtention}", SearchOption.TopDirectoryOnly).FirstOrDefault();
+        if (File.Exists(csprojFiles))
         {
             // 添加到主服务
-            if (!ProcessHelper.RunCommand("dotnet", $"add {apiFile} reference {projectPath}", out string error))
+            if (!ProcessHelper.RunCommand("dotnet", $"add {csprojFiles} reference {projectPath}", out string error))
             {
                 Console.WriteLine("add project reference failed:" + error);
             }
-        }
-    }
-
-    /// <summary>
-    /// 初始化模块源代码
-    /// </summary>
-    private static void InitModulesCodes()
-    {
-        var studioPath = AssemblyHelper.GetStudioPath();
-        var version = AssemblyHelper.GetVersion();
-        // 仅当版本无更新，并且没有模块时解压
-        if (File.Exists(Path.Combine(studioPath, $"{version}.txt")) &&
-            File.Exists(Path.Combine(studioPath, "Modules")))
-        {
-            return;
-        }
-
-        var toolPath = AssemblyHelper.GetToolPath();
-        var moduleFile = Path.Combine(toolPath, Const.ModulesZip);
-        if (File.Exists(moduleFile))
-        {
-            // 清理原内容
-            if (Directory.Exists(Path.Combine(studioPath, "Modules")))
-            {
-                Directory.Delete(Path.Combine(studioPath, "Modules"), true);
-            }
-            ZipFile.ExtractToDirectory(moduleFile, studioPath, true);
         }
     }
 
@@ -194,13 +215,12 @@ public class ModuleCommand
     /// </summary>
     /// <param name="moduleName"></param>
     /// <param name="solutionPath"></param>
-    private static void AddDefaultModule(string solutionPath, string moduleName)
+    private static async Task AddDefaultModuleAsync(string solutionPath, string moduleName)
     {
         if (!ModuleNames.Contains(moduleName))
         {
             return;
         }
-        InitModulesCodes();
         var studioPath = AssemblyHelper.GetStudioPath();
         var sourcePath = Path.Combine(studioPath, "Modules", moduleName);
         if (!Directory.Exists(sourcePath))
@@ -209,24 +229,25 @@ public class ModuleCommand
             return;
         }
 
-        var databasePath = Path.Combine(solutionPath, "src", "Database", "EntityFramework");
-
-        var entityPath = Path.Combine(solutionPath, Config.EntityPath, "Entities", $"{moduleName}Entities");
+        var databasePath = Path.Combine(solutionPath, Config.EntityFrameworkPath);
+        var entityPath = Path.Combine(solutionPath, Config.EntityPath, $"{moduleName}");
         var modulePath = Path.Combine(solutionPath, "src", "Modules", moduleName);
 
         Console.WriteLine("🚀 copy module files");
-        CopyModuleFiles(Path.Combine(sourcePath, "Entities"), entityPath);
+        // copy entities
+        CopyModuleFiles(Path.Combine(sourcePath, "Entity"), entityPath);
+
+        // copy module files
         CopyModuleFiles(sourcePath, modulePath);
 
-
         Console.WriteLine("🚀 update ContextBase DbSet");
-        var dbContextFile = Path.Combine(databasePath, "ContextBase.cs");
+        var dbContextFile = Path.Combine(databasePath, "DBProvider", "ContextBase.cs");
         var dbContextContent = File.ReadAllText(dbContextFile);
 
         var compilation = new CompilationHelper(databasePath);
         compilation.AddSyntaxTree(dbContextContent);
 
-        var entityFiles = new DirectoryInfo(Path.Combine(sourcePath, "Entities")).GetFiles("*.cs").ToList();
+        var entityFiles = new DirectoryInfo(Path.Combine(sourcePath, "Entity")).GetFiles("*.cs").ToList();
 
         entityFiles.ForEach(file =>
         {
@@ -239,14 +260,39 @@ public class ModuleCommand
                 compilation.AddClassProperty(propertyString);
             }
         });
+
         dbContextContent = compilation.SyntaxRoot!.ToFullString();
         File.WriteAllText(dbContextFile, dbContextContent);
+        // update globalusings.cs
+        var globalUsingsFile = Path.Combine(databasePath, "GlobalUsings.cs");
+        var globalUsingsContent = File.ReadAllText(globalUsingsFile);
+
+        var moduleNsp = moduleName.EndsWith("Mod")
+            ? moduleName.Replace("Mod", "")
+            : moduleName;
+
+        var newLine = @$"global using Entity.{moduleNsp};";
+        if (!globalUsingsContent.Contains(newLine))
+        {
+            Console.WriteLine($"  ℹ️ add new using {newLine} ➡️ GlobalUsings");
+            globalUsingsContent = globalUsingsContent.Replace("global using Entity;", $"global using Entity;{Environment.NewLine}{newLine}");
+            File.WriteAllText(globalUsingsFile, globalUsingsContent);
+        }
+
+        // 重新生成DataStore和依赖注入服务
+        var applicationPath = Path.Combine(solutionPath, Config.ApplicationPath);
+        var entityFrameworkPath = Path.Combine(solutionPath, Config.EntityFrameworkPath);
+        var applicationName = Config.ApplicationPath.Split(Path.DirectorySeparatorChar).Last();
+        var entityFrameworkName = Config.EntityFrameworkPath.Split(Path.DirectorySeparatorChar).Last();
+        var content = ManagerGenerate.GetManagerDIExtensions(solutionPath, applicationName);
+        await IOHelper.WriteToFileAsync(Path.Combine(applicationPath, "ManagerServiceCollectionExtensions.cs"), content);
+
     }
 
     /// <summary>
     /// 复制模块文件
     /// </summary>
-    /// <param name="sourceDir"></param>
+    /// <param name="sourceDir"></param>`
     /// <param name="destinationDir"></param>
     /// <param name="recursive"></param>
     private static void CopyModuleFiles(string sourceDir, string destinationDir)
@@ -273,7 +319,8 @@ public class ModuleCommand
 
         foreach (DirectoryInfo subDir in dirs)
         {
-            if (subDir.Name == "Entities")
+            // 过滤不必要的目录
+            if (subDir.Name is "Entity" or "Application")
             {
                 continue;
             }

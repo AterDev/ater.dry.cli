@@ -1,0 +1,35 @@
+<div class="container p-0">
+  <div class="d-flex">
+    <!-- 边栏选项 -->
+    <div class="d-flex flex-column" style="min-width: 200px;">
+      <mat-selection-list #shoes [multiple]="false" [hideSingleSelectionIndicator]="true"
+        (selectionChange)="selectTool($event)">
+        <mat-list-option [value]="ToolType.Entity" [selected]="selectedTool=== ToolType.Entity">
+          实体
+        </mat-list-option>
+        <!-- <mat-list-option [value]="ToolType.File" [selected]="selectedTool=== ToolType.File">
+          文件
+        </mat-list-option> -->
+        <mat-list-option [value]="ToolType.Answer" [selected]="selectedTool=== ToolType.Answer">
+          问答
+        </mat-list-option>
+      </mat-selection-list>
+
+    </div>
+    <!-- 对话内容 -->
+    <div class="d-flex flex-column flex-fill">
+      <div class="d-flex flex-column dialog">
+        <div class="flex-fill answer-area">
+          <markdown [data]="answerContent" *ngIf="answerContent" lineNumbers [start]="1" style="display: grid;">
+          </markdown>
+        </div>
+        <div class="fixed-bottom input-block d-flex">
+          <textarea matInput type="text" class="flex-grow-1 input-area" placeholder="" [(ngModel)]="content"
+            row="2"></textarea>
+          <button mat-flat-button color="primary" class="h-100" (click)="send()" (keyup.enter)="send()"
+            [disabled]="isProcessing">发送</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

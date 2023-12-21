@@ -21,10 +21,11 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ProjectContext>();
 builder.Services.AddSingleton<DbContext>();
 builder.Services.AddScoped<ProjectManager>();
-builder.Services.AddScoped<EntityAdvance>();
+builder.Services.AddScoped<AdvanceManager>();
 builder.Services.AddScoped<EntityManager>();
 builder.Services.AddScoped<SwaggerManager>();
 builder.Services.AddScoped<FeatureManager>();
+builder.Services.AddScoped<ToolsManager>();
 builder.Services.AddHttpClient<DusiHttpClient>();
 
 // cors配置 
@@ -76,6 +77,7 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         options.JsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
+        options.JsonSerializerOptions.ReadCommentHandling = JsonCommentHandling.Skip;
     });
 WebApplication app = builder.Build();
 

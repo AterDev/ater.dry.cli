@@ -13,7 +13,7 @@ import 'prismjs/components/prism-markup.min.js';
   encapsulation: ViewEncapsulation.None
 })
 export class DatabaseComponent implements OnInit {
-
+  isLoding = true;
   content: string | null = null;
   projectId: string | null = null;
   editorOptions = { theme: 'vs-dark', language: 'markdown', minimap: { enabled: false } };
@@ -29,20 +29,19 @@ export class DatabaseComponent implements OnInit {
   ngOnInit(): void {
     this.getContent();
   }
-
-
   getContent(): void {
     if (this.projectId)
       this.service.getDatabaseContent(this.projectId)
         .subscribe({
           next: (res) => {
-            if (res) {
-              this.content = res;
-            } else {
-            }
+            this.content = res;
           },
           error: (error) => {
             this.snb.open(error.detail);
+            this.isLoding = false;
+          },
+          complete: () => {
+            this.isLoding = false;
           }
         });
   }

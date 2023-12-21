@@ -1,5 +1,4 @@
-﻿export enum DBType {
-  SQLServer = 0,
-  PostgreSQL = 1,
+export enum DBType {
+  PostgreSQL = 0,
 
 }

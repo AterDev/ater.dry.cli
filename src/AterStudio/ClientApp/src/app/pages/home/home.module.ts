@@ -1,6 +1,4 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-
 import { HomeRoutingModule } from './home-routing.module';
 import { LoginComponent } from './login/login.component';
 import { IndexComponent } from './index/index.component';
@@ -10,6 +8,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
+import { MarkdownModule } from 'ngx-markdown';
 
 
 @NgModule({
@@ -24,7 +23,8 @@ import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
-    MonacoEditorModule
+    MonacoEditorModule,
+    MarkdownModule.forRoot()
   ]
 })
 export class HomeModule { }

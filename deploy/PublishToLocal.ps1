@@ -33,7 +33,7 @@ try {
     $xml.Save($path)
 
     # pack modules  use PackModules.ps1
-    & "./PackModules.ps1"
+    & "./PackTemplate.ps1"
 
     # build web project
     if ($withStudio -eq $true) {
@@ -44,20 +44,42 @@ try {
         
         dotnet publish -c release -o ./publish
         # 移除部分 dll文件，减少体积
-        Remove-Item .\publish\Microsoft.CodeAnalysis.CSharp.dll
-        Remove-Item .\publish\Swashbuckle.AspNetCore.SwaggerUI.dll
-        Remove-Item .\publish\Microsoft.CodeAnalysis.dll
-        Remove-Item .\publish\LiteDB.dll
-        Remove-Item .\publish\Microsoft.OpenApi.Readers.dll
-        Remove-Item .\publish\Microsoft.OpenApi.dll
-        Remove-Item .\publish\SharpYaml.dll
-        Remove-Item .\publish\AterStudio.exe
+        $pathsToRemove = @(
+            ".\publish\Microsoft.CodeAnalysis.CSharp.dll",
+            ".\publish\Microsoft.CodeAnalysis.Workspaces.dll",
+            ".\publish\Microsoft.CodeAnalysis.dll",
+            ".\publish\Microsoft.CodeAnalysis.CSharp.Workspaces.dll",
+            ".\publish\Microsoft.CodeAnalysis.Workspaces.MSBuild.dll"
+            ".\publish\Microsoft.Build.dll",
+            ".\publish\Microsoft.Build.Framework.dll",
+            ".\publish\Humanizer.dll",
+            ".\publish\LiteDB.dll",
+            ".\publish\Microsoft.OpenApi.Readers.dll",
+            ".\publish\Microsoft.OpenApi.dll",
+            ".\publish\SharpYaml.dll",
+            ".\publish\AterStudio.exe",
+            ".\publish\CodeGenerator.dll",
+            ".\publish\Command.Share.dll",
+            ".\publish\Core.dll",
+            ".\publish\Datastore.dll",
+            ".\publish\NuGet.Versioning.dll",
+            ".\publish\PluralizeService.Core.dll",
+            ".\publish\swagger.json"
+        )
 
-        Remove-Item .\publish\CodeGenerator.dll
-        Remove-Item .\publish\Command.Share.dll
-        Remove-Item .\publish\Core.dll
-        Remove-Item .\publish\Datastore.dll
-        Remove-Item .\publish\swagger.json
+        foreach ($path in $pathsToRemove) {
+            if (Test-Path $path) {
+                Remove-Item $path -Force
+            }
+        }
+        # remove pdb and xml files
+        $files = Get-ChildItem -Path .\publish -Recurse -Include *.pdb, *.xml
+        foreach ($file in $files) {
+            Remove-Item $file.FullName -Force
+        }
+        if (Test-Path -Path "../CommandLine/studio.zip") {
+            Remove-Item "../CommandLine/studio.zip" -Force
+        }
         Compress-Archive -Path .\publish\*  -DestinationPath "../CommandLine/studio.zip" -CompressionLevel Optimal -Force
     }
 

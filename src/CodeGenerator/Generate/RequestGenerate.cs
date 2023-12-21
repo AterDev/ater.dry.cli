@@ -1,4 +1,5 @@
 using Datastore;
+
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Interfaces;
@@ -8,24 +9,16 @@ namespace CodeGenerator.Generate;
 /// <summary>
 /// 请求生成
 /// </summary>
-public class RequestGenerate : GenerateBase
+public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
 {
-    protected OpenApiPaths PathsPairs { get; }
-    protected List<OpenApiTag> ApiTags { get; }
-    public IDictionary<string, OpenApiSchema> Schemas { get; set; }
-    public OpenApiDocument OpenApi { get; set; }
+    protected OpenApiPaths PathsPairs { get; } = openApi.Paths;
+    protected List<OpenApiTag> ApiTags { get; } = openApi.Tags.ToList();
+    public IDictionary<string, OpenApiSchema> Schemas { get; set; } = openApi.Components.Schemas;
+    public OpenApiDocument OpenApi { get; set; } = openApi;
 
     public RequestLibType LibType { get; set; } = RequestLibType.NgHttp;
 
     public List<GenFileInfo>? TsModelFiles { get; set; }
-
-    public RequestGenerate(OpenApiDocument openApi)
-    {
-        OpenApi = openApi;
-        PathsPairs = openApi.Paths;
-        Schemas = openApi.Components.Schemas;
-        ApiTags = openApi.Tags.ToList();
-    }
 
     public static string GetBaseService(RequestLibType libType)
     {
@@ -70,7 +63,7 @@ public class RequestGenerate : GenerateBase
     /// <returns></returns>
     public List<RequestServiceFunction> GetAllRequestFunctions()
     {
-        List<RequestServiceFunction> functions = new();
+        List<RequestServiceFunction> functions = [];
         // 处理所有方法
         foreach (KeyValuePair<string, OpenApiPathItem> path in PathsPairs)
         {
@@ -124,7 +117,7 @@ public class RequestGenerate : GenerateBase
         {
             GetTSInterfaces();
         }
-        List<GenFileInfo> files = new();
+        List<GenFileInfo> files = [];
         List<RequestServiceFunction> functions = GetAllRequestFunctions();
 
         // 先以tag分组
@@ -144,15 +137,41 @@ public class RequestGenerate : GenerateBase
 
             string content = LibType switch
             {
-                RequestLibType.NgHttp => ToNgRequestService(serviceFile),
+                RequestLibType.NgHttp => ToNgRequestBaseService(serviceFile),
                 RequestLibType.Axios => ToAxiosRequestService(serviceFile),
                 _ => ""
             };
 
-            string fileName = currentTag.Name?.ToHyphen() + ".service.ts";
-            GenFileInfo file = new(fileName, content);
+            switch (LibType)
+            {
+                // 同时生成基类和继承类，继承类可自定义
+                case RequestLibType.NgHttp:
+                {
+                    string baseFileName = currentTag.Name?.ToHyphen() + "-base.service.ts";
+                    GenFileInfo file = new(baseFileName, content);
+                    files.Add(file);
 
-            files.Add(file);
+                    string fileName = currentTag.Name?.ToHyphen() + ".service.ts";
+                    content = ToNgRequestService(serviceFile);
+                    file = new(fileName, content)
+                    {
+                        CanModify = true
+                    };
+                    files.Add(file);
+                    break;
+                }
+                case RequestLibType.Axios:
+                {
+                    string fileName = currentTag.Name?.ToHyphen() + ".service.ts";
+                    GenFileInfo file = new(fileName, content);
+                    files.Add(file);
+                    break;
+                }
+                default:
+                    break;
+            }
+
+
         }
         return files;
     }
@@ -164,7 +183,7 @@ public class RequestGenerate : GenerateBase
     public List<GenFileInfo> GetTSInterfaces()
     {
         TSModelGenerate tsGen = new(OpenApi);
-        List<GenFileInfo> files = new();
+        List<GenFileInfo> files = [];
         foreach (KeyValuePair<string, OpenApiSchema> item in Schemas)
         {
             files.Add(tsGen.GenerateInterfaceFile(item.Key, item.Value));
@@ -201,27 +220,29 @@ public class RequestGenerate : GenerateBase
         }
 
         var sb = new StringBuilder();
-        sb.AppendLine($"case '{enumType}':");
-        sb.AppendLine("{");
-        sb.AppendLine($"  switch (value)");
-        sb.AppendLine("  {");
+
+        TabConst.TabSize = 2;
+        sb.AppendLine($"case '{enumType}':".Indent(3));
+        sb.AppendLine("{".Indent(4));
+        sb.AppendLine($"  switch (value)".Indent(5));
+        sb.AppendLine("{".Indent(4));
 
         if (enumData.Value is OpenApiArray array)
         {
             for (int i = 0; i < array.Count; i++)
             {
-                var item = ((OpenApiObject)array[i]);
+                var item = (OpenApiObject)array[i];
 
-                string caseString = string.Format("    case {0}: result = '{1}'; break;", ((OpenApiInteger)item["value"]).Value, ((OpenApiString)item["description"]).Value);
+                string caseString = string.Format("case {0}: result = '{1}'; break;".Indent(6), ((OpenApiInteger)item["value"]).Value, ((OpenApiString)item["description"]).Value);
 
                 sb.AppendLine(caseString);
             }
-            sb.AppendLine("    default: '默认'; break;");
+            sb.AppendLine("default: '默认'; break;".Indent(6));
         }
 
-        sb.AppendLine("  }");
-        sb.AppendLine("}");
-        sb.AppendLine("break;");
+        sb.AppendLine("}".Indent(5));
+        sb.AppendLine("}".Indent(4));
+        sb.AppendLine("break;".Indent(4));
         return sb.ToString();
     }
 
@@ -250,6 +271,7 @@ public class RequestGenerate : GenerateBase
                 type = "boolean";
                 break;
             case "integer":
+            case "number":
                 // 看是否为enum
                 if (schema.Enum.Count > 0)
                 {
@@ -269,12 +291,16 @@ public class RequestGenerate : GenerateBase
                 type = "FormData";
                 break;
             case "string":
-                type = schema.Format switch
+                type = "string";
+                if (!string.IsNullOrWhiteSpace(schema.Format))
                 {
-                    "binary" => "FormData",
-                    "date-time" => "string",
-                    _ => "string",
-                };
+                    type = schema.Format switch
+                    {
+                        "binary" => "FormData",
+                        "date-time" => "string",
+                        _ => "string",
+                    };
+                }
                 break;
 
             case "array":
@@ -355,17 +381,22 @@ public class RequestGenerate : GenerateBase
         return tplContent;
     }
 
-    public string ToNgRequestService(RequestServiceFile serviceFile)
+    /// <summary>
+    /// 生成angular请求服务基类
+    /// </summary>
+    /// <param name="serviceFile"></param>
+    /// <returns></returns>
+    public string ToNgRequestBaseService(RequestServiceFile serviceFile)
     {
         var functions = serviceFile.Functions;
         string functionstr = "";
         // import引用的models
         string importModels = "";
-        List<string> refTypes = new();
+        List<string> refTypes = [];
         if (functions != null)
         {
             functionstr = string.Join("\n", functions.Select(f => f.ToNgRequestFunction()).ToArray());
-            string[] baseTypes = new string[] { "string", "string[]", "number", "number[]", "boolean", "integer" };
+            string[] baseTypes = ["string", "string[]", "number", "number[]", "boolean", "integer"];
             // 获取请求和响应的类型，以便导入
             List<string?> requestRefs = functions
                 .Where(f => !string.IsNullOrEmpty(f.RequestRefType)
@@ -422,10 +453,33 @@ import {{ Observable }} from 'rxjs';
  * {serviceFile.Description}
  */
 @Injectable({{ providedIn: 'root' }})
-export class {serviceFile.Name}Service extends BaseService {{
+export class {serviceFile.Name}BaseService extends BaseService {{
 {functionstr}
 }}
 ";
+        return result;
+    }
+
+    /// <summary>
+    /// 生成ng 请求服务继承类,可自定义
+    /// </summary>
+    /// <param name="serviceFile"></param>
+    /// <returns></returns>
+    public static string ToNgRequestService(RequestServiceFile serviceFile)
+    {
+        string result = $$"""
+import { Injectable } from '@angular/core';
+import { {{serviceFile.Name}}BaseService } from './{{serviceFile.Name.ToHyphen()}}-base.service';
+
+/**
+ * {{serviceFile.Description}}
+ */
+@Injectable({providedIn: 'root' })
+export class {{serviceFile.Name}}Service extends {{serviceFile.Name}}BaseService {
+  id: string | null = null;
+  name: string | null = null;
+}
+""";
         return result;
     }
 
@@ -525,8 +579,8 @@ export class {serviceFile.Name}Service extends BaseService {{
         }
         string functionString = @$"{comments}
   {Name}({paramsString}): Promise<{ResponseType}> {{
-    const url = `{Path}`;
-    return this.request<{ResponseType}>('{function.Method.ToLower()}', url{dataString});
+    const _url = `{Path}`;
+    return this.request<{ResponseType}>('{function.Method.ToLower()}', _url{dataString});
   }}
 ";
         return functionString;
@@ -539,9 +593,9 @@ export class {serviceFile.Name}Service extends BaseService {{
     /// <returns></returns>
     protected List<string> GetRefTyeps(List<RequestServiceFunction> functions)
     {
-        List<string> refTypes = new();
+        List<string> refTypes = [];
 
-        string[] baseTypes = new string[] { "string", "string[]", "number", "number[]", "boolean", "integer" };
+        string[] baseTypes = ["string", "string[]", "number", "number[]", "boolean", "integer"];
         // 获取请求和响应的类型，以便导入
         List<string?> requestRefs = functions
                 .Where(f => !string.IsNullOrEmpty(f.RequestRefType)

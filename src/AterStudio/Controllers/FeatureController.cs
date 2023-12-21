@@ -1,5 +1,4 @@
-﻿using AterStudio.Advance;
-using AterStudio.Manager;
+﻿using AterStudio.Manager;
 using AterStudio.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,17 +9,10 @@ namespace AterStudio.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-public class FeatureController : ControllerBase
+public class FeatureController(FeatureManager feature, ProjectContext projectContext) : ControllerBase
 {
-    private readonly ProjectManager _manager;
-    private readonly EntityAdvance _advace;
-    private readonly FeatureManager _feature;
-    public FeatureController(ProjectManager manager, EntityAdvance advace, FeatureManager feature)
-    {
-        _manager = manager;
-        _advace = advace;
-        _feature = feature;
-    }
+    private readonly FeatureManager _feature = feature;
+    private readonly ProjectContext _projectContext = projectContext;
 
     /// <summary>
     /// 创建新解决方案
@@ -44,7 +36,7 @@ public class FeatureController : ControllerBase
     }
 
     /// <summary>
-    /// 创建模型
+    /// 创建模块
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>

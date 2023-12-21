@@ -1,5 +1,5 @@
 ﻿using Core.Entities;
-
+using Core.Infrastructure.Helper;
 using LiteDB;
 
 namespace Datastore;
@@ -10,12 +10,13 @@ public class DbContext : IDisposable
     public ILiteCollection<EntityInfo> EntityInfos { get; set; }
     public ILiteCollection<ApiDocInfo> ApiDocInfos { get; set; }
     public ILiteCollection<TemplateFile> TemplateFile { get; set; }
+    public ILiteCollection<ConfigData> Configs { get; set; }
 
     public DbContext()
     {
         string path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        var localDir = Path.Combine(path, "AterStudio");
-        var connectionString = $"Filename={Path.Combine(localDir, "droplet.db")};Upgrade=true;initialSize=5MB";
+        var localDir = AssemblyHelper.GetStudioPath();
+        var connectionString = $"Filename={Path.Combine(localDir, "dry.db")};Upgrade=true;initialSize=5MB";
 
         LiteDb ??= new LiteDatabase(connectionString);
         LiteDb.Mapper.EmptyStringToNull = false;
@@ -23,11 +24,11 @@ public class DbContext : IDisposable
         EntityInfos = LiteDb.GetCollection<EntityInfo>();
         ApiDocInfos = LiteDb.GetCollection<ApiDocInfo>();
         TemplateFile = LiteDb.GetCollection<TemplateFile>();
+        Configs = LiteDb.GetCollection<ConfigData>();
     }
-    ~DbContext() => Dispose();
 
     public void Dispose()
     {
-        ((IDisposable)LiteDb).Dispose();
+        LiteDb?.Dispose();
     }
 }

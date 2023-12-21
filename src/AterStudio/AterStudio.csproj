@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
     <SpaRoot>ClientApp\</SpaRoot>
@@ -9,7 +9,8 @@
     <SatelliteResourceLanguages>en,zh-cn</SatelliteResourceLanguages>
     <ImplicitUsings>enable</ImplicitUsings>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <Version>7.1.4.3</Version>
+    <Version>8.0.0-rc1</Version>
+    <Trimming>full</Trimming>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <NoWarn>1701;1702;1591</NoWarn>
@@ -20,14 +21,14 @@
     <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="7.0.5" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="8.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
   </ItemGroup>
   <!--生成swagger.json-->
   <Target Name="SwaggerPostBuildTarget" AfterTargets="Build" Condition="'$(Configuration)' == 'Debug'">
     <Exec Command="dotnet tool restore" UseUtf8Encoding="Always" />
-    <Exec Command="dotnet swagger tofile --output ./swagger.json .\bin\Debug\net7.0\AterStudio.dll v1" UseUtf8Encoding="Always" />
-    <Exec Command="droplet ng .\swagger.json -o .\ClientApp\src\app\share" UseUtf8Encoding="Always" />
+    <Exec Command="dotnet swagger tofile --output ./swagger.json .\bin\Debug\net8.0\AterStudio.dll v1" UseUtf8Encoding="Always" />
+    <Exec Command="dry ng .\swagger.json -o .\ClientApp\src\app\share" UseUtf8Encoding="Always" />
   </Target>
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
@@ -45,7 +46,7 @@
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build -- --configuration production" />
     <!-- Include the newly-built files in the publish output -->
     <ItemGroup>
-      <DistFiles Include="$(SpaRoot)dist\**; $(SpaRoot)dist-server\**" />
+      <DistFiles Include="$(SpaRoot)dist\browser\**" />
       <ResolvedFileToPublish Include="@(DistFiles-&gt;'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
         <RelativePath>wwwroot\%(RecursiveDir)%(FileName)%(Extension)</RelativePath>
         <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>

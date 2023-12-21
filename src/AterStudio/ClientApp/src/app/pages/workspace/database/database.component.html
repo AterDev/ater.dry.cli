@@ -1,4 +1,9 @@
-<div class="p-2" style="width:800px">
+<div class="d-flex justify-content-center mt-2" *ngIf="isLoding">
+  <mat-spinner mode="indeterminate">
+  </mat-spinner>
+</div>
+
+<div class="p-2" style="width:800px" *ngIf="!isLoding">
   <markdown [data]="content" *ngIf="content" lineNumbers [start]="1">
   </markdown>
 </div>

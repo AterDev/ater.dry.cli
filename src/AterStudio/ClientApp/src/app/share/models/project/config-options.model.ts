@@ -1,4 +1,5 @@
-﻿/**
+import { SolutionType } from '../enum/solution-type.model';
+/**
  * 项目配置
  */
 export interface ConfigOptions {
@@ -13,7 +14,11 @@ export interface ConfigOptions {
   dtoPath: string;
   entityPath: string;
   dbContextPath: string;
-  storePath: string;
+  /**
+   * 废弃属性
+   */
+  storePath?: string | null;
+  applicationPath: string;
   apiPath: string;
   /**
    * NameId/Id
@@ -23,17 +28,14 @@ export interface ConfigOptions {
   createdTimeName: string;
   updatedTimeName: string;
   /**
-   * 是否拆分
+   * 控制器是否拆分
    */
   isSplitController?: boolean | null;
   version: string;
   /**
-   * swagger地址
-   */
-  swaggerPath?: string | null;
-  /**
    * 前端路径
    */
   webAppPath?: string | null;
+  solutionType?: SolutionType | null;
 
 }

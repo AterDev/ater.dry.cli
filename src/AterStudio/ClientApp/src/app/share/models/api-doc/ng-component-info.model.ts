@@ -1,4 +1,4 @@
-﻿export interface NgComponentInfo {
+export interface NgComponentInfo {
   name: string;
   routing?: string | null;
   tsContent?: string | null;

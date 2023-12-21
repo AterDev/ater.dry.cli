@@ -17,7 +17,7 @@ public class DtoCodeGenerate : GenerateBase
     /// </summary>
     public string? AssemblyName { get; set; } = "Share";
     public string DtoPath { get; init; }
-    public List<PropertyChange> PropertyChanges = new List<PropertyChange>();
+    public List<PropertyChange> PropertyChanges = [];
     public readonly DbContext dbContext;
     public DtoCodeGenerate(string entityPath, string dtoPath, DbContext dbContext)
     {
@@ -30,7 +30,6 @@ public class DtoCodeGenerate : GenerateBase
 
         var entityHelper = new EntityParseHelper(entityPath);
         EntityInfo = entityHelper.GetEntity();
-        AssemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(DtoPath));
         KeyType = EntityInfo.KeyType switch
         {
             EntityKeyType.Int => "Int",
@@ -96,52 +95,6 @@ public class DtoCodeGenerate : GenerateBase
     }
 
     /// <summary>
-    /// 合并更新后的属性
-    /// </summary>
-    /// <param name="dtoPath">dto文件的完整路径</param>
-    /// <returns></returns>
-    public List<PropertyInfo> MergeProperties(string dtoPath)
-    {
-        if (!File.Exists(dtoPath))
-        {
-            Console.WriteLine("not found:" + dtoPath);
-            return EntityInfo.PropertyInfos;
-        }
-
-        var entityHelper = new EntityParseHelper(dtoPath);
-        var entityInfo = entityHelper.GetEntity();
-        var props = entityInfo.PropertyInfos;
-
-        //Console.WriteLine("before change:" + string.Join(",", props.Select(p => p.Name).ToArray()));
-
-        // 1 移除删除的内容
-        var deletePropNames = PropertyChanges.Where(c => c.Type == ChangeType.Delete)
-            .Select(c => c.Name).ToList();
-        props = props.Where(p => !deletePropNames.Contains(p.Name)).ToList();
-
-        // 2 要更新的属性
-        var updatePropNames = PropertyChanges.Where(c => c.Type != ChangeType.Delete)
-            .Select(c => c.Name).ToList();
-
-        var updateProps = EntityInfo.PropertyInfos.Where(p => updatePropNames.Contains(p.Name)).ToList();
-        updateProps.ForEach(p =>
-        {
-            var index = props.FindIndex(item => item.Name == p.Name);
-            if (index > -1)
-            {
-                props[index] = p;
-            }
-            else
-            {
-                props.Add(p);
-            }
-        });
-
-        //Console.WriteLine("after change:" + string.Join(",", props.Select(p => p.Name).ToArray()));
-        return props;
-    }
-
-    /// <summary>
     /// 注释内容替换
     /// </summary>
     /// <param name="comment"></param>
@@ -185,10 +138,12 @@ public class DtoCodeGenerate : GenerateBase
         };
 
         dto.Properties = dto.Properties?.Where(
-            (p => p.Name != "Content"
-                && p.Name != "IsDeleted"
-                && (p.MaxLength < 2000 || p.MaxLength == null)
-                && !(p.IsList && p.IsNavigation))
+            p => p.Name != "Content"
+                && p.Name != "UpdatedTime"
+                && p.Name != "CreatedTime"
+                && p.MaxLength < 1000
+                && !p.Name.EndsWith("Id") && p.Name != "Id"
+                && !(p.IsList && p.IsNavigation)
             )
             .ToList();
 
@@ -201,6 +156,7 @@ public class DtoCodeGenerate : GenerateBase
         {
             return default;
         }
+
         DtoInfo dto = new()
         {
             EntityNamespace = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
@@ -209,13 +165,15 @@ public class DtoCodeGenerate : GenerateBase
             Comment = FormatComment(EntityInfo.Comment, "列表元素"),
             Tag = EntityInfo.Name,
             Properties = EntityInfo.PropertyInfos?
-                .Where(p => p.Name != "IsDeleted")
+                .Where(p => p.Name is not "IsDeleted" and not "UpdatedTime")
                 .Where(p => !p.IsJsonIgnore)
                 .ToList()
         };
 
-        dto.Properties = dto.Properties?.Where(p => !p.IsList
-        && (p.MaxLength <= 1000 || p.MaxLength == null)
+        dto.Properties = dto.Properties?
+            .Where(p => !p.IsList
+                && p.MaxLength < 1000
+                && !p.Name.EndsWith("Id") && p.Name != "Id"
                 && !p.IsNavigation).ToList();
 
         return dto.ToDtoContent(AssemblyName, EntityInfo.Name);
@@ -238,7 +196,7 @@ public class DtoCodeGenerate : GenerateBase
             })
             .ToList();
 
-        string[] filterFields = new string[] { "Id", "CreatedTime", "UpdatedTime", "IsDeleted", "PageSize", "PageIndex" };
+        string[] filterFields = ["Id", "CreatedTime", "UpdatedTime", "IsDeleted", "PageSize", "PageIndex"];
 
         DtoInfo dto = new()
         {
@@ -254,12 +212,12 @@ public class DtoCodeGenerate : GenerateBase
                 .Where(p => (p.IsRequired && !p.IsNavigation)
                     || (!p.IsList
                         && !p.IsNavigation
-                        && !filterFields.Contains(p.Name)
-                     || p.IsEnum)
+                        && !filterFields.Contains(p.Name))
+                     || p.IsEnum
                     )
                 .Where(p => p.MaxLength is not (not null and >= 1000))
                 .ToList();
-        dto.Properties = properties.Copy() ?? new List<PropertyInfo>();
+        dto.Properties = properties.Copy() ?? [];
 
         // 筛选条件调整为可空
         foreach (var item in dto.Properties)
@@ -292,9 +250,7 @@ public class DtoCodeGenerate : GenerateBase
             .Select(s => new PropertyInfo()
             {
                 Name = s.NavigationName + (s.IsList ? "Ids" : "Id"),
-                Type = s.IsList
-                    ? $"List<{KeyType}>" + (s.IsRequired ? "" : "?")
-                    : KeyType,
+                Type = s.IsList ? $"List<{KeyType}>" + (s.IsRequired ? "" : "?") : KeyType,
                 IsRequired = s.IsRequired,
                 IsNullable = s.IsNullable,
                 DefaultValue = "",
@@ -315,7 +271,7 @@ public class DtoCodeGenerate : GenerateBase
                 && p.Name != "CreatedTime"
                 && p.Name != "UpdatedTime"
                 && p.Name != "IsDeleted")
-            .ToList() ?? new List<PropertyInfo>()
+            .ToList() ?? []
         };
 
         // 初次创建
@@ -376,15 +332,8 @@ public class DtoCodeGenerate : GenerateBase
                 && p.Name != "IsDeleted")
             .ToList();
 
-        dto.Properties = properties?.Copy() ?? new List<PropertyInfo>();
+        dto.Properties = properties?.Copy() ?? [];
 
-        foreach (PropertyInfo item in dto.Properties)
-        {
-            if (!item.IsRequired)
-            {
-                item.IsNullable = true;
-            }
-        }
         referenceProps?.ForEach(item =>
         {
             if (!dto.Properties.Any(p => p.Name.Equals(item.Name)))
@@ -395,107 +344,19 @@ public class DtoCodeGenerate : GenerateBase
 
         foreach (PropertyInfo item in dto.Properties)
         {
-            if (!item.IsRequired)
-            {
-                item.IsNullable = true;
-            }
+            item.IsNullable = true;
         }
         return dto.ToDtoContent(AssemblyName, EntityInfo.Name);
     }
 
     public string GetDtoUsings()
     {
-        return @$"global using System.ComponentModel.DataAnnotations;
-global using {AssemblyName}.Models;
-global using {AssemblyName}.Entities;
-global using {EntityInfo!.AssemblyName}.Models;";
-    }
-    public string GetFilterBase()
-    {
-        string content = GetTplContent("FilterBase.tpl");
-        if (content.NotNull())
-        {
-            content = content.Replace(TplConst.NAMESPACE, AssemblyName);
-        }
-        return content;
-    }
-    public string GetEntityBase()
-    {
-        string content = GetTplContent("EntityBase.tpl");
-        if (content.NotNull())
-        {
-            content = content.Replace(TplConst.NAMESPACE, AssemblyName)
-                .Replace(TplConst.ID_TYPE, Config.IdType)
-                .Replace(TplConst.CREATEDTIME_NAME, Config.CreatedTimeName);
-        }
-        return content;
-    }
-    public string GetBatchUpdate()
-    {
-        string content = GetTplContent("BatchUpdate.tpl");
-        if (content.NotNull())
-        {
-            content = content.Replace(TplConst.NAMESPACE, AssemblyName);
-        }
-        return content;
-    }
-    public string GetPageList()
-    {
-        string content = GetTplContent("PageList.tpl");
-        if (content.NotNull())
-        {
-            content = content.Replace(TplConst.NAMESPACE, AssemblyName);
-        }
-        return content;
-    }
-
-    /// <summary>
-    /// 生成AutoMapperProfile
-    /// </summary>
-    /// <param name="entityName"></param>
-    protected static void GenerateAutoMapperProfile(string entityName)
-    {
-        string code =
-    @$"            CreateMap<{entityName}AddDto, {entityName}>();
-            CreateMap<{entityName}UpdateDto, {entityName}>()
-                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => NotNull(srcMember)));;
-            CreateMap<{entityName}, {entityName}Dto>();
-            CreateMap<{entityName}, {entityName}ItemDto>();
-            CreateMap<{entityName}, {entityName}DetailDto>();        
-";
-        // 先判断是否存在配置文件
-        string path = Path.Combine("", "AutoMapper");
-        if (!Directory.Exists(path))
-        {
-            _ = Directory.CreateDirectory(path);
-        }
-        const string AppendSign = "// {AppendMappers}";
-        const string AlreadySign = "// {AlreadyMapedEntity}";
-        string mapperFilePath = Path.Combine(path, "AutoGenerateProfile.cs");
-        string content;
-        if (File.Exists(mapperFilePath))
-        {
-            // 如果文件存在但当前entity没有生成mapper，则替换该文件
-            content = File.ReadAllText(mapperFilePath);
-            if (!content.Contains($"// {entityName};"))
-            {
-                Console.WriteLine("添加Mapper：" + entityName);
-                content = content.Replace(AlreadySign, $"// {entityName};\r\n" + AlreadySign);
-                content = content.Replace(AppendSign, code + AppendSign);
-            }
-            else
-            {
-                Console.WriteLine("已存在:" + entityName);
-            }
-        }
-        else
-        {
-            // 读取模板文件
-            content = GetTplContent("AutoMapper.tpl");
-            content = content.Replace(AppendSign, code + AppendSign);
-        }
-        // 写入文件
-        File.WriteAllText(mapperFilePath, content, Encoding.UTF8);
-        Console.WriteLine("AutoMapper 配置完成");
+        return $"""
+        global using System;
+        global using System.ComponentModel.DataAnnotations;
+        global using {AssemblyName}.Models;
+        global using Ater.Web.Core.Models;
+        global using Entity;
+        """;
     }
 }

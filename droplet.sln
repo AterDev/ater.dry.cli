@@ -7,8 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommandLine", "src\CommandL
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deploy", "deploy", "{749452B4-5415-4ABE-A691-70718DDED23F}"
 	ProjectSection(SolutionItems) = preProject
-		deploy\PackModules.ps1 = deploy\PackModules.ps1
+		deploy\PackTemplate.ps1 = deploy\PackTemplate.ps1
 		deploy\PublishToLocal.ps1 = deploy\PublishToLocal.ps1
+		deploy\SetVersion.ps1 = deploy\SetVersion.ps1
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeGenerator", "src\CodeGenerator\CodeGenerator.csproj", "{4D08D738-532E-449D-9A82-D4DAFF850A70}"
@@ -28,6 +29,11 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Command.Share", "src\Command.Share\Command.Share.csproj", "{23B17DCD-E90F-49E2-90B3-88E3076B74C7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Datastore", "src\Datastore\Datastore.csproj", "{9BCEBC46-BB98-4759-9ADA-FA748E6139B5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CE42BC5A-A2DF-4330-87BF-CD006D85063E}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

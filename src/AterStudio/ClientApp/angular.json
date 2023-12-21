@@ -15,13 +15,17 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser-esbuild",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "progress": false,
             "outputPath": "dist",
             "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
+            "browser": "src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
+            "optimization": {
+              "fonts": false
+            },
             "tsConfig": "tsconfig.app.json",
             "allowedCommonJsDependencies": [],
             "assets": [
@@ -33,8 +37,8 @@
               }
             ],
             "styles": [
-              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
-              "src/styles.css"
+              "src/styles.css",
+              "src/theme.scss"
             ],
             "scripts": [
               "./node_modules/marked/marked.min.js",
@@ -65,9 +69,7 @@
               "outputHashing": "all"
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -77,12 +79,15 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "forceEsbuild": true
+          },
           "configurations": {
             "production": {
-              "browserTarget": "AterStudio:build:production"
+              "buildTarget": "AterStudio:build:production"
             },
             "development": {
-              "browserTarget": "AterStudio:build:development",
+              "buildTarget": "AterStudio:build:development",
               "proxyConfig": "proxy.conf.json"
             }
           },
@@ -91,7 +96,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "AterStudio:build"
+            "buildTarget": "AterStudio:build"
           }
         },
         "test": {
@@ -140,7 +145,6 @@
       }
     }
   },
-  "defaultProject": "AterStudio",
   "cli": {
     "analytics": false
   }

@@ -1,4 +1,5 @@
-﻿using AterStudio.Manager;
+﻿using System.Text;
+using AterStudio.Manager;
 using AterStudio.Models;
 using Core.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -10,15 +11,10 @@ namespace AterStudio.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-public class ApiDocController : ControllerBase
+public class ApiDocController(SwaggerManager manager, ProjectManager project) : ControllerBase
 {
-    private readonly SwaggerManager _manager;
-    private readonly ProjectManager _project;
-    public ApiDocController(SwaggerManager manager, ProjectManager project)
-    {
-        _manager = manager;
-        _project = project;
-    }
+    private readonly SwaggerManager _manager = manager;
+    private readonly ProjectManager _project = project;
 
     /// <summary>
     /// 获取项目文档
@@ -26,9 +22,9 @@ public class ApiDocController : ControllerBase
     /// <param name="id">项目id</param>
     /// <returns></returns>
     [HttpGet("all/{id}")]
-    public ActionResult<List<ApiDocInfo>> List([FromRoute] Guid id)
+    public async Task<ActionResult<List<ApiDocInfo>>> ListAsync([FromRoute] Guid id)
     {
-        var project = _project.GetProject(id);
+        var project = await _project.GetProjectAsync(id);
         return project == null
             ? NotFound("不存在的项目")
             : _manager.FindAll(project);
@@ -48,6 +44,20 @@ public class ApiDocController : ControllerBase
             return Problem(_manager.ErrorMsg);
         }
         return res;
+    }
+
+    /// <summary>
+    /// 导出markdown文档
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpGet("export/{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FileContentResult))]
+    public async Task<ActionResult> ExportAsync([FromRoute] Guid id)
+    {
+        var content = await _manager.ExportDocAsync(id);
+        return File(Encoding.UTF8.GetBytes(content), "application/octet-stream", "api-doc.md");
+
     }
 
 

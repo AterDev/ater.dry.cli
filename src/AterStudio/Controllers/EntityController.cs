@@ -12,36 +12,61 @@ namespace AterStudio.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-public class EntityController : ControllerBase
+public class EntityController(EntityManager manager) : ControllerBase
 {
-    private readonly EntityManager _manager;
-    public EntityController(EntityManager manager)
-    {
-        _manager = manager;
-    }
+    private readonly EntityManager _manager = manager;
 
     [HttpGet("{id}")]
-    public ActionResult<List<EntityFile>> List([FromRoute] Guid id, string? name)
+    public ActionResult<List<EntityFile>> List([FromRoute] Guid id, string? serviceName)
     {
         return !_manager.IsExist(id)
             ? NotFound("不存在的项目")
-            : _manager.GetEntityFiles(name);
+            : _manager.GetEntityFiles(serviceName);
     }
 
     /// <summary>s
     /// 获取dtos
     /// </summary>
-    /// <param name="entityName"></param>
+    /// <param name="entityFilePath"></param>
     /// <returns></returns>
     [HttpGet("dtos")]
-    public List<EntityFile> GetDtos(string entityName)
+    public ActionResult<List<EntityFile>> GetDtos(string entityFilePath)
     {
-        return _manager.GetDtos(entityName);
+        return !System.IO.File.Exists(entityFilePath) ? NotFound("不存在的文件") : _manager.GetDtos(entityFilePath);
     }
 
     /// <summary>
-    /// 获取文件内容
-    /// entity/manager
+    /// 创建DTO
+    /// </summary>
+    /// <param name="entityFilePath"></param>
+    /// <param name="name"></param>
+    /// <param name="summary"></param>
+    /// <returns></returns>
+    [HttpPost("dto")]
+    public async Task<ActionResult<string>> CreateDtoAsync(string entityFilePath, string name, string summary)
+    {
+        if (!System.IO.File.Exists(entityFilePath))
+        {
+            return NotFound("不存在的文件");
+        }
+        var res = await _manager.CreateDtoAsync(entityFilePath, name, summary);
+        return res == null ? BadRequest("创建失败") : res;
+    }
+
+    /// <summary>
+    /// 清理解决方案
+    /// </summary>
+    /// <returns></returns>
+    [HttpDelete]
+    public string CleanSolution()
+    {
+        var res = _manager.CleanSolution(out var errorMsg);
+        return res ? "清理成功" : errorMsg;
+
+    }
+
+    /// <summary>
+    /// 获取文件内容 entity/manager
     /// </summary>
     /// <param name="entityName"></param>
     /// <param name="isManager">是否为manager</param>

@@ -1,19 +1,15 @@
-﻿using AterStudio.Models;
+﻿using System.Text;
+using AterStudio.Models;
 using Core.Entities;
 using Core.Infrastructure.Helper;
 using Datastore;
 using Microsoft.OpenApi.Readers;
 
 namespace AterStudio.Manager;
-public class SwaggerManager
+public class SwaggerManager(DbContext dbContext)
 {
-    private readonly DbContext _dbContext;
+    private readonly DbContext _dbContext = dbContext;
     public string? ErrorMsg { get; set; }
-
-    public SwaggerManager(DbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
 
     public ApiDocInfo? Find(Guid id)
     {
@@ -43,7 +39,7 @@ public class SwaggerManager
             if (path.StartsWith("http://") || path.StartsWith("https://"))
             {
                 using HttpClient http = new();
-                http.Timeout = TimeSpan.FromSeconds(5);
+                http.Timeout = TimeSpan.FromSeconds(60);
                 openApiContent = await http.GetStringAsync(path);
             }
             else
@@ -69,6 +65,84 @@ public class SwaggerManager
             ErrorMsg = $"{path} 请求失败！" + ex.Message;
             return default;
         }
+    }
+    public async Task<string> ExportDocAsync(Guid id)
+    {
+        var apiDocInfo = _dbContext.ApiDocInfos.FindById(id);
+        var path = apiDocInfo.Path;
+        string openApiContent = "";
+        if (path.StartsWith("http://") || path.StartsWith("https://"))
+        {
+            using HttpClient http = new();
+            http.Timeout = TimeSpan.FromSeconds(60);
+            openApiContent = await http.GetStringAsync(path);
+        }
+        else
+        {
+            openApiContent = File.ReadAllText(path);
+        }
+        openApiContent = openApiContent
+            .Replace("«", "")
+            .Replace("»", "");
+
+        var apiDocument = new OpenApiStringReader().Read(openApiContent, out _);
+        var helper = new OpenApiHelper(apiDocument);
+        var groups = helper.RestApiGroups;
+
+        var sb = new StringBuilder();
+        foreach (var group in groups)
+        {
+            sb.AppendLine("## " + group.Description);
+            sb.AppendLine();
+            foreach (var api in group.ApiInfos)
+            {
+                sb.AppendLine($"### {api.Summary}");
+                sb.AppendLine();
+                sb.AppendLine("|||");
+                sb.AppendLine("|---------|---------|");
+                sb.AppendLine($"|接口说明|{api.Summary}|");
+                sb.AppendLine($"|接口地址|{api.Router}|");
+                sb.AppendLine($"|接口方法|{api.OperationType.ToString()}|");
+                sb.AppendLine();
+
+                sb.AppendLine("#### 请求内容");
+                sb.AppendLine();
+                var requestInfo = api.RequestInfo;
+                if (requestInfo != null)
+                {
+
+                    sb.AppendLine("|名称|类型|是否必须|说明|");
+                    sb.AppendLine("|---------|---------|---------|---------|");
+                    foreach (var property in requestInfo.PropertyInfos)
+                    {
+                        sb.AppendLine($"|{property.Name}|{property.Type}|{(property.IsRequired ? "是" : "否")}|{property.CommentSummary?.Trim()}|");
+                    }
+                    sb.AppendLine();
+                }
+                else
+                {
+                    sb.AppendLine("无");
+                }
+                sb.AppendLine();
+                sb.AppendLine("#### 返回内容");
+                var responseInfo = api.ResponseInfo;
+                if (responseInfo != null)
+                {
+                    sb.AppendLine("|名称|类型|说明|");
+                    sb.AppendLine("|---------|---------|---------|");
+                    foreach (var property in responseInfo.PropertyInfos)
+                    {
+                        sb.AppendLine($"|{property.Name}|{property.Type}|{property.CommentSummary?.Trim()}|");
+                    }
+                }
+                else
+                {
+                    sb.AppendLine("无");
+                }
+                sb.AppendLine();
+            }
+        }
+        return sb.ToString();
     }
 
     /// <summary>
@@ -118,16 +192,11 @@ public class SwaggerManager
     /// <returns></returns>
     public NgComponentInfo CreateUIComponent(CreateUIComponentDto dto)
     {
-        switch (dto.ComponentType)
+        return dto.ComponentType switch
         {
-            case ComponentType.Form:
-                return NgPageGenerate.GenFormComponent(dto.ModelInfo, dto.ServiceName);
-
-            case ComponentType.Table:
-                return NgPageGenerate.GenTableComponent(dto.ModelInfo, dto.ServiceName);
-            default:
-                return default!;
-        }
-
+            ComponentType.Form => NgPageGenerate.GenFormComponent(dto.ModelInfo, dto.ServiceName),
+            ComponentType.Table => NgPageGenerate.GenTableComponent(dto.ModelInfo, dto.ServiceName),
+            _ => default!,
+        };
     }
 }

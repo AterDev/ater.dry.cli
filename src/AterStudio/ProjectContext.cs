@@ -3,6 +3,7 @@
 using Core;
 using Core.Entities;
 using Core.Infrastructure;
+using Core.Infrastructure.Helper;
 
 using Datastore;
 
@@ -20,7 +21,8 @@ public class ProjectContext
     public string? ApplicationPath { get; set; }
     public string? EntityPath { get; set; }
     public string? ApiPath { get; set; }
-
+    public string? Version { get; set; }
+    public string? EntityFrmeworkPath { get; set; }
 
     public ProjectContext(IHttpContextAccessor httpContextAccessor, DbContext context)
     {
@@ -41,10 +43,12 @@ public class ProjectContext
                         Config.SolutionPath = SolutionPath;
                     }
 
-                    SharePath = Path.Combine(SolutionPath, Config.DtoPath);
-                    ApplicationPath = Path.Combine(SolutionPath, Config.StorePath);
+                    SharePath = Path.Combine(SolutionPath, Config.SharePath);
+                    ApplicationPath = Path.Combine(SolutionPath, Config.ApplicationPath);
                     EntityPath = Path.Combine(SolutionPath, Config.EntityPath);
                     ApiPath = Path.Combine(SolutionPath, Config.ApiPath);
+                    EntityFrmeworkPath = Path.Combine(SolutionPath, Config.EntityFrameworkPath);
+                    Version = AssemblyHelper.GetSolutionVersionAsync(SolutionPath).Result;
                 }
             }
         }

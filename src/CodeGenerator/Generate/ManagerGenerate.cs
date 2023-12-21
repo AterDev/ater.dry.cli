@@ -10,32 +10,41 @@ public class ManagerGenerate : GenerateBase
     /// <summary>
     /// Entity 文件路径
     /// </summary>
-    public string EntityPath { get; set; }
-    /// <summary>
-    /// DataStroe所在项目目录路径
-    /// </summary>
-    public string StorePath { get; set; }
+    public string EntityFilePath { get; set; }
+
+    public string ApplicationPath { get; set; }
     /// <summary>
     /// DTO 所在项目目录路径
     /// </summary>
-    public string SharePath { get; set; }
-    public string? ContextName { get; set; }
+    public string DtoPath { get; set; }
     /// <summary>
     /// DataStore 项目的命名空间
     /// </summary>
     public string? ShareNamespace { get; set; }
-    public string? ServiceNamespace { get; set; }
-    public readonly EntityInfo EntityInfo;
-    public ManagerGenerate(string entityPath, string dtoPath, string servicePath, string? contextName = null)
+    public string? ApplicationNamespace { get; set; }
+    public readonly EntityInfo? EntityInfo;
+    public ManagerGenerate(string entityFilePath, string dtoPath, string applicationPath)
     {
-        EntityPath = entityPath;
-        SharePath = dtoPath;
-        StorePath = servicePath;
-        ContextName = contextName;
-        ShareNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(SharePath));
-        ServiceNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(StorePath));
-        EntityParseHelper entityHelper = new(entityPath);
-        EntityInfo = entityHelper.GetEntity();
+        EntityFilePath = entityFilePath;
+        DtoPath = dtoPath;
+        ApplicationPath = applicationPath;
+
+        if (Config.IsMicroservice)
+        {
+            ShareNamespace = Config.ServiceName + ".Definition.Share";
+            ApplicationNamespace = Config.ServiceName + ".Application";
+        }
+        else
+        {
+            ShareNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(DtoPath));
+            ApplicationNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(ApplicationPath));
+        }
+
+        if (File.Exists(entityFilePath))
+        {
+            EntityParseHelper entityHelper = new(entityFilePath);
+            EntityInfo = entityHelper.GetEntity();
+        }
     }
 
     /// <summary>
@@ -46,7 +55,7 @@ public class ManagerGenerate : GenerateBase
     public string GetInterfaceFile(string tplName)
     {
         string content = GetTplContent($"Interface.{tplName}.tpl");
-        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace);
+        content = content.Replace(TplConst.NAMESPACE, ApplicationNamespace);
         return content;
     }
 
@@ -58,7 +67,7 @@ public class ManagerGenerate : GenerateBase
     public string GetImplementFile(string tplName)
     {
         string content = GetTplContent($"Implement.{tplName}.tpl");
-        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace);
+        content = content.Replace(TplConst.NAMESPACE, ApplicationNamespace);
         return content;
     }
 
@@ -70,11 +79,11 @@ public class ManagerGenerate : GenerateBase
     public string GetManagerTestContent()
     {
         string tplContent = GetTplContent($"Implement.ManagerTest.tpl");
-        var entityHelper = new EntityParseHelper(EntityPath);
+        var entityHelper = new EntityParseHelper(EntityFilePath);
         entityHelper.Parse();
         tplContent = tplContent.Replace(TplConst.ENTITY_NAMESPACE, entityHelper.NamespaceName)
-            .Replace(TplConst.NAMESPACE, ServiceNamespace);
-        string entityName = Path.GetFileNameWithoutExtension(EntityPath);
+            .Replace(TplConst.NAMESPACE, ApplicationNamespace);
+        string entityName = Path.GetFileNameWithoutExtension(EntityFilePath);
         tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName);
 
         var addContent = GenManagerAddTest();
@@ -87,12 +96,12 @@ public class ManagerGenerate : GenerateBase
     private string GenManagerAddTest()
     {
         // 解析add dto
-        var addDtoPath = Path.Combine(SharePath, "Models", EntityInfo.Name + "Dtos", EntityInfo.Name + "AddDto.cs");
+        var addDtoPath = Path.Combine(DtoPath, "Models", EntityInfo?.Name + "Dtos", EntityInfo?.Name + "AddDto.cs");
         var entityHelper = new EntityParseHelper(addDtoPath);
         entityHelper.Parse();
         // 构造内容
         string content = $$"""
-                    var dto = new {{EntityInfo.Name}}AddDto()
+                    var dto = new {{EntityInfo?.Name}}AddDto()
                     {
 
             """;
@@ -103,7 +112,7 @@ public class ManagerGenerate : GenerateBase
         var assertContent = "";
         requiredProps?.ForEach(p =>
         {
-            var row = (p.Type) switch
+            var row = p.Type switch
             {
                 "Guid" => $"{p.Name} = new Guid(\"\"),",
                 "string" => $"{p.Name} = \"{p.Name}\" + RandomString,",
@@ -127,12 +136,12 @@ public class ManagerGenerate : GenerateBase
     private string GenManagerUpdateTest()
     {
         // 解析add dto
-        var addDtoPath = Path.Combine(SharePath, "Models", EntityInfo.Name + "Dtos", EntityInfo.Name + "AddDto.cs");
+        var addDtoPath = Path.Combine(DtoPath, "Models", EntityInfo?.Name + "Dtos", EntityInfo?.Name + "AddDto.cs");
         var entityHelper = new EntityParseHelper(addDtoPath);
         entityHelper.Parse();
         // 构造内容
         string content = $$"""
-                    var dto = new {{EntityInfo.Name}}UpdateDto()
+                    var dto = new {{EntityInfo?.Name}}UpdateDto()
                     {
 
             """;
@@ -143,7 +152,7 @@ public class ManagerGenerate : GenerateBase
         var assertContent = "";
         requiredProps?.ForEach(p =>
         {
-            var row = (p.Type) switch
+            var row = p.Type switch
             {
                 "Guid" => $"{p.Name} = new Guid(\"\"),",
                 "string" => $"{p.Name} = \"Update{p.Name}\" + RandomString,",
@@ -171,7 +180,7 @@ public class ManagerGenerate : GenerateBase
     public string GetUserContextClass()
     {
         string content = GetTplContent("Implement.UserContext.tpl");
-        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace);
+        content = content.Replace(TplConst.NAMESPACE, ApplicationNamespace);
         return content;
     }
 
@@ -181,35 +190,21 @@ public class ManagerGenerate : GenerateBase
     /// <returns></returns>
     public List<string> GetGlobalUsings()
     {
-        FileInfo fileInfo = new(EntityPath);
+        FileInfo fileInfo = new(EntityFilePath);
         FileInfo? projectFile = AssemblyHelper.FindProjectFile(fileInfo.Directory!, fileInfo.Directory!.Root);
         string? entityProjectNamespace = AssemblyHelper.GetNamespaceName(projectFile!.Directory!);
 
         CompilationHelper compilationHelper = new(projectFile.Directory!.FullName);
-        string content = File.ReadAllText(fileInfo.FullName, Encoding.UTF8);
+        string content = File.ReadAllText(fileInfo.FullName, new UTF8Encoding(false));
         compilationHelper.AddSyntaxTree(content);
         string? entityNamespace = compilationHelper.GetNamesapce();
 
-        return new List<string>
-        {
-            "global using System;",
-            "global using System.Text.Json;",
-            "global using EntityFramework;",
-            "global using Microsoft.EntityFrameworkCore;",
-            "global using Microsoft.Extensions.Logging;",
-            $"global using {entityProjectNamespace}.Utils;",
-            $"global using {entityProjectNamespace}.Entities;",
-            $"global using {entityProjectNamespace}.Models;",
+        return
+        [
+            $"global using {entityProjectNamespace};",
             $"global using {entityNamespace};",
-            $"global using {ShareNamespace}.Models;",
-            $"global using {ServiceNamespace}.Interface;",
-            $"global using {ServiceNamespace}.{Const.QUERY_STORE};",
-            $"global using {ServiceNamespace}.{Const.COMMAND_STORE};",
-            $"global using {ServiceNamespace}.Implement;",
-            $"global using {ServiceNamespace}.Manager;",
-            $"global using {ServiceNamespace}.IManager;",
-            "global using Microsoft.Extensions.DependencyInjection;",
-        };
+            ""
+    ];
     }
 
     /// <summary>
@@ -224,10 +219,11 @@ public class ManagerGenerate : GenerateBase
             throw new ArgumentException("不允许的参数");
         }
         string contextName = queryOrCommand + "DbContext";
-        string entityName = Path.GetFileNameWithoutExtension(EntityPath);
+        string entityName = Path.GetFileNameWithoutExtension(EntityFilePath);
         // 生成基础仓储实现类，替换模板变量并写入文件
         string tplContent = GetTplContent($"Implement.{queryOrCommand}StoreContent.tpl");
-        tplContent = tplContent.Replace(TplConst.NAMESPACE, ServiceNamespace);
+        var entityFrameworkNsp = Config.EntityFrameworkPath.Split(Path.DirectorySeparatorChar).Last();
+        tplContent = tplContent.Replace(TplConst.NAMESPACE, entityFrameworkNsp);
         //tplContent = tplContent.Replace(TplConst.SHARE_NAMESPACE, ShareNamespace);
         tplContent = tplContent.Replace(TplConst.DBCONTEXT_NAME, contextName);
         tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName);
@@ -235,96 +231,66 @@ public class ManagerGenerate : GenerateBase
     }
 
     /// <summary>
-    /// Manager接口内容
-    /// </summary>
-    /// <returns></returns>
-    public string GetIManagerContent()
-    {
-        string entityName = Path.GetFileNameWithoutExtension(EntityPath);
-        string tplContent = GetTplContent($"Implement.IManager.tpl");
-        tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName)
-            .Replace(TplConst.ID_TYPE, Config.IdType)
-            .Replace(TplConst.NAMESPACE, ServiceNamespace);
-        return tplContent;
-    }
-
-    /// <summary>
     /// Manager默认代码内容
     /// </summary>
     /// <returns></returns>
-    public string GetManagerContent()
+    public string GetManagerContent(string? nsp = null)
     {
-        string entityName = Path.GetFileNameWithoutExtension(EntityPath);
+        nsp ??= ApplicationNamespace;
+        string entityName = Path.GetFileNameWithoutExtension(EntityFilePath);
         string tplContent = GetTplContent($"Implement.Manager.tpl");
-
-        // 依赖注入
-        string additionManagerProps = "";
-        string additionManagerDI = "";
-        string additionManagerInit = "";
-
-        var navigations = EntityInfo.PropertyInfos.Where(p => p.IsNavigation && p.HasMany == true)
-            .ToList();
-        navigations?.ForEach(navigation =>
-        {
-            var name = navigation.NavigationName ?? navigation.Type;
-
-            additionManagerProps += $"    private readonly I{name}Manager _{name.ToCamelCase()}Manager;" + Environment.NewLine;
-
-            additionManagerDI += $",{Environment.NewLine}        I{name}Manager {name.ToCamelCase()}Manager";
-            //_catalogManager = catalogManager;
-            additionManagerInit += $"        _{name.ToCamelCase()}Manager = {name.ToCamelCase()}Manager;" + Environment.NewLine;
-        });
-        tplContent = tplContent.Replace("${AdditionManagersProps}", additionManagerProps)
-            .Replace("${AdditionManagersDI}", additionManagerDI)
-            .Replace("${AdditionManagersInit}", additionManagerInit);
-
 
         // 方法内容
         tplContent = tplContent.Replace("${AddActionBlock}", GetAddMethodContent())
             .Replace("${UpdateActionBlock}", GetUpdateMethodContent())
             .Replace("${FilterActionBlock}", GetFilterMethodContent());
 
+
         tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName)
             .Replace(TplConst.ID_TYPE, Config.IdType)
-            .Replace(TplConst.COMMENT, EntityInfo.Comment)
-            .Replace(TplConst.NAMESPACE, ServiceNamespace);
+            .Replace(TplConst.COMMENT, EntityInfo?.Comment)
+            .Replace(TplConst.SHARE_NAMESPACE, ShareNamespace)
+            .Replace(TplConst.NAMESPACE, nsp);
         return tplContent;
     }
 
     public string GetAddMethodContent()
     {
-        string entityName = EntityInfo.Name;
+        string entityName = EntityInfo?.Name ?? "";
         string content = $$"""
                     var entity = dto.MapTo<{{entityName}}AddDto, {{entityName}}>();
 
             """;
         // 包含的关联内容
-        var navigations = EntityInfo.PropertyInfos.Where(p => p.IsNavigation && p.HasMany == true)
+        var navigations = EntityInfo?.PropertyInfos.Where(p => p.IsNavigation && p.HasMany == true)
           .ToList();
         navigations?.ForEach(nav =>
         {
             var name = nav.NavigationName ?? nav.Type;
-            var manager = "_" + name.ToCamelCase() + "Manager";
             var variable = nav.Name.ToCamelCase();
             content += $$"""
-                    if (dto.{{name}}Ids != null && dto.{{name}}Ids.Any())
+                    /*
+                    if (dto.{{name}}Ids != null && dto.{{name}}Ids.Count > 0)
                     {
-                        var {{variable}} = await {{manager}}.Command.Db.Where(t => dto.{{name}}Ids.Contains(t.Id)).ToListAsync();
+                        var {{variable}} = await CommandContext.{{nav.Name}}()
+                            .Where(t => dto.{{name}}Ids.Contains(t.Id))
+                            .ToListAsync();
                         if ({{variable}} != null)
                         {
                             entity.{{nav.Name}} = {{variable}};
                         }
                     }
+                    */
             """;
         });
         // 所属的关联内容
-        var requiredNavigations = EntityInfo.GetRequiredNavigation();
+        var requiredNavigations = EntityInfo?.GetRequiredNavigation();
         requiredNavigations?.ForEach(nav =>
         {
             var name = nav.NavigationName ?? nav.Type;
             var manager = "_" + name.ToCamelCase() + "Manager";
             var idName = nav.Name + "Id";
-            if (name != "User" && name != "SystemUser")
+            if (name is not "User" and not "SystemUser")
             {
                 content += $$"""
                         Command.Db.Entry(entity).Property("{{idName}}").CurrentValue = dto.{{name}}Id;
@@ -335,8 +301,8 @@ public class ManagerGenerate : GenerateBase
             else
             {
                 content += $$"""
-                        Command.Db.Entry(entity).Property("{{idName}}").CurrentValue = _userContext.UserId!.Value;
-                        // or entity.{{idName}} = _userContext.UserId!.Value;
+                        Command.Db.Entry(entity).Property("{{idName}}").CurrentValue = _userContext.UserId;
+                        // or entity.{{idName}} = _userContext.UserId;
 
                 """;
             }
@@ -351,22 +317,26 @@ public class ManagerGenerate : GenerateBase
     {
         string content = "";
         // 包含的关联内容
-        var navigations = EntityInfo.PropertyInfos.Where(p => p.IsNavigation && p.HasMany == true)
+        var navigations = EntityInfo?.PropertyInfos.Where(p => p.IsNavigation && p.HasMany == true)
           .ToList();
         navigations?.ForEach(nav =>
         {
             var name = nav.NavigationName ?? nav.Type;
-            var manager = "_" + name.ToCamelCase() + "Manager";
             var variable = nav.Name.ToCamelCase();
             content += $$"""
-                    if (dto.{{name}}Ids != null && dto.{{name}}Ids.Any())
+                    /*
+                    if (dto.{{name}}Ids != null && dto.{{name}}Ids.Count > 0)
                     {
-                        var {{variable}} = await {{manager}}.Command.Db.Where(t => dto.{{name}}Ids.Contains(t.Id)).ToListAsync();
+                        var {{variable}} = await CommandContext.{{nav.Name}}()
+                            .Where(t => dto.{{name}}Ids.Contains(t.Id))
+                            .ToListAsync();
                         if ({{variable}} != null)
                         {
                             entity.{{nav.Name}} = {{variable}};
                         }
                     }
+                    */
+
             """;
         });
         content += "return await base.UpdateAsync(entity, dto);".Indent(2);
@@ -375,16 +345,16 @@ public class ManagerGenerate : GenerateBase
     public string GetFilterMethodContent()
     {
         string content = "";
-        string entityName = EntityInfo.Name;
-        var props = EntityInfo.PropertyInfos.Where(p => !p.IsList)
-            .Where(p => p.IsRequired && !p.IsNullable
+        string entityName = EntityInfo?.Name ?? "";
+        var props = EntityInfo?.PropertyInfos.Where(p => !p.IsList)
+            .Where(p => (p.IsRequired && !p.IsNullable)
               || p.IsEnum
-              || p.Type.StartsWith("bool") && p.Name != "IsDeleted")
+              || (p.Type.StartsWith("bool") && p.Name != "IsDeleted"))
             .Where(p => !p.Name.EndsWith("Id"))
             .Where(p => p.MaxLength is not (not null and >= 200))
             .ToList();
 
-        if (props.Any())
+        if (props != null && props.Count != 0)
         {
             content += """
                     Queryable = Queryable
@@ -394,7 +364,7 @@ public class ManagerGenerate : GenerateBase
         var last = props?.LastOrDefault();
         props?.ForEach(p =>
         {
-            bool isLast = (p == last);
+            bool isLast = p == last;
             var name = p.Name;
             if (p.IsNavigation)
             {
@@ -418,36 +388,6 @@ public class ManagerGenerate : GenerateBase
         return content;
     }
 
-    /// <summary>
-    /// 服务注册
-    /// </summary>
-    /// <param name="dataStores">all store names</param>
-    /// <returns></returns>
-    public string GetStoreServiceAfterBuild()
-    {
-        string storeServiceDIContent = "";
-        // 获取所有继承了 DataStoreBase 的类
-        string? assemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(StorePath));
-        CompilationHelper cpl = new(StorePath, assemblyName);
-        IEnumerable<INamedTypeSymbol> classes = cpl.AllClass;
-        if (classes != null)
-        {
-            IEnumerable<INamedTypeSymbol> allDataStores = CompilationHelper.GetClassNameByBaseType(classes, "DataStoreBase");
-            if (allDataStores.Any())
-            {
-                allDataStores.ToList().ForEach(dataStore =>
-                {
-                    string row = $"        services.AddScoped(typeof({dataStore.Name}));";
-                    storeServiceDIContent += row + Environment.NewLine;
-                });
-            }
-        }
-        // 构建服务
-        string content = GetTplContent("Implement.DataStoreExtensioins.tpl");
-        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace);
-        content = content.Replace(TplConst.SERVICE_STORES, storeServiceDIContent);
-        return content;
-    }
 
     /// <summary>
     /// get user DbContext name
@@ -457,8 +397,8 @@ public class ManagerGenerate : GenerateBase
     public string GetContextName(string? contextName = null)
     {
         string name = "ContextBase";
-        string? assemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(StorePath));
-        CompilationHelper cpl = new(StorePath, assemblyName);
+        string? assemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(ApplicationPath));
+        CompilationHelper cpl = new(ApplicationPath, assemblyName);
         IEnumerable<INamedTypeSymbol> classes = cpl.AllClass;
         if (classes != null)
         {
@@ -469,7 +409,6 @@ public class ManagerGenerate : GenerateBase
                 allDbContexts = CompilationHelper.GetClassNameByBaseType(classes, "DbContext");
             }
 
-            //Console.WriteLine("find dbcontext:" + allDbContexts.FirstOrDefault().Name);
             if (allDbContexts.Any())
             {
                 if (string.IsNullOrEmpty(contextName))
@@ -488,79 +427,68 @@ public class ManagerGenerate : GenerateBase
     }
 
     /// <summary>
-    /// 添加依赖注入扩展方法
+    /// 生成注入服务
     /// </summary>
+    /// <param name="solutionPath"></param>
+    /// <param name="nspName"></param>
     /// <returns></returns>
-    public string GetExtensions()
+    public static string GetManagerDIExtensions(string managerPath, string nspName)
     {
-        DirectoryInfo entityDir = new FileInfo(EntityPath).Directory!;
-        FileInfo? entityProjectFile = AssemblyHelper.FindProjectFile(entityDir, entityDir.Root);
-        string? entityNamespace = AssemblyHelper.GetNamespaceName(entityProjectFile!.Directory!);
-        string tplContent = GetTplContent("Extensions.tpl");
-        tplContent = tplContent.Replace(TplConst.NAMESPACE, entityNamespace);
-        return tplContent;
+        string managerServiceContent = "";
+        // 获取所有manager
+        if (!Directory.Exists(managerPath))
+        {
+            return string.Empty;
+        }
+
+        var files = Directory.GetFiles(managerPath, "*Manager.cs", SearchOption.TopDirectoryOnly);
+
+        files?.ToList().ForEach(file =>
+        {
+            string name = Path.GetFileNameWithoutExtension(file);
+            string row = $"        services.AddScoped(typeof({name}));";
+            managerServiceContent += row + Environment.NewLine;
+        });
+
+        // 构建服务
+        string content = GetTplContent("Implement.ManagerServiceCollectionExtensions.tpl");
+        content = content.Replace(TplConst.NAMESPACE, nspName);
+        content = content.Replace(TplConst.SERVICE_MANAGER, managerServiceContent);
+        return content;
     }
 
     /// <summary>
-    /// store上下文
+    /// 生成模块的注入服务
     /// </summary>
+    /// <param name="solutionPath"></param>
+    /// <param name="ModuleName">模块名称</param>
     /// <returns></returns>
-    public string GetDataStoreContext()
+    /// <exception cref="NotImplementedException"></exception>
+    public static string GetManagerModuleDIExtensions(string solutionPath, string ModuleName)
     {
-        string queryPath = Path.Combine(StorePath, $"{Const.QUERY_STORE}");
-        string[] queryFiles = Directory.GetFiles(queryPath, $"*{Const.QUERY_STORE}.cs", SearchOption.TopDirectoryOnly);
-        string commandPath = Path.Combine(StorePath, $"{Const.COMMAND_STORE}");
-        string[] commandFiles = Directory.GetFiles(commandPath, $"*{Const.COMMAND_STORE}.cs", SearchOption.TopDirectoryOnly);
-        IEnumerable<string> allDataStores = queryFiles.Concat(commandFiles);
-
-        string ctorParams = "";
-        string ctorAssign = "";
-        string twoTab = "        ";
-        string usings = "";
-        if (allDataStores.Any())
+        // 获取所有manager
+        var modulePath = Path.Combine(solutionPath, "src", "Modules", ModuleName);
+        string managerDir = Path.Combine(modulePath, "Manager");
+        if (!Directory.Exists(managerDir))
         {
-            var compilationHelper = new CompilationHelper(SharePath);
-            var entityClassNames = new List<string>();
-
-            allDataStores.ToList().ForEach(filePath =>
-            {
-                string fileName = Path.GetFileNameWithoutExtension(filePath);
-                // 属性名
-                string propName = fileName.Replace("Store", "");
-                // 属性类型
-                string propType = fileName.EndsWith($"{Const.QUERY_STORE}") ? "QuerySet" : "CommandSet";
-                // 属性泛型
-                string propGeneric = fileName.Replace($"{Const.QUERY_STORE}", "")
-                    .Replace($"{Const.COMMAND_STORE}", "");
-
-                entityClassNames.Add(propGeneric);
-
-                //string row = $"{oneTab}public {propType}<{propGeneric}> {propName} {{ get; init; }}";
-                //props += row + Environment.NewLine;
-                // 构造函数参数
-                string row = $"{twoTab}{fileName} {propName.ToCamelCase()},";
-                ctorParams += row + Environment.NewLine;
-                // 构造函数赋值
-                //row = $"{twoTab}{propName} = {propName.ToCamelCase()};";
-                //ctorAssign += row + Environment.NewLine;
-                ctorAssign += $"{twoTab}AddCache({propName.ToCamelCase()});" + Environment.NewLine;
-            });
-            // 关联模型需要引入的命名空间
-            var importNamespaces = compilationHelper.GetNamespaceNames(entityClassNames);
-            if (importNamespaces.Any())
-            {
-                importNamespaces.ForEach(n =>
-                {
-                    usings += $"using {n};" + Environment.NewLine;
-                });
-            }
+            return string.Empty;
         }
+
+        string[] files = Array.Empty<string>();
+        var managerServiceContent = "";
+
+        files = Directory.GetFiles(managerDir, "*Manager.cs", SearchOption.TopDirectoryOnly);
+        files?.ToList().ForEach(file =>
+        {
+            object name = Path.GetFileNameWithoutExtension(file);
+            string row = $"        services.AddScoped(typeof({name}));";
+            managerServiceContent += row + Environment.NewLine;
+        });
+
         // 构建服务
-        string content = GetTplContent("Implement.DataStoreContext.tpl");
-        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace)
-            .Replace(TplConst.STORECONTEXT_PROPS, "")
-            .Replace(TplConst.STORECONTEXT_PARAMS, ctorParams)
-            .Replace(TplConst.STORECONTEXT_ASSIGN, ctorAssign);
-        return usings + content;
+        string content = GetTplContent("Implement.ModuleManagerServiceCollectionExtensions.tpl");
+        content = content.Replace(TplConst.NAMESPACE, ModuleName);
+        content = content.Replace(TplConst.SERVICE_MANAGER, managerServiceContent);
+        return content;
     }
 }

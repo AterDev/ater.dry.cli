@@ -25,7 +25,7 @@ public static class TabConst
     public const string Eight = "        ";
 }
 
-public static class TabExtenstions
+public static class TabExtensions
 {
     public static string Indent(this string str, int tabNumber)
     {

@@ -41,60 +41,7 @@ export class EntityComponent {
   onInit(editor: any) {
 
   }
-  generate(): void {
-    if (this.name) {
-      this.isProcessing = true;
-      this.service.getEntity(this.name, this.description ?? null)
-        .subscribe({
-          next: (res) => {
-            if (res) {
-              this.entities = res;
-            } else {
-              this.snb.open('获取失败');
-            }
-          },
-          error: (error) => {
-            this.snb.open(error.detail);
-            this.isProcessing = false;
-          },
-          complete: () => {
-            this.isProcessing = false;
-          }
-        });
-    } else {
-      this.snb.open('实体名称必填');
-    }
-  }
-  select(index: number) {
-    this.selectedIndex = this.selectedIndex === index ? null : index;
-    this.selectedContent = this.entities![index];
-  }
 
-  save(): void {
-    if (this.selectedContent && this.projectId) {
-      this.isProcessing = true;
-      this.service.createEntity(this.projectId, {
-        namespace: this.namespace,
-        content: this.selectedContent
-      }).subscribe({
-        next: (res) => {
-          if (res) {
-            this.snb.open('创建成功,请在编辑器中查看');
-          } else {
-            this.snb.open('');
-          }
-          this.isProcessing = false;
-        },
-        error: (error) => {
-          this.snb.open(error.detail);
-          this.isProcessing = false;
-        }
-      });
-    } else {
-      this.snb.open('未选择内容或ProjectId丢失');
-      console.log('projectId:', this.projectId);
-    }
-  }
 
   back(): void {
     this.location.back();

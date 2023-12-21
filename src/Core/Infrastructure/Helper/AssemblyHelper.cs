@@ -1,4 +1,7 @@
 ﻿using System.Xml.Linq;
+
+using Core.Entities;
+
 using NuGet.Versioning;
 
 namespace Core.Infrastructure.Helper;
@@ -18,7 +21,7 @@ public class AssemblyHelper
     {
         try
         {
-            FileInfo? file = dir.GetFiles("*.csproj")?.FirstOrDefault();
+            FileInfo? file = dir.GetFiles($"*{Const.CSharpProjectExtention}")?.FirstOrDefault();
             return root == null ? file : file == null && dir != root ? FindProjectFile(dir.Parent!, root) : file;
         }
         catch (DirectoryNotFoundException)
@@ -121,16 +124,15 @@ public class AssemblyHelper
     /// 获取解决方案文件，从当前目录向根目录搜索
     /// </summary>
     /// <param name="dir">当前目录</param>
-    /// <param name="searchPattern"></param>
     /// <param name="root">要目录</param>
     /// <returns></returns>
-    public static FileInfo? GetSlnFile(DirectoryInfo dir, string searchPattern, DirectoryInfo? root = null)
+    public static FileInfo? GetSlnFile(DirectoryInfo dir, DirectoryInfo? root = null)
     {
         try
         {
             FileInfo? file = dir.GetFiles("*.sln")?.FirstOrDefault();
             return root == null ? file
-                : file == null && dir != root ? GetSlnFile(dir.Parent!, searchPattern, root) : file;
+                : file == null && dir != root ? GetSlnFile(dir.Parent!, root) : file;
         }
         catch (Exception)
         {
@@ -159,12 +161,30 @@ public class AssemblyHelper
     }
 
     /// <summary>
-    /// 获取版本
+    /// 获取当前工具运行版本
     /// </summary>
     /// <returns></returns>
-    public static string GetVersion()
+    public static string GetCurrentToolVersion()
     {
-        return Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
+        var version = Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
+        return version.Split('+')[0];
+    }
+
+    /// <summary>
+    /// 获取解决方案版本
+    /// </summary>
+    /// <param name="solutionPath"></param>
+    /// <returns></returns>
+    public static async Task<string?> GetSolutionVersionAsync(string solutionPath)
+    {
+        var configFilePath = Path.Combine(solutionPath, Config.ConfigFileName);
+        if (File.Exists(configFilePath))
+        {
+            string configJson = await File.ReadAllTextAsync(configFilePath);
+            ConfigOptions? config = ConfigOptions.ParseJson(configJson);
+            return config?.Version;
+        }
+        return default;
     }
 
     /// <summary>
@@ -173,7 +193,7 @@ public class AssemblyHelper
     /// <returns></returns>
     public static List<XmlCommentMember>? GetXmlMembers(DirectoryInfo dir)
     {
-        FileInfo? projectFile = dir.GetFiles("*.csproj")?.FirstOrDefault();
+        FileInfo? projectFile = dir.GetFiles($"*{Const.CSharpProjectExtention}")?.FirstOrDefault();
         if (projectFile != null)
         {
             string assemblyName = GetAssemblyName(projectFile);
@@ -204,7 +224,7 @@ public class AssemblyHelper
     {
         var minVersion = NuGetVersion.Parse(minVersionStr);
         var oldVerion = NuGetVersion.Parse(Config.Version);
-        var currentVersion = NuGetVersion.Parse(GetVersion());
+        var currentVersion = NuGetVersion.Parse(GetCurrentToolVersion());
 
         Console.WriteLine($"project version:{oldVerion}; studio version:{currentVersion}");
         return VersionComparer.Compare(oldVerion, minVersion, VersionComparison.Version) >= 0
@@ -218,7 +238,7 @@ public class AssemblyHelper
     public static string GetStudioPath()
     {
         string appPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        return Path.Combine(appPath, "AterStudio");
+        return Path.Combine(appPath, "DryStudio");
     }
 
     /// <summary>
@@ -260,15 +280,14 @@ public class AssemblyHelper
     }
 
     /// <summary>
-    /// 获取dotnet tool 路径
+    /// 获取 dotnet tool 路径
     /// </summary>
     /// <returns></returns>
     public static string GetToolPath()
     {
         string userPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         // 版本号
-        string version = Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
-
+        string version = GetCurrentToolVersion();
         return Path.Combine(
             userPath,
             ".dotnet/tools/.store",
@@ -281,7 +300,10 @@ public class AssemblyHelper
             "any");
     }
 
-
+    /// <summary>
+    /// delete module entity files
+    /// </summary>
+    /// <param name="solutionPath"></param>
     public static void RemoveModuleEntityFiles(string solutionPath)
     {
         var entityPath = Path.Combine(solutionPath, Config.EntityPath, "Entities");
@@ -295,6 +317,46 @@ public class AssemblyHelper
             File.Delete(file);
         });
     }
+
+    /// <summary>
+    /// get solution type
+    /// </summary>
+    /// <param name="filePath"></param>
+    /// <returns></returns>
+    public static SolutionType? GetSolutionType(string filePath)
+    {
+        string fileName = Path.GetFileName(filePath);
+        string fileExt = Path.GetExtension(filePath);
+        if (fileName == "package.json") return SolutionType.Node;
+        switch (fileExt)
+        {
+            case Const.SolutionExtention:
+            case Const.CSharpProjectExtention:
+                return SolutionType.DotNet;
+            default:
+                break;
+        }
+        return default;
+    }
+
+    /// <summary>
+    /// 移除项目包
+    /// </summary>
+    /// <param name="projectPath"></param>
+    /// <param name="packageNames"></param>
+    public static void RemovePackageReference(string projectPath, string[] packageNames)
+    {
+        packageNames.ToList().ForEach(package =>
+        {
+            if (!ProcessHelper.RunCommand("dotnet", $"remove {projectPath} package {string.Join(" ", packageNames)}", out string error))
+            {
+                Console.WriteLine("dotnet remove error:" + error);
+            }
+        });
+
+
+    }
+
 }
 public class XmlCommentMember
 {

@@ -3,29 +3,22 @@
 /// <summary>
 /// angular material 表单生成
 /// </summary>
-public class NgInputBuilder
+public class NgInputBuilder(string type, string name, string? label)
 {
-    public string Type { get; }
-    public string Name { get; }
-    public string? Label { get; set; }
-    public bool IsRequired { get; set; } = false;
+    public string Type { get; } = type;
+    public string Name { get; } = name;
+    public string? Label { get; set; } = label ?? name ?? type;
+    public bool IsRequired { get; set; }
     public int? MinLength { get; set; }
     public int? MaxLength { get; set; }
-    public bool IsDecimal { get; set; } = false;
-    public bool IsList { get; set; } = false;
-    public bool IsEnum { get; set; } = false;
-
-    public NgInputBuilder(string type, string name, string? label)
-    {
-        Type = type;
-        Name = name;
-        Label = label ?? name ?? type;
-    }
+    public bool IsDecimal { get; set; }
+    public bool IsList { get; set; }
+    public bool IsEnum { get; set; }
 
     public string ToFormControl()
     {
         // 过滤常规字段
-        string[] filterNames = new string[] { "createdtime", "updatedtime", "createtime", "updatetime" };
+        string[] filterNames = ["createdtime", "updatedtime", "createtime", "updatetime"];
         if (filterNames.Contains(Name.ToLower()))
         {
             return string.Empty;
@@ -34,7 +27,7 @@ public class NgInputBuilder
         {
             "string" => BuildInputText(),
             "DateTimeOffset" or "DateTime" => BuildInputDate(),
-            "short" or "int" or "decimal" or "double" or "float" => BuildInputNumber(),
+            "short" or "int" or "decimal" or "double" or "float" or "uint" or "ushort" => BuildInputNumber(),
             "bool" => BuildSlide(),
             _ => BuildInputText(),
         };
@@ -52,13 +45,14 @@ public class NgInputBuilder
         string html = "";
         if (MaxLength <= 200)
         {
-            html = $@"  <mat-form-field>
-    <mat-label>{Label}</mat-label>
-    <input matInput placeholder=""{Label},不超过{MaxLength}字"" formControlName=""{name}"" {(IsRequired ? "required" : "")} minlength=""{MinLength}"" maxlength=""{MaxLength}"">
-    <mat-error *ngIf=""{name}?.invalid"">
-    {{{{getValidatorMessage('{name}')}}}}
-    </mat-error>
-  </mat-form-field>
+            html = $@"  
+    <mat-form-field>
+      <mat-label>{Label}</mat-label>
+      <input matInput placeholder=""{Label},不超过{MaxLength}字"" formControlName=""{name}"" {(IsRequired ? "required" : "")} minlength=""{MinLength}"" maxlength=""{MaxLength}"">
+      <mat-error *ngIf=""{name}?.invalid"">
+        {{{{getValidatorMessage('{name}')}}}}
+      </mat-error>
+    </mat-form-field>
 ";
         }
         else if (MaxLength <= 1000)
@@ -78,7 +72,17 @@ public class NgInputBuilder
             html = $@" <textarea formControlName=""{name}"" rows=""10"" ></textarea>
 ";
         }
-
+        else
+        {
+            html = $@"  <mat-form-field>
+    <mat-label>{Label}</mat-label>
+    <input matInput placeholder=""{Label}"" formControlName=""{name}"" {(IsRequired ? "required" : "")}>
+    <mat-error *ngIf=""{name}?.invalid"">
+    {{{{getValidatorMessage('{name}')}}}}
+    </mat-error>
+  </mat-form-field>
+";
+        }
         return html;
     }
 
@@ -121,17 +125,18 @@ public class NgInputBuilder
     {
         string name = Name.ToCamelCase();
         string list = IsEnum ? Type.ToPascalCase() : name;
-        string html = @$"<mat-form-field>
-  <mat-label>{Label}</mat-label>
-  <mat-select formControlName=""{name}"">
-    <mat-option *ngFor=""let item of {list} | toKeyValue"" [value]=""item.value"">
-      {{{{item.key}}}}
-    </mat-option>
-  </mat-select>
-  <mat-error *ngIf=""{name}?.invalid"">
-    {{{{getValidatorMessage('{name}')}}}}
-  </mat-error>
-</mat-form-field>
+        string html = @$"
+    <mat-form-field>
+      <mat-label>{Label}</mat-label>
+      <mat-select formControlName=""{name}"">
+        <mat-option *ngFor=""let item of {list} | toKeyValue"" [value]=""item.value"">
+          {{{{item.value | enumText:'{list}'}}}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf=""{name}?.invalid"">
+        {{{{getValidatorMessage('{name}')}}}}
+      </mat-error>
+    </mat-form-field>
 ";
         return html;
     }
@@ -146,7 +151,7 @@ public class NgInputBuilder
     public string BuildSlide()
     {
         string name = Name.ToCamelCase();
-        string html = @$"    <mat-slide-toggle color=""primary"" formControlName=""{name}"">{Label}</mat-slide-toggle>
+        string html = @$"    <mat-slide-toggle class=""my-2"" color=""primary"" formControlName=""{name}"">{Label}</mat-slide-toggle>
 ";
         return html;
     }

@@ -3,7 +3,7 @@
   <form [formGroup]="addForm" class="d-flex  flex-column">
     <div class="d-flex flex-column">
       <h2>基本信息 (必填项)</h2>
-      <div class="d-flex flex-row gap-1">
+      <div class="d-flex flex-row gap-1 align-items-center ">
         <mat-form-field>
           <mat-label>解决方案名称</mat-label>
           <input matInput placeholder="解决方案名称" formControlName="name" required maxlength="50" />
@@ -18,6 +18,13 @@
             路径不能为空
           </mat-error>
         </mat-form-field>
+      </div>
+      <div class="d-flex gap-1 align-items-center ">
+        <label for="">项目类型:</label>
+        <mat-radio-group aria-label="项目类型" formControlName="projectType">
+          <mat-radio-button [value]="ProjectType.WebAPI">WebAPI</mat-radio-button>
+          <!-- <mat-radio-button [value]="ProjectType.GRPC">gRPC</mat-radio-button> -->
+        </mat-radio-group>
       </div>
       <p *ngIf="path?.value">
         <span>生成路径: {{path?.value}}\{{name?.value}} </span>
@@ -82,21 +89,27 @@
       </div>
 
     </div>
-    <div class="d-flex flex-column mt-1">
-      <h2>功能模块</h2>
+    <div class="d-flex flex-column mt-1" *ngIf="projectType?.value==ProjectType.WebAPI">
+      <h2>功能模块
+        <small>(预览)</small>
+      </h2>
       <div class="d-flex gap-2 align-items-center ">
-        <mat-checkbox formControlName="hasCmsFeature" matTooltip="添加内容管理基础接口"
+        <mat-checkbox formControlName="hasSystemFeature" matTooltip="系统管理员、角色、权限相关功能"
+          matTooltipPosition="below">后台管理</mat-checkbox>
+        <mat-checkbox formControlName="hasCmsFeature" matTooltip="内容管理基础接口"
           matTooltipPosition="below">内容管理</mat-checkbox>
         <!-- <mat-icon class="ms-1" fontSet="material-icons-outlined">info</mat-icon> -->
-        <mat-checkbox formControlName="hasUserLogsFeature" matTooltip="用户行为记录"
-          matTooltipPosition="below">用户日志</mat-checkbox>
-        <mat-checkbox matTooltip="" formControlName="hasSystemLogsFeature" matTooltip="管理员用户操作日志"
-          matTooltipPosition="below">系统日志</mat-checkbox>
+        <mat-checkbox formControlName="hasFileManagerFeature" matTooltip="文件管理"
+          matTooltipPosition="below">文件管理</mat-checkbox>
+        <mat-checkbox formControlName="hasFileManagerFeature" matTooltip="订单模块"
+          matTooltipPosition="below">订单模块</mat-checkbox>
+
       </div>
     </div>
 
-    <div class="mt-2">
+    <div class="mt-2 d-flex gap-1 align-items-center">
       <button mat-flat-button color="primary" (click)="addSolution()" [disabled]="isProcess">创建</button>
+      <mat-spinner *ngIf="isProcess" style="width: 26px;height:26px"></mat-spinner>
     </div>
   </form>
 </div>

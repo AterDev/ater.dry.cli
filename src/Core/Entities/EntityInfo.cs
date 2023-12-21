@@ -33,12 +33,12 @@ public class EntityInfo : EntityBase
     /// 是否为枚举类
     /// </summary>
     public bool? IsEnum { get; set; } = false;
-    public bool IsList { get; set; } = false;
+    public bool IsList { get; set; }
 
     /// <summary>
     /// 属性
     /// </summary>
-    public List<PropertyInfo> PropertyInfos { get; set; } = new List<PropertyInfo>();
+    public IReadOnlyList<PropertyInfo> PropertyInfos { get; set; } = new List<PropertyInfo>();
 
     /// <summary>
     /// 获取导航属性

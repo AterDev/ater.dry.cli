@@ -1,14 +1,11 @@
 ﻿using Microsoft.OpenApi.Models;
 
 namespace CodeGenerator.Generate;
-public class DocGenerate : GenerateBase
+public class DocGenerate(IDictionary<string, OpenApiSchema> schemas) : GenerateBase
 {
-    public IDictionary<string, OpenApiSchema> Schemas { get; set; }
+    public IDictionary<string, OpenApiSchema> Schemas { get; set; } = schemas;
     public List<OpenApiTag>? ApiTags { get; set; }
-    public DocGenerate(IDictionary<string, OpenApiSchema> schemas)
-    {
-        Schemas = schemas;
-    }
+
     public void SetTags(List<OpenApiTag> apiTags)
     {
         ApiTags = apiTags;
@@ -72,7 +69,7 @@ public class DocGenerate : GenerateBase
             .Replace(Environment.NewLine, "")
             .Replace("\n", ";")
             .Replace(" ", "")
-            .Trim(new char[] { ';' });
+            .Trim([';']);
 
         if (string.IsNullOrEmpty(comments)) { comments = "-"; }
 

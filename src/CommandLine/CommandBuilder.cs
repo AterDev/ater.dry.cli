@@ -1,6 +1,7 @@
 ﻿using System.CommandLine;
 using System.Text.Json;
-namespace Droplet.CommandLine;
+
+namespace CommandLine;
 
 public class CommandBuilder
 {
@@ -9,9 +10,9 @@ public class CommandBuilder
 
     public CommandBuilder()
     {
-        RootCommand = new RootCommand("Welcome use droplet cli, a tool to help you generate source code!")
+        RootCommand = new RootCommand("Welcome use dry cli, a tool to help you generate source code!")
         {
-            Name = "droplet"
+            Name = "dry"
         };
         ConfigOptions = ConfigCommand.ReadConfigFile();
         if (ConfigOptions != null)
@@ -35,12 +36,11 @@ public class CommandBuilder
         return RootCommand;
     }
 
-
     public void AddStudio()
     {
         System.CommandLine.Command studioCommand = new("studio", "studio management");
         var update = new System.CommandLine.Command("update", "update studio");
-        update.SetHandler(StudioCommand.UpdateAsync);
+        update.SetHandler(StudioCommand.UpdateStudio);
         studioCommand.SetHandler(StudioCommand.RunStudioAsync);
 
         studioCommand.AddCommand(update);
@@ -93,7 +93,7 @@ public class CommandBuilder
         Argument<string> path = new("entity path", "The entity file path");
         Option<string> outputOption = new(new[] { "--output", "-o" },
             "output project directory");
-        outputOption.SetDefaultValue(Path.Combine(ConfigOptions!.RootPath, ConfigOptions.DtoPath));
+        outputOption.SetDefaultValue(Config.SharePath);
         Option<bool> forceOption = new(new[] { "--force", "-f" },
             "force overwrite file");
         forceOption.SetDefaultValue(true);
@@ -139,10 +139,10 @@ public class CommandBuilder
         Argument<string> path = new("entity path", "The entity file path");
         Option<string> dtoOption = new(new[] { "--dto", "-d" },
             "dto project directory");
-        dtoOption.SetDefaultValue(Path.Combine(ConfigOptions!.RootPath, ConfigOptions.DtoPath));
+        dtoOption.SetDefaultValue(Config.SharePath);
         Option<string> storeOption = new(new[] { "--manager", "-m" },
             "application project directory");
-        storeOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.StorePath));
+        storeOption.SetDefaultValue(Config.ApplicationPath);
         Option<string> typeOption = new(new[] { "--type", "-t" },
             "api type, valid values:rest/grpc/graph");
         Option<bool> forceOption = new(new[] { "--force", "-f" },
@@ -171,15 +171,15 @@ public class CommandBuilder
         Argument<string> path = new("entity path", "The entity file path");
         Option<string> dtoOption = new(new[] { "--dto", "-d" },
             "dto project director");
-        dtoOption.SetDefaultValue(Path.Combine(ConfigOptions!.RootPath, ConfigOptions.DtoPath));
+        dtoOption.SetDefaultValue(Config.SharePath);
 
         Option<string> managerOption = new(new[] { "--manager", "-m" },
             "manager and datastore project directory");
-        managerOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.StorePath));
+        managerOption.SetDefaultValue(Config.ApplicationPath);
 
         Option<string> apiOption = new(new[] { "--output", "-o" },
             "api controller project directory");
-        apiOption.SetDefaultValue(Path.Combine(ConfigOptions.RootPath, ConfigOptions.ApiPath));
+        apiOption.SetDefaultValue(Config.ApiPath);
 
         Option<string> suffixOption = new(new[] { "--suffix", "-s" },
             "the controller suffix");
@@ -245,7 +245,7 @@ public class CommandBuilder
         viewCommand.AddAlias("view");
         Argument<string> entityArgument = new("entity path", "The entity file path, like path/xxx.cs");
         Option<string> dtoOption = new(new[] { "--dto", "-d" }, "dto project directory");
-        dtoOption.SetDefaultValue(Path.Combine(ConfigOptions!.RootPath, ConfigOptions.DtoPath));
+        dtoOption.SetDefaultValue(Config.SharePath);
         Option<string> outputOption = new(new[] { "--output", "-o" }, "angular project root path")
         {
             IsRequired = true,

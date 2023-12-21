@@ -1,14 +1,12 @@
 <mat-toolbar class="d-flex gap-1">
-  <button color="basic" mat-icon-button matTooltip="返回" (click)="back()">
-    <mat-icon>arrow_back</mat-icon>
-  </button>
-    添加
+  <!-- <mat-icon class="clickable" matTooltip="返回" (click)="back()">arrow_back</mat-icon> -->
+  <span>添加</span>
 </mat-toolbar>
-<form class="d-flex" *ngIf="!isLoading" [formGroup]="formGroup">
+<form class="d-flex p-2" *ngIf="!isLoading" [formGroup]="formGroup">
   <div class="d-flex flex-column w-100">
 {$FormControls}
-    <div class="d-flex mt-1">
-      <button class="d-flex flex-column" mat-flat-button color="primary" (click)="add()">保存</button>
+    <div class="d-flex mt-1 justify-content-end">
+      <button class="d-flex flex-column" mat-flat-button color="primary" (click)="add()">添加</button>
     </div>
   </div>
 </form>
