@@ -212,6 +212,10 @@ public class StudioCommand
             solutionDir = Path.Combine(solutionDir, Config.ConfigFileName);
 
             // read config file
+            if (!File.Exists(solutionDir))
+            {
+                continue;
+            }
             string configJson = await File.ReadAllTextAsync(solutionDir);
             ConfigOptions? options = ConfigOptions.ParseJson(configJson);
             if (options != null)

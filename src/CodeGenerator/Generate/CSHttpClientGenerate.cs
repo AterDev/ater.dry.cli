@@ -147,17 +147,18 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
         }
         if (!string.IsNullOrEmpty(function.RequestType))
         {
+            var requestType = function.RequestType == "IFile" ? "Stream" : function.RequestType;
             if (function.Params?.Count > 0)
             {
-                paramsString += $", {function.RequestType} data";
+                paramsString += $", {requestType} data";
             }
             else
             {
-                paramsString = $"{function.RequestType} data";
+                paramsString = $"{requestType} data";
             }
 
             dataString = ", data";
-            paramsComments += $"    /// <param name=\"data\">{function.RequestType}</param>\n";
+            paramsComments += $"    /// <param name=\"data\">{requestType}</param>\n";
         }
         // 注释生成
         string comments = $"""
@@ -190,11 +191,18 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
         {
             dataString = $", {file.Name}";
         }
+
+        var returnType = function.ResponseType == "IFile" ? "Stream?" : function.ResponseType;
+        var method = function.ResponseType == "IFile"
+            ? $"DownloadFileAsync(url{dataString})"
+            : $"{function.Method}JsonAsync<{function.ResponseType}?>(url{dataString})";
+
+        method = function.RequestType == "IFile" ? $"UploadFileAsync<{function.ResponseType}?>(url, new StreamContent(data))" : method;
         string res = $$"""
         {{comments}}
             public async Task<{{function.ResponseType}}?> {{function.Name.ToPascalCase()}}Async({{paramsString}}) {
                 var url = $"{{function.Path}}";
-                return await {{function.Method}}JsonAsync<{{function.ResponseType}}?>(url{{dataString}});
+                return await {{method}};
             }
 
         """;
