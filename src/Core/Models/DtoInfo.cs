@@ -23,7 +23,7 @@ public class DtoInfo
     public string ToDtoContent(string? projectName = "Share", string entityName = "", bool isInput = false)
     {
         string[] props = Properties?.Select(p => p.ToCsharpLine(isInput)).ToArray()
-            ?? Array.Empty<string>();
+            ?? [];
         string propStrings = string.Join(string.Empty, props);
 
         // 对region进行处理

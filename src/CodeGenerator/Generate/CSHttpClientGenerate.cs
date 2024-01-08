@@ -9,7 +9,7 @@ namespace CodeGenerator.Generate;
 public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
 {
     protected OpenApiPaths PathsPairs { get; } = openApi.Paths;
-    protected List<OpenApiTag> ApiTags { get; } = openApi.Tags.ToList();
+    protected List<OpenApiTag> ApiTags { get; } = [.. openApi.Tags];
     public IDictionary<string, OpenApiSchema> Schemas { get; set; } = openApi.Components.Schemas;
     public OpenApiDocument OpenApi { get; set; } = openApi;
 
@@ -62,7 +62,7 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
         foreach (IGrouping<string?, RequestServiceFunction>? group in funcGroups)
         {
             // 查询该标签包含的所有方法
-            List<RequestServiceFunction> tagFunctions = group.ToList();
+            List<RequestServiceFunction> tagFunctions = [.. group];
             OpenApiTag? currentTag = ApiTags.Where(t => t.Name == group.Key).FirstOrDefault();
             currentTag ??= new OpenApiTag { Name = group.Key, Description = group.Key };
             RequestServiceFile serviceFile = new()

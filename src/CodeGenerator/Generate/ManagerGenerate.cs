@@ -474,7 +474,7 @@ public class ManagerGenerate : GenerateBase
             return string.Empty;
         }
 
-        string[] files = Array.Empty<string>();
+        string[] files = [];
         var managerServiceContent = "";
 
         files = Directory.GetFiles(managerDir, "*Manager.cs", SearchOption.TopDirectoryOnly);

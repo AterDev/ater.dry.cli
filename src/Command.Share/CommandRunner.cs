@@ -293,8 +293,8 @@ public static class CommandRunner
             var microPath = Path.Combine(apiPath, "..", "Microservice", "Controllers");
             if (Directory.Exists(microPath))
             {
-                files = Directory.GetFiles(microPath, $"{EntityName}Controller.cs", SearchOption.AllDirectories)
-    .ToList();
+                files = [.. Directory.GetFiles(microPath, $"{EntityName}Controller.cs", SearchOption.AllDirectories)
+];
                 files.ForEach(f =>
                 {
                     File.Delete(f);

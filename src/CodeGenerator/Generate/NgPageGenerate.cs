@@ -84,7 +84,7 @@ public class NgPageGenerate : GenerateBase
     public static NgComponentInfo GenFormComponent(EntityInfo modelInfo, string serviceName)
     {
 
-        List<PropertyInfo>? props = modelInfo.PropertyInfos.ToList();
+        List<PropertyInfo>? props = [.. modelInfo.PropertyInfos];
         string modelName = modelInfo.Name;
         var entityName = modelName;
         var suffix = new string[] { "AddDto", "ItemDto", "UpdateDto", "ShortDto", "FilterDto" };
@@ -157,7 +157,7 @@ public class NgPageGenerate : GenerateBase
             .Skip(0).Take(5)
             .ToList();
 
-        string[] columnsDef = Array.Empty<string>();
+        string[] columnsDef = [];
         if (columns != null && columns.Count != 0)
         {
             columnsDef = columns.Select(s =>
@@ -191,7 +191,7 @@ public class NgPageGenerate : GenerateBase
         htmlContent = htmlContent.Replace("{$ColumnsDef}", string.Join("", columnsDef));
 
         // 解析属性，并生成相应ts代码
-        columnsDef = Array.Empty<string>();
+        columnsDef = [];
         if (columns != null && columns.Count != 0)
         {
             columns.Add("actions");
@@ -294,7 +294,7 @@ public class NgPageGenerate : GenerateBase
             .Where(p => p.Name.ToLower() != "id")
             .ToList();
 
-        string[] columnsDef = Array.Empty<string>();
+        string[] columnsDef = [];
         if (props != null && props.Count != 0)
         {
             columnsDef = props.Select(p =>
@@ -324,7 +324,7 @@ public class NgPageGenerate : GenerateBase
         htmlContent = htmlContent.Replace("{$ColumnsDef}", string.Join("", columnsDef));
 
         // 解析属性，并生成相应ts代码
-        columnsDef = Array.Empty<string>();
+        columnsDef = [];
         List<string>? columns = props?.Select(p => p.Name).ToList();
         if (columns != null && columns.Count != 0)
         {
@@ -357,7 +357,7 @@ public class NgPageGenerate : GenerateBase
 
         // html
         string htmlContent = GetTplContent("angular.detail.detail.component.html.tpl");
-        string[] content = Array.Empty<string>();
+        string[] content = [];
         if (props != null)
         {
             content = props.Select(p =>
@@ -566,8 +566,14 @@ public class NgPageGenerate : GenerateBase
     private static string CleanTsTplVariables(string tplContent)
     {
         string[] TplVariables = [
-            "[@Imports]","[@Declares]","[@DI]","[@Init]","[@Methods]",
-            "{$DefinedProperties}","{$DefinedFormControls}","{$DefinedValidatorMessage}"
+            "[@Imports]",
+            "[@Declares]",
+            "[@DI]",
+            "[@Init]",
+            "[@Methods]",
+            "{$DefinedProperties}",
+            "{$DefinedFormControls}",
+            "{$DefinedValidatorMessage}"
         ];
         foreach (string item in TplVariables)
         {

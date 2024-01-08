@@ -4,7 +4,7 @@ namespace CodeGenerator.Generate;
 public class TestGenerate(OpenApiDocument openApi) : GenerateBase
 {
     protected OpenApiPaths PathsPairs { get; } = openApi.Paths;
-    protected List<OpenApiTag> ApiTags { get; } = openApi.Tags.ToList();
+    protected List<OpenApiTag> ApiTags { get; } = [.. openApi.Tags];
     public IDictionary<string, OpenApiSchema> Schemas { get; set; } = openApi.Components.Schemas;
     public OpenApiDocument OpenApi { get; set; } = openApi;
 

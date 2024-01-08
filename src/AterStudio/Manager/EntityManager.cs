@@ -46,7 +46,7 @@ public partial class EntityManager(DbContext dbContext, ProjectContext projectCo
             }
 
             // get files in directory
-            List<string> filePaths = Directory.GetFiles(entityPath, "*.cs", SearchOption.AllDirectories).ToList();
+            List<string> filePaths = [.. Directory.GetFiles(entityPath, "*.cs", SearchOption.AllDirectories)];
 
             if (filePaths.Count != 0)
             {
@@ -102,10 +102,13 @@ public partial class EntityManager(DbContext dbContext, ProjectContext projectCo
             }
 
             // 排序
-            entityFiles = entityFiles
-                .OrderByDescending(e => e.Module)
-                .ThenBy(e => e.Name)
-                .ToList();
+            entityFiles =
+            [
+                .. entityFiles
+                                .OrderByDescending(e => e.Module)
+                                .ThenBy(e => e.Name)
+,
+            ];
         }
         catch (Exception)
         {
@@ -169,7 +172,7 @@ public partial class EntityManager(DbContext dbContext, ProjectContext projectCo
             string dtoPath = GetDtoPath(entityFilePath);
 
             // get files in directory
-            List<string> filePaths = Directory.GetFiles(dtoPath, "*.cs", SearchOption.AllDirectories).ToList();
+            List<string> filePaths = [.. Directory.GetFiles(dtoPath, "*.cs", SearchOption.AllDirectories)];
 
             if (filePaths.Count != 0)
             {

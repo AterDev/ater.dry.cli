@@ -126,7 +126,7 @@ public class ModuleCommand
         {
             return default;
         }
-        List<string> files = Directory.GetFiles(modulesPath, $"*{Const.CSharpProjectExtention}", SearchOption.AllDirectories).ToList();
+        List<string> files = [.. Directory.GetFiles(modulesPath, $"*{Const.CSharpProjectExtention}", SearchOption.AllDirectories)];
         return files.Count != 0 ? files : default;
     }
 
