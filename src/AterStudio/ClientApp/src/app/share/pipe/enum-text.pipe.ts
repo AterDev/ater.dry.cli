@@ -28,6 +28,16 @@ export class EnumTextPipe implements PipeTransform {
           }
         }
         break;
+      case 'FrontType':
+        {
+            switch (value)
+        {
+            case 1: result = 'Angular'; break;
+            case 2: result = 'Blazor'; break;
+            default: '默认'; break;
+          }
+        }
+        break;
 
       default:
         break;

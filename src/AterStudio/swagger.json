@@ -2228,6 +2228,9 @@
           "cacheType": {
             "$ref": "#/components/schemas/CacheType"
           },
+          "frontType": {
+            "$ref": "#/components/schemas/FrontType"
+          },
           "hasTenant": {
             "type": "boolean",
             "description": "是否包含租户"
@@ -2432,6 +2435,33 @@
           "String"
         ],
         "x-enumData": [ ]
+      },
+      "FrontType": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "description": "前端项目",
+        "format": "int32",
+        "x-enumNames": [
+          "None",
+          "Angular",
+          "Blazor"
+        ],
+        "x-enumData": [
+          {
+            "name": "Angular",
+            "value": 1,
+            "description": "Angular"
+          },
+          {
+            "name": "Blazor",
+            "value": 2,
+            "description": "Blazor"
+          }
+        ]
       },
       "GenerateDto": {
         "type": "object",
