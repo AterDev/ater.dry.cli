@@ -4,7 +4,7 @@ public class BaseService
 {
     public HttpClient Http { get; set; }
     public JsonSerializerOptions JsonSerializerOptions { get; set; }
-    public ErrorResult? ErrorMsg { get; set; } = null;
+    public ErrorResult? ErrorMsg { get; set; }
 
     public BaseService(HttpClient httpClient)
     {

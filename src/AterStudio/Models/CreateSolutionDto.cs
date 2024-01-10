@@ -30,6 +30,11 @@ public class CreateSolutionDto
     public CacheType CacheType { get; set; } = CacheType.Redis;
 
     /// <summary>
+    /// 前端项目
+    /// </summary>
+    public FrontType FrontType { get; set; } = FrontType.None;
+
+    /// <summary>
     /// 是否包含租户
     /// </summary>
     public bool HasTenant { get; set; }
@@ -112,4 +117,25 @@ public enum CacheType
     /// </summary>
     [Description(description: "Memory")]
     Memory
+}
+
+/// <summary>
+/// 前端项目
+/// </summary>
+public enum FrontType
+{
+    /// <summary>
+    /// 无
+    /// </summary>
+    None,
+    /// <summary>
+    /// Angular
+    /// </summary>
+    [Description("Angular")]
+    Angular,
+    /// <summary>
+    /// Blazor
+    /// </summary>
+    [Description("Blazor")]
+    Blazor,
 }

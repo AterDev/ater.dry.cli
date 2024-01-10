@@ -72,6 +72,25 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
             jsonString = jsonNode.ToString();
             File.WriteAllText(configFile, jsonString);
         }
+
+        // 移除默认的微服务
+        var defaultServicePath = Path.Combine(path, "src", "Microservice", "StandaloneService");
+        if (Directory.Exists(defaultServicePath))
+        {
+            // 从解决方案移除项目
+            ProcessHelper.RunCommand("dotnet", $"sln {path} remove {Path.Combine(defaultServicePath, "StandaloneService.csproj")}", out string error);
+            Directory.Delete(defaultServicePath, true);
+        }
+        // TODO:前端项目处理
+        if (dto.FrontType == FrontType.None)
+        {
+            var appPath = Path.Combine(path, "src", "ClientApp");
+            if (Directory.Exists(appPath))
+            {
+                Directory.Delete(appPath, true);
+            }
+        }
+
         // 模块
         if (dto.HasFileManagerFeature)
         {

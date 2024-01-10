@@ -106,7 +106,17 @@
 
       </div>
     </div>
-
+    <!-- <div class="d-flex flex-column mt-1">
+      <h2>前端项目
+        <small>(预览)</small>
+      </h2>
+      <div class="d-flex gap-2 align-items-center ">
+        <mat-radio-group formControlName="frontType">
+          <mat-radio-button value="1">Angular</mat-radio-button>
+          <mat-radio-button value="2">Blazor</mat-radio-button>
+        </mat-radio-group>
+      </div>
+    </div> -->
     <div class="mt-2 d-flex gap-1 align-items-center">
       <button mat-flat-button color="primary" (click)="addSolution()" [disabled]="isProcess">创建</button>
       <mat-spinner *ngIf="isProcess" style="width: 26px;height:26px"></mat-spinner>
