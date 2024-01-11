@@ -70,9 +70,7 @@ public class EntityParseHelper
         AssemblyName = GetAssemblyName();
         CompilationHelper = new CompilationHelper(ProjectFile.Directory!.FullName);
 
-        using FileStream stream = fileInfo.Open(FileMode.Open, FileAccess.Read, FileShare.None);
-        var reader = new StreamReader(stream, Encoding.UTF8);
-        var content = reader.ReadToEnd();
+        var content = File.ReadAllTextAsync(fileInfo.FullName).Result;
 
         CompilationHelper.AddSyntaxTree(content);
         SyntaxTree = CompilationHelper.SyntaxTree;
