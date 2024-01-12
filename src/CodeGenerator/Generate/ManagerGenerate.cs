@@ -366,7 +366,7 @@ public class ManagerGenerate : GenerateBase
         {
             bool isLast = p == last;
             var name = p.Name;
-            if (p.IsNavigation)
+            if (p.IsNavigation && !p.IsComplexType)
             {
                 content += $$"""
                             .WhereNotNull(filter.{{name}}Id, q => q.{{name}}.Id == filter.{{name}}Id){{(isLast ? ";" : "")}}

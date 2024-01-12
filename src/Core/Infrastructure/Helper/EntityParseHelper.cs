@@ -438,9 +438,14 @@ public class EntityParseHelper
         {
             propertyInfo.NavigationName = navigationType.Name;
             propertyInfo.HasMany = hasMany;
+
             if (navigationType.GetMembers().Any(m => m.Kind == SymbolKind.Property && m.Name == "Id"))
             {
                 propertyInfo.IsNavigation = true;
+            }
+            else
+            {
+                propertyInfo.IsComplexType = true;
             }
         }
     }

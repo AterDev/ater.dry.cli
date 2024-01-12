@@ -212,6 +212,7 @@ public class DtoCodeGenerate : GenerateBase
                 .Where(p => (p.IsRequired && !p.IsNavigation)
                     || (!p.IsList
                         && !p.IsNavigation
+                        && !p.IsComplexType
                         && !filterFields.Contains(p.Name))
                      || p.IsEnum
                     )

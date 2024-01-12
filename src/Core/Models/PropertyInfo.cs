@@ -21,6 +21,7 @@ public class PropertyInfo : EntityBase
     /// 导航属性类名称
     /// </summary>
     public string? NavigationName { get; set; }
+    public bool IsComplexType { get; set; }
     /// <summary>
     /// 导航属性的对应关系
     /// </summary>
