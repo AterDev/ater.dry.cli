@@ -48,10 +48,6 @@ public class ModuleCommand
         // 基础类
         string projectPath = Path.Combine(moduleDir, moduleName);
         await Console.Out.WriteLineAsync($"🚀 create module:{moduleName} ➡️ {projectPath}");
-        string tplContent = GenerateBase.GetTplContent("Implement.RestControllerBase.tpl");
-        tplContent = tplContent.Replace(TplConst.NAMESPACE, moduleName);
-        string infrastructurePath = Path.Combine(projectPath, "Infrastructure");
-        await AssemblyHelper.GenerateFileAsync(infrastructurePath, "RestControllerBase.cs", tplContent);
 
         // global usings
         string usingsContent = GetGlobalUsings();

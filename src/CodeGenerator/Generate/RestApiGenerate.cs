@@ -96,6 +96,7 @@ public class RestApiGenerate : GenerateBase
             "global using System.Text.Json.Serialization;",
             "global using Microsoft.EntityFrameworkCore;",
             "global using Ater.Web.Core.Models;",
+            "global using Ater.Web.Abstraction;",
             "global using Ater.Web.Core.Utils;",
             $"global using {EntityInfo.NamespaceName};",
             $"global using {ApplicationNamespace}.Manager;",

@@ -437,8 +437,11 @@ public class EntityParseHelper
             && !propertyInfo.IsEnum)
         {
             propertyInfo.NavigationName = navigationType.Name;
-            propertyInfo.IsNavigation = true;
             propertyInfo.HasMany = hasMany;
+            if (navigationType.GetMembers().Any(m => m.Kind == SymbolKind.Property && m.Name == "Id"))
+            {
+                propertyInfo.IsNavigation = true;
+            }
         }
     }
     /// <summary>
