@@ -175,9 +175,4 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
         }
         return true;
     }
-
-    public void CreateMicroService()
-    {
-
-    }
 }
