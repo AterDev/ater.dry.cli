@@ -442,7 +442,7 @@ public class ManagerGenerate : GenerateBase
             return string.Empty;
         }
 
-        var files = Directory.GetFiles(managerPath, "*Manager.cs", SearchOption.TopDirectoryOnly);
+        var files = Directory.GetFiles(Path.Combine(managerPath, "Manager"), "*Manager.cs", SearchOption.TopDirectoryOnly);
 
         files?.ToList().ForEach(file =>
         {
