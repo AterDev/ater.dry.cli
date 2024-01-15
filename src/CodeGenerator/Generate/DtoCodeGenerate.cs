@@ -173,7 +173,7 @@ public class DtoCodeGenerate : GenerateBase
         dto.Properties = dto.Properties?
             .Where(p => !p.IsList
                 && p.MaxLength < 1000
-                && !p.Name.EndsWith("Id") && p.Name != "Id"
+                && !p.Name.EndsWith("Id")
                 && !p.IsNavigation).ToList();
 
         return dto.ToDtoContent(AssemblyName, EntityInfo.Name);
