@@ -2645,6 +2645,9 @@
             "description": "导航属性类名称",
             "nullable": true
           },
+          "isComplexType": {
+            "type": "boolean"
+          },
           "hasMany": {
             "type": "boolean",
             "description": "导航属性的对应关系",

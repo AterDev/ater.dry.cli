@@ -50,12 +50,11 @@ public class TestGenerate(OpenApiDocument openApi) : GenerateBase
     """;
     }
 
-
     public string GenerateFilterMethod(string url, string name, OperationType type)
     {
         var dataString = "";
         var requestString = "GetAsync(url);";
-        if (type == OperationType.Post || type == OperationType.Put)
+        if (type is OperationType.Post or OperationType.Put)
         {
             dataString = "var data = new {};";
             requestString = "PostAsJsonAsync(url, data);";

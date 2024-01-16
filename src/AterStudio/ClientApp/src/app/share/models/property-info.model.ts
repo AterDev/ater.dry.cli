@@ -19,6 +19,7 @@ export interface PropertyInfo {
    * 导航属性类名称
    */
   navigationName?: string | null;
+  isComplexType: boolean;
   /**
    * 导航属性的对应关系
    */

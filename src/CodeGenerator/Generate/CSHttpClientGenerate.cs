@@ -8,6 +8,9 @@ namespace CodeGenerator.Generate;
 /// </summary>
 public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
 {
+    /// <summary>
+    /// 
+    /// </summary>
     protected OpenApiPaths PathsPairs { get; } = openApi.Paths;
     protected List<OpenApiTag> ApiTags { get; } = [.. openApi.Tags];
     public IDictionary<string, OpenApiSchema> Schemas { get; set; } = openApi.Components.Schemas;
@@ -23,7 +26,6 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
     /// <summary>
     /// 生成客户端类
     /// </summary>
-    /// <param name="list">所有子服务</param>
     /// <returns></returns>
     public static string GetClient(List<GenFileInfo> infos, string namespaceName, string className)
     {
@@ -52,6 +54,11 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
         return content;
     }
 
+    /// <summary>
+    /// 请求服务
+    /// </summary>
+    /// <param name="namespaceName"></param>
+    /// <returns></returns>
     public List<GenFileInfo> GetServices(string namespaceName)
     {
         List<GenFileInfo> files = [];
@@ -84,6 +91,23 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
         return files;
     }
 
+    /// <summary>
+    /// 获取模型内容
+    /// </summary>
+    /// <param name="modelName"></param>
+    /// <returns></returns>
+    public List<GenFileInfo> GetModelFiles(string nspName)
+    {
+        var csGen = new CsharpModelGenerate(OpenApi);
+        List<GenFileInfo> files = [];
+        foreach (KeyValuePair<string, OpenApiSchema> item in Schemas)
+        {
+            files.Add(csGen.GenerateModelFile(item.Key, item.Value, nspName));
+        }
+        return files;
+    }
+
+
     public static string ToRequestService(RequestServiceFile serviceFile, string namespaceName)
     {
         var functions = serviceFile.Functions;
@@ -95,7 +119,7 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
 
         }
         string result = $$"""
-        using Share.Models.{{serviceFile.Name}}Dtos;
+        using {{namespaceName}}.Models;
         namespace {{namespaceName}}.Services;
         /// <summary>
         /// {{serviceFile.Description}}
