@@ -140,13 +140,6 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
     {
         function.ResponseType = string.IsNullOrWhiteSpace(function.ResponseType) ? "object" : function.ResponseType;
 
-        // TODO:特殊处理PageList，针对泛型类型，不通用
-        if (function.ResponseType.EndsWith("PageList") && function.ResponseRefType!.EndsWith("PageList"))
-        {
-            var type = function.ResponseType.Replace("PageList", "");
-            function.ResponseType = $"PageList<{type}>";
-        }
-
         // 函数名处理，去除tag前缀，然后格式化
         function.Name = function.Name.Replace(function.Tag + "_", "");
         function.Name = function.Name.ToCamelCase();
