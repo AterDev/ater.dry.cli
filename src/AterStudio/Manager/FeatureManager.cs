@@ -28,6 +28,9 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
         var projectType = dto.ProjectType == ProjectType.GRPC ? "-g" : "";
         var apiName = dto.ProjectType == ProjectType.GRPC ? "Grpc.API" : "Http.API";
 
+        var version = AssemblyHelper.GetCurrentToolVersion();
+        ProcessHelper.RunCommand("dotnet", $"new install ater.web.templates::{version}", out _);
+
         if (!Directory.Exists(dto.Path))
         {
             Directory.CreateDirectory(path);
