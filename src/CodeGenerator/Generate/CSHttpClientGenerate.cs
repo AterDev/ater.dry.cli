@@ -235,7 +235,7 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
         method = function.RequestType == "IFile" ? $"UploadFileAsync<{function.ResponseType}?>(url, new StreamContent(data))" : method;
         string res = $$"""
         {{comments}}
-            public async Task<{{function.ResponseType}}?> {{function.Name.ToPascalCase()}}Async({{paramsString}}) {
+            public async Task<{{returnType}}> {{function.Name.ToPascalCase()}}Async({{paramsString}}) {
                 var url = $"{{function.Path}}";
                 return await {{method}};
             }

@@ -421,6 +421,6 @@ public class CSProperty
         // 引用的类型可空
         string type = Type + (IsNullable ? "?" : "");
 
-        return $"{Comments}    public {type} {Name.ToPascalCase()} {{ get; set; }}" + Environment.NewLine;
+        return $"{Comments}    public {type} {Name?.ToPascalCase()} {{ get; set; }}" + Environment.NewLine;
     }
 }

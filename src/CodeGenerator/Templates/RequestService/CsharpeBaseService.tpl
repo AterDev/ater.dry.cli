@@ -156,3 +156,10 @@ public class BaseService
         }
     }
 }
+
+public class ErrorResult
+{
+    public string Title { get; set; } = string.Empty;
+    public string Detail { get; set; } = string.Empty;
+    public int Number { get; set; }
+}
