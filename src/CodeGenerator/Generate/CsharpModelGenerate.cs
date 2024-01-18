@@ -128,10 +128,7 @@ public class CsharpModelGenerate : GenerateBase
         string tsContent;
         var dirName = GetDirName(schemaKey);
         string path = Path.Combine("Models", dirName ?? "");
-        if (!string.IsNullOrWhiteSpace(dirName))
-        {
-            nspName += $".{dirName}";
-        }
+
         if (schema.Enum.Count > 0)
         {
             tsContent = ToEnumString(schema, schemaKey, nspName);
@@ -193,7 +190,7 @@ public class CsharpModelGenerate : GenerateBase
                 {
                     string? dirName = GetDirName(name);
                     dirName = dirName.NotNull() ? dirName!.ToHyphen() + "/" : "";
-                    importString += @$"using Models.{extend};"
+                    importString += @$"using {nspName}.Models;"
                         + Environment.NewLine;
                 }
             }
@@ -220,23 +217,8 @@ public class CsharpModelGenerate : GenerateBase
                 g.First().Reference
             })
             .ToList();
-        importsProps.ForEach(ip =>
-        {
-            // 引用的导入，自引用不需要导入
-            if (ip.Reference != name)
-            {
-                string? dirName = GetDirName(ip.Reference);
-                dirName = dirName.NotNull() ? dirName!.ToHyphen() + "/" : "";
-                if (ip.IsEnum)
-                {
-                    dirName = "enum/";
-                }
 
-                importString += @$"using Models.{ip.Reference}';"
-                + Environment.NewLine;
-            }
-        });
-        var namespaceString = $"namespace Models.{nspName}" + Environment.NewLine;
+        var namespaceString = $"namespace {nspName}.Models;" + Environment.NewLine;
 
         res = @$"{importString}{namespaceString}{comment}public class {name} {extendString}{{
 {propertyString}
@@ -277,7 +259,7 @@ public class CsharpModelGenerate : GenerateBase
         {
             for (int i = 0; i < values?.Count; i++)
             {
-                propertyString += "    " + ((OpenApiString)values[i]).Value + Environment.NewLine;
+                propertyString += "    " + ((OpenApiString)values[i]).Value + "," + Environment.NewLine;
             }
         }
         else
@@ -295,7 +277,7 @@ public class CsharpModelGenerate : GenerateBase
                 }
             }
         }
-        var namespaceString = $"namespace Models.{nspName}" + Environment.NewLine;
+        var namespaceString = $"namespace {nspName}.Models;" + Environment.NewLine;
         res = @$"{namespaceString}{comment}public enum {name} {{
 {propertyString}
 }}

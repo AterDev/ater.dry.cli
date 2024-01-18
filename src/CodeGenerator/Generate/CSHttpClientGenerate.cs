@@ -48,9 +48,31 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
         return tplContent;
     }
 
-    public static string GetGlobalUsing()
+    public static string GetGlobalUsing(string name)
     {
         var content = GetTplContent("RequestService.GlobalUsings.tpl");
+        content = content + $"global using {name}.Models;" + Environment.NewLine;
+        return content;
+    }
+
+    /// <summary>
+    /// 项目文件
+    /// </summary>
+    /// <returns></returns>
+    public static string GetCsprojContent()
+    {
+        var content = """
+            <Project Sdk="Microsoft.NET.Sdk">
+              <PropertyGroup>
+                <TargetFramework>net8.0</TargetFramework>
+                <ImplicitUsings>enable</ImplicitUsings>
+                <Nullable>enable</Nullable>
+              </PropertyGroup>
+              <ItemGroup>
+                <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
+              </ItemGroup>
+            </Project>
+            """;
         return content;
     }
 
@@ -124,12 +146,8 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
         /// <summary>
         /// {{serviceFile.Description}}
         /// </summary>
-        public class {{serviceFile.Name}}Service : BaseService
+        public class {{serviceFile.Name}}Service(IHttpClientFactory httpClient) : BaseService(httpClient)
         {
-            public {{serviceFile.Name}}Service(HttpClient httpClient) : base(httpClient)
-            {
-
-            }
         {{functionstr}}
         }
         """;
@@ -225,7 +243,6 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
         """;
         return res;
     }
-
 
     /// <summary>
     /// 获取方法信息

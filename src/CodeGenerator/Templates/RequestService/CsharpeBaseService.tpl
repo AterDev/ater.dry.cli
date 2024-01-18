@@ -6,9 +6,9 @@ public class BaseService
     public JsonSerializerOptions JsonSerializerOptions { get; set; }
     public ErrorResult? ErrorMsg { get; set; }
 
-    public BaseService(HttpClient httpClient)
+    public BaseService(IHttpClientFactory httpClient)
     {
-        Http = httpClient;
+        Http = httpClient.CreateClient();
         JsonSerializerOptions = new JsonSerializerOptions()
         {
             ReferenceHandler = ReferenceHandler.IgnoreCycles,

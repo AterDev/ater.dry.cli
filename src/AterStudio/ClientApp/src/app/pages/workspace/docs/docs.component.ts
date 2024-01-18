@@ -163,7 +163,7 @@ export class DocsComponent implements OnInit {
     this.clientRequestForm = new FormGroup({
       swagger: new FormControl<string | null>('./swagger.json', []),
       type: new FormControl<LanguageType>(LanguageType.CSharp, []),
-      path: new FormControl<string | null>(this.config?.rootPath + '\\' + this.config?.apiPath ?? "", [Validators.required])
+      path: new FormControl<string | null>(this.config?.rootPath + "\\src\\SDK\\", [Validators.required])
     });
   }
 
@@ -245,6 +245,7 @@ export class DocsComponent implements OnInit {
 
   openClientRequestDialog(): void {
     this.clientRequestForm.get('swagger')?.setValue(this.currentDoc?.path);
+    this.clientRequestForm.get('path')?.setValue(this.config?.rootPath + "\\src\\SDK\\");
     this.dialogRef = this.dialog.open(this.clientRequestTmpRef, {
       minWidth: 400
     });
