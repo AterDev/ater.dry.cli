@@ -82,9 +82,9 @@ public class ApiClientCommand : CommandBase
             string dir = Path.Combine(OutputPath, "Services");
             await GenerateFileAsync(dir, service.Name, service.Content, true);
         }
-        var serviceNames = services.Select(s => s.Name).ToList();
+        var serviceNames = services.Select(s => s.Name.TrimEnd(".cs".ToCharArray())).ToList();
         var extensionContent = CSHttpClientGenerate.GetExtensionContent(nspName, serviceNames);
-        await GenerateFileAsync(OutputPath, "Extensions.cs", extensionContent, true);
+        await GenerateFileAsync(OutputPath, "Extension.cs", extensionContent, true);
 
         var models = gen.GetModelFiles(nspName);
         foreach (GenFileInfo model in models)

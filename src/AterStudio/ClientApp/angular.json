@@ -80,14 +80,14 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "forceEsbuild": true
+            "browserTarget": "AterStudio:build"
           },
           "configurations": {
             "production": {
-              "buildTarget": "AterStudio:build:production"
+              "browserTarget": "AterStudio:build:production"
             },
             "development": {
-              "buildTarget": "AterStudio:build:development",
+              "browserTarget": "AterStudio:build:development",
               "proxyConfig": "proxy.conf.json"
             }
           },
@@ -96,7 +96,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "AterStudio:build"
+            "browserTarget": "AterStudio:build"
           }
         },
         "test": {

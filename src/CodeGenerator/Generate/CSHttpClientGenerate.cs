@@ -86,7 +86,8 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
     /// <returns></returns>
     public static string GetExtensionContent(string namespaceName, List<string> services)
     {
-        var tplContent = GetTplContent("RequestService.Extension.cs.tpl");
+        var tplContent = GetTplContent("RequestService.Extension.tpl");
+        Console.WriteLine(tplContent);
         tplContent = tplContent.Replace("${Namespace}", namespaceName);
 
         var serviceContent = "";
@@ -249,7 +250,7 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
             dataString = $", {file.Name}";
         }
 
-        var returnType = function.ResponseType == "IFile" ? "Stream?" : function.ResponseType;
+        var returnType = function.ResponseType == "IFile" ? "Stream" : function.ResponseType;
         var method = function.ResponseType == "IFile"
             ? $"DownloadFileAsync(url{dataString})"
             : $"{function.Method}JsonAsync<{function.ResponseType}?>(url{dataString})";
@@ -257,7 +258,7 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
         method = function.RequestType == "IFile" ? $"UploadFileAsync<{function.ResponseType}?>(url, new StreamContent(data))" : method;
         string res = $$"""
         {{comments}}
-            public async Task<{{returnType}}> {{function.Name.ToPascalCase()}}Async({{paramsString}}) {
+            public async Task<{{returnType}}?> {{function.Name.ToPascalCase()}}Async({{paramsString}}) {
                 var url = $"{{function.Path}}";
                 return await {{method}};
             }
@@ -361,6 +362,8 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
                 {
                     "binary" => "IFile",
                     "date-time" => "DateTimeOffset",
+                    "uuid" => "Guid",
+                    "date" => "DateOnly",
                     _ => "string",
                 };
                 break;

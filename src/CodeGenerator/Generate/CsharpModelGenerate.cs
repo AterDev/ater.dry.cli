@@ -22,8 +22,8 @@ public class CsharpModelGenerate : GenerateBase
                 OpenApiSchema? responseSchema = operation.Value.Responses.FirstOrDefault().Value
                      ?.Content.FirstOrDefault().Value
                      ?.Schema;
-                (string? RequestType, string? requestRefType) = RequestGenerate.GetTypescriptParamType(requestSchema);
-                (string? ResponseType, string? responseRefType) = RequestGenerate.GetTypescriptParamType(responseSchema);
+                (string? RequestType, string? requestRefType) = CSHttpClientGenerate.GetCsharpParamType(requestSchema);
+                (string? ResponseType, string? responseRefType) = CSHttpClientGenerate.GetCsharpParamType(responseSchema);
 
                 // 存储对应的Tag
                 // 请求dto
@@ -305,7 +305,7 @@ public class CsharpModelGenerate : GenerateBase
             // 泛型处理
             foreach (KeyValuePair<string, OpenApiSchema> prop in schema.Properties)
             {
-                string type = GetCSType(prop.Value);
+                (string type, _) = CSHttpClientGenerate.GetCsharpParamType(prop.Value);
                 string propComments = "";
                 string name = prop.Key;
 
@@ -330,11 +330,13 @@ public class CsharpModelGenerate : GenerateBase
                 if (prop.Value.Items?.Reference != null)
                 {
                     refType = prop.Value.Items;
+                    property.IsList = true;
                 }
 
                 if (prop.Value.Items?.OneOf.Count > 0)
                 {
                     refType = prop.Value.Items.OneOf.FirstOrDefault();
+                    property.IsList = true;
                 }
 
                 if (refType?.Reference != null)
@@ -362,49 +364,6 @@ public class CsharpModelGenerate : GenerateBase
             .Select(s => s.FirstOrDefault()).ToList();
         return res!;
     }
-
-    /// <summary>
-    /// 获取转换成ts的类型
-    /// </summary>
-    /// <param name="prop"></param>
-    /// <returns></returns>
-    public static string GetCSType(OpenApiSchema prop)
-    {
-        string? type = "object";
-        // 常规类型
-        type = prop.Type switch
-        {
-            "boolean" => "bool",
-            "integer" => prop.Enum.Count > 0
-                                ? prop.Reference?.Id
-                                : "int",// 看是否为enum
-            "number" => "int",
-            "string" => prop.Format switch
-            {
-                "guid" => "Guid",
-                "binary" => "Stream",
-                "date-time" => "DateTimeOffset",
-                _ => "string",
-            },
-            "array" => prop.Items.Reference != null
-                                    ? $"List<{prop.Items.Reference.Id}>"
-                                    : $"List<{GetCSType(prop.Items)}>",
-            _ => prop.Reference?.Id ?? "object",
-        };
-        // 引用对象
-        if (prop.OneOf.Count > 0)
-        {
-            // 获取引用对象名称
-            type = prop.OneOf.First()?.Reference.Id;
-        }
-
-        if (prop.Nullable || prop.Reference != null)
-        {
-            //type += "";
-        }
-
-        return type ?? "object";
-    }
 }
 
 public class CSProperty
@@ -414,6 +373,7 @@ public class CSProperty
     public string Reference { get; set; } = string.Empty;
     public bool IsEnum { get; set; }
     public bool IsNullable { get; set; }
+    public bool IsList { get; set; }
     public string? Comments { get; set; }
 
     public string ToProperty()
@@ -421,6 +381,12 @@ public class CSProperty
         // 引用的类型可空
         string type = Type + (IsNullable ? "?" : "");
 
-        return $"{Comments}    public {type} {Name?.ToPascalCase()} {{ get; set; }}" + Environment.NewLine;
+        var defaultValue = string.Empty;
+        if (!IsNullable && !IsEnum && !IsList)
+        {
+            defaultValue = " = default!;";
+        }
+
+        return $"{Comments}    public {type} {Name?.ToPascalCase()} {{ get; set; }}{defaultValue}" + Environment.NewLine;
     }
 }
