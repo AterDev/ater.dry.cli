@@ -1,4 +1,4 @@
-﻿export interface UpdateConfigOptionsDto {
+export interface UpdateConfigOptionsDto {
   /**
    * dto项目目录
    */

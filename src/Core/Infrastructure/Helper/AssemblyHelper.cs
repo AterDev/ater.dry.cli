@@ -164,7 +164,13 @@ public class AssemblyHelper
     /// <returns></returns>
     public static string GetVersion()
     {
-        return Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
+        var version = Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
+
+        if (version.Contains('+'))
+        {
+            version = version.Split('+').First();
+        }
+        return version;
     }
 
     /// <summary>
@@ -266,7 +272,7 @@ public class AssemblyHelper
     {
         string userPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         // 版本号
-        string version = Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
+        string version = GetVersion();
 
         return Path.Combine(
             userPath,

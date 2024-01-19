@@ -1,4 +1,4 @@
-﻿export enum LanguageType {
+export enum LanguageType {
   CSharp = 0,
 
 }

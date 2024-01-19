@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 项目配置
  */
 export interface ConfigOptions {

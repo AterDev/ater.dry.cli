@@ -1,4 +1,4 @@
-﻿import { OperationType } from './enum/operation-type.model';
+import { OperationType } from './enum/operation-type.model';
 import { PropertyInfo } from './property-info.model';
 import { EntityInfo } from './entity-info.model';
 /**
