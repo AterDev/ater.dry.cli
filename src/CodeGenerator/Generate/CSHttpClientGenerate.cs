@@ -70,10 +70,32 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
               </PropertyGroup>
               <ItemGroup>
                 <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
+                <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="8.0.1" />
+                <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
               </ItemGroup>
             </Project>
             """;
         return content;
+    }
+
+    /// <summary>
+    /// 扩展类
+    /// </summary>
+    /// <param name="namespaceName"></param>
+    /// <param name="services"></param>
+    /// <returns></returns>
+    public static string GetExtensionContent(string namespaceName, List<string> services)
+    {
+        var tplContent = GetTplContent("RequestService.Extension.cs.tpl");
+        tplContent = tplContent.Replace("${Namespace}", namespaceName);
+
+        var serviceContent = "";
+        services.ForEach(service =>
+        {
+            serviceContent += $"        services.AddSingleton<{service}>();" + Environment.NewLine;
+        });
+        tplContent = tplContent.Replace("${AddServices}", serviceContent);
+        return tplContent;
     }
 
     /// <summary>

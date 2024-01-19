@@ -8,7 +8,7 @@ public class BaseService
 
     public BaseService(IHttpClientFactory httpClient)
     {
-        Http = httpClient.CreateClient();
+        Http = httpClient.CreateClient("${Namespace}");
         JsonSerializerOptions = new JsonSerializerOptions()
         {
             ReferenceHandler = ReferenceHandler.IgnoreCycles,
