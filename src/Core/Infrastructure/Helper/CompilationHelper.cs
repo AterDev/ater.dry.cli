@@ -35,13 +35,13 @@ public class CompilationHelper
                       if (!string.IsNullOrEmpty(dllFilter))
                       {
                           string fileName = Path.GetFileName(dll);
-                          return fileName.ToLower().StartsWith(dllFilter.ToLower());
+                          return fileName.StartsWith(dllFilter, StringComparison.CurrentCultureIgnoreCase);
                       }
                       else
                       {
                           return true;
                       }
-                  }).ToList();
+                  }).Where(dll => dll.Contains(Path.Combine("bin", "Debug"))).ToList();
 
         Compilation = Compilation.AddReferences(dlls.Select(dll => MetadataReference.CreateFromFile(dll)))
             .WithOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));

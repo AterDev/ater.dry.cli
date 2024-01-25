@@ -173,7 +173,7 @@ public class DtoCodeGenerate : GenerateBase
         dto.Properties = dto.Properties?
             .Where(p => !p.IsList
                 && p.MaxLength < 1000
-                && !p.Name.EndsWith("Id")
+                && (!p.Name.EndsWith("Id") || p.Name.Equals("Id"))
                 && !p.IsNavigation).ToList();
 
         return dto.ToDtoContent(AssemblyName, EntityInfo.Name);
@@ -244,13 +244,13 @@ public class DtoCodeGenerate : GenerateBase
         }
 
         List<PropertyInfo>? referenceProps = EntityInfo.PropertyInfos?
-            .Where(p => !p.IsJsonIgnore)
+            .Where(p => !p.IsJsonIgnore && !p.IsList)
             .Where(p => p.IsNavigation &&
                 (p.IsRequired || !p.IsNullable || !string.IsNullOrWhiteSpace(p.DefaultValue)))
             .Where(p => !p.Type.Equals("User") && !p.Type.Equals("SystemUser"))
             .Select(s => new PropertyInfo()
             {
-                Name = s.NavigationName + (s.IsList ? "Ids" : "Id"),
+                Name = s.NavigationName + "Id",
                 Type = s.IsList ? $"List<{KeyType}>" + (s.IsRequired ? "" : "?") : KeyType,
                 IsRequired = s.IsRequired,
                 IsNullable = s.IsNullable,

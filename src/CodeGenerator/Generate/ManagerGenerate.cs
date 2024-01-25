@@ -430,7 +430,7 @@ public class ManagerGenerate : GenerateBase
     /// <summary>
     /// 生成注入服务
     /// </summary>
-    /// <param name="solutionPath"></param>
+    /// <param name="managerPath"></param>
     /// <param name="nspName"></param>
     /// <returns></returns>
     public static string GetManagerDIExtensions(string managerPath, string nspName)
