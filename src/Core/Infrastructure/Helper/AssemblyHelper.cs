@@ -166,8 +166,13 @@ public class AssemblyHelper
     /// <returns></returns>
     public static string GetCurrentToolVersion()
     {
-        var version = Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
-        return version.Split('+')[0];
+        var version = Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+        if (version != null)
+            return version.Split('+')[0];
+
+        return Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version
+            ?? Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyVersionAttribute>()?.Version
+            ?? string.Empty;
     }
 
     /// <summary>
