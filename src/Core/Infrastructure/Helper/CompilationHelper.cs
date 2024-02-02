@@ -50,8 +50,8 @@ public class CompilationHelper
     public void AddSyntaxTree(string content)
     {
         SyntaxTree = CSharpSyntaxTree.ParseText(content);
-        SyntaxRoot = SyntaxTree!.GetCompilationUnitRoot();
         Compilation = Compilation.AddSyntaxTrees(SyntaxTree);
+        SyntaxRoot = SyntaxTree!.GetCompilationUnitRoot();
         SemanticModel = Compilation.GetSemanticModel(SyntaxTree);
 
         ClassDeclarationSyntax? classNode = SyntaxTree.GetCompilationUnitRoot().DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
@@ -62,9 +62,13 @@ public class CompilationHelper
     /// 获取命名空间
     /// </summary>
     /// <returns></returns>
-    public string? GetNamesapce()
+    public string? GetNamespace()
     {
         IEnumerable<SyntaxNode>? rootNodes = SyntaxTree?.GetCompilationUnitRoot().DescendantNodes();
+        if (rootNodes == null)
+        {
+            return null;
+        }
         NamespaceDeclarationSyntax? namespaceDeclarationSyntax = rootNodes!.OfType<NamespaceDeclarationSyntax>().FirstOrDefault();
 
         FileScopedNamespaceDeclarationSyntax? filescopeNamespaceDeclarationSyntax = rootNodes!.OfType<FileScopedNamespaceDeclarationSyntax>().FirstOrDefault();

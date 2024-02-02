@@ -181,9 +181,9 @@ public class ProjectController(ProjectManager manager, AdvanceManager advace) : 
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpGet("database/{id}")]
-    public string GetDatabaseContent([FromRoute] Guid id)
+    public string GetDatabaseContentAsync([FromRoute] Guid id)
     {
-        return _advace.GetDatabaseStructure();
+        return _advace.GetDatabaseStructureAsync();
     }
 
     /// <summary>

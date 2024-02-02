@@ -5,6 +5,7 @@ import { ProjectService } from 'src/app/share/services/project.service';
 
 import 'prismjs/plugins/line-numbers/prism-line-numbers.js';
 import 'prismjs/components/prism-markup.min.js';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-database',
@@ -20,7 +21,8 @@ export class DatabaseComponent implements OnInit {
   constructor(
     private service: ProjectService,
     private projectState: ProjectStateService,
-    private snb: MatSnackBar
+    private snb: MatSnackBar,
+    private sanitizer: DomSanitizer
   ) {
 
     this.projectId = projectState.project?.id!;

@@ -50,7 +50,7 @@ public class StoreGenerateTest
         CompilationHelper compilationHelper = new(projectFile!.Directory!.FullName);
         string content = File.ReadAllText(fileInfo.FullName, new UTF8Encoding(false));
         compilationHelper.AddSyntaxTree(content);
-        string? entityNamespace = compilationHelper.GetNamesapce();
+        string? entityNamespace = compilationHelper.GetNamespace();
 
         Assert.NotNull(entityNamespace);
 

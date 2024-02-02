@@ -1,6 +1,4 @@
-﻿using System.Collections.Concurrent;
-using System.Text;
-
+﻿using System.Text;
 using Core;
 using Core.Entities;
 using Core.Infrastructure.Helper;
@@ -65,9 +63,8 @@ public class AdvanceManager
     /// 获取实体表结构
     /// </summary>
     /// <returns>markdown format</returns>
-    public string GetDatabaseStructure()
+    public string GetDatabaseStructureAsync()
     {
-        var res = new ConcurrentBag<string>();
         var sb = new StringBuilder();
         // get contextbase path 
         var contextPath = Directory.GetFiles(_projectContext.SolutionPath!, "ContextBase.cs", SearchOption.AllDirectories)
@@ -82,22 +79,23 @@ public class AdvanceManager
 
             var entityFiles = Directory.GetFiles(Path.Combine(_projectContext.SolutionPath!, Config.EntityPath), $"*.cs", SearchOption.AllDirectories).ToList();
 
-            Parallel.ForEach(
-                propertyTypes,
-                new ParallelOptions { MaxDegreeOfParallelism = 5 },
-                propertyType =>
+            if (entityFiles.Count > 0)
+            {
+                propertyTypes.ForEach(propertyType =>
                 {
                     var entityPath = entityFiles.Where(e => e.EndsWith($"{propertyType}.cs")).FirstOrDefault();
+
                     if (entityPath != null)
                     {
                         var entityCompilation = new EntityParseHelper(entityPath);
                         var entityInfo = entityCompilation.GetEntity();
-                        res.Add(ToMarkdown(entityInfo));
+                        var content = ToMarkdown(entityInfo);
+                        sb.AppendLine(content);
                     }
                 });
+            }
         }
-        GC.Collect();
-        return string.Join(Environment.NewLine, res);
+        return string.Join(Environment.NewLine, sb.ToString());
     }
 
     /// <summary>

@@ -1,5 +1,4 @@
 ﻿using System.Text.RegularExpressions;
-
 using Core.Entities;
 
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -91,7 +90,7 @@ public class EntityParseHelper
     {
         // 获取当前类名
         ClassDeclarationSyntax? classDeclarationSyntax = RootNodes?.OfType<ClassDeclarationSyntax>().FirstOrDefault();
-        NamespaceName = CompilationHelper.GetNamesapce();
+        NamespaceName = CompilationHelper.GetNamespace();
         Name = classDeclarationSyntax?.Identifier.ToString();
         Comment = GetClassComment(classDeclarationSyntax);
         CommentContent = GetComment();
@@ -99,11 +98,27 @@ public class EntityParseHelper
         GetNgPageAttribute();
     }
 
+    public async Task<EntityInfo?> ParseEntityAsync(string filePath)
+    {
+        if (File.Exists(filePath))
+        {
+            var content = await File.ReadAllTextAsync(filePath);
+            CompilationHelper = new CompilationHelper(ProjectFile.Directory!.FullName);
+            CompilationHelper.AddSyntaxTree(content);
+            SyntaxTree = CompilationHelper.SyntaxTree;
+            Compilation = CompilationHelper.Compilation;
+            SemanticModel = CompilationHelper.SemanticModel;
+            RootNodes = SyntaxTree?.GetCompilationUnitRoot().DescendantNodes();
+            return GetEntity();
+        }
+        return null;
+    }
+
     public EntityInfo GetEntity()
     {
         ClassDeclarationSyntax? classDeclarationSyntax = RootNodes?.OfType<ClassDeclarationSyntax>().FirstOrDefault();
         Name = classDeclarationSyntax?.Identifier.ToString();
-        NamespaceName = CompilationHelper.GetNamesapce();
+        NamespaceName = CompilationHelper.GetNamespace();
         Comment = GetClassComment(classDeclarationSyntax);
 
         return new EntityInfo()

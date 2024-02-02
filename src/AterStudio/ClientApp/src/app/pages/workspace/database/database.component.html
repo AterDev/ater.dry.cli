@@ -4,6 +4,9 @@
 </div>
 
 <div class="p-2" style="width:800px" *ngIf="!isLoding">
-  <markdown [data]="content" *ngIf="content" lineNumbers [start]="1">
-  </markdown>
+  @if(content){
+  <pre style="font-size: 16px;font-family: 'Courier New', Courier, monospace;">
+      {{content}}
+    </pre>
+  }
 </div>
