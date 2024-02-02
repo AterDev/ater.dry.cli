@@ -393,7 +393,10 @@ public class EntityParseHelper
         }
 
         // 导航属性判断
-        ParseNavigation((INamedTypeSymbol)typeInfo.Type!, propertyInfo);
+        if (typeInfo.Type is INamedTypeSymbol)
+        {
+            ParseNavigation((INamedTypeSymbol)typeInfo.Type!, propertyInfo);
+        }
         return propertyInfo;
     }
 
