@@ -9,8 +9,7 @@
     <SatelliteResourceLanguages>en,zh-cn</SatelliteResourceLanguages>
     <ImplicitUsings>enable</ImplicitUsings>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <Version>8.0.0-rc1</Version>
-    <Trimming>full</Trimming>
+    <Version>8.0.0</Version>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <NoWarn>1701;1702;1591</NoWarn>
@@ -28,7 +27,7 @@
   <Target Name="SwaggerPostBuildTarget" AfterTargets="Build" Condition="'$(Configuration)' == 'Debug'">
     <Exec Command="dotnet tool restore" UseUtf8Encoding="Always" />
     <Exec Command="dotnet swagger tofile --output ./swagger.json .\bin\Debug\net8.0\AterStudio.dll v1" UseUtf8Encoding="Always" />
-    <Exec Command="dry ng .\swagger.json -o .\ClientApp\src\app\share" UseUtf8Encoding="Always" />
+    <!--<Exec Command="dry ng .\swagger.json -o .\ClientApp\src\app\share" UseUtf8Encoding="Always" />-->
   </Target>
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->

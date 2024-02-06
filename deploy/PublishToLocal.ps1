@@ -94,7 +94,7 @@ try {
     Write-Host 'uninstall old version'
     dotnet tool uninstall -g $PackageId
 
-    Write-Host 'install new version'
+    Write-Host 'install new version:'$PackageId $Version
     dotnet tool install -g --add-source ./nupkg $PackageId --version $Version
 
     Set-Location $location
