@@ -1,20 +1,14 @@
-﻿using ${Namespace}.Implement;
-using ${Namespace}.IManager;
-using Share.Models.${EntityName}Dtos;
+﻿using ${Namespace}.Manager;
+using ${ShareNamespace}.Models.${EntityName}Dtos;
 
 namespace ${Namespace}.Manager;
 ${Comment}
-public class ${EntityName}Manager : DomainManagerBase<${EntityName}, ${EntityName}UpdateDto, ${EntityName}FilterDto, ${EntityName}ItemDto>, I${EntityName}Manager
+public class ${EntityName}Manager(
+    DataAccessContext<${EntityName}> dataContext, 
+    ILogger<${EntityName}Manager> logger,
+    IUserContext userContext) : ManagerBase<${EntityName}, ${EntityName}UpdateDto, ${EntityName}FilterDto, ${EntityName}ItemDto>(dataContext, logger)
 {
-${AdditionManagersProps}
-    public ${EntityName}Manager(
-        DataStoreContext storeContext, 
-        ILogger<${EntityName}Manager> logger,
-        IUserContext userContext${AdditionManagersDI}) : base(storeContext, logger)
-    {
-${AdditionManagersInit}
-        _userContext = userContext;
-    }
+    private readonly IUserContext _userContext = userContext;
 
     /// <summary>
     /// 创建待添加实体

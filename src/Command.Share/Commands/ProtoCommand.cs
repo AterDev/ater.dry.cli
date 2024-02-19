@@ -5,28 +5,19 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Command.Share.Commands;
-public class ProtoCommand : CommandBase
+public class ProtoCommand(string entityPath, string projectPath) : CommandBase
 {
     /// <summary>
     /// 实体文件路径
     /// </summary>
-    public string EntityPath { get; set; }
+    public string EntityPath { get; set; } = entityPath;
     /// <summary>
     /// 项目路径
     /// </summary>
-    public string ProjectPath { get; set; }
-    public ProtobufGenerate CodeGen { get; set; }
+    public string ProjectPath { get; set; } = projectPath;
+    public ProtobufGenerate CodeGen { get; set; } = new ProtobufGenerate(entityPath);
 
     public string? ErrorMessage { get; set; }
-
-    public ProtoCommand(string entityPath, string projectPath)
-    {
-        EntityPath = entityPath;
-        ProjectPath = projectPath;
-        CodeGen = new ProtobufGenerate(entityPath);
-
-        ErrorMessage = null;
-    }
 
     public async Task RunAsync(bool cover = false)
     {

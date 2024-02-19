@@ -10,13 +10,13 @@ public class ApiDocContent
     /// <summary>
     /// 接口信息
     /// </summary>
-    public List<RestApiGroup> RestApiGroups { get; set; } = new List<RestApiGroup>();
+    public List<RestApiGroup> RestApiGroups { get; set; } = [];
     /// <summary>
     /// 所有请求及返回类型信息
     /// </summary>
-    public List<EntityInfo> ModelInfos { get; set; } = new List<EntityInfo>();
+    public List<EntityInfo> ModelInfos { get; set; } = [];
     /// <summary>
     /// tag信息
     /// </summary>
-    public List<ApiDocTag> OpenApiTags { get; set; } = new List<ApiDocTag>();
+    public List<ApiDocTag> OpenApiTags { get; set; } = [];
 }

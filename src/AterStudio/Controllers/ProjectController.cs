@@ -1,8 +1,9 @@
 ﻿using AterStudio.Advance;
 using AterStudio.Manager;
 using AterStudio.Models;
+
 using Core.Entities;
-using Core.Infrastructure;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace AterStudio.Controllers;
@@ -10,22 +11,32 @@ namespace AterStudio.Controllers;
 /// <summary>
 /// 项目
 /// </summary>
+/// <see cref="ProjectManager"/>
 [ApiController]
 [Route("api/[controller]")]
-public class ProjectController : ControllerBase
+public class ProjectController(ProjectManager manager, AdvanceManager advace) : ControllerBase
 {
-    private readonly ProjectManager _manager;
-    private readonly EntityAdvance _advace;
-    public ProjectController(ProjectManager manager, EntityAdvance advace)
+    private readonly ProjectManager _manager = manager;
+    private readonly AdvanceManager _advace = advace;
+
+    /// <summary>
+    /// 获取解决方案列表
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    public async Task<List<Project>> ListAsync()
     {
-        _manager = manager;
-        _advace = advace;
+        return await _manager.GetProjectsAsync();
     }
 
-    [HttpGet]
-    public List<Project> List()
+    /// <summary>
+    /// 获取工具版本
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("verison")]
+    public string GetVersion()
     {
-        return _manager.GetProjects();
+        return _manager.GetToolVersion();
     }
 
     /// <summary>
@@ -34,15 +45,15 @@ public class ProjectController : ControllerBase
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpGet("{id}")]
-    public Project? Project([FromRoute] Guid id)
+    public async Task<Project?> ProjectAsync([FromRoute] Guid id)
     {
-        return _manager.GetProject(id);
+        return await _manager.GetProjectAsync(id);
     }
 
     [HttpGet("sub/{id}")]
-    public List<SubProjectInfo>? GetAllProjectInfos([FromRoute] Guid id)
+    public async Task<List<SubProjectInfo>?> GetAllProjectInfosAsync([FromRoute] Guid id)
     {
-        return _manager.GetAllProjects(id);
+        return await _manager.GetAllProjectsAsync(id);
     }
 
     /// <summary>
@@ -52,11 +63,26 @@ public class ProjectController : ControllerBase
     /// <param name="path"></param>
     /// <returns></returns>
     [HttpPost]
-    public async Task<ActionResult<Project?>> AddAsync(string name, string path)
+    public async Task<ActionResult<string?>> AddAsync(string name, string path)
     {
-        return (!System.IO.File.Exists(path) && !Directory.Exists(path))
-            ? Problem("未找到该路径")
-            : await _manager.AddProjectAsync(name, path);
+        if (!Directory.Exists(path))
+        {
+            return Problem("未找到该路径");
+        }
+        var res = await _manager.AddProjectAsync(name, path);
+        return res != null ? (ActionResult<string?>)Problem(res) : (ActionResult<string?>)Ok("添加成功");
+    }
+
+    /// <summary>
+    /// 添加微服务
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    [HttpPost("service")]
+    public ActionResult<bool> AddService(string name)
+    {
+        var res = _manager.AddServiceProject(name);
+        return res;
     }
 
     /// <summary>
@@ -68,6 +94,27 @@ public class ProjectController : ControllerBase
     {
         var config = _manager.GetConfigOptions();
         return config == null ? Problem("配置文件加载失败") : config;
+    }
+
+    /// <summary>
+    /// 更新解决方案
+    /// </summary>
+    /// <returns></returns>
+    [HttpPut("solution")]
+    public async Task<string> UpdateSolutionAsync()
+    {
+        return await _manager.UpdateSolutionAsync();
+    }
+
+    /// <summary>
+    /// 打开解决方案，仅支持sln
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    [HttpPost("open")]
+    public ActionResult<string> OpenSolution(string path)
+    {
+        return path.EndsWith(".sln") ? (ActionResult<string>)_manager.OpenSolution(path) : (ActionResult<string>)Problem("不支持的解决方案文件");
     }
 
     /// <summary>
@@ -134,9 +181,9 @@ public class ProjectController : ControllerBase
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpGet("database/{id}")]
-    public string GetDatabaseContent([FromRoute] Guid id)
+    public string GetDatabaseContentAsync([FromRoute] Guid id)
     {
-        return _advace.GetDatabaseStructure(id);
+        return _advace.GetDatabaseStructureAsync();
     }
 
     /// <summary>
@@ -144,50 +191,10 @@ public class ProjectController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpGet("watcher/{id}")]
-    public ActionResult<bool> GetWatcherStatus([FromRoute] Guid id)
+    public async Task<ActionResult<bool>> GetWatcherStatusAsync([FromRoute] Guid id)
     {
-        var project = _manager.GetProject(id);
-        if (project == null)
-        {
-            return NotFound("不存在该项目");
-        }
-        return _manager.GetWatcherStatus(project);
+        var project = await _manager.GetProjectAsync(id);
+        return project == null ? (ActionResult<bool>)NotFound("不存在该项目") : (ActionResult<bool>)_manager.GetWatcherStatus(project);
     }
 
-    /// <summary>
-    /// 开启监测
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    [HttpPost("watcher/{id}")]
-    public ActionResult<bool> StartWatcher([FromRoute] Guid id)
-    {
-        var project = _manager.GetProject(id);
-        if (project == null)
-        {
-            return NotFound("不存在该项目");
-        }
-
-        Const.PROJECT_ID = project.ProjectId;
-        _manager.StartWatcher(project);
-        return true;
-    }
-
-    /// <summary>
-    /// 停止监测
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    [HttpDelete("watcher/{id}")]
-    public ActionResult<bool> StopWatcher([FromRoute] Guid id)
-    {
-        var project = _manager.GetProject(id);
-        if (project == null)
-        {
-            return NotFound("不存在该项目");
-        }
-        Const.PROJECT_ID = project.ProjectId;
-        _manager.StopWatcher(project);
-        return true;
-    }
 }

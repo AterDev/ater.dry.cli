@@ -30,6 +30,11 @@ public class CreateSolutionDto
     public CacheType CacheType { get; set; } = CacheType.Redis;
 
     /// <summary>
+    /// 前端项目
+    /// </summary>
+    public FrontType FrontType { get; set; } = FrontType.None;
+
+    /// <summary>
     /// 是否包含租户
     /// </summary>
     public bool HasTenant { get; set; }
@@ -37,11 +42,11 @@ public class CreateSolutionDto
     /// <summary>
     /// 是否包含验证授权服务
     /// </summary>
-    public bool HasIdentityServer { get; set; } = false;
+    public bool HasIdentityServer { get; set; }
     /// <summary>
     /// 是否包含任务管理服务
     /// </summary>
-    public bool HasTaskManager { get; set; } = false;
+    public bool HasTaskManager { get; set; }
     /// <summary>
     /// 写数据库连接字符串
     /// </summary>
@@ -63,31 +68,42 @@ public class CreateSolutionDto
     [MaxLength(60)]
     public string? CacheInstanceName { get; set; }
     /// <summary>
+    /// 系统管理模块
+    /// </summary>
+    public bool HasSystemFeature { get; set; }
+    /// <summary>
     /// 内容管理模块
     /// </summary>
-    public bool HasCmsFeature { get; set; } = false;
+    public bool HasCmsFeature { get; set; }
     /// <summary>
-    /// 用户日志模块
+    /// 用户文件模块
     /// </summary>
-    public bool HasUserLogsFeature { get; set; } = false;
+    public bool HasFileManagerFeature { get; set; }
+
     /// <summary>
-    /// 系统日志模块
+    /// 订单模块
     /// </summary>
-    public bool HasSystemLogsFeature { get; set; } = false;
+    public bool HasOrderFeature { get; set; }
+
+    /// <summary>
+    /// 项目类型
+    /// </summary>
+    public ProjectType ProjectType { get; set; } = ProjectType.WebAPI;
 }
 
 public enum DBType
 {
     /// <summary>
-    /// SQLServer
-    /// </summary>
-    [Description("SQLServer")]
-    SQLServer,
-    /// <summary>
     /// PostgreSQL
     /// </summary>
     [Description("PostgreSQL")]
-    PostgreSQL
+    PostgreSQL,
+    /*/// <summary>
+    /// SQLServer
+    /// </summary>
+    [Description("SQLServer")]
+    SQLServer*/
+
 }
 public enum CacheType
 {
@@ -100,10 +116,26 @@ public enum CacheType
     /// Memory
     /// </summary>
     [Description(description: "Memory")]
-    Memory,
+    Memory
+}
+
+/// <summary>
+/// 前端项目
+/// </summary>
+public enum FrontType
+{
     /// <summary>
-    /// None
+    /// 无
     /// </summary>
-    [Description(description: "None")]
-    None
+    None,
+    /// <summary>
+    /// Angular
+    /// </summary>
+    [Description("Angular")]
+    Angular,
+    /// <summary>
+    /// Blazor
+    /// </summary>
+    [Description("Blazor")]
+    Blazor,
 }

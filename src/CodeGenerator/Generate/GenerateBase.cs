@@ -2,9 +2,6 @@
 
 public class GenerateBase
 {
-    public GenerateBase()
-    {
-    }
     /// <summary>
     /// 获取模板内容
     /// </summary>
@@ -22,22 +19,5 @@ public class GenerateBase
         }
         using StreamReader reader = new(stream);
         return reader.ReadToEnd();
-    }
-
-    /// <summary>
-    /// 写入文件
-    /// </summary>
-    /// <param name="path">目录</param>
-    /// <param name="fileName">文件名称</param>
-    /// <param name="content">文件内容</param>
-    protected static void SaveToFile(string path, string fileName, string content)
-    {
-        if (!Directory.Exists(path))
-        {
-            _ = Directory.CreateDirectory(path);
-        }
-
-        File.WriteAllText(Path.Combine(path, fileName), content, Encoding.UTF8);
-        Console.WriteLine($"👉 Created file {Path.Combine(path, fileName)}.");
     }
 }

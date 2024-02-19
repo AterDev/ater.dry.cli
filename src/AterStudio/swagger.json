@@ -6,16 +6,55 @@
     "version": "v1"
   },
   "paths": {
-    "/api/Advance/token": {
+    "/api/Advance/config": {
       "get": {
         "tags": [
           "Advance"
         ],
-        "summary": "获取token",
-        "operationId": "Advance_GetToken",
+        "summary": "获取配置",
+        "operationId": "Advance_GetConfig",
         "parameters": [
           {
-            "name": "username",
+            "name": "key",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfigData"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfigData"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfigData"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Advance"
+        ],
+        "summary": "设置配置",
+        "operationId": "Advance_SetConfig",
+        "parameters": [
+          {
+            "name": "key",
             "in": "query",
             "description": "",
             "schema": {
@@ -23,7 +62,7 @@
             }
           },
           {
-            "name": "password",
+            "name": "value",
             "in": "query",
             "description": "",
             "schema": {
@@ -33,145 +72,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Advance/entity": {
-      "get": {
-        "tags": [
-          "Advance"
-        ],
-        "summary": "生成实体",
-        "operationId": "Advance_GetEntity",
-        "parameters": [
-          {
-            "name": "name",
-            "in": "query",
-            "description": "",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "description",
-            "in": "query",
-            "description": "",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Advance/entity/{projectId}": {
-      "post": {
-        "tags": [
-          "Advance"
-        ],
-        "summary": "创建实体",
-        "operationId": "Advance_CreateEntity",
-        "parameters": [
-          {
-            "name": "projectId",
-            "in": "path",
-            "description": "",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AddEntityDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AddEntityDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/AddEntityDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              }
-            }
+            "description": "Success"
           }
         }
       }
@@ -373,6 +274,52 @@
         }
       }
     },
+    "/api/ApiDoc/export/{id}": {
+      "get": {
+        "tags": [
+          "ApiDoc"
+        ],
+        "summary": "导出markdown文档",
+        "operationId": "ApiDoc_Export",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/ApiDoc": {
       "post": {
         "tags": [
@@ -492,7 +439,7 @@
             }
           },
           {
-            "name": "name",
+            "name": "serviceName",
             "in": "query",
             "schema": {
               "type": "string"
@@ -541,7 +488,7 @@
         "operationId": "Entity_GetDtos",
         "parameters": [
           {
-            "name": "entityName",
+            "name": "entityFilePath",
             "in": "query",
             "description": "",
             "schema": {
@@ -582,12 +529,149 @@
         }
       }
     },
+    "/api/Entity/dto": {
+      "post": {
+        "tags": [
+          "Entity"
+        ],
+        "summary": "创建DTO",
+        "operationId": "Entity_CreateDto",
+        "parameters": [
+          {
+            "name": "entityFilePath",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "summary",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Entity"
+        ],
+        "summary": "更新内容",
+        "operationId": "Entity_UpdateDtoContent",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDtoDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDtoDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDtoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Entity": {
+      "delete": {
+        "tags": [
+          "Entity"
+        ],
+        "summary": "清理解决方案",
+        "operationId": "Entity_CleanSolution",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Entity/fileContent": {
       "get": {
         "tags": [
           "Entity"
         ],
-        "summary": "获取文件内容\r\nentity/manager",
+        "summary": "获取文件内容 entity/manager",
         "operationId": "Entity_GetFileContent",
         "parameters": [
           {
@@ -632,57 +716,6 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/EntityFile"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Entity/dto": {
-      "put": {
-        "tags": [
-          "Entity"
-        ],
-        "summary": "更新内容",
-        "operationId": "Entity_UpdateDtoContent",
-        "requestBody": {
-          "description": "",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateDtoDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateDtoDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateDtoDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "boolean"
                 }
               }
             }
@@ -1121,7 +1154,7 @@
         "tags": [
           "Feature"
         ],
-        "summary": "创建模型",
+        "summary": "创建模块",
         "operationId": "Feature_CreateModule",
         "parameters": [
           {
@@ -1162,6 +1195,7 @@
         "tags": [
           "Project"
         ],
+        "summary": "获取解决方案列表",
         "operationId": "Project_List",
         "responses": {
           "200": {
@@ -1225,17 +1259,48 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Project"
+                  "type": "string"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Project"
+                  "type": "string"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Project"
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Project/verison": {
+      "get": {
+        "tags": [
+          "Project"
+        ],
+        "summary": "获取工具版本",
+        "operationId": "Project_GetVersion",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
                 }
               }
             }
@@ -1377,6 +1442,47 @@
         }
       }
     },
+    "/api/Project/service": {
+      "post": {
+        "tags": [
+          "Project"
+        ],
+        "summary": "添加微服务",
+        "operationId": "Project_AddService",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Project/setting": {
       "get": {
         "tags": [
@@ -1450,6 +1556,78 @@
               "text/json": {
                 "schema": {
                   "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Project/solution": {
+      "put": {
+        "tags": [
+          "Project"
+        ],
+        "summary": "更新解决方案",
+        "operationId": "Project_UpdateSolution",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Project/open": {
+      "post": {
+        "tags": [
+          "Project"
+        ],
+        "summary": "打开解决方案，仅支持sln",
+        "operationId": "Project_OpenSolution",
+        "parameters": [
+          {
+            "name": "path",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
                 }
               }
             }
@@ -1703,83 +1881,60 @@
             }
           }
         }
-      },
+      }
+    },
+    "/api/Tools/classModel": {
       "post": {
         "tags": [
-          "Project"
+          "Tools"
         ],
-        "summary": "开启监测",
-        "operationId": "Project_StartWatcher",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "boolean"
-                }
+        "summary": "转换成类",
+        "operationId": "Tools_ConvertToClass",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConvertDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConvertDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConvertDto"
               }
             }
           }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Project"
-        ],
-        "summary": "停止监测",
-        "operationId": "Project_StopWatcher",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
+        },
         "responses": {
           "200": {
             "description": "Success",
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "boolean"
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "boolean"
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "boolean"
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -1790,19 +1945,6 @@
   },
   "components": {
     "schemas": {
-      "AddEntityDto": {
-        "type": "object",
-        "properties": {
-          "namespace": {
-            "type": "string",
-            "nullable": true
-          },
-          "content": {
-            "type": "string"
-          }
-        },
-        "additionalProperties": false
-      },
       "ApiDocContent": {
         "type": "object",
         "properties": {
@@ -1885,6 +2027,11 @@
               "type": "string"
             }
           },
+          "serviceName": {
+            "type": "string",
+            "description": "服务",
+            "nullable": true
+          },
           "commandType": {
             "$ref": "#/components/schemas/CommandType"
           },
@@ -1905,15 +2052,13 @@
       "CacheType": {
         "enum": [
           0,
-          1,
-          2
+          1
         ],
         "type": "integer",
         "format": "int32",
         "x-enumNames": [
           "Redis",
-          "Memory",
-          "None"
+          "Memory"
         ],
         "x-enumData": [
           {
@@ -1925,11 +2070,6 @@
             "name": "Memory",
             "value": 1,
             "description": "Memory"
-          },
-          {
-            "name": "None",
-            "value": 2,
-            "description": "None"
           }
         ]
       },
@@ -1966,6 +2106,30 @@
         ],
         "x-enumData": [ ]
       },
+      "ConfigData": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "key": {
+            "maxLength": 100,
+            "type": "string",
+            "description": "键"
+          },
+          "value": {
+            "maxLength": 2000,
+            "type": "string",
+            "description": "值"
+          },
+          "valueType": {
+            "$ref": "#/components/schemas/ValueType"
+          }
+        },
+        "additionalProperties": false,
+        "description": "配置"
+      },
       "ConfigOptions": {
         "type": "object",
         "properties": {
@@ -1988,6 +2152,11 @@
             "type": "string"
           },
           "storePath": {
+            "type": "string",
+            "description": "废弃属性",
+            "nullable": true
+          },
+          "applicationPath": {
             "type": "string"
           },
           "apiPath": {
@@ -2008,25 +2177,37 @@
           },
           "isSplitController": {
             "type": "boolean",
-            "description": "是否拆分",
+            "description": "控制器是否拆分",
             "nullable": true
           },
           "version": {
             "type": "string"
           },
-          "swaggerPath": {
-            "type": "string",
-            "description": "swagger地址",
-            "nullable": true
-          },
           "webAppPath": {
             "type": "string",
             "description": "前端路径",
             "nullable": true
+          },
+          "solutionType": {
+            "$ref": "#/components/schemas/SolutionType"
           }
         },
         "additionalProperties": false,
         "description": "项目配置"
+      },
+      "ConvertDto": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "className": {
+            "type": "string",
+            "description": "类名称",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "CreateSolutionDto": {
         "type": "object",
@@ -2046,6 +2227,9 @@
           },
           "cacheType": {
             "$ref": "#/components/schemas/CacheType"
+          },
+          "frontType": {
+            "$ref": "#/components/schemas/FrontType"
           },
           "hasTenant": {
             "type": "boolean",
@@ -2083,17 +2267,24 @@
             "description": "缓存实例名称",
             "nullable": true
           },
+          "hasSystemFeature": {
+            "type": "boolean",
+            "description": "系统管理模块"
+          },
           "hasCmsFeature": {
             "type": "boolean",
             "description": "内容管理模块"
           },
-          "hasUserLogsFeature": {
+          "hasFileManagerFeature": {
             "type": "boolean",
-            "description": "用户日志模块"
+            "description": "用户文件模块"
           },
-          "hasSystemLogsFeature": {
+          "hasOrderFeature": {
             "type": "boolean",
-            "description": "系统日志模块"
+            "description": "订单模块"
+          },
+          "projectType": {
+            "$ref": "#/components/schemas/ProjectType"
           }
         },
         "additionalProperties": false,
@@ -2120,24 +2311,17 @@
       },
       "DBType": {
         "enum": [
-          0,
-          1
+          0
         ],
         "type": "integer",
         "format": "int32",
         "x-enumNames": [
-          "SQLServer",
           "PostgreSQL"
         ],
         "x-enumData": [
           {
-            "name": "SQLServer",
-            "value": 0,
-            "description": "SQLServer"
-          },
-          {
             "name": "PostgreSQL",
-            "value": 1,
+            "value": 0,
             "description": "PostgreSQL"
           }
         ]
@@ -2252,6 +2436,33 @@
         ],
         "x-enumData": [ ]
       },
+      "FrontType": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "description": "前端项目",
+        "format": "int32",
+        "x-enumNames": [
+          "None",
+          "Angular",
+          "Blazor"
+        ],
+        "x-enumData": [
+          {
+            "name": "Angular",
+            "value": 1,
+            "description": "Angular"
+          },
+          {
+            "name": "Blazor",
+            "value": 2,
+            "description": "Blazor"
+          }
+        ]
+      },
       "GenerateDto": {
         "type": "object",
         "properties": {
@@ -2261,6 +2472,11 @@
           },
           "entityPath": {
             "type": "string"
+          },
+          "serviceName": {
+            "type": "string",
+            "description": "服务",
+            "nullable": true
           },
           "commandType": {
             "$ref": "#/components/schemas/CommandType"
@@ -2356,6 +2572,13 @@
           },
           "path": {
             "type": "string"
+          },
+          "version": {
+            "type": "string",
+            "nullable": true
+          },
+          "solutionType": {
+            "$ref": "#/components/schemas/SolutionType"
           }
         },
         "additionalProperties": false,
@@ -2366,7 +2589,9 @@
           0,
           1,
           2,
-          3
+          3,
+          4,
+          5
         ],
         "type": "integer",
         "format": "int32",
@@ -2374,7 +2599,9 @@
           "Web",
           "Console",
           "Lib",
-          "Module"
+          "Module",
+          "WebAPI",
+          "GRPC"
         ],
         "x-enumData": [ ]
       },
@@ -2417,6 +2644,9 @@
             "type": "string",
             "description": "导航属性类名称",
             "nullable": true
+          },
+          "isComplexType": {
+            "type": "boolean"
           },
           "hasMany": {
             "type": "boolean",
@@ -2553,6 +2783,19 @@
         "additionalProperties": false,
         "description": "接口信息"
       },
+      "SolutionType": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32",
+        "x-enumNames": [
+          "DotNet",
+          "Node"
+        ],
+        "x-enumData": [ ]
+      },
       "SubProjectInfo": {
         "type": "object",
         "properties": {
@@ -2645,6 +2888,10 @@
             "type": "string",
             "nullable": true
           },
+          "entityFrameworkPath": {
+            "type": "string",
+            "nullable": true
+          },
           "storePath": {
             "type": "string",
             "nullable": true
@@ -2677,7 +2924,8 @@
         "properties": {
           "fileName": {
             "maxLength": 100,
-            "type": "string"
+            "type": "string",
+            "description": "文件完整路径"
           },
           "content": {
             "maxLength": 2000,
@@ -2685,6 +2933,23 @@
           }
         },
         "additionalProperties": false
+      },
+      "ValueType": {
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "integer",
+        "format": "int32",
+        "x-enumNames": [
+          "Integer",
+          "Double",
+          "String",
+          "Boolean"
+        ],
+        "x-enumData": [ ]
       }
     }
   },
@@ -2708,6 +2973,10 @@
     {
       "name": "Project",
       "description": "项目"
+    },
+    {
+      "name": "Tools",
+      "description": "Tools"
     }
   ]
 }

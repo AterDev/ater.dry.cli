@@ -50,19 +50,6 @@ export class LoginComponent implements OnInit {
     }
     return '';
   }
-  doLogin(): void {
-    if (this.loginForm.valid) {
-      this.advanceService.getToken(this.username?.value, this.password?.value)
-        .subscribe(res => {
-          if (res) {
-            this.loginService.saveLoginState(this.username?.value, res);
-            this.router.navigate(['/']);
-          } else {
-            this.snb.open('用户名密码错误');
-          }
-        });
-    }
-  }
 
   logout(): void {
     this.loginService.logout();

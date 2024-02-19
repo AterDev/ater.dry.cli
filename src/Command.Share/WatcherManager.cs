@@ -1,7 +1,7 @@
 ﻿namespace Command.Share;
 public class WatcherManager
 {
-    public static Dictionary<Guid, FileWatcher> WatcherList { get; set; } = new();
+    public static Dictionary<Guid, FileWatcher> WatcherList { get; set; } = [];
 
     public static FileWatcher StartWatcher(Guid name, string entityPath, string dtoPath, string appPath)
     {

@@ -17,11 +17,11 @@ public class RequestServiceFile
         string functions = "";
         // import引用的models
         string importModels = "";
-        List<string> refTypes = new();
+        List<string> refTypes = [];
         if (Functions != null)
         {
             functions = string.Join("\n", Functions.Select(f => f.ToNgRequestFunction()).ToArray());
-            string[] baseTypes = new string[] { "string", "string[]", "number", "number[]", "boolean" };
+            string[] baseTypes = ["string", "string[]", "number", "number[]", "boolean"];
             // 获取请求和响应的类型，以便导入
             List<string?> requestRefs = Functions
                 .Where(f => !string.IsNullOrEmpty(f.RequestRefType)
@@ -164,16 +164,18 @@ public class RequestServiceFunction
         List<string?>? paths = Params?.Where(p => p.InPath).Select(p => p.Name)?.ToList();
         paths?.ForEach(p =>
             {
+                // 路由参数处理
                 string origin = $"{{{p}}}";
                 Path = Path.Replace(origin, "$" + origin);
             });
+
         // 需要拼接的参数,特殊处理文件上传
         List<string?>? reqParams = Params?.Where(p => !p.InPath && p.Type != "FormData")
             .Select(p => p.Name)?.ToList();
         if (reqParams != null)
         {
             string queryParams = "";
-            queryParams = string.Join("&", reqParams.Select(p => { return $"{p}=${{{p}}}"; }).ToArray());
+            queryParams = string.Join("&", reqParams.Select(p => { return $"{p}=${{{p} ?? ''}}"; }).ToArray());
             if (!string.IsNullOrEmpty(queryParams))
             {
                 Path += "?" + queryParams;
@@ -184,11 +186,19 @@ public class RequestServiceFunction
         {
             dataString = $", {file.Name}";
         }
+        var method = "request";
+        var generics = $"<{ResponseType}>";
+        if (ResponseType.Equals("FormData"))
+        {
+            ResponseType = "Blob";
+            method = "downloadFile";
+            generics = "";
+        }
 
         string function = @$"{comments}
   {Name}({paramsString}): Observable<{ResponseType}> {{
-    const url = `{Path}`;
-    return this.request<{ResponseType}>('{Method.ToLower()}', url{dataString});
+    const _url = `{Path}`;
+    return this.{method}{generics}('{Method.ToLower()}', _url{dataString});
   }}
 ";
         return function;
@@ -207,5 +217,5 @@ public class FunctionParams
     /// <summary>
     /// 是否路由参数
     /// </summary>
-    public bool InPath { get; set; } = false;
+    public bool InPath { get; set; }
 }

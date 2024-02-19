@@ -12,6 +12,8 @@ public class CompilationHelper
     public IEnumerable<INamedTypeSymbol> AllClass { get; set; }
     public CompilationUnitSyntax? SyntaxRoot { get; set; }
 
+    public string EntityPath { get; set; }
+
     /// <summary>
     /// 
     /// </summary>
@@ -21,7 +23,7 @@ public class CompilationHelper
     {
         string suffix = DateTime.Now.ToString("HHmmss");
         Compilation = CSharpCompilation.Create("tmp" + suffix);
-
+        EntityPath = path;
         AddDllReferences(path, dllFilter);
         AllClass = GetAllClasses();
     }
@@ -33,13 +35,13 @@ public class CompilationHelper
                       if (!string.IsNullOrEmpty(dllFilter))
                       {
                           string fileName = Path.GetFileName(dll);
-                          return fileName.ToLower().StartsWith(dllFilter.ToLower());
+                          return fileName.StartsWith(dllFilter, StringComparison.CurrentCultureIgnoreCase);
                       }
                       else
                       {
                           return true;
                       }
-                  }).ToList();
+                  }).Where(dll => dll.Contains(Path.Combine("bin", "Debug"))).ToList();
 
         Compilation = Compilation.AddReferences(dlls.Select(dll => MetadataReference.CreateFromFile(dll)))
             .WithOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
@@ -48,8 +50,8 @@ public class CompilationHelper
     public void AddSyntaxTree(string content)
     {
         SyntaxTree = CSharpSyntaxTree.ParseText(content);
-        SyntaxRoot = SyntaxTree!.GetCompilationUnitRoot();
         Compilation = Compilation.AddSyntaxTrees(SyntaxTree);
+        SyntaxRoot = SyntaxTree!.GetCompilationUnitRoot();
         SemanticModel = Compilation.GetSemanticModel(SyntaxTree);
 
         ClassDeclarationSyntax? classNode = SyntaxTree.GetCompilationUnitRoot().DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
@@ -60,9 +62,13 @@ public class CompilationHelper
     /// 获取命名空间
     /// </summary>
     /// <returns></returns>
-    public string? GetNamesapce()
+    public string? GetNamespace()
     {
         IEnumerable<SyntaxNode>? rootNodes = SyntaxTree?.GetCompilationUnitRoot().DescendantNodes();
+        if (rootNodes == null)
+        {
+            return null;
+        }
         NamespaceDeclarationSyntax? namespaceDeclarationSyntax = rootNodes!.OfType<NamespaceDeclarationSyntax>().FirstOrDefault();
 
         FileScopedNamespaceDeclarationSyntax? filescopeNamespaceDeclarationSyntax = rootNodes!.OfType<FileScopedNamespaceDeclarationSyntax>().FirstOrDefault();
@@ -141,7 +147,7 @@ public class CompilationHelper
     /// <returns></returns>
     protected IEnumerable<INamedTypeSymbol> GetNamespacesClasses(IEnumerable<INamespaceSymbol> namespaces)
     {
-        List<INamedTypeSymbol> classes = new();
+        List<INamedTypeSymbol> classes = [];
         classes = namespaces.SelectMany(n => n.GetTypeMembers()).ToList();
         List<INamespaceSymbol> childNamespaces = namespaces.SelectMany(n => n.GetNamespaceMembers()).ToList();
         if (childNamespaces.Count > 0)
@@ -288,14 +294,16 @@ public class CompilationHelper
             ClassDeclarationSyntax classNode = SyntaxRoot.DescendantNodes()
                 .OfType<ClassDeclarationSyntax>().First();
 
-            ConstructorDeclarationSyntax constructor = classNode.DescendantNodes().OfType<ConstructorDeclarationSyntax>().First();
-
-            propertyContent = $"    {propertyContent}" + Environment.NewLine;
-            if (SyntaxFactory.ParseMemberDeclaration(propertyContent) is not PropertyDeclarationSyntax propertyNode)
+            var methodDeclaration = classNode.DescendantNodes().OfType<MethodDeclarationSyntax>().FirstOrDefault();
+            if (methodDeclaration != null)
             {
-                return;
+                propertyContent = $"    {propertyContent}" + Environment.NewLine;
+                if (SyntaxFactory.ParseMemberDeclaration(propertyContent) is not PropertyDeclarationSyntax propertyNode)
+                {
+                    return;
+                }
+                SyntaxRoot = SyntaxRoot.InsertNodesBefore(methodDeclaration, new[] { propertyNode });
             }
-            SyntaxRoot = SyntaxRoot.InsertNodesBefore(constructor, new[] { propertyNode });
         }
     }
 
@@ -348,4 +356,39 @@ public class CompilationHelper
         }
         return classAttribution;
     }
+
+
+    /// <summary>
+    /// 获取特性参数值
+    /// </summary>
+    /// <param name="argument"></param>
+    /// <returns></returns>
+    public string? GetArgumentValue(AttributeArgumentSyntax argument)
+    {
+
+        string? name = null;
+        if (argument.Expression is LiteralExpressionSyntax literal)
+        {
+            name = literal.Token.ValueText;
+        }
+        // 常量特殊处理，获取常量值
+        else if (argument.Expression is MemberAccessExpressionSyntax memberAccess)
+        {
+            var className = ((IdentifierNameSyntax)memberAccess.Expression).Identifier.Text;
+            var varName = memberAccess.Name.ToString();
+
+            var constClass = GetClass(className);
+
+            if (constClass != null)
+            {
+                var field = constClass.GetMembers()
+                    .Where(m => m.Name == varName)
+                    .FirstOrDefault();
+                name = (field as IFieldSymbol)?.ConstantValue?.ToString();
+            }
+        }
+        return name;
+    }
+
+
 }

@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+
 using PropertyInfo = Core.Models.PropertyInfo;
 
 namespace CodeGenerator.Generate;
@@ -12,8 +13,6 @@ public class NgPageGenerate : GenerateBase
     public string DtoPath { get; }
     public string Output { get; }
     public string DtoDirName { get; set; }
-
-
 
     public NgPageGenerate(string entityName, string dtoPath, string output)
     {
@@ -85,8 +84,23 @@ public class NgPageGenerate : GenerateBase
     public static NgComponentInfo GenFormComponent(EntityInfo modelInfo, string serviceName)
     {
 
-        var props = modelInfo.PropertyInfos;
-        var modelName = modelInfo.Name;
+        List<PropertyInfo>? props = [.. modelInfo.PropertyInfos];
+        string modelName = modelInfo.Name;
+        var entityName = modelName;
+        var suffix = new string[] { "AddDto", "ItemDto", "UpdateDto", "ShortDto", "FilterDto" };
+        foreach (var item in suffix)
+        {
+            if (entityName.EndsWith(item))
+            {
+                entityName = entityName.Replace(item, "");
+                break;
+            }
+            if (serviceName.EndsWith(item))
+            {
+                serviceName = serviceName.Replace(item, "");
+                break;
+            }
+        }
 
         // 生成.ts
         string tplContent = GetTplContent("angular.component.form.component.ts");
@@ -143,30 +157,32 @@ public class NgPageGenerate : GenerateBase
             .Skip(0).Take(5)
             .ToList();
 
-        string[] columnsDef = Array.Empty<string>();
-        if (columns != null && columns.Any())
+        string[] columnsDef = [];
+        if (columns != null && columns.Count != 0)
         {
             columnsDef = columns.Select(s =>
             {
-                string? type = modelInfo.PropertyInfos?
+                var prop = modelInfo.PropertyInfos?
                     .Where(p => p.Name.Equals(s))
-                    .Select(p => p.Type)
                     .FirstOrDefault();
+
+                var type = prop?.Type;
                 string pipe = "";
                 if (type != null)
                 {
                     if (type.Equals("DateTime") || type.Equals("DateTimeOffset"))
                     {
-                        pipe = s.EndsWith("Date") ? " | date: 'yyyy-MM-dd'" : " | date: 'yyy-MM-dd HH:mm:ss'";
+                        pipe = s.EndsWith("Date") ? " | date: 'yyyy-MM-dd'" : " | date: 'yyy-MM-dd HH:mm'";
                     }
                 }
                 return $$$"""
                       <ng-container matColumnDef="{{{s.ToCamelCase()}}}">
-                        <th mat-header-cell *matHeaderCellDef>path</th>
-                        <td mat-cell *matCellDef="let element">
-                          {{element.{{{s.ToCamelCase()}}}{{{pipe}}}  }}
+                        <th mat-header-cell *matHeaderCellDef>{{{prop?.CommentSummary ?? prop?.Name}}}</th>
+                        <td mat-cell *matCellDef="let element;table:table">
+                          {{element.{{{s.ToCamelCase()}}}{{{pipe}}} }}
                         </td>
                       </ng-container>
+
                 """;
             }).ToArray();
         }
@@ -175,8 +191,8 @@ public class NgPageGenerate : GenerateBase
         htmlContent = htmlContent.Replace("{$ColumnsDef}", string.Join("", columnsDef));
 
         // 解析属性，并生成相应ts代码
-        columnsDef = Array.Empty<string>();
-        if (columns != null && columns.Any())
+        columnsDef = [];
+        if (columns != null && columns.Count != 0)
         {
             columns.Add("actions");
             columnsDef = columns.Select(s =>
@@ -184,9 +200,27 @@ public class NgPageGenerate : GenerateBase
                 return $@"'{s.ToCamelCase()}'";
             }).ToArray();
         }
-        var modelName = modelInfo.Name;
+        string modelName = modelInfo.Name;
         string tplContent = GetTplContent("angular.component.table.component.ts");
+
+        var entityName = modelName;
+        var suffix = new string[] { "AddDto", "ItemDto", "UpdateDto", "ShortDto", "FilterDto" };
+
+        foreach (var item in suffix)
+        {
+            if (entityName.EndsWith(item))
+            {
+                entityName = entityName.Replace(item, "");
+            }
+            if (serviceName.EndsWith(item))
+            {
+                serviceName = serviceName.Replace(item, "");
+                break;
+            }
+        }
+
         tplContent = tplContent.Replace("{$ModelName}", modelName)
+            .Replace("{$EntityName}", entityName)
             .Replace("{$ModelPathName}", modelName.ToHyphen())
             .Replace("{$ServiceName}", serviceName)
             .Replace("{$ServicePathName}", serviceName.ToHyphen())
@@ -256,34 +290,30 @@ public class NgPageGenerate : GenerateBase
         EntityParseHelper typeHelper = new(Path.Combine(DtoPath, "models", DtoDirName, EntityName + "ItemDto.cs"));
         typeHelper.Parse();
         // 需要展示的列
-        List<string>? columns = typeHelper.PropertyInfos?.Where(p => !p.IsList && !p.IsNavigation)
+        List<PropertyInfo>? props = typeHelper.PropertyInfos?.Where(p => !p.IsList && !p.IsNavigation)
             .Where(p => p.Name.ToLower() != "id")
-            .Select(p => p.Name)
-            .Skip(0).Take(5)
             .ToList();
 
-        string[] columnsDef = Array.Empty<string>();
-        if (columns != null && columns.Any())
+        string[] columnsDef = [];
+        if (props != null && props.Count != 0)
         {
-            columnsDef = columns.Select(s =>
+            columnsDef = props.Select(p =>
             {
-                string? type = typeHelper.PropertyInfos?
-                    .Where(p => p.Name.Equals(s))
-                    .Select(p => p.Type)
-                    .FirstOrDefault();
+                string? type = p.Type;
                 string pipe = "";
                 if (type != null)
                 {
                     if (type.Equals("DateTime") || type.Equals("DateTimeOffset"))
                     {
-                        pipe = s.EndsWith("Date") ? " | date: 'yyyy-MM-dd'" : " | date: 'yyy-MM-dd HH:mm:ss'";
+                        pipe = p.Name.EndsWith("Date") ? " | date: 'yyyy-MM-dd'" : " | date: 'yyy-MM-dd HH:mm:ss'";
                     }
                 }
 
-                return $@"  <ng-container matColumnDef=""{s.ToCamelCase()}"">
-    <th mat-header-cell *matHeaderCellDef>{s}</th>
-    <td mat-cell *matCellDef=""let element"">
-      {{{{element.{s.ToCamelCase()}{pipe}}}}}
+                return $@"
+  <ng-container matColumnDef=""{p.Name.ToCamelCase()}"">
+    <th mat-header-cell *matHeaderCellDef>{p.CommentSummary ?? p.Type}</th>
+    <td mat-cell *matCellDef=""let element;table:table"">
+      {{{{element.{p.Name.ToCamelCase()}{pipe}}}}}
     </td>
   </ng-container>
 ";
@@ -294,8 +324,9 @@ public class NgPageGenerate : GenerateBase
         htmlContent = htmlContent.Replace("{$ColumnsDef}", string.Join("", columnsDef));
 
         // 解析属性，并生成相应ts代码
-        columnsDef = Array.Empty<string>();
-        if (columns != null && columns.Any())
+        columnsDef = [];
+        List<string>? columns = props?.Select(p => p.Name).ToList();
+        if (columns != null && columns.Count != 0)
         {
             columns.Add("actions");
             columnsDef = columns.Select(s =>
@@ -326,7 +357,7 @@ public class NgPageGenerate : GenerateBase
 
         // html
         string htmlContent = GetTplContent("angular.detail.detail.component.html.tpl");
-        string[] content = Array.Empty<string>();
+        string[] content = [];
         if (props != null)
         {
             content = props.Select(p =>
@@ -534,10 +565,16 @@ public class NgPageGenerate : GenerateBase
     /// <returns></returns>
     private static string CleanTsTplVariables(string tplContent)
     {
-        var TplVariables = new string[]{
-            "[@Imports]","[@Declares]","[@DI]","[@Init]","[@Methods]",
-            "{$DefinedProperties}","{$DefinedFormControls}","{$DefinedValidatorMessage}"
-        };
+        string[] TplVariables = [
+            "[@Imports]",
+            "[@Declares]",
+            "[@DI]",
+            "[@Init]",
+            "[@Methods]",
+            "{$DefinedProperties}",
+            "{$DefinedFormControls}",
+            "{$DefinedValidatorMessage}"
+        ];
         foreach (string item in TplVariables)
         {
             tplContent = tplContent.Replace(item, "");
@@ -551,7 +588,7 @@ public class NgPageGenerate : GenerateBase
             string name = property.Name.ToCamelCase();
             definedProperties += $@"    get {name}() {{ return this.formGroup.get('{name}'); }}
 ";
-            List<string> validators = new();
+            List<string> validators = [];
             if (property.IsRequired)
             {
                 validators.Add("Validators.required");
@@ -571,9 +608,9 @@ public class NgPageGenerate : GenerateBase
             definedFormControls += $@"      {name}: new FormControl({defaultValue}, [{string.Join(",", validators)}]),
 ";
             definedValidatorMessage += @$"      case '{name}':
-        return this.{name}?.errors?.['required'] ? '{property.Name}必填' :
-          this.{name}?.errors?.['minlength'] ? '{property.Name}长度最少{property.MinLength}位' :
-          this.{name}?.errors?.['maxlength'] ? '{property.Name}长度最多{property.MaxLength}位' : '';
+        return this.{name}?.errors?.['required'] ? '{property.CommentSummary ?? property.Name}必填' :
+          this.{name}?.errors?.['minlength'] ? '{property.CommentSummary ?? property.Name}长度最少{property.MinLength}位' :
+          this.{name}?.errors?.['maxlength'] ? '{property.CommentSummary ?? property.Name}长度最多{property.MaxLength}位' : '';
 ";
         }
     }

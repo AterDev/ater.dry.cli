@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# RS1014: 不要忽略通过不可变对象上的方法返回的值
+dotnet_diagnostic.RS1014.severity = silent

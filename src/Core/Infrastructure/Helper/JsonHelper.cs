@@ -28,7 +28,7 @@ public static class JsonHelper
                 else
                 {
                     // add new node with path 
-                    current.AsObject()!.Append(new KeyValuePair<string, JsonNode>(paths[i], ""));
+                    current.AsObject()!.Append(new KeyValuePair<string, JsonNode?>(paths[i], ""));
                     current = current[paths[i]];
                 }
 
@@ -41,5 +41,58 @@ public static class JsonHelper
         catch (Exception)
         {
         }
+    }
+
+    /// <summary>
+    /// 获取值
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="node"></param>
+    /// <param name="keyPath"></param>
+    /// <returns></returns>
+    public static T? GetValue<T>(JsonNode node, string keyPath) where T : class
+    {
+        var paths = keyPath.Split('.');
+        var current = node;
+        if (current == null) return default;
+
+        for (int i = 0; i < paths.Length; i++)
+        {
+            if (current!.AsObject().ContainsKey(paths[i]))
+            {
+                current = current[paths[i]];
+            }
+            else
+            {
+                return default;
+            }
+        }
+        return current!.GetValue<T>();
+    }
+
+    /// <summary>
+    /// 获取节点
+    /// </summary>
+    /// <param name="root"></param>
+    /// <param name="keyPath"></param>
+    /// <returns></returns>
+    public static JsonNode? GetSectionNode(JsonNode root, string keyPath)
+    {
+        var paths = keyPath.Split('.');
+        var current = root;
+        if (current == null) return default;
+
+        for (int i = 0; i < paths.Length; i++)
+        {
+            if (current!.AsObject().ContainsKey(paths[i]))
+            {
+                current = current[paths[i]];
+            }
+            else
+            {
+                return default;
+            }
+        }
+        return current;
     }
 }

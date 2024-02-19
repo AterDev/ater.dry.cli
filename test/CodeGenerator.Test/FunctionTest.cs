@@ -1,9 +1,18 @@
 ﻿using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Threading.Tasks;
+
 using CodeGenerator.Generate;
+
 using Core.Infrastructure.Helper;
+
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.OpenApi.Readers;
+
+using NuGet.Versioning;
 
 namespace CodeGenerator.Test;
 public class FunctionTest
@@ -112,7 +121,7 @@ public class FunctionTest
     public void Test_JsonNode()
     {
         var jsonString = """
-                        {
+            {
               "Logging": {
                 "LogLevel": {
                   "Default": "Information",
@@ -120,14 +129,124 @@ public class FunctionTest
                   "Microsoft.Hosting.Lifetime": "Information"
                 }
               },
+                // 应用组件配置
+                "Components": {
+                  // 数据支持: pgsql/sqlserver
+                  "Database": "postgresql",
+                  // 缓存支持: redis/memory/none
+                  "Cache": "redis",
+                  // 日志支持: otlp/none
+                  "Logging": "none",
+                  // 是否使用swagger
+                  "Swagger": true,
+                  // 是否使用 jwt 验证
+                  "Jwt": true
+                },
+                "ConnectionStrings": {
+                  "Default": "Server=localhost;Port=5432;Database=v7._0;User Id=postgres;Password=root;",
+                  "Redis": "localhost:6379",
+                  "RedisInstanceName": "Dev"
+                },
               "AllowedHosts": "*"
             }
             
             """;
-        var jsonNode = JsonNode.Parse(jsonString);
-        JsonHelper.AddOrUpdateJsonNode(jsonNode, "AllowedHosts", "111");
+        var jsonNode = JsonNode.Parse(jsonString, documentOptions: new JsonDocumentOptions
+        {
+            CommentHandling = JsonCommentHandling.Skip
+        });
+        var section = JsonHelper.GetSectionNode(jsonNode!, "ConnectionStrings");
+        var value = JsonHelper.GetValue<string>(section!, "RedisInstanceName");
+        JsonHelper.AddOrUpdateJsonNode(jsonNode!, "AllowedHosts", "111");
+        var changeValaue = JsonHelper.GetValue<string>(jsonNode!, "AllowedHosts");
+        Assert.Equal("Dev", value);
+        Assert.Equal("111", changeValaue);
+    }
 
-        Console.WriteLine();
+    [Fact]
+    public void Should_Version()
+    {
+        var v70 = NuGetVersion.Parse("7.0");
+        var v700 = NuGetVersion.Parse("7.0.0");
+        var v71 = NuGetVersion.Parse("7.1");
+        var equal = VersionComparer.Compare(v70, v700, VersionComparison.Version) == 0;
 
+        Assert.True(equal);
+
+    }
+
+    [Fact]
+    public async Task Should_Analysis_CodeAsync()
+    {
+        var content = File.ReadAllText(@"D:\codes\v7.0\src\Application\IManager\ISystemRoleManager.cs");
+        var tree = CSharpSyntaxTree.ParseText(content);
+        var mscorlib = MetadataReference.CreateFromFile(typeof(object).Assembly.Location);
+        var compilation = CSharpCompilation.Create("MyCompilation", syntaxTrees: new[] { tree }, references: new[] { mscorlib });
+        await CSharpAnalysisHelper.GetBaseInterfaceInfoAsync(compilation, tree);
+
+    }
+
+    [Fact]
+    public void Should_ConvertJsonToCsharp()
+    {
+        var json = """
+            {
+              "description": {
+                "title": "Contiguous U.S., Average Temperature",
+                "units": "Degrees Fahrenheit",
+                "base_period": "1901-2000",
+                "time":"12:00:12",
+                "date":"2013-12-12",
+                "datetime":"2022-12-12T12:22:22Z"
+              },
+              "list":[
+                  {
+                      "text":"abc",
+                      "des":"des",
+                      "detail":null
+                  }
+              ],
+              "enum":[1,2,3,4],
+              "summary": {
+                "title": "Contiguous U.S., Average Temperature",
+                "units": "Degrees Fahrenheit",
+                "base_period": "1901-2000",
+                "abc":"222"
+              },
+              "data": {
+                "189512": {
+                  "value": "50.34",
+                  "anomaly": "-1.68"
+                },
+                "189612": {
+                  "value": "51.99",
+                  "anomaly": "-0.03"
+                },
+                "188712": {
+                  "value": "51.56",
+                  "anomaly": "-0.46"
+                },
+                "adf":{
+                    "aaa":"1111"
+                }
+              }
+            }
+            """;
+
+        var helper = new CSharpCovertHelper();
+        if (CSharpCovertHelper.CheckJson(json))
+        {
+            var jsonElement = JsonSerializer.Deserialize<JsonElement>(json);
+
+            helper.ToCsharpClassContent(jsonElement);
+
+            var meta = helper.JsonMetadataList;
+            helper.GenerateClass(jsonElement);
+
+
+            var classcodes = helper.ClassCodes;
+            Console.WriteLine(classcodes.Count);
+
+        }
     }
 }

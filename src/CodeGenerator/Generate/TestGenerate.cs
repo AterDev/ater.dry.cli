@@ -1,23 +1,12 @@
 ﻿using Microsoft.OpenApi.Models;
 
 namespace CodeGenerator.Generate;
-public class TestGenerate : GenerateBase
+public class TestGenerate(OpenApiDocument openApi) : GenerateBase
 {
-    protected OpenApiPaths PathsPairs { get; }
-    protected List<OpenApiTag> ApiTags { get; }
-    public IDictionary<string, OpenApiSchema> Schemas { get; set; }
-    public OpenApiDocument OpenApi { get; set; }
-
-
-    public TestGenerate(OpenApiDocument openApi)
-    {
-        OpenApi = openApi;
-        PathsPairs = openApi.Paths;
-        Schemas = openApi.Components.Schemas;
-        ApiTags = openApi.Tags.ToList();
-    }
-
-
+    protected OpenApiPaths PathsPairs { get; } = openApi.Paths;
+    protected List<OpenApiTag> ApiTags { get; } = [.. openApi.Tags];
+    public IDictionary<string, OpenApiSchema> Schemas { get; set; } = openApi.Components.Schemas;
+    public OpenApiDocument OpenApi { get; set; } = openApi;
 
     public string GetFilterTestContent()
     {
@@ -61,12 +50,11 @@ public class TestGenerate : GenerateBase
     """;
     }
 
-
     public string GenerateFilterMethod(string url, string name, OperationType type)
     {
         var dataString = "";
         var requestString = "GetAsync(url);";
-        if (type == OperationType.Post || type == OperationType.Put)
+        if (type is OperationType.Post or OperationType.Put)
         {
             dataString = "var data = new {};";
             requestString = "PostAsJsonAsync(url, data);";

@@ -2,17 +2,13 @@
 namespace ${Namespace}.Controllers;
 
 ${Comment}
-public class ${EntityName}${APISuffix} : RestControllerBase<I${EntityName}Manager>
+public class ${EntityName}${APISuffix}(
+    IUserContext user,
+    ILogger<${EntityName}${APISuffix}> logger,
+    ${EntityName}Manager manager${AdditionManagersDI}
+    ) : RestControllerBase<${EntityName}Manager>(manager, user, logger)
 {
 ${AdditionManagersProps}
-    public ${EntityName}${APISuffix}(
-        IUserContext user,
-        ILogger<${EntityName}${APISuffix}> logger,
-        I${EntityName}Manager manager${AdditionManagersDI}
-        ) : base(manager, user, logger)
-    {
-${AdditionManagersInit}
-    }
 
     /// <summary>
     /// 筛选
@@ -37,12 +33,12 @@ ${AddActionBlock}
     }
 
     /// <summary>
-    /// 更新
+    /// 部分更新
     /// </summary>
     /// <param name="id"></param>
     /// <param name="dto"></param>
     /// <returns></returns>
-    [HttpPut("{id}")]
+    [HttpPatch("{id}")]
     public async Task<ActionResult<${EntityName}?>> UpdateAsync([FromRoute] ${IdType} id, ${EntityName}UpdateDto dto)
     {
 ${UpdateActionBlock}

@@ -1,5 +1,4 @@
 ﻿using System.Text.RegularExpressions;
-
 using Core.Entities;
 
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -49,11 +48,11 @@ public class EntityParseHelper
     public IEnumerable<SyntaxNode>? RootNodes { get; set; }
     public CompilationHelper CompilationHelper { get; set; }
     public EntityKeyType KeyType { get; set; } = EntityKeyType.Guid;
-    public string[] SpecialTypes = new[] { "DateTime", "DateTimeOffset", "DateOnly", "TimeOnly", "Guid" };
+    public string[] SpecialTypes = ["DateTime", "DateTimeOffset", "DateOnly", "TimeOnly", "Guid"];
     /// <summary>
     /// 可复制的特性
     /// </summary>
-    public string[] ValidAttributes = new[] { "MaxLength", "MinLength", "StringLength" };
+    public string[] ValidAttributes = ["MaxLength", "MinLength", "StringLength", "Length", "Range", "AllowedValues"];
 
     public EntityParseHelper(string filePath)
     {
@@ -70,9 +69,7 @@ public class EntityParseHelper
         AssemblyName = GetAssemblyName();
         CompilationHelper = new CompilationHelper(ProjectFile.Directory!.FullName);
 
-        using FileStream stream = fileInfo.Open(FileMode.Open, FileAccess.Read, FileShare.None);
-        var reader = new StreamReader(stream, Encoding.UTF8);
-        var content = reader.ReadToEnd();
+        var content = File.ReadAllTextAsync(fileInfo.FullName).Result;
 
         CompilationHelper.AddSyntaxTree(content);
         SyntaxTree = CompilationHelper.SyntaxTree;
@@ -93,7 +90,7 @@ public class EntityParseHelper
     {
         // 获取当前类名
         ClassDeclarationSyntax? classDeclarationSyntax = RootNodes?.OfType<ClassDeclarationSyntax>().FirstOrDefault();
-        NamespaceName = CompilationHelper.GetNamesapce();
+        NamespaceName = CompilationHelper.GetNamespace();
         Name = classDeclarationSyntax?.Identifier.ToString();
         Comment = GetClassComment(classDeclarationSyntax);
         CommentContent = GetComment();
@@ -101,11 +98,27 @@ public class EntityParseHelper
         GetNgPageAttribute();
     }
 
+    public async Task<EntityInfo?> ParseEntityAsync(string filePath)
+    {
+        if (File.Exists(filePath))
+        {
+            var content = await File.ReadAllTextAsync(filePath);
+            CompilationHelper = new CompilationHelper(ProjectFile.Directory!.FullName);
+            CompilationHelper.AddSyntaxTree(content);
+            SyntaxTree = CompilationHelper.SyntaxTree;
+            Compilation = CompilationHelper.Compilation;
+            SemanticModel = CompilationHelper.SemanticModel;
+            RootNodes = SyntaxTree?.GetCompilationUnitRoot().DescendantNodes();
+            return GetEntity();
+        }
+        return null;
+    }
+
     public EntityInfo GetEntity()
     {
         ClassDeclarationSyntax? classDeclarationSyntax = RootNodes?.OfType<ClassDeclarationSyntax>().FirstOrDefault();
         Name = classDeclarationSyntax?.Identifier.ToString();
-        NamespaceName = CompilationHelper.GetNamesapce();
+        NamespaceName = CompilationHelper.GetNamespace();
         Comment = GetClassComment(classDeclarationSyntax);
 
         return new EntityInfo()
@@ -143,8 +156,8 @@ public class EntityParseHelper
             return string.Empty;
         }
 
-        SyntaxTriviaList trivias = syntax.GetLeadingTrivia();
-        string comment = trivias.ToString().Trim();
+        SyntaxTriviaList triviaList = syntax.GetLeadingTrivia();
+        string comment = triviaList.ToString().Trim();
         if (!string.IsNullOrWhiteSpace(comment)
             && !comment.StartsWith("///"))
         {
@@ -173,7 +186,7 @@ public class EntityParseHelper
         CompilationUnitSyntax root = SyntaxTree!.GetCompilationUnitRoot();
         ClassDeclarationSyntax? syntax = root.DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
         List<AttributeSyntax> attributesSyntax = syntax!.DescendantNodes().OfType<AttributeSyntax>().ToList();
-        if (attributesSyntax != null && attributesSyntax.Any())
+        if (attributesSyntax != null && attributesSyntax.Count != 0)
         {
             AttributeArgumentSyntax[]? attributes = GetAttributeArguments(attributesSyntax, "NgPage")?.ToArray();
             if (attributes != null)
@@ -196,16 +209,20 @@ public class EntityParseHelper
     /// <returns></returns>
     public List<PropertyInfo> GetPropertyInfos(string? parentClassName = null)
     {
-        List<PropertyInfo> properties = new();
+        List<PropertyInfo> properties = [];
         CompilationUnitSyntax root = SyntaxTree!.GetCompilationUnitRoot();
         IEnumerable<PropertyDeclarationSyntax> propertySyntax = root.DescendantNodes().OfType<PropertyDeclarationSyntax>();
 
         // 如果指定父类名称
         parentClassName ??= GetParentClassName();
-        List<PropertyInfo>? parentProperties = new();
+
+        List<PropertyInfo>? parentProperties = [];
         if (parentClassName != null)
         {
-            string? filePath = AssemblyHelper.FindFileInProject(ProjectFile!.FullName, parentClassName + ".cs");
+            var solutionFile = AssemblyHelper.GetSlnFile(ProjectFile.Directory!, ProjectFile.Directory!.Root);
+            string? filePath = solutionFile?.Directory?.GetFiles($"{parentClassName}.cs", SearchOption.AllDirectories)
+                .FirstOrDefault()?.FullName;
+
             if (filePath != null)
             {
                 EntityParseHelper entity = new(filePath);
@@ -235,6 +252,7 @@ public class EntityParseHelper
             properties.AddRange(parentProperties);
         }
 
+
         return properties.GroupBy(p => p.Name)
              .Select(s => s.FirstOrDefault()!)
              .ToList();
@@ -249,11 +267,7 @@ public class EntityParseHelper
     {
         string pattern = @"\w+?<(?<Type>\w+)>";
         Match match = Regex.Match(type, pattern);
-        if (match.Success)
-        {
-            return match.Groups["Type"]?.Value;
-        }
-        return null;
+        return match.Success ? (match.Groups["Type"]?.Value) : null;
     }
 
     /// <summary>
@@ -295,10 +309,10 @@ public class EntityParseHelper
         if (summary == null) return null;
 
         var contentNode = summary?.ChildNodes().OfType<XmlTextSyntax>().FirstOrDefault();
-        if (contentNode != null)
-            return string.Join(' ', contentNode.TextTokens.Where(x => x.IsKind(SyntaxKind.XmlTextLiteralToken))
-                .Select(x => x.Text.Trim()).Where(x => !string.IsNullOrWhiteSpace(x)).ToList());
-        return null;
+        return contentNode != null
+            ? string.Join(' ', contentNode.TextTokens.Where(x => x.IsKind(SyntaxKind.XmlTextLiteralToken))
+                .Select(x => x.Text.Trim()).Where(x => !string.IsNullOrWhiteSpace(x)).ToList())
+            : null;
     }
 
     /// <summary>
@@ -320,7 +334,7 @@ public class EntityParseHelper
     /// <param name="syntax"></param>
     protected PropertyInfo ParsePropertyType(PropertyDeclarationSyntax syntax)
     {
-        string[] listTypes = new[] { "IList", "List", "ICollection", "IEnumerable" };
+        string[] listTypes = ["IList", "List", "ICollection", "IEnumerable"];
         string type = syntax.Type.ToString();
         string name = syntax.Identifier.ToString();
         Microsoft.CodeAnalysis.TypeInfo typeInfo = SemanticModel.GetTypeInfo(syntax.Type);
@@ -390,10 +404,21 @@ public class EntityParseHelper
         if (syntax.Initializer != null)
         {
             propertyInfo.DefaultValue = syntax.Initializer.Value.ToFullString();
+
+            if (propertyInfo.DefaultValue.StartsWith("null!")
+                || propertyInfo.DefaultValue.StartsWith("default!"))
+            {
+                propertyInfo.IsRequired = true;
+                propertyInfo.IsNullable = false;
+            }
         }
 
         // 导航属性判断
-        ParseNavigation((INamedTypeSymbol)typeInfo.Type!, propertyInfo);
+        if (typeInfo.Type is INamedTypeSymbol typeSymbol)
+        {
+            ParseNavigation(typeSymbol, propertyInfo);
+        }
+
         return propertyInfo;
     }
 
@@ -427,8 +452,16 @@ public class EntityParseHelper
             && !propertyInfo.IsEnum)
         {
             propertyInfo.NavigationName = navigationType.Name;
-            propertyInfo.IsNavigation = true;
             propertyInfo.HasMany = hasMany;
+
+            if (navigationType.GetMembers().Any(m => m.Kind == SymbolKind.Property && m.Name == "Id"))
+            {
+                propertyInfo.IsNavigation = true;
+            }
+            else
+            {
+                propertyInfo.IsComplexType = true;
+            }
         }
     }
     /// <summary>
@@ -436,6 +469,7 @@ public class EntityParseHelper
     /// </summary>
     protected void ParsePropertyAttributes(PropertyDeclarationSyntax syntax, PropertyInfo propertyInfo)
     {
+        propertyInfo.MaxLength = 0;
         List<AttributeSyntax> attributes = syntax.DescendantNodes().OfType<AttributeSyntax>().ToList();
         if (attributes != null && attributes.Count > 0)
         {
@@ -445,9 +479,12 @@ public class EntityParseHelper
                 .FirstOrDefault();
             AttributeArgumentSyntax? stringLength = GetAttributeArguments(attributes, "StringLength")?
                 .FirstOrDefault();
+
+            IEnumerable<AttributeArgumentSyntax>? length = GetAttributeArguments(attributes, "Length");
+            IEnumerable<AttributeArgumentSyntax>? range = GetAttributeArguments(attributes, "Range");
+            IEnumerable<AttributeArgumentSyntax>? allowedValues = GetAttributeArguments(attributes, "AllowedValues");
             IEnumerable<AttributeArgumentSyntax>? required = GetAttributeArguments(attributes, "Required");
             IEnumerable<AttributeArgumentSyntax>? key = GetAttributeArguments(attributes, "Key");
-
             IEnumerable<AttributeArgumentSyntax>? jsonIgnore = GetAttributeArguments(attributes, "JsonIgnore");
 
             if (key != null)
@@ -459,7 +496,6 @@ public class EntityParseHelper
                     _ => EntityKeyType.Guid,
                 };
             }
-
             if (required != null)
             {
                 propertyInfo.IsRequired = true;
@@ -468,7 +504,32 @@ public class EntityParseHelper
             {
                 propertyInfo.IsJsonIgnore = true;
             }
-
+            if (length != null)
+            {
+                if (int.TryParse(length.FirstOrDefault()?.ToString(), out int val))
+                {
+                    propertyInfo.MinLength = val;
+                }
+                if (int.TryParse(length.Skip(1).FirstOrDefault()?.ToString(), out int max))
+                {
+                    propertyInfo.MaxLength = max;
+                }
+            }
+            if (range != null)
+            {
+                if (int.TryParse(range.FirstOrDefault()?.ToString(), out int val))
+                {
+                    propertyInfo.MinLength = val;
+                }
+                if (int.TryParse(range.Skip(1).FirstOrDefault()?.ToString(), out int max))
+                {
+                    propertyInfo.MaxLength = max;
+                }
+            }
+            if (allowedValues != null)
+            {
+                // TODO:
+            }
             if (maxLength != null)
             {
                 if (int.TryParse(maxLength.ToString(), out int val))
@@ -505,7 +566,7 @@ public class EntityParseHelper
         return theSyntax != null
             ? theSyntax.ArgumentList?.Arguments ??
                 new SeparatedSyntaxList<AttributeArgumentSyntax>()
-            : (IEnumerable<AttributeArgumentSyntax>?)default;
+            : null;
     }
     /// <summary>
     /// 获取父类名称
@@ -515,6 +576,7 @@ public class EntityParseHelper
     {
         // 获取当前类名
         ClassDeclarationSyntax? classDeclarationSyntax = RootNodes!.OfType<ClassDeclarationSyntax>().FirstOrDefault();
+        if (classDeclarationSyntax == null) return null;
         var classSymbol = SemanticModel.GetDeclaredSymbol(classDeclarationSyntax!);
         return classSymbol?.BaseType?.Name;
     }
@@ -525,12 +587,7 @@ public class EntityParseHelper
     /// <returns></returns>
     public bool HasBaseType(INamedTypeSymbol? baseType, string baseName)
     {
-        if (baseType == null) return false;
-        if (baseType.Name == baseName) return true;
-        if (baseType.BaseType != null)
-        {
-            return HasBaseType(baseType.BaseType, baseName);
-        }
-        return false;
+        return baseType != null
+            && (baseType.Name == baseName || (baseType.BaseType != null && HasBaseType(baseType.BaseType, baseName)));
     }
 }

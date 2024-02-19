@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container p-0">
   <div class="d-flex gap-1">
     <mat-toolbar>
       <mat-toolbar-row>
@@ -55,13 +55,14 @@
 <ng-template #addModuleDialog>
   <h2 mat-dialog-title>添加模块</h2>
   <mat-dialog-content>
+    <p>模块名会自动添加Mod后缀</p>
     <form [formGroup]="mydialogForm">
       <mat-form-field appearance="fill" class="w-100">
         <mat-label>模块名称</mat-label>
-        <input matInput placeholder="不超过40" formControlName="name" required>
+        <input matInput placeholder="不超过40字符" formControlName="name" required>
         <mat-error>
           <span *ngIf="name?.hasError('maxLength')">
-            长度不能超过40
+            长度不能超过40字符
           </span>
           <span *ngIf="name?.hasError('required')">
             名称必填

@@ -86,7 +86,7 @@ public class OpenApiHelper
                                 {
                                     Name = RequestType,
                                     ProjectId = Const.PROJECT_ID,
-                                    Type = RequestRefType ?? "any",
+                                    Type = RequestRefType ?? RequestType,
                                 }
                             };
                         }
@@ -121,7 +121,7 @@ public class OpenApiHelper
                                 {
                                     Name = ResponseType,
                                     ProjectId = Const.PROJECT_ID,
-                                    Type = ResponseRefType ?? "any",
+                                    Type = ResponseRefType ?? ResponseType,
                                 }
                             };
                         }
@@ -213,8 +213,32 @@ public class OpenApiHelper
     {
         var props = new List<PropertyInfo>();
         var enums = schema.Enum.ToList();
+
         var extEnum = schema.Extensions.Where(e => e.Key == "x-enumNames").FirstOrDefault();
-        if (enums != null)
+        var extEnumData = schema.Extensions.Where(e => e.Key == "x-enumData").FirstOrDefault();
+        if (extEnumData.Value != null)
+        {
+            var data = extEnumData.Value as OpenApiArray;
+            data?.ForEach(item =>
+            {
+                var prop = new PropertyInfo
+                {
+                    Name = ((item as OpenApiObject)?["name"] as OpenApiString)?
+                        .Value.ToString() ?? "",
+                    CommentSummary = ((item as OpenApiObject)?["description"] as OpenApiString)?
+                        .Value.ToString() ?? "",
+
+                    ProjectId = Const.PROJECT_ID,
+                    Type = "Enum:" + ((item as OpenApiObject)?["value"] as OpenApiInteger)?
+                        .Value.ToString() ?? "",
+                    IsEnum = true,
+                    DefaultValue = ((item as OpenApiObject)?["value"] as OpenApiInteger)?
+                        .Value.ToString() ?? "",
+                };
+                props.Add(prop);
+            });
+        }
+        else if (enums != null)
         {
             for (int i = 0; i < enums.Count; i++)
             {
@@ -224,15 +248,18 @@ public class OpenApiHelper
                     ProjectId = Const.PROJECT_ID,
                     Type = "Enum:int",
                     IsEnum = true,
+                    DefaultValue = (enums[i] as OpenApiInteger)?.Value.ToString() ?? i.ToString(),
                 };
 
                 if (extEnum.Value is OpenApiArray values)
                 {
                     prop.CommentSummary = (values[i] as OpenApiString)!.Value;
+                    prop.Name = (values[i] as OpenApiString)!.Value;
                 }
                 else
                 {
                     prop.CommentSummary = (enums[i] as OpenApiInteger)?.Value.ToString() ?? i.ToString();
+                    prop.Name = (enums[i] as OpenApiInteger)?.Value.ToString() ?? i.ToString();
                 }
                 props.Add(prop);
             }
@@ -247,7 +274,7 @@ public class OpenApiHelper
     /// <returns></returns>
     public static List<PropertyInfo> ParseProperties(OpenApiSchema schema)
     {
-        List<PropertyInfo> properties = new();
+        List<PropertyInfo> properties = [];
         // 继承的需要递归 从AllOf中获取属性
         if (schema.AllOf.Count > 1)
         {
@@ -396,7 +423,7 @@ public class OpenApiHelper
             return (string.Empty, string.Empty);
         }
 
-        string? type = "any";
+        string type = "any";
         string? refType = schema.Reference?.Id;
         if (schema.Reference != null)
         {
@@ -428,12 +455,17 @@ public class OpenApiHelper
                 type = "FormData";
                 break;
             case "string":
-                type = schema.Format switch
+                type = "string";
+                if (!string.IsNullOrWhiteSpace(schema.Format))
                 {
-                    "binary" => "FormData",
-                    "date-time" => "string",
-                    _ => "string",
-                };
+                    type = schema.Format switch
+                    {
+                        "binary" => "FormData",
+                        "date-time" => "string",
+                        _ => "string",
+                    };
+                }
+
                 break;
 
             case "array":

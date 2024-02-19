@@ -14,70 +14,81 @@ using Datastore;
 
 namespace AterStudio.Manager;
 
-public class ProjectManager
+public class ProjectManager(DbContext dbContext, ProjectContext projectContext)
 {
-    private readonly DbContext _db;
-    private readonly ProjectContext _projectContext;
+    private readonly DbContext _db = dbContext;
+    private readonly ProjectContext _projectContext = projectContext;
 
-    public ProjectManager(DbContext dbContext, ProjectContext projectContext)
+    public string GetToolVersion()
     {
-        _db = dbContext;
-        _projectContext = projectContext;
+        return AssemblyHelper.GetCurrentToolVersion();
     }
 
-    public List<Project> GetProjects()
+    public async Task<List<Project>> GetProjectsAsync()
     {
-        return _db.Projects.FindAll().ToList();
+        var projects = _db.Projects.FindAll().ToList();
+
+        for (int i = 0; i < projects.Count; i++)
+        {
+            var p = projects[i];
+            var configFilePath = Path.Combine(p.Path, "..", Config.ConfigFileName);
+            if (File.Exists(configFilePath))
+            {
+                string configJson = await File.ReadAllTextAsync(configFilePath);
+                ConfigOptions? config = ConfigOptions.ParseJson(configJson);
+                if (string.IsNullOrWhiteSpace(p.Version))
+                {
+                    _db.Projects.Update(p);
+                }
+                p.Version = config!.Version;
+            }
+            // 移除不存在的项目
+            if (!File.Exists(p.Path))
+            {
+                _db.Projects.Delete(p.Id);
+                projects.Remove(p);
+            }
+        }
+        return projects;
     }
 
-    public async Task<Project?> AddProjectAsync(string name, string path)
+    public async Task<string?> AddProjectAsync(string name, string path)
     {
         // 获取并构造参数
         FileInfo projectFile = new(path);
-        bool hasProjectFile = true;
-        // 如果是目录
-        if ((projectFile.Attributes & FileAttributes.Directory) != 0)
+        var projectFilePath = Directory.GetFiles(path, "*.sln", SearchOption.TopDirectoryOnly).FirstOrDefault();
+
+        projectFilePath ??= Directory.GetFiles(path, $"*{Const.CSharpProjectExtention}", SearchOption.TopDirectoryOnly).FirstOrDefault();
+        projectFilePath ??= Directory.GetFiles(path, "package.json", SearchOption.TopDirectoryOnly).FirstOrDefault();
+
+        if (projectFilePath == null)
         {
-            var projectFilePath = Directory.GetFiles(path, "*.sln", SearchOption.TopDirectoryOnly).FirstOrDefault();
-            if (projectFilePath != null)
-            {
-                projectFile = new FileInfo(projectFilePath);
-            }
-            else
-            {
-                projectFilePath = Directory.GetFiles(path, "*.csproj", SearchOption.TopDirectoryOnly).FirstOrDefault();
-                if (projectFilePath != null)
-                {
-                    projectFile = new FileInfo(projectFilePath);
-                }
-                else
-                {
-                    hasProjectFile = false;
-                }
-            }
+            return "未找到有效的项目";
         }
+        var solutionType = AssemblyHelper.GetSolutionType(projectFilePath);
 
-        string dir = hasProjectFile ? projectFile.DirectoryName! : projectFile.FullName;
-        string configFilePath = Path.Combine(dir!, Config.ConfigFileName);
+        string configFilePath = Path.Combine(path!, Config.ConfigFileName);
 
-        await ConfigCommand.InitConfigFileAsync(dir);
+        await ConfigCommand.InitConfigFileAsync(path, solutionType);
         string configJson = await File.ReadAllTextAsync(configFilePath);
 
-        ConfigOptions? config = JsonSerializer.Deserialize<ConfigOptions>(configJson);
+        ConfigOptions? config = ConfigOptions.ParseJson(configJson);
 
-        string projectName = Path.GetFileNameWithoutExtension(projectFile.FullName);
+        string projectName = Path.GetFileNameWithoutExtension(projectFilePath);
         Project project = new()
         {
             ProjectId = config!.ProjectId,
             DisplayName = name,
-            Path = projectFile.FullName,
+            Path = projectFilePath,
             Name = projectName,
+            Version = config.Version,
+            SolutionType = solutionType
         };
 
         _db.Projects.EnsureIndex(p => p.ProjectId);
         _db.Projects.Insert(project);
 
-        return project;
+        return default;
     }
 
     public bool DeleteProject(Guid id)
@@ -85,21 +96,62 @@ public class ProjectManager
         return _db.Projects.Delete(id);
     }
 
-    public Project GetProject(Guid id)
+    public async Task<Project> GetProjectAsync(Guid id)
     {
-        return _db.Projects.FindById(id);
+        var project = _db.Projects.FindById(id);
+        if (string.IsNullOrWhiteSpace(project.Version))
+        {
+            var solutionPath = Path.Combine(project.Path, "..");
+            var version = await AssemblyHelper.GetSolutionVersionAsync(solutionPath);
+            project.Version = version;
+        }
+        return project;
     }
 
-    public List<SubProjectInfo>? GetAllProjects(Guid id)
+    /// <summary>
+    /// 打开项目
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    public string OpenSolution(string path)
     {
-        var project = GetProject(id);
+        var res = ProcessHelper.ExecuteCommands($"start {path}");
+        return res;
+    }
+
+    /// <summary>
+    /// 更新解决方案
+    /// </summary>
+    /// <returns></returns>
+    public async Task<string> UpdateSolutionAsync()
+    {
+        if (_projectContext.Project == null)
+        {
+            return "未找到有效的项目";
+        }
+        try
+        {
+            var path = _projectContext.Project.Path;
+            var version = await AssemblyHelper.GetSolutionVersionAsync(_projectContext.SolutionPath!);
+            return version == null ? "未找到项目配置文件，无法进行更新" : "暂不支持该功能";
+        }
+        catch (Exception ex)
+        {
+            await Console.Out.WriteLineAsync(ex.Message + ex.StackTrace);
+            return ex.Message;
+        }
+    }
+
+    public async Task<List<SubProjectInfo>?> GetAllProjectsAsync(Guid id)
+    {
+        var project = await GetProjectAsync(id);
         var pathString = Path.Combine(project.Path, "../");
         var res = new List<SubProjectInfo>();
         try
         {
-            var subProjectFiles = new DirectoryInfo(pathString).GetFiles("*.csproj", SearchOption.AllDirectories).ToList();
+            var subProjectFiles = new DirectoryInfo(pathString).GetFiles($"*{Const.CSharpProjectExtention}", SearchOption.AllDirectories).ToList();
 
-            if (subProjectFiles.Any())
+            if (subProjectFiles.Count != 0)
             {
                 subProjectFiles.ForEach(f =>
                 {
@@ -157,8 +209,12 @@ public class ProjectManager
             options.IdType = dto.IdType;
         if (dto.EntityPath != null)
             options.EntityPath = dto.EntityPath;
+
+        if (dto.EntityFrameworkPath != null)
+            options.DbContextPath = dto.EntityFrameworkPath;
+
         if (dto.StorePath != null)
-            options.StorePath = dto.StorePath;
+            options.ApplicationPath = dto.StorePath;
         if (dto.DtoPath != null)
             options.DtoPath = dto.DtoPath;
         if (dto.ApiPath != null)
@@ -167,7 +223,7 @@ public class ProjectManager
             options.IsSplitController = dto.IsSplitController;
 
         string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
-        await File.WriteAllTextAsync(Path.Combine(_projectContext.SolutionPath!, Config.ConfigFileName), content, Encoding.UTF8);
+        await File.WriteAllTextAsync(Path.Combine(_projectContext.SolutionPath!, Config.ConfigFileName), content, new UTF8Encoding(false));
         return true;
     }
 
@@ -205,8 +261,8 @@ public class ProjectManager
     /// <returns></returns>
     public List<TemplateFile> GetTemplateFiles(Guid id)
     {
-        return new List<TemplateFile>
-        {
+        return
+        [
             new TemplateFile()
             {
                 Name = "RequestService.axios.service.tpl",
@@ -219,7 +275,7 @@ public class ProjectManager
                 DisplayName = "Angular请求基础类",
                 ProjectId = id
             },
-        };
+        ];
     }
 
     /// <summary>
@@ -262,7 +318,7 @@ public class ProjectManager
     /// <returns></returns>
     public TemplateFile GetTemplate(Guid id, string name)
     {
-        var project = GetProject(id);
+        var project = GetProjectAsync(id);
         // 从库中获取，如果没有，则从模板中读取
         var file = _db.TemplateFile.Query()
             .Where(f => f.Name.Equals(name))
@@ -275,4 +331,23 @@ public class ProjectManager
         return file;
     }
 
+    /// <summary>
+    /// 添加微服务
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public bool AddServiceProject(string name)
+    {
+        try
+        {
+            ProjectCommand.CreateService(_projectContext.SolutionPath, name);
+            return true;
+        }
+        catch (Exception)
+        {
+            Console.WriteLine("创建服务失败");
+            return false;
+        }
+    }
 }

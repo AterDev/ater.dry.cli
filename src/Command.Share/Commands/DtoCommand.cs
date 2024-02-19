@@ -1,5 +1,3 @@
-using Datastore;
-
 namespace Command.Share.Commands;
 
 public class DtoCommand : CommandBase
@@ -12,6 +10,11 @@ public class DtoCommand : CommandBase
     /// dto项目目录
     /// </summary>
     public string DtoPath { get; set; }
+    /// <summary>
+    /// 对应模块名
+    /// </summary>
+    public string? ModuleName { get; private set; }
+
     public DtoCodeGenerate CodeGen { get; set; }
 
     public DtoCommand(string entityPath, string dtoPath)
@@ -39,30 +42,49 @@ public class DtoCommand : CommandBase
             Console.WriteLine("🛑 Dto project not exist!");
             return;
         }
-
         if (CodeGen.EntityInfo == null)
         {
             Console.WriteLine("🛑 Entity parse failed!");
         }
         else
         {
+            // 是否为模块
+            var compilation = new CompilationHelper(DtoPath, "Entity");
+            var content = File.ReadAllText(EntityPath);
+            compilation.AddSyntaxTree(content);
+            var attributes = compilation.GetClassAttribution("Module");
+            if (attributes != null && attributes.Count != 0)
+            {
+                var argument = attributes.First().ArgumentList!.Arguments[0];
+                ModuleName = compilation.GetArgumentValue(argument);
+            }
+            if (!string.IsNullOrWhiteSpace(ModuleName))
+            {
+                DtoPath = Path.Combine(DtoPath, "..", "Modules", ModuleName);
+                CodeGen.AssemblyName = ModuleName;
+            }
+            if (Config.IsMicroservice)
+            {
+                CodeGen.AssemblyName = Config.ServiceName + ".Definition.Share";
+            }
             Console.WriteLine(Instructions[0]);
-            await SaveToFileAsync("Add", CodeGen.GetAddDto(), cover);
-            await SaveToFileAsync("Update", CodeGen.GetUpdateDto(), cover);
-            await SaveToFileAsync("Filter", CodeGen.GetFilterDto(), cover);
             await SaveToFileAsync("Item", CodeGen.GetItemDto(), cover);
             await SaveToFileAsync("Short", CodeGen.GetShortDto(), cover);
-            GenerateCommonFiles();
+            await SaveToFileAsync("Filter", CodeGen.GetFilterDto(), cover);
+            await SaveToFileAsync("Add", CodeGen.GetAddDto(), cover);
+            await SaveToFileAsync("Update", CodeGen.GetUpdateDto(), cover);
+
+            if (string.IsNullOrWhiteSpace(ModuleName) && !Config.IsMicroservice)
+            {
+                GenerateCommonFiles();
+            }
             Console.WriteLine("😀 Dto generate completed!" + Environment.NewLine);
+
         }
     }
     public async void GenerateCommonFiles()
     {
         await GenerateFileAsync(DtoPath, "GlobalUsings.cs", CodeGen.GetDtoUsings());
-        await GenerateFileAsync("FilterBase.cs", CodeGen.GetFilterBase());
-        await GenerateFileAsync("PageList.cs", CodeGen.GetPageList());
-        await GenerateFileAsync("BatchUpdate.cs", CodeGen.GetBatchUpdate());
-        //await GenerateFileAsync("EntityBase.cs", CodeGen.GetEntityBase());
     }
 
     public async Task GenerateFileAsync(string fileName, string content)

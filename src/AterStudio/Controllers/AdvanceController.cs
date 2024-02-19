@@ -1,5 +1,7 @@
 ﻿using AterStudio.Advance;
-using AterStudio.Models;
+
+using Core.Entities;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace AterStudio.Controllers;
@@ -9,59 +11,34 @@ namespace AterStudio.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-public class AdvanceController : ControllerBase
+public class AdvanceController(AdvanceManager entityAdvance) : ControllerBase
 {
-    private readonly EntityAdvance _entityAdvance;
-    public AdvanceController(EntityAdvance entityAdvance)
-    {
-        _entityAdvance = entityAdvance;
-    }
+    private readonly AdvanceManager _entityAdvance = entityAdvance;
 
 
     /// <summary>
-    /// 获取token
+    /// 获取配置
     /// </summary>
-    /// <param name="username"></param>
-    /// <param name="password"></param>
+    /// <param name="key"></param>
     /// <returns></returns>
-    [HttpGet("token")]
-    public async Task<string?> GetTokenAsync(string username, string password)
+    [HttpGet("config")]
+    public ActionResult<ConfigData> GetConfig(string key)
     {
-        return await _entityAdvance.GetTokenAsync(username, password);
+        var data = _entityAdvance.GetConfig(key);
+        return data != null ? (ActionResult<ConfigData>)data : (ActionResult<ConfigData>)Ok();
     }
 
     /// <summary>
-    /// 生成实体
+    /// 设置配置
     /// </summary>
-    /// <param name="name"></param>
-    /// <param name="description"></param>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
     /// <returns></returns>
-    [HttpGet("entity")]
-    public async Task<ActionResult<List<string>?>> GetEntityAsync(string name, string description)
+    [HttpPut("config")]
+    public ActionResult SetConfig(string key, string value)
     {
-        // get token from  httpcontext header 
-        var token = HttpContext.Request.Headers["Authorization"].ToString();
-        if (token == null) return Forbid("禁止访问");
-        var res = await _entityAdvance.GetEntityAsync(name, description, token);
-        if (res == null)
-        {
-            return Problem("获取失败");
-        }
-        return res;
-    }
-
-
-    /// <summary>
-    /// 创建实体
-    /// </summary>
-    /// <param name="projectId"></param>
-    /// <param name="dto"></param>
-    /// <returns></returns>
-    [HttpPost("entity/{projectId}")]
-    public bool CreateEntity([FromRoute] Guid projectId, AddEntityDto dto)
-    {
-        return _entityAdvance.CreateEntity(dto);
-
+        _entityAdvance.SetConfig(key, value);
+        return Ok();
     }
 }
 

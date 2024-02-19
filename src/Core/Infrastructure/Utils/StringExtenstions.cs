@@ -95,14 +95,12 @@ public static class StringExtenstions
         }
 
         MemoryStream stream = new();
-        JsonSerializer.Serialize(stream, origin, new JsonSerializerOptions
+        var jsonOption = new JsonSerializerOptions
         {
             ReferenceHandler = ReferenceHandler.IgnoreCycles
-        });
+        };
+        JsonSerializer.Serialize(stream, origin, jsonOption);
         stream.Position = 0;
-        return JsonSerializer.Deserialize<T>(stream, new JsonSerializerOptions
-        {
-            ReferenceHandler = ReferenceHandler.IgnoreCycles
-        });
+        return JsonSerializer.Deserialize<T>(stream, jsonOption);
     }
 }

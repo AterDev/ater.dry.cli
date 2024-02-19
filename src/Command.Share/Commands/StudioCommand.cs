@@ -3,6 +3,7 @@ using System.IO.Compression;
 using System.Runtime.InteropServices;
 
 using Core.Entities;
+using Core.Infrastructure;
 
 using LiteDB;
 
@@ -11,21 +12,23 @@ public class StudioCommand
 {
     public static async Task RunStudioAsync()
     {
-        Console.WriteLine("🙌 welcome ater studio!");
-        string appPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        var studioPath = Path.Combine(appPath, "AterStudio");
+        Console.WriteLine("🙌 Welcome Ater studio!");
+        var studioPath = AssemblyHelper.GetStudioPath();
 
         int sleepTime = 1500;
         // 检查并更新
-        string version = AssemblyHelper.GetVersion();
+        string version = AssemblyHelper.GetCurrentToolVersion();
         if (File.Exists(Path.Combine(studioPath, $"{version}.txt")))
         {
             Console.WriteLine("😊 Already latest version!");
         }
         else
         {
-            await UpdateAsync();
+            // 更新程序
+            UpdateStudio();
         }
+        // 更新项目信息
+        await UpdateProjectAsync();
 
         Console.WriteLine("🚀 start studio...");
         // 运行
@@ -86,27 +89,36 @@ public class StudioCommand
     /// <summary>
     /// 升级studio
     /// </summary>
-    public static async Task UpdateAsync()
+    public static void UpdateStudio()
     {
         Console.WriteLine($"☑️ check&update studio...");
 
         var copyFiles = new string[]
         {
-            "Microsoft.CodeAnalysis.CSharp",
             "Microsoft.CodeAnalysis",
+            "Microsoft.CodeAnalysis.CSharp",
+            "Microsoft.CodeAnalysis.Workspaces",
+            "Microsoft.CodeAnalysis.Workspaces.MSBuild",
+            "Microsoft.CodeAnalysis.CSharp.Workspaces",
+            "Microsoft.Build",
+            "Microsoft.Build.Framework",
+            "Humanizer",
             "LiteDB",
             "SharpYaml",
             "Microsoft.OpenApi",
-            "CodeGenerator",
             "Microsoft.OpenApi.Readers",
             "Core",
+            "CodeGenerator",
             "Command.Share",
-            "Datastore"
+            "Datastore",
+            "NuGet.Versioning",
+            "PluralizeService.Core"
         };
 
-        var version = AssemblyHelper.GetVersion();
+        var version = AssemblyHelper.GetCurrentToolVersion();
         var toolRootPath = AssemblyHelper.GetToolPath();
-        var zipPath = Path.Combine(toolRootPath, "studio.zip");
+        var zipPath = Path.Combine(toolRootPath, Const.StudioZip);
+        var templatePath = Path.Combine(toolRootPath, Const.TemplateZip);
 
         if (!File.Exists(zipPath))
         {
@@ -114,19 +126,34 @@ public class StudioCommand
             return;
         }
         var studioPath = AssemblyHelper.GetStudioPath();
+        var dbFile = Path.Combine(studioPath, "dry.db");
+        var tempDbFile = Path.Combine(Path.GetTempPath(), "dry.db");
+
         // 删除旧文件
         if (Directory.Exists(studioPath))
         {
+            if (File.Exists(dbFile))
+            {
+                File.Copy(dbFile, tempDbFile, true);
+            }
             Directory.Delete(studioPath, true);
         }
 
         // 解压
+        if (File.Exists(templatePath))
+        {
+            ZipFile.ExtractToDirectory(templatePath, studioPath, true);
+        }
         ZipFile.ExtractToDirectory(zipPath, studioPath, true);
-
         // create version file
         File.Create(Path.Combine(studioPath, $"{version}.txt")).Close();
 
-        // copy其他文件以及runtimes目录
+        if (File.Exists(tempDbFile))
+        {
+            File.Copy(tempDbFile, dbFile, true);
+        }
+
+        // copy其他文件
         copyFiles.ToList().ForEach(file =>
         {
             var sourceFile = Path.Combine(toolRootPath, file + ".dll");
@@ -135,7 +162,6 @@ public class StudioCommand
                 File.Copy(sourceFile, Path.Combine(studioPath, file + ".dll"), true);
             }
         });
-        await UpdateConfigsAsync();
         UpdateTemplate();
         Console.WriteLine("✅ update complete!");
     }
@@ -162,55 +188,46 @@ public class StudioCommand
     }
 
     /// <summary>
-    /// 更新项目配置文件
+    /// 更新项目数据
     /// </summary>
-    public static async Task UpdateConfigsAsync()
+    public static async Task UpdateProjectAsync()
     {
-        var localDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AterStudio");
-        var connectionString = $"Filename={Path.Combine(localDir, "droplet.db")};Upgrade=true;initialSize=5MB";
-
+        var localDir = AssemblyHelper.GetStudioPath();
+        // 更新数据库
+        var connectionString = $"Filename={Path.Combine(localDir, "dry.db")};Upgrade=true;initialSize=5MB";
         using var db = new LiteDatabase(connectionString);
-        var projects = db.GetCollection<Project>().FindAll().ToList();
+        var collection = db.GetCollection<Project>();
+        var projects = collection.FindAll().ToList();
         foreach (var project in projects)
         {
-            var path = project.Path;
+            var solutionDir = project.Path;
+
             if (File.Exists(project.Path))
             {
-                path = Path.Combine(project.Path, "..");
+                solutionDir = Path.Combine(project.Path, "..");
             }
-            path = Path.Combine(path, Config.ConfigFileName);
-            await ConfigCommand.UpdateConfigAsync(path);
+            if (!Directory.Exists(solutionDir))
+            {
+                collection.Delete(project.Id);
+                continue;
+            }
+            solutionDir = Path.Combine(solutionDir, Config.ConfigFileName);
+
+            // read config file
+            if (!File.Exists(solutionDir))
+            {
+                continue;
+            }
+            string configJson = await File.ReadAllTextAsync(solutionDir);
+            ConfigOptions? options = ConfigOptions.ParseJson(configJson);
+            if (options != null)
+            {
+            }
+            else
+            {
+                Console.WriteLine("config file parsing error! : " + solutionDir);
+            }
         }
         db.Dispose();
-    }
-
-    public static void CopyDirectory(string sourceDir, string destinationDir, bool recursive)
-    {
-        var dir = new DirectoryInfo(sourceDir);
-
-        if (!dir.Exists)
-            throw new DirectoryNotFoundException($"Source directory not found: {dir.FullName}");
-
-        DirectoryInfo[] dirs = dir.GetDirectories();
-
-        // Create the destination directory
-        Directory.CreateDirectory(destinationDir);
-
-        // Get the files in the source directory and copy to the destination directory
-        foreach (FileInfo file in dir.GetFiles())
-        {
-            string targetFilePath = Path.Combine(destinationDir, file.Name);
-            file.CopyTo(targetFilePath, true);
-        }
-
-        // If recursive and copying subdirectories, recursively call this method
-        if (recursive)
-        {
-            foreach (DirectoryInfo subDir in dirs)
-            {
-                string newDestinationDir = Path.Combine(destinationDir, subDir.Name);
-                CopyDirectory(subDir.FullName, newDestinationDir, true);
-            }
-        }
     }
 }

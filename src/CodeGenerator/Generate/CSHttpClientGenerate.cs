@@ -6,21 +6,15 @@ namespace CodeGenerator.Generate;
 /// <summary>
 /// c#请求客户端生成
 /// </summary>
-public class CSHttpClientGenerate : GenerateBase
+public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
 {
-    protected OpenApiPaths PathsPairs { get; }
-    protected List<OpenApiTag> ApiTags { get; }
-    public IDictionary<string, OpenApiSchema> Schemas { get; set; }
-    public OpenApiDocument OpenApi { get; set; }
-
-    public CSHttpClientGenerate(OpenApiDocument openApi)
-    {
-        OpenApi = openApi;
-        PathsPairs = openApi.Paths;
-        Schemas = openApi.Components.Schemas;
-        ApiTags = openApi.Tags.ToList();
-    }
-
+    /// <summary>
+    /// 
+    /// </summary>
+    protected OpenApiPaths PathsPairs { get; } = openApi.Paths;
+    protected List<OpenApiTag> ApiTags { get; } = [.. openApi.Tags];
+    public IDictionary<string, OpenApiSchema> Schemas { get; set; } = openApi.Components.Schemas;
+    public OpenApiDocument OpenApi { get; set; } = openApi;
 
     public static string GetBaseService(string namespaceName)
     {
@@ -32,7 +26,6 @@ public class CSHttpClientGenerate : GenerateBase
     /// <summary>
     /// 生成客户端类
     /// </summary>
-    /// <param name="list">所有子服务</param>
     /// <returns></returns>
     public static string GetClient(List<GenFileInfo> infos, string namespaceName, string className)
     {
@@ -55,15 +48,65 @@ public class CSHttpClientGenerate : GenerateBase
         return tplContent;
     }
 
-    public static string GetGlobalUsing()
+    public static string GetGlobalUsing(string name)
     {
         var content = GetTplContent("RequestService.GlobalUsings.tpl");
+        content = content + $"global using {name}.Models;" + Environment.NewLine;
         return content;
     }
 
+    /// <summary>
+    /// 项目文件
+    /// </summary>
+    /// <returns></returns>
+    public static string GetCsprojContent()
+    {
+        var content = """
+            <Project Sdk="Microsoft.NET.Sdk">
+              <PropertyGroup>
+                <TargetFramework>net8.0</TargetFramework>
+                <ImplicitUsings>enable</ImplicitUsings>
+                <Nullable>enable</Nullable>
+              </PropertyGroup>
+              <ItemGroup>
+                <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
+                <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="8.0.1" />
+                <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+              </ItemGroup>
+            </Project>
+            """;
+        return content;
+    }
+
+    /// <summary>
+    /// 扩展类
+    /// </summary>
+    /// <param name="namespaceName"></param>
+    /// <param name="services"></param>
+    /// <returns></returns>
+    public static string GetExtensionContent(string namespaceName, List<string> services)
+    {
+        var tplContent = GetTplContent("RequestService.Extension.tpl");
+        Console.WriteLine(tplContent);
+        tplContent = tplContent.Replace("${Namespace}", namespaceName);
+
+        var serviceContent = "";
+        services.ForEach(service =>
+        {
+            serviceContent += $"        services.AddSingleton<{service}>();" + Environment.NewLine;
+        });
+        tplContent = tplContent.Replace("${AddServices}", serviceContent);
+        return tplContent;
+    }
+
+    /// <summary>
+    /// 请求服务
+    /// </summary>
+    /// <param name="namespaceName"></param>
+    /// <returns></returns>
     public List<GenFileInfo> GetServices(string namespaceName)
     {
-        List<GenFileInfo> files = new();
+        List<GenFileInfo> files = [];
         List<RequestServiceFunction> functions = GetAllRequestFunctions();
 
         // 先以tag分组
@@ -71,7 +114,7 @@ public class CSHttpClientGenerate : GenerateBase
         foreach (IGrouping<string?, RequestServiceFunction>? group in funcGroups)
         {
             // 查询该标签包含的所有方法
-            List<RequestServiceFunction> tagFunctions = group.ToList();
+            List<RequestServiceFunction> tagFunctions = [.. group];
             OpenApiTag? currentTag = ApiTags.Where(t => t.Name == group.Key).FirstOrDefault();
             currentTag ??= new OpenApiTag { Name = group.Key, Description = group.Key };
             RequestServiceFile serviceFile = new()
@@ -93,28 +136,41 @@ public class CSHttpClientGenerate : GenerateBase
         return files;
     }
 
+    /// <summary>
+    /// 获取模型内容
+    /// </summary>
+    /// <param name="modelName"></param>
+    /// <returns></returns>
+    public List<GenFileInfo> GetModelFiles(string nspName)
+    {
+        var csGen = new CsharpModelGenerate(OpenApi);
+        List<GenFileInfo> files = [];
+        foreach (KeyValuePair<string, OpenApiSchema> item in Schemas)
+        {
+            files.Add(csGen.GenerateModelFile(item.Key, item.Value, nspName));
+        }
+        return files;
+    }
+
+
     public static string ToRequestService(RequestServiceFile serviceFile, string namespaceName)
     {
         var functions = serviceFile.Functions;
         string functionstr = "";
-        List<string> refTypes = new();
+        List<string> refTypes = [];
         if (functions != null)
         {
             functionstr = string.Join("\n", functions.Select(f => ToRequestFunction(f)).ToArray());
 
         }
         string result = $$"""
-        using Share.Models.{{serviceFile.Name}}Dtos;
+        using {{namespaceName}}.Models;
         namespace {{namespaceName}}.Services;
         /// <summary>
         /// {{serviceFile.Description}}
         /// </summary>
-        public class {{serviceFile.Name}}Service : BaseService
+        public class {{serviceFile.Name}}Service(IHttpClientFactory httpClient) : BaseService(httpClient)
         {
-            public {{serviceFile.Name}}Service(HttpClient httpClient) : base(httpClient)
-            {
-
-            }
         {{functionstr}}
         }
         """;
@@ -124,13 +180,6 @@ public class CSHttpClientGenerate : GenerateBase
     public static string ToRequestFunction(RequestServiceFunction function)
     {
         function.ResponseType = string.IsNullOrWhiteSpace(function.ResponseType) ? "object" : function.ResponseType;
-
-        // TODO:特殊处理PageList，针对泛型类型，不通用
-        if (function.ResponseType.EndsWith("PageList") && function.ResponseRefType!.EndsWith("PageList"))
-        {
-            var type = function.ResponseType.Replace("PageList", "");
-            function.ResponseType = $"PageList<{type}>";
-        }
 
         // 函数名处理，去除tag前缀，然后格式化
         function.Name = function.Name.Replace(function.Tag + "_", "");
@@ -156,17 +205,18 @@ public class CSHttpClientGenerate : GenerateBase
         }
         if (!string.IsNullOrEmpty(function.RequestType))
         {
+            var requestType = function.RequestType == "IFile" ? "Stream" : function.RequestType;
             if (function.Params?.Count > 0)
             {
-                paramsString += $", {function.RequestType} data";
+                paramsString += $", {requestType} data";
             }
             else
             {
-                paramsString = $"{function.RequestType} data";
+                paramsString = $"{requestType} data";
             }
 
             dataString = ", data";
-            paramsComments += $"    /// <param name=\"data\">{function.RequestType}</param>\n";
+            paramsComments += $"    /// <param name=\"data\">{requestType}</param>\n";
         }
         // 注释生成
         string comments = $"""
@@ -199,17 +249,23 @@ public class CSHttpClientGenerate : GenerateBase
         {
             dataString = $", {file.Name}";
         }
+
+        var returnType = function.ResponseType == "IFile" ? "Stream" : function.ResponseType;
+        var method = function.ResponseType == "IFile"
+            ? $"DownloadFileAsync(url{dataString})"
+            : $"{function.Method}JsonAsync<{function.ResponseType}?>(url{dataString})";
+
+        method = function.RequestType == "IFile" ? $"UploadFileAsync<{function.ResponseType}?>(url, new StreamContent(data))" : method;
         string res = $$"""
         {{comments}}
-            public async Task<{{function.ResponseType}}?> {{function.Name.ToPascalCase()}}Async({{paramsString}}) {
+            public async Task<{{returnType}}?> {{function.Name.ToPascalCase()}}Async({{paramsString}}) {
                 var url = $"{{function.Path}}";
-                return await {{function.Method}}JsonAsync<{{function.ResponseType}}?>(url{{dataString}});
+                return await {{method}};
             }
 
         """;
         return res;
     }
-
 
     /// <summary>
     /// 获取方法信息
@@ -217,7 +273,7 @@ public class CSHttpClientGenerate : GenerateBase
     /// <returns></returns>
     public List<RequestServiceFunction> GetAllRequestFunctions()
     {
-        List<RequestServiceFunction> functions = new();
+        List<RequestServiceFunction> functions = [];
         // 处理所有方法
         foreach (KeyValuePair<string, OpenApiPathItem> path in PathsPairs)
         {
@@ -306,6 +362,8 @@ public class CSHttpClientGenerate : GenerateBase
                 {
                     "binary" => "IFile",
                     "date-time" => "DateTimeOffset",
+                    "uuid" => "Guid",
+                    "date" => "DateOnly",
                     _ => "string",
                 };
                 break;

@@ -42,7 +42,7 @@ public class DocCommand : CommandBase
         DocGenerate ngGen = new(schemas);
         if (ApiDocument!.Tags.Any())
         {
-            ngGen.SetTags(ApiDocument!.Tags.ToList());
+            ngGen.SetTags([.. ApiDocument!.Tags]);
         }
         string content = ngGen.GetMarkdownContent();
         await GenerateFileAsync(OutputPath, title + ".md", content, true);

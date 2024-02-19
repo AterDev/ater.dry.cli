@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text.Json;
 
+using Core.Entities;
 using Core.Infrastructure;
 
 namespace Command.Share.Commands;
@@ -10,7 +11,7 @@ public class ConfigCommand
     /// <summary>
     /// 初始化配置文件
     /// </summary>
-    public static async Task InitConfigFileAsync(string? configPath = null)
+    public static async Task InitConfigFileAsync(string? configPath = null, SolutionType? solutionType = null)
     {
         configPath ??= GetConfigPath();
         Console.WriteLine("use config path:" + configPath);
@@ -21,18 +22,17 @@ public class ConfigCommand
         {
             ConfigOptions options = new()
             {
-                ProjectId = Guid.NewGuid()
+                ProjectId = Guid.NewGuid(),
             };
+            if (solutionType != null)
+            {
+                options.SolutionType = solutionType.Value;
+            }
 
             Const.PROJECT_ID = options.ProjectId;
             string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
-            await File.WriteAllTextAsync(path, content, Encoding.UTF8);
+            await File.WriteAllTextAsync(path, content, new UTF8Encoding(false));
             Console.WriteLine("Init config file success:" + path);
-        }
-        else
-        {
-            // 如果配置格式变了，需要更新
-            await UpdateConfigAsync(path);
         }
     }
 
@@ -43,39 +43,7 @@ public class ConfigCommand
             await Console.Out.WriteLineAsync("file not found:" + path);
             return;
         }
-        string config = File.ReadAllText(path);
-        var options = JsonSerializer.Deserialize<ConfigOptions>(config);
-        if (options != null)
-        {
-            Const.PROJECT_ID = options.ProjectId;
-            // 添加projectId标识 
-            if (options.ProjectId == Guid.Empty)
-            {
-                options.ProjectId = Guid.NewGuid();
-                Const.PROJECT_ID = options.ProjectId;
-            }
-            // 7.0配置更新
-            if (options.Version == "7.0")
-            {
-                options.DtoPath = "src/" + options.DtoPath;
-                options.EntityPath = "src/" + options.EntityPath;
-                options.DbContextPath = "src/" + options.DbContextPath;
-                options.StorePath = "src/" + options.StorePath;
-                options.ApiPath = "src/" + options.ApiPath;
-                options.Version = "7.1";
-
-                string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
-                await File.WriteAllTextAsync(path, content, Encoding.UTF8);
-                Console.WriteLine("Update config file success");
-            }
-        }
-        else
-        {
-            Console.WriteLine("config file parsing error! : " + path);
-        }
     }
-
-
 
     /// <summary>
     /// 读取配置文件
@@ -87,12 +55,12 @@ public class ConfigCommand
         FileInfo file = new(Path.Combine(configPath, Config.ConfigFileName));
         if (!file.Exists)
         {
-            Console.WriteLine($"config file not found , please run droplet confing init");
-            return default;
+            Console.WriteLine($"config file not found , please run dry config init");
+            return new ConfigOptions();
         }
         string path = file.FullName;
         string config = File.ReadAllText(path);
-        ConfigOptions? options = JsonSerializer.Deserialize<ConfigOptions>(config);
+        ConfigOptions? options = ConfigOptions.ParseJson(config);
         return options;
     }
 
@@ -102,7 +70,7 @@ public class ConfigCommand
         FileInfo file = new(Path.Combine(configPath, Config.ConfigFileName));
         if (file == null)
         {
-            Console.WriteLine($"config file not found , please run droplet confing init");
+            Console.WriteLine($"config file not found , please run dry config init");
             return;
         }
         string path = file.FullName;
@@ -129,7 +97,7 @@ public class ConfigCommand
     public static string GetConfigPath()
     {
         DirectoryInfo currentDir = new(Environment.CurrentDirectory);
-        FileInfo? solutionPath = AssemblyHelper.GetSlnFile(currentDir, "*.sln", currentDir.Root);
+        FileInfo? solutionPath = AssemblyHelper.GetSlnFile(currentDir, currentDir.Root);
         string configPath;
         if (solutionPath == null)
         {

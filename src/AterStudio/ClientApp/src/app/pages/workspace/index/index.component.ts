@@ -1,9 +1,9 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { splitNsName } from '@angular/compiler';
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSelectionListChange } from '@angular/material/list';
+import { MatSelectChange } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -35,7 +35,7 @@ export class IndexComponent implements OnInit {
   projectId: string;
   entityFiles = [] as EntityFile[];
   baseEntityPath = '';
-  columns: string[] = ['select', 'name', 'path', 'actions'];
+  columns: string[] = ['select', 'name', 'description', 'path', 'actions'];
   dataSource!: MatTableDataSource<EntityFile>;
   isLoading = true;
   requestForm!: FormGroup;
@@ -45,9 +45,10 @@ export class IndexComponent implements OnInit {
   force = false;
   isListening = false;
   isProcessing = false;
-
+  modules: string[] = [];
   entityName: string | null = null;
   entityDescription: string | null = null;
+  selectedService: string | null = null;
   @ViewChild("requestDialog", { static: true })
   requestTmpRef!: TemplateRef<{}>;
   @ViewChild("syncDialog", { static: true })
@@ -58,9 +59,17 @@ export class IndexComponent implements OnInit {
   @ViewChild('previewDialog', { static: true }) previewTmpl!: TemplateRef<{}>;
   @ViewChild('ngPagesDialog', { static: true }) ngPagesTmpl!: TemplateRef<{}>;
   @ViewChild('addEntityDialog', { static: true }) addEntityTmpl!: TemplateRef<{}>;
+  @ViewChild('contextMenu', { static: true }) contextMenuTmpl!: TemplateRef<{}>;
+  @ViewChild('addDtoDialog', { static: true }) addDtoTmpl!: TemplateRef<{}>;
+  @ViewChild('addsServiceDialog', { static: true }) addServiceTmpl!: TemplateRef<{}>;
+
+  newServiceName: string | null = null;
   editorOptions = { theme: 'vs-dark', language: 'csharp', minimap: { enabled: false } };
   webPath: string | null = null;
   previewItem: EntityFile | null = null;
+  newDtoFileName: string = '';
+  newDtoDescription: string = '';
+
   selection = new SelectionModel<EntityFile>(true, []);
   selectedWebProjectIds: string[] = [];
   webProjects: SubProjectInfo[] = [];
@@ -100,6 +109,8 @@ export class IndexComponent implements OnInit {
           if (res) {
             this.config = res;
             this.initForm();
+            this.getProjectInfo();
+
           } else {
             this.snb.open('获取失败');
           }
@@ -108,9 +119,7 @@ export class IndexComponent implements OnInit {
           this.snb.open(error.detail);
         }
       });
-    this.getProjectInfo();
     this.getEntity();
-    // this.getWatchStatus();
     this.getProjects();
   }
 
@@ -137,32 +146,28 @@ export class IndexComponent implements OnInit {
     }
 
   }
+  displayContextMenu(event: any, entity: EntityFile): void {
+    if (event.button === 2) {
+      this.dialog.closeAll();
+      this.dialogRef = this.dialog.open(this.contextMenuTmpl, {
+        position: { top: `${event.pageY}px`, left: `${event.pageX}px` },
+        disableClose: false,
+        data: entity,
+      });
+    }
+  }
 
   initEditor(editor: any): void {
     this.editor = editor;
-    console.log(this.editor);
-    console.log((window as any).monaco);
   }
 
   getProjectInfo(): void {
     this.projectSrv.getConfigOptions()
       .subscribe(res => {
         if (res) {
-          this.requestForm.get('swagger')?.setValue(res.swaggerPath);
           this.requestForm.get('path')?.setValue(res.webAppPath);
         }
       });
-  }
-
-  getWatchStatus(): void {
-    this.projectSrv.getWatcherStatus(this.projectId)
-      .subscribe(res => {
-        if (res) {
-          this.isListening = true;
-        } else {
-          this.isListening = false;
-        }
-      })
   }
 
   initForm(): void {
@@ -182,7 +187,7 @@ export class IndexComponent implements OnInit {
 
   getEntity(): void {
     this.selection.clear();
-    this.service.list(this.projectId!, this.searchKey)
+    this.service.list(this.projectId!, this.selectedService)
       .subscribe(res => {
         if (res.length > 0) {
           this.entityFiles = res;
@@ -196,9 +201,31 @@ export class IndexComponent implements OnInit {
             }
             return false;
           }
+        } else {
+          this.dataSource = new MatTableDataSource<EntityFile>([]);
         }
         this.isLoading = false;
       })
+  }
+
+  clean(): void {
+    this.isSync = true;
+    this.service.cleanSolution()
+      .subscribe({
+        next: (res) => {
+          if (res) {
+            this.snb.open(res);
+            this.getEntity();
+          }
+        },
+        error: (error) => {
+          this.snb.open(error.detail);
+          this.isSync = false;
+        },
+        complete: () => {
+          this.isSync = false;
+        }
+      });
   }
 
   openRequestDialog(): void {
@@ -217,6 +244,22 @@ export class IndexComponent implements OnInit {
       minWidth: 400
     });
   }
+
+
+  openAddDtoDialog(data: EntityFile): void {
+    this.previewItem = data;
+    this.newDtoFileName = data.name.replace('.cs', '') + 'Dto';
+    this.dialog.closeAll();
+    this.dialogRef = this.dialog.open(this.addDtoTmpl, {
+      minWidth: 400,
+    });
+  }
+
+  openWithVSCode(data: EntityFile): void {
+    window.open(`vscode://file/${data.baseDirPath}${data.path}`);
+    this.dialogRef.close();
+  }
+
   clearCodesDialog(): void {
     this.dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
@@ -265,14 +308,21 @@ export class IndexComponent implements OnInit {
         }
       });
   }
+
   openAddEntity(): void {
     this.router.navigateByUrl('/workspace/entity');
   }
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+
+  filterEntity() {
+    this.dataSource.filter = this.searchKey.trim().toLowerCase();
   }
 
+  searchEntity(event: MatSelectChange) {
+    const filterValue = event.value ?? '';
+    this.selectedService = filterValue;
+    this.getEntity();
+
+  }
   async openPreviewDialog(item: EntityFile, isManager: boolean) {
     if (isManager) {
       item = await this.getFileContent(item.name!, true, item.module ?? '');
@@ -295,16 +345,44 @@ export class IndexComponent implements OnInit {
     }, 1500);
   }
 
+  addDto(open: boolean = false): void {
+    if (this.previewItem?.baseDirPath && this.previewItem?.path) {
+      const path = this.previewItem?.baseDirPath + this.previewItem?.path;
+      this.service.createDto(path, this.newDtoFileName, this.newDtoDescription)
+        .subscribe({
+          next: (res) => {
+            if (res) {
+              this.snb.open('添加成功');
+              this.dialogRef.close();
+              if (open) {
+                window.open(`vscode://file/${res}`);
+              }
+            }
+          },
+          error: (error) => {
+            this.snb.open(error.detail);
+          },
+          complete: () => {
+          }
+        });
+    }
+  }
+
   getProjects(): void {
     this.projectSrv.getAllProjectInfos(this.projectId)
       .subscribe({
         next: (res) => {
           if (res) {
             this.webProjects = res.filter(p => {
-              return p.projectType == ProjectType.Web &&
-                !p.name?.endsWith('Test.csproj')
+              return p.projectType == ProjectType.Web
+                && !p.name?.endsWith('Test.csproj')
+                && (p.path.includes('Microservice'));
             });
 
+            // change webProjects name contont
+            this.webProjects.forEach(p => {
+              p.name = p.name.replace('.csproj', '');
+            });
 
           } else {
             this.snb.open('没有有效的项目');
@@ -314,6 +392,39 @@ export class IndexComponent implements OnInit {
           this.snb.open(error);
         }
       });
+  }
+
+  openInfo(url: string): void {
+    window.open(url, '_blank');
+  }
+  openAddService(): void {
+    this.dialogRef = this.dialog.open(this.addServiceTmpl, {
+      minWidth: 400
+    });
+  }
+
+  addService(): void {
+    if (this.newServiceName) {
+      this.projectSrv.addService(this.newServiceName)
+        .subscribe({
+          next: (res) => {
+            if (res) {
+              this.snb.open('创建成功');
+              this.dialogRef.close();
+            }
+          },
+          error: (error) => {
+            this.snb.open(error.detail);
+            this.isSync = false;
+          },
+          complete: () => {
+            this.isSync = false;
+          }
+        });
+
+    } else {
+      this.snb.open('请输入服务名称');
+    }
   }
 
   openSelectProjectDialog(type: CommandType, element: EntityFile | null): void {
@@ -377,10 +488,12 @@ export class IndexComponent implements OnInit {
       this.batch(this.currentType!);
     } else {
       if (this.currentEntity && this.currentType !== null) {
+        this.isSync = true;
         const dto: GenerateDto = {
           projectId: this.projectId!,
           entityPath: this.baseEntityPath + this.currentEntity.path,
           commandType: this.currentType,
+          serviceName: this.selectedService,
           force: this.force
         };
         this.service.generate(dto)
@@ -394,11 +507,16 @@ export class IndexComponent implements OnInit {
               }
             },
             error: (error) => {
+              this.isSync = false;
               this.snb.open(error.detail);
+            },
+            complete: () => {
+              this.isSync = false;
             }
           });
 
       } else {
+        this.snb.open('未选择任何实体');
       }
     }
   }
@@ -412,6 +530,7 @@ export class IndexComponent implements OnInit {
         projectId: this.projectId!,
         entityPaths: selected.map(s => this.baseEntityPath + s.path),
         commandType: type,
+        serviceName: this.selectedService,
         force: this.force
       };
       // 参数
@@ -486,24 +605,8 @@ export class IndexComponent implements OnInit {
       })
   }
 
-  startWatch(): void {
-    this.projectSrv.startWatcher(this.projectId)
-      .subscribe(res => {
-        if (res) {
-          this.isListening = true;
-          this.snb.open('已开始监听');
-        }
-      })
+  goToDto(entity: EntityFile): void {
+    this.projectState.currentEntity = entity;
+    this.router.navigate(['../dto', entity.name], { relativeTo: this.route });
   }
-
-  stopWatch(): void {
-    this.projectSrv.stopWatcher(this.projectId)
-      .subscribe(res => {
-        if (res) {
-          this.isListening = false;
-          this.snb.open('已停止监听');
-        }
-      })
-  }
-
 }

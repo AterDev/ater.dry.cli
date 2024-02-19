@@ -11,7 +11,7 @@
     "AterStudio": {
       "commandName": "Project",
       "launchBrowser": false,
-      "applicationUrl": "https://localhost:7079;http://localhost:5278",
+      "applicationUrl": "http://localhost:5278",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

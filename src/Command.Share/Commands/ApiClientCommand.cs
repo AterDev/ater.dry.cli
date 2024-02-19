@@ -28,9 +28,7 @@ public class ApiClientCommand : CommandBase
         DocUrl = docUrl;
         DocName = docUrl.Split('/').Reverse().Skip(1).First();
 
-        // 兼容过去没有分组的生成
-        if (DocName == "v1") DocName = string.Empty;
-        OutputPath = output;
+        OutputPath = Path.Combine(output, DocName.ToPascalCase() + "API");
         LanguageType = languageType;
 
         Instructions.Add($"  🔹 generate ts interfaces.");
@@ -64,7 +62,7 @@ public class ApiClientCommand : CommandBase
     {
         var nspName = new DirectoryInfo(OutputPath).Name;
         string baseContent = CSHttpClientGenerate.GetBaseService(nspName);
-        string globalUsingContent = CSHttpClientGenerate.GetGlobalUsing();
+        string globalUsingContent = CSHttpClientGenerate.GetGlobalUsing(DocName.ToPascalCase() + "API");
 
         string dir = Path.Combine(OutputPath, "Services");
         await GenerateFileAsync(dir, "BaseService.cs", baseContent, true);
@@ -84,12 +82,25 @@ public class ApiClientCommand : CommandBase
             string dir = Path.Combine(OutputPath, "Services");
             await GenerateFileAsync(dir, service.Name, service.Content, true);
         }
-        var className = string.IsNullOrWhiteSpace(DocName) ? "Manager" : DocName.ToPascalCase();
-        string clientContent = CSHttpClientGenerate.GetClient(services, nspName, className);
-        await GenerateFileAsync(OutputPath, DocName.ToPascalCase() + "Client.cs", clientContent, true);
+        var serviceNames = services.Select(s => s.Name.TrimEnd(".cs".ToCharArray())).ToList();
+        var extensionContent = CSHttpClientGenerate.GetExtensionContent(nspName, serviceNames);
+        await GenerateFileAsync(OutputPath, "Extension.cs", extensionContent, true);
+
+        var models = gen.GetModelFiles(nspName);
+        foreach (GenFileInfo model in models)
+        {
+            string dir = Path.Combine(OutputPath, "Models");
+            await GenerateFileAsync(dir, model.Name, model.Content, true);
+        }
+
+        //var className = string.IsNullOrWhiteSpace(DocName) ? "RestApi" : DocName.ToPascalCase();
+        //string clientContent = CSHttpClientGenerate.GetClient(services, nspName, className);
+        //await GenerateFileAsync(OutputPath, DocName.ToPascalCase() + "API.cs", clientContent, true);
+
+        var csProjectContent = CSHttpClientGenerate.GetCsprojContent();
+        await GenerateFileAsync(OutputPath, $"{DocName.ToPascalCase()}API.csproj", csProjectContent);
     }
 }
-
 
 public enum LanguageType
 {

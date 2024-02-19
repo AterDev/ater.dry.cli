@@ -1,5 +1,7 @@
-﻿import { DBType } from '../enum/dbtype.model';
+import { DBType } from '../enum/dbtype.model';
 import { CacheType } from '../enum/cache-type.model';
+import { FrontType } from '../enum/front-type.model';
+import { ProjectType } from '../enum/project-type.model';
 /**
  * 创建解决方案dto
  */
@@ -14,6 +16,10 @@ export interface CreateSolutionDto {
   path: string;
   dbType?: DBType | null;
   cacheType?: CacheType | null;
+  /**
+   * 前端项目
+   */
+  frontType?: FrontType | null;
   /**
    * 是否包含租户
    */
@@ -43,16 +49,21 @@ export interface CreateSolutionDto {
    */
   cacheInstanceName?: string | null;
   /**
+   * 系统管理模块
+   */
+  hasSystemFeature: boolean;
+  /**
    * 内容管理模块
    */
   hasCmsFeature: boolean;
   /**
-   * 用户日志模块
+   * 用户文件模块
    */
-  hasUserLogsFeature: boolean;
+  hasFileManagerFeature: boolean;
   /**
-   * 系统日志模块
+   * 订单模块
    */
-  hasSystemLogsFeature: boolean;
+  hasOrderFeature: boolean;
+  projectType?: ProjectType | null;
 
 }

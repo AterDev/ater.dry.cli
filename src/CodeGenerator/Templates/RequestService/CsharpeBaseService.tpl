@@ -4,11 +4,11 @@ public class BaseService
 {
     public HttpClient Http { get; set; }
     public JsonSerializerOptions JsonSerializerOptions { get; set; }
-    public ErrorResult? ErrorMsg { get; set; } = null;
+    public ErrorResult? ErrorMsg { get; set; }
 
-    public BaseService(HttpClient httpClient)
+    public BaseService(IHttpClientFactory httpClient)
     {
-        Http = httpClient;
+        Http = httpClient.CreateClient("${Namespace}");
         JsonSerializerOptions = new JsonSerializerOptions()
         {
             ReferenceHandler = ReferenceHandler.IgnoreCycles,
@@ -61,9 +61,42 @@ public class BaseService
     /// <param name="route"></param>
     /// <param name="dic"></param>
     /// <returns></returns>
-    protected async Task<TResult?> DeleteJsonAsync<TResult>(string route, Dictionary<string, string?>? dic = null)
+    protected async Task<TResult?> DeleteJsonAsync<TResult>(string route, object? data = null)
     {
-        return await SendJsonAsync<TResult>(HttpMethod.Delete, route, dic);
+        return await SendJsonAsync<TResult>(HttpMethod.Delete, route, data);
+    }
+
+    // upload file
+    protected async Task<TResult?> UploadFileAsync<TResult>(string route, StreamContent file)
+    {
+        HttpResponseMessage? res = await Http.PostAsync(route, new MultipartFormDataContent
+        {
+            { file, "file", "file" }
+        });
+        if (res != null && res.IsSuccessStatusCode)
+        {
+            return await res.Content.ReadFromJsonAsync<TResult>();
+        }
+        else
+        {
+            ErrorMsg = await res!.Content.ReadFromJsonAsync<ErrorResult>();
+            return default;
+        }
+    }
+
+    // download file
+    protected async Task<Stream?> DownloadFileAsync(string route)
+    {
+        HttpResponseMessage? res = await Http.GetAsync(route);
+        if (res != null && res.IsSuccessStatusCode)
+        {
+            return await res.Content.ReadAsStreamAsync();
+        }
+        else
+        {
+            ErrorMsg = await res!.Content.ReadFromJsonAsync<ErrorResult>();
+            return default;
+        }
     }
 
     protected static string ToUrlParameters(Dictionary<string, string?> dic)
@@ -122,4 +155,11 @@ public class BaseService
             return default;
         }
     }
+}
+
+public class ErrorResult
+{
+    public string Title { get; set; } = string.Empty;
+    public string Detail { get; set; } = string.Empty;
+    public int Number { get; set; }
 }

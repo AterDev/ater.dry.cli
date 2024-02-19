@@ -18,7 +18,7 @@ public class RestApiGenerate : GenerateBase
     /// <summary>
     /// service项目目录路径
     /// </summary>
-    public string StorePath { get; }
+    public string ApplicationPath { get; }
     /// <summary>
     /// api项目目录路径
     /// </summary>
@@ -32,28 +32,34 @@ public class RestApiGenerate : GenerateBase
     /// DataStore 项目的命名空间
     /// </summary>
     public string? ShareNamespace { get; set; }
-    public string? ServiceNamespace { get; set; }
+    public string? ApplicationNamespace { get; set; }
     public string? ApiNamespace { get; set; }
     public readonly EntityInfo EntityInfo;
 
-    public RestApiGenerate(string entityPath, string dtoPath, string servicePath, string apiPath, string? suffix = null)
+    public RestApiGenerate(string entityPath, string dtoPath, string applicationPath, string apiPath, string? suffix = null)
     {
         EntityPath = entityPath;
         SharePath = dtoPath;
-        StorePath = servicePath;
+        ApplicationPath = applicationPath;
         ApiPath = apiPath;
         Suffix = suffix;
         DirectoryInfo entityDir = new FileInfo(entityPath).Directory!;
-        FileInfo? entityProjectFile = AssemblyHelper.FindProjectFile(entityDir, entityDir.Root);
-        if (entityProjectFile == null)
-        {
-            throw new FileNotFoundException("project file not found!");
-        }
+        FileInfo? entityProjectFile = AssemblyHelper.FindProjectFile(entityDir, entityDir.Root) ?? throw new FileNotFoundException("project file not found!");
 
-        EntityNamespace = AssemblyHelper.GetNamespaceName(entityProjectFile.Directory!);
-        ShareNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(SharePath));
-        ServiceNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(StorePath));
-        ApiNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(ApiPath));
+        if (Config.IsMicroservice)
+        {
+            EntityNamespace = Config.ServiceName + ".Definition.Entity";
+            ShareNamespace = Config.ServiceName + ".Definition.Share";
+            ApplicationNamespace = Config.ServiceName + ".Application";
+            ApiNamespace = Config.ServiceName;
+        }
+        else
+        {
+            EntityNamespace = AssemblyHelper.GetNamespaceName(entityProjectFile.Directory!);
+            ShareNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(SharePath));
+            ApplicationNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(ApplicationPath));
+            ApiNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(ApiPath));
+        }
 
         EntityParseHelper entityHelper = new(entityPath);
         EntityInfo = entityHelper.GetEntity();
@@ -82,22 +88,19 @@ public class RestApiGenerate : GenerateBase
 
     public List<string> GetGlobalUsings()
     {
-        return new List<string>
-        {
+        return
+        [
             "global using Microsoft.Extensions.DependencyInjection;",
             "global using Microsoft.AspNetCore.Mvc;",
             "global using Microsoft.AspNetCore.Authorization;",
             "global using System.Text.Json.Serialization;",
             "global using Microsoft.EntityFrameworkCore;",
-            "global using Http.API.Infrastructure;",
+            "global using Ater.Web.Core.Models;",
+            "global using Ater.Web.Abstraction;",
+            "global using Ater.Web.Core.Utils;",
             $"global using {EntityInfo.NamespaceName};",
-            $"global using {EntityNamespace}.Utils;",
-            $"global using {EntityNamespace}.Models;",
-            $"global using {ShareNamespace}.Models;",
-            $"global using {ServiceNamespace}.Interface;",
-            $"global using {ServiceNamespace}.IManager;",
-            $"global using {ServiceNamespace}.Const;",
-        };
+            $"global using {ApplicationNamespace}.Manager;",
+        ];
     }
 
     /// <summary>
@@ -111,22 +114,18 @@ public class RestApiGenerate : GenerateBase
         // 依赖注入
         string additionManagerProps = "";
         string additionManagerDI = "";
-        string additionManagerInit = "";
 
         var requiredNavigations = EntityInfo.GetRequiredNavigation();
         requiredNavigations?.ForEach(navigation =>
         {
             var name = navigation.Type;
+            additionManagerProps += $"    private readonly {name}Manager _{name.ToCamelCase()}Manager = {name.ToCamelCase()}Manager;" + Environment.NewLine;
+            additionManagerDI += $",{Environment.NewLine}        {name}Manager {name.ToCamelCase()}Manager";
 
-            additionManagerProps += $"    private readonly I{name}Manager _{name.ToCamelCase()}Manager;" + Environment.NewLine;
-
-            additionManagerDI += $",{Environment.NewLine}        I{name}Manager {name.ToCamelCase()}Manager";
-            //_catalogManager = catalogManager;
-            additionManagerInit += $"        _{name.ToCamelCase()}Manager = {name.ToCamelCase()}Manager;" + Environment.NewLine;
         });
         tplContent = tplContent.Replace("${AdditionManagersProps}", additionManagerProps)
-            .Replace("${AdditionManagersDI}", additionManagerDI)
-            .Replace("${AdditionManagersInit}", additionManagerInit);
+            .Replace("${AdditionManagersDI}", additionManagerDI);
+
 
         var addContent = GetAddApiContent();
         var updateContent = GetUpdateApiContent();
@@ -135,7 +134,7 @@ public class RestApiGenerate : GenerateBase
             .Replace("${UpdateActionBlock}", updateContent);
 
         // add see cref comment
-        var comment = EntityInfo?.Comment + Environment.NewLine + $"/// <see cref=\"{ServiceNamespace}.Manager.{entityName}Manager\"/>";
+        var comment = EntityInfo?.Comment + Environment.NewLine + $"/// <see cref=\"{ApplicationNamespace}.Manager.{entityName}Manager\"/>";
         tplContent = tplContent.Replace(TplConst.NAMESPACE, ApiNamespace)
             .Replace(TplConst.SHARE_NAMESPACE, ShareNamespace)
             .Replace(TplConst.ENTITY_NAME, entityName)
@@ -191,7 +190,7 @@ public class RestApiGenerate : GenerateBase
     {
         string content = """
                     var current = await manager.GetCurrentAsync(id);
-                    if (current == null) { return NotFound(ErrorMsg.NotFoundResource); };
+                    if (current == null) { return NotFound("不存在的资源"); };
 
             """;
         string entityName = EntityInfo.Name;
@@ -199,15 +198,16 @@ public class RestApiGenerate : GenerateBase
 
         requiredNavigations?.ForEach(nav =>
         {
-            var manager = "_" + nav.Type.ToCamelCase() + "Manager";
-            var variable = nav.Type.ToCamelCase();
-            if (!nav.Type.Equals("User") && !nav.Type.Equals("SystemUser"))
+            string name = nav.Type;
+            var manager = "_" + name.ToCamelCase() + "Manager";
+            var variable = name.ToCamelCase();
+            if (!name.Equals("User") && !name.Equals("SystemUser"))
             {
                 content += $$"""
-                        if (current.{{nav.Name}}.Id != dto.{{nav.Type}}Id)
+                        if (dto.{{name}}Id != null && current.{{nav.Name}}.Id != dto.{{name}}Id)
                         {
-                            var {{variable}} = await {{manager}}.GetCurrentAsync(dto.{{nav.Type}}Id);
-                            if ({{variable}} == null) { return NotFound("不存在的{{nav.CommentSummary ?? nav.Type}}"); }
+                            var {{variable}} = await {{manager}}.GetCurrentAsync(dto.{{name}}Id.Value);
+                            if ({{variable}} == null) { return NotFound("不存在的{{nav.CommentSummary ?? name}}"); }
                             current.{{nav.Name}} = {{variable}};
                         }
 
@@ -221,26 +221,6 @@ public class RestApiGenerate : GenerateBase
     }
 
     /// <summary>
-    /// 生成仓储的注入服务
-    /// </summary>
-    public void GenerateRepositoryServicesDI()
-    {
-        // 获取services中所有Repository仓储类
-        DirectoryInfo dir = new(Path.Combine(StorePath, "Repositories"));
-        Console.WriteLine("搜索目录:" + dir.FullName);
-        FileInfo[] files = dir.GetFiles("*Repository.cs", SearchOption.TopDirectoryOnly);
-        List<FileInfo> classes = files.Where(f => f.Name != "Repository.cs").ToList();
-        Console.WriteLine("共找到" + classes.Count + "个仓储");
-        string content = string.Join(string.Empty, classes.Select(c => "            services.AddScoped(typeof(" + Path.GetFileNameWithoutExtension(c.FullName) + "));\r\n").ToArray());
-        // 替换模板文件并写入
-        string tplContent = GetTplContent("RepositoryServiceExtensions.tpl");
-        string replaceSign = "// {$TobeAddRepository}";
-        tplContent = tplContent.Replace(replaceSign, content);
-        File.WriteAllText(Path.Combine(ApiPath, "RepositoryServiceExtensions.cs"), tplContent);
-        Console.WriteLine("create file:" + Path.Combine(ApiPath, "RepositoryServiceExtensions.cs") + "\r\n" + "写入仓储注册服务完成");
-    }
-
-    /// <summary>
     /// get user DbContext name
     /// </summary>
     /// <param name="contextName"></param>
@@ -248,8 +228,8 @@ public class RestApiGenerate : GenerateBase
     public string GetContextName(string? contextName = null)
     {
         string name = "ContextBase";
-        string? assemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(StorePath));
-        CompilationHelper cpl = new(StorePath, assemblyName);
+        string? assemblyName = AssemblyHelper.GetAssemblyName(new DirectoryInfo(ApplicationPath));
+        CompilationHelper cpl = new(ApplicationPath, assemblyName);
         IEnumerable<INamedTypeSymbol> classes = cpl.AllClass;
         if (classes != null)
         {
@@ -280,59 +260,5 @@ public class RestApiGenerate : GenerateBase
         return tplContent.Replace("${AdditionManagersProps}", "")
             .Replace("${AdditionManagersDI}", "")
             .Replace("${AdditionManagersInit}", "");
-    }
-
-    /// <summary>
-    /// 服务注册代码
-    /// </summary>
-    /// <returns></returns>
-    public string GetStoreService()
-    {
-        string storeServiceContent = "";
-        string managerServiceContent = "";
-
-        // 获取所有data stores
-        string storeDir = Path.Combine(StorePath, "DataStore");
-        string[] files = Array.Empty<string>();
-
-        if (Directory.Exists(storeDir))
-        {
-            files = Directory.GetFiles(storeDir, "*DataStore.cs", SearchOption.TopDirectoryOnly);
-        }
-
-        string[] queryFiles = Directory.GetFiles(Path.Combine(StorePath, $"{Const.QUERY_STORE}"), $"*{Const.QUERY_STORE}.cs", SearchOption.TopDirectoryOnly);
-        string[] commandFiles = Directory.GetFiles(Path.Combine(StorePath, $"{Const.COMMAND_STORE}"), $"*{Const.COMMAND_STORE}.cs", SearchOption.TopDirectoryOnly);
-
-        files = files.Concat(queryFiles).Concat(commandFiles).ToArray();
-
-        files?.ToList().ForEach(file =>
-        {
-            object name = Path.GetFileNameWithoutExtension(file);
-            string row = $"        services.AddScoped(typeof({name}));";
-            storeServiceContent += row + Environment.NewLine;
-        });
-
-        // 获取所有manager
-        string managerDir = Path.Combine(StorePath, "Manager");
-        if (!Directory.Exists(managerDir))
-        {
-            return string.Empty;
-        }
-
-        files = Directory.GetFiles(managerDir, "*Manager.cs", SearchOption.TopDirectoryOnly);
-
-        files?.ToList().ForEach(file =>
-        {
-            object name = Path.GetFileNameWithoutExtension(file);
-            string row = $"        services.AddScoped<I{name}, {name}>();";
-            managerServiceContent += row + Environment.NewLine;
-        });
-
-        // 构建服务
-        string content = GetTplContent("Implement.StoreServicesExtensions.tpl");
-        content = content.Replace(TplConst.NAMESPACE, ServiceNamespace);
-        content = content.Replace(TplConst.SERVICE_STORES, storeServiceContent);
-        content = content.Replace(TplConst.SERVICE_MANAGER, managerServiceContent);
-        return content;
     }
 }

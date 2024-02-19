@@ -4,11 +4,15 @@ public class GenerateDto
 {
     public required Guid ProjectId { get; set; }
     public required string EntityPath { get; set; }
+    /// <summary>
+    /// 服务
+    /// </summary>
+    public string? ServiceName { get; set; }
     public CommandType CommandType { get; set; }
     /// <summary>
     /// 是否覆盖
     /// </summary>
-    public bool Force { get; set; } = false;
+    public bool Force { get; set; }
 }
 
 /// <summary>

@@ -1,24 +1,14 @@
 ﻿using Microsoft.OpenApi.Models;
 
 namespace Command.Share.Commands;
-public class AutoSyncNgCommand : CommandBase
+public class AutoSyncNgCommand(string swaggerPath, string entityPath, string dtoPath, string httpPath) : CommandBase
 {
     public OpenApiDocument? ApiDocument { get; set; }
-    public string SharePath { get; set; }
-    public string EntityPath { get; set; }
-    public string HttpPath { get; set; }
-    public string DtoPath { get; set; }
-    public string SwagerPath { get; set; } = "./swagger.json";
-
-
-    public AutoSyncNgCommand(string swaggerPath, string entityPath, string dtoPath, string httpPath)
-    {
-        SwagerPath = swaggerPath;
-        SharePath = Path.Combine(httpPath, "ClientApp", "src", "app", "share");
-        HttpPath = httpPath;
-        EntityPath = entityPath;
-        DtoPath = dtoPath;
-    }
+    public string SharePath { get; set; } = Path.Combine(httpPath, "ClientApp", "src", "app", "share");
+    public string EntityPath { get; set; } = entityPath;
+    public string HttpPath { get; set; } = httpPath;
+    public string DtoPath { get; set; } = dtoPath;
+    public string SwagerPath { get; set; } = swaggerPath;
 
     public async Task RunAsync()
     {
@@ -61,7 +51,7 @@ public class AutoSyncNgCommand : CommandBase
 
         }
         string[] files = Directory.GetFiles(EntityPath, "*.cs", SearchOption.AllDirectories);
-        List<FileInfo> fileInfos = new();
+        List<FileInfo> fileInfos = [];
         // 筛选出只包含特性文本的实体
         foreach (string file in files)
         {
@@ -120,7 +110,7 @@ public class AutoSyncNgCommand : CommandBase
         foreach (GenFileInfo service in services)
         {
             string dir = Path.Combine(SharePath, "services");
-            await GenerateFileAsync(dir, service.Name, service.Content, true);
+            await GenerateFileAsync(dir, service.Name, service.Content, !service.CanModify);
         }
     }
 }
