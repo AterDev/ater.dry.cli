@@ -30,6 +30,17 @@ ${UpdateActionBlock}
 ${FilterActionBlock}
     }
 
+
+    /// <summary>
+    /// 是否唯一
+    /// </summary>
+    /// <returns></returns>
+    public async Task<bool> IsUniqueAsync(string unique)
+    {
+        // TODO:自定义唯一性验证参数和逻辑
+        return await Command.Db.AnyAsync(q => q.Id == new Guid(unique));
+    }
+
     /// <summary>
     /// 当前用户所拥有的对象
     /// </summary>
