@@ -131,7 +131,7 @@ public class BaseService
 
     protected async Task<TResult?> SendJsonAsync<TResult>(HttpMethod method, string route, object? data)
     {
-        route = Http.BaseAddress + route;
+        route = Http.BaseAddress + (route.StartsWith('/') ? route[1..] : route);
         HttpResponseMessage? res = null;
         if (method == HttpMethod.Post)
         {
@@ -158,7 +158,7 @@ public class BaseService
 
     protected async Task<TResult?> SendJsonAsync<TResult>(HttpMethod method, string route, Dictionary<string, string?>? dic = null)
     {
-        route = Http.BaseAddress + route;
+        route = Http.BaseAddress + (route.StartsWith('/') ? route[1..] : route);
         if (dic != null)
         {
             route = route + "?" + ToUrlParameters(dic);
