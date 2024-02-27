@@ -3,7 +3,7 @@
   "ProjectId": "88b31ec4-a61a-462c-95af-def877105af3",
   "DtoPath": "./",
   "EntityPath": "./",
-  "DbContextPath": "src/Database/EntityFramework",
+  "DbContextPath": "src/Definition/EntityFramework",
   "StorePath": "./",
   "ApiPath": "./",
   "IdStyle": "Id",

@@ -69,8 +69,10 @@ export class IndexComponent implements OnInit {
   }
 
   needUpdate(currentVersion: string | null): boolean {
-    if (currentVersion == null || this.version == null) return false;
-    return !this.version.includes(currentVersion!);
+    const majorVersion = this.version?.split('.')[0];
+    const currentMajorVersion = currentVersion?.split('.')[0];
+    if (majorVersion == null || currentMajorVersion == null) return false;
+    return majorVersion !== currentMajorVersion;
   }
 
   getOpenAIKey(): void {
