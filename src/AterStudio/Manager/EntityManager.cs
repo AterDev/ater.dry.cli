@@ -102,11 +102,7 @@ public partial class EntityManager(DbContext dbContext, ProjectContext projectCo
             }
 
             // 排序
-            entityFiles =
-            [
-                .. entityFiles.OrderByDescending(e => e.Module)
-                                .ThenBy(e => e.Name),
-            ];
+            entityFiles = [.. entityFiles.OrderByDescending(e => e.Module).ThenBy(e => e.Name)];
         }
         catch (Exception)
         {

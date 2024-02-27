@@ -84,7 +84,7 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
             ProcessHelper.RunCommand("dotnet", $"sln {path} remove {Path.Combine(defaultServicePath, "StandaloneService.csproj")}", out string error);
             Directory.Delete(defaultServicePath, true);
         }
-        // TODO:前端项目处理
+        // 前端项目处理
         if (dto.FrontType == FrontType.None)
         {
             var appPath = Path.Combine(path, "src", "ClientApp");
@@ -135,6 +135,13 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
         if (addRes != null)
         {
             ErrorMsg = addRes;
+            return false;
+        }
+
+        // restore & build solution
+        if (!ProcessHelper.RunCommand("dotnet", $"build {path}", out _))
+        {
+            ErrorMsg = "项目创建成功，但构建失败，请查看错误信息!";
             return false;
         }
         return true;
