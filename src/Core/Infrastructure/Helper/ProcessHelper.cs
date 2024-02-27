@@ -47,7 +47,7 @@ public static class ProcessHelper
         string shell, argument;
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            shell = "pwsh";
+            shell = "powershell";
             argument = "/c";
         }
         else
