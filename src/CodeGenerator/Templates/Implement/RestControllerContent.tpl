@@ -38,7 +38,7 @@ ${AddActionBlock}
     /// <param name="id"></param>
     /// <param name="dto"></param>
     /// <returns></returns>
-    [HttpPatch("{id}")]
+    [HttpPut("{id}")]
     public async Task<ActionResult<${EntityName}?>> UpdateAsync([FromRoute] ${IdType} id, ${EntityName}UpdateDto dto)
     {
 ${UpdateActionBlock}
