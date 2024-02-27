@@ -2,7 +2,7 @@
 namespace ${Namespace}.Services;
 public class BaseService
 {
-    public HttpClient Http { get; set; }
+    protected HttpClient Http { get; init; }
     public JsonSerializerOptions JsonSerializerOptions { get; set; }
     public ErrorResult? ErrorMsg { get; set; }
 
@@ -14,6 +14,24 @@ public class BaseService
             ReferenceHandler = ReferenceHandler.IgnoreCycles,
             Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
         };
+    }
+
+    /// <summary>
+    /// set Http Header
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="value"></param>
+    protected void SetHttpHeader(string name, string value)
+    {
+        Http.DefaultRequestHeaders.Add(name, value);
+    }
+
+    /// <summary>
+    /// add bearer token to header
+    /// </summary>    /// <param name="token"></param>
+    protected void AddBearerToken(string token)
+    {
+        SetHttpHeader("Authorization", $"Bearer {token}");
     }
 
     /// <summary>
@@ -113,6 +131,7 @@ public class BaseService
 
     protected async Task<TResult?> SendJsonAsync<TResult>(HttpMethod method, string route, object? data)
     {
+        route = Http.BaseAddress + route;
         HttpResponseMessage? res = null;
         if (method == HttpMethod.Post)
         {
@@ -139,6 +158,7 @@ public class BaseService
 
     protected async Task<TResult?> SendJsonAsync<TResult>(HttpMethod method, string route, Dictionary<string, string?>? dic = null)
     {
+        route = Http.BaseAddress + route;
         if (dic != null)
         {
             route = route + "?" + ToUrlParameters(dic);
