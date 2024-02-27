@@ -251,6 +251,7 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
         }
 
         var returnType = function.ResponseType == "IFile" ? "Stream" : function.ResponseType;
+
         var method = function.ResponseType == "IFile"
             ? $"DownloadFileAsync(url{dataString})"
             : $"{function.Method}JsonAsync<{function.ResponseType}?>(url{dataString})";

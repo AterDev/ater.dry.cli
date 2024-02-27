@@ -42,6 +42,11 @@ public class BaseService
         return await SendJsonAsync<TResult>(HttpMethod.Put, route, data);
     }
 
+    protected async Task<TResult?> PatchJsonAsync<TResult>(string route, object? data = null)
+    {
+        return await SendJsonAsync<TResult>(HttpMethod.Patch, route, data);
+    }
+
     /// <summary>
     /// get
     /// </summary>
@@ -116,6 +121,10 @@ public class BaseService
         else if (method == HttpMethod.Put)
         {
             res = await Http.PutAsJsonAsync(route, data, JsonSerializerOptions);
+        }
+        else if (method == HttpMethod.Patch)
+        {
+            res = await Http.PatchAsJsonAsync(route, data, JsonSerializerOptions);
         }
         if (res != null && res.IsSuccessStatusCode)
         {
