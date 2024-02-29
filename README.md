@@ -1,5 +1,7 @@
 # Dry CLI
 
+**[English](./README-en.md)**
+
 **dry** 是一个智能代码辅助工具，主要提供代码生成功能，它可以分析您的实体，智能的帮助您生成相关的数据传输对象、数据库读写操作以及API接口。
 
 它作为`dotnet`命令行工具提供，同时支持`Web UI`操作界面。
@@ -47,9 +49,7 @@ dry 命令工具可以帮助开发者根据实体模型(.cs文件)生成常用�
 
 |Package Version|.NET SDK Version|支持|
 |-|-|-|
-|6.x|6.0+|不再更新|
-|7.x|7.0+|当前版本|
-|8.x|8.0+|未来支持|
+|8.x|8.0+|当前版本|
 
 ## 安装工具
 
@@ -60,9 +60,6 @@ dotnet tool install --global ater.dry.cli
 ```
 
 可到[nuget](https://www.nuget.org/packages/ater.dry.cli)中查询最新版本！
-
-> [!TIP]
-> 模板的主版本与.NET的主版本号保持一致，如要安装模板的7.x版本，则需要`.NET 7.x`。
 
 ## 使用
 
