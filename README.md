@@ -79,4 +79,4 @@ dry studio
 
 ## 文档
 
-[查看完整文档](https://docs.dusi.dev/zh/dry/%E6%A6%82%E8%BF%B0.html)
+[查看完整文档](https://docs.dusi.dev/zh/ater.dry/%E6%A6%82%E8%BF%B0.html)

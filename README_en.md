@@ -79,4 +79,4 @@ Or use `dry [command] --help` to view specific command help information.
 
 ## Documentation
 
-[View the full documentation](https://docs.dusi.dev/zh/dry/%E6%A6%82%E8%BF%B0.html)
+[View the full documentation](https://docs.dusi.dev/en/ater.dry/Overview.html)
