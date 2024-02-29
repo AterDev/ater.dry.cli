@@ -1,6 +1,6 @@
 # Dry CLI
 
-**[English](./README-en.md)**
+**[English](./README_en.md)**
 
 **dry** 是一个智能代码辅助工具，主要提供代码生成功能，它可以分析您的实体，智能的帮助您生成相关的数据传输对象、数据库读写操作以及API接口。
 
