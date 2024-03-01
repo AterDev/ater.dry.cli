@@ -7,7 +7,7 @@
     <PackageOutputPath>./nupkg</PackageOutputPath>
     <AssemblyVersion>8.0.0</AssemblyVersion>
     <PackageId>ater.dry</PackageId>
-    <Version>8.0.1</Version>
+    <Version>8.0.2</Version>
     <Description> DRY代码生成助手</Description>
     <Authors>NilTor</Authors>
     <Company>Atersoft</Company>
@@ -18,11 +18,8 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/AterDev/cli.git</RepositoryUrl>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>- 基于.NET8 全面升级，全面图形化操作。
-- 添加创建新解决方案功能，新的模板。
-- 添加了快速切换项目的交互。
-- 前端添加模型Tab，可据此生成代码片段。
-- 添加了对模块的支持。现在可以通过工具创建新的模块，以对项目代码进行拆分开发。代码生成也会自动判断是否为模块实体，如果是模块实体，相应的代码生成会生成到模块目录。
+    <PackageReleaseNotes>- 修复一些模板问题，提高稳定性。
+- Windows下使用powershell调用命令，提高兼容性。
 		</PackageReleaseNotes>
     <PackageIcon>logo.jpg</PackageIcon>
     <ImplicitUsings>enable</ImplicitUsings>
