@@ -43,6 +43,7 @@ export class CreateComponent {
   get hasSystemFeature() { return this.addForm.get('hasSystemFeature'); }
   get hasCmsFeature() { return this.addForm.get('hasCmsFeature'); }
   get hasFileManagerFeature() { return this.addForm.get('hasFileManagerFeature'); }
+  get hasOrderFeature() { return this.addForm.get('hasOrderFeature'); }
   get projectType() { return this.addForm.get('projectType'); }
 
   ngOnInit(): void {
@@ -69,6 +70,7 @@ export class CreateComponent {
       hasCmsFeature: new FormControl(false, []),
       hasFileManagerFeature: new FormControl(false, []),
       hasSystemFeature: new FormControl(false, []),
+      hasOrderFeature: new FormControl(false, []),
       projectType: new FormControl(ProjectType.WebAPI, [Validators.required])
     });
   }
