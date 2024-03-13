@@ -284,6 +284,12 @@ public class ModuleCommand
         var content = ManagerGenerate.GetManagerDIExtensions(applicationPath, applicationName);
         await IOHelper.WriteToFileAsync(Path.Combine(applicationPath, "ManagerServiceCollectionExtensions.cs"), content);
 
+        // 初始化内容
+        if (moduleNsp.Equals("System"))
+        {
+            var apiPath = Path.Combine(solutionPath, Config.ApiPath);
+            InitSystemModule(apiPath);
+        }
     }
 
     /// <summary>
@@ -326,4 +332,27 @@ public class ModuleCommand
         }
     }
 
+    /// <summary>
+    /// TODO:系统模块初始化内容
+    /// </summary>
+    /// <param name="apiPath"></param>
+    private static void InitSystemModule(string apiPath)
+    {
+        var initFilePath = Path.Combine(apiPath, "Worker", "InitDataTask.cs");
+        if (!File.Exists(initFilePath))
+        {
+            return;
+        }
+
+        var content = File.ReadAllText(initFilePath);
+
+        var replaceStr = "// [InitModule]";
+        if (content.Contains(replaceStr))
+        {
+            var initContent = "await SystemMod.InitModule.InitializeAsync(context, configuration, logger);";
+            content = content.Replace(replaceStr, initContent);
+        }
+
+        File.WriteAllText(initFilePath, content);
+    }
 }

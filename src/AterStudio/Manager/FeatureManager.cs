@@ -29,13 +29,19 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
         var apiName = dto.ProjectType == ProjectType.GRPC ? "Grpc.API" : "Http.API";
 
         var version = AssemblyHelper.GetCurrentToolVersion();
+
+        if(ProcessHelper.RunCommand("dotnet", $"new list atapi", out _))
+        {
+            ProcessHelper.RunCommand("dotnet", $"new update", out _);
+        }
+
         ProcessHelper.RunCommand("dotnet", $"new install ater.web.templates::{version}", out _);
 
         if (!Directory.Exists(dto.Path))
         {
             Directory.CreateDirectory(path);
         }
-        if (!ProcessHelper.RunCommand("dotnet", $"new atapi -o {path} {projectType}", out _))
+        if (!ProcessHelper.RunCommand("dotnet", $"new atapi -o {path} {projectType} --force", out _))
         {
             ErrorMsg = "创建项目失败，请尝试使用空目录创建";
             return false;
