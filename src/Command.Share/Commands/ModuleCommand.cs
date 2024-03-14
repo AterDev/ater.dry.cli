@@ -349,7 +349,7 @@ public class ModuleCommand
         var replaceStr = "// [InitModule]";
         if (content.Contains(replaceStr))
         {
-            var initContent = "await SystemMod.InitModule.InitializeAsync(context, configuration, logger);";
+            var initContent = "await SystemMod.InitModule.InitializeAsync(provider);";
             content = content.Replace(replaceStr, initContent);
         }
 
