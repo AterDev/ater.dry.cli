@@ -20,4 +20,5 @@ public class Const
     public const string CSharpProjectExtention = ".csproj";
     public const string CoreLibName = "Ater.Web.Core";
     public const string AbstractionLibName = "Ater.Web.Abstraction";
+    public const string ExtensionLibName = "Ater.Web.Extension";
 }

@@ -170,6 +170,7 @@ public class ModuleCommand
             	</ItemGroup>
             	<ItemGroup>
             	    <ProjectReference Include="..\..\Application\Application.csproj" />
+                    <ProjectReference Include="..\..\Infrastructure\Ater.Web.Extension\Ater.Web.Extension.csproj" />
             	</ItemGroup>
             </Project>
             """;

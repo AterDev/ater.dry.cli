@@ -1,12 +1,13 @@
-﻿using ${Namespace};
-using Ater.Web.Abstraction;
-using Microsoft.AspNetCore.Http;
+﻿using EntityFramework.DBProvider;
+
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using Share.Options;
 
 namespace ${Namespace};
 

@@ -8,9 +8,6 @@ public static class CommandRunner
     /// 全局静态唯一
     /// </summary>
     public static DbContext dbContext = new();
-    /// <summary>
-    /// 服务名称
-    /// </summary>
 
     public static async Task GenerateDocAsync(string url = "", string output = "")
     {
