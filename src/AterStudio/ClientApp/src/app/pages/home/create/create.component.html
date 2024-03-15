@@ -101,8 +101,7 @@
         <!-- <mat-icon class="ms-1" fontSet="material-icons-outlined">info</mat-icon> -->
         <mat-checkbox formControlName="hasFileManagerFeature" matTooltip="文件管理"
           matTooltipPosition="below">文件管理</mat-checkbox>
-        <mat-checkbox formControlName="hasOrderFeature" matTooltip="订单模块"
-          matTooltipPosition="below">订单模块</mat-checkbox>
+        <mat-checkbox formControlName="hasOrderFeature" matTooltip="订单模块" matTooltipPosition="below">订单模块</mat-checkbox>
       </div>
     </div>
     <!-- <div class="d-flex flex-column mt-1">
@@ -117,7 +116,13 @@
       </div>
     </div> -->
     <div class="mt-2 d-flex gap-1 align-items-center">
-      <button mat-flat-button color="primary" (click)="addSolution()" [disabled]="isProcess">创建</button>
+      <button mat-flat-button color="primary" (click)="addSolution()" [disabled]="isProcess">
+        @if(isProcess){
+        创建中...
+        }@else {
+        创建
+        }
+      </button>
       <mat-spinner *ngIf="isProcess" style="width: 26px;height:26px"></mat-spinner>
     </div>
   </form>

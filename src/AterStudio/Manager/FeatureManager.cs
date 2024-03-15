@@ -30,12 +30,15 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
 
         var version = AssemblyHelper.GetCurrentToolVersion();
 
-        if(ProcessHelper.RunCommand("dotnet", $"new list atapi", out _))
+        if (ProcessHelper.RunCommand("dotnet", $"new list atapi", out _))
         {
             ProcessHelper.RunCommand("dotnet", $"new update", out _);
         }
-
-        ProcessHelper.RunCommand("dotnet", $"new install ater.web.templates::{version}", out _);
+        else
+        {
+            ProcessHelper.RunCommand("dotnet", $"new install ater.web.templates::{version}", out string msg);
+            Console.WriteLine(msg);
+        }
 
         if (!Directory.Exists(dto.Path))
         {
