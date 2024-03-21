@@ -396,7 +396,7 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
         List<string> refTypes = [];
         if (functions != null)
         {
-            functionstr = string.Join("\n", functions.Select(f => f.ToNgRequestFunction()).ToArray());
+            functionstr = string.Join("\n", functions.Select(ToNgRequestFunction).ToArray());
             string[] baseTypes = ["string", "string[]", "number", "number[]", "boolean", "integer"];
             // 获取请求和响应的类型，以便导入
             List<string?> requestRefs = functions
@@ -591,6 +591,92 @@ export class {{serviceFile.Name}}Service extends {{serviceFile.Name}}BaseService
         return functionString;
     }
 
+    public string ToNgRequestFunction(RequestServiceFunction function)
+    {
+        string Name = function.Name;
+        List<FunctionParams>? Params = function.Params;
+        string RequestType = function.RequestType;
+        string ResponseType = string.IsNullOrWhiteSpace(function.ResponseType) ? "any" : function.ResponseType!;
+
+        string Path = function.Path;
+        if (Server != null)
+        {
+            Path = Server + Path;
+        }
+
+        // 函数名处理，去除tag前缀，然后格式化
+        Name = Name.Replace(function.Tag + "_", "");
+        Name = Name.ToCamelCase();
+
+        // 处理参数
+        string paramsString = "";
+        string paramsComments = "";
+        string dataString = "";
+        if (Params?.Count > 0)
+        {
+            paramsString = string.Join(", ",
+                Params.OrderByDescending(p => p.IsRequired)
+                    .Select(p => p.IsRequired
+                        ? p.Name + ": " + p.Type
+                        : p.Name + ": " + p.Type + " | null")
+                .ToArray());
+            Params.ForEach(p =>
+            {
+                paramsComments += $"   * @param {p.Name} {p.Description ?? p.Type}\n";
+            });
+        }
+
+        if (!string.IsNullOrEmpty(RequestType))
+        {
+            if (Params?.Count > 0)
+            {
+                paramsString += $", data: {RequestType}";
+            }
+            else
+            {
+                paramsString = $"data: {RequestType}";
+            }
+
+            dataString = ", data";
+            paramsComments += $"   * @param data {RequestType}\n";
+        }
+        // 注释生成
+        string comments = $@"  /**
+   * {function.Description ?? Name}
+{paramsComments}   */";
+
+        // 构造请求url
+        List<string?>? paths = Params?.Where(p => p.InPath).Select(p => p.Name)?.ToList();
+        paths?.ForEach(p =>
+        {
+            string origin = $"{{{p}}}";
+            Path = Path.Replace(origin, "$" + origin);
+        });
+        // 需要拼接的参数,特殊处理文件上传
+        List<string?>? reqParams = Params?.Where(p => !p.InPath && p.Type != "FormData")
+            .Select(p => p.Name)?.ToList();
+        if (reqParams != null)
+        {
+            string queryParams = "";
+            queryParams = string.Join("&", reqParams.Select(p => { return $"{p}=${{{p}}}"; }).ToArray());
+            if (!string.IsNullOrEmpty(queryParams))
+            {
+                Path += "?" + queryParams;
+            }
+        }
+        FunctionParams? file = Params?.Where(p => p.Type!.Equals("FormData")).FirstOrDefault();
+        if (file != null)
+        {
+            dataString = $", {file.Name}";
+        }
+        string functionString = @$"{comments}
+  {Name}({paramsString}): Observable<{ResponseType}> {{
+    const url = `{Path}`;
+    return this.request<{ResponseType}>('{function.Method.ToLower()}', url{dataString});
+  }}
+";
+        return functionString;
+    }
     /// <summary>
     /// 获取要导入的依赖
     /// </summary>

@@ -38,7 +38,13 @@ public class SwaggerManager(DbContext dbContext)
         {
             if (path.StartsWith("http://") || path.StartsWith("https://"))
             {
-                using HttpClient http = new();
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true
+                };
+
+                using HttpClient http = new(handler);
+
                 http.Timeout = TimeSpan.FromSeconds(60);
                 openApiContent = await http.GetStringAsync(path);
             }
