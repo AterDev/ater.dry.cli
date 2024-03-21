@@ -242,7 +242,7 @@ public class CsharpModelGenerate : GenerateBase
         {
             comment = $"""
                 /// <summary>
-                /// {schema.Description}
+                /// {schema.Description.ReplaceLineEndings("")}
                 /// </summary>
                 """ + Environment.NewLine;
         }
@@ -259,7 +259,7 @@ public class CsharpModelGenerate : GenerateBase
         {
             for (int i = 0; i < values?.Count; i++)
             {
-                propertyString += "    " + ((OpenApiString)values[i]).Value + "," + Environment.NewLine;
+                propertyString += "    " + ((OpenApiString)values[i]).Value + ',' + Environment.NewLine;
             }
         }
         else
@@ -273,7 +273,7 @@ public class CsharpModelGenerate : GenerateBase
                         continue;
                     }
 
-                    propertyString += "  " + ((OpenApiString)schema.Enum[i]).Value + Environment.NewLine;
+                    propertyString += "  " + ((OpenApiString)schema.Enum[i]).Value + ',' + Environment.NewLine;
                 }
             }
         }

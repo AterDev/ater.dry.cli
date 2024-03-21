@@ -17,6 +17,7 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
     public OpenApiDocument OpenApi { get; set; } = openApi;
 
     public RequestLibType LibType { get; set; } = RequestLibType.NgHttp;
+    public string? Server { get; set; } = openApi.Servers.FirstOrDefault()?.Url;
 
     public List<GenFileInfo>? TsModelFiles { get; set; }
 
@@ -496,6 +497,10 @@ export class {{serviceFile.Name}}Service extends {{serviceFile.Name}}BaseService
         string ResponseType = string.IsNullOrWhiteSpace(function.ResponseType) ? "any" : function.ResponseType!;
 
         string Path = function.Path;
+        if (Server != null)
+        {
+            Path = Server + Path;
+        }
 
         // 函数名处理，去除tag前缀，然后格式化
         Name = Name.Replace(function.Tag + "_", "");
