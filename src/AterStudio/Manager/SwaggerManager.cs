@@ -42,7 +42,12 @@ public class SwaggerManager
         {
             if (path.StartsWith("http://") || path.StartsWith("https://"))
             {
-                using HttpClient http = new();
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true
+                };
+
+                using HttpClient http = new(handler);
                 http.Timeout = TimeSpan.FromSeconds(60);
                 openApiContent = await http.GetStringAsync(path);
             }
@@ -118,16 +123,11 @@ public class SwaggerManager
     /// <returns></returns>
     public NgComponentInfo CreateUIComponent(CreateUIComponentDto dto)
     {
-        switch (dto.ComponentType)
+        return dto.ComponentType switch
         {
-            case ComponentType.Form:
-                return NgPageGenerate.GenFormComponent(dto.ModelInfo, dto.ServiceName);
-
-            case ComponentType.Table:
-                return NgPageGenerate.GenTableComponent(dto.ModelInfo, dto.ServiceName);
-            default:
-                return default!;
-        }
-
+            ComponentType.Form => NgPageGenerate.GenFormComponent(dto.ModelInfo, dto.ServiceName),
+            ComponentType.Table => NgPageGenerate.GenTableComponent(dto.ModelInfo, dto.ServiceName),
+            _ => default!,
+        };
     }
 }

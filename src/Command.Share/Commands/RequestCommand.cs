@@ -47,7 +47,12 @@ public class RequestCommand : CommandBase
         string openApiContent = "";
         if (DocUrl.StartsWith("http://") || DocUrl.StartsWith("https://"))
         {
-            using HttpClient http = new();
+            var handler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true
+            };
+
+            using HttpClient http = new(handler);
             openApiContent = await http.GetStringAsync(DocUrl);
         }
         else
