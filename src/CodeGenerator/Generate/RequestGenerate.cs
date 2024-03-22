@@ -45,7 +45,7 @@ public class RequestGenerate : GenerateBase
                         .Where(t => t.ProjectId == Const.PROJECT_ID)
                         .Select(t => t.Content)
                         .FirstOrDefault();
-                    return content ?? GetTplContent("angular.base.service.tpl");
+                    return string.IsNullOrWhiteSpace(content) ? GetTplContent("angular.base.service.tpl") : content;
 
                 case RequestLibType.Axios:
                     content = data?
@@ -53,7 +53,7 @@ public class RequestGenerate : GenerateBase
                         .Where(t => t.ProjectId == Const.PROJECT_ID)
                         .Select(t => t.Content)
                         .FirstOrDefault();
-                    return content ?? GetTplContent("RequestService.axios.service.tpl");
+                    return string.IsNullOrWhiteSpace(content) ? GetTplContent("RequestService.axios.service.tpl") : content;
                 default:
                     break;
             }
