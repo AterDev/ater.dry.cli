@@ -35,7 +35,6 @@ public class CommandBuilder
         return RootCommand;
     }
 
-
     public void AddStudio()
     {
         System.CommandLine.Command studioCommand = new("studio", "studio management");
