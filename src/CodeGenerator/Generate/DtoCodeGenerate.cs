@@ -15,7 +15,7 @@ public class DtoCodeGenerate : GenerateBase
     /// <summary>
     /// dto 输出的 程序集名称
     /// </summary>
-    public string? AssemblyName { get; set; } = "Share";
+    public string? AssemblyName { get; set; }
     public string DtoPath { get; init; }
     public List<PropertyChange> PropertyChanges = [];
     public readonly DbContext dbContext;
@@ -23,6 +23,9 @@ public class DtoCodeGenerate : GenerateBase
     {
         DtoPath = dtoPath;
         this.dbContext = dbContext;
+
+        AssemblyName = AssemblyHelper.GetNamespaceByPath(Config.SharePath);
+
         if (!File.Exists(entityPath))
         {
             throw new FileNotFoundException();
@@ -357,7 +360,7 @@ public class DtoCodeGenerate : GenerateBase
         global using System.ComponentModel.DataAnnotations;
         global using {AssemblyName}.Models;
         global using Ater.Web.Core.Models;
-        global using Entity;
+        global using {EntityInfo.NamespaceName};
         """;
     }
 }

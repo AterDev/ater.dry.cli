@@ -46,21 +46,4 @@ public class {Name}{baseType}
 ";
         return tpl;
     }
-    public void Save(string dir, bool cover)
-    {
-        string path = Path.Combine(dir, Tag ?? "");
-        if (!Directory.Exists(path))
-        {
-            _ = Directory.CreateDirectory(path);
-        }
-        string fileName = Path.Combine(path, Name + ".cs");
-        // 不覆盖
-        if (!cover && File.Exists(fileName))
-        {
-            Console.WriteLine("skip dto file:" + fileName);
-            return;
-        }
-        File.WriteAllText(fileName, ToDtoContent());
-        Console.WriteLine("Created dto file:" + fileName);
-    }
 }

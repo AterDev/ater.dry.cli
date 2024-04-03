@@ -48,31 +48,6 @@ public class ManagerGenerate : GenerateBase
     }
 
     /// <summary>
-    /// 获取接口模板内容
-    /// </summary>
-    /// <param name="tplName"></param>
-    /// <returns></returns>
-    public string GetInterfaceFile(string tplName)
-    {
-        string content = GetTplContent($"Interface.{tplName}.tpl");
-        content = content.Replace(TplConst.NAMESPACE, ApplicationNamespace);
-        return content;
-    }
-
-    /// <summary>
-    /// 获取实现模板内容
-    /// </summary>
-    /// <param name="tplName"></param>
-    /// <returns></returns>
-    public string GetImplementFile(string tplName)
-    {
-        string content = GetTplContent($"Implement.{tplName}.tpl");
-        content = content.Replace(TplConst.NAMESPACE, ApplicationNamespace);
-        return content;
-    }
-
-
-    /// <summary>
     /// manager测试内容
     /// </summary>
     /// <returns></returns>
@@ -177,13 +152,6 @@ public class ManagerGenerate : GenerateBase
         return content;
     }
 
-    public string GetUserContextClass()
-    {
-        string content = GetTplContent("Implement.UserContext.tpl");
-        content = content.Replace(TplConst.NAMESPACE, ApplicationNamespace);
-        return content;
-    }
-
     /// <summary>
     /// 全局依赖
     /// </summary>
@@ -204,30 +172,7 @@ public class ManagerGenerate : GenerateBase
             $"global using {entityProjectNamespace};",
             $"global using {entityNamespace};",
             ""
-    ];
-    }
-
-    /// <summary>
-    /// 生成store实现
-    /// </summary>
-    /// <param name="queryOrCommand">Query or Command</param>
-    /// <returns></returns>
-    public string GetStoreContent(string queryOrCommand)
-    {
-        if (queryOrCommand is not "Query" and not "Command")
-        {
-            throw new ArgumentException("不允许的参数");
-        }
-        string contextName = queryOrCommand + "DbContext";
-        string entityName = Path.GetFileNameWithoutExtension(EntityFilePath);
-        // 生成基础仓储实现类，替换模板变量并写入文件
-        string tplContent = GetTplContent($"Implement.{queryOrCommand}StoreContent.tpl");
-        var entityFrameworkNsp = Config.EntityFrameworkPath.Split(Path.DirectorySeparatorChar).Last();
-        tplContent = tplContent.Replace(TplConst.NAMESPACE, entityFrameworkNsp);
-        //tplContent = tplContent.Replace(TplConst.SHARE_NAMESPACE, ShareNamespace);
-        tplContent = tplContent.Replace(TplConst.DBCONTEXT_NAME, contextName);
-        tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName);
-        return tplContent;
+        ];
     }
 
     /// <summary>
@@ -245,6 +190,7 @@ public class ManagerGenerate : GenerateBase
             .Replace("${UpdateActionBlock}", GetUpdateMethodContent())
             .Replace("${FilterActionBlock}", GetFilterMethodContent());
 
+        Console.WriteLine(ShareNamespace);
 
         tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName)
             .Replace(TplConst.ID_TYPE, Config.IdType)
@@ -388,7 +334,6 @@ public class ManagerGenerate : GenerateBase
             """;
         return content;
     }
-
 
     /// <summary>
     /// get user DbContext name

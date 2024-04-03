@@ -100,7 +100,7 @@ public class AssemblyHelper
         FileInfo? file = FindProjectFile(dir);
         if (file == null)
         {
-            return null;
+            return GetNamespaceByPath(dir.FullName.Replace(Config.SolutionPath, ""));
         }
 
         XElement xml = XElement.Load(file.FullName);
@@ -362,6 +362,18 @@ public class AssemblyHelper
 
     }
 
+    /// <summary>
+    /// 将目录结构转换成命名空间
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    public static string GetNamespaceByPath(string path)
+    {
+        return path.Replace("src", "")
+            .Replace(Path.PathSeparator, '.')
+            .Replace(Path.DirectorySeparatorChar, '.')
+            .Trim('.');
+    }
 }
 public class XmlCommentMember
 {

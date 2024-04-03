@@ -22,10 +22,7 @@ public class DtoCommand : CommandBase
         EntityPath = entityPath;
         DtoPath = dtoPath;
 
-        CodeGen = new DtoCodeGenerate(EntityPath, DtoPath, CommandRunner.dbContext)
-        {
-            AssemblyName = new DirectoryInfo(DtoPath).Name
-        };
+        CodeGen = new DtoCodeGenerate(EntityPath, DtoPath, CommandRunner.dbContext);
         string entityName = Path.GetFileNameWithoutExtension(entityPath);
         Instructions.Add($"  🔹 generate {entityName} dtos.");
     }
@@ -76,15 +73,15 @@ public class DtoCommand : CommandBase
 
             if (string.IsNullOrWhiteSpace(ModuleName) && !Config.IsMicroservice)
             {
-                GenerateCommonFiles();
+                GenerateCommonFiles(cover);
             }
             Console.WriteLine("😀 Dto generate completed!" + Environment.NewLine);
 
         }
     }
-    public async void GenerateCommonFiles()
+    public async void GenerateCommonFiles(bool cover)
     {
-        await GenerateFileAsync(DtoPath, "GlobalUsings.cs", CodeGen.GetDtoUsings());
+        await GenerateFileAsync(DtoPath, "GlobalUsings.cs", CodeGen.GetDtoUsings(), cover);
     }
 
     public async Task GenerateFileAsync(string fileName, string content)

@@ -214,7 +214,8 @@ public class ManagerCommand : CommandBase
     /// <returns></returns>
     public async Task GenerateDIExtensionsAsync()
     {
-        var nsp = Config.IsMicroservice ? Config.ServiceName + ".Application" : "Application";
+        var applicationNamespace = AssemblyHelper.GetNamespaceByPath(Config.ApplicationPath);
+        var nsp = Config.IsMicroservice ? Config.ServiceName + $".{applicationNamespace}" : applicationNamespace;
         var content = ManagerGenerate.GetManagerDIExtensions(ApplicationPath, nsp);
         await GenerateFileAsync(ApplicationPath, "ManagerServiceCollectionExtensions.cs", content, true);
     }
