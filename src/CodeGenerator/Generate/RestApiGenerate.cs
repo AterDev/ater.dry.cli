@@ -35,7 +35,7 @@ public class RestApiGenerate : GenerateBase
     public string? ApplicationNamespace { get; set; }
     public string? ApiNamespace { get; set; }
     public readonly EntityInfo EntityInfo;
-
+    
     public RestApiGenerate(string entityPath, string dtoPath, string applicationPath, string apiPath, string? suffix = null)
     {
         EntityPath = entityPath;
