@@ -669,10 +669,20 @@ export class {{serviceFile.Name}}Service extends {{serviceFile.Name}}BaseService
         {
             dataString = $", {file.Name}";
         }
+
+        var method = "request";
+        var generics = $"<{ResponseType}>";
+        if (ResponseType.Equals("FormData"))
+        {
+            ResponseType = "Blob";
+            method = "downloadFile";
+            generics = "";
+        }
+
         string functionString = @$"{comments}
   {Name}({paramsString}): Observable<{ResponseType}> {{
-    const url = `{Path}`;
-    return this.request<{ResponseType}>('{function.Method.ToLower()}', url{dataString});
+    const _url = `{Path}`;
+    return this.{method}{generics}('{function.Method.ToLower()}', _url{dataString});
   }}
 ";
         return functionString;
