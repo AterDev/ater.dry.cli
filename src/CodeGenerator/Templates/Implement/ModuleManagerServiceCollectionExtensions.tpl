@@ -8,12 +8,26 @@ namespace ${Namespace};
 public static class ServiceCollectionExtensions
 {
     /// <summary>
+    /// 添加模块服务
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
+    public static IServiceCollection Add${Namespace}Services(this IServiceCollection services)
+    {
+        services.Add${Namespace}Managers();
+        // add other services
+        return services;
+    }
+
+
+    /// <summary>
     /// 添加${Namespace} 注入服务
     /// </summary>
     /// <param name="services"></param>
-    public static void Add${Namespace}Managers(this IServiceCollection services)
+    public static IServiceCollection Add${Namespace}Managers(this IServiceCollection services)
     {
 ${ManagerServices}
+        return services;
     }
 }
 
