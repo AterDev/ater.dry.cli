@@ -137,8 +137,10 @@ public class ModuleCommand
             global using Application.Implement;
             global using ${Module}.Infrastructure;
             global using ${Module}.Manager;
+            global using Ater.Web.Abstraction;
             global using Ater.Web.Core.Models;
             global using Ater.Web.Core.Utils;
+            global using Ater.Web.Extension;
             global using Entity;
             global using EntityFramework;
             global using Microsoft.AspNetCore.Authorization;
