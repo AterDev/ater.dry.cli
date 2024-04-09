@@ -249,4 +249,24 @@ public class FunctionTest
 
         }
     }
+
+    [Fact]
+    public void GetBaseLists_Should_Return_BaseTypes()
+    {
+        // Arrange
+        var compilationHelper = new CompilationHelper("./");
+        compilationHelper.AddSyntaxTree("public class MyClass : MyBaseClass, IEntityBase { }");
+
+        // Act
+        var baseTypes = compilationHelper.GetBaseLists();
+
+        // Assert
+        Assert.NotNull(baseTypes);
+
+        Assert.Equal("MyBaseClass", baseTypes[0].ToString());
+
+        baseTypes = compilationHelper.GetBaseLists("IEntityBase");
+        Assert.NotNull(baseTypes);
+        Assert.Equal("IEntityBase", baseTypes[0].ToString());
+    }
 }

@@ -50,7 +50,7 @@ public partial class EntityManager(DbContext dbContext, ProjectContext projectCo
 
             if (filePaths.Count != 0)
             {
-                filePaths = (List<string>)filePaths.Where(f => !(f.EndsWith(".g.cs")
+                filePaths = filePaths.Where(f => !(f.EndsWith(".g.cs")
                     || f.EndsWith(".AssemblyAttributes.cs")
                     || f.EndsWith(".AssemblyInfo.cs")
                     || f.EndsWith("GlobalUsings.cs")
@@ -63,9 +63,14 @@ public partial class EntityManager(DbContext dbContext, ProjectContext projectCo
                     FileInfo file = new(path);
 
                     var content = File.ReadAllText(path);
-
+                    // 备注
                     var comment = SummaryCommentRegex().Match(content)?.Groups[1]?.Value.Trim();
                     comment = comment?.Replace("/", "").Trim();
+
+                    // 解析
+                    compilation.AddSyntaxTree(content);
+                    // 如果是枚举类，则忽略
+                    if (compilation.IsEnum()) continue;
 
                     EntityFile item = new()
                     {
@@ -77,7 +82,6 @@ public partial class EntityManager(DbContext dbContext, ProjectContext projectCo
                     };
 
                     // 解析特性
-                    compilation.AddSyntaxTree(content);
                     var moduleAttribution = compilation.GetClassAttribution("Module");
                     if (moduleAttribution != null && moduleAttribution.Count != 0)
                     {

@@ -8,7 +8,7 @@ public class CompilationHelper
 
     public SemanticModel? SemanticModel { get; set; }
     public ITypeSymbol? ClassSymbol { get; set; }
-    public SyntaxTree? SyntaxTree { get; set; }
+    public SyntaxTree SyntaxTree { get; set; } = null!;
     public IEnumerable<INamedTypeSymbol> AllClass { get; set; }
     public CompilationUnitSyntax? SyntaxRoot { get; set; }
 
@@ -85,6 +85,42 @@ public class CompilationHelper
     {
         IEnumerable<INamespaceSymbol> namespaces = Compilation.GlobalNamespace.GetNamespaceMembers();
         return GetNamespacesClasses(namespaces);
+    }
+
+    /// <summary>
+    /// 判断当前文档是否为枚举类
+    /// </summary>
+    /// <returns></returns>
+    public bool IsEnum()
+    {
+        var hasClass = SyntaxTree.GetCompilationUnitRoot().DescendantNodes()
+            .OfType<ClassDeclarationSyntax>().Count();
+
+        var hasEnum = SyntaxTree.GetCompilationUnitRoot().DescendantNodes()
+            .OfType<EnumDeclarationSyntax>().Count();
+
+        return hasClass == 0 && hasEnum > 0;
+    }
+
+    /// <summary>
+    /// 获取所有基类
+    /// </summary>
+    /// <param name="baseTypeName"></param>
+    /// <returns></returns>
+    public List<BaseTypeSyntax>? GetBaseLists(string? baseTypeName = null)
+    {
+        // 获取所有继承的基类
+        var baseList = SyntaxRoot!.DescendantNodes()
+            .OfType<BaseListSyntax>().FirstOrDefault();
+
+        // 筛选出baseTypeName 的基类
+        var baseTypes = baseList?.Types.ToList();
+
+        if (baseTypeName.NotNull())
+        {
+            baseTypes = baseTypes?.Where(t => t.ToString().Equals(baseTypeName)).ToList();
+        }
+        return baseTypes;
     }
 
     /// <summary>
