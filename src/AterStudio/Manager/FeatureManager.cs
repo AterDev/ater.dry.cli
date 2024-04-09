@@ -51,39 +51,10 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
         }
         await Console.Out.WriteLineAsync($"✅ create new solution {path}");
 
-        // 修改配置文件
-        var configFile = Path.Combine(path, "src", apiName, "appsettings.json");
-        var jsonString = File.ReadAllText(configFile);
-        var jsonNode = JsonNode.Parse(jsonString, documentOptions: new JsonDocumentOptions
-        {
-            CommentHandling = JsonCommentHandling.Skip
-        });
-
-        if (jsonNode != null)
-        {
-            //JsonHelper.AddOrUpdateJsonNode(jsonNode, "Components.Database", dto.DBType.ToString().ToLower());
-            //JsonHelper.AddOrUpdateJsonNode(jsonNode, "Components.Cache", dto.CacheType.ToString().ToLower());
-
-            if (!string.IsNullOrWhiteSpace(dto.CommandDbConnStrings))
-            {
-                JsonHelper.AddOrUpdateJsonNode(jsonNode, "ConnectionStrings.CommandDb", dto.CommandDbConnStrings);
-            }
-            if (!string.IsNullOrWhiteSpace(dto.QueryDbConnStrings))
-            {
-                JsonHelper.AddOrUpdateJsonNode(jsonNode, "ConnectionStrings.QueryDb", dto.QueryDbConnStrings);
-            }
-            if (!string.IsNullOrWhiteSpace(dto.CacheConnStrings))
-            {
-                JsonHelper.AddOrUpdateJsonNode(jsonNode, "ConnectionStrings.Cache", dto.CacheConnStrings);
-            }
-            if (!string.IsNullOrWhiteSpace(dto.CacheInstanceName))
-            {
-                JsonHelper.AddOrUpdateJsonNode(jsonNode, "ConnectionStrings.CacheInstanceName", dto.CacheInstanceName);
-            }
-
-            jsonString = jsonNode.ToString();
-            File.WriteAllText(configFile, jsonString);
-        }
+        // 更新配置文件
+        UpdateAppSettings(dto, path, apiName);
+        // 数据库选择
+        ChooseDatabase(dto.DBType, path);
 
         // 移除默认的微服务
         var defaultServicePath = Path.Combine(path, "src", "Microservice", "StandaloneService");
@@ -93,6 +64,7 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
             ProcessHelper.RunCommand("dotnet", $"sln {path} remove {Path.Combine(defaultServicePath, "StandaloneService.csproj")}", out string error);
             Directory.Delete(defaultServicePath, true);
         }
+
         // 前端项目处理
         if (dto.FrontType == FrontType.None)
         {
@@ -104,6 +76,9 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
         }
 
         // 模块
+        // 默认包含SystemMod
+        await ModuleCommand.CreateModuleAsync(path, ModuleCommand.System);
+
         if (dto.HasFileManagerFeature)
         {
             await ModuleCommand.CreateModuleAsync(path, ModuleCommand.FileManager);
@@ -130,16 +105,7 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
             ModuleCommand.CleanModule(path, ModuleCommand.CMS);
         }
 
-        if (dto.HasSystemFeature)
-        {
-            await ModuleCommand.CreateModuleAsync(path, ModuleCommand.System);
-        }
-        else
-        {
-            ModuleCommand.CleanModule(path, ModuleCommand.System);
-        }
-
-        // 添加项目
+        // 保存项目信息
         var addRes = await _projectManager.AddProjectAsync(dto.Name, path);
         if (addRes != null)
         {
@@ -154,6 +120,96 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
             return false;
         }
         return true;
+    }
+
+    /// <summary>
+    /// 更新配置文件
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <param name="path"></param>
+    /// <param name="apiName"></param>
+    private static void UpdateAppSettings(CreateSolutionDto dto, string path, string apiName)
+    {
+        // 修改配置文件
+        var configFile = Path.Combine(path, "src", apiName, "appsettings.json");
+        var jsonString = File.ReadAllText(configFile);
+        var jsonNode = JsonNode.Parse(jsonString, documentOptions: new JsonDocumentOptions
+        {
+            CommentHandling = JsonCommentHandling.Skip
+        });
+        if (jsonNode != null)
+        {
+            JsonHelper.AddOrUpdateJsonNode(jsonNode, "Components.Database", dto.DBType.ToString());
+            JsonHelper.AddOrUpdateJsonNode(jsonNode, "Components.Cache", dto.CacheType.ToString());
+            JsonHelper.AddOrUpdateJsonNode(jsonNode, "Key.DefaultPassword", dto.DefaultPassword ?? "");
+            JsonHelper.AddOrUpdateJsonNode(jsonNode, "ConnectionStrings.CommandDb", dto.CommandDbConnStrings ?? "");
+            JsonHelper.AddOrUpdateJsonNode(jsonNode, "ConnectionStrings.QueryDb", dto.QueryDbConnStrings ?? "");
+            JsonHelper.AddOrUpdateJsonNode(jsonNode, "ConnectionStrings.Cache", dto.CacheConnStrings ?? "");
+            JsonHelper.AddOrUpdateJsonNode(jsonNode, "ConnectionStrings.CacheInstanceName", dto.CacheInstanceName ?? "");
+
+            jsonString = jsonNode.ToString();
+            File.WriteAllText(configFile, jsonString);
+        }
+    }
+
+    /// <summary>
+    /// 不同数据库处理
+    /// </summary>
+    /// <param name="dBType"></param>
+    /// <param name="path"></param>
+    private void ChooseDatabase(DBType dBType, string path)
+    {
+        string[] packageNames = [
+            "Microsoft.EntityFrameworkCore.Sqlite",
+            "Microsoft.EntityFrameworkCore.SqlServer",
+            "Npgsql.EntityFrameworkCore.PostgreSQL"
+            ];
+
+        var useMethod = "UseNpgsql";
+        var packageName = "Npgsql.EntityFrameworkCore.PostgreSQL";
+        if (dBType == DBType.SQLite)
+        {
+            useMethod = "UseSqlite";
+            packageName = "Microsoft.EntityFrameworkCore.Sqlite";
+        }
+        else if (dBType == DBType.SQLServer)
+        {
+            useMethod = "UseSqlServer";
+            packageName = "Microsoft.EntityFrameworkCore.SqlServer";
+        }
+
+        var appServiceFile = Path.Combine(path, "src", "Application", "AppServiceCollectionExtensions.cs");
+        var content = File.ReadAllText(appServiceFile);
+        content = content.Replace("option.UseNpgsql", "option." + useMethod);
+        File.WriteAllText(appServiceFile, content);
+
+        var queryFactoryFile = Path.Combine(path, "src", "Definition", "EntityFramework", "DBProvider", "QueryDbContextFactory.cs");
+        content = File.ReadAllText(queryFactoryFile);
+
+        content = content.Replace("builder.UseNpgsql", "builder." + useMethod);
+        File.WriteAllText(queryFactoryFile, content);
+
+        var commandFactoryFile = Path.Combine(path, "src", "Definition", "EntityFramework", "DBProvider", "CommandDbContextFactory.cs");
+        content = File.ReadAllText(commandFactoryFile);
+        content = content.Replace("builder.UseNpgsql", "builder." + useMethod);
+        File.WriteAllText(commandFactoryFile, content);
+
+        // 项目引用处理
+        var entityProjectFile = Path.Combine(path, "src", "Definition", "EntityFramework", "EntityFramework.csproj");
+
+        packageNames.ToList().Remove(packageName);
+
+        // 移除无用包
+        var lines = File.ReadAllLines(entityProjectFile).ToList();
+        foreach (var item in packageNames)
+        {
+            var index = lines.FindIndex(x => x.Contains(item));
+            if (index > 0)
+            {
+                lines.RemoveAt(index);
+            }
+        }
+        File.WriteAllLines(entityProjectFile, lines);
     }
 
     /// <summary>

@@ -2311,18 +2311,32 @@
       },
       "DBType": {
         "enum": [
-          0
+          0,
+          1,
+          2
         ],
         "type": "integer",
         "format": "int32",
         "x-enumNames": [
-          "PostgreSQL"
+          "PostgreSQL",
+          "SQLServer",
+          "SQLite"
         ],
         "x-enumData": [
           {
             "name": "PostgreSQL",
             "value": 0,
             "description": "PostgreSQL"
+          },
+          {
+            "name": "SQLServer",
+            "value": 1,
+            "description": "SQLServer"
+          },
+          {
+            "name": "SQLite",
+            "value": 2,
+            "description": "SQLite"
           }
         ]
       },

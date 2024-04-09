@@ -89,6 +89,9 @@ public class CreateSolutionDto
     /// 项目类型
     /// </summary>
     public ProjectType ProjectType { get; set; } = ProjectType.WebAPI;
+
+    [MaxLength(60)]
+    public string? DefaultPassword { get; set; }
 }
 
 public enum DBType
@@ -98,11 +101,17 @@ public enum DBType
     /// </summary>
     [Description("PostgreSQL")]
     PostgreSQL,
-    /*/// <summary>
+    /// <summary>
     /// SQLServer
     /// </summary>
     [Description("SQLServer")]
-    SQLServer*/
+    SQLServer,
+    /// <summary>
+    /// SQLite
+    /// </summary>
+    [Description("SQLite")]
+    SQLite
+
 
 }
 public enum CacheType

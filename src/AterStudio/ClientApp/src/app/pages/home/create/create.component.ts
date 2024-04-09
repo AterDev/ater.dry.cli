@@ -33,6 +33,7 @@ export class CreateComponent {
   get path() { return this.addForm.get('path'); }
   get dbType() { return this.addForm.get('dbType'); }
   get cacheType() { return this.addForm.get('cacheType'); }
+  get defaultPassword() { return this.addForm.get('defaultPassword'); }
   get hasTenant() { return this.addForm.get('hasTenant'); }
   get hasIdentityServer() { return this.addForm.get('hasIdentityServer'); }
   get hasTaskManager() { return this.addForm.get('hasTaskManager'); }
@@ -60,6 +61,7 @@ export class CreateComponent {
       path: new FormControl('', [Validators.required, Validators.maxLength(50)]),
       dbType: new FormControl(DBType.PostgreSQL, []),
       cacheType: new FormControl(CacheType.Redis, []),
+      defaultPassword: new FormControl('Hello.Net', []),
       hasTenant: new FormControl(false, []),
       hasIdentityServer: new FormControl(false, []),
       hasTaskManager: new FormControl(false, []),
@@ -69,10 +71,11 @@ export class CreateComponent {
       cacheInstanceName: new FormControl('Dev', [Validators.maxLength(60)]),
       hasCmsFeature: new FormControl(false, []),
       hasFileManagerFeature: new FormControl(false, []),
-      hasSystemFeature: new FormControl(false, []),
+      hasSystemFeature: new FormControl(true, []),
       hasOrderFeature: new FormControl(false, []),
       projectType: new FormControl(ProjectType.WebAPI, [Validators.required])
     });
+    this.hasSystemFeature?.disable();
   }
 
   addSolution(): void {
