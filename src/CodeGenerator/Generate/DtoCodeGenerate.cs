@@ -24,7 +24,7 @@ public class DtoCodeGenerate : GenerateBase
         DtoPath = dtoPath;
         this.dbContext = dbContext;
 
-        AssemblyName = AssemblyHelper.GetNamespaceByPath(Config.SharePath);
+        AssemblyName = AssemblyHelper.GetNamespaceName(new DirectoryInfo(dtoPath));
 
         if (!File.Exists(entityPath))
         {
@@ -353,14 +353,14 @@ public class DtoCodeGenerate : GenerateBase
         return dto.ToDtoContent(AssemblyName, EntityInfo.Name);
     }
 
-    public string GetDtoUsings()
+    public List<string> GetGlobalUsings()
     {
-        return $"""
-        global using System;
-        global using System.ComponentModel.DataAnnotations;
-        global using {AssemblyName}.Models;
-        global using Ater.Web.Core.Models;
-        global using {EntityInfo.NamespaceName};
-        """;
+        return [
+        "global using System;",
+        "global using System.ComponentModel.DataAnnotations;",
+        "global using {AssemblyName}.Models;",
+        "global using Ater.Web.Core.Models;",
+        "global using {EntityInfo.NamespaceName};"
+        ];
     }
 }

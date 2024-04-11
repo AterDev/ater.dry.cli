@@ -9,7 +9,6 @@ public class ${EntityName}${APISuffix}(
     ) : RestControllerBase<${EntityName}Manager>(manager, user, logger)
 {
 ${AdditionManagersProps}
-
     /// <summary>
     /// 筛选
     /// </summary>

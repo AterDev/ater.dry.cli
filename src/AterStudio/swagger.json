@@ -2285,6 +2285,11 @@
           },
           "projectType": {
             "$ref": "#/components/schemas/ProjectType"
+          },
+          "defaultPassword": {
+            "maxLength": 60,
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false,

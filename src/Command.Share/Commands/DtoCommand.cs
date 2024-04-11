@@ -73,20 +73,32 @@ public class DtoCommand : CommandBase
 
             if (string.IsNullOrWhiteSpace(ModuleName) && !Config.IsMicroservice)
             {
-                GenerateCommonFiles(cover);
+                await GenerateCommonFiles();
             }
             Console.WriteLine("😀 Dto generate completed!" + Environment.NewLine);
 
         }
     }
-    public async void GenerateCommonFiles(bool cover)
+    public async Task GenerateCommonFiles()
     {
-        await GenerateFileAsync(DtoPath, "GlobalUsings.cs", CodeGen.GetDtoUsings(), cover);
-    }
-
-    public async Task GenerateFileAsync(string fileName, string content)
-    {
-        await GenerateFileAsync(Path.Combine(DtoPath, "Models"), fileName, content);
+        List<string> globalUsings = CodeGen!.GetGlobalUsings();
+        string filePath = Path.Combine(DtoPath, "GlobalUsings.cs");
+        // 如果不存在则生成，如果存在，则添加
+        if (File.Exists(filePath))
+        {
+            string content = File.ReadAllText(filePath);
+            var newUsings = globalUsings.Where(g => !content.Contains(g))
+                .ToList();
+            if (newUsings.Count != 0)
+            {
+                newUsings.Insert(0, Environment.NewLine);
+                File.AppendAllLines(filePath, newUsings);
+            }
+        }
+        else
+        {
+            await GenerateFileAsync(DtoPath, "GlobalUsings.cs", string.Join(Environment.NewLine, globalUsings));
+        }
     }
 
     /// <summary>
