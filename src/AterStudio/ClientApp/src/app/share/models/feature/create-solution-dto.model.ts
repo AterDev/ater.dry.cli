@@ -14,6 +14,10 @@ export interface CreateSolutionDto {
    * 路径
    */
   path: string;
+  /**
+   * 是否为轻量模板
+   */
+  isLight: boolean;
   dbType?: DBType | null;
   cacheType?: CacheType | null;
   /**

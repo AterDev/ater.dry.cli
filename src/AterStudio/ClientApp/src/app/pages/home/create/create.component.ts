@@ -31,6 +31,7 @@ export class CreateComponent {
 
   get name() { return this.addForm.get('name'); }
   get path() { return this.addForm.get('path'); }
+  get isLight() { return this.addForm.get('isLight'); }
   get dbType() { return this.addForm.get('dbType'); }
   get cacheType() { return this.addForm.get('cacheType'); }
   get defaultPassword() { return this.addForm.get('defaultPassword'); }
@@ -59,6 +60,7 @@ export class CreateComponent {
     this.addForm = new FormGroup({
       name: new FormControl('', [Validators.required, Validators.maxLength(50)]),
       path: new FormControl('', [Validators.required, Validators.maxLength(50)]),
+      isLight: new FormControl(false, [Validators.required]),
       dbType: new FormControl(DBType.PostgreSQL, []),
       cacheType: new FormControl(CacheType.Redis, []),
       defaultPassword: new FormControl('Hello.Net', []),

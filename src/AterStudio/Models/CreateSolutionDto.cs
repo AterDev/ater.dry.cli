@@ -20,6 +20,11 @@ public class CreateSolutionDto
     public required string Path { get; set; }
 
     /// <summary>
+    /// 是否为轻量模板
+    /// </summary>
+    public bool IsLight { get; set; }
+
+    /// <summary>
     /// 数据库类型
     /// </summary>
     public DBType DBType { get; set; } = DBType.PostgreSQL;

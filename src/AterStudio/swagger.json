@@ -2255,6 +2255,10 @@
             "type": "string",
             "description": "路径"
           },
+          "isLight": {
+            "type": "boolean",
+            "description": "是否为轻量模板"
+          },
           "dbType": {
             "$ref": "#/components/schemas/DBType"
           },

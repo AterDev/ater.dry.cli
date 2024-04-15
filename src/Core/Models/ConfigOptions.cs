@@ -72,7 +72,6 @@ public enum ControllerType
     /// </summary>
     [Description("用户端和管理端")]
     Both
-
 }
 
 public class DoubleStringJsonConverter : JsonConverter<string>

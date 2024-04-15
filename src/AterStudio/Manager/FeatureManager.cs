@@ -25,8 +25,8 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
     {
         // 生成项目
         var path = Path.Combine(dto.Path, dto.Name);
-        var projectType = dto.ProjectType == ProjectType.GRPC ? "-g" : "";
-        var apiName = dto.ProjectType == ProjectType.GRPC ? "Grpc.API" : "Http.API";
+        var apiName = "Http.API";
+        var templateType = dto.IsLight ? "atlight" : "atapi";
 
         var version = AssemblyHelper.GetCurrentToolVersion();
 
@@ -44,7 +44,7 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
         {
             Directory.CreateDirectory(path);
         }
-        if (!ProcessHelper.RunCommand("dotnet", $"new atapi -o {path} {projectType} --force", out _))
+        if (!ProcessHelper.RunCommand("dotnet", $"new {templateType} -o {path} --force", out _))
         {
             ErrorMsg = "创建项目失败，请尝试使用空目录创建";
             return false;
