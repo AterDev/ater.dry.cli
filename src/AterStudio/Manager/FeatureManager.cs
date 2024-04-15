@@ -54,7 +54,7 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
         // 更新配置文件
         UpdateAppSettings(dto, path, apiName);
         // 数据库选择
-        ChooseDatabase(dto.DBType, path);
+        ChooseDatabase(dto.DBType, path, dto.IsLight);
 
         // 移除默认的微服务
         var defaultServicePath = Path.Combine(path, "src", "Microservice", "StandaloneService");
@@ -75,34 +75,37 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
             }
         }
 
-        // 模块
+
         // 默认包含SystemMod
-        await ModuleCommand.CreateModuleAsync(path, ModuleCommand.System);
+        if (!dto.IsLight)
+        {
+            await ModuleCommand.CreateModuleAsync(path, ModuleCommand.System);
 
-        if (dto.HasFileManagerFeature)
-        {
-            await ModuleCommand.CreateModuleAsync(path, ModuleCommand.FileManager);
-        }
-        else
-        {
-            ModuleCommand.CleanModule(path, ModuleCommand.FileManager);
-        }
-        if (dto.HasOrderFeature)
-        {
-            await ModuleCommand.CreateModuleAsync(path, ModuleCommand.Order);
-        }
-        else
-        {
-            ModuleCommand.CleanModule(path, ModuleCommand.Order);
-        }
+            if (dto.HasFileManagerFeature)
+            {
+                await ModuleCommand.CreateModuleAsync(path, ModuleCommand.FileManager);
+            }
+            else
+            {
+                ModuleCommand.CleanModule(path, ModuleCommand.FileManager);
+            }
+            if (dto.HasOrderFeature)
+            {
+                await ModuleCommand.CreateModuleAsync(path, ModuleCommand.Order);
+            }
+            else
+            {
+                ModuleCommand.CleanModule(path, ModuleCommand.Order);
+            }
 
-        if (dto.HasCmsFeature)
-        {
-            await ModuleCommand.CreateModuleAsync(path, ModuleCommand.CMS);
-        }
-        else
-        {
-            ModuleCommand.CleanModule(path, ModuleCommand.CMS);
+            if (dto.HasCmsFeature)
+            {
+                await ModuleCommand.CreateModuleAsync(path, ModuleCommand.CMS);
+            }
+            else
+            {
+                ModuleCommand.CleanModule(path, ModuleCommand.CMS);
+            }
         }
 
         // 保存项目信息
@@ -157,13 +160,14 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
     /// </summary>
     /// <param name="dBType"></param>
     /// <param name="path"></param>
-    private void ChooseDatabase(DBType dBType, string path)
+    /// <param name="isLight"></param>
+    private void ChooseDatabase(DBType dBType, string path, bool isLight)
     {
-        string[] packageNames = [
+        var packageNames = new List<string> {
             "Microsoft.EntityFrameworkCore.Sqlite",
             "Microsoft.EntityFrameworkCore.SqlServer",
             "Npgsql.EntityFrameworkCore.PostgreSQL"
-            ];
+        };
 
         var useMethod = "UseNpgsql";
         var packageName = "Npgsql.EntityFrameworkCore.PostgreSQL";
@@ -195,9 +199,9 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
         File.WriteAllText(commandFactoryFile, content);
 
         // 项目引用处理
-        var entityProjectFile = Path.Combine(path, "src", "Definition", "EntityFramework", "EntityFramework.csproj");
+        var entityProjectFile = Path.Combine(path, "src", "Definition", "Definition.csproj");
 
-        packageNames.ToList().Remove(packageName);
+        packageNames.Remove(packageName);
 
         // 移除无用包
         var lines = File.ReadAllLines(entityProjectFile).ToList();
