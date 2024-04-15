@@ -33,11 +33,11 @@ public partial class EntityManager(DbContext dbContext, ProjectContext projectCo
         List<EntityFile> entityFiles = [];
         try
         {
-            Config.EntityPath = Config.EntityPath.Replace('\\', Path.DirectorySeparatorChar)
+            string entityPath = Config.EntityPath.Replace('\\', Path.DirectorySeparatorChar)
                 .Replace('/', Path.DirectorySeparatorChar);
 
             string servicePath = Path.Combine(_projectContext.SolutionPath!, "src");
-            string entityPath = Path.Combine(_projectContext.SolutionPath!, Config.EntityPath);
+            entityPath = Path.Combine(_projectContext.SolutionPath!, entityPath);
             if (!string.IsNullOrWhiteSpace(serviceName))
             {
 

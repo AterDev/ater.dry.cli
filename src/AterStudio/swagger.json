@@ -2137,6 +2137,10 @@
             "type": "string",
             "description": "项目根目录"
           },
+          "isLight": {
+            "type": "boolean",
+            "description": "是否为轻量项目"
+          },
           "projectId": {
             "type": "string",
             "format": "uuid"
@@ -2150,11 +2154,6 @@
           },
           "dbContextPath": {
             "type": "string"
-          },
-          "storePath": {
-            "type": "string",
-            "description": "废弃属性",
-            "nullable": true
           },
           "applicationPath": {
             "type": "string"
@@ -2180,6 +2179,9 @@
             "description": "控制器是否拆分",
             "nullable": true
           },
+          "controllerType": {
+            "$ref": "#/components/schemas/ControllerType"
+          },
           "version": {
             "type": "string"
           },
@@ -2194,6 +2196,37 @@
         },
         "additionalProperties": false,
         "description": "项目配置"
+      },
+      "ControllerType": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32",
+        "x-enumNames": [
+          "Client",
+          "Admin",
+          "Both"
+        ],
+        "x-enumData": [
+          {
+            "name": "Client",
+            "value": 0,
+            "description": "用户端"
+          },
+          {
+            "name": "Admin",
+            "value": 1,
+            "description": "管理端"
+          },
+          {
+            "name": "Both",
+            "value": 2,
+            "description": "用户端和管理端"
+          }
+        ]
       },
       "ConvertDto": {
         "type": "object",
@@ -2930,6 +2963,9 @@
           "updatedTimeName": {
             "type": "string",
             "nullable": true
+          },
+          "controllerType": {
+            "$ref": "#/components/schemas/ControllerType"
           },
           "isSplitController": {
             "type": "boolean",

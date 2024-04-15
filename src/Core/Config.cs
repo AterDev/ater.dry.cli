@@ -2,17 +2,19 @@
 
 public static class Config
 {
-    public static string IdType { get; set; } = "Guid";
-    public static string CreatedTimeName { get; set; } = "CreatedTime";
-    public static string UpdatedTimeName { get; set; } = "UpdatedTime";
+    public static string IdType { get; private set; } = "Guid";
+    public static string CreatedTimeName { get; private set; } = "CreatedTime";
+    public static string UpdatedTimeName { get; private set; } = "UpdatedTime";
     public static string Version { get; private set; } = "8.0";
-    public static string SharePath { get; set; } = Path.Combine("src", "Definition", "Share");
-    public static string EntityPath { get; set; } = Path.Combine("src", "Definition", "Entity");
-    public static string EntityFrameworkPath { get; set; } = Path.Combine("src", "Definition", "EntityFramework");
-    public static string ApplicationPath { get; set; } = Path.Combine("src", "Application");
-    public static string ApiPath { get; set; } = Path.Combine("src", "Http.API");
-    public static string MicroservicePath { get; set; } = Path.Combine("src", "Microservice");
+    public static string SharePath { get; private set; } = Path.Combine("src", "Definition", "Share");
+    public static string EntityPath { get; private set; } = Path.Combine("src", "Definition", "Entity");
+    public static string EntityFrameworkPath { get; private set; } = Path.Combine("src", "Definition", "EntityFramework");
+    public static string ApplicationPath { get; private set; } = Path.Combine("src", "Application");
+    public static string ApiPath { get; private set; } = Path.Combine("src", "Http.API");
+    public static string MicroservicePath { get; private set; } = Path.Combine("src", "Microservice");
     public static string SolutionPath { get; set; } = "";
+    public static bool IsLight { get; private set; } = false;
+    public static ControllerType ControllerType { get; set; } = ControllerType.Client;
 
     /// <summary>
     /// 是否拆分
@@ -49,6 +51,8 @@ public static class Config
         CreatedTimeName = configOptions.CreatedTimeName;
         Version = configOptions.Version;
         IsMicroservice = false;
+        IsLight = configOptions.IsLight;
+        ControllerType = configOptions.ControllerType;
         ServiceName = null;
     }
 

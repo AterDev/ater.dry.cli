@@ -15,6 +15,7 @@ import 'prismjs/plugins/line-numbers/prism-line-numbers.js';
 import 'prismjs/components/prism-markup.min.js';
 import 'prismjs/components/prism-csharp.min.js';
 import { AdvanceService } from 'src/app/share/services/advance.service';
+import { ControllerType } from 'src/app/share/models/enum/controller-type.model';
 
 @Component({
   selector: 'app-index',
@@ -27,6 +28,7 @@ export class IndexComponent implements OnInit {
   @ViewChild("updateProjectDialog", { static: true }) updateTmpRef!: TemplateRef<{}>;
   @ViewChild("addOpenAiKeyDialog", { static: true }) openAITmpRef!: TemplateRef<{}>;
   SolutionType = SolutionType;
+  ControllerType = ControllerType;
   dialogRef!: MatDialogRef<{}, any>;
   projects = [] as Project[];
   current: Project | null = null;
@@ -184,7 +186,7 @@ export class IndexComponent implements OnInit {
       storePath: new FormControl(this.config?.applicationPath, [Validators.required, Validators.minLength(1), Validators.maxLength(200)]),
       apiPath: new FormControl(this.config?.apiPath, [Validators.required, Validators.minLength(1), Validators.maxLength(200)]),
       idType: new FormControl(this.config?.idType ?? "Guid", [Validators.required, Validators.minLength(2), Validators.maxLength(20)]),
-      isSplitController: new FormControl<boolean>(this.config?.isSplitController ?? false)
+      controllerType: new FormControl(this.config?.controllerType ?? 0, [Validators.required]),
     });
   }
   saveSetting(): void {

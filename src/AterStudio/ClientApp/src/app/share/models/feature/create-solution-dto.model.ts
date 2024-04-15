@@ -65,5 +65,6 @@ export interface CreateSolutionDto {
    */
   hasOrderFeature: boolean;
   projectType?: ProjectType | null;
+  defaultPassword?: string | null;
 
 }

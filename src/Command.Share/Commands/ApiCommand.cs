@@ -117,16 +117,32 @@ public class ApiCommand : CommandBase
         string entityName = Path.GetFileNameWithoutExtension(EntityFilePath);
         string apiContent = CodeGen!.GetRestApiContent();
 
-        if (Config.IsSplitController == true)
+        switch (Config.ControllerType)
         {
-            string adminContent = apiContent
-                .Replace(CodeGen.ApiNamespace + ".Controllers", CodeGen.ApiNamespace + ".Controllers.AdminControllers");
-            await GenerateFileAsync(adminDir, $"{entityName}{Suffix}.cs", adminContent, force);
+            case ControllerType.Client:
+            {
+                string clientContent = apiContent.Replace("RestControllerBase", "ClientControllerBase");
+                await GenerateFileAsync(apiDir, $"{entityName}{Suffix}.cs", clientContent, force);
+                break;
+            }
+            case ControllerType.Admin:
+            {
+                string adminContent = apiContent.Replace(CodeGen.ApiNamespace + ".Controllers", CodeGen.ApiNamespace + ".Controllers.AdminControllers");
+                await GenerateFileAsync(adminDir, $"{entityName}{Suffix}.cs", adminContent, force);
+                break;
+            }
+
+            case ControllerType.Both:
+            {
+                string clientContent = apiContent.Replace("RestControllerBase", "ClientControllerBase");
+                await GenerateFileAsync(apiDir, $"{entityName}{Suffix}.cs", clientContent, force);
+
+                string adminContent = apiContent.Replace(CodeGen.ApiNamespace + ".Controllers", CodeGen.ApiNamespace + ".Controllers.AdminControllers");
+                await GenerateFileAsync(adminDir, $"{entityName}{Suffix}.cs", adminContent, force);
+                break;
+            }
+            default:
+                break;
         }
-
-        string clientContent = apiContent
-            .Replace("RestControllerBase", "ClientControllerBase");
-
-        await GenerateFileAsync(apiDir, $"{entityName}{Suffix}.cs", clientContent, force);
     }
 }

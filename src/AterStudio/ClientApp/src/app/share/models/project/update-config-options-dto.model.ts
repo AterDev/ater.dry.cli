@@ -1,3 +1,4 @@
+import { ControllerType } from '../enum/controller-type.model';
 export interface UpdateConfigOptionsDto {
   /**
    * dto项目目录
@@ -10,6 +11,7 @@ export interface UpdateConfigOptionsDto {
   idType?: string | null;
   createdTimeName?: string | null;
   updatedTimeName?: string | null;
+  controllerType?: ControllerType | null;
   isSplitController?: boolean | null;
 
 }

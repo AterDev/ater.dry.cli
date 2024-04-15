@@ -19,11 +19,24 @@ export class EnumTextPipe implements PipeTransform {
           }
         }
         break;
+      case 'ControllerType':
+        {
+            switch (value)
+        {
+            case 0: result = '用户端'; break;
+            case 1: result = '管理端'; break;
+            case 2: result = '用户端和管理端'; break;
+            default: '默认'; break;
+          }
+        }
+        break;
       case 'DBType':
         {
             switch (value)
         {
             case 0: result = 'PostgreSQL'; break;
+            case 1: result = 'SQLServer'; break;
+            case 2: result = 'SQLite'; break;
             default: '默认'; break;
           }
         }

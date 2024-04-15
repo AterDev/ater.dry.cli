@@ -221,6 +221,8 @@ public class ProjectManager(DbContext dbContext, ProjectContext projectContext)
             options.ApiPath = dto.ApiPath;
         if (dto.IsSplitController != null)
             options.IsSplitController = dto.IsSplitController;
+        if (dto.ControllerType != null)
+            options.ControllerType = dto.ControllerType.Value;
 
         string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
         await File.WriteAllTextAsync(Path.Combine(_projectContext.SolutionPath!, Config.ConfigFileName), content, new UTF8Encoding(false));

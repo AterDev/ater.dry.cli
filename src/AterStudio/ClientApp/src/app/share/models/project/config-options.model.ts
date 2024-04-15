@@ -1,3 +1,4 @@
+import { ControllerType } from '../enum/controller-type.model';
 import { SolutionType } from '../enum/solution-type.model';
 /**
  * 项目配置
@@ -7,6 +8,10 @@ export interface ConfigOptions {
    * 项目根目录
    */
   rootPath: string;
+  /**
+   * 是否为轻量项目
+   */
+  isLight: boolean;
   projectId: string;
   /**
    * dto项目目录
@@ -14,10 +19,6 @@ export interface ConfigOptions {
   dtoPath: string;
   entityPath: string;
   dbContextPath: string;
-  /**
-   * 废弃属性
-   */
-  storePath?: string | null;
   applicationPath: string;
   apiPath: string;
   /**
@@ -31,6 +32,7 @@ export interface ConfigOptions {
    * 控制器是否拆分
    */
   isSplitController?: boolean | null;
+  controllerType?: ControllerType | null;
   version: string;
   /**
    * 前端路径

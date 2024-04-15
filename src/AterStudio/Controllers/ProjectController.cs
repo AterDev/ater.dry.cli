@@ -14,10 +14,10 @@ namespace AterStudio.Controllers;
 /// <see cref="ProjectManager"/>
 [ApiController]
 [Route("api/[controller]")]
-public class ProjectController(ProjectManager manager, AdvanceManager advace) : ControllerBase
+public class ProjectController(ProjectManager manager, AdvanceManager advance) : ControllerBase
 {
     private readonly ProjectManager _manager = manager;
-    private readonly AdvanceManager _advace = advace;
+    private readonly AdvanceManager _advance = advance;
 
     /// <summary>
     /// 获取解决方案列表
@@ -183,7 +183,7 @@ public class ProjectController(ProjectManager manager, AdvanceManager advace) : 
     [HttpGet("database/{id}")]
     public string GetDatabaseContentAsync([FromRoute] Guid id)
     {
-        return _advace.GetDatabaseStructureAsync();
+        return _advance.GetDatabaseStructureAsync();
     }
 
     /// <summary>

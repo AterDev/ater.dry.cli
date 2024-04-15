@@ -19,7 +19,7 @@
       <mat-card-header>
         <mat-card-title class="d-flex align-items-center " style="height: 48px;">
           <!-- insert svg icon -->
-          <img *ngIf="item.solutionType==SolutionType.DotNet" src="assets/images/dotnet.svg" height="30" width="30">
+          <img *ngIf="item.solutionType==SolutionType.DotNet" src="assets/images/logo_net.svg" height="30" width="30">
           <img *ngIf="item.solutionType==SolutionType.Node" src="assets/images/nodejs.svg" height="30" width="30">
           <span class="ms-1">
             {{item.displayName}}
@@ -109,10 +109,13 @@
           <mat-label>Id类型</mat-label>
           <input matInput placeholder="支持Guid/int" formControlName="idType" required>
         </mat-form-field>
-        <mat-label>是否拆分</mat-label>
-        <mat-slide-toggle matTooltip="是否拆分成前后台控制器" formControlName="isSplitController">
-          是否拆分控制器
-        </mat-slide-toggle>
+
+        <mat-label>控制器类型</mat-label>
+        <mat-radio-group formControlName="controllerType" class="d-flex gap-2">
+          @for (item of ControllerType | toKeyValue; track $index) {
+          <mat-radio-button [value]="item.value"> {{item.value | enumText:'ControllerType'}}</mat-radio-button>
+          }
+        </mat-radio-group>
       </form>
     </mat-dialog-content>
     <mat-dialog-actions class="justify-content-end">
