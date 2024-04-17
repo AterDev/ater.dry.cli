@@ -187,7 +187,7 @@ export class IndexComponent implements OnInit {
 
   getEntity(): void {
     this.selection.clear();
-    this.service.list(this.projectId!, this.selectedService)
+    this.service.list(this.projectId!, this.selectedService ?? '')
       .subscribe(res => {
         if (res.length > 0) {
           this.entityFiles = res;

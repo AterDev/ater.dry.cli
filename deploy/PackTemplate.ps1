@@ -9,7 +9,7 @@ param (
 $deployPath = Get-Location
 $rootPath = [IO.Path]::GetFullPath("$deployPath/..")
 $templatePath = Join-Path $deployPath $relativePath
-$entityPath = Join-Path $templatePath "templates" "apistd" "src" "Definition" "Entity"
+$entityPath = Join-Path $templatePath "templates" "ApiStandard" "src" "Definition" "Entity"
 $commandLinePath = Join-Path $rootPath "src" "CommandLine"
 $destPath = Join-Path $commandLinePath "template"
 $destModulesPath = Join-Path $destPath "Modules" 
@@ -48,7 +48,7 @@ $modulesNames = @("CMSMod", "FileManagerMod", "OrderMod", "SystemMod")
 foreach ($moduleName in $modulesNames) {
     Write-Host "copy module:"$moduleName
 
-    $modulePath = Join-Path $templatePath "templates" "apistd" "src" "Modules" $moduleName
+    $modulePath = Join-Path $templatePath "templates" "ApiStandard" "src" "Modules" $moduleName
     Copy-Item $modulePath $destModulesPath -Recurse -Force
     
     # delete obj and bin dir 
@@ -57,24 +57,24 @@ foreach ($moduleName in $modulesNames) {
     Remove-Item $pathsToRemove -Recurse -Force -ErrorAction SilentlyContinue
 
     # copy module entity
-    $solutionPath = Join-Path $templatePath "templates" "apistd"
+    $solutionPath = Join-Path $templatePath "templates" "ApiStandard"
     CopyModule $solutionPath $moduleName $destModulesPath
 }
 
 # remove ModuleContextBase.cs
-$entityFrameworkPath = Join-Path $templatePath "templates" "apistd" "src" "Definition" "EntityFramework"
+$entityFrameworkPath = Join-Path $templatePath "templates" "ApiStandard" "src" "Definition" "EntityFramework"
 if (Test-Path "$entityFrameworkPath/ModuleContextBase.cs") {
     Remove-Item "$destModulesPath/ModuleContextBase.cs" -Recurse -Force -ErrorAction SilentlyContinue
 }
 
 # copy Infrastructure
-$infrastructurePath = Join-Path $templatePath "templates" "apistd" "src" "Infrastructure"
+$infrastructurePath = Join-Path $templatePath "templates" "ApiStandard" "src" "Infrastructure"
 Copy-Item $infrastructurePath $destInfrastructure -Recurse -Force
 Remove-Item "$destInfrastructure/**/obj" -Recurse -Force -ErrorAction SilentlyContinue
 Remove-Item "$destInfrastructure/**/bin" -Recurse -Force -ErrorAction SilentlyContinue
 
 # copy service
-$servicePath = Join-Path $templatePath "templates" "apistd" "src" "Microservice" "StandaloneService"
+$servicePath = Join-Path $templatePath "templates" "ApiStandard" "src" "Microservice" "StandaloneService"
 Copy-Item $servicePath $destServicePath -Recurse -Force
 Remove-Item "$destServicePath/obj" -Recurse -Force -ErrorAction SilentlyContinue
 Remove-Item "$destServicePath/bin" -Recurse -Force -ErrorAction SilentlyContinue

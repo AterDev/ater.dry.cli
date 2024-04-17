@@ -36,14 +36,20 @@ public partial class EntityManager(DbContext dbContext, ProjectContext projectCo
             string entityPath = Config.EntityPath.Replace('\\', Path.DirectorySeparatorChar)
                 .Replace('/', Path.DirectorySeparatorChar);
 
+
             string servicePath = Path.Combine(_projectContext.SolutionPath!, "src");
             entityPath = Path.Combine(_projectContext.SolutionPath!, entityPath);
+
             if (!string.IsNullOrWhiteSpace(serviceName))
             {
+                Console.WriteLine(serviceName);
 
                 servicePath = Path.Combine(_projectContext.SolutionPath!, Config.MicroservicePath, serviceName);
                 entityPath = Path.Combine(servicePath, "Definition", "Entity");
             }
+
+
+            Console.WriteLine(entityPath);
 
             // get files in directory
             List<string> filePaths = [.. Directory.GetFiles(entityPath, "*.cs", SearchOption.AllDirectories)];
