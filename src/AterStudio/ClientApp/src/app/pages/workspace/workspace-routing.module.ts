@@ -9,7 +9,7 @@ import { SettingComponent } from './setting/setting.component';
 import { DatabaseComponent } from './database/database.component';
 import { EntityComponent } from './entity/entity.component';
 import { FeatureComponent } from './feature/feature.component';
-import { Json2TypeComponent } from './json2-type/json2-type.component';
+import { Json2TypeComponent } from '../tools/json2-type/json2-type.component';
 
 const routes: Routes = [
   {

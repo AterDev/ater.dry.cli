@@ -12,8 +12,6 @@ import { SettingComponent } from './setting/setting.component';
 import { DatabaseComponent } from './database/database.component';
 import { EntityComponent } from './entity/entity.component';
 import { FeatureComponent } from './feature/feature.component';
-import { Json2TypeComponent } from './json2-type/json2-type.component';
-
 
 @NgModule({
   declarations: [
@@ -25,7 +23,6 @@ import { Json2TypeComponent } from './json2-type/json2-type.component';
     DatabaseComponent,
     EntityComponent,
     FeatureComponent,
-    Json2TypeComponent
   ],
   imports: [
     ComponentsModule,

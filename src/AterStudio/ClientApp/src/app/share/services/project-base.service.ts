@@ -27,7 +27,7 @@ export class ProjectBaseService extends BaseService {
    * @param path 
    */
   add(name: string | null, path: string | null): Observable<string> {
-    const _url = `/api/Project?name=${name}&path=${path}`;
+    const _url = `/api/Project?name=${name ?? ''}&path=${path ?? ''}`;
     return this.request<string>('post', _url);
   }
 
@@ -71,7 +71,7 @@ export class ProjectBaseService extends BaseService {
    * @param name 
    */
   addService(name: string | null): Observable<boolean> {
-    const _url = `/api/Project/service?name=${name}`;
+    const _url = `/api/Project/service?name=${name ?? ''}`;
     return this.request<boolean>('post', _url);
   }
 
@@ -105,7 +105,7 @@ export class ProjectBaseService extends BaseService {
    * @param path 
    */
   openSolution(path: string | null): Observable<string> {
-    const _url = `/api/Project/open?path=${path}`;
+    const _url = `/api/Project/open?path=${path ?? ''}`;
     return this.request<string>('post', _url);
   }
 
@@ -124,7 +124,7 @@ export class ProjectBaseService extends BaseService {
    * @param name 
    */
   getTemplateFile(id: string, name: string | null): Observable<TemplateFile> {
-    const _url = `/api/Project/template/${id}?name=${name}`;
+    const _url = `/api/Project/template/${id}?name=${name ?? ''}`;
     return this.request<TemplateFile>('get', _url);
   }
 

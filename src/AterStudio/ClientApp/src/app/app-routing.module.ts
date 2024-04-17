@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { IndexComponent } from './pages/tools/index/index.component';
-import { Json2TypeComponent } from './pages/workspace/json2-type/json2-type.component';
+import { Json2TypeComponent } from './pages/tools/json2-type/json2-type.component';
+import { RestfulAPIComponent } from './pages/tools/restful-api/restful-api.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'index', pathMatch: 'full' },
