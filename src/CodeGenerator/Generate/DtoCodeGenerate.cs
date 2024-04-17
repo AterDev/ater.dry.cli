@@ -1,7 +1,10 @@
 ﻿using System.Text.RegularExpressions;
+
 using Core.Entities;
+
 using Datastore;
 using Datastore.Models;
+
 using PropertyInfo = Core.Models.PropertyInfo;
 
 namespace CodeGenerator.Generate;
@@ -39,62 +42,6 @@ public class DtoCodeGenerate : GenerateBase
             EntityKeyType.String => "String",
             _ => "Guid"
         };
-    }
-
-    /// <summary>
-    /// 获取变更的实体属性内容
-    /// </summary>
-    public void GetChangedProperties()
-    {
-        var currentEntity = dbContext.EntityInfos?.Query()
-            .Where(e => e.Name == EntityInfo.Name
-                && e.NamespaceName == EntityInfo.NamespaceName
-                && e.ProjectId == Const.PROJECT_ID)
-            .FirstOrDefault();
-
-        if (currentEntity != null)
-        {
-            // 新的属性名称
-            var propNames = EntityInfo.PropertyInfos.Select(p => p.Name).ToList();
-
-            // 变动的属性
-            var updateProps = EntityInfo.PropertyInfos
-                .Except(currentEntity.PropertyInfos, new PropertyEquality())
-                .ToList();
-
-            // 待删除的属性
-            var removeProps = currentEntity.PropertyInfos
-                .Where(p => !propNames.Contains(p.Name))
-                .ToList();
-
-            updateProps.ForEach(p =>
-            {
-                var prop = new PropertyChange
-                {
-                    Name = p.Name,
-                    Type = ChangeType.Update,
-                    Origin = p.ToCsharpLine(true),
-                };
-                PropertyChanges.Add(prop);
-            });
-
-            removeProps.ForEach(p =>
-            {
-                var prop = new PropertyChange
-                {
-                    Name = p.Name,
-                    Type = ChangeType.Delete
-                };
-                PropertyChanges.Add(prop);
-            });
-            dbContext.EntityInfos?.Delete(currentEntity.Id);
-        }
-        dbContext.EntityInfos?.EnsureIndex(e => e.Name);
-        dbContext.EntityInfos?.Insert(EntityInfo);
-        PropertyChanges.ForEach(p =>
-        {
-            Console.WriteLine(p.Type.ToString() + " : " + p.Name);
-        });
     }
 
     /// <summary>

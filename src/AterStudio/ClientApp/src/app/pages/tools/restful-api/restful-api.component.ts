@@ -40,7 +40,12 @@ export class RestfulAPIComponent {
     const filterDto = this.useDto ? this.modelName + 'FilterDto' : 'FilterBase';
 
     this.classCode = `
-[HttpGet]
+/// <summary>
+/// 获取${this.description}列表
+/// </summary>
+/// <param name="filter"></param>
+/// <returns></returns>
+[HttpPost]
 public async Task<ActionResult<List<${this.modelName}>>> Get${this.modelName}List(${filterDto} filter)
 {
     return await _manager.FilterAsync(filter);

@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+
 using Core.Entities;
 
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -227,6 +228,10 @@ public class EntityParseHelper
             {
                 EntityParseHelper entity = new(filePath);
                 parentProperties = entity.GetPropertyInfos();
+            }
+            else
+            {
+                //GetParentProperties();
             }
         }
         foreach (PropertyDeclarationSyntax prop in propertySyntax)
@@ -578,7 +583,24 @@ public class EntityParseHelper
         ClassDeclarationSyntax? classDeclarationSyntax = RootNodes!.OfType<ClassDeclarationSyntax>().FirstOrDefault();
         if (classDeclarationSyntax == null) return null;
         var classSymbol = SemanticModel.GetDeclaredSymbol(classDeclarationSyntax!);
+
         return classSymbol?.BaseType?.Name;
+    }
+
+    public void GetParentProperties()
+    {
+        ClassDeclarationSyntax? classDeclarationSyntax = RootNodes!.OfType<ClassDeclarationSyntax>().FirstOrDefault();
+        if (classDeclarationSyntax == null) return;
+        var classSymbol = SemanticModel.GetDeclaredSymbol(classDeclarationSyntax!);
+
+        // get base class's properties
+        INamedTypeSymbol? baseType = classSymbol?.BaseType;
+        if (baseType == null) return;
+        var baseProperties = baseType.GetMembers().Where(m => m.Kind == SymbolKind.Property);
+
+        foreach (var property in baseProperties)
+        {
+        }
     }
 
     /// <summary>
