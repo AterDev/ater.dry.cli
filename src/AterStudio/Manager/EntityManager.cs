@@ -131,7 +131,7 @@ public partial class EntityManager(DbContext dbContext, ProjectContext projectCo
 
         var dtoPath = Path.Combine(_projectContext.SolutionPath!, Config.SharePath, "Models", $"{entityName}Dtos", $"{entityName}AddDto.cs");
         var managerPath = Path.Combine(_projectContext.SolutionPath!, Config.ApplicationPath, "Manager", $"{entityName}Manager.cs");
-        var apiPath = Path.Combine(_projectContext.SolutionPath!, Config.ApiPath, "Controllers", $"{entityName}Controller.cs");
+        var apiPath = Path.Combine(_projectContext.SolutionPath!, Config.ApiPath, "Controllers");
         var servicePath = Path.Combine(_projectContext.SolutionPath!, "src");
 
         if (!string.IsNullOrWhiteSpace(serviceName))
@@ -139,7 +139,7 @@ public partial class EntityManager(DbContext dbContext, ProjectContext projectCo
             var serviceOptions = Config.GetServiceConfig(serviceName);
             dtoPath = Path.Combine(_projectContext.SolutionPath!, serviceOptions.DtoPath, "Models", $"{entityName}Dtos", $"{entityName}AddDto.cs");
             managerPath = Path.Combine(_projectContext.SolutionPath!, serviceOptions.ApplicationPath, "Manager", $"{entityName}Manager.cs");
-            apiPath = Path.Combine(_projectContext.SolutionPath!, serviceOptions.ApiPath, "Controllers", $"{entityName}Controller.cs");
+            apiPath = Path.Combine(_projectContext.SolutionPath!, serviceOptions.ApiPath);
             servicePath = serviceOptions.RootPath;
         }
 
@@ -147,13 +147,20 @@ public partial class EntityManager(DbContext dbContext, ProjectContext projectCo
         {
             dtoPath = Path.Combine(servicePath, "Modules", moduleName, "Models", $"{entityName}Dtos", $"{entityName}AddDto.cs");
             managerPath = Path.Combine(servicePath, "Modules", moduleName, "Manager", $"{entityName}Manager.cs");
-            apiPath = Path.Combine(servicePath, "Modules", moduleName, "Controllers", $"{entityName}Controller.cs");
+            apiPath = Path.Combine(servicePath, "Modules", moduleName, "Controllers");
         }
 
         if (File.Exists(dtoPath)) { hasDto = true; }
         if (File.Exists(managerPath)) { hasManager = true; }
-        if (File.Exists(apiPath)) { hasAPI = true; }
 
+        if (Directory.Exists(apiPath))
+        {
+            var files = Directory.GetFiles(apiPath, $"{entityName}Controller.cs", SearchOption.AllDirectories);
+            if (files.Length > 0)
+            {
+                hasAPI = true;
+            }
+        }
         return (hasDto, hasManager, hasAPI);
     }
 

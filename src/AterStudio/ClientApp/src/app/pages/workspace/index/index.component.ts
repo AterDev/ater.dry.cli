@@ -502,6 +502,8 @@ export class IndexComponent implements OnInit {
               if (res) {
                 this.snb.open('生成成功');
                 this.dialogRef.close();
+                this.getEntity();
+
               } else {
                 this.snb.open('');
               }
@@ -546,6 +548,7 @@ export class IndexComponent implements OnInit {
             if (res) {
               this.snb.open('生成成功');
               this.dialogRef.close();
+              this.getEntity();
             } else {
               this.snb.open('生成失败');
             }
