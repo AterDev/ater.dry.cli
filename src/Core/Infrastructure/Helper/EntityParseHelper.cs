@@ -236,6 +236,12 @@ public class EntityParseHelper
         }
         foreach (PropertyDeclarationSyntax prop in propertySyntax)
         {
+            // if prop has attribution [NotMapped] continue
+            if (prop.AttributeLists.Any(a => a.Attributes.Any(attr => attr.Name.ToString() == "NotMapped")))
+            {
+                continue;
+            }
+
             // type and name
             PropertyInfo propertyInfo = ParsePropertyType(prop);
             // attribute and comments text

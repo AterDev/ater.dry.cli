@@ -303,11 +303,11 @@ public class DtoCodeGenerate : GenerateBase
     public List<string> GetGlobalUsings()
     {
         return [
-        "global using System;",
-        "global using System.ComponentModel.DataAnnotations;",
-        "global using {AssemblyName}.Models;",
-        "global using Ater.Web.Core.Models;",
-        "global using {EntityInfo.NamespaceName};"
+            "global using System;",
+            "global using System.ComponentModel.DataAnnotations;",
+            $"global using {AssemblyName}.Models;",
+            "global using Ater.Web.Core.Models;",
+            $"global using {EntityInfo.NamespaceName};"
         ];
     }
 }
