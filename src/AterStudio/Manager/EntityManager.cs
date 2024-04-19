@@ -48,9 +48,6 @@ public partial class EntityManager(DbContext dbContext, ProjectContext projectCo
                 entityPath = Path.Combine(servicePath, "Definition", "Entity");
             }
 
-
-            Console.WriteLine(entityPath);
-
             // get files in directory
             List<string> filePaths = [.. Directory.GetFiles(entityPath, "*.cs", SearchOption.AllDirectories)];
 
@@ -67,16 +64,13 @@ public partial class EntityManager(DbContext dbContext, ProjectContext projectCo
                 foreach (string? path in filePaths)
                 {
                     FileInfo file = new(path);
-
                     var content = File.ReadAllText(path);
+                    compilation.AddSyntaxTree(content);
+                    if (!compilation.IsEntityClass()) continue;
+
                     // 备注
                     var comment = SummaryCommentRegex().Match(content)?.Groups[1]?.Value.Trim();
                     comment = comment?.Replace("/", "").Trim();
-
-                    // 解析
-                    compilation.AddSyntaxTree(content);
-                    // 如果是枚举类，则忽略
-                    if (compilation.IsEnum()) continue;
 
                     EntityFile item = new()
                     {

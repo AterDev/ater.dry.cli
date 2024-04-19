@@ -31,7 +31,7 @@ export class FeatureBaseService extends BaseService {
    * @param name 
    */
   createModule(name: string | null): Observable<boolean> {
-    const _url = `/api/Feature/createModule?name=${name ?? ''}`;
+    const _url = `/api/Feature/createModule?name=${name}`;
     return this.request<boolean>('post', _url);
   }
 
