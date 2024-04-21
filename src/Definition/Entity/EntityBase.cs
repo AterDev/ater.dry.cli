@@ -1,11 +1,10 @@
-﻿
-using System.ComponentModel.DataAnnotations;
+﻿namespace Definition.Entity;
 
-namespace Definition.Entity;
-
-public abstract class EntityBase
+public abstract class EntityBase : IEntityBase
 {
-    [Key]
-    public Guid Id { get; set; } = Guid.NewGuid();
 
+    public Guid Id { get; set; } = Guid.NewGuid();
+    public DateTimeOffset CreatedTime { get; set; }
+    public DateTimeOffset UpdatedTime { get; set; }
+    public bool IsDeleted { get; set; }
 }

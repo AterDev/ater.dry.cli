@@ -34,7 +34,7 @@ public class ProjectController(ProjectManager manager, AdvanceManager advance) :
     /// 获取工具版本
     /// </summary>
     /// <returns></returns>
-    [HttpGet("verison")]
+    [HttpGet("version")]
     public string GetVersion()
     {
         return _manager.GetToolVersion();
@@ -71,7 +71,7 @@ public class ProjectController(ProjectManager manager, AdvanceManager advance) :
             return Problem("未找到该路径");
         }
         var res = await _manager.AddProjectAsync(name, path);
-        return res != null ? (ActionResult<string?>)Problem(res) : (ActionResult<string?>)Ok("添加成功");
+        return res != null ? Problem(res) : Ok("添加成功");
     }
 
     /// <summary>

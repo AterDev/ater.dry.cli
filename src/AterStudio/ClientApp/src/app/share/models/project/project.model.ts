@@ -8,6 +8,9 @@ import { TemplateFile } from '../project/template-file.model';
  */
 export interface Project {
   id: string;
+  createdTime: Date;
+  updatedTime: Date;
+  isDeleted: boolean;
   /**
    * 项目名称
    */

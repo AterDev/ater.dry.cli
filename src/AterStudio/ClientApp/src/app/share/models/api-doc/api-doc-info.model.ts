@@ -4,6 +4,9 @@ import { Project } from '../project/project.model';
  */
 export interface ApiDocInfo {
   id: string;
+  createdTime: Date;
+  updatedTime: Date;
+  isDeleted: boolean;
   /**
    * 文档名称
    */

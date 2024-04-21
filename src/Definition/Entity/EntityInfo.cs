@@ -2,8 +2,9 @@
 
 namespace Definition.Entity;
 /// <summary>
-/// defined entity model 
+/// 实体
 /// </summary>
+[Index(nameof(Name))]
 public class EntityInfo : EntityBase
 {
     /// <summary>

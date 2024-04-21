@@ -7,13 +7,11 @@ namespace AterStudio.Advance;
 public class AdvanceManager
 {
     private readonly DryContext _dbContext;
-    private readonly DusiHttpClient _httpClient;
     private readonly ProjectContext _projectContext;
 
-    public AdvanceManager(DryContext dbContext, DusiHttpClient httpClient, ProjectContext projectContext)
+    public AdvanceManager(DryContext dbContext, ProjectContext projectContext)
     {
         _dbContext = dbContext;
-        _httpClient = httpClient;
         _projectContext = projectContext;
 
         var openAIKey = _dbContext.Configs.Where(c => c.Key == ConfigData.OpenAI).FirstOrDefault();

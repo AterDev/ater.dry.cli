@@ -1277,7 +1277,7 @@
         }
       }
     },
-    "/api/Project/verison": {
+    "/api/Project/version": {
       "get": {
         "tags": [
           "Project"
@@ -1938,6 +1938,17 @@
             "type": "string",
             "format": "uuid"
           },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isDeleted": {
+            "type": "boolean"
+          },
           "name": {
             "maxLength": 100,
             "type": "string",
@@ -2076,6 +2087,17 @@
           "id": {
             "type": "string",
             "format": "uuid"
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isDeleted": {
+            "type": "boolean"
           },
           "key": {
             "maxLength": 100,
@@ -2398,6 +2420,17 @@
             "type": "string",
             "format": "uuid"
           },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isDeleted": {
+            "type": "boolean"
+          },
           "name": {
             "maxLength": 100,
             "type": "string",
@@ -2454,7 +2487,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "defined entity model"
+        "description": "实体"
       },
       "EntityKeyType": {
         "enum": [
@@ -2595,6 +2628,17 @@
             "type": "string",
             "format": "uuid"
           },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isDeleted": {
+            "type": "boolean"
+          },
           "name": {
             "maxLength": 100,
             "type": "string",
@@ -2675,13 +2719,29 @@
             "type": "string",
             "format": "uuid"
           },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isDeleted": {
+            "type": "boolean"
+          },
           "type": {
-            "type": "string"
+            "maxLength": 100,
+            "type": "string",
+            "description": "类型"
           },
           "name": {
-            "type": "string"
+            "maxLength": 100,
+            "type": "string",
+            "description": "名称"
           },
           "displayName": {
+            "maxLength": 100,
             "type": "string",
             "nullable": true
           },
@@ -2700,6 +2760,7 @@
             "type": "boolean"
           },
           "navigationName": {
+            "maxLength": 100,
             "type": "string",
             "description": "导航属性类名称",
             "nullable": true
@@ -2720,15 +2781,18 @@
             "description": "是否包括set方法"
           },
           "attributeText": {
+            "maxLength": 100,
             "type": "string",
             "nullable": true
           },
           "commentXml": {
+            "maxLength": 500,
             "type": "string",
             "description": "xml comment",
             "nullable": true
           },
           "commentSummary": {
+            "maxLength": 200,
             "type": "string",
             "description": "comment summary",
             "nullable": true
@@ -2755,11 +2819,13 @@
             "type": "boolean"
           },
           "suffixContent": {
+            "maxLength": 100,
             "type": "string",
             "description": "尾缀，如#endregion",
             "nullable": true
           },
           "defaultValue": {
+            "maxLength": 100,
             "type": "string",
             "description": "默认值"
           },
@@ -2771,7 +2837,8 @@
             "format": "uuid"
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "属性"
       },
       "RequestLibType": {
         "enum": [
@@ -2881,6 +2948,17 @@
           "id": {
             "type": "string",
             "format": "uuid"
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isDeleted": {
+            "type": "boolean"
           },
           "name": {
             "maxLength": 100,

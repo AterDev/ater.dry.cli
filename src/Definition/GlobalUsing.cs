@@ -4,6 +4,8 @@ global using System.IO;
 global using System.Reflection;
 global using System.Text;
 
+global using Ater.Web.Core.Models;
+
 global using Definition.Entity;
 global using Definition.Models;
 

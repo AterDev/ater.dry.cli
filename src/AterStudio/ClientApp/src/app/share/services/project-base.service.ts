@@ -35,7 +35,7 @@ export class ProjectBaseService extends BaseService {
    * 获取工具版本
    */
   getVersion(): Observable<string> {
-    const _url = `/api/Project/verison`;
+    const _url = `/api/Project/version`;
     return this.request<string>('get', _url);
   }
 

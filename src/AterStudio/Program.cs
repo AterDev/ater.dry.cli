@@ -6,6 +6,7 @@ using System.Text.Unicode;
 using AterStudio;
 using AterStudio.Advance;
 using AterStudio.Manager;
+using AterStudio.Worker;
 
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc.Controllers;
@@ -22,7 +23,10 @@ builder.Services.AddScoped<ProjectContext>();
 builder.Services.AddDbContext<DryContext>(options =>
 {
     var path = Path.Combine(AssemblyHelper.GetStudioPath(), "ater.dry.db");
-    options.UseSqlite($"Source={path}");
+    options.UseSqlite($"DataSource={path}", _ =>
+    {
+        _.MigrationsAssembly("AterStudio");
+    });
 });
 
 builder.Services.AddScoped<ProjectManager>();
@@ -31,18 +35,7 @@ builder.Services.AddScoped<EntityManager>();
 builder.Services.AddScoped<SwaggerManager>();
 builder.Services.AddScoped<FeatureManager>();
 builder.Services.AddScoped<ToolsManager>();
-builder.Services.AddHttpClient<DusiHttpClient>();
 
-// cors配置 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("default", builder =>
-    {
-        _ = builder.AllowAnyOrigin();
-        _ = builder.AllowAnyMethod();
-        _ = builder.AllowAnyHeader();
-    });
-});
 #if DEBUG 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -104,18 +97,16 @@ app.UseExceptionHandler(handler =>
     });
 });
 
-// 初始化
-IServiceScope scope = app.Services.CreateScope();
-
-app.UseCors("default");
-//app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller}/{action=Index}/{id?}");
-
+app.MapControllers();
 app.MapFallbackToFile("index.html");
 
-app.Run();
+
+using (app)
+{
+    var scope = app.Services.CreateScope();
+    await InitDataTask.InitDataAsync(scope.ServiceProvider);
+    app.Run();
+}
+

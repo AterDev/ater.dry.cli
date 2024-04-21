@@ -2,10 +2,13 @@ import { EntityKeyType } from './enum/entity-key-type.model';
 import { Project } from './project/project.model';
 import { PropertyInfo } from './property-info.model';
 /**
- * defined entity model
+ * 实体
  */
 export interface EntityInfo {
   id: string;
+  createdTime: Date;
+  updatedTime: Date;
+  isDeleted: boolean;
   /**
    * 类名
    */

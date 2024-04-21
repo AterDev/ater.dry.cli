@@ -66,7 +66,7 @@ public class ProjectManager(DryContext dbContext, ProjectContext projectContext)
         await ConfigCommand.InitConfigFileAsync(path, solutionType);
         string configJson = await File.ReadAllTextAsync(configFilePath);
 
-        ConfigOptions? config = ConfigOptions.ParseJson(configJson);
+        var config = ConfigOptions.ParseJson(configJson);
 
         string projectName = Path.GetFileNameWithoutExtension(projectFilePath);
         Project project = new()
@@ -74,11 +74,12 @@ public class ProjectManager(DryContext dbContext, ProjectContext projectContext)
             DisplayName = name,
             Path = projectFilePath,
             Name = projectName,
-            Version = config.Version,
+            Version = config!.Version,
             SolutionType = solutionType
         };
 
-        _db.Projects.Add(project);
+        _db.Add(project);
+        await _db.SaveChangesAsync();
 
         return default;
     }

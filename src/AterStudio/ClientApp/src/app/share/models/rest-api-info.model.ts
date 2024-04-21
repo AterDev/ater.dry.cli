@@ -21,11 +21,11 @@ export interface RestApiInfo {
    */
   queryParameters?: PropertyInfo[] | null;
   /**
-   * defined entity model
+   * 实体
    */
   requestInfo?: EntityInfo | null;
   /**
-   * defined entity model
+   * 实体
    */
   responseInfo?: EntityInfo | null;
 

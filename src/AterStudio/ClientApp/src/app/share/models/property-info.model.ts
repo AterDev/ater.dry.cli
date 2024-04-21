@@ -1,7 +1,19 @@
 import { EntityInfo } from './entity-info.model';
+/**
+ * 属性
+ */
 export interface PropertyInfo {
   id: string;
+  createdTime: Date;
+  updatedTime: Date;
+  isDeleted: boolean;
+  /**
+   * 类型
+   */
   type: string;
+  /**
+   * 名称
+   */
   name: string;
   displayName?: string | null;
   /**
@@ -57,7 +69,7 @@ export interface PropertyInfo {
    */
   defaultValue: string;
   /**
-   * defined entity model
+   * 实体
    */
   entityInfo?: EntityInfo | null;
   entityInfoId: string;
