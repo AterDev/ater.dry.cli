@@ -1841,48 +1841,6 @@
         }
       }
     },
-    "/api/Project/watcher/{id}": {
-      "get": {
-        "tags": [
-          "Project"
-        ],
-        "summary": "获取监听状态",
-        "operationId": "Project_GetWatcherStatus",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/Tools/classModel": {
       "post": {
         "tags": [
@@ -1980,22 +1938,28 @@
             "type": "string",
             "format": "uuid"
           },
-          "projectId": {
-            "type": "string",
-            "format": "uuid"
-          },
           "name": {
+            "maxLength": 100,
             "type": "string",
             "description": "文档名称"
           },
           "description": {
+            "maxLength": 1000,
             "type": "string",
             "description": "文档描述",
             "nullable": true
           },
           "path": {
+            "maxLength": 300,
             "type": "string",
             "description": "文档地址"
+          },
+          "project": {
+            "$ref": "#/components/schemas/Project"
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
           }
         },
         "additionalProperties": false,
@@ -2125,6 +2089,13 @@
           },
           "valueType": {
             "$ref": "#/components/schemas/ValueType"
+          },
+          "project": {
+            "$ref": "#/components/schemas/Project"
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
           }
         },
         "additionalProperties": false,
@@ -2427,30 +2398,31 @@
             "type": "string",
             "format": "uuid"
           },
-          "projectId": {
-            "type": "string",
-            "format": "uuid"
-          },
           "name": {
+            "maxLength": 100,
             "type": "string",
             "description": "类名"
           },
           "namespaceName": {
+            "maxLength": 100,
             "type": "string",
             "description": "命名空间",
             "nullable": true
           },
           "assemblyName": {
+            "maxLength": 100,
             "type": "string",
             "description": "程序集名称",
             "nullable": true
           },
           "comment": {
+            "maxLength": 300,
             "type": "string",
             "description": "类注释",
             "nullable": true
           },
           "summary": {
+            "maxLength": 100,
             "type": "string",
             "description": "类注释",
             "nullable": true
@@ -2465,6 +2437,13 @@
           },
           "isList": {
             "type": "boolean"
+          },
+          "project": {
+            "$ref": "#/components/schemas/Project"
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
           },
           "propertyInfos": {
             "type": "array",
@@ -2616,25 +2595,53 @@
             "type": "string",
             "format": "uuid"
           },
-          "projectId": {
-            "type": "string",
-            "format": "uuid"
-          },
           "name": {
-            "type": "string"
+            "maxLength": 100,
+            "type": "string",
+            "description": "项目名称"
           },
           "displayName": {
-            "type": "string"
+            "maxLength": 100,
+            "type": "string",
+            "description": "显示名"
           },
           "path": {
-            "type": "string"
+            "maxLength": 200,
+            "type": "string",
+            "description": "路径"
           },
           "version": {
+            "maxLength": 20,
             "type": "string",
+            "description": "版本",
             "nullable": true
           },
           "solutionType": {
             "$ref": "#/components/schemas/SolutionType"
+          },
+          "entityInfos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EntityInfo"
+            }
+          },
+          "apiDocInfos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApiDocInfo"
+            }
+          },
+          "configDatas": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConfigData"
+            }
+          },
+          "templateFiles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TemplateFile"
+            }
           }
         },
         "additionalProperties": false,
@@ -2665,10 +2672,6 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "projectId": {
             "type": "string",
             "format": "uuid"
           },
@@ -2762,6 +2765,10 @@
           },
           "entityInfo": {
             "$ref": "#/components/schemas/EntityInfo"
+          },
+          "entityInfoId": {
+            "type": "string",
+            "format": "uuid"
           }
         },
         "additionalProperties": false
@@ -2875,10 +2882,6 @@
             "type": "string",
             "format": "uuid"
           },
-          "projectId": {
-            "type": "string",
-            "format": "uuid"
-          },
           "name": {
             "maxLength": 100,
             "type": "string",
@@ -2895,6 +2898,13 @@
             "type": "string",
             "description": "内容",
             "nullable": true
+          },
+          "project": {
+            "$ref": "#/components/schemas/Project"
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
           }
         },
         "additionalProperties": false,

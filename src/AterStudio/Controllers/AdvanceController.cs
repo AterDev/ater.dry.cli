@@ -1,6 +1,6 @@
 ﻿using AterStudio.Advance;
 
-using Core.Entities;
+using Definition.Entity;
 
 using Microsoft.AspNetCore.Mvc;
 

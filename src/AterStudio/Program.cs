@@ -7,10 +7,9 @@ using AterStudio;
 using AterStudio.Advance;
 using AterStudio.Manager;
 
-using Datastore;
-
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 Console.OutputEncoding = Encoding.UTF8;
@@ -19,7 +18,13 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ProjectContext>();
-builder.Services.AddSingleton<DbContext>();
+
+builder.Services.AddDbContext<DryContext>(options =>
+{
+    var path = Path.Combine(AssemblyHelper.GetStudioPath(), "ater.dry.db");
+    options.UseSqlite($"Source={path}");
+});
+
 builder.Services.AddScoped<ProjectManager>();
 builder.Services.AddScoped<AdvanceManager>();
 builder.Services.AddScoped<EntityManager>();

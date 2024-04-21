@@ -1,4 +1,5 @@
-﻿using Core.Entities;
+﻿using Definition.Entity;
+using Definition.Models;
 
 namespace AterStudio.Models;
 

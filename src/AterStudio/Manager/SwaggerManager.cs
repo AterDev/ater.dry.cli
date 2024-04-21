@@ -1,24 +1,26 @@
 ﻿using System.Text;
+
 using AterStudio.Models;
-using Core.Entities;
-using Core.Infrastructure.Helper;
-using Datastore;
+
+using Definition.Entity;
+using Definition.Models;
+
 using Microsoft.OpenApi.Readers;
 
 namespace AterStudio.Manager;
-public class SwaggerManager(DbContext dbContext)
+public class SwaggerManager(DryContext context)
 {
-    private readonly DbContext _dbContext = dbContext;
+    private readonly DryContext _context = context;
     public string? ErrorMsg { get; set; }
 
     public ApiDocInfo? Find(Guid id)
     {
-        return _dbContext.ApiDocInfos.FindById(id);
+        return _context.ApiDocInfos.Find(id);
     }
 
     public List<ApiDocInfo> FindAll(Project project)
     {
-        return _dbContext.ApiDocInfos.Query()
+        return _context.ApiDocInfos
             .Where(d => d.ProjectId == project.Id)
             .ToList();
     }
@@ -30,7 +32,7 @@ public class SwaggerManager(DbContext dbContext)
     /// <returns></returns>
     public async Task<ApiDocContent?> GetContentAsync(Guid id)
     {
-        var apiDocInfo = _dbContext.ApiDocInfos.FindById(id);
+        var apiDocInfo = _context.ApiDocInfos.Find(id);
         var path = apiDocInfo.Path;
 
         string openApiContent = "";
@@ -74,7 +76,7 @@ public class SwaggerManager(DbContext dbContext)
     }
     public async Task<string> ExportDocAsync(Guid id)
     {
-        var apiDocInfo = _dbContext.ApiDocInfos.FindById(id);
+        var apiDocInfo = _context.ApiDocInfos.Find(id);
         var path = apiDocInfo.Path;
         string openApiContent = "";
         if (path.StartsWith("http://") || path.StartsWith("https://"))
@@ -158,7 +160,7 @@ public class SwaggerManager(DbContext dbContext)
     /// <returns></returns>
     public ApiDocInfo AddApiDoc(ApiDocInfo apiDocInfo)
     {
-        _dbContext.ApiDocInfos.Insert(apiDocInfo);
+        _context.ApiDocInfos.Add(apiDocInfo);
         return apiDocInfo;
     }
 
@@ -170,13 +172,13 @@ public class SwaggerManager(DbContext dbContext)
     /// <returns></returns>
     public ApiDocInfo? UpdateApiDoc(Guid id, ApiDocInfo apiDocInfo)
     {
-        var doc = _dbContext.ApiDocInfos.FindById(id);
+        var doc = _context.ApiDocInfos.Find(id);
         if (doc != null)
         {
             doc.Description = apiDocInfo.Description;
             doc.Path = apiDocInfo.Path;
             doc.Name = apiDocInfo.Name;
-            _dbContext.ApiDocInfos.Update(doc);
+            _context.ApiDocInfos.Update(doc);
         }
         return doc;
     }
@@ -188,7 +190,9 @@ public class SwaggerManager(DbContext dbContext)
     /// <returns></returns>
     public bool Delete(Guid id)
     {
-        return _dbContext.ApiDocInfos.Delete(id);
+        var entity = _context.ApiDocInfos.Find(id);
+        _context.ApiDocInfos.Remove(entity);
+        return _context.SaveChanges() > 0;
     }
 
     /// <summary>

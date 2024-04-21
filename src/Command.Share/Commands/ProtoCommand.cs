@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Command.Share.Commands;
+﻿namespace Command.Share.Commands;
 public class ProtoCommand(string entityPath, string projectPath) : CommandBase
 {
     /// <summary>
@@ -21,7 +15,7 @@ public class ProtoCommand(string entityPath, string projectPath) : CommandBase
 
     public async Task RunAsync(bool cover = false)
     {
-        var  projectName  = Path.GetFileNameWithoutExtension(ProjectPath);
+        var projectName = Path.GetFileNameWithoutExtension(ProjectPath);
         var projectDir = Path.GetDirectoryName(ProjectPath);
         if (!File.Exists(EntityPath))
         {
@@ -48,7 +42,7 @@ public class ProtoCommand(string entityPath, string projectPath) : CommandBase
 
             var content = CodeGen.GenerateProtobuf();
 
-            await SaveToFileAsync(projectDir ,content, cover);
+            await SaveToFileAsync(projectDir, content, cover);
             Console.WriteLine("😀 Protobuf generate completed!" + Environment.NewLine);
         }
     }
@@ -58,7 +52,7 @@ public class ProtoCommand(string entityPath, string projectPath) : CommandBase
     /// </summary>
     /// <param name="content"></param>
     /// <param name="cover">是否覆盖</param>
-    public async Task SaveToFileAsync(string path,string? content, bool cover = false)
+    public async Task SaveToFileAsync(string path, string? content, bool cover = false)
     {
         // 以文件名为准
         string fileName = Path.GetFileNameWithoutExtension(EntityPath).ToHyphen('_');

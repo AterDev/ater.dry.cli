@@ -1,7 +1,6 @@
 import { EntityInfo } from './entity-info.model';
 export interface PropertyInfo {
   id: string;
-  projectId: string;
   type: string;
   name: string;
   displayName?: string | null;
@@ -61,5 +60,6 @@ export interface PropertyInfo {
    * defined entity model
    */
   entityInfo?: EntityInfo | null;
+  entityInfoId: string;
 
 }

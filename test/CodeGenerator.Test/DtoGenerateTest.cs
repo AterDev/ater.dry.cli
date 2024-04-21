@@ -1,8 +1,12 @@
 ﻿using System.IO;
 using System.Linq;
+
 using CodeGenerator.Generate;
 using CodeGenerator.Test.Entity;
-using Core.Infrastructure.Helper;
+
+using Definition.Entity;
+using Definition.EntityFramework;
+using Definition.Infrastructure.Helper;
 
 namespace CodeGenerator.Test;
 
@@ -32,39 +36,39 @@ public class DtoGenerateTest
         string assembly = typeof(Blog).Assembly.ManifestModule.Name;
         Assert.Equal(assembly, entityHelper.AssemblyName + ".dll");
 
-        List<Core.Models.PropertyInfo> props = entityHelper.PropertyInfos!;
+        List<PropertyInfo> props = entityHelper.PropertyInfos!;
         Assert.NotEmpty(props);
 
-        Core.Models.PropertyInfo? idProp = props!.Where(p => p.Name.Equals("Id")).FirstOrDefault();
+        PropertyInfo? idProp = props!.Where(p => p.Name.Equals("Id")).FirstOrDefault();
         Assert.NotNull(idProp);
         Assert.False(idProp!.IsNullable);
 
         // 验证属性内容
-        Core.Models.PropertyInfo? nameProp = props!.Where(p => p.Name.Equals("Name")).FirstOrDefault();
+        PropertyInfo? nameProp = props!.Where(p => p.Name.Equals("Name")).FirstOrDefault();
         Assert.True(nameProp!.IsRequired);
         Assert.False(nameProp!.IsNullable);
         Assert.Equal(100, nameProp!.MaxLength);
         Assert.Equal(10, nameProp!.MinLength);
 
-        Core.Models.PropertyInfo? titleProp = props!.Where(p => p.Name.Equals("Title")).FirstOrDefault();
+        PropertyInfo? titleProp = props!.Where(p => p.Name.Equals("Title")).FirstOrDefault();
         Assert.False(titleProp!.IsNullable);
 
-        Core.Models.PropertyInfo? commentsProp = props!.Where(p => p.Name.Equals("Comments")).FirstOrDefault();
+        PropertyInfo? commentsProp = props!.Where(p => p.Name.Equals("Comments")).FirstOrDefault();
         Assert.True(commentsProp!.IsList);
         Assert.True(commentsProp!.IsNullable);
         Assert.True(commentsProp!.IsNavigation);
         Assert.Equal("Comments", commentsProp!.NavigationName);
 
-        Core.Models.PropertyInfo? commentProp = props!.SingleOrDefault(p => p.Name.Equals("Comments2"));
+        PropertyInfo? commentProp = props!.SingleOrDefault(p => p.Name.Equals("Comments2"));
         Assert.True(commentsProp!.IsNavigation);
         Assert.True(commentsProp!.IsNullable);
 
-        Core.Models.PropertyInfo? statusProp = props!.Where(p => p.Name.Equals("Status")).FirstOrDefault();
+        PropertyInfo? statusProp = props!.Where(p => p.Name.Equals("Status")).FirstOrDefault();
         Assert.True(statusProp!.IsEnum);
         Assert.False(statusProp!.IsNavigation);
 
         // 父类属性
-        Core.Models.PropertyInfo? datetimeProp = props!.SingleOrDefault(p => p.Name.Equals("CreatedTime"));
+        PropertyInfo? datetimeProp = props!.SingleOrDefault(p => p.Name.Equals("CreatedTime"));
         Assert.Equal("DateTimeOffset", datetimeProp!.Type);
     }
 
@@ -75,7 +79,7 @@ public class DtoGenerateTest
         string filePath = PathHelper.GetProjectFilePath(@"Entity\Blog.cs");
         filePath = @"D:\codes\ater.web\templates\apistd\src\Entity\SystemEntities\SystemPermission.cs";
         string dtoPath = PathHelper.GetProjectPath();
-        DtoCodeGenerate gen = new(filePath, dtoPath, new Datastore.DbContext());
+        DtoCodeGenerate gen = new(filePath, dtoPath, new DryContext());
         string? addDto = gen.GetAddDto();
         string? shortDto = gen.GetShortDto();
         string? filterDto = gen.GetFilterDto();

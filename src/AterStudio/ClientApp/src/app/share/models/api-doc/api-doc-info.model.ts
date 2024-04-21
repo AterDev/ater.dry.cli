@@ -1,9 +1,9 @@
+import { Project } from '../project/project.model';
 /**
  * 接口文档
  */
 export interface ApiDocInfo {
   id: string;
-  projectId: string;
   /**
    * 文档名称
    */
@@ -16,5 +16,10 @@ export interface ApiDocInfo {
    * 文档地址
    */
   path: string;
+  /**
+   * 项目
+   */
+  project?: Project | null;
+  projectId: string;
 
 }

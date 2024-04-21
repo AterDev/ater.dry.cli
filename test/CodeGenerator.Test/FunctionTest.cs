@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using CodeGenerator.Generate;
 
-using Core.Infrastructure.Helper;
+using Definition.Infrastructure.Helper;
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;

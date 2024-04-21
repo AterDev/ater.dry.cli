@@ -1,5 +1,4 @@
-﻿
-namespace Command.Share.Commands;
+﻿namespace Command.Share.Commands;
 
 /// <summary>
 /// 项目管理命令

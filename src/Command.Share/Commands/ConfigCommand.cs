@@ -1,8 +1,7 @@
 using System.Diagnostics;
 using System.Text.Json;
 
-using Core.Entities;
-using Core.Infrastructure;
+using Definition.Infrastructure;
 
 namespace Command.Share.Commands;
 

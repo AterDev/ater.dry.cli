@@ -1,4 +1,4 @@
-﻿using Core.Infrastructure.Helper;
+﻿using Definition.Infrastructure.Helper;
 
 namespace AterStudio.Manager;
 

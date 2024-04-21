@@ -1,11 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 
-using Core.Entities;
 
-using Datastore;
-using Datastore.Models;
-
-using PropertyInfo = Core.Models.PropertyInfo;
+using PropertyInfo = Definition.Entity.PropertyInfo;
 
 namespace CodeGenerator.Generate;
 /// <summary>
@@ -21,8 +17,8 @@ public class DtoCodeGenerate : GenerateBase
     public string? AssemblyName { get; set; }
     public string DtoPath { get; init; }
     public List<PropertyChange> PropertyChanges = [];
-    public readonly DbContext dbContext;
-    public DtoCodeGenerate(string entityPath, string dtoPath, DbContext dbContext)
+    public readonly DryContext dbContext;
+    public DtoCodeGenerate(string entityPath, string dtoPath, DryContext dbContext)
     {
         DtoPath = dtoPath;
         this.dbContext = dbContext;
@@ -142,7 +138,6 @@ public class DtoCodeGenerate : GenerateBase
             {
                 Name = s.Name + "Id",
                 Type = KeyType + "?",
-                ProjectId = Const.PROJECT_ID
             })
             .ToList();
 
@@ -205,7 +200,6 @@ public class DtoCodeGenerate : GenerateBase
                 IsRequired = s.IsRequired,
                 IsNullable = s.IsNullable,
                 DefaultValue = "",
-                ProjectId = Const.PROJECT_ID
             })
             .ToList();
 
@@ -259,7 +253,6 @@ public class DtoCodeGenerate : GenerateBase
             {
                 Name = s.NavigationName + (s.IsList ? "Ids" : "Id"),
                 Type = s.IsList ? $"List<{KeyType}>" : KeyType,
-                ProjectId = Const.PROJECT_ID,
                 IsRequired = s.IsRequired,
                 IsNullable = s.IsNullable,
             })
@@ -303,11 +296,11 @@ public class DtoCodeGenerate : GenerateBase
     public List<string> GetGlobalUsings()
     {
         return [
-            "global using System;",
-            "global using System.ComponentModel.DataAnnotations;",
-            $"global using {AssemblyName}.Models;",
-            "global using Ater.Web.Core.Models;",
-            $"global using {EntityInfo.NamespaceName};"
+        "global using System;",
+        "global using System.ComponentModel.DataAnnotations;",
+        "global using {AssemblyName}.Models;",
+        "global using Ater.Web.Core.Models;",
+        "global using {EntityInfo.NamespaceName};"
         ];
     }
 }

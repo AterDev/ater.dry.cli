@@ -2,10 +2,7 @@
 using System.IO.Compression;
 using System.Runtime.InteropServices;
 
-using Core.Entities;
-using Core.Infrastructure;
-
-using LiteDB;
+using Definition.Infrastructure;
 
 namespace Command.Share.Commands;
 public class StudioCommand
@@ -192,12 +189,10 @@ public class StudioCommand
     /// </summary>
     public static async Task UpdateProjectAsync()
     {
-        var localDir = AssemblyHelper.GetStudioPath();
-        // 更新数据库
-        var connectionString = $"Filename={Path.Combine(localDir, "dry.db")};Upgrade=true;initialSize=5MB";
-        using var db = new LiteDatabase(connectionString);
-        var collection = db.GetCollection<Project>();
-        var projects = collection.FindAll().ToList();
+
+        var db = new DryContext();
+
+        var projects = db.Projects.ToList();
         foreach (var project in projects)
         {
             var solutionDir = project.Path;
@@ -208,7 +203,7 @@ public class StudioCommand
             }
             if (!Directory.Exists(solutionDir))
             {
-                collection.Delete(project.Id);
+                db.Remove(project);
                 continue;
             }
             solutionDir = Path.Combine(solutionDir, Config.ConfigFileName);

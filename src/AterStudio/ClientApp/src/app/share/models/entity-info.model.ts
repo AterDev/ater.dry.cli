@@ -1,11 +1,11 @@
 import { EntityKeyType } from './enum/entity-key-type.model';
+import { Project } from './project/project.model';
 import { PropertyInfo } from './property-info.model';
 /**
  * defined entity model
  */
 export interface EntityInfo {
   id: string;
-  projectId: string;
   /**
    * 类名
    */
@@ -32,6 +32,11 @@ export interface EntityInfo {
    */
   isEnum?: boolean | null;
   isList: boolean;
+  /**
+   * 项目
+   */
+  project?: Project | null;
+  projectId: string;
   /**
    * 属性
    */

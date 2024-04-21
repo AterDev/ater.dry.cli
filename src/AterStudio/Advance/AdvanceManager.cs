@@ -1,25 +1,22 @@
 ﻿using System.Text;
-using Core;
-using Core.Entities;
-using Core.Infrastructure.Helper;
 
-using Datastore;
+using Definition.Entity;
 
 namespace AterStudio.Advance;
 
 public class AdvanceManager
 {
-    private readonly DbContext _dbContext;
+    private readonly DryContext _dbContext;
     private readonly DusiHttpClient _httpClient;
     private readonly ProjectContext _projectContext;
 
-    public AdvanceManager(DbContext dbContext, DusiHttpClient httpClient, ProjectContext projectContext)
+    public AdvanceManager(DryContext dbContext, DusiHttpClient httpClient, ProjectContext projectContext)
     {
         _dbContext = dbContext;
         _httpClient = httpClient;
         _projectContext = projectContext;
 
-        var openAIKey = _dbContext.Configs.Find(c => c.Key == ConfigData.OpenAI).FirstOrDefault();
+        var openAIKey = _dbContext.Configs.Where(c => c.Key == ConfigData.OpenAI).FirstOrDefault();
         if (openAIKey != null)
         {
         }
@@ -32,7 +29,7 @@ public class AdvanceManager
     /// <param name="value"></param>
     public void SetConfig(string key, string value)
     {
-        var config = _dbContext.Configs.FindOne(c => c.Key == key);
+        var config = _dbContext.Configs.FirstOrDefault(c => c.Key == key);
         if (config != null)
         {
             config.Value = value;
@@ -45,7 +42,7 @@ public class AdvanceManager
                 Key = key,
                 Value = value
             };
-            _dbContext.Configs.Insert(config);
+            _dbContext.Configs.Add(config);
         }
     }
 
@@ -56,7 +53,7 @@ public class AdvanceManager
     /// <returns></returns>
     public ConfigData? GetConfig(string key)
     {
-        return _dbContext.Configs.FindOne(c => c.Key == key);
+        return _dbContext.Configs.FirstOrDefault(c => c.Key == key);
     }
 
     /// <summary>

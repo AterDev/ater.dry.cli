@@ -1,9 +1,9 @@
+import { Project } from '../project/project.model';
 /**
  * 模板内容
  */
 export interface TemplateFile {
   id: string;
-  projectId: string;
   /**
    * 名称
    */
@@ -16,5 +16,10 @@ export interface TemplateFile {
    * 内容
    */
   content?: string | null;
+  /**
+   * 项目
+   */
+  project?: Project | null;
+  projectId: string;
 
 }

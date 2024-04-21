@@ -1,6 +1,4 @@
-﻿using Core.Entities;
-
-using PropertyInfo = Core.Models.PropertyInfo;
+﻿using PropertyInfo = Definition.Entity.PropertyInfo;
 
 namespace CodeGenerator.Generate;
 
@@ -178,7 +176,7 @@ public class NgPageGenerate : GenerateBase
                 return $$$"""
                       <ng-container matColumnDef="{{{s.ToCamelCase()}}}">
                         <th mat-header-cell *matHeaderCellDef>{{{prop?.CommentSummary ?? prop?.Name}}}</th>
-                        <td mat-cell *matCellDef="let element">
+                        <td mat-cell *matCellDef="let element;table:table">
                           {{element.{{{s.ToCamelCase()}}}{{{pipe}}} }}
                         </td>
                       </ng-container>

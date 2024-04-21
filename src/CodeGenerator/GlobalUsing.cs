@@ -3,9 +3,14 @@ global using System.Collections.Generic;
 global using System.Linq;
 global using System.Reflection;
 global using System.Text;
-global using Core;
-global using Core.Infrastructure;
-global using Core.Infrastructure.Helper;
-global using Core.Infrastructure.Utils;
-global using Core.Models;
+
+global using Definition;
+global using Definition.Entity;
+global using Definition.EntityFramework;
+global using Definition.Infrastructure;
+global using Definition.Infrastructure.Helper;
+global using Definition.Infrastructure.Utils;
+global using Definition.Models;
+global using Definition.Share;
+
 global using Microsoft.CodeAnalysis;

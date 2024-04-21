@@ -22,7 +22,7 @@ public class DtoCommand : CommandBase
         EntityPath = entityPath;
         DtoPath = dtoPath;
 
-        CodeGen = new DtoCodeGenerate(EntityPath, DtoPath, CommandRunner.dbContext);
+        CodeGen = new DtoCodeGenerate(EntityPath, DtoPath, new DryContext());
         string entityName = Path.GetFileNameWithoutExtension(entityPath);
         Instructions.Add($"  🔹 generate {entityName} dtos.");
     }

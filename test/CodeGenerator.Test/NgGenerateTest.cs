@@ -1,5 +1,9 @@
 ﻿using System.IO;
+
 using CodeGenerator.Generate;
+
+using Definition.Models;
+
 using Microsoft.OpenApi.Readers;
 
 namespace CodeGenerator.Test;
@@ -17,7 +21,7 @@ public class NgGenerateTest
             LibType = RequestLibType.Axios
         };
         // 获取对应的ts模型类，生成文件
-        List<Core.Models.GenFileInfo> models = ngGen.GetTSInterfaces();
+        List<GenFileInfo> models = ngGen.GetTSInterfaces();
         Console.WriteLine(models.Count);
     }
 
@@ -33,7 +37,7 @@ public class NgGenerateTest
             LibType = RequestLibType.NgHttp
         };
 
-        List<Core.Models.GenFileInfo> services = serviceGen.GetServices(openApiDoc.Tags);
+        List<GenFileInfo> services = serviceGen.GetServices(openApiDoc.Tags);
 
         Assert.NotNull(services);
     }
@@ -51,7 +55,7 @@ public class NgGenerateTest
         };
 
         serviceGen.GetTSInterfaces();
-        List<Core.Models.GenFileInfo> services = serviceGen.GetServices(openApiDoc.Tags);
+        List<GenFileInfo> services = serviceGen.GetServices(openApiDoc.Tags);
 
         Assert.NotNull(services);
     }
@@ -65,8 +69,8 @@ public class NgGenerateTest
         string output = @"D:\codes\DevCenter\src\Webapp\Admin";
         NgPageGenerate gen = new(entityName, dtoPath, output);
 
-        Core.Models.NgComponentInfo dialog = NgPageGenerate.BuildConfirmDialog();
-        Core.Models.NgComponentInfo component = gen.BuildAddPage();
+        NgComponentInfo dialog = NgPageGenerate.BuildConfirmDialog();
+        NgComponentInfo component = gen.BuildAddPage();
         Assert.Equal("add", component.Name);
         Assert.NotNull(dialog);
     }

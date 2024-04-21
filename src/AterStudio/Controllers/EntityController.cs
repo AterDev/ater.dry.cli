@@ -1,8 +1,8 @@
 ﻿using AterStudio.Manager;
 using AterStudio.Models;
-using Command.Share.Commands;
-using Core.Entities;
-using Datastore.Models;
+
+using Definition.Entity;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace AterStudio.Controllers;

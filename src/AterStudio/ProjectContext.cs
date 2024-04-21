@@ -1,11 +1,4 @@
-﻿using Command.Share.Commands;
-
-using Core;
-using Core.Entities;
-using Core.Infrastructure;
-using Core.Infrastructure.Helper;
-
-using Datastore;
+﻿using Definition.Entity;
 
 namespace AterStudio;
 
@@ -24,14 +17,14 @@ public class ProjectContext
     public string? Version { get; set; }
     public string? EntityFrmeworkPath { get; set; }
 
-    public ProjectContext(IHttpContextAccessor httpContextAccessor, DbContext context)
+    public ProjectContext(IHttpContextAccessor httpContextAccessor, DryContext context)
     {
         var id = httpContextAccessor.HttpContext?.Request.Headers["projectId"].ToString();
         if (!string.IsNullOrWhiteSpace(id))
         {
             if (Guid.TryParse(id, out Guid ProjectId))
             {
-                Project = context.Projects.FindById(ProjectId);
+                Project = context.Projects.Find(ProjectId);
                 if (Project != null)
                 {
                     Const.PROJECT_ID = ProjectId;

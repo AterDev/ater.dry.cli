@@ -2,7 +2,8 @@
 using AterStudio.Manager;
 using AterStudio.Models;
 
-using Core.Entities;
+using Definition.Entity;
+using Definition.Models;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -184,17 +185,6 @@ public class ProjectController(ProjectManager manager, AdvanceManager advance) :
     public string GetDatabaseContentAsync([FromRoute] Guid id)
     {
         return _advance.GetDatabaseStructureAsync();
-    }
-
-    /// <summary>
-    /// 获取监听状态
-    /// </summary>
-    /// <returns></returns>
-    [HttpGet("watcher/{id}")]
-    public async Task<ActionResult<bool>> GetWatcherStatusAsync([FromRoute] Guid id)
-    {
-        var project = await _manager.GetProjectAsync(id);
-        return project == null ? (ActionResult<bool>)NotFound("不存在该项目") : (ActionResult<bool>)_manager.GetWatcherStatus(project);
     }
 
 }

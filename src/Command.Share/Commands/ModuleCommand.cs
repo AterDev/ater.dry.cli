@@ -1,4 +1,4 @@
-﻿using Core.Infrastructure;
+﻿using Definition.Infrastructure;
 
 using PluralizeService.Core;
 

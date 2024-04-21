@@ -1,9 +1,12 @@
 ﻿using System.Threading.Tasks;
+
 using CodeGenerator.Test.Hepler;
+
 using Command.Share;
 using Command.Share.Commands;
-using Core.Infrastructure;
-using Core.Infrastructure.Helper;
+
+using Definition.Infrastructure;
+using Definition.Infrastructure.Helper;
 
 namespace CommandLine.Test;
 

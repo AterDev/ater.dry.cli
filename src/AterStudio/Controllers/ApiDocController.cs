@@ -1,7 +1,11 @@
 ﻿using System.Text;
+
 using AterStudio.Manager;
 using AterStudio.Models;
-using Core.Entities;
+
+using Definition.Entity;
+using Definition.Models;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace AterStudio.Controllers;

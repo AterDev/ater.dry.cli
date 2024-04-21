@@ -147,13 +147,4 @@ export class ProjectBaseService extends BaseService {
     return this.request<string>('get', _url);
   }
 
-  /**
-   * 获取监听状态
-   * @param id string
-   */
-  getWatcherStatus(id: string): Observable<boolean> {
-    const _url = `/api/Project/watcher/${id}`;
-    return this.request<boolean>('get', _url);
-  }
-
 }

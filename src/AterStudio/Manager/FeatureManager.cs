@@ -4,7 +4,7 @@ using AterStudio.Models;
 
 using Command.Share.Commands;
 
-using Core.Infrastructure.Helper;
+using Definition.Infrastructure.Helper;
 
 namespace AterStudio.Manager;
 /// <summary>

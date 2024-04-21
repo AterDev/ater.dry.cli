@@ -34,7 +34,11 @@ public class RequestCommand : CommandBase
         }
 
         // 兼容过去没有分组的生成
-        if (DocName == "v1") DocName = string.Empty;
+        if (DocName == "v1")
+        {
+            DocName = string.Empty;
+        }
+
         OutputPath = Path.Combine(output, DocName);
         LibType = libType;
 

@@ -1,4 +1,6 @@
-﻿namespace AterStudio.Models;
+﻿using Definition.Models;
+
+namespace AterStudio.Models;
 
 public class UpdateConfigOptionsDto
 {

@@ -1,5 +1,3 @@
-using Datastore;
-
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Interfaces;
@@ -25,9 +23,9 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
     {
         try
         {
-            var db = new DbContext();
+            var db = new DryContext();
             string? content = null;
-            var data = db.TemplateFile?.FindAll().ToList();
+            var data = db.TemplateFiles?.ToList();
             switch (libType)
             {
                 case RequestLibType.NgHttp:

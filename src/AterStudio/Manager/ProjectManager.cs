@@ -2,21 +2,14 @@
 
 using AterStudio.Models;
 
-using Command.Share;
-using Command.Share.Commands;
-
-using Core;
-using Core.Entities;
-using Core.Infrastructure;
-using Core.Infrastructure.Helper;
-
-using Datastore;
+using Definition.Entity;
+using Definition.Models;
 
 namespace AterStudio.Manager;
 
-public class ProjectManager(DbContext dbContext, ProjectContext projectContext)
+public class ProjectManager(DryContext dbContext, ProjectContext projectContext)
 {
-    private readonly DbContext _db = dbContext;
+    private readonly DryContext _db = dbContext;
     private readonly ProjectContext _projectContext = projectContext;
 
     public string GetToolVersion()
@@ -26,7 +19,7 @@ public class ProjectManager(DbContext dbContext, ProjectContext projectContext)
 
     public async Task<List<Project>> GetProjectsAsync()
     {
-        var projects = _db.Projects.FindAll().ToList();
+        var projects = _db.Projects.ToList();
 
         for (int i = 0; i < projects.Count; i++)
         {
@@ -45,7 +38,8 @@ public class ProjectManager(DbContext dbContext, ProjectContext projectContext)
             // 移除不存在的项目
             if (!File.Exists(p.Path))
             {
-                _db.Projects.Delete(p.Id);
+                _db.Projects.Remove(p);
+                _db.SaveChanges();
                 projects.Remove(p);
             }
         }
@@ -77,7 +71,6 @@ public class ProjectManager(DbContext dbContext, ProjectContext projectContext)
         string projectName = Path.GetFileNameWithoutExtension(projectFilePath);
         Project project = new()
         {
-            ProjectId = config!.ProjectId,
             DisplayName = name,
             Path = projectFilePath,
             Name = projectName,
@@ -85,20 +78,21 @@ public class ProjectManager(DbContext dbContext, ProjectContext projectContext)
             SolutionType = solutionType
         };
 
-        _db.Projects.EnsureIndex(p => p.ProjectId);
-        _db.Projects.Insert(project);
+        _db.Projects.Add(project);
 
         return default;
     }
 
     public bool DeleteProject(Guid id)
     {
-        return _db.Projects.Delete(id);
+        var project = _db.Projects.Find(id);
+        _db.Projects.Remove(project);
+        return _db.SaveChanges() > 0;
     }
 
     public async Task<Project> GetProjectAsync(Guid id)
     {
-        var project = _db.Projects.FindById(id);
+        var project = _db.Projects.Find(id);
         if (string.IsNullOrWhiteSpace(project.Version))
         {
             var solutionPath = Path.Combine(project.Path, "..");
@@ -206,54 +200,48 @@ public class ProjectManager(DbContext dbContext, ProjectContext projectContext)
         }
 
         if (dto.IdType != null)
+        {
             options.IdType = dto.IdType;
+        }
+
         if (dto.EntityPath != null)
+        {
             options.EntityPath = dto.EntityPath;
+        }
 
         if (dto.EntityFrameworkPath != null)
+        {
             options.DbContextPath = dto.EntityFrameworkPath;
+        }
 
         if (dto.StorePath != null)
+        {
             options.ApplicationPath = dto.StorePath;
+        }
+
         if (dto.DtoPath != null)
+        {
             options.DtoPath = dto.DtoPath;
+        }
+
         if (dto.ApiPath != null)
+        {
             options.ApiPath = dto.ApiPath;
+        }
+
         if (dto.IsSplitController != null)
+        {
             options.IsSplitController = dto.IsSplitController;
+        }
+
         if (dto.ControllerType != null)
+        {
             options.ControllerType = dto.ControllerType.Value;
+        }
 
         string content = JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = true });
         await File.WriteAllTextAsync(Path.Combine(_projectContext.SolutionPath!, Config.ConfigFileName), content, new UTF8Encoding(false));
         return true;
-    }
-
-    /// <summary>
-    /// 是否在监视中
-    /// </summary>
-    /// <param name="project"></param>
-    /// <returns></returns>
-    public bool GetWatcherStatus(Project project)
-    {
-        return WatcherManager.WatcherList.TryGetValue(project.ProjectId, out _);
-    }
-
-    /// <summary>
-    /// 开启监控
-    /// </summary>
-    /// <param name="project"></param>
-    public void StartWatcher(Project project)
-    {
-        WatcherManager.StartWatcher(project.ProjectId, _projectContext.EntityPath!, _projectContext.SharePath!, _projectContext.ApplicationPath!);
-    }
-    /// <summary>
-    /// 关闭监测
-    /// </summary>
-    /// <param name="project"></param>
-    public void StopWatcher(Project project)
-    {
-        WatcherManager.StopWatcher(project.ProjectId);
     }
 
     /// <summary>
@@ -289,7 +277,7 @@ public class ProjectManager(DbContext dbContext, ProjectContext projectContext)
     /// <returns></returns>
     public bool SaveTemplate(Guid id, string name, string content)
     {
-        var file = _db.TemplateFile.Query()
+        var file = _db.TemplateFiles
            .Where(f => f.Name.Equals(name))
            .FirstOrDefault();
 
@@ -301,15 +289,15 @@ public class ProjectManager(DbContext dbContext, ProjectContext projectContext)
                 ProjectId = Const.PROJECT_ID,
                 Content = content
             };
-            _db.TemplateFile.EnsureIndex(f => f.Name);
-            return _db.TemplateFile.Insert(file).AsBoolean;
+            _db.TemplateFiles.Add(file);
         }
         else
         {
             file.Content = content;
             file.ProjectId = Const.PROJECT_ID;
-            return _db.TemplateFile.Update(file);
+            _db.TemplateFiles.Update(file);
         }
+        return _db.SaveChanges() > 0;
     }
 
     /// <summary>
@@ -322,7 +310,7 @@ public class ProjectManager(DbContext dbContext, ProjectContext projectContext)
     {
         var project = GetProjectAsync(id);
         // 从库中获取，如果没有，则从模板中读取
-        var file = _db.TemplateFile.Query()
+        var file = _db.TemplateFiles
             .Where(f => f.Name.Equals(name))
             .FirstOrDefault() ?? new TemplateFile
             {

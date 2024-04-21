@@ -1,4 +1,8 @@
-﻿using Core.Entities;
+﻿using Definition;
+using Definition.Entity;
+using Definition.Infrastructure;
+using Definition.Infrastructure.Helper;
+using Definition.Infrastructure.Utils;
 
 namespace CodeGenerator.Generate;
 

@@ -1,4 +1,4 @@
-﻿using PropertyInfo = Core.Models.PropertyInfo;
+﻿using PropertyInfo = Definition.Entity.PropertyInfo;
 
 namespace CodeGenerator.Generate;
 

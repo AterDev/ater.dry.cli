@@ -1,4 +1,6 @@
-﻿namespace CodeGenerator.Generate;
+﻿using Definition.Infrastructure.Utils;
+
+namespace CodeGenerator.Generate;
 
 /// <summary>
 /// angular material 表单生成

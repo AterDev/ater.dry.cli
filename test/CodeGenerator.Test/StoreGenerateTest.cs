@@ -1,7 +1,9 @@
 ﻿using System.IO;
 using System.Text;
+
 using CodeGenerator.Generate;
-using Core.Infrastructure.Helper;
+
+using Definition.Infrastructure.Helper;
 
 namespace CodeGenerator.Test;
 
