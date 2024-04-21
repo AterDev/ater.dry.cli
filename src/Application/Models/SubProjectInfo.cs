@@ -1,4 +1,4 @@
-﻿namespace AterStudio.Models;
+﻿namespace Application.Models;
 /// <summary>
 /// 项目信息
 /// </summary>

@@ -1,15 +1,18 @@
 ﻿using System.Text;
 
+using Application.Implement;
+
 using Definition.Entity;
+using Definition.EntityFramework.DBProvider;
 
 namespace AterStudio.Advance;
 
 public class AdvanceManager
 {
-    private readonly DryContext _dbContext;
+    private readonly ContextBase _dbContext;
     private readonly ProjectContext _projectContext;
 
-    public AdvanceManager(DryContext dbContext, ProjectContext projectContext)
+    public AdvanceManager(ContextBase dbContext, ProjectContext projectContext)
     {
         _dbContext = dbContext;
         _projectContext = projectContext;

@@ -1,12 +1,8 @@
 ﻿using System.Text.Json.Nodes;
 
-using AterStudio.Models;
+using Application.Models;
 
-using Command.Share.Commands;
-
-using Definition.Infrastructure.Helper;
-
-namespace AterStudio.Manager;
+namespace Application.Manager;
 /// <summary>
 /// 功能集成
 /// </summary>

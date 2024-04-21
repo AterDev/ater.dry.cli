@@ -1,15 +1,12 @@
 ﻿using System.Text;
 
-using AterStudio.Models;
+using Application.Models;
 
-using Definition.Entity;
-using Definition.Models;
+namespace Application.Manager;
 
-namespace AterStudio.Manager;
-
-public class ProjectManager(DryContext dbContext, ProjectContext projectContext)
+public class ProjectManager(ContextBase dbContext, ProjectContext projectContext)
 {
-    private readonly DryContext _db = dbContext;
+    private readonly ContextBase _db = dbContext;
     private readonly ProjectContext _projectContext = projectContext;
 
     public string GetToolVersion()

@@ -1,6 +1,4 @@
-﻿using Definition.Infrastructure.Helper;
-
-namespace AterStudio.Manager;
+﻿namespace Application.Manager;
 
 /// <summary>
 /// 工具类

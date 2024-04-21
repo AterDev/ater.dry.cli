@@ -1,7 +1,7 @@
 ﻿using Definition.Entity;
 using Definition.Models;
 
-namespace AterStudio.Models;
+namespace Application.Models;
 
 /// <summary>
 /// 接口返回模型

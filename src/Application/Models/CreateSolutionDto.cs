@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace AterStudio.Models;
+namespace Application.Models;
 
 /// <summary>
 /// 创建解决方案dto

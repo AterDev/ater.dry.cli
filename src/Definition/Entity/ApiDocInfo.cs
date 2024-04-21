@@ -24,6 +24,11 @@ public class ApiDocInfo : EntityBase
     [MaxLength(300)]
     public required string Path { get; set; }
 
+    /// <summary>
+    /// 生成路径
+    /// </summary>
+    [MaxLength(200)]
+    public string? LocalPath { get; set; }
 
     public Project Project { get; set; } = null!;
     public Guid ProjectId { get; set; } = default!;

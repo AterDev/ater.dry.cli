@@ -1,16 +1,11 @@
 ﻿using System.Text;
 
-using AterStudio.Models;
+using Application.Models;
 
-using Definition.Entity;
-using Definition.Models;
-
-using Microsoft.OpenApi.Readers;
-
-namespace AterStudio.Manager;
-public class SwaggerManager(DryContext context)
+namespace Application.Manager;
+public class SwaggerManager(ContextBase context)
 {
-    private readonly DryContext _context = context;
+    private readonly ContextBase _context = context;
     public string? ErrorMsg { get; set; }
 
     public ApiDocInfo? Find(Guid id)

@@ -2,6 +2,7 @@
 using System.IO.Compression;
 using System.Runtime.InteropServices;
 
+using Definition.EntityFramework.DBProvider;
 using Definition.Infrastructure;
 
 namespace Command.Share.Commands;
@@ -189,9 +190,7 @@ public class StudioCommand
     /// </summary>
     public static async Task UpdateProjectAsync()
     {
-
-        var db = new DryContext();
-
+        var db = new ContextBase();
         var projects = db.Projects.ToList();
         foreach (var project in projects)
         {

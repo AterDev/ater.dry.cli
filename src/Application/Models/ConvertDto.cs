@@ -1,4 +1,4 @@
-﻿namespace AterStudio.Models;
+﻿namespace Application.Models;
 
 public class ConvertDto
 {

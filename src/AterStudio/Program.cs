@@ -3,10 +3,15 @@ using System.Text.Encodings.Web;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
 
+using Application.Implement;
+using Application.Manager;
+
 using AterStudio;
 using AterStudio.Advance;
 using AterStudio.Manager;
 using AterStudio.Worker;
+
+using Definition.EntityFramework.DBProvider;
 
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc.Controllers;
@@ -20,7 +25,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ProjectContext>();
 
-builder.Services.AddDbContext<DryContext>(options =>
+builder.Services.AddDbContext<ContextBase>(options =>
 {
     var path = Path.Combine(AssemblyHelper.GetStudioPath(), "ater.dry.db");
     options.UseSqlite($"DataSource={path}", _ =>

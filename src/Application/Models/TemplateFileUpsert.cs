@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace AterStudio.Models;
+namespace Application.Models;
 
 public class TemplateFileUpsert
 {

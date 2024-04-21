@@ -1,14 +1,12 @@
 ﻿using System.Linq.Expressions;
-
-
 using Definition.Infrastructure.Helper;
 
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Definition.EntityFramework;
+namespace Definition.EntityFramework.DBProvider;
 
-public class DryContext : DbContext
+public class ContextBase : DbContext
 {
     public DbSet<Project> Projects { get; set; }
 
@@ -21,10 +19,10 @@ public class DryContext : DbContext
     public DbSet<ConfigData> Configs { get; set; }
 
 
-    public DryContext(DbContextOptions options) : base(options)
+    public ContextBase(DbContextOptions options) : base(options)
     {
     }
-    public DryContext()
+    public ContextBase()
     {
     }
 

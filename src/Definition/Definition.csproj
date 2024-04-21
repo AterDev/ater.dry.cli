@@ -9,7 +9,7 @@
 		<NoWarn>1701;1702;1591</NoWarn>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Ater.Web.Core" Version="0.1.1" />
+		<PackageReference Include="Ater.Web.Abstraction" Version="0.1.2" />
 		<PackageReference Include="Microsoft.Build" Version="17.9.5" ExcludeAssets="runtime" />
 		<PackageReference Include="Microsoft.Build.Locator" Version="1.7.8" />
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.9.2" />

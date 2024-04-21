@@ -8,9 +8,9 @@ using Project = Definition.Entity.Project;
 
 namespace AterStudio.Manager;
 
-public partial class EntityManager(DryContext dbContext, ProjectContext projectContext)
+public partial class EntityManager(ContextBase dbContext, ProjectContext projectContext)
 {
-    private readonly DryContext _dbContext = dbContext;
+    private readonly ContextBase _dbContext = dbContext;
     private readonly ProjectContext _projectContext = projectContext;
 
     /// <summary>

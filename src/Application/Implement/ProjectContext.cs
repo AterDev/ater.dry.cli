@@ -1,6 +1,6 @@
-﻿using Definition.Entity;
+﻿using Microsoft.AspNetCore.Http;
 
-namespace AterStudio;
+namespace Application.Implement;
 
 /// <summary>
 /// 项目上下文
@@ -17,7 +17,7 @@ public class ProjectContext
     public string? Version { get; set; }
     public string? EntityFrmeworkPath { get; set; }
 
-    public ProjectContext(IHttpContextAccessor httpContextAccessor, DryContext context)
+    public ProjectContext(IHttpContextAccessor httpContextAccessor, ContextBase context)
     {
         var id = httpContextAccessor.HttpContext?.Request.Headers["projectId"].ToString();
         if (!string.IsNullOrWhiteSpace(id))

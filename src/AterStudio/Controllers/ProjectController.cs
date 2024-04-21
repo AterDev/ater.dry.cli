@@ -1,6 +1,7 @@
-﻿using AterStudio.Advance;
-using AterStudio.Manager;
-using AterStudio.Models;
+﻿using Application.Manager;
+using Application.Models;
+
+using AterStudio.Advance;
 
 using Definition.Entity;
 using Definition.Models;

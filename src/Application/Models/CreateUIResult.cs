@@ -1,4 +1,4 @@
-﻿namespace AterStudio.Models;
+﻿namespace Application.Models;
 /// <summary>
 /// 创建UI组件结果
 /// </summary>

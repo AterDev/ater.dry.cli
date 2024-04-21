@@ -1,3 +1,5 @@
+using Definition.EntityFramework.DBProvider;
+
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Interfaces;
@@ -23,7 +25,7 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
     {
         try
         {
-            var db = new DryContext();
+            var db = new ContextBase();
             string? content = null;
             var data = db.TemplateFiles?.ToList();
             switch (libType)
@@ -212,7 +214,11 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
                 .Where(e => e.Key == "x-enumData")
                 .FirstOrDefault();
         // 过滤没有注释的内容
-        if (enumData.Value == null) return string.Empty;
+        if (enumData.Value == null)
+        {
+            return string.Empty;
+        }
+
         if (enumData.Value is OpenApiArray data)
         {
             if (!data.Any()) { return string.Empty; }

@@ -1,3 +1,5 @@
+using Definition.EntityFramework.DBProvider;
+
 namespace Command.Share.Commands;
 
 public class DtoCommand : CommandBase
@@ -22,7 +24,7 @@ public class DtoCommand : CommandBase
         EntityPath = entityPath;
         DtoPath = dtoPath;
 
-        CodeGen = new DtoCodeGenerate(EntityPath, DtoPath, new DryContext());
+        CodeGen = new DtoCodeGenerate(EntityPath, DtoPath, new ContextBase());
         string entityName = Path.GetFileNameWithoutExtension(entityPath);
         Instructions.Add($"  🔹 generate {entityName} dtos.");
     }

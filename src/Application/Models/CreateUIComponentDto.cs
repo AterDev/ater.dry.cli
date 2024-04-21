@@ -1,6 +1,6 @@
 ﻿using Definition.Entity;
 
-namespace AterStudio.Models;
+namespace Application.Models;
 /// <summary>
 /// 生成组件模型
 /// </summary>

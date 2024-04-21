@@ -1,7 +1,7 @@
 ﻿using System.Text;
 
-using AterStudio.Manager;
-using AterStudio.Models;
+using Application.Manager;
+using Application.Models;
 
 using Definition.Entity;
 using Definition.Models;

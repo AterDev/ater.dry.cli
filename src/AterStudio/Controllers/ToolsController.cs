@@ -1,5 +1,5 @@
-﻿using AterStudio.Manager;
-using AterStudio.Models;
+﻿using Application.Manager;
+using Application.Models;
 
 using Microsoft.AspNetCore.Mvc;
 
