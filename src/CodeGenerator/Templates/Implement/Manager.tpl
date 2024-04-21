@@ -35,7 +35,7 @@ ${FilterActionBlock}
     /// 是否唯一
     /// </summary>
     /// <returns></returns>
-    public async Task<bool> IsUniqueAsync(string unique)
+    public async Task<bool> IsConflictAsync(string unique)
     {
         // TODO:自定义唯一性验证参数和逻辑
         return await Command.Db.AnyAsync(q => q.Id == new Guid(unique));

@@ -19,7 +19,7 @@ export class EntityBaseService extends BaseService {
    * @param serviceName string
    */
   list(id: string, serviceName: string | null): Observable<EntityFile[]> {
-    const _url = `/api/Entity/${id}?serviceName=${serviceName}`;
+    const _url = `/api/Entity/${id}?serviceName=${serviceName ?? ''}`;
     return this.request<EntityFile[]>('get', _url);
   }
 
@@ -29,7 +29,7 @@ export class EntityBaseService extends BaseService {
    * @param entityFilePath 
    */
   getDtos(entityFilePath: string | null): Observable<EntityFile[]> {
-    const _url = `/api/Entity/dtos?entityFilePath=${entityFilePath}`;
+    const _url = `/api/Entity/dtos?entityFilePath=${entityFilePath ?? ''}`;
     return this.request<EntityFile[]>('get', _url);
   }
 
@@ -40,7 +40,7 @@ export class EntityBaseService extends BaseService {
    * @param summary 
    */
   createDto(entityFilePath: string | null, name: string | null, summary: string | null): Observable<string> {
-    const _url = `/api/Entity/dto?entityFilePath=${entityFilePath}&name=${name}&summary=${summary}`;
+    const _url = `/api/Entity/dto?entityFilePath=${entityFilePath ?? ''}&name=${name ?? ''}&summary=${summary ?? ''}`;
     return this.request<string>('post', _url);
   }
 
@@ -68,7 +68,7 @@ export class EntityBaseService extends BaseService {
    * @param moduleName 
    */
   getFileContent(entityName: string | null, isManager: boolean | null, moduleName: string | null): Observable<EntityFile> {
-    const _url = `/api/Entity/fileContent?entityName=${entityName}&isManager=${isManager}&moduleName=${moduleName}`;
+    const _url = `/api/Entity/fileContent?entityName=${entityName ?? ''}&isManager=${isManager ?? ''}&moduleName=${moduleName ?? ''}`;
     return this.request<EntityFile>('get', _url);
   }
 
@@ -98,7 +98,7 @@ export class EntityBaseService extends BaseService {
    * @param swaggerPath 
    */
   generateRequest(id: string, webPath: string | null, type: RequestLibType | null, swaggerPath: string | null): Observable<boolean> {
-    const _url = `/api/Entity/generateRequest/${id}?webPath=${webPath}&type=${type}&swaggerPath=${swaggerPath}`;
+    const _url = `/api/Entity/generateRequest/${id}?webPath=${webPath ?? ''}&type=${type ?? ''}&swaggerPath=${swaggerPath ?? ''}`;
     return this.request<boolean>('get', _url);
   }
 
@@ -110,7 +110,7 @@ export class EntityBaseService extends BaseService {
    * @param swaggerPath 
    */
   generateClientRequest(id: string, webPath: string | null, type: LanguageType | null, swaggerPath: string | null): Observable<boolean> {
-    const _url = `/api/Entity/generateClientRequest/${id}?webPath=${webPath}&type=${type}&swaggerPath=${swaggerPath}`;
+    const _url = `/api/Entity/generateClientRequest/${id}?webPath=${webPath ?? ''}&type=${type ?? ''}&swaggerPath=${swaggerPath ?? ''}`;
     return this.request<boolean>('get', _url);
   }
 
@@ -130,7 +130,7 @@ export class EntityBaseService extends BaseService {
    * @param rootPath 
    */
   generateNgModule(id: string, entityName: string | null, rootPath: string | null): Observable<boolean> {
-    const _url = `/api/Entity/generateNgModule/${id}?entityName=${entityName}&rootPath=${rootPath}`;
+    const _url = `/api/Entity/generateNgModule/${id}?entityName=${entityName ?? ''}&rootPath=${rootPath ?? ''}`;
     return this.request<boolean>('post', _url);
   }
 
