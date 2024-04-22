@@ -11,5 +11,6 @@ public static partial class ManagerServiceCollectionExtensions
         services.AddScoped(typeof(FeatureManager));
         services.AddScoped(typeof(ProjectManager));
         services.AddScoped(typeof(ToolsManager));
+        services.AddScoped(typeof(AdvanceManager));
     }
 }

@@ -1,9 +1,4 @@
-﻿using Application.Manager;
-using Application.Models;
-
-using AterStudio.Advance;
-
-using Definition.Entity;
+﻿using Definition.Entity;
 using Definition.Models;
 
 using Microsoft.AspNetCore.Mvc;

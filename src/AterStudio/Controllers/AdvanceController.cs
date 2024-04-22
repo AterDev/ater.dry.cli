@@ -1,6 +1,4 @@
-﻿using AterStudio.Advance;
-
-using Definition.Entity;
+﻿using Definition.Entity;
 
 using Microsoft.AspNetCore.Mvc;
 

@@ -9,7 +9,7 @@ import { environment } from 'src/environments/environment';
 })
 export class BaseService {
   public baseUrl: string | null;
-  public isMobile = false;
+  private isMobile = false;
   constructor(
     protected http: HttpClient,
     @Inject('BASE_URL') baseUrl: string
@@ -54,6 +54,7 @@ export class BaseService {
     return new HttpHeaders({
       Accept: 'application/json',
       Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
+      projectId: localStorage.getItem('projectId') ?? ''
     });
   }
   isMoblie(): boolean {
