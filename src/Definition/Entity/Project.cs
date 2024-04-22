@@ -32,6 +32,11 @@ public class Project : EntityBase
     /// </summary>
     public SolutionType? SolutionType { get; set; }
 
+    /// <summary>
+    /// Front Path
+    /// </summary>
+    [MaxLength(200)]
+    public string? FrontPath { get; set; }
 
     public List<EntityInfo> EntityInfos { get; set; } = [];
     public List<ApiDocInfo> ApiDocInfos { get; set; } = [];

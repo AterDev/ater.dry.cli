@@ -28,6 +28,10 @@ export interface Project {
    */
   version?: string | null;
   solutionType?: SolutionType | null;
+  /**
+   * Front Path
+   */
+  frontPath?: string | null;
   entityInfos?: EntityInfo[];
   apiDocInfos?: ApiDocInfo[];
   configDatas?: ConfigData[];

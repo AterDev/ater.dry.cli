@@ -9,4 +9,4 @@ if ([string]::IsNullOrWhiteSpace($Name)) {
     $Name = [DateTime]::Now.ToString("yyyyMMdd-HHmmss")
 }
 dotnet build
-dotnet ef migrations add $Name -c DryContext --no-build
+dotnet ef migrations add $Name -c ContextBase --no-build

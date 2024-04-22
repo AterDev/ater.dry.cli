@@ -21,6 +21,7 @@ namespace AterStudio.Migrations
                     Path = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
                     Version = table.Column<string>(type: "TEXT", maxLength: 20, nullable: true),
                     SolutionType = table.Column<int>(type: "INTEGER", nullable: true),
+                    FrontPath = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
                     CreatedTime = table.Column<string>(type: "TEXT", nullable: false),
                     UpdatedTime = table.Column<string>(type: "TEXT", nullable: false),
                     IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false)
@@ -38,6 +39,7 @@ namespace AterStudio.Migrations
                     Name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "TEXT", maxLength: 1000, nullable: true),
                     Path = table.Column<string>(type: "TEXT", maxLength: 300, nullable: false),
+                    LocalPath = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
                     ProjectId = table.Column<Guid>(type: "TEXT", nullable: false),
                     CreatedTime = table.Column<string>(type: "TEXT", nullable: false),
                     UpdatedTime = table.Column<string>(type: "TEXT", nullable: false),

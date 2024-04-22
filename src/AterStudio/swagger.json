@@ -1910,26 +1910,22 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/RestApiGroup"
-            },
-            "description": "接口信息"
+            }
           },
           "modelInfos": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/EntityInfo"
-            },
-            "description": "所有请求及返回类型信息"
+            }
           },
           "openApiTags": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ApiDocTag"
-            },
-            "description": "tag信息"
+            }
           }
         },
-        "additionalProperties": false,
-        "description": "接口返回模型"
+        "additionalProperties": false
       },
       "ApiDocInfo": {
         "type": "object",
@@ -1964,6 +1960,12 @@
             "maxLength": 300,
             "type": "string",
             "description": "文档地址"
+          },
+          "localPath": {
+            "maxLength": 200,
+            "type": "string",
+            "description": "生成路径",
+            "nullable": true
           },
           "project": {
             "$ref": "#/components/schemas/Project"
@@ -2229,7 +2231,6 @@
           },
           "className": {
             "type": "string",
-            "description": "类名称",
             "nullable": true
           }
         },
@@ -2240,17 +2241,14 @@
         "properties": {
           "name": {
             "maxLength": 50,
-            "type": "string",
-            "description": "名称"
+            "type": "string"
           },
           "path": {
             "maxLength": 300,
-            "type": "string",
-            "description": "路径"
+            "type": "string"
           },
           "isLight": {
-            "type": "boolean",
-            "description": "是否为轻量模板"
+            "type": "boolean"
           },
           "dbType": {
             "$ref": "#/components/schemas/DBType"
@@ -2262,56 +2260,45 @@
             "$ref": "#/components/schemas/FrontType"
           },
           "hasTenant": {
-            "type": "boolean",
-            "description": "是否包含租户"
+            "type": "boolean"
           },
           "hasIdentityServer": {
-            "type": "boolean",
-            "description": "是否包含验证授权服务"
+            "type": "boolean"
           },
           "hasTaskManager": {
-            "type": "boolean",
-            "description": "是否包含任务管理服务"
+            "type": "boolean"
           },
           "commandDbConnStrings": {
             "maxLength": 300,
             "type": "string",
-            "description": "写数据库连接字符串",
             "nullable": true
           },
           "queryDbConnStrings": {
             "maxLength": 300,
             "type": "string",
-            "description": "读数据库连接字符串",
             "nullable": true
           },
           "cacheConnStrings": {
             "maxLength": 200,
             "type": "string",
-            "description": "缓存连接字符串",
             "nullable": true
           },
           "cacheInstanceName": {
             "maxLength": 60,
             "type": "string",
-            "description": "缓存实例名称",
             "nullable": true
           },
           "hasSystemFeature": {
-            "type": "boolean",
-            "description": "系统管理模块"
+            "type": "boolean"
           },
           "hasCmsFeature": {
-            "type": "boolean",
-            "description": "内容管理模块"
+            "type": "boolean"
           },
           "hasFileManagerFeature": {
-            "type": "boolean",
-            "description": "用户文件模块"
+            "type": "boolean"
           },
           "hasOrderFeature": {
-            "type": "boolean",
-            "description": "订单模块"
+            "type": "boolean"
           },
           "projectType": {
             "$ref": "#/components/schemas/ProjectType"
@@ -2322,8 +2309,7 @@
             "nullable": true
           }
         },
-        "additionalProperties": false,
-        "description": "创建解决方案dto"
+        "additionalProperties": false
       },
       "CreateUIComponentDto": {
         "type": "object",
@@ -2341,8 +2327,7 @@
             "type": "string"
           }
         },
-        "additionalProperties": false,
-        "description": "生成组件模型"
+        "additionalProperties": false
       },
       "DBType": {
         "enum": [
@@ -2511,7 +2496,6 @@
           2
         ],
         "type": "integer",
-        "description": "前端项目",
         "format": "int32",
         "x-enumNames": [
           "None",
@@ -2662,6 +2646,12 @@
           },
           "solutionType": {
             "$ref": "#/components/schemas/SolutionType"
+          },
+          "frontPath": {
+            "maxLength": 200,
+            "type": "string",
+            "description": "Front Path",
+            "nullable": true
           },
           "entityInfos": {
             "type": "array",
@@ -2939,8 +2929,7 @@
             "$ref": "#/components/schemas/ProjectType"
           }
         },
-        "additionalProperties": false,
-        "description": "项目信息"
+        "additionalProperties": false
       },
       "TemplateFile": {
         "type": "object",
@@ -2993,13 +2982,11 @@
         "properties": {
           "name": {
             "maxLength": 60,
-            "type": "string",
-            "description": "名称"
+            "type": "string"
           },
           "content": {
             "maxLength": 10000,
-            "type": "string",
-            "description": "内容"
+            "type": "string"
           }
         },
         "additionalProperties": false
@@ -3011,7 +2998,6 @@
           2
         ],
         "type": "integer",
-        "description": "使用的UI组件库",
         "format": "int32",
         "x-enumNames": [
           "AngularMaterial",
@@ -3025,7 +3011,6 @@
         "properties": {
           "dtoPath": {
             "type": "string",
-            "description": "dto项目目录",
             "nullable": true
           },
           "entityPath": {
@@ -3071,8 +3056,7 @@
         "properties": {
           "fileName": {
             "maxLength": 100,
-            "type": "string",
-            "description": "文件完整路径"
+            "type": "string"
           },
           "content": {
             "maxLength": 2000,

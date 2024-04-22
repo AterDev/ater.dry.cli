@@ -1,5 +1,4 @@
 ﻿using Definition.Infrastructure.Utils;
-
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Definition.Infrastructure.Helper;
@@ -10,6 +9,8 @@ public class CompilationHelper
 
     public SemanticModel? SemanticModel { get; set; }
     public ITypeSymbol? ClassSymbol { get; set; }
+
+    public ClassDeclarationSyntax? ClassNode { get; set; }
     public SyntaxTree SyntaxTree { get; set; } = null!;
     public IEnumerable<INamedTypeSymbol> AllClass { get; set; }
     public CompilationUnitSyntax? SyntaxRoot { get; set; }
@@ -17,7 +18,7 @@ public class CompilationHelper
     public string EntityPath { get; set; }
 
     /// <summary>
-    /// 
+    /// ctor
     /// </summary>
     /// <param name="path">程序集路径</param>
     /// <param name="dllFilter"></param>
@@ -56,8 +57,8 @@ public class CompilationHelper
         SyntaxRoot = SyntaxTree!.GetCompilationUnitRoot();
         SemanticModel = Compilation.GetSemanticModel(SyntaxTree);
 
-        ClassDeclarationSyntax? classNode = SyntaxTree.GetCompilationUnitRoot().DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
-        ClassSymbol = classNode == null ? null : SemanticModel.GetDeclaredSymbol(classNode);
+        ClassNode = SyntaxTree.GetCompilationUnitRoot().DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
+        ClassSymbol = ClassNode == null ? null : SemanticModel.GetDeclaredSymbol(ClassNode);
     }
 
     /// <summary>
@@ -102,6 +103,25 @@ public class CompilationHelper
             .OfType<EnumDeclarationSyntax>().Count();
 
         return hasClass == 0 && hasEnum > 0;
+    }
+
+    /// <summary>
+    /// 是否为静态类
+    /// </summary>
+    /// <returns></returns>
+    public bool IsStatic()
+    {
+        return ClassNode?.Modifiers.Any(SyntaxKind.StaticKeyword) ?? false;
+    }
+
+    public bool IsAbstract()
+    {
+        return ClassNode?.Modifiers.Any(SyntaxKind.AbstractKeyword) ?? false;
+    }
+
+    public bool IsEntityClass()
+    {
+        return !IsStatic() && !IsEnum() && !IsAbstract();
     }
 
     /// <summary>
@@ -300,9 +320,6 @@ public class CompilationHelper
     {
         if (SyntaxTree != null && SyntaxRoot != null)
         {
-            ClassDeclarationSyntax classNode = SyntaxRoot.DescendantNodes()
-                .OfType<ClassDeclarationSyntax>().First();
-
             TypeSyntax typeName = SyntaxFactory.ParseTypeName(newImplementContent);
             SimpleBaseTypeSyntax baseType = SyntaxFactory.SimpleBaseType(typeName);
 
@@ -315,8 +332,8 @@ public class CompilationHelper
                   .WithTrailingTrivia(SyntaxFactory.LineFeed)
                   .WithColonToken(newColonToken);
 
-            ClassDeclarationSyntax newInterfaceNode = classNode.WithBaseList(newBaseList);
-            SyntaxRoot = SyntaxRoot.ReplaceNode(classNode, newInterfaceNode);
+            ClassDeclarationSyntax newInterfaceNode = ClassNode!.WithBaseList(newBaseList);
+            SyntaxRoot = SyntaxRoot.ReplaceNode(ClassNode, newInterfaceNode);
 
         }
     }
@@ -329,10 +346,7 @@ public class CompilationHelper
     {
         if (SyntaxTree != null && SyntaxRoot != null)
         {
-            ClassDeclarationSyntax classNode = SyntaxRoot.DescendantNodes()
-                .OfType<ClassDeclarationSyntax>().First();
-
-            var methodDeclaration = classNode.DescendantNodes().OfType<MethodDeclarationSyntax>().FirstOrDefault();
+            var methodDeclaration = ClassNode!.DescendantNodes().OfType<MethodDeclarationSyntax>().FirstOrDefault();
             if (methodDeclaration != null)
             {
                 propertyContent = $"    {propertyContent}" + Environment.NewLine;
@@ -372,9 +386,7 @@ public class CompilationHelper
     /// <returns></returns>
     public string? GetParentClassName()
     {
-        ClassDeclarationSyntax? classNode = SyntaxTree!.GetCompilationUnitRoot().DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
-
-        return classNode?.BaseList?.Types.FirstOrDefault()?.ToString();
+        return ClassNode?.BaseList?.Types.FirstOrDefault()?.ToString();
     }
 
     /// <summary>
@@ -384,9 +396,8 @@ public class CompilationHelper
     /// <returns></returns>
     public List<AttributeSyntax>? GetClassAttribution(string? name = null)
     {
-        ClassDeclarationSyntax? classNode = SyntaxTree!.GetCompilationUnitRoot().DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
 
-        List<AttributeSyntax>? classAttribution = classNode?.AttributeLists.SelectMany(a => a.Attributes).ToList();
+        List<AttributeSyntax>? classAttribution = ClassNode?.AttributeLists.SelectMany(a => a.Attributes).ToList();
 
         if (name != null)
         {

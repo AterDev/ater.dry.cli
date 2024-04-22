@@ -1,9 +1,4 @@
-﻿using Application.Implement;
-using Application.Models;
-
-using AterStudio.Manager;
-
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace AterStudio.Controllers;
 

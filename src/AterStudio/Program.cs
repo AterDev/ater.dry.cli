@@ -3,9 +3,6 @@ using System.Text.Encodings.Web;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
 
-using Application.Implement;
-using Application.Manager;
-
 using AterStudio;
 using AterStudio.Advance;
 using AterStudio.Manager;

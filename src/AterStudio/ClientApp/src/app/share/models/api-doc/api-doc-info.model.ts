@@ -20,6 +20,10 @@ export interface ApiDocInfo {
    */
   path: string;
   /**
+   * 生成路径
+   */
+  localPath?: string | null;
+  /**
    * 项目
    */
   project?: Project | null;

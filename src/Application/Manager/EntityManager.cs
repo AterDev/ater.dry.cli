@@ -66,7 +66,7 @@ public partial class EntityManager(ContextBase dbContext, ProjectContext project
                     // 解析
                     compilation.AddSyntaxTree(content);
                     // 如果是枚举类，则忽略
-                    if (compilation.IsEnum())
+                    if (!compilation.IsEntityClass())
                     {
                         continue;
                     }
