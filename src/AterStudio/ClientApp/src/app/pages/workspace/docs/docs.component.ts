@@ -224,7 +224,6 @@ export class DocsComponent implements OnInit {
     if (this.addForm.valid) {
       const data = this.addForm.value as ApiDocInfo;
       data.projectId = this.projectId;
-      console.log(data);
       this.service.add(data)
         .subscribe(res => {
           if (res) {
@@ -382,8 +381,6 @@ export class DocsComponent implements OnInit {
                     .flat(1)
                     .find((a) => a?.router == this.currentApi?.router);
 
-                  console.log(updateContent);
-
                   if (updateContent) {
                     this.currentApi = updateContent;
                   }
@@ -439,12 +436,9 @@ export class DocsComponent implements OnInit {
 
   selectApi(api: RestApiInfo): void {
     this.currentApi = api;
-    console.log(this.currentApi);
-
   }
   selectModel(model: EntityInfo): void {
     this.currentModel = model;
-
   }
 
   showModel(prop: PropertyInfo): void {
