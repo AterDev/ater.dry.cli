@@ -7,7 +7,7 @@ namespace Application.Implement;
 /// </summary>
 public class ProjectContext
 {
-    public Guid? ProjectId { get; set; }
+    public Guid ProjectId { get; set; }
     public Project? Project { get; set; }
     public string? SolutionPath { get; set; }
     public string? SharePath { get; set; }
@@ -15,7 +15,7 @@ public class ProjectContext
     public string? EntityPath { get; set; }
     public string? ApiPath { get; set; }
     public string? Version { get; set; }
-    public string? EntityFrmeworkPath { get; set; }
+    public string? EntityFrameworkPath { get; set; }
 
     public ProjectContext(IHttpContextAccessor httpContextAccessor, ContextBase context)
     {
@@ -40,10 +40,18 @@ public class ProjectContext
                     ApplicationPath = Path.Combine(SolutionPath, Config.ApplicationPath);
                     EntityPath = Path.Combine(SolutionPath, Config.EntityPath);
                     ApiPath = Path.Combine(SolutionPath, Config.ApiPath);
-                    EntityFrmeworkPath = Path.Combine(SolutionPath, Config.EntityFrameworkPath);
+                    EntityFrameworkPath = Path.Combine(SolutionPath, Config.EntityFrameworkPath);
                     Version = AssemblyHelper.GetSolutionVersionAsync(SolutionPath).Result;
                 }
             }
+            else
+            {
+                throw new NullReferenceException("未获取到有效的ProjectId");
+            }
+        }
+        else
+        {
+            throw new NullReferenceException("未获取到有效的ProjectId");
         }
     }
 

@@ -68,9 +68,14 @@ public async Task<ActionResult<${this.modelName}>> Add${this.modelName}Async(${a
 /// <param name="entity"></param>
 /// <returns></returns>
 [HttpPut]
-public async Task<ActionResult<${this.modelName}>> Update${this.modelName}Async(${updateDto} entity)
+public async Task<ActionResult<${this.modelName}>> Update${this.modelName}Async(${updateDto} dto)
 {
-    return await _manager.UpdateAsync(entity);
+    var entity = await manager.GetCurrentAsync(id);
+    if (entity == null)
+    {
+        return NotFound("未找到该对象");
+    }
+    return await _manager.UpdateAsync(entity, dto);
 }
 
 /// <summary>
@@ -92,6 +97,11 @@ public async Task<ActionResult<${this.modelName}>> Get${this.modelName}Async(Gui
 [HttpDelete("{id}")]
 public async Task<ActionResult<${this.modelName}>> Delete${this.modelName}Async(Guid id)
 {
+    var entity = await manager.FindAsync(id);
+    if (entity == null)
+    {
+        return NotFound("未找到该对象");
+    }
     return await _manager.DeleteAsync(id);
 }
     `

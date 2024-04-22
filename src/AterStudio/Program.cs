@@ -5,7 +5,6 @@ using System.Text.Unicode;
 
 using AterStudio;
 using AterStudio.Advance;
-using AterStudio.Manager;
 using AterStudio.Worker;
 
 using Definition.EntityFramework.DBProvider;
@@ -42,7 +41,7 @@ builder.Services.AddScoped<ToolsManager>();
 builder.Services.AddSwaggerGen(c =>
 {
 
-    c.SwaggerDoc("v1", new OpenApiInfo
+    c.SwaggerDoc("client", new OpenApiInfo
     {
         Title = "Ater Studio",
         Description = "API 文档",

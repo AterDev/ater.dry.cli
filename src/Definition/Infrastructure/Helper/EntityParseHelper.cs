@@ -456,7 +456,10 @@ public class EntityParseHelper
             propertyInfo.NavigationName = navigationType.Name;
             propertyInfo.HasMany = hasMany;
 
-            if (navigationType.GetMembers().Any(m => m.Kind == SymbolKind.Property && m.Name == "Id"))
+            var parentClassName = GetParentClassName(navigationType);
+
+            // TODO:暂时用指定名称判断
+            if (parentClassName is "EntityBase" or "IEntityBase")
             {
                 propertyInfo.IsNavigation = true;
             }
@@ -584,6 +587,16 @@ public class EntityParseHelper
         return classSymbol?.BaseType?.Name;
     }
 
+    /// <summary>
+    /// 获取父类
+    /// </summary>
+    /// <param name="typeSymbol"></param>
+    /// <returns></returns>
+    public string? GetParentClassName(INamedTypeSymbol typeSymbol)
+    {
+        return typeSymbol.BaseType?.Name;
+    }
+
     public void GetParentProperties()
     {
         ClassDeclarationSyntax? classDeclarationSyntax = RootNodes!.OfType<ClassDeclarationSyntax>().FirstOrDefault();
@@ -599,6 +612,8 @@ public class EntityParseHelper
         {
         }
     }
+
+
 
     /// <summary>
     /// 获取最初始基类

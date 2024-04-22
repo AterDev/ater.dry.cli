@@ -1,11 +1,10 @@
 ﻿using System.Text;
-
-using Application.Manager;
-using Application.Models;
-
+using Application;
+using Ater.Web.Abstraction;
 using Definition.Entity;
 using Definition.Models;
-
+using Definition.Share.Models.ApiDocInfoDtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AterStudio.Controllers;
@@ -13,25 +12,26 @@ namespace AterStudio.Controllers;
 /// <summary>
 /// api文档
 /// </summary>
-[ApiController]
-[Route("api/[controller]")]
-public class ApiDocController(SwaggerManager manager, ProjectManager project) : ControllerBase
+[AllowAnonymous]
+public class ApiDocInfoController(
+    ApiDocInfoManager manager,
+    IUserContext user,
+    ProjectContext project,
+    ILogger<ApiDocInfoController> logger
+    ) : ClientControllerBase<ApiDocInfoManager>(manager, user, logger)
 {
-    private readonly SwaggerManager _manager = manager;
-    private readonly ProjectManager _project = project;
+    private readonly ProjectContext _project = project;
 
     /// <summary>
     /// 获取项目文档
     /// </summary>
-    /// <param name="id">项目id</param>
     /// <returns></returns>
-    [HttpGet("all/{id}")]
-    public async Task<ActionResult<List<ApiDocInfo>>> ListAsync([FromRoute] Guid id)
+    [HttpGet]
+    public async Task<ActionResult<List<ApiDocInfoItemDto>>> ListAsync()
     {
-        var project = await _project.GetProjectAsync(id);
-        return project == null
-            ? NotFound("不存在的项目")
-            : _manager.FindAll(project);
+        var filter = new ApiDocInfoFilterDto { PageSize = 999, ProjectId = _project.ProjectId };
+        var pager = await manager.FilterAsync(filter);
+        return pager.Data;
     }
 
     /// <summary>
@@ -42,10 +42,10 @@ public class ApiDocController(SwaggerManager manager, ProjectManager project) : 
     [HttpGet("{id}")]
     public async Task<ActionResult<ApiDocContent?>> GetApiDocContentAsync([FromRoute] Guid id)
     {
-        var res = await _manager.GetContentAsync(id);
+        var res = await manager.GetContentAsync(id);
         if (res == null)
         {
-            return Problem(_manager.ErrorMsg);
+            return Problem(manager.ErrorMsg);
         }
         return res;
     }
@@ -59,9 +59,8 @@ public class ApiDocController(SwaggerManager manager, ProjectManager project) : 
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FileContentResult))]
     public async Task<ActionResult> ExportAsync([FromRoute] Guid id)
     {
-        var content = await _manager.ExportDocAsync(id);
+        var content = await manager.ExportDocAsync(id);
         return File(Encoding.UTF8.GetBytes(content), "application/octet-stream", "api-doc.md");
-
     }
 
 
@@ -71,26 +70,27 @@ public class ApiDocController(SwaggerManager manager, ProjectManager project) : 
     /// <param name="apiDocInfo"></param>
     /// <returns></returns>
     [HttpPost]
-    public ActionResult<ApiDocInfo> Add(ApiDocInfo apiDocInfo)
+    public async Task<ActionResult<ApiDocInfo>> AddAsync(ApiDocInfoAddDto apiDocInfo)
     {
-        return _manager.AddApiDoc(apiDocInfo);
+        var entity = await manager.CreateNewEntityAsync(apiDocInfo);
+        return await manager.AddAsync(entity);
     }
 
     /// <summary>
     ///  更新
     /// </summary>
     /// <param name="id"></param>
-    /// <param name="apiDocInfo"></param>
+    /// <param name="dto"></param>
     /// <returns></returns>
     [HttpPut("{id}")]
-    public ActionResult<ApiDocInfo> Update([FromRoute] Guid id, ApiDocInfo apiDocInfo)
+    public async Task<ActionResult<ApiDocInfo>> UpdateAsync([FromRoute] Guid id, ApiDocInfoUpdateDto dto)
     {
-        var res = _manager.UpdateApiDoc(id, apiDocInfo);
-        if (res == null)
+        var entity = await manager.GetCurrentAsync(id);
+        if (entity == null)
         {
             return NotFound("未找到该对象");
         }
-        return res;
+        return await manager.UpdateAsync(entity, dto);
     }
 
     /// <summary>
@@ -99,9 +99,14 @@ public class ApiDocController(SwaggerManager manager, ProjectManager project) : 
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpDelete("{id}")]
-    public bool Delete([FromRoute] Guid id)
+    public async Task<ActionResult<ApiDocInfo?>> Delete([FromRoute] Guid id)
     {
-        return _manager.Delete(id);
+        var entity = await manager.FindAsync(id);
+        if (entity == null)
+        {
+            return NotFound("未找到该对象");
+        }
+        return await manager.DeleteAsync(entity);
     }
 
     /// <summary>
@@ -112,6 +117,6 @@ public class ApiDocController(SwaggerManager manager, ProjectManager project) : 
     [HttpPost("component")]
     public NgComponentInfo CreateUIComponent(CreateUIComponentDto dto)
     {
-        return _manager.CreateUIComponent(dto);
+        return manager.CreateUIComponent(dto);
     }
 }

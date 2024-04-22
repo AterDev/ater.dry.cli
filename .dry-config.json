@@ -1,0 +1,19 @@
+{
+  "RootPath": "./",
+  "IsLight": false,
+  "ProjectId": "485ff1ce-3ad0-4723-86b1-d2c399be3c1b",
+  "DtoPath": "src\\Definition\\Share",
+  "EntityPath": "src\\Definition\\Entity",
+  "DbContextPath": "src\\Definition\\EntityFramework",
+  "ApplicationPath": "src\\Application",
+  "ApiPath": "src\\AterStudio",
+  "IdStyle": "Id",
+  "IdType": "Guid",
+  "CreatedTimeName": "CreatedTime",
+  "UpdatedTimeName": "UpdatedTime",
+  "IsSplitController": false,
+  "ControllerType": 0,
+  "Version": "8.0.0",
+  "WebAppPath": null,
+  "SolutionType": 0
+}

@@ -1,6 +1,6 @@
 import { SolutionType } from '../enum/solution-type.model';
 import { EntityInfo } from '../entity-info.model';
-import { ApiDocInfo } from '../api-doc/api-doc-info.model';
+import { ApiDocInfo } from '../api-doc-info/api-doc-info.model';
 import { ConfigData } from '../advance/config-data.model';
 import { TemplateFile } from '../project/template-file.model';
 /**

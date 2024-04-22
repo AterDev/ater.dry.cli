@@ -297,9 +297,9 @@ public class DtoCodeGenerate : GenerateBase
         return [
         "global using System;",
         "global using System.ComponentModel.DataAnnotations;",
-        "global using {AssemblyName}.Models;",
+        $"global using {AssemblyName}.Models;",
         "global using Ater.Web.Core.Models;",
-        "global using {EntityInfo.NamespaceName};"
+        $"global using {EntityInfo.NamespaceName};"
         ];
     }
 }

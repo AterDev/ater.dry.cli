@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis;
 
 using Project = Definition.Entity.Project;
 
-namespace AterStudio.Manager;
+namespace Application.Manager;
 
 public partial class EntityManager(ContextBase dbContext, ProjectContext projectContext)
 {
@@ -32,14 +32,9 @@ public partial class EntityManager(ContextBase dbContext, ProjectContext project
 
             if (!string.IsNullOrWhiteSpace(serviceName))
             {
-                Console.WriteLine(serviceName);
-
                 servicePath = Path.Combine(_projectContext.SolutionPath!, Config.MicroservicePath, serviceName);
                 entityPath = Path.Combine(servicePath, "Definition", "Entity");
             }
-
-
-            Console.WriteLine(entityPath);
 
             // get files in directory
             List<string> filePaths = [.. Directory.GetFiles(entityPath, "*.cs", SearchOption.AllDirectories)];

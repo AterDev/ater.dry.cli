@@ -3,10 +3,11 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { ApiDocInfo } from 'src/app/share/models/api-doc-info.model';
+import { ApiDocInfoItemDto } from 'src/app/share/models/api-doc-info/api-doc-info-item-dto.model';
+import { CreateUIComponentDto } from 'src/app/share/models/api-doc-info/create-uicomponent-dto.model';
+import { NgComponentInfo } from 'src/app/share/models/api-doc-info/ng-component-info.model';
 import { ApiDocTag } from 'src/app/share/models/api-doc-tag.model';
-import { ApiDocInfo } from 'src/app/share/models/api-doc/api-doc-info.model';
-import { CreateUIComponentDto } from 'src/app/share/models/api-doc/create-uicomponent-dto.model';
-import { NgComponentInfo } from 'src/app/share/models/api-doc/ng-component-info.model';
 import { EntityInfo } from 'src/app/share/models/entity-info.model';
 import { ComponentType } from 'src/app/share/models/enum/component-type.model';
 import { LanguageType } from 'src/app/share/models/enum/language-type.model';
@@ -19,7 +20,7 @@ import { PropertyInfo } from 'src/app/share/models/property-info.model';
 import { RestApiGroup } from 'src/app/share/models/rest-api-group.model';
 import { RestApiInfo } from 'src/app/share/models/rest-api-info.model';
 import { ProjectStateService } from 'src/app/share/project-state.service';
-import { ApiDocService } from 'src/app/share/services/api-doc.service';
+import { ApiDocInfoService } from 'src/app/share/services/api-doc-info.service';
 import { EntityService } from 'src/app/share/services/entity.service';
 import { ProjectService } from 'src/app/share/services/project.service';
 
@@ -48,8 +49,8 @@ export class DocsComponent implements OnInit {
   /**
    * 文档列表
    */
-  docs = [] as ApiDocInfo[];
-  currentDoc: ApiDocInfo | null = null;
+  docs = [] as ApiDocInfoItemDto[];
+  currentDoc: ApiDocInfoItemDto | null = null;
   newDoc = {} as ApiDocInfo;
   addForm!: FormGroup;
   editForm!: FormGroup;
@@ -95,7 +96,7 @@ export class DocsComponent implements OnInit {
   constructor(
     public projectSrv: ProjectService,
     public projectState: ProjectStateService,
-    public service: ApiDocService,
+    public service: ApiDocInfoService,
     public entitySrv: EntityService,
     public router: Router,
     public dialog: MatDialog,
@@ -168,7 +169,7 @@ export class DocsComponent implements OnInit {
   }
 
   getDocs(): void {
-    this.service.list(this.projectId)
+    this.service.list()
       .subscribe({
         next: (res) => {
           if (res) {

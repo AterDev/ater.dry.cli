@@ -77,51 +77,62 @@
         }
       }
     },
-    "/api/ApiDoc/all/{id}": {
+    "/api/ApiDocInfo": {
       "get": {
         "tags": [
-          "ApiDoc"
+          "ApiDocInfo"
         ],
         "summary": "获取项目文档",
-        "operationId": "ApiDoc_List",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "项目id",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
+        "operationId": "ApiDocInfo_List",
         "responses": {
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ApiDocInfo"
-                  }
-                }
-              },
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ApiDocInfo"
+                    "$ref": "#/components/schemas/ApiDocInfoItemDto"
                   }
                 }
-              },
-              "text/json": {
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "ApiDocInfo"
+        ],
+        "summary": "添加",
+        "operationId": "ApiDocInfo_Add",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiDocInfoAddDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiDocInfoAddDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiDocInfoAddDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ApiDocInfo"
-                  }
+                  "$ref": "#/components/schemas/ApiDocInfo"
                 }
               }
             }
@@ -129,13 +140,13 @@
         }
       }
     },
-    "/api/ApiDoc/{id}": {
+    "/api/ApiDocInfo/{id}": {
       "get": {
         "tags": [
-          "ApiDoc"
+          "ApiDocInfo"
         ],
         "summary": "获取某个文档信息",
-        "operationId": "ApiDoc_GetApiDocContent",
+        "operationId": "ApiDocInfo_GetApiDocContent",
         "parameters": [
           {
             "name": "id",
@@ -152,17 +163,7 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiDocContent"
-                }
-              },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiDocContent"
-                }
-              },
-              "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ApiDocContent"
                 }
@@ -173,10 +174,10 @@
       },
       "put": {
         "tags": [
-          "ApiDoc"
+          "ApiDocInfo"
         ],
         "summary": "更新",
-        "operationId": "ApiDoc_Update",
+        "operationId": "ApiDocInfo_Update",
         "parameters": [
           {
             "name": "id",
@@ -194,17 +195,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ApiDocInfo"
+                "$ref": "#/components/schemas/ApiDocInfoUpdateDto"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/ApiDocInfo"
+                "$ref": "#/components/schemas/ApiDocInfoUpdateDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/ApiDocInfo"
+                "$ref": "#/components/schemas/ApiDocInfoUpdateDto"
               }
             }
           }
@@ -213,17 +214,7 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiDocInfo"
-                }
-              },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiDocInfo"
-                }
-              },
-              "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ApiDocInfo"
                 }
@@ -234,10 +225,10 @@
       },
       "delete": {
         "tags": [
-          "ApiDoc"
+          "ApiDocInfo"
         ],
         "summary": "删除",
-        "operationId": "ApiDoc_Delete",
+        "operationId": "ApiDocInfo_Delete",
         "parameters": [
           {
             "name": "id",
@@ -254,19 +245,9 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
               "application/json": {
                 "schema": {
-                  "type": "boolean"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "boolean"
+                  "$ref": "#/components/schemas/ApiDocInfo"
                 }
               }
             }
@@ -274,13 +255,13 @@
         }
       }
     },
-    "/api/ApiDoc/export/{id}": {
+    "/api/ApiDocInfo/export/{id}": {
       "get": {
         "tags": [
-          "ApiDoc"
+          "ApiDocInfo"
         ],
         "summary": "导出markdown文档",
-        "operationId": "ApiDoc_Export",
+        "operationId": "ApiDocInfo_Export",
         "parameters": [
           {
             "name": "id",
@@ -297,19 +278,7 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              },
               "application/json": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              },
-              "text/json": {
                 "schema": {
                   "type": "string",
                   "format": "binary"
@@ -320,64 +289,13 @@
         }
       }
     },
-    "/api/ApiDoc": {
+    "/api/ApiDocInfo/component": {
       "post": {
         "tags": [
-          "ApiDoc"
-        ],
-        "summary": "添加",
-        "operationId": "ApiDoc_Add",
-        "requestBody": {
-          "description": "",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApiDocInfo"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApiDocInfo"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApiDocInfo"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiDocInfo"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiDocInfo"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiDocInfo"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/ApiDoc/component": {
-      "post": {
-        "tags": [
-          "ApiDoc"
+          "ApiDocInfo"
         ],
         "summary": "生成页面组件",
-        "operationId": "ApiDoc_CreateUIComponent",
+        "operationId": "ApiDocInfo_CreateUIComponent",
         "requestBody": {
           "description": "",
           "content": {
@@ -402,17 +320,7 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/NgComponentInfo"
-                }
-              },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/NgComponentInfo"
-                }
-              },
-              "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/NgComponentInfo"
                 }
@@ -1978,6 +1886,103 @@
         "additionalProperties": false,
         "description": "接口文档"
       },
+      "ApiDocInfoAddDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 100,
+            "type": "string",
+            "description": "文档名称"
+          },
+          "description": {
+            "maxLength": 1000,
+            "type": "string",
+            "description": "文档描述",
+            "nullable": true
+          },
+          "path": {
+            "maxLength": 300,
+            "type": "string",
+            "description": "文档地址"
+          },
+          "localPath": {
+            "maxLength": 200,
+            "type": "string",
+            "description": "生成路径",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "接口文档添加时请求结构"
+      },
+      "ApiDocInfoItemDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 100,
+            "type": "string",
+            "description": "文档名称"
+          },
+          "path": {
+            "maxLength": 300,
+            "type": "string",
+            "description": "文档地址"
+          },
+          "description": {
+            "maxLength": 1000,
+            "type": "string",
+            "description": "文档描述",
+            "nullable": true
+          },
+          "localPath": {
+            "maxLength": 200,
+            "type": "string",
+            "description": "生成路径",
+            "nullable": true
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "接口文档列表元素"
+      },
+      "ApiDocInfoUpdateDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 100,
+            "type": "string",
+            "description": "文档名称",
+            "nullable": true
+          },
+          "description": {
+            "maxLength": 1000,
+            "type": "string",
+            "description": "文档描述",
+            "nullable": true
+          },
+          "path": {
+            "maxLength": 300,
+            "type": "string",
+            "description": "文档地址",
+            "nullable": true
+          },
+          "localPath": {
+            "maxLength": 200,
+            "type": "string",
+            "description": "生成路径",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "接口文档更新时请求结构"
+      },
       "ApiDocTag": {
         "type": "object",
         "properties": {
@@ -3090,10 +3095,6 @@
       "description": "高级功能"
     },
     {
-      "name": "ApiDoc",
-      "description": "api文档"
-    },
-    {
       "name": "Entity",
       "description": "实体"
     },
@@ -3108,6 +3109,10 @@
     {
       "name": "Tools",
       "description": "Tools"
+    },
+    {
+      "name": "ApiDocInfo",
+      "description": "api文档"
     }
   ]
 }

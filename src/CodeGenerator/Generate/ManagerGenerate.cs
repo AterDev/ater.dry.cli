@@ -1,9 +1,3 @@
-using Definition;
-using Definition.Entity;
-using Definition.Infrastructure;
-using Definition.Infrastructure.Helper;
-using Definition.Infrastructure.Utils;
-
 namespace CodeGenerator.Generate;
 
 /// <summary>
@@ -175,6 +169,7 @@ public class ManagerGenerate : GenerateBase
         [
             $"global using {entityProjectNamespace};",
             $"global using {entityNamespace};",
+            $"global using {ApplicationNamespace}.Manager;",
             ""
         ];
     }
