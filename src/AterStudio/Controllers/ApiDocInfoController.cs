@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using Application;
 using Ater.Web.Abstraction;
 using Definition.Entity;
 using Definition.Models;
@@ -15,12 +14,12 @@ namespace AterStudio.Controllers;
 [AllowAnonymous]
 public class ApiDocInfoController(
     ApiDocInfoManager manager,
-    IUserContext user,
     ProjectContext project,
     ILogger<ApiDocInfoController> logger
-    ) : ClientControllerBase<ApiDocInfoManager>(manager, user, logger)
+    ) : RestControllerBase()
 {
     private readonly ProjectContext _project = project;
+    private readonly ILogger<ApiDocInfoController> logger = logger;
 
     /// <summary>
     /// 获取项目文档

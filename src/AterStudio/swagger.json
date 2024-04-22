@@ -3095,6 +3095,10 @@
       "description": "高级功能"
     },
     {
+      "name": "ApiDocInfo",
+      "description": "api文档"
+    },
+    {
       "name": "Entity",
       "description": "实体"
     },
@@ -3109,10 +3113,6 @@
     {
       "name": "Tools",
       "description": "Tools"
-    },
-    {
-      "name": "ApiDocInfo",
-      "description": "api文档"
     }
   ]
 }

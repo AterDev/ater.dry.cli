@@ -2,13 +2,12 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
-
+using Application;
 using AterStudio;
-using AterStudio.Advance;
 using AterStudio.Worker;
 
 using Definition.EntityFramework.DBProvider;
-
+using EntityFramework.DBProvider;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.EntityFrameworkCore;
@@ -21,21 +20,25 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ProjectContext>();
 
-builder.Services.AddDbContext<ContextBase>(options =>
+var path = Path.Combine(AssemblyHelper.GetStudioPath(), "ater.dry.db");
+builder.Services.AddDbContext<CommandDbContext>(options =>
 {
-    var path = Path.Combine(AssemblyHelper.GetStudioPath(), "ater.dry.db");
+
     options.UseSqlite($"DataSource={path}", _ =>
     {
         _.MigrationsAssembly("AterStudio");
     });
 });
 
-builder.Services.AddScoped<ProjectManager>();
-builder.Services.AddScoped<AdvanceManager>();
-builder.Services.AddScoped<EntityManager>();
-builder.Services.AddScoped<SwaggerManager>();
-builder.Services.AddScoped<FeatureManager>();
-builder.Services.AddScoped<ToolsManager>();
+builder.Services.AddDbContext<QueryDbContext>(options =>
+{
+    options.UseSqlite($"DataSource={path}", _ =>
+    {
+        _.MigrationsAssembly("AterStudio");
+    });
+});
+
+builder.Services.AddManager();
 
 #if DEBUG 
 builder.Services.AddSwaggerGen(c =>
@@ -102,7 +105,6 @@ app.UseStaticFiles();
 app.UseRouting();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
-
 
 using (app)
 {

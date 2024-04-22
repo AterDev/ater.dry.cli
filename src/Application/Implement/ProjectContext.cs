@@ -49,10 +49,6 @@ public class ProjectContext
                 throw new NullReferenceException("未获取到有效的ProjectId");
             }
         }
-        else
-        {
-            throw new NullReferenceException("未获取到有效的ProjectId");
-        }
     }
 
     public static string GetProjectRootPath(string projectPath)

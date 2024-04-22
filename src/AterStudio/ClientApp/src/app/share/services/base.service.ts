@@ -9,7 +9,7 @@ import { environment } from 'src/environments/environment';
 })
 export class BaseService {
   public baseUrl: string | null;
-  private isMobile = false;
+  public isMobile = false;
   constructor(
     protected http: HttpClient,
     @Inject('BASE_URL') baseUrl: string
@@ -41,7 +41,7 @@ export class BaseService {
     };
     return this.http.request(method, url, options);
   }
-  
+
   openFile(blob: Blob, filename: string) {
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
@@ -54,7 +54,6 @@ export class BaseService {
     return new HttpHeaders({
       Accept: 'application/json',
       Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
-      projectId: localStorage.getItem('projectId') ?? ''
     });
   }
   isMoblie(): boolean {
