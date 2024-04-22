@@ -330,414 +330,13 @@
         }
       }
     },
-    "/api/Entity/{id}": {
+    "/api/ApiDocInfo/generateRequest/{id}": {
       "get": {
         "tags": [
-          "Entity"
-        ],
-        "operationId": "Entity_List",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "serviceName",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/EntityFile"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/EntityFile"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/EntityFile"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Entity/dtos": {
-      "get": {
-        "tags": [
-          "Entity"
-        ],
-        "summary": "s\r\n            获取dtos",
-        "operationId": "Entity_GetDtos",
-        "parameters": [
-          {
-            "name": "entityFilePath",
-            "in": "query",
-            "description": "",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/EntityFile"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/EntityFile"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/EntityFile"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Entity/dto": {
-      "post": {
-        "tags": [
-          "Entity"
-        ],
-        "summary": "创建DTO",
-        "operationId": "Entity_CreateDto",
-        "parameters": [
-          {
-            "name": "entityFilePath",
-            "in": "query",
-            "description": "",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "name",
-            "in": "query",
-            "description": "",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "summary",
-            "in": "query",
-            "description": "",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Entity"
-        ],
-        "summary": "更新内容",
-        "operationId": "Entity_UpdateDtoContent",
-        "requestBody": {
-          "description": "",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateDtoDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateDtoDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateDtoDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Entity": {
-      "delete": {
-        "tags": [
-          "Entity"
-        ],
-        "summary": "清理解决方案",
-        "operationId": "Entity_CleanSolution",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Entity/fileContent": {
-      "get": {
-        "tags": [
-          "Entity"
-        ],
-        "summary": "获取文件内容 entity/manager",
-        "operationId": "Entity_GetFileContent",
-        "parameters": [
-          {
-            "name": "entityName",
-            "in": "query",
-            "description": "",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "isManager",
-            "in": "query",
-            "description": "是否为manager",
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
-            "name": "moduleName",
-            "in": "query",
-            "description": "",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/EntityFile"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EntityFile"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EntityFile"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Entity/generate": {
-      "post": {
-        "tags": [
-          "Entity"
-        ],
-        "operationId": "Entity_Generate",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GenerateDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GenerateDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/GenerateDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Entity/batch-generate": {
-      "post": {
-        "tags": [
-          "Entity"
-        ],
-        "summary": "批量生成",
-        "operationId": "Entity_BatchGenerate",
-        "requestBody": {
-          "description": "",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/BatchGenerateDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/BatchGenerateDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/BatchGenerateDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Entity/generateRequest/{id}": {
-      "get": {
-        "tags": [
-          "Entity"
+          "ApiDocInfo"
         ],
         "summary": "生成前端请求",
-        "operationId": "Entity_GenerateRequest",
+        "operationId": "ApiDocInfo_GenerateRequest",
         "parameters": [
           {
             "name": "id",
@@ -778,17 +377,7 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
               "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "text/json": {
                 "schema": {
                   "type": "boolean"
                 }
@@ -798,13 +387,13 @@
         }
       }
     },
-    "/api/Entity/generateClientRequest/{id}": {
+    "/api/ApiDocInfo/generateClientRequest/{id}": {
       "get": {
         "tags": [
-          "Entity"
+          "ApiDocInfo"
         ],
         "summary": "生成客户端请求",
-        "operationId": "Entity_GenerateClientRequest",
+        "operationId": "ApiDocInfo_GenerateClientRequest",
         "parameters": [
           {
             "name": "id",
@@ -845,17 +434,7 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
               "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "text/json": {
                 "schema": {
                   "type": "boolean"
                 }
@@ -865,13 +444,322 @@
         }
       }
     },
-    "/api/Entity/generateSync/{id}": {
+    "/api/EntityInfo/{id}": {
+      "get": {
+        "tags": [
+          "EntityInfo"
+        ],
+        "operationId": "EntityInfo_List",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "serviceName",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EntityFile"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/EntityInfo/dtos": {
+      "get": {
+        "tags": [
+          "EntityInfo"
+        ],
+        "summary": "s\r\n            获取dtos",
+        "operationId": "EntityInfo_GetDtos",
+        "parameters": [
+          {
+            "name": "entityFilePath",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EntityFile"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/EntityInfo/dto": {
       "post": {
         "tags": [
-          "Entity"
+          "EntityInfo"
+        ],
+        "summary": "创建DTO",
+        "operationId": "EntityInfo_CreateDto",
+        "parameters": [
+          {
+            "name": "entityFilePath",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "summary",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "EntityInfo"
+        ],
+        "summary": "更新内容",
+        "operationId": "EntityInfo_UpdateDtoContent",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDtoDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDtoDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDtoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/EntityInfo": {
+      "delete": {
+        "tags": [
+          "EntityInfo"
+        ],
+        "summary": "清理解决方案",
+        "operationId": "EntityInfo_CleanSolution",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/EntityInfo/fileContent": {
+      "get": {
+        "tags": [
+          "EntityInfo"
+        ],
+        "summary": "获取文件内容 entity/manager",
+        "operationId": "EntityInfo_GetFileContent",
+        "parameters": [
+          {
+            "name": "entityName",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "isManager",
+            "in": "query",
+            "description": "是否为manager",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "moduleName",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntityFile"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/EntityInfo/generate": {
+      "post": {
+        "tags": [
+          "EntityInfo"
+        ],
+        "operationId": "EntityInfo_Generate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/EntityInfo/batch-generate": {
+      "post": {
+        "tags": [
+          "EntityInfo"
+        ],
+        "summary": "批量生成",
+        "operationId": "EntityInfo_BatchGenerate",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchGenerateDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchGenerateDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchGenerateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/EntityInfo/generateSync/{id}": {
+      "post": {
+        "tags": [
+          "EntityInfo"
         ],
         "summary": "同步ng页面",
-        "operationId": "Entity_GenerateSync",
+        "operationId": "EntityInfo_GenerateSync",
         "parameters": [
           {
             "name": "id",
@@ -888,17 +776,7 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
               "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "text/json": {
                 "schema": {
                   "type": "boolean"
                 }
@@ -908,24 +786,14 @@
         }
       }
     },
-    "/api/Entity/generateNgModule/{id}": {
+    "/api/EntityInfo/generateNgModule": {
       "post": {
         "tags": [
-          "Entity"
+          "EntityInfo"
         ],
         "summary": "生成NG组件模块",
-        "operationId": "Entity_GenerateNgModule",
+        "operationId": "EntityInfo_GenerateNgModule",
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
           {
             "name": "entityName",
             "in": "query",
@@ -947,17 +815,7 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
               "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "text/json": {
                 "schema": {
                   "type": "boolean"
                 }
@@ -3099,7 +2957,7 @@
       "description": "api文档"
     },
     {
-      "name": "Entity",
+      "name": "EntityInfo",
       "description": "实体"
     },
     {

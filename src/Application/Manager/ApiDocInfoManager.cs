@@ -97,6 +97,7 @@ public class ApiDocInfoManager(
     public async Task<string> ExportDocAsync(Guid id)
     {
         var apiDocInfo = await FindAsync(id);
+        if (apiDocInfo == null) return string.Empty;
         var path = apiDocInfo.Path;
         string openApiContent = "";
         if (path.StartsWith("http://") || path.StartsWith("https://"))
@@ -211,4 +212,38 @@ public class ApiDocInfoManager(
         };
     }
 
+    /// <summary>
+    /// 生成前端请求服务
+    /// </summary>
+    /// <param name="doc"></param>
+    /// <param name="webPath"></param>
+    /// <param name="type"></param>
+    /// <param name="swaggerPath"></param>
+    /// <returns></returns>
+    public async Task GenerateRequestAsync(ApiDocInfo doc, string webPath, RequestLibType type, string? swaggerPath = null)
+    {
+        // 保存路径
+        doc.LocalPath = webPath;
+        await SaveChangesAsync();
+
+        swaggerPath ??= Path.Combine(_project.ApiPath!, "swagger.json");
+        await CommandRunner.GenerateRequestAsync(swaggerPath, webPath, type);
+    }
+
+    /// <summary>
+    /// 生成csharp 客户端请求服务
+    /// </summary>
+    /// <param name="doc"></param>
+    /// <param name="webPath"></param>
+    /// <param name="type"></param>
+    /// <param name="swaggerPath"></param>
+    /// <returns></returns>
+    public async Task GenerateClientRequestAsync(ApiDocInfo doc, string webPath, LanguageType type, string? swaggerPath = null)
+    {
+        // 保存路径
+        doc.LocalPath = webPath;
+        await SaveChangesAsync();
+        swaggerPath ??= Path.Combine(_project.ApiPath!, "swagger.json");
+        await CommandRunner.GenerateCSharpApiClientAsync(swaggerPath, webPath, type);
+    }
 }

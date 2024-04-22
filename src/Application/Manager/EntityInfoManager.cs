@@ -1,16 +1,19 @@
 ﻿using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
-
+using Definition.Share.Models.EntityInfoDtos;
 using Microsoft.CodeAnalysis;
 
 using Project = Definition.Entity.Project;
 
 namespace Application.Manager;
 
-public partial class EntityManager(CommandDbContext dbContext, ProjectContext projectContext)
+public partial class EntityInfoManager(
+    DataAccessContext<EntityInfo> dataContext,
+    ILogger<EntityInfoManager> logger,
+    ProjectContext projectContext)
+    : ManagerBase<EntityInfo, EntityInfoUpdateDto, EntityInfoFilterDto, EntityInfoItemDto>(dataContext, logger)
 {
-    private readonly CommandDbContext _dbContext = dbContext;
     private readonly ProjectContext _projectContext = projectContext;
 
     /// <summary>
@@ -340,15 +343,6 @@ public partial class EntityManager(CommandDbContext dbContext, ProjectContext pr
         return false;
     }
 
-    public Project? Find(Guid id)
-    {
-        return _dbContext.Projects.Find(id);
-    }
-
-    public bool IsExist(Guid id)
-    {
-        return _dbContext.Projects.Find(id) != null;
-    }
 
     public async Task GenerateAsync(Project project, GenerateDto dto)
     {
@@ -445,19 +439,6 @@ public partial class EntityManager(CommandDbContext dbContext, ProjectContext pr
             default:
                 break;
         }
-    }
-
-    public async Task GenerateRequestAsync(string webPath, RequestLibType type, string? swaggerPath = null)
-    {
-        swaggerPath ??= Path.Combine(_projectContext.ApiPath!, "swagger.json");
-        await CommandRunner.GenerateRequestAsync(swaggerPath, webPath, type);
-    }
-
-
-    public async Task GenerateClientRequestAsync(Project project, string webPath, LanguageType type, string? swaggerPath = null)
-    {
-        swaggerPath ??= Path.Combine(_projectContext.ApiPath!, "swagger.json");
-        await CommandRunner.GenerateCSharpApiClientAsync(swaggerPath, webPath, type);
     }
 
     public async Task GenerateSyncAsync(Project project)

@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
-import { EntityService } from 'src/app/share/services/entity.service';
 import { ProjectStateService } from 'src/app/share/project-state.service';
 import { MatTabChangeEvent } from '@angular/material/tabs';
-import { EntityFile } from 'src/app/share/models/entity/entity-file.model';
+import { EntityInfoService } from 'src/app/share/services/entity-info.service';
+import { EntityFile } from 'src/app/share/models/entity-info/entity-file.model';
 
 @Component({
   selector: 'app-dto',
@@ -29,7 +29,7 @@ export class DtoComponent implements OnInit {
     public route: ActivatedRoute,
     public snb: MatSnackBar,
     public projectState: ProjectStateService,
-    private service: EntityService,
+    private service: EntityInfoService,
     private location: Location
   ) {
     this.name = this.route.snapshot.paramMap.get('name');

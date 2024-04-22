@@ -10,9 +10,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { lastValueFrom } from 'rxjs';
 import { LoginService } from 'src/app/auth/login.service';
 import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confirm-dialog.component';
-import { BatchGenerateDto } from 'src/app/share/models/entity/batch-generate-dto.model';
-import { EntityFile } from 'src/app/share/models/entity/entity-file.model';
-import { GenerateDto } from 'src/app/share/models/entity/generate-dto.model';
+import { BatchGenerateDto } from 'src/app/share/models/entity-info/batch-generate-dto.model';
+import { EntityFile } from 'src/app/share/models/entity-info/entity-file.model';
+import { GenerateDto } from 'src/app/share/models/entity-info/generate-dto.model';
 import { CommandType } from 'src/app/share/models/enum/command-type.model';
 import { ProjectType } from 'src/app/share/models/enum/project-type.model';
 import { RequestLibType } from 'src/app/share/models/enum/request-lib-type.model';
@@ -20,7 +20,7 @@ import { SubProjectInfo } from 'src/app/share/models/feature/sub-project-info.mo
 import { ConfigOptions } from 'src/app/share/models/project/config-options.model';
 import { Project } from 'src/app/share/models/project/project.model';
 import { ProjectStateService } from 'src/app/share/project-state.service';
-import { EntityService } from 'src/app/share/services/entity.service';
+import { EntityInfoService } from 'src/app/share/services/entity-info.service';
 import { ProjectService } from 'src/app/share/services/project.service';
 
 @Component({
@@ -85,7 +85,7 @@ export class IndexComponent implements OnInit {
   constructor(
     public route: ActivatedRoute,
     public router: Router,
-    public service: EntityService,
+    public service: EntityInfoService,
     public projectSrv: ProjectService,
     public projectState: ProjectStateService,
     public dialog: MatDialog,
@@ -459,7 +459,7 @@ export class IndexComponent implements OnInit {
   genNgModule(): void {
     if (this.currentEntity && this.webPath) {
       this.isSync = true;
-      this.service.generateNgModule(this.projectId, this.currentEntity.name!, this.webPath)
+      this.service.generateNgModule(this.currentEntity.name!, this.webPath)
         .subscribe({
           next: (res) => {
             if (res) {
@@ -571,26 +571,6 @@ export class IndexComponent implements OnInit {
     var data = event.source.selectedOptions.selected;
     this.selectedWebProjectIds = data.map<string>(d => d.value);
   }
-  generateRequest(): void {
-    this.isSync = true;
-    const swagger = this.requestForm.get('swagger')?.value as string;
-    const type = this.requestForm.get('type')?.value as number;
-    const path = this.requestForm.get('path')?.value as string;
-    this.service.generateRequest(this.projectId!, path, type, swagger)
-      .subscribe({
-        next: res => {
-          if (res) {
-            this.snb.open('生成成功');
-            this.dialogRef.close();
-          }
-          this.isSync = false;
-        },
-        error: () => {
-          this.isSync = false;
-        }
-      })
-  }
-
   generateSync(): void {
     this.isSync = true;
     this.service.generateSync(this.projectId!)

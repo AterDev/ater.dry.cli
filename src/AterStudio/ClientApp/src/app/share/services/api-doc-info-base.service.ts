@@ -8,6 +8,8 @@ import { ApiDocInfoItemDto } from '../models/api-doc-info/api-doc-info-item-dto.
 import { ApiDocInfo } from '../models/api-doc-info/api-doc-info.model';
 import { ApiDocContent } from '../models/api-doc-info/api-doc-content.model';
 import { NgComponentInfo } from '../models/api-doc-info/ng-component-info.model';
+import { RequestLibType } from '../models/enum/request-lib-type.model';
+import { LanguageType } from '../models/enum/language-type.model';
 
 /**
  * api文档
@@ -75,6 +77,30 @@ export class ApiDocInfoBaseService extends BaseService {
   createUIComponent(data: CreateUIComponentDto): Observable<NgComponentInfo> {
     const _url = `/api/ApiDocInfo/component`;
     return this.request<NgComponentInfo>('post', _url, data);
+  }
+
+  /**
+   * 生成前端请求
+   * @param id 
+   * @param webPath 
+   * @param type 
+   * @param swaggerPath 
+   */
+  generateRequest(id: string, webPath: string | null, type: RequestLibType | null, swaggerPath: string | null): Observable<boolean> {
+    const _url = `/api/ApiDocInfo/generateRequest/${id}?webPath=${webPath}&type=${type}&swaggerPath=${swaggerPath}`;
+    return this.request<boolean>('get', _url);
+  }
+
+  /**
+   * 生成客户端请求
+   * @param id 
+   * @param webPath 
+   * @param type 
+   * @param swaggerPath 
+   */
+  generateClientRequest(id: string, webPath: string | null, type: LanguageType | null, swaggerPath: string | null): Observable<boolean> {
+    const _url = `/api/ApiDocInfo/generateClientRequest/${id}?webPath=${webPath}&type=${type}&swaggerPath=${swaggerPath}`;
+    return this.request<boolean>('get', _url);
   }
 
 }

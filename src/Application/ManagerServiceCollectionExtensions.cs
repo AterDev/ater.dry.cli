@@ -7,7 +7,7 @@ public static partial class ManagerServiceCollectionExtensions
     {
         services.AddScoped(typeof(DataAccessContext<>));
         services.AddScoped(typeof(ApiDocInfoManager));
-        services.AddScoped(typeof(EntityManager));
+        services.AddScoped(typeof(EntityInfoManager));
         services.AddScoped(typeof(FeatureManager));
         services.AddScoped(typeof(ProjectManager));
         services.AddScoped(typeof(ToolsManager));

@@ -118,4 +118,47 @@ public class ApiDocInfoController(
     {
         return manager.CreateUIComponent(dto);
     }
+
+    /// <summary>
+    /// 生成前端请求
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="webPath"></param>
+    /// <param name="type"></param>
+    /// <param name="swaggerPath"></param>
+    /// <returns></returns>
+    [HttpGet("generateRequest/{id}")]
+    public async Task<ActionResult<bool>> GenerateRequest([FromRoute] Guid id, string webPath, RequestLibType type, string? swaggerPath = null)
+    {
+        if (_project.Project == null)
+        {
+            return NotFound("项目不存在");
+        }
+
+        var entity = await manager.GetCurrentAsync(id);
+        if (entity == null) return NotFound("未找到文档配置");
+        await manager.GenerateRequestAsync(entity, webPath, type, swaggerPath);
+        return true;
+    }
+
+    /// <summary>
+    /// 生成客户端请求
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="webPath"></param>
+    /// <param name="type"></param>
+    /// <param name="swaggerPath"></param>
+    /// <returns></returns>
+    [HttpGet("generateClientRequest/{id}")]
+    public async Task<ActionResult<bool>> GenerateClientRequest([FromRoute] Guid id, string webPath, LanguageType type, string? swaggerPath = null)
+    {
+        if (_project.Project == null)
+        {
+            return NotFound("项目不存在");
+        }
+        var entity = await manager.GetCurrentAsync(id);
+        if (entity == null) return NotFound("未找到文档配置");
+        await manager.GenerateClientRequestAsync(entity, webPath, type, swaggerPath);
+        return true;
+    }
 }

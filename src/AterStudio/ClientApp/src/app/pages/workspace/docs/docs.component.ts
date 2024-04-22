@@ -21,7 +21,7 @@ import { RestApiGroup } from 'src/app/share/models/rest-api-group.model';
 import { RestApiInfo } from 'src/app/share/models/rest-api-info.model';
 import { ProjectStateService } from 'src/app/share/project-state.service';
 import { ApiDocInfoService } from 'src/app/share/services/api-doc-info.service';
-import { EntityService } from 'src/app/share/services/entity.service';
+import { EntityInfoService } from 'src/app/share/services/entity-info.service';
 import { ProjectService } from 'src/app/share/services/project.service';
 
 @Component({
@@ -97,7 +97,7 @@ export class DocsComponent implements OnInit {
     public projectSrv: ProjectService,
     public projectState: ProjectStateService,
     public service: ApiDocInfoService,
-    public entitySrv: EntityService,
+    public entitySrv: EntityInfoService,
     public router: Router,
     public dialog: MatDialog,
     public snb: MatSnackBar
@@ -148,7 +148,6 @@ export class DocsComponent implements OnInit {
 
     // 生成请求表单
     let defaultPath = `\\src\\app\\share`;
-
     if (this.projectState.project?.path?.endsWith(".sln")) {
       defaultPath = this.config?.rootPath! + '\\' + this.config?.apiPath + '\\ClientApp' + defaultPath;
     } else {
@@ -239,6 +238,9 @@ export class DocsComponent implements OnInit {
   }
   openRequestDialog(): void {
     this.requestForm.get('swagger')?.setValue(this.currentDoc?.path);
+    if (this.currentDoc?.localPath) {
+      this.requestForm.get('path')?.setValue(this.currentDoc?.localPath);
+    }
     this.dialogRef = this.dialog.open(this.requestTmpRef, {
       minWidth: 400
     });
@@ -291,7 +293,7 @@ export class DocsComponent implements OnInit {
     const swagger = this.requestForm.get('swagger')?.value as string;
     const type = this.requestForm.get('type')?.value as number;
     const path = this.requestForm.get('path')?.value as string;
-    this.entitySrv.generateRequest(this.projectId!, path, type, swagger)
+    this.service.generateRequest(this.currentDoc?.id!, path, type, swagger)
       .subscribe({
         next: res => {
           if (res) {
@@ -311,7 +313,7 @@ export class DocsComponent implements OnInit {
     const swagger = this.clientRequestForm.get('swagger')?.value as string;
     const type = this.clientRequestForm.get('type')?.value as number;
     const path = this.clientRequestForm.get('path')?.value as string;
-    this.entitySrv.generateClientRequest(this.projectId!, path, type, swagger)
+    this.service.generateClientRequest(this.currentDoc?.id!, path, type, swagger)
       .subscribe({
         next: res => {
           if (res) {

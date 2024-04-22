@@ -1,5 +1,5 @@
-﻿using Definition.Entity;
-
+﻿using Ater.Web.Abstraction;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AterStudio.Controllers;
@@ -7,18 +7,23 @@ namespace AterStudio.Controllers;
 /// <summary>
 ///  实体
 /// </summary>
-[ApiController]
-[Route("api/[controller]")]
-public class EntityController(EntityManager manager) : ControllerBase
+[AllowAnonymous]
+public class EntityInfoController(
+    EntityInfoManager manager,
+    ProjectContext project,
+    ILogger<EntityInfoController> logger
+    ) : RestControllerBase
 {
-    private readonly EntityManager _manager = manager;
+    private readonly EntityInfoManager manager = manager;
+    private readonly ProjectContext _project = project;
+    private readonly ILogger<EntityInfoController> logger = logger;
 
     [HttpGet("{id}")]
     public ActionResult<List<EntityFile>> List([FromRoute] Guid id, string? serviceName)
     {
-        return !_manager.IsExist(id)
+        return _project.Project == null
             ? NotFound("不存在的项目")
-            : _manager.GetEntityFiles(serviceName);
+            : manager.GetEntityFiles(serviceName);
     }
 
     /// <summary>s
@@ -29,7 +34,7 @@ public class EntityController(EntityManager manager) : ControllerBase
     [HttpGet("dtos")]
     public ActionResult<List<EntityFile>> GetDtos(string entityFilePath)
     {
-        return !System.IO.File.Exists(entityFilePath) ? NotFound("不存在的文件") : _manager.GetDtos(entityFilePath);
+        return !System.IO.File.Exists(entityFilePath) ? NotFound("不存在的文件") : manager.GetDtos(entityFilePath);
     }
 
     /// <summary>
@@ -46,7 +51,7 @@ public class EntityController(EntityManager manager) : ControllerBase
         {
             return NotFound("不存在的文件");
         }
-        var res = await _manager.CreateDtoAsync(entityFilePath, name, summary);
+        var res = await manager.CreateDtoAsync(entityFilePath, name, summary);
         return res == null ? BadRequest("创建失败") : res;
     }
 
@@ -57,7 +62,7 @@ public class EntityController(EntityManager manager) : ControllerBase
     [HttpDelete]
     public string CleanSolution()
     {
-        var res = _manager.CleanSolution(out var errorMsg);
+        var res = manager.CleanSolution(out var errorMsg);
         return res ? "清理成功" : errorMsg;
 
     }
@@ -72,7 +77,7 @@ public class EntityController(EntityManager manager) : ControllerBase
     [HttpGet("fileContent")]
     public EntityFile? GetFileContent(string entityName, bool isManager, string? moduleName = null)
     {
-        return _manager.GetFileContent(entityName, isManager, moduleName);
+        return manager.GetFileContent(entityName, isManager, moduleName);
     }
 
 
@@ -84,18 +89,17 @@ public class EntityController(EntityManager manager) : ControllerBase
     [HttpPut("dto")]
     public bool UpdateDtoContent(UpdateDtoDto dto)
     {
-        return _manager.UpdateDtoContent(dto.FileName, dto.Content);
+        return manager.UpdateDtoContent(dto.FileName, dto.Content);
     }
 
     [HttpPost("generate")]
     public async Task<ActionResult<bool>> GenerateAsync(GenerateDto dto)
     {
-        Project? project = _manager.Find(dto.ProjectId);
-        if (project == null)
+        if (_project.Project == null)
         {
             return NotFound("项目不存在");
         }
-        await _manager.GenerateAsync(project, dto);
+        await manager.GenerateAsync(_project.Project, dto);
         return true;
     }
 
@@ -107,55 +111,13 @@ public class EntityController(EntityManager manager) : ControllerBase
     [HttpPost("batch-generate")]
     public async Task<ActionResult<bool>> BatchGenerateAsync(BatchGenerateDto dto)
     {
-        Project? project = _manager.Find(dto.ProjectId);
-        if (project == null)
+        if (_project.Project == null)
         {
             return NotFound("项目不存在");
         }
-        await _manager.BatchGenerateAsync(dto);
+        await manager.BatchGenerateAsync(dto);
         return true;
     }
-
-    /// <summary>
-    /// 生成前端请求
-    /// </summary>
-    /// <param name="id"></param>
-    /// <param name="webPath"></param>
-    /// <param name="type"></param>
-    /// <param name="swaggerPath"></param>
-    /// <returns></returns>
-    [HttpGet("generateRequest/{id}")]
-    public async Task<ActionResult<bool>> GenerateRequest([FromRoute] Guid id, string webPath, RequestLibType type, string? swaggerPath = null)
-    {
-        Project? project = _manager.Find(id);
-        if (project == null)
-        {
-            return NotFound("项目不存在");
-        }
-        await _manager.GenerateRequestAsync(webPath, type, swaggerPath);
-        return true;
-    }
-
-    /// <summary>
-    /// 生成客户端请求
-    /// </summary>
-    /// <param name="id"></param>
-    /// <param name="webPath"></param>
-    /// <param name="type"></param>
-    /// <param name="swaggerPath"></param>
-    /// <returns></returns>
-    [HttpGet("generateClientRequest/{id}")]
-    public async Task<ActionResult<bool>> GenerateClientRequest([FromRoute] Guid id, string webPath, LanguageType type, string? swaggerPath = null)
-    {
-        Project? project = _manager.Find(id);
-        if (project == null)
-        {
-            return NotFound("项目不存在");
-        }
-        await _manager.GenerateClientRequestAsync(project, webPath, type, swaggerPath);
-        return true;
-    }
-
 
     /// <summary>
     /// 同步ng页面
@@ -165,31 +127,31 @@ public class EntityController(EntityManager manager) : ControllerBase
     [HttpPost("generateSync/{id}")]
     public async Task<ActionResult<bool>> GenerateSync([FromRoute] Guid id)
     {
-        Project? project = _manager.Find(id);
-        if (project == null)
+        if (_project.Project == null)
         {
             return NotFound("项目不存在");
         }
-        await _manager.GenerateSyncAsync(project);
+        await manager.GenerateSyncAsync(_project.Project);
         return true;
     }
 
     /// <summary>
     /// 生成NG组件模块
     /// </summary>
-    /// <param name="id"></param>
     /// <param name="entityName"></param>
     /// <param name="rootPath"></param>
     /// <returns></returns>
-    [HttpPost("generateNgModule/{id}")]
-    public async Task<ActionResult<bool>> GenerateNgModuleAsync([FromRoute] Guid id, string entityName, string rootPath)
+    [HttpPost("generateNgModule")]
+    public async Task<ActionResult<bool>> GenerateNgModuleAsync(string entityName, string rootPath)
     {
-        Project? project = _manager.Find(id);
-        if (project == null)
+        if (_project.Project == null)
         {
             return NotFound("项目不存在");
         }
-        await _manager.GenerateNgModuleAsync(entityName, rootPath);
+        _project.Project.FrontPath = rootPath;
+        await manager.SaveChangesAsync();
+
+        await manager.GenerateNgModuleAsync(entityName, rootPath);
         return true;
     }
 
