@@ -7,9 +7,11 @@ namespace Application.Manager;
 /// </summary>
 public class ApiDocInfoManager(
     DataAccessContext<ApiDocInfo> dataContext,
+    ProjectContext project,
     ILogger<ApiDocInfoManager> logger
     ) : ManagerBase<ApiDocInfo, ApiDocInfoUpdateDto, ApiDocInfoFilterDto, ApiDocInfoItemDto>(dataContext, logger)
 {
+    private readonly ProjectContext _project = project;
 
     /// <summary>
     /// 创建待添加实体
@@ -19,6 +21,7 @@ public class ApiDocInfoManager(
     public async Task<ApiDocInfo> CreateNewEntityAsync(ApiDocInfoAddDto dto)
     {
         var entity = dto.MapTo<ApiDocInfoAddDto, ApiDocInfo>();
+        entity.ProjectId = _project.ProjectId;
         return await Task.FromResult(entity);
     }
 

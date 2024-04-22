@@ -22,12 +22,13 @@ public class ProjectContext
         var id = httpContextAccessor.HttpContext?.Request.Headers["projectId"].ToString();
         if (!string.IsNullOrWhiteSpace(id))
         {
-            if (Guid.TryParse(id, out Guid ProjectId))
+            if (Guid.TryParse(id, out Guid projectId))
             {
-                Project = context.Projects.Find(ProjectId);
+                ProjectId = projectId;
+                Project = context.Projects.Find(projectId);
                 if (Project != null)
                 {
-                    Const.PROJECT_ID = ProjectId;
+                    Const.PROJECT_ID = projectId;
                     SolutionPath = GetProjectRootPath(Project.Path);
                     var options = ConfigCommand.ReadConfigFile(SolutionPath);
                     if (options != null)
