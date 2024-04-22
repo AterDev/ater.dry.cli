@@ -17,7 +17,7 @@ public class ProjectContext
     public string? Version { get; set; }
     public string? EntityFrameworkPath { get; set; }
 
-    public ProjectContext(IHttpContextAccessor httpContextAccessor, ContextBase context)
+    public ProjectContext(IHttpContextAccessor httpContextAccessor, CommandDbContext context)
     {
         var id = httpContextAccessor.HttpContext?.Request.Headers["projectId"].ToString();
         if (!string.IsNullOrWhiteSpace(id))

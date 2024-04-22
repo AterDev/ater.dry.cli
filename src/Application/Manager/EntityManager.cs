@@ -8,9 +8,9 @@ using Project = Definition.Entity.Project;
 
 namespace Application.Manager;
 
-public partial class EntityManager(ContextBase dbContext, ProjectContext projectContext)
+public partial class EntityManager(CommandDbContext dbContext, ProjectContext projectContext)
 {
-    private readonly ContextBase _dbContext = dbContext;
+    private readonly CommandDbContext _dbContext = dbContext;
     private readonly ProjectContext _projectContext = projectContext;
 
     /// <summary>

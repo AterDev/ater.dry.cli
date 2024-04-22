@@ -7,10 +7,9 @@ namespace Application.Manager;
 /// </summary>
 public class ApiDocInfoManager(
     DataAccessContext<ApiDocInfo> dataContext,
-    ILogger<ApiDocInfoManager> logger,
-    IUserContext userContext) : ManagerBase<ApiDocInfo, ApiDocInfoUpdateDto, ApiDocInfoFilterDto, ApiDocInfoItemDto>(dataContext, logger)
+    ILogger<ApiDocInfoManager> logger
+    ) : ManagerBase<ApiDocInfo, ApiDocInfoUpdateDto, ApiDocInfoFilterDto, ApiDocInfoItemDto>(dataContext, logger)
 {
-    private readonly IUserContext _userContext = userContext;
 
     /// <summary>
     /// 创建待添加实体

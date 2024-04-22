@@ -1,12 +1,10 @@
 ﻿using System.Text;
 
-using Application.Models;
-
 namespace Application.Manager;
 
-public class ProjectManager(ContextBase dbContext, ProjectContext projectContext)
+public class ProjectManager(CommandDbContext dbContext, ProjectContext projectContext)
 {
-    private readonly ContextBase _db = dbContext;
+    private readonly CommandDbContext _db = dbContext;
     private readonly ProjectContext _projectContext = projectContext;
 
     public string GetToolVersion()

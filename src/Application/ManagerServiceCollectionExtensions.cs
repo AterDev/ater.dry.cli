@@ -10,8 +10,6 @@ public static partial class ManagerServiceCollectionExtensions
         services.AddScoped(typeof(EntityManager));
         services.AddScoped(typeof(FeatureManager));
         services.AddScoped(typeof(ProjectManager));
-        services.AddScoped(typeof(SwaggerManager));
         services.AddScoped(typeof(ToolsManager));
-
     }
 }
