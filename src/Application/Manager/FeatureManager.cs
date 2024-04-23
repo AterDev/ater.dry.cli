@@ -1,7 +1,5 @@
 ﻿using System.Text.Json.Nodes;
 
-using Application.Models;
-
 namespace Application.Manager;
 /// <summary>
 /// 功能集成
@@ -196,6 +194,10 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
 
         // 项目引用处理
         var entityProjectFile = Path.Combine(path, "src", "Definition", "Definition.csproj");
+        if (!isLight)
+        {
+            entityProjectFile = Path.Combine(path, "src", "Definition", "EntityFramework", "EntityFramework.csproj");
+        }
 
         packageNames.Remove(packageName);
 

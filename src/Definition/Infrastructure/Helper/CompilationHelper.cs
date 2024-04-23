@@ -354,7 +354,9 @@ public class CompilationHelper
                 {
                     return;
                 }
+                Console.WriteLine(propertyContent);
                 SyntaxRoot = SyntaxRoot.InsertNodesBefore(methodDeclaration, new[] { propertyNode });
+                ClassNode = SyntaxRoot.DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
             }
         }
     }

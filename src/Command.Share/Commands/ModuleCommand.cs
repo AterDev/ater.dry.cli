@@ -246,17 +246,19 @@ public class ModuleCommand
         var compilation = new CompilationHelper(databasePath);
         compilation.AddSyntaxTree(dbContextContent);
 
-        var entityFiles = new DirectoryInfo(Path.Combine(sourcePath, "Entity")).GetFiles("*.cs").ToList();
+        var entityFiles = new DirectoryInfo(Path.Combine(sourcePath, "Entity"))
+            .GetFiles("*.cs", SearchOption.AllDirectories)
+            .ToList();
 
         entityFiles.ForEach(file =>
         {
             var entityName = Path.GetFileNameWithoutExtension(file.Name);
             var plural = PluralizationProvider.Pluralize(entityName);
             var propertyString = $@"public DbSet<{entityName}> {plural} {{ get; set; }}";
+
             if (!compilation.PropertyExist(plural))
             {
                 Console.WriteLine($"  ℹ️ add new property {plural} ➡️ ContextBase");
-                compilation.AddClassProperty(propertyString);
             }
         });
 
@@ -291,7 +293,7 @@ public class ModuleCommand
         if (moduleNsp.Equals("System"))
         {
             var apiPath = Path.Combine(solutionPath, Config.ApiPath);
-            InitSystemModule(apiPath);
+            //InitSystemModule(apiPath);
         }
     }
 
