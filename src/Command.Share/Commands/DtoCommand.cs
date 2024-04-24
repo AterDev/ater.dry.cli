@@ -11,7 +11,8 @@ public class DtoCommand : CommandBase
     /// <summary>
     /// dto项目目录
     /// </summary>
-    public string DtoPath { get; set; }
+    public string OutputPath { get; set; }
+
     /// <summary>
     /// 对应模块名
     /// </summary>
@@ -19,12 +20,12 @@ public class DtoCommand : CommandBase
 
     public DtoCodeGenerate CodeGen { get; set; }
 
-    public DtoCommand(string entityPath, string dtoPath)
+    public DtoCommand(string entityPath, string outputPath)
     {
         EntityPath = entityPath;
-        DtoPath = dtoPath;
+        OutputPath = outputPath;
 
-        CodeGen = new DtoCodeGenerate(EntityPath, DtoPath, new ContextBase());
+        CodeGen = new DtoCodeGenerate(EntityPath, OutputPath, new ContextBase());
         string entityName = Path.GetFileNameWithoutExtension(entityPath);
         Instructions.Add($"  🔹 generate {entityName} dtos.");
     }
@@ -36,7 +37,7 @@ public class DtoCommand : CommandBase
             Console.WriteLine("🛑 Entity not exist!");
             return;
         }
-        if (!Directory.Exists(DtoPath))
+        if (!Directory.Exists(OutputPath))
         {
             Console.WriteLine("🛑 Dto project not exist!");
             return;
@@ -48,7 +49,7 @@ public class DtoCommand : CommandBase
         else
         {
             // 是否为模块
-            var compilation = new CompilationHelper(DtoPath, "Entity");
+            var compilation = new CompilationHelper(OutputPath, "Entity");
             var content = File.ReadAllText(EntityPath);
             compilation.LoadContent(content);
             var attributes = compilation.GetClassAttribution("Module");
@@ -57,9 +58,10 @@ public class DtoCommand : CommandBase
                 var argument = attributes.First().ArgumentList!.Arguments[0];
                 ModuleName = compilation.GetArgumentValue(argument);
             }
+
             if (!string.IsNullOrWhiteSpace(ModuleName))
             {
-                DtoPath = Path.Combine(DtoPath, "..", "Modules", ModuleName);
+                OutputPath = Path.Combine(Config.SolutionPath, "src", "Modules", ModuleName);
                 CodeGen.AssemblyName = ModuleName;
             }
             if (Config.IsMicroservice)
@@ -84,7 +86,7 @@ public class DtoCommand : CommandBase
     public async Task GenerateCommonFiles()
     {
         List<string> globalUsings = CodeGen!.GetGlobalUsings();
-        string filePath = Path.Combine(DtoPath, "GlobalUsings.cs");
+        string filePath = Path.Combine(OutputPath, "GlobalUsings.cs");
         // 如果不存在则生成，如果存在，则添加
         if (File.Exists(filePath))
         {
@@ -99,7 +101,7 @@ public class DtoCommand : CommandBase
         }
         else
         {
-            await GenerateFileAsync(DtoPath, "GlobalUsings.cs", string.Join(Environment.NewLine, globalUsings));
+            await GenerateFileAsync(OutputPath, "GlobalUsings.cs", string.Join(Environment.NewLine, globalUsings));
         }
     }
 
@@ -113,7 +115,7 @@ public class DtoCommand : CommandBase
     {
         // 以文件名为准
         string entityName = Path.GetFileNameWithoutExtension(new FileInfo(EntityPath).Name);
-        string outputDir = Path.Combine(DtoPath, "Models", entityName + "Dtos");
+        string outputDir = Path.Combine(OutputPath, "Models", entityName + "Dtos");
         await GenerateFileAsync(outputDir, $"{entityName}{dtoType}Dto.cs", content ?? "", cover);
     }
 }
