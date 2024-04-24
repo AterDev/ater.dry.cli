@@ -46,7 +46,7 @@ public class ManagerCommand : CommandBase
         {
             var compilation = new CompilationHelper(ApplicationPath, "Entity");
             var content = File.ReadAllText(EntityFilePath);
-            compilation.AddSyntaxTree(content);
+            compilation.LoadContent(content);
             var attributes = compilation.GetClassAttribution("Module");
             if (attributes != null && attributes.Count != 0)
             {
@@ -124,7 +124,7 @@ public class ManagerCommand : CommandBase
         var dbContextContent = File.ReadAllText(dbContextFile);
 
         var compilation = new CompilationHelper(entityFrameworkPath);
-        compilation.AddSyntaxTree(dbContextContent);
+        compilation.LoadContent(dbContextContent);
 
         var entityName = Path.GetFileNameWithoutExtension(EntityFilePath);
         var plural = PluralizationProvider.Pluralize(entityName);

@@ -162,7 +162,7 @@ public class ManagerGenerate : GenerateBase
 
         CompilationHelper compilationHelper = new(projectFile.Directory!.FullName);
         string content = File.ReadAllText(fileInfo.FullName, new UTF8Encoding(false));
-        compilationHelper.AddSyntaxTree(content);
+        compilationHelper.LoadContent(content);
         string? entityNamespace = compilationHelper.GetNamespace();
 
         return

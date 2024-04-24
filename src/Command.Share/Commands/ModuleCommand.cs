@@ -6,7 +6,7 @@ namespace Command.Share.Commands;
 /// <summary>
 /// 模块命令
 /// </summary>
-public class ModuleCommand
+public class ModuleCommand(string solutionPath, string moduleName)
 {
     public const string CMS = "CMSMod";
     public const string FileManager = "FileManagerMod";
@@ -21,76 +21,108 @@ public class ModuleCommand
         FileManager,
         Configuration
     ];
+    public string ModuleName { get; set; } = moduleName.EndsWith("Mod") ? moduleName : moduleName + "Mod";
+    public string SolutionPath { get; set; } = solutionPath;
 
     /// <summary>
     /// 创建模块
     /// </summary>
-    /// <param name="solutionPath"></param>
-    /// <param name="moduleName"></param>
-    public static async Task CreateModuleAsync(string solutionPath, string moduleName)
+    /// <param name="SolutionPath"></param>
+    /// <param name="ModuleName"></param>
+    public async Task CreateModuleAsync()
     {
-        if (!moduleName.EndsWith("Mod"))
+        if (!ModuleName.EndsWith("Mod"))
         {
-            moduleName += "Mod";
+            ModuleName += "Mod";
         }
 
-        var moduleDir = Path.Combine(solutionPath, "src", "Modules");
+        var moduleDir = Path.Combine(SolutionPath, "src", "Modules");
 
         if (!Directory.Exists(moduleDir))
         {
             Directory.CreateDirectory(moduleDir);
         }
-        if (Directory.Exists(Path.Combine(moduleDir, moduleName)))
+        if (Directory.Exists(Path.Combine(moduleDir, ModuleName)))
         {
             throw new Exception("该模块已存在");
         }
 
         // 基础类
-        string projectPath = Path.Combine(moduleDir, moduleName);
-        await Console.Out.WriteLineAsync($"🚀 create module:{moduleName} ➡️ {projectPath}");
+        string projectPath = Path.Combine(moduleDir, ModuleName);
+        await Console.Out.WriteLineAsync($"🚀 create module:{ModuleName} ➡️ {projectPath}");
 
         // global usings
         string usingsContent = GetGlobalUsings();
-        usingsContent = usingsContent.Replace("${Module}", moduleName);
+        usingsContent = usingsContent.Replace("${Module}", ModuleName);
         await AssemblyHelper.GenerateFileAsync(projectPath, "GlobalUsings.cs", usingsContent, true);
 
-        // get target version 
+        // project file
         string targetVersion = Const.Version;
-        var csprojFiles = Directory.GetFiles(Path.Combine(solutionPath, Config.ApiPath), $"*{Const.CSharpProjectExtention}", SearchOption.TopDirectoryOnly).FirstOrDefault();
+        var csprojFiles = Directory.GetFiles(Path.Combine(SolutionPath, Config.ApiPath), $"*{Const.CSharpProjectExtention}", SearchOption.TopDirectoryOnly).FirstOrDefault();
         if (csprojFiles != null)
         {
             targetVersion = AssemblyHelper.GetTargetFramework(csprojFiles) ?? Const.Version;
         }
         string csprojContent = GetCsProjectContent(targetVersion);
-        await AssemblyHelper.GenerateFileAsync(projectPath, $"{moduleName}{Const.CSharpProjectExtention}", csprojContent);
+        await AssemblyHelper.GenerateFileAsync(projectPath, $"{ModuleName}{Const.CSharpProjectExtention}", csprojContent);
 
         // create dirs
         Directory.CreateDirectory(Path.Combine(projectPath, "Models"));
         Directory.CreateDirectory(Path.Combine(projectPath, "Manager"));
+        Directory.CreateDirectory(Path.Combine(projectPath, "Controllers"));
+        // 模块文件
+        await AssemblyHelper.GenerateFileAsync(projectPath, "InitModule.cs", GetInitModuleContent());
+        await AssemblyHelper.GenerateFileAsync(projectPath, "ServiceCollectionExtensions.cs", GetServiceCollectionContent());
 
         try
         {
-            await AddDefaultModuleAsync(solutionPath, moduleName);
+            await AddDefaultModuleAsync();
+            AddModuleConstField();
             // update solution file
-            UpdateSolutionFile(solutionPath, Path.Combine(projectPath, $"{moduleName}{Const.CSharpProjectExtention}"));
+            UpdateSolutionFile(Path.Combine(projectPath, $"{ModuleName}{Const.CSharpProjectExtention}"));
 
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message + ex.StackTrace + ex.InnerException);
         }
-
     }
 
-    public static void CleanModule(string solutionPath, string moduleName)
+    /// <summary>
+    /// 添加模块常量
+    /// </summary>
+    public void AddModuleConstField()
     {
-        if (moduleName.EndsWith("Mod"))
+        var moduleConstPath = Path.Combine(SolutionPath, "src", "Definition", "Entity", "Modules.cs");
+        if (File.Exists(moduleConstPath))
         {
-            moduleName = moduleName.Replace("Mod", "");
+            var assemblyPath = Config.IsLight ? Path.Combine(SolutionPath, "src", "Definition")
+                : Path.Combine(SolutionPath, "src", "Definition", "Entity");
+
+            var analyzer = new CompilationHelper(assemblyPath);
+            var content = File.ReadAllText(moduleConstPath);
+            analyzer.LoadContent(content);
+            var fieldName = ModuleName.Replace("Mod", "");
+            if (!analyzer.PropertyExist(fieldName))
+            {
+                var newField = @$"public const string {fieldName} = ""{ModuleName}"";";
+                analyzer.AddClassProperty(newField);
+                content = analyzer.SyntaxRoot!.ToFullString();
+                File.WriteAllText(moduleConstPath, content);
+            }
+
+        }
+    }
+
+    public void CleanModule()
+    {
+        if (ModuleName.EndsWith("Mod"))
+        {
+            ModuleName = ModuleName.Replace("Mod", "");
         }
 
-        var entityPath = Path.Combine(solutionPath, Config.EntityPath, moduleName);
-        var entityFrameworkPath = Path.Combine(solutionPath, Config.EntityFrameworkPath);
+        var entityPath = Path.Combine(SolutionPath, Config.EntityPath, ModuleName);
+        var entityFrameworkPath = Path.Combine(SolutionPath, Config.EntityFrameworkPath);
 
         if (Directory.Exists(entityPath))
         {
@@ -106,7 +138,7 @@ public class ModuleCommand
             Directory.Delete(entityPath, true);
 
             // 从解决方案移除项目
-            ProcessHelper.RunCommand("dotnet", $"sln {solutionPath} remove {Path.Combine(solutionPath, "src", "Modules", moduleName + "Mod", $"{moduleName}Mod{Const.CSharpProjectExtention}")}", out string error);
+            ProcessHelper.RunCommand("dotnet", $"sln {SolutionPath} remove {Path.Combine(SolutionPath, "src", "Modules", ModuleName + "Mod", $"{ModuleName}Mod{Const.CSharpProjectExtention}")}", out string error);
         }
     }
 
@@ -128,7 +160,13 @@ public class ModuleCommand
 
     private static string GetGlobalUsings()
     {
-        return """
+        string definition = "";
+        if (Config.IsLight)
+        {
+            definition = "Definition.";
+        }
+
+        return $$"""
             global using System.ComponentModel.DataAnnotations;
             global using System.Diagnostics;
             global using System.Linq.Expressions;
@@ -141,8 +179,9 @@ public class ModuleCommand
             global using Ater.Web.Core.Models;
             global using Ater.Web.Core.Utils;
             global using Ater.Web.Extension;
-            global using Entity;
-            global using EntityFramework;
+            global using {{definition}}Entity;
+            global using {{definition}}EntityFramework;
+            global using {{definition}}EntityFramework.DBProvider;
             global using Microsoft.AspNetCore.Authorization;
             global using Microsoft.AspNetCore.Mvc;
             global using Microsoft.EntityFrameworkCore;
@@ -168,9 +207,6 @@ public class ModuleCommand
                     <NoWarn>1701;1702;1591</NoWarn>
             	</PropertyGroup>
             	<ItemGroup>
-            		<FrameworkReference Include="Microsoft.AspNetCore.App" />
-            	</ItemGroup>
-            	<ItemGroup>
             	    <ProjectReference Include="..\..\Application\Application.csproj" />
                     <ProjectReference Include="..\..\Infrastructure\Ater.Web.Extension\Ater.Web.Extension.csproj" />
             	</ItemGroup>
@@ -178,14 +214,78 @@ public class ModuleCommand
             """;
     }
 
-    /// <summary>
-    /// 使用dotnet sln add
-    /// </summary>
-    /// <param name="dirPath"></param>
-    /// <param name="projectPath"></param>
-    private static void UpdateSolutionFile(string dirPath, string projectPath)
+    private string GetInitModuleContent()
     {
-        var slnFile = AssemblyHelper.GetSlnFile(new DirectoryInfo(dirPath));
+        return $$"""
+            using EntityFramework.DBProvider;
+            namespace {{ModuleName}};
+            public class InitModule
+            {
+                /// <summary>
+                /// 模块初始化方法
+                /// </summary>
+                /// <param name="provider"></param>
+                /// <returns></returns>
+                public static async Task InitializeAsync(IServiceProvider provider)
+                {
+                    ILoggerFactory loggerFactory = provider.GetRequiredService<ILoggerFactory>();
+                    CommandDbContext context = provider.GetRequiredService<CommandDbContext>();
+                    ILogger<InitModule> logger = loggerFactory.CreateLogger<InitModule>();
+                    IConfiguration configuration = provider.GetRequiredService<IConfiguration>();
+                    try
+                    {
+                       // 初始化逻辑
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogError("初始化{{ModuleName}}失败！{message}", ex.Message);
+                    }
+                }
+            }
+            """;
+    }
+
+    private string GetServiceCollectionContent()
+    {
+        return $$"""
+            namespace {{ModuleName}};
+            /// <summary>
+            /// 服务注入扩展
+            /// </summary>
+            public static class ServiceCollectionExtensions
+            {
+                /// <summary>
+                /// 添加模块服务
+                /// </summary>
+                /// <param name="services"></param>
+                /// <returns></returns>
+                public static IServiceCollection Add{{ModuleName}}Services(this IServiceCollection services)
+                {
+                    services.Add{{ModuleName}}}Managers();
+                    // TODO:注入其他服务
+                    return services;
+                }
+
+                /// <summary>
+                /// 注入Manager服务
+                /// </summary>
+                /// <param name="services"></param>
+                public static IServiceCollection Add{{ModuleName}}Managers(this IServiceCollection services)
+                {
+                    // TODO: 注入Manager服务
+                    return services;
+                }
+            }
+            """;
+    }
+
+    /// <summary>
+    /// 使用 dotnet sln add
+    /// </summary>
+    /// <param name="projectPath"></param>
+    private void UpdateSolutionFile(string projectPath)
+    {
+        var slnFile = AssemblyHelper.GetSlnFile(new DirectoryInfo(SolutionPath));
         if (slnFile != null)
         {
             // 添加到解决方案
@@ -198,7 +298,7 @@ public class ModuleCommand
                 Console.WriteLine("✅ add project ➡️ solution!");
             }
         }
-        var csprojFiles = Directory.GetFiles(Path.Combine(dirPath, Config.ApiPath), $"*{Const.CSharpProjectExtention}", SearchOption.TopDirectoryOnly).FirstOrDefault();
+        var csprojFiles = Directory.GetFiles(Path.Combine(SolutionPath, Config.ApiPath), $"*{Const.CSharpProjectExtention}", SearchOption.TopDirectoryOnly).FirstOrDefault();
         if (File.Exists(csprojFiles))
         {
             // 添加到主服务
@@ -212,25 +312,23 @@ public class ModuleCommand
     /// <summary>
     /// 添加默认模块
     /// </summary>
-    /// <param name="moduleName"></param>
-    /// <param name="solutionPath"></param>
-    private static async Task AddDefaultModuleAsync(string solutionPath, string moduleName)
+    private async Task AddDefaultModuleAsync()
     {
-        if (!ModuleNames.Contains(moduleName))
+        if (!ModuleNames.Contains(ModuleName))
         {
             return;
         }
         var studioPath = AssemblyHelper.GetStudioPath();
-        var sourcePath = Path.Combine(studioPath, "Modules", moduleName);
+        var sourcePath = Path.Combine(studioPath, "Modules", ModuleName);
         if (!Directory.Exists(sourcePath))
         {
-            Console.WriteLine($"🦘 no default {moduleName}, just init it!");
+            Console.WriteLine($"🦘 no default {ModuleName}, just init it!");
             return;
         }
 
-        var databasePath = Path.Combine(solutionPath, Config.EntityFrameworkPath);
-        var entityPath = Path.Combine(solutionPath, Config.EntityPath, $"{moduleName}");
-        var modulePath = Path.Combine(solutionPath, "src", "Modules", moduleName);
+        var databasePath = Path.Combine(SolutionPath, Config.EntityFrameworkPath);
+        var entityPath = Path.Combine(SolutionPath, Config.EntityPath, $"{ModuleName}");
+        var modulePath = Path.Combine(SolutionPath, "src", "Modules", ModuleName);
 
         Console.WriteLine("🚀 copy module files");
         // copy entities
@@ -244,7 +342,7 @@ public class ModuleCommand
         var dbContextContent = File.ReadAllText(dbContextFile);
 
         var compilation = new CompilationHelper(databasePath);
-        compilation.AddSyntaxTree(dbContextContent);
+        compilation.LoadContent(dbContextContent);
 
         var entityFiles = new DirectoryInfo(Path.Combine(sourcePath, "Entity"))
             .GetFiles("*.cs", SearchOption.AllDirectories)
@@ -268,9 +366,9 @@ public class ModuleCommand
         var globalUsingsFile = Path.Combine(databasePath, "GlobalUsings.cs");
         var globalUsingsContent = File.ReadAllText(globalUsingsFile);
 
-        var moduleNsp = moduleName.EndsWith("Mod")
-            ? moduleName.Replace("Mod", "")
-            : moduleName;
+        var moduleNsp = ModuleName.EndsWith("Mod")
+            ? ModuleName.Replace("Mod", "")
+            : ModuleName;
 
         var newLine = @$"global using Entity.{moduleNsp};";
         if (!globalUsingsContent.Contains(newLine))
@@ -281,8 +379,8 @@ public class ModuleCommand
         }
 
         // 重新生成依赖注入服务
-        var applicationPath = Path.Combine(solutionPath, Config.ApplicationPath);
-        var entityFrameworkPath = Path.Combine(solutionPath, Config.EntityFrameworkPath);
+        var applicationPath = Path.Combine(SolutionPath, Config.ApplicationPath);
+        var entityFrameworkPath = Path.Combine(SolutionPath, Config.EntityFrameworkPath);
         var applicationName = Config.ApplicationPath.Split(Path.DirectorySeparatorChar).Last();
         var entityFrameworkName = Config.EntityFrameworkPath.Split(Path.DirectorySeparatorChar).Last();
 
@@ -292,7 +390,7 @@ public class ModuleCommand
         // 初始化内容
         if (moduleNsp.Equals("System"))
         {
-            var apiPath = Path.Combine(solutionPath, Config.ApiPath);
+            var apiPath = Path.Combine(SolutionPath, Config.ApiPath);
             //InitSystemModule(apiPath);
         }
     }

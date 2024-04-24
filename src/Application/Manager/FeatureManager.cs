@@ -73,32 +73,33 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
         // 默认包含SystemMod
         if (!dto.IsLight)
         {
-            await ModuleCommand.CreateModuleAsync(path, ModuleCommand.System);
+            var moduleCommand = new ModuleCommand(path, ModuleCommand.System);
+            await moduleCommand.CreateModuleAsync();
 
             if (dto.HasFileManagerFeature)
             {
-                await ModuleCommand.CreateModuleAsync(path, ModuleCommand.FileManager);
+                await moduleCommand.CreateModuleAsync();
             }
             else
             {
-                ModuleCommand.CleanModule(path, ModuleCommand.FileManager);
+                moduleCommand.CleanModule();
             }
             if (dto.HasOrderFeature)
             {
-                await ModuleCommand.CreateModuleAsync(path, ModuleCommand.Order);
+                await moduleCommand.CreateModuleAsync();
             }
             else
             {
-                ModuleCommand.CleanModule(path, ModuleCommand.Order);
+                moduleCommand.CleanModule();
             }
 
             if (dto.HasCmsFeature)
             {
-                await ModuleCommand.CreateModuleAsync(path, ModuleCommand.CMS);
+                await moduleCommand.CreateModuleAsync();
             }
             else
             {
-                ModuleCommand.CleanModule(path, ModuleCommand.CMS);
+                moduleCommand.CleanModule();
             }
         }
 
@@ -243,7 +244,7 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
     {
         try
         {
-            await ModuleCommand.CreateModuleAsync(_projectContext.SolutionPath!, name);
+            await new ModuleCommand(_projectContext.SolutionPath!, name).CreateModuleAsync();
         }
         catch (Exception e)
         {

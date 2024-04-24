@@ -50,7 +50,11 @@ public class CompilationHelper
             .WithOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
     }
 
-    public void AddSyntaxTree(string content)
+    /// <summary>
+    /// 加载要分析的代码内容
+    /// </summary>
+    /// <param name="content"></param>
+    public void LoadContent(string content)
     {
         SyntaxTree = CSharpSyntaxTree.ParseText(content);
         Compilation = Compilation.AddSyntaxTrees(SyntaxTree);
@@ -244,6 +248,18 @@ public class CompilationHelper
     }
 
     /// <summary>
+    /// 字段是否存在
+    /// </summary>
+    /// <param name="fieldName"></param>
+    /// <returns></returns>
+    public bool FieldExist(string fieldName)
+    {
+        return SyntaxRoot!.DescendantNodes()
+            .OfType<FieldDeclarationSyntax>()
+            .Any(m => m.Declaration.Variables.Any(v => v.Identifier.Text.Equals(fieldName.Trim())));
+    }
+
+    /// <summary>
     /// 向接口插入方法
     /// </summary>
     /// <param name="methodContent"></param>
@@ -346,18 +362,37 @@ public class CompilationHelper
     {
         if (SyntaxTree != null && SyntaxRoot != null)
         {
-            var methodDeclaration = ClassNode!.DescendantNodes().OfType<MethodDeclarationSyntax>().FirstOrDefault();
-            if (methodDeclaration != null)
+            propertyContent = $"    {propertyContent}" + Environment.NewLine;
+            if (SyntaxFactory.ParseMemberDeclaration(propertyContent) is not PropertyDeclarationSyntax propertyNode)
             {
-                propertyContent = $"    {propertyContent}" + Environment.NewLine;
-                if (SyntaxFactory.ParseMemberDeclaration(propertyContent) is not PropertyDeclarationSyntax propertyNode)
-                {
-                    return;
-                }
-                Console.WriteLine(propertyContent);
-                SyntaxRoot = SyntaxRoot.InsertNodesBefore(methodDeclaration, new[] { propertyNode });
-                ClassNode = SyntaxRoot.DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
+                return;
             }
+            var methodDeclaration = ClassNode!.DescendantNodes().OfType<MethodDeclarationSyntax>().FirstOrDefault();
+            SyntaxRoot = methodDeclaration != null
+                ? SyntaxRoot.InsertNodesBefore(methodDeclaration, [propertyNode])
+                : SyntaxRoot.AddMembers(propertyNode);
+            ClassNode = SyntaxRoot.DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
+        }
+    }
+
+    /// <summary>
+    /// 添加字段
+    /// </summary>
+    /// <param name="fieldContent"></param>
+    public void AddClassField(string fieldContent)
+    {
+        if (SyntaxTree != null && SyntaxRoot != null)
+        {
+            fieldContent = $"    {fieldContent}" + Environment.NewLine;
+            if (SyntaxFactory.ParseMemberDeclaration(fieldContent) is not FieldDeclarationSyntax fieldNode)
+            {
+                return;
+            }
+            var methodDeclaration = ClassNode!.DescendantNodes().OfType<MethodDeclarationSyntax>().FirstOrDefault();
+            SyntaxRoot = methodDeclaration != null
+                ? SyntaxRoot.InsertNodesBefore(methodDeclaration, [fieldNode])
+                : SyntaxRoot.AddMembers(fieldNode);
+            ClassNode = SyntaxRoot.DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
         }
     }
 

@@ -70,7 +70,7 @@ public class EntityParseHelper
 
         var content = File.ReadAllTextAsync(fileInfo.FullName).Result;
 
-        CompilationHelper.AddSyntaxTree(content);
+        CompilationHelper.LoadContent(content);
         SyntaxTree = CompilationHelper.SyntaxTree;
         Compilation = CompilationHelper.Compilation;
         SemanticModel = CompilationHelper.SemanticModel;
@@ -103,7 +103,7 @@ public class EntityParseHelper
         {
             var content = await File.ReadAllTextAsync(filePath);
             CompilationHelper = new CompilationHelper(ProjectFile.Directory!.FullName);
-            CompilationHelper.AddSyntaxTree(content);
+            CompilationHelper.LoadContent(content);
             SyntaxTree = CompilationHelper.SyntaxTree;
             Compilation = CompilationHelper.Compilation;
             SemanticModel = CompilationHelper.SemanticModel;

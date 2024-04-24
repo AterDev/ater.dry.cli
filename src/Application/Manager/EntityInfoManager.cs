@@ -62,7 +62,7 @@ public partial class EntityInfoManager(
                     comment = comment?.Replace("/", "").Trim();
 
                     // 解析
-                    compilation.AddSyntaxTree(content);
+                    compilation.LoadContent(content);
                     // 如果是枚举类，则忽略
                     if (!compilation.IsEntityClass())
                     {
@@ -203,7 +203,7 @@ public partial class EntityInfoManager(
         var content = File.ReadAllText(entityFilePath);
         var compilation = new CompilationHelper(Path.Combine(_projectContext.SolutionPath!, Config.EntityPath));
 
-        compilation.AddSyntaxTree(content);
+        compilation.LoadContent(content);
         var moduleAttribution = compilation.GetClassAttribution("Module");
         if (moduleAttribution != null && moduleAttribution.Count != 0)
         {
@@ -479,7 +479,7 @@ public partial class EntityInfoManager(
         var content = File.ReadAllText(entityFilePath);
         var compilation = new CompilationHelper(Path.Combine(_projectContext.SolutionPath!, Config.EntityPath));
 
-        compilation.AddSyntaxTree(content);
+        compilation.LoadContent(content);
         var moduleAttribution = compilation.GetClassAttribution("Module");
         if (moduleAttribution != null && moduleAttribution.Count != 0)
         {

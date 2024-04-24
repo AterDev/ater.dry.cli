@@ -66,7 +66,7 @@ public class AdvanceManager
         {
             // parse context content and get all properties 
             var compilation = new CompilationHelper(Path.Combine(_projectContext.SolutionPath!, Config.EntityPath));
-            compilation.AddSyntaxTree(File.ReadAllText(contextPath));
+            compilation.LoadContent(File.ReadAllText(contextPath));
 
             var propertyTypes = compilation.GetPropertyTypes();
 

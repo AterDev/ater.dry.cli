@@ -50,7 +50,7 @@ public class DtoCommand : CommandBase
             // 是否为模块
             var compilation = new CompilationHelper(DtoPath, "Entity");
             var content = File.ReadAllText(EntityPath);
-            compilation.AddSyntaxTree(content);
+            compilation.LoadContent(content);
             var attributes = compilation.GetClassAttribution("Module");
             if (attributes != null && attributes.Count != 0)
             {

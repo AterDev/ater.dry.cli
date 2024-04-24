@@ -105,7 +105,7 @@ public class FunctionTest
         var filePath = Path.Combine(projectPath, "IManager", interfaceName + ".cs");
 
         var compilation = new CompilationHelper(projectPath);
-        compilation.AddSyntaxTree(File.ReadAllText(filePath));
+        compilation.LoadContent(File.ReadAllText(filePath));
 
         var exist = compilation.MethodExist("Task<SystemConfig?> GetOwnedAsync(Guid id);");
         Assert.True(exist);
@@ -255,7 +255,7 @@ public class FunctionTest
     {
         // Arrange
         var compilationHelper = new CompilationHelper("./");
-        compilationHelper.AddSyntaxTree("public class MyClass : MyBaseClass, IEntityBase { }");
+        compilationHelper.LoadContent("public class MyClass : MyBaseClass, IEntityBase { }");
 
         // Act
         var baseTypes = compilationHelper.GetBaseLists();

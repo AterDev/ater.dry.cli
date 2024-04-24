@@ -71,7 +71,7 @@ public class ViewCommand : CommandBase
         // 是否为模块
         var compilation = new CompilationHelper(DtoPath, "Entity");
         var content = File.ReadAllText(EntityFilePath);
-        compilation.AddSyntaxTree(content);
+        compilation.LoadContent(content);
         var attributes = compilation.GetClassAttribution("Module");
         var moduleName = string.Empty;
         if (attributes != null && attributes.Count != 0)

@@ -57,7 +57,7 @@ public class ApiCommand : CommandBase
         // 是否为模块
         var compilation = new CompilationHelper(ApplicationPath, "Entity");
         var content = File.ReadAllText(EntityFilePath);
-        compilation.AddSyntaxTree(content);
+        compilation.LoadContent(content);
         var attributes = compilation.GetClassAttribution("Module");
         if (attributes != null && attributes.Count != 0)
         {
