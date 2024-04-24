@@ -128,7 +128,7 @@ public partial class EntityInfoManager(
 
         var dtoPath = Path.Combine(_projectContext.SolutionPath!, Config.SharePath, "Models", $"{entityName}Dtos", $"{entityName}AddDto.cs");
         var managerPath = Path.Combine(_projectContext.SolutionPath!, Config.ApplicationPath, "Manager", $"{entityName}Manager.cs");
-        var apiPath = Path.Combine(_projectContext.SolutionPath!, Config.ApiPath, "Controllers", $"{entityName}Controller.cs");
+        var apiPath = Path.Combine(_projectContext.SolutionPath!, Config.ApiPath, "Controllers");
         var servicePath = Path.Combine(_projectContext.SolutionPath!, "src");
 
         if (!string.IsNullOrWhiteSpace(serviceName))
@@ -136,7 +136,7 @@ public partial class EntityInfoManager(
             var serviceOptions = Config.GetServiceConfig(serviceName);
             dtoPath = Path.Combine(_projectContext.SolutionPath!, serviceOptions.DtoPath, "Models", $"{entityName}Dtos", $"{entityName}AddDto.cs");
             managerPath = Path.Combine(_projectContext.SolutionPath!, serviceOptions.ApplicationPath, "Manager", $"{entityName}Manager.cs");
-            apiPath = Path.Combine(_projectContext.SolutionPath!, serviceOptions.ApiPath, "Controllers", $"{entityName}Controller.cs");
+            apiPath = Path.Combine(_projectContext.SolutionPath!, serviceOptions.ApiPath, "Controllers");
             servicePath = serviceOptions.RootPath;
         }
 
@@ -144,12 +144,14 @@ public partial class EntityInfoManager(
         {
             dtoPath = Path.Combine(servicePath, "Modules", moduleName, "Models", $"{entityName}Dtos", $"{entityName}AddDto.cs");
             managerPath = Path.Combine(servicePath, "Modules", moduleName, "Manager", $"{entityName}Manager.cs");
-            apiPath = Path.Combine(servicePath, "Modules", moduleName, "Controllers", $"{entityName}Controller.cs");
+            apiPath = Path.Combine(servicePath, "Modules", moduleName, "Controllers");
         }
+
+        var apiFiles = Directory.GetFiles(apiPath, $"{entityName}Controller.cs", SearchOption.AllDirectories);
 
         if (File.Exists(dtoPath)) { hasDto = true; }
         if (File.Exists(managerPath)) { hasManager = true; }
-        if (File.Exists(apiPath)) { hasAPI = true; }
+        if (apiFiles.Count() > 0) { hasAPI = true; }
 
         return (hasDto, hasManager, hasAPI);
     }
@@ -352,13 +354,14 @@ public partial class EntityInfoManager(
 
         if (!string.IsNullOrWhiteSpace(dto.ServiceName))
         {
-            Config.IsSplitController = false;
             Config.IsMicroservice = true;
             Config.ServiceName = dto.ServiceName;
             var serviceOptions = Config.GetServiceConfig(dto.ServiceName);
             dtoPath = Path.Combine(_projectContext.SolutionPath!, serviceOptions.DtoPath);
             applicationPath = Path.Combine(_projectContext.SolutionPath!, serviceOptions.ApplicationPath);
             apiPath = Path.Combine(_projectContext.SolutionPath!, serviceOptions.ApiPath);
+            Config.IsMicroservice = false;
+
         }
         switch (dto.CommandType)
         {

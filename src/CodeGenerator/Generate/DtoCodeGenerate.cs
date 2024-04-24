@@ -158,7 +158,7 @@ public class DtoCodeGenerate : GenerateBase
                         && !p.IsNavigation
                         && !p.IsComplexType
                         && !filterFields.Contains(p.Name))
-                     || p.IsEnum
+                    || p.IsEnum
                     )
                 .Where(p => p.MaxLength is not (not null and >= 1000))
                 .ToList();

@@ -502,10 +502,13 @@ export class IndexComponent implements OnInit {
               if (res) {
                 this.snb.open('生成成功');
                 this.dialogRef.close();
-                this.getEntity();
-
+                if (this.currentType == CommandType.Dto) {
+                  this.currentEntity!.hasDto = true;
+                }
+                if (this.currentType == CommandType.Manager) {
+                  this.currentEntity!.hasManager = true;
+                }
               } else {
-                this.snb.open('');
               }
             },
             error: (error) => {
@@ -548,7 +551,18 @@ export class IndexComponent implements OnInit {
             if (res) {
               this.snb.open('生成成功');
               this.dialogRef.close();
-              this.getEntity();
+
+              // 更新数据状态
+              if (type == CommandType.Dto) {
+                selected.forEach(e => e.hasDto = true);
+              }
+              if (type == CommandType.Manager) {
+                selected.forEach(e => e.hasManager = true);
+              }
+              if (type == CommandType.API) {
+                selected.forEach(e => e.hasAPI = true);
+              }
+
             } else {
               this.snb.open('生成失败');
             }
