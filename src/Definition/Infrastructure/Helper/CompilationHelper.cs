@@ -367,11 +367,13 @@ public class CompilationHelper
             {
                 return;
             }
-            var methodDeclaration = ClassNode!.DescendantNodes().OfType<MethodDeclarationSyntax>().FirstOrDefault();
-            SyntaxRoot = methodDeclaration != null
-                ? SyntaxRoot.InsertNodesBefore(methodDeclaration, [propertyNode])
-                : SyntaxRoot.AddMembers(propertyNode);
-            ClassNode = SyntaxRoot.DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
+
+            var lastPropertyDeclaration = SyntaxRoot!.DescendantNodes().OfType<PropertyDeclarationSyntax>().LastOrDefault();
+            if (lastPropertyDeclaration != null)
+            {
+                SyntaxRoot = SyntaxRoot.InsertNodesAfter(lastPropertyDeclaration, [propertyNode]);
+                ClassNode = SyntaxRoot.DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
+            }
         }
     }
 
@@ -388,11 +390,13 @@ public class CompilationHelper
             {
                 return;
             }
-            var methodDeclaration = ClassNode!.DescendantNodes().OfType<MethodDeclarationSyntax>().FirstOrDefault();
-            SyntaxRoot = methodDeclaration != null
-                ? SyntaxRoot.InsertNodesBefore(methodDeclaration, [fieldNode])
-                : SyntaxRoot.AddMembers(fieldNode);
-            ClassNode = SyntaxRoot.DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
+            // 获取最后一个字段
+            var lastFieldDeclaration = SyntaxRoot!.DescendantNodes().OfType<FieldDeclarationSyntax>().LastOrDefault();
+            if (lastFieldDeclaration != null)
+            {
+                SyntaxRoot = SyntaxRoot.InsertNodesAfter(lastFieldDeclaration, [fieldNode]);
+                ClassNode = SyntaxRoot.DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
+            }
         }
     }
 

@@ -77,7 +77,7 @@ public class ModuleCommand(string solutionPath, string moduleName)
         try
         {
             await AddDefaultModuleAsync();
-            AddModuleConstField();
+            await AddModuleConstFieldAsync();
             // update solution file
             UpdateSolutionFile(Path.Combine(projectPath, $"{ModuleName}{Const.CSharpProjectExtention}"));
 
@@ -91,7 +91,7 @@ public class ModuleCommand(string solutionPath, string moduleName)
     /// <summary>
     /// 添加模块常量
     /// </summary>
-    public void AddModuleConstField()
+    public async Task AddModuleConstFieldAsync()
     {
         var moduleConstPath = Path.Combine(SolutionPath, "src", "Definition", "Entity", "Modules.cs");
         if (File.Exists(moduleConstPath))
@@ -103,14 +103,14 @@ public class ModuleCommand(string solutionPath, string moduleName)
             var content = File.ReadAllText(moduleConstPath);
             analyzer.LoadContent(content);
             var fieldName = ModuleName.Replace("Mod", "");
-            if (!analyzer.PropertyExist(fieldName))
+
+            if (!analyzer.FieldExist(fieldName))
             {
                 var newField = @$"public const string {fieldName} = ""{ModuleName}"";";
-                analyzer.AddClassProperty(newField);
+                analyzer.AddClassField(newField);
                 content = analyzer.SyntaxRoot!.ToFullString();
-                File.WriteAllText(moduleConstPath, content);
+                await AssemblyHelper.GenerateFileAsync(moduleConstPath, content, true);
             }
-
         }
     }
 
@@ -173,7 +173,6 @@ public class ModuleCommand(string solutionPath, string moduleName)
             global using Application.Const;
             global using Application;
             global using Application.Implement;
-            global using ${Module}.Infrastructure;
             global using ${Module}.Manager;
             global using Ater.Web.Abstraction;
             global using Ater.Web.Core.Models;
@@ -183,6 +182,7 @@ public class ModuleCommand(string solutionPath, string moduleName)
             global using {{definition}}EntityFramework;
             global using {{definition}}EntityFramework.DBProvider;
             global using Microsoft.AspNetCore.Authorization;
+            global using Microsoft.Extensions.DependencyInjection;
             global using Microsoft.AspNetCore.Mvc;
             global using Microsoft.EntityFrameworkCore;
             global using Microsoft.Extensions.Logging;
@@ -217,7 +217,7 @@ public class ModuleCommand(string solutionPath, string moduleName)
     private string GetInitModuleContent()
     {
         return $$"""
-            using EntityFramework.DBProvider;
+            using Microsoft.Extensions.Configuration;
             namespace {{ModuleName}};
             public class InitModule
             {
@@ -234,7 +234,8 @@ public class ModuleCommand(string solutionPath, string moduleName)
                     IConfiguration configuration = provider.GetRequiredService<IConfiguration>();
                     try
                     {
-                       // 初始化逻辑
+                       // TODO:初始化逻辑
+                        await Task.CompletedTask;
                     }
                     catch (Exception ex)
                     {
@@ -261,7 +262,7 @@ public class ModuleCommand(string solutionPath, string moduleName)
                 /// <returns></returns>
                 public static IServiceCollection Add{{ModuleName}}Services(this IServiceCollection services)
                 {
-                    services.Add{{ModuleName}}}Managers();
+                    services.Add{{ModuleName}}Managers();
                     // TODO:注入其他服务
                     return services;
                 }

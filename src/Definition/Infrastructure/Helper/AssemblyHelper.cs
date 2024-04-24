@@ -287,6 +287,28 @@ public class AssemblyHelper
         }
     }
 
+    public static async Task GenerateFileAsync(string filePath, string content, bool cover = false)
+    {
+        var fileName = Path.GetFileName(filePath);
+        if (!File.Exists(filePath) || cover)
+        {
+            await File.WriteAllTextAsync(filePath, content);
+            if (cover)
+            {
+                Console.WriteLine(@$"  ℹ️ update file {fileName}.");
+            }
+            else
+            {
+                Console.WriteLine(@$"  ✅ generate file {fileName}.");
+            }
+            
+        }
+        else
+        {
+            Console.WriteLine($"  🦘 Skip exist file: {fileName}.");
+        }
+    }
+
     /// <summary>
     /// 获取 dotnet tool 路径
     /// </summary>
