@@ -184,28 +184,6 @@ public class ManagerCommand : CommandBase
             await GenerateFileAsync(ApplicationPath, "GlobalUsings.cs",
                 string.Join(Environment.NewLine, globalUsings));
         }
-
-
-        var entityFrameworkPath = Path.Combine(SolutionPath, Config.EntityFrameworkPath);
-        filePath = Path.Combine(entityFrameworkPath, "GlobalUsings.cs");
-        // 如果不存在则生成，如果存在，则添加
-        if (File.Exists(filePath))
-        {
-            string content = File.ReadAllText(filePath);
-            var newUsings = globalUsings.Where(g => !content.Contains(g))
-                .ToList();
-            if (newUsings.Count != 0)
-            {
-                newUsings.Insert(0, Environment.NewLine);
-                File.AppendAllLines(filePath, newUsings);
-            }
-        }
-        else
-        {
-            await GenerateFileAsync(entityFrameworkPath, "GlobalUsings.cs",
-                string.Join(Environment.NewLine, globalUsings));
-        }
-
     }
 
     /// <summary>

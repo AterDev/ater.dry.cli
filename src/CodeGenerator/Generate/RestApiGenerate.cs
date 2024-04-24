@@ -106,7 +106,6 @@ public class RestApiGenerate : GenerateBase
             "global using Ater.Web.Extension.Services;",
             $"global using {EntityInfo.NamespaceName};",
             $"global using {ApplicationNamespace}.Manager;",
-            $"global using {ApplicationNamespace}.Services;"
         ];
     }
 
