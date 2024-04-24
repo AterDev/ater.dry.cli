@@ -158,7 +158,7 @@ public class ModuleCommand(string solutionPath, string moduleName)
         return files.Count != 0 ? files : default;
     }
 
-    private static string GetGlobalUsings()
+    private string GetGlobalUsings()
     {
         string definition = "";
         if (Config.IsLight)
@@ -179,6 +179,7 @@ public class ModuleCommand(string solutionPath, string moduleName)
             global using Ater.Web.Core.Utils;
             global using Ater.Web.Extension;
             global using {{definition}}Entity;
+            global using {{definition}}Entity.{{ModuleName}};
             global using {{definition}}EntityFramework;
             global using {{definition}}EntityFramework.DBProvider;
             global using Microsoft.AspNetCore.Authorization;
@@ -367,11 +368,7 @@ public class ModuleCommand(string solutionPath, string moduleName)
         var globalUsingsFile = Path.Combine(databasePath, "GlobalUsings.cs");
         var globalUsingsContent = File.ReadAllText(globalUsingsFile);
 
-        var moduleNsp = ModuleName.EndsWith("Mod")
-            ? ModuleName.Replace("Mod", "")
-            : ModuleName;
-
-        var newLine = @$"global using Entity.{moduleNsp};";
+        var newLine = @$"global using Entity.{ModuleName};";
         if (!globalUsingsContent.Contains(newLine))
         {
             Console.WriteLine($"  ℹ️ add new using {newLine} ➡️ GlobalUsings");
@@ -389,7 +386,7 @@ public class ModuleCommand(string solutionPath, string moduleName)
         await IOHelper.WriteToFileAsync(Path.Combine(applicationPath, "ManagerServiceCollectionExtensions.cs"), content);
 
         // 初始化内容
-        if (moduleNsp.Equals("System"))
+        if (ModuleName.Equals("SystemMod"))
         {
             var apiPath = Path.Combine(SolutionPath, Config.ApiPath);
             //InitSystemModule(apiPath);

@@ -25,9 +25,7 @@ function CopyModule([string]$solutionPath, [string]$moduleName, [string]$destMod
     if (!(Test-Path $entityDestDir)) {
         New-Item -ItemType Directory -Path $entityDestDir | Out-Null
     }
-
-    $moduleEntityName = $moduleName.Replace("Mod", "")
-    $entityPath = Join-Path $solutionPath "./src/Definition/Entity" $moduleEntityName
+    $entityPath = Join-Path $solutionPath "./src/Definition/Entity" $moduleName
 
     if (Test-Path $entityPath) {
         Copy-Item -Path $entityPath\* -Destination $entityDestDir -Force
