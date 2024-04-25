@@ -28,9 +28,11 @@ $light-theme: mat.define-light-theme((color: (primary: $light-primary,
       density: 0,
     ));
 
-@media (prefers-color-scheme: light) {
-  @include mat.all-component-themes($light-theme);
 
+@include mat.all-component-themes($dark-theme);
+
+@media (prefers-color-scheme: light) {
+  @include mat.all-component-colors($light-theme);
   .active {
     background-color: mat.get-theme-color($light-theme, primary, 300) !important;
   }
@@ -42,8 +44,6 @@ $light-theme: mat.define-light-theme((color: (primary: $light-primary,
 }
 
 @media (prefers-color-scheme: dark) {
-  @include mat.all-component-themes($dark-theme);
-
   .active {
     background-color: mat.get-theme-color($dark-theme, primary, 400) !important;
   }

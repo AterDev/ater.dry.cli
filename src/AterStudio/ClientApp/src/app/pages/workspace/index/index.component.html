@@ -281,11 +281,11 @@
     <div class="d-flex flex-column">
       <mat-form-field>
         <mat-label>文件名</mat-label>
-        <input matInput placeholder="Dto文件名称,不用输入.cs后缀" [(ngModel)]="newDtoFileName" name="dtoName">
+        <input matInput placeholder="Dto文件名称,不用输入.cs后缀" [(ngModel)]="newDtoFileName" name="dtoName" required>
       </mat-form-field>
       <mat-form-field>
         <mat-label>说明</mat-label>
-        <input matInput placeholder="Dto说明" [(ngModel)]="newDtoDescription" name="dtoSummary">
+        <input matInput placeholder="Dto说明" [(ngModel)]="newDtoDescription" name="dtoSummary" required>
       </mat-form-field>
     </div>
   </mat-dialog-content>

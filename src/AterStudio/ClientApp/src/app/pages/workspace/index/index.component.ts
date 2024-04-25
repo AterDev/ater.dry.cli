@@ -346,6 +346,11 @@ export class IndexComponent implements OnInit {
   }
 
   addDto(open: boolean = false): void {
+    if (!this.newDtoDescription || !this.newDtoFileName) {
+      this.snb.open("请填写文件名和描述");
+      return;
+    }
+
     if (this.previewItem?.baseDirPath && this.previewItem?.path) {
       const path = this.previewItem?.baseDirPath + this.previewItem?.path;
       this.service.createDto(path, this.newDtoFileName, this.newDtoDescription)

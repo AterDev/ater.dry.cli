@@ -3,6 +3,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
 using Application;
+using Ater.Web.Abstraction;
 using AterStudio;
 using AterStudio.Worker;
 
@@ -75,6 +76,13 @@ builder.Services.AddSwaggerGen(c =>
 });
 #endif
 builder.Services.AddControllers()
+    .ConfigureApiBehaviorOptions(o =>
+    {
+        o.InvalidModelStateResponseFactory = context =>
+        {
+            return new CustomBadRequest(context, null);
+        };
+    })
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
