@@ -14,8 +14,11 @@ public class TSModelGenerate : GenerateBase
 {
     public Dictionary<string, string?> ModelDictionary { get; set; } = [];
 
+    public OpenApiDocument OpenApi { get; set; }
+
     public TSModelGenerate(OpenApiDocument openApi)
     {
+        OpenApi = openApi;
         foreach (KeyValuePair<string, OpenApiPathItem> path in openApi.Paths)
         {
             foreach (KeyValuePair<OperationType, OpenApiOperation> operation in path.Value.Operations)
@@ -157,9 +160,10 @@ public class TSModelGenerate : GenerateBase
     /// <returns></returns>
     private string? GetDirName(string searchKey)
     {
-        return ModelDictionary.Where(m => m.Key.StartsWith(searchKey))
+        var dirName = ModelDictionary.Where(m => m.Key.StartsWith(searchKey))
             .Select(m => m.Value)
             .FirstOrDefault();
+        return dirName;
     }
 
     /// <summary>
