@@ -130,7 +130,7 @@ public class TSModelGenerate : GenerateBase
         // 文件名及内容
         string fileName = schemaKey.ToHyphen() + ".model.ts";
         string tsContent;
-        string? path = GetDirName(schemaKey);
+        string? path = GetDirName(schemaKey)?.ToHyphen();
         if (schema.Enum.Count > 0)
         {
             tsContent = ToEnumString(schema, schemaKey);
@@ -176,12 +176,12 @@ public class TSModelGenerate : GenerateBase
         string propertyString = "";
         string extendString = "";
         string importString = "";// 需要导入的关联接口
-        string relatePath = "../";
+        string relatePath = "../../";
 
         // 不在控制器中的类型，则在根目录生成，相对目录也从根目录开始
         if (string.IsNullOrEmpty(GetDirName(name)))
         {
-            relatePath = "./";
+            relatePath = "../";
         }
 
         if (schema.AllOf.Count > 0)
@@ -195,7 +195,7 @@ public class TSModelGenerate : GenerateBase
                 {
                     string? dirName = GetDirName(name);
                     dirName = dirName.NotNull() ? dirName!.ToHyphen() + "/" : "";
-                    importString += @$"import {{ {extend} }} from '{relatePath}{dirName}{extend.ToHyphen()}.model';"
+                    importString += @$"import {{ {extend} }} from '{relatePath}{dirName}models/{extend.ToHyphen()}.model';"
                         + Environment.NewLine;
                 }
             }
@@ -233,7 +233,7 @@ public class TSModelGenerate : GenerateBase
                     dirName = "enum/";
                 }
 
-                importString += @$"import {{ {ip.Reference} }} from '{relatePath}{dirName}{ip.Reference.ToHyphen()}.model';"
+                importString += @$"import {{ {ip.Reference} }} from '{relatePath}{dirName}models/{ip.Reference.ToHyphen()}.model';"
                 + Environment.NewLine;
             }
         });

@@ -149,14 +149,19 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
                 case RequestLibType.NgHttp:
                 {
                     string baseFileName = currentTag.Name?.ToHyphen() + "-base.service.ts";
-                    GenFileInfo file = new(baseFileName, content);
+                    var path = currentTag.Name?.ToHyphen() ?? "";
+                    GenFileInfo file = new(baseFileName, content)
+                    {
+                        Path = path
+                    };
                     files.Add(file);
 
                     string fileName = currentTag.Name?.ToHyphen() + ".service.ts";
                     content = ToNgRequestService(serviceFile);
                     file = new(fileName, content)
                     {
-                        CanModify = true
+                        CanModify = true,
+                        Path = path
                     };
                     files.Add(file);
                     break;
@@ -171,8 +176,6 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
                 default:
                     break;
             }
-
-
         }
         return files;
     }
@@ -440,18 +443,20 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
             {
                 if (Config.EnumModels.Contains(t))
                 {
-                    importModels += $"import {{ {t} }} from '../models/enum/{t.ToHyphen()}.model';{Environment.NewLine}";
+                    importModels += $"import {{ {t} }} from '../enum/models/{t.ToHyphen()}.model';{Environment.NewLine}";
                 }
                 else
                 {
-                    string? dirName = TsModelFiles?.Where(f => f.ModelName == t).Select(f => f.Path).FirstOrDefault();
-                    importModels += $"import {{ {t} }} from '../models/{dirName?.ToHyphen()}/{t.ToHyphen()}.model';{Environment.NewLine}";
+                    string? dirName = TsModelFiles?.Where(f => f.ModelName == t)
+                        .Select(f => f.Path).FirstOrDefault();
+
+                    importModels += $"import {{ {t} }} from './models/{t.ToHyphen()}.model';{Environment.NewLine}";
                 }
 
             });
         }
         string result = $@"import {{ Injectable }} from '@angular/core';
-import {{ BaseService }} from './base.service';
+import {{ BaseService }} from '../base.service';
 import {{ Observable }} from 'rxjs';
 {importModels}
 /**

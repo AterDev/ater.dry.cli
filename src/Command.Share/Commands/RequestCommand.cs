@@ -24,6 +24,9 @@ public class RequestCommand : CommandBase
     public RequestCommand(string docUrl, string output, RequestLibType libType)
     {
         DocUrl = docUrl;
+        OutputPath = output;
+        LibType = libType;
+
         if (docUrl.Contains("http"))
         {
             DocName = docUrl.Split('/').Reverse().Skip(1).First();
@@ -32,15 +35,10 @@ public class RequestCommand : CommandBase
         {
             DocName = string.Empty;
         }
-
-        // 兼容过去没有分组的生成
         if (DocName == "v1")
         {
             DocName = string.Empty;
         }
-
-        OutputPath = Path.Combine(output, DocName);
-        LibType = libType;
 
         Instructions.Add($"  🔹 generate ts interfaces.");
         Instructions.Add($"  🔹 generate request services.");
@@ -80,7 +78,7 @@ public class RequestCommand : CommandBase
     public async Task GenerateCommonFilesAsync()
     {
         string content = RequestGenerate.GetBaseService(LibType);
-        string dir = Path.Combine(OutputPath, "services");
+        string dir = Path.Combine(OutputPath, "services", DocName);
         await GenerateFileAsync(dir, "base.service.ts", content, false);
 
         // 枚举pipe
@@ -88,7 +86,7 @@ public class RequestCommand : CommandBase
         {
             var schemas = ApiDocument!.Components.Schemas;
             string pipeContent = RequestGenerate.GetEnumPipeContent(schemas);
-            dir = Path.Combine(OutputPath, "pipe");
+            dir = Path.Combine(OutputPath, "pipe", DocName);
             await GenerateFileAsync(dir, "enum-text.pipe.ts", pipeContent, true);
         }
     }
@@ -104,7 +102,7 @@ public class RequestCommand : CommandBase
         List<GenFileInfo> models = ngGen.GetTSInterfaces();
         foreach (GenFileInfo model in models)
         {
-            string dir = Path.Combine(OutputPath, "models", model.Path.ToHyphen());
+            string dir = Path.Combine(OutputPath, "services", DocName, model.Path, "models");
             await GenerateFileAsync(dir, model.Name, model.Content, true);
         }
 
@@ -112,9 +110,8 @@ public class RequestCommand : CommandBase
         List<GenFileInfo> services = ngGen.GetServices(ApiDocument!.Tags);
         foreach (GenFileInfo service in services)
         {
-            string dir = Path.Combine(OutputPath, "services");
+            string dir = Path.Combine(OutputPath, "services", DocName, service.Path);
             await GenerateFileAsync(dir, service.Name, service.Content, !service.CanModify);
         }
-
     }
 }
