@@ -212,7 +212,7 @@ public class ViewCommand : CommandBase
     {
         string path = Path.Combine(dir, info.Name);
         await GenerateFileAsync(path, info.Name + ".component.ts", info.TsContent!);
-        await GenerateFileAsync(path, info.Name + ".component.css", info.CssContent!);
+        await GenerateFileAsync(path, info.Name + ".component.scss", info.CssContent!);
         await GenerateFileAsync(path, info.Name + ".component.html", info.HtmlContent!);
     }
 }
