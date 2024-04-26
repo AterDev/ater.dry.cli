@@ -309,7 +309,7 @@ public class NgPageGenerate : GenerateBase
 
                 return $@"
   <ng-container matColumnDef=""{p.Name.ToCamelCase()}"">
-    <th mat-header-cell *matHeaderCellDef>{p.CommentSummary ?? p.Type}</th>
+    <th mat-header-cell *matHeaderCellDef>{p.CommentSummary ?? p.Name ?? p.Type}</th>
     <td mat-cell *matCellDef=""let element;table:table"">
       {{{{element.{p.Name.ToCamelCase()}{pipe}}}}}
     </td>
@@ -370,7 +370,7 @@ public class NgPageGenerate : GenerateBase
                 }
                 return $$$"""
                 <tr>
-                  <th>{{{p.Name}}}</th>
+                  <th>{{{p.CommentSummary ?? p.Name}}}</th>
                   <td class="text-primary">{{data.{{{p.Name.ToCamelCase()}}} {{{pipe}}}}}</td>
                 </tr>
                 """;
