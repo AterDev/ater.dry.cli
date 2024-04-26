@@ -6,7 +6,7 @@
     <mat-icon>edit</mat-icon>
   </button>
 </mat-toolbar>
-<div *ngIf="!isLoading" class="d-flex">
+<div *ngIf="!isLoading" class="d-flex p-2">
   <mat-card class="w-100">
     <!-- <mat-card-header>
       <div mat-card-avatar class=""></div>

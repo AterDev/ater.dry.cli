@@ -19,7 +19,7 @@
   <!-- 无数据时显示 -->
   <ng-container *ngIf="data && data.length<=0; else elseTemplate">
     <h4>
-      暂无内容！
+      暂无数据！
     </h4>
   </ng-container>
   <ng-template #elseTemplate>

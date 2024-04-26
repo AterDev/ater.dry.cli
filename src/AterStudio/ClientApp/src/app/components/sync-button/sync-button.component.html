@@ -1,0 +1,9 @@
+@if(!isSync){
+<button mat-button (click)="onClick()" color="primary">
+  生成
+</button>
+}@else {
+<button mat-button color="primary" [disabled]="isSync">
+  <mat-spinner *ngIf="isSync" style="width: 24px;height:24px"></mat-spinner>
+</button>
+}

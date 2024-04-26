@@ -205,7 +205,8 @@
   </mat-dialog-content>
   <mat-dialog-actions class="justify-content-end">
     <button mat-button mat-dialog-close>取消</button>
-    <button mat-button (click)="genNgModule()" color="primary" [disabled]="isSync">生成</button>
+    <sync-button [isSync]="isSync" (click)="genNgModule()">生成</sync-button>
+    
   </mat-dialog-actions>
 </ng-template>
 

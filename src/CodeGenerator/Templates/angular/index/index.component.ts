@@ -63,8 +63,6 @@ export class IndexComponent implements OnInit {
               this.total = res.count;
               this.dataSource = new MatTableDataSource<{$EntityName}ItemDto>(this.data);
             }
-          } else {
-            this.snb.open('');
           }
         },
         error: (error) => {

@@ -59,8 +59,6 @@ export class EditComponent implements OnInit {
             this.data = res;
             this.initForm();
             this.isLoading = false;
-          } else {
-            this.snb.open('');
           }
         },
         error: (error) => {

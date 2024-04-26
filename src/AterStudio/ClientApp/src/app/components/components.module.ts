@@ -38,6 +38,7 @@ import { CommonModule } from '@angular/common';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { AdminLayoutComponent } from './admin-layout/admin-layout.component';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
+import { SyncButtonComponent } from './sync-button/sync-button.component';
 
 const MaterialModules = [
   MatToolbarModule,
@@ -76,7 +77,7 @@ const MaterialModules = [
 ];
 
 @NgModule({
-  declarations: [LayoutComponent, NavigationComponent, ConfirmDialogComponent, AdminLayoutComponent],
+  declarations: [LayoutComponent, NavigationComponent, ConfirmDialogComponent, AdminLayoutComponent, SyncButtonComponent],
   imports: [
     CommonModule,
     RouterModule,
@@ -89,7 +90,8 @@ const MaterialModules = [
     LayoutComponent,
     NavigationComponent,
     ConfirmDialogComponent,
-    AdminLayoutComponent
+    AdminLayoutComponent,
+    SyncButtonComponent
   ]
 })
 export class ComponentsModule { }
