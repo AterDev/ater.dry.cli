@@ -1,6 +1,7 @@
-﻿using Definition.Entity;
+﻿using Ater.Web.Abstraction;
+using Definition.Entity;
 using Definition.Models;
-
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AterStudio.Controllers;
@@ -9,9 +10,7 @@ namespace AterStudio.Controllers;
 /// 项目
 /// </summary>
 /// <see cref="ProjectManager"/>
-[ApiController]
-[Route("api/[controller]")]
-public class ProjectController(ProjectManager manager, AdvanceManager advance) : ControllerBase
+public class ProjectController(ProjectManager manager, AdvanceManager advance) : RestControllerBase
 {
     private readonly ProjectManager _manager = manager;
     private readonly AdvanceManager _advance = advance;

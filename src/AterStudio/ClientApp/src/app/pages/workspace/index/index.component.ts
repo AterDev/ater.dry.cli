@@ -178,10 +178,12 @@ export class IndexComponent implements OnInit {
     });
 
     let defaultPath = `\\src\\app\\pages`;
-    if (this.projectState.project?.path?.endsWith(".sln")) {
-      this.webPath = this.config?.rootPath! + '\\' + this.config?.apiPath + '\\ClientApp' + defaultPath;
+
+
+    if (this.projectState.project?.frontPath) {
+      this.webPath = this.projectState.project?.frontPath
     } else {
-      this.webPath = this.config?.rootPath! + defaultPath;
+      this.webPath = this.config?.rootPath! + '\\' + this.config?.apiPath + '\\ClientApp' + defaultPath;
     }
   }
 

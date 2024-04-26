@@ -2,9 +2,6 @@
   <button color="basic" mat-icon-button matTooltip="返回" (click)="back()">
     <mat-icon>arrow_back</mat-icon>
   </button>
-  <button color="primary" mat-icon-button matTooltip="编辑" (click)="edit()">
-    <mat-icon>edit</mat-icon>
-  </button>
 </mat-toolbar>
 <div *ngIf="!isLoading" class="d-flex p-2">
   <mat-card class="w-100">

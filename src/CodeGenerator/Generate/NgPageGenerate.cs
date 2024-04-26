@@ -355,23 +355,36 @@ public class NgPageGenerate : GenerateBase
 
         // html
         string htmlContent = GetTplContent("angular.detail.detail.component.html.tpl");
-        string[] content = [];
+
+
+        string[] trRows = [];
         if (props != null)
         {
-            content = props.Select(p =>
+            trRows = props.Select(p =>
             {
                 // 管道处理
                 string pipe = "";
                 if (p.Type.ToLower().Contains("datetime"))
                 {
-                    pipe = "|date:'yyyy-MM-dd HH:mm:ss'";
+                    pipe = "| date:'yyyy-MM-dd HH:mm:ss'";
                 }
-                return $@"      <p><strong>{p.Name}</strong><br> <span class=""text-primary"">{{{{data.{p.Name.ToCamelCase()}{pipe}}}}}</span></p>
-";
+                return $$$"""
+                <tr>
+                  <th>{{{p.Name}}}</th>
+                  <td class="text-primary">{{data.{{{p.Name.ToCamelCase()}}} {{{pipe}}}}}</td>
+                </tr>
+                """;
             }).ToArray();
         }
-        htmlContent = htmlContent.Replace("{$Content}", string.Join("", content));
 
+        var tableContent = $"""
+            <table class="table">
+              <tbody>
+              {string.Join("", trRows)}
+              </tbody>
+            </table>
+            """;
+        htmlContent = htmlContent.Replace("{$Content}", string.Join("", tableContent));
         // ts
         string tplContent = GetTplContent("angular.detail.detail.component.ts");
         tplContent = tplContent.Replace("{$EntityName}", EntityName)
@@ -602,7 +615,7 @@ public class NgPageGenerate : GenerateBase
                 validators.Add($"Validators.maxLength({property.MaxLength})");
             }
 
-            string defaultValue = isEdit ? $"this.data.{name}" : "null";
+            string defaultValue = isEdit ? $"this.data.{name}" : property.Type.Equals("bool") ? "false" : "null";
             definedFormControls += $@"      {name}: new FormControl({defaultValue}, [{string.Join(",", validators)}]),
 ";
             definedValidatorMessage += @$"      case '{name}':

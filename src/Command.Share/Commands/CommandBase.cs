@@ -13,8 +13,16 @@ public class CommandBase
         string filePath = Path.Combine(dir, fileName);
         if (!File.Exists(filePath) || cover)
         {
-            await File.WriteAllTextAsync(filePath, content, new UTF8Encoding(false));
-            Console.WriteLine(@$"  ℹ️ generate file {fileName}.");
+            try
+            {
+                await File.WriteAllTextAsync(filePath, content, new UTF8Encoding(false));
+                Console.WriteLine(@$"  ℹ️ generate file {fileName}.");
+            }
+            catch (IOException ex)
+            {
+                Console.WriteLine($"写入文件失败：{ex.Message}");
+            }
+
         }
         else
         {

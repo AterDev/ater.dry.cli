@@ -1,5 +1,5 @@
 <div class="d-flex">
-  <mat-toolbar color="">
+  <mat-toolbar class="box-shadow">
     <mat-toolbar-row style="font-size:16px">
       <div class="d-flex gap-1">
         <!-- 筛选 -->
@@ -60,7 +60,7 @@
       <tr mat-row *matRowDef="let row; columns: columns;"></tr>
     </table>
     <mat-divider></mat-divider>
-    <div class="d-flex justify-content-between paginator-bg">
+    <div class="d-flex justify-content-between paginator">
       <mat-form-field subscriptSizing="dynamic">
         <mat-label>跳转到</mat-label>
         <input matInput type="number" [value]="filter.pageIndex" #pageJump (keyup.enter)="jumpTo(pageJump.value)">

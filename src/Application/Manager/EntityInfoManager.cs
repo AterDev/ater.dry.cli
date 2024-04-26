@@ -457,6 +457,7 @@ public partial class EntityInfoManager(
         var entityPath = Directory.GetFiles(entityDir, entityName, SearchOption.AllDirectories)
             .FirstOrDefault();
 
+
         if (entityPath != null)
         {
             await CommandRunner.GenerateNgPagesAsync(entityPath, dtoPath, rootPath);
