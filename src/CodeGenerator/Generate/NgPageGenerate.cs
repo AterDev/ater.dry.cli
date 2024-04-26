@@ -417,7 +417,7 @@ public class NgPageGenerate : GenerateBase
     }
 
     /// <summary>
-    /// 创建模块路由
+    /// 模块内容
     /// </summary>
     public string GetModule(string? route = null)
     {
@@ -534,7 +534,7 @@ public class NgPageGenerate : GenerateBase
         string declareStrings = "";
         foreach (PropertyInfo item in props)
         {
-            importStrings += @$"import {{ {item.Type} }} from 'src/app/share/admin/models/enum/{item.Type.ToHyphen()}.model';" + Environment.NewLine;
+            importStrings += @$"import {{ {item.Type} }} from 'src/app/services/admin/enum/models/{item.Type.ToHyphen()}.model';" + Environment.NewLine;
             declareStrings += @$"  {item.Type} = {item.Type};" + Environment.NewLine;
         }
         return content.Replace("[@Imports]", importStrings + "[@Imports]")

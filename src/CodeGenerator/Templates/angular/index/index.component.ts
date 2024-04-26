@@ -1,9 +1,9 @@
 import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
-import { {$EntityName}Service } from 'src/app/share/admin/services/{$EntityPathName}.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confirm-dialog.component';
-import { {$EntityName}ItemDto } from 'src/app/share/admin/models/{$EntityPathName}/{$EntityPathName}-item-dto.model';
-import { {$EntityName}FilterDto } from 'src/app/share/admin/models/{$EntityPathName}/{$EntityPathName}-filter-dto.model';
+import { {$EntityName}Service } from 'src/app/services/admin/{$EntityPathName}/{$EntityPathName}.service';
+import { {$EntityName}ItemDto } from 'src/app/services/admin/{$EntityPathName}/models/{$EntityPathName}-item-dto.model';
+import { {$EntityName}FilterDto } from 'src/app/services/admin/{$EntityPathName}/models/{$EntityPathName}-filter-dto.model';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSnackBar } from '@angular/material/snack-bar';

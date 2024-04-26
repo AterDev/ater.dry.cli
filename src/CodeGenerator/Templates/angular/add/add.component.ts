@@ -1,8 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { {$EntityName}Service } from 'src/app/share/admin/services/{$EntityPathName}.service';
-import { {$EntityName} } from 'src/app/share/admin/models/{$EntityPathName}/{$EntityPathName}.model';
-import { {$EntityName}AddDto } from 'src/app/share/admin/models/{$EntityPathName}/{$EntityPathName}-add-dto.model';
+import { {$EntityName}Service } from 'src/app/services/admin/{$EntityPathName}/{$EntityPathName}.service';
+import { {$EntityName} } from 'src/app/services/admin/{$EntityPathName}/models/{$EntityPathName}.model';
+import { {$EntityName}AddDto } from 'src/app/services/admin/{$EntityPathName}/models/{$EntityPathName}-add-dto.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
