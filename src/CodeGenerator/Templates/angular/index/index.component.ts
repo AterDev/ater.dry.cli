@@ -5,7 +5,6 @@ import { #@EntityName#Service } from 'src/app/services/admin/#@EntityPathName#/#
 import { #@EntityName#ItemDto } from 'src/app/services/admin/#@EntityPathName#/models/#@EntityPathName#-item-dto.model';
 import { #@EntityName#FilterDto } from 'src/app/services/admin/#@EntityPathName#/models/#@EntityPathName#-filter-dto.model';
 import { #@EntityName#ItemDtoPageList } from 'src/app/services/admin/#@EntityPathName#/models/#@EntityPathName#-item-dto-page-list.model';
-
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -13,6 +12,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FormGroup } from '@angular/forms';
 import { AddComponent } from '../add/add.component';
 import { EditComponent } from '../edit/edit.component';
+import { Observable, forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-index',
@@ -24,7 +24,7 @@ export class IndexComponent implements OnInit {
   isLoading = true;
   isProcessing = false;
   total = 0;
-  data: #@EntityName#)ItemDto[] = [];
+  data: #@EntityName#ItemDto[] = [];
   columns: string[] = [#@Columns#];
   dataSource!: MatTableDataSource<#@EntityName#ItemDto>;
   dialogRef!: MatDialogRef<{}, any>;

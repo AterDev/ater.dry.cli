@@ -32,7 +32,6 @@ export class AddComponent implements OnInit {
   ) {
 
   }
-
   //[@DefinedProperties]
 
   ngOnInit(): void {

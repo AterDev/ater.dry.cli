@@ -304,7 +304,7 @@ public class NgPageGenerate : GenerateBase
                     if (type.Equals("DateTime") || type.Equals("DateTimeOffset"))
                     {
                         var pipe = p.Name.EndsWith("Date") ? " | date: 'yyyy-MM-dd'" : " | date: 'yyy-MM-dd HH:mm:ss'";
-                        tdContent = $$$"""{{element.{{{p.Name.ToCamelCase()}}}}}{{{pipe}}}}}""";
+                        tdContent = $$$"""{{element.{{{p.Name.ToCamelCase()}}}{{{pipe}}}}}""";
                     }
 
                     if (type.Equals("bool"))
@@ -314,13 +314,13 @@ public class NgPageGenerate : GenerateBase
                 }
 
                 return $"""
-                  <ng-container matColumnDef="{p.Name.ToCamelCase()}">
-                    <th mat-header-cell *matHeaderCellDef>{p.CommentSummary ?? p.Name ?? p.Type}</th>
-                    <td mat-cell *matCellDef="let element;table:table">
-                      {tdContent}
-                    </td>
-                  </ng-container>
 
+                      <ng-container matColumnDef="{p.Name.ToCamelCase()}">
+                        <th mat-header-cell *matHeaderCellDef>{p.CommentSummary ?? p.Name ?? p.Type}</th>
+                        <td mat-cell *matCellDef="let element;table:table">
+                          {tdContent}
+                        </td>
+                      </ng-container>
                 """;
             }).ToArray();
         }
@@ -482,7 +482,6 @@ public class NgPageGenerate : GenerateBase
                 </mat-expansion-panel-header>
             {navListTmp}
               </mat-expansion-panel>
-
             """;
         return temp;
     }
@@ -565,7 +564,7 @@ public class NgPageGenerate : GenerateBase
         foreach (PropertyInfo item in props)
         {
             importStrings += @$"import {{ {item.Type} }} from 'src/app/services/admin/enum/models/{item.Type.ToHyphen()}.model';" + Environment.NewLine;
-            declareStrings += @$"  {item.Type} = {item.Type};" + Environment.NewLine;
+            declareStrings += @$"{item.Type} = {item.Type};" + Environment.NewLine;
         }
         return content.Replace(TplConst.IMPORTS, importStrings + TplConst.IMPORTS)
             .Replace(TplConst.DECLARES, declareStrings + TplConst.DECLARES);
@@ -579,13 +578,12 @@ public class NgPageGenerate : GenerateBase
     private static string InsertEditor(string tsContent)
     {
         return tsContent.Replace(TplConst.IMPORTS, $$"""
-            import { environment } from 'src/environments/environment';
             {{TplConst.IMPORTS}}
             """)
             .Replace(TplConst.DECLARES, @TplConst.DECLARES)
             .Replace(TplConst.DI, @"")
             .Replace(TplConst.METHODS, """
-              initEditor(): void {  }
+            initEditor(): void {  }
 
             """).Replace(TplConst.INIT, "this.initEditor();");
     }
@@ -619,8 +617,8 @@ public class NgPageGenerate : GenerateBase
         {
             string name = property.Name.ToCamelCase();
             definedProperties += $$"""
-                    get {{name}}() { return this.formGroup.get('{{name}}'); }
 
+                  get {{name}}() { return this.formGroup.get('{{name}}'); }
                 """;
             List<string> validators = [];
             if (property.IsRequired)
@@ -640,15 +638,15 @@ public class NgPageGenerate : GenerateBase
 
             string defaultValue = isEdit ? $"this.data.{name}" : property.Type.Equals("bool") ? "false" : "null";
             definedFormControls += $"""
-                      {name}: new FormControl({defaultValue}, [{string.Join(",", validators)}]),
 
+                      {name}: new FormControl({defaultValue}, [{string.Join(", ", validators)}]),
                 """;
             definedValidatorMessage += $"""
+
                       case '{name}':
                         return this.{name}?.errors?.['required'] ? '{property.CommentSummary ?? property.Name}必填' :
                           this.{name}?.errors?.['minlength'] ? '{property.CommentSummary ?? property.Name}长度最少{property.MinLength}位' :
-                          this.{name}?.errors?.['maxlength'] ? '{property.CommentSummary ?? property.Name}长度最多{property.MaxLength}位' : '';
-
+                            this.{name}?.errors?.['maxlength'] ? '{property.CommentSummary ?? property.Name}长度最多{property.MaxLength}位' : '';
                 """;
         }
     }
