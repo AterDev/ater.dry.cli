@@ -1,7 +1,7 @@
-﻿using ${Namespace}.Services;
-namespace ${Namespace};
+﻿using #@Namespace#.Services;
+namespace #@Namespace#;
 
-public class ${ClassName}Client
+public class #@ClassName#Client
 {
     public string? AccessToken { get; set; }
     private readonly HttpClient Http;
@@ -9,10 +9,10 @@ public class ${ClassName}Client
     public ErrorResult? ErrorMsg { get; set; } = null;
 
     #region api services
-${Properties}
+#@Properties#
     #endregion
 
-    public ${ClassName}Client(HttpClient http)
+    public #@ClassName#Client(HttpClient http)
     {
         Http = http;
         JsonSerializerOptions = new JsonSerializerOptions()
@@ -22,7 +22,7 @@ ${Properties}
         };
 
         #region api services
-${InitProperties}
+#@InitProperties#
         #endregion
     }
 

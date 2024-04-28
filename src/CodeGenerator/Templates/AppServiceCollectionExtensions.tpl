@@ -9,7 +9,7 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Share.Options;
 
-namespace ${Namespace};
+namespace #@Namespace#;
 
 /// <summary>
 /// 应用配置常量

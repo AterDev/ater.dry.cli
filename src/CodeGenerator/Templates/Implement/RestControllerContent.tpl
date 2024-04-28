@@ -1,21 +1,21 @@
-﻿using ${ShareNamespace}.Models.${EntityName}Dtos;
-namespace ${Namespace}.Controllers;
+﻿using #@ShareNamespace#.Models.#@EntityName#Dtos;
+namespace #@Namespace#.Controllers;
 
-${Comment}
-public class ${EntityName}${APISuffix}(
+#@Comment#
+public class #@EntityName##@APISuffix#(
     IUserContext user,
-    ILogger<${EntityName}${APISuffix}> logger,
-    ${EntityName}Manager manager${AdditionManagersDI}
-    ) : RestControllerBase<${EntityName}Manager>(manager, user, logger)
+    ILogger<#@EntityName##@APISuffix#> logger,
+    #@EntityName#Manager manager#@AdditionManagersDI#
+    ) : RestControllerBase<#@EntityName#Manager>(manager, user, logger)
 {
-${AdditionManagersProps}
+#@AdditionManagersProps#
     /// <summary>
     /// 筛选
     /// </summary>
     /// <param name="filter"></param>
     /// <returns></returns>
     [HttpPost("filter")]
-    public async Task<ActionResult<PageList<${EntityName}ItemDto>>> FilterAsync(${EntityName}FilterDto filter)
+    public async Task<ActionResult<PageList<#@EntityName#ItemDto>>> FilterAsync(#@EntityName#FilterDto filter)
     {
         return await manager.FilterAsync(filter);
     }
@@ -26,9 +26,9 @@ ${AdditionManagersProps}
     /// <param name="dto"></param>
     /// <returns></returns>
     [HttpPost]
-    public async Task<ActionResult<${EntityName}>> AddAsync(${EntityName}AddDto dto)
+    public async Task<ActionResult<#@EntityName#>> AddAsync(#@EntityName#AddDto dto)
     {
-${AddActionBlock}
+#@AddActionBlock#
     }
 
     /// <summary>
@@ -38,9 +38,9 @@ ${AddActionBlock}
     /// <param name="dto"></param>
     /// <returns></returns>
     [HttpPatch("{id}")]
-    public async Task<ActionResult<${EntityName}?>> UpdateAsync([FromRoute] ${IdType} id, ${EntityName}UpdateDto dto)
+    public async Task<ActionResult<#@EntityName#?>> UpdateAsync([FromRoute] #@IdType# id, #@EntityName#UpdateDto dto)
     {
-${UpdateActionBlock}
+#@UpdateActionBlock#
     }
 
     /// <summary>
@@ -49,7 +49,7 @@ ${UpdateActionBlock}
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpGet("{id}")]
-    public async Task<ActionResult<${EntityName}?>> GetDetailAsync([FromRoute] ${IdType} id)
+    public async Task<ActionResult<#@EntityName#?>> GetDetailAsync([FromRoute] #@IdType# id)
     {
         var res = await manager.FindAsync(id);
         return (res == null) ? NotFound() : res;
@@ -62,7 +62,7 @@ ${UpdateActionBlock}
     /// <returns></returns>
     // [ApiExplorerSettings(IgnoreApi = true)]
     [HttpDelete("{id}")]
-    public async Task<ActionResult<${EntityName}?>> DeleteAsync([FromRoute] ${IdType} id)
+    public async Task<ActionResult<#@EntityName#?>> DeleteAsync([FromRoute] #@IdType# id)
     {
         // 注意删除权限
         var entity = await manager.GetCurrentAsync(id);

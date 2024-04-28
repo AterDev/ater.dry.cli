@@ -1,11 +1,11 @@
 ﻿import { BaseService, ExtOptions } from './base.service';
-[@Import]
-class [@ServiceName]Service extends BaseService {
+//[@Import]
+class //[@ServiceName]Service extends BaseService {
   constructor() {
     super();
   }
 
-[@Functions]
+//[@Functions]
 }
 
-export default new [@ServiceName]Service();
+export default new //[@ServiceName]Service();

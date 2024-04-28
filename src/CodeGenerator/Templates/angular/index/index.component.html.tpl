@@ -1,11 +1,11 @@
 <div class="d-flex">
   <mat-toolbar class="box-shadow">
     <mat-toolbar-row style="font-size:16px">
-      <div class="d-flex gap-1">
+      <div class="d-flex gap-1 align-items-center">
         <!-- 筛选 -->
         <!--<mat-form-field subscriptSizing="dynamic">
           <mat-label>搜索</mat-label>
-          <input matInput placeholder="名称;回车搜索" [(ngModel)]="filter.name" (keyup.enter)="getList()">
+          <input type="search" matInput placeholder="名称;回车搜索" [(ngModel)]="filter.name" (keyup.enter)="getList()">
         </mat-form-field> -->
         <!-- <mat-form-field subscriptSizing="dynamic">
           <mat-label>筛选示例</mat-label>
@@ -16,6 +16,9 @@
             </mat-option>
           </mat-select>
         </mat-form-field> -->
+        <div class="d-flex">
+          <button mat-flat-button (click)="getList()" color="primary">搜索</button>
+        </div>
       </div>
       <div class="d-flex flex-grow-1"></div>
       <button mat-flat-button color="primary" (click)="openAddDialog()">
@@ -41,7 +44,7 @@
   </ng-container>
   <ng-template #elseTemplate>
     <table mat-table [dataSource]="dataSource" style="width: 100%;" #table="matTable">
-    {$ColumnsDef}
+    #@ColumnsDef#
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef>操作</th>
         <td mat-cell *matCellDef="let element;table:table">

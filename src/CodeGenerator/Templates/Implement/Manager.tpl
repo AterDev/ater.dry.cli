@@ -1,12 +1,12 @@
-﻿using ${Namespace}.Manager;
-using ${ShareNamespace}.Models.${EntityName}Dtos;
+﻿using #@Namespace#.Manager;
+using #@ShareNamespace#.Models.#@EntityName#Dtos;
 
-namespace ${Namespace}.Manager;
-${Comment}
-public class ${EntityName}Manager(
-    DataAccessContext<${EntityName}> dataContext, 
-    ILogger<${EntityName}Manager> logger,
-    IUserContext userContext) : ManagerBase<${EntityName}, ${EntityName}UpdateDto, ${EntityName}FilterDto, ${EntityName}ItemDto>(dataContext, logger)
+namespace #@Namespace#.Manager;
+#@Comment#
+public class #@EntityName#Manager(
+    DataAccessContext<#@EntityName#> dataContext, 
+    ILogger<#@EntityName#Manager> logger,
+    IUserContext userContext) : ManagerBase<#@EntityName#, #@EntityName#UpdateDto, #@EntityName#FilterDto, #@EntityName#ItemDto>(dataContext, logger)
 {
     private readonly IUserContext _userContext = userContext;
 
@@ -15,19 +15,19 @@ public class ${EntityName}Manager(
     /// </summary>
     /// <param name="dto"></param>
     /// <returns></returns>
-    public async Task<${EntityName}> CreateNewEntityAsync(${EntityName}AddDto dto)
+    public async Task<#@EntityName#> CreateNewEntityAsync(#@EntityName#AddDto dto)
     {
-${AddActionBlock}
+#@AddActionBlock#
     }
 
-    public override async Task<${EntityName}> UpdateAsync(${EntityName} entity, ${EntityName}UpdateDto dto)
+    public override async Task<#@EntityName#> UpdateAsync(#@EntityName# entity, #@EntityName#UpdateDto dto)
     {
-${UpdateActionBlock}
+#@UpdateActionBlock#
     }
 
-    public override async Task<PageList<${EntityName}ItemDto>> FilterAsync(${EntityName}FilterDto filter)
+    public override async Task<PageList<#@EntityName#ItemDto>> FilterAsync(#@EntityName#FilterDto filter)
     {
-${FilterActionBlock}
+#@FilterActionBlock#
     }
 
 
@@ -46,7 +46,7 @@ ${FilterActionBlock}
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public async Task<${EntityName}?> GetOwnedAsync(${IdType} id)
+    public async Task<#@EntityName#?> GetOwnedAsync(#@IdType# id)
     {
         var query = Command.Db.Where(q => q.Id == id);
         // 获取用户所属的对象

@@ -1,17 +1,17 @@
 ﻿using Polly;
 using Polly.Extensions.Http;
 
-namespace ${Namespace};
+namespace #@Namespace#;
 public static class Extension
 {
-    public static IServiceCollection Add${Namespace}(this IServiceCollection services, Action<HttpClient> option)
+    public static IServiceCollection Add#@Namespace#(this IServiceCollection services, Action<HttpClient> option)
     {
         services.AddSingleton<InterceptHttpHandler>();
-        services.AddHttpClient("${Namespace}", option)
+        services.AddHttpClient("#@Namespace#", option)
             .AddHttpMessageHandler<InterceptHttpHandler>()
             .SetHandlerLifetime(TimeSpan.FromMinutes(5))
             .AddPolicyHandler(GetRetryPolicy());
-${AddServices}
+#@AddServices#
         return services;
     }
 

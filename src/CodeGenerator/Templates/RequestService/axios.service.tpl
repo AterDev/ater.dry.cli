@@ -187,7 +187,7 @@ const options: Options = {
   interceptors: {
     request: (config) => {
       const token = storage.get('userInfo')?.token
-      token && ((config.headers as any).Authorization = `Bearer ${token}`)
+      token && ((config.headers as any).Authorization = `Bearer #@token#`)
       if(MODE === 'development' && (mockUrls as string[]).includes(config.url!)) {
         config.baseURL = VITE_APP_MOCK_URL
       }

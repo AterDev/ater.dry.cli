@@ -8,7 +8,7 @@ import { EditComponent } from './edit/edit.component';
 
 const routes: Routes = [
   {
-    path: '{$RoutePathName}',
+    path: '#@RoutePathName#',
     canActivateChild: [AuthGuard],
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'index' },
@@ -25,4 +25,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class {$ModuleName}RoutingModule { }
+export class #@ModuleName#RoutingModule { }

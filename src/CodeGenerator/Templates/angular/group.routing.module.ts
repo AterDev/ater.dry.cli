@@ -5,7 +5,7 @@ import { AdminLayoutComponent } from 'src/app/components/admin-layout/admin-layo
 
 const routes: Routes = [
     {
-        path: '{$ModulePathName}',
+        path: '#@ModulePathName#',
         component: AdminLayoutComponent,
         // data: { reuse: true },
         canActivate: [AuthGuard],
@@ -21,4 +21,4 @@ const routes: Routes = [
     imports: [RouterModule.forRoot(routes)],
     exports: [RouterModule]
 })
-export class {$ModuleName}RoutingModule { }
+export class #@ModuleName#RoutingModule { }

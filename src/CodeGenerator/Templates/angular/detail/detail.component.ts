@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { {$EntityName} } from 'src/app/services/admin/{$EntityPathName}/models/{$EntityPathName}.model';
-import { {$EntityName}Service } from 'src/app/services/admin/{$EntityPathName}/{$EntityPathName}.service';
+import { #@EntityName# } from 'src/app/services/admin/#@EntityPathName#/models/#@EntityPathName#.model';
+import { #@EntityName#Service } from 'src/app/services/admin/#@EntityPathName#/#@EntityPathName#.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
@@ -13,9 +13,9 @@ import { Location } from '@angular/common';
 export class DetailComponent implements OnInit {
   id!: string;
   isLoading = true;
-  data = {} as {$EntityName};
+  data = {} as #@EntityName#;
   constructor(
-    private service: {$EntityName}Service,
+    private service: #@EntityName#Service,
     private snb: MatSnackBar,
     private route: ActivatedRoute,
     public location: Location,
@@ -36,12 +36,12 @@ export class DetailComponent implements OnInit {
     this.service.getDetail(this.id)
       .subscribe({
         next: (res) => {
-          if(res) {
+          if (res) {
             this.data = res;
-              this.isLoading = false;
-            }
+            this.isLoading = false;
+          }
         },
-        error:(error) => {
+        error: (error) => {
           this.snb.open(error);
         }
       })

@@ -1,30 +1,30 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { {$EntityName} } from 'src/app/services/admin/{$EntityPathName}/models/{$EntityPathName}.model';
-import { {$EntityName}Service } from 'src/app/services/admin/{$EntityPathName}/{$EntityPathName}.service';
-import { {$EntityName}UpdateDto } from 'src/app/services/admin/{$EntityPathName}/models/{$EntityPathName}-update-dto.model';
+import { #@EntityName# } from 'src/app/services/admin/#@EntityPathName#/models/#@EntityPathName#.model';
+import { #@EntityName#Service } from 'src/app/services/admin/#@EntityPathName#/#@EntityPathName#.service';
+import { #@EntityName#UpdateDto } from 'src/app/services/admin/#@EntityPathName#/models/#@EntityPathName#-update-dto.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Location } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
-[@Imports]
+//[@Imports]
 @Component({
   selector: 'app-edit',
   templateUrl: './edit.component.html',
   styleUrls: ['./edit.component.scss']
 })
 export class EditComponent implements OnInit {
-  [@Declares]
+  //[@Declares]
   id!: string;
   isLoading = true;
   isProcessing = false;
-  data = {} as {$EntityName};
-  updateData = {} as {$EntityName}UpdateDto;
+  data = {} as #@EntityName#;
+  updateData = {} as #@EntityName#UpdateDto;
   formGroup!: FormGroup;
-    constructor(
-    [@DI]
-    private service: {$EntityName}Service,
+  constructor(
+    //[@DI]
+    private service: #@EntityName#Service,
     private snb: MatSnackBar,
     private router: Router,
     private route: ActivatedRoute,
@@ -33,7 +33,7 @@ export class EditComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public dlgData: { id: '' }
   ) {
 
-    
+
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.id = id;
@@ -42,15 +42,15 @@ export class EditComponent implements OnInit {
     }
   }
 
-{$DefinedProperties}
+  //[@DefinedProperties]
 
   ngOnInit(): void {
     this.getDetail();
-    [@Init]
+    //[@Init]
     // TODO:等待数据加载完成
     // this.isLoading = false;
   }
-  [@Methods]
+  //[@Methods]
   getDetail(): void {
     this.service.getDetail(this.id)
       .subscribe({
@@ -70,24 +70,24 @@ export class EditComponent implements OnInit {
 
   initForm(): void {
     this.formGroup = new FormGroup({
-{$DefinedFormControls}
+      //[@DefinedFormControls]
     });
   }
   getValidatorMessage(type: string): string {
     switch (type) {
-{$DefinedValidatorMessage}
+      //[@DefinedValidatorMessage]
       default:
         return '';
     }
   }
   edit(): void {
-    if(this.formGroup.valid) {
+    if (this.formGroup.valid) {
       this.isProcessing = true;
-      this.updateData = this.formGroup.value as {$EntityName}UpdateDto;
+      this.updateData = this.formGroup.value as #@EntityName#UpdateDto;
       this.service.update(this.id, this.updateData)
         .subscribe({
           next: (res) => {
-            if(res){
+            if (res) {
               this.snb.open('修改成功');
               this.dialogRef.close(res);
               // this.router.navigate(['../../index'], { relativeTo: this.route });
@@ -102,7 +102,7 @@ export class EditComponent implements OnInit {
           }
         });
     } else {
-        this.snb.open('表单验证不通过，请检查填写的内容!');
+      this.snb.open('表单验证不通过，请检查填写的内容!');
     }
   }
 

@@ -383,9 +383,9 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
                 importModels += $"import {{ {t} }} from '../models/{dirName?.ToHyphen()}/{t.ToHyphen()}.model';{Environment.NewLine}";
             });
         }
-        tplContent = tplContent.Replace("[@Import]", importModels)
-            .Replace("[@ServiceName]", serviceFile.Name)
-            .Replace("[@Functions]", functionString);
+        tplContent = tplContent.Replace("//[@Import]", importModels)
+            .Replace("//[@ServiceName]", serviceFile.Name)
+            .Replace("//[@Functions]", functionString);
         return tplContent;
     }
 

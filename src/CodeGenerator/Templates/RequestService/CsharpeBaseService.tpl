@@ -1,5 +1,5 @@
 ﻿
-namespace ${Namespace}.Services;
+namespace #@Namespace#.Services;
 public class BaseService
 {
     protected HttpClient Http { get; init; }
@@ -8,7 +8,7 @@ public class BaseService
 
     public BaseService(IHttpClientFactory httpClient)
     {
-        Http = httpClient.CreateClient("${Namespace}");
+        Http = httpClient.CreateClient("#@Namespace#");
         JsonSerializerOptions = new JsonSerializerOptions()
         {
             ReferenceHandler = ReferenceHandler.IgnoreCycles,

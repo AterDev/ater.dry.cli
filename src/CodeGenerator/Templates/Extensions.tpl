@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Mapster;
-namespace ${Namespace}.Utils;
+namespace #@Namespace#.Utils;
 
 public static partial class Extensions
 {

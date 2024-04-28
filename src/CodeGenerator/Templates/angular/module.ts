@@ -1,5 +1,5 @@
 ﻿import { NgModule } from '@angular/core';
-import { {$ModuleName}RoutingModule } from './{$ModulePathName}-routing.module';
+import { #@ModuleName#RoutingModule } from './#@ModulePathName#-routing.module';
 import { ShareModule } from 'src/app/share/share.module';
 import { ComponentsModule } from 'src/app/components/components.module';
 import { IndexComponent } from './index/index.component';
@@ -13,8 +13,8 @@ import { EnumTextPipeModule } from 'src/app/pipe/admin/enum-text.pipe';
   imports: [
     ComponentsModule,
     ShareModule,
-    {$ModuleName}RoutingModule,
+    #@ModuleName#RoutingModule,
     EnumTextPipeModule
   ]
 })
-export class {$ModuleName}Module { }
+export class #@ModuleName#Module { }

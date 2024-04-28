@@ -4,7 +4,7 @@
 </mat-toolbar>
 <form class="d-flex p-2" *ngIf="!isLoading" [formGroup]="formGroup">
   <div class="d-flex flex-column w-100">
-{$FormControls}
+#@FormControls#
     <div class="d-flex mt-1 justify-content-end">
       <button class="d-flex flex-column" mat-flat-button color="primary" (click)="add()">添加</button>
     </div>

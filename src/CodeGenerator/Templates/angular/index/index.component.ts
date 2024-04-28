@@ -1,9 +1,11 @@
 import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confirm-dialog.component';
-import { {$EntityName}Service } from 'src/app/services/admin/{$EntityPathName}/{$EntityPathName}.service';
-import { {$EntityName}ItemDto } from 'src/app/services/admin/{$EntityPathName}/models/{$EntityPathName}-item-dto.model';
-import { {$EntityName}FilterDto } from 'src/app/services/admin/{$EntityPathName}/models/{$EntityPathName}-filter-dto.model';
+import { #@EntityName#Service } from 'src/app/services/admin/#@EntityPathName#/#@EntityPathName#.service';
+import { #@EntityName#ItemDto } from 'src/app/services/admin/#@EntityPathName#/models/#@EntityPathName#-item-dto.model';
+import { #@EntityName#FilterDto } from 'src/app/services/admin/#@EntityPathName#/models/#@EntityPathName#-filter-dto.model';
+import { #@EntityName#ItemDtoPageList } from 'src/app/services/admin/#@EntityPathName#/models/#@EntityPathName#-item-dto-page-list.model';
+
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -22,17 +24,17 @@ export class IndexComponent implements OnInit {
   isLoading = true;
   isProcessing = false;
   total = 0;
-  data: {$EntityName}ItemDto[] = [];
-  columns: string[] = [{$Columns}];
-  dataSource!: MatTableDataSource<{$EntityName}ItemDto>;
+  data: #@EntityName#)ItemDto[] = [];
+  columns: string[] = [#@Columns#];
+  dataSource!: MatTableDataSource<#@EntityName#ItemDto>;
   dialogRef!: MatDialogRef<{}, any>;
   @ViewChild('myDialog', { static: true })
   myTmpl!: TemplateRef<{}>;
   mydialogForm!: FormGroup;
-  filter: {$EntityName}FilterDto;
+  filter: #@EntityName#FilterDto;
   pageSizeOption = [12, 20, 50];
   constructor(
-    private service: {$EntityName}Service,
+    private service: #@EntityName#Service,
     private snb: MatSnackBar,
     private dialog: MatDialog,
     private route: ActivatedRoute,
@@ -46,7 +48,29 @@ export class IndexComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getList();
+    forkJoin([this.getListAsync()])
+    .subscribe({
+      next: ([res]) => {
+        if (res) {
+          if (res.data) {
+            this.data = res.data;
+            this.total = res.count;
+            this.dataSource = new MatTableDataSource<#@EntityName#ItemDto>(this.data);
+          }
+        }
+      },
+      error: (error) => {
+        this.snb.open(error.detail);
+        this.isLoading = false;
+      },
+      complete: () => {
+        this.isLoading = false;
+      }
+    });
+  }
+
+  getListAsync(): Observable<#@EntityName#ItemDtoPageList> {
+    return this.service.filter(this.filter);
   }
 
   getList(event?: PageEvent): void {
@@ -61,7 +85,7 @@ export class IndexComponent implements OnInit {
             if (res.data) {
               this.data = res.data;
               this.total = res.count;
-              this.dataSource = new MatTableDataSource<{$EntityName}ItemDto>(this.data);
+              this.dataSource = new MatTableDataSource<#@EntityName#ItemDto>(this.data);
             }
           }
         },
@@ -94,7 +118,7 @@ export class IndexComponent implements OnInit {
       });
   }
 
-  openEditDialog(item: {$EntityName}ItemDto): void {
+  openEditDialog(item: #@EntityName#ItemDto): void {
     this.dialogRef = this.dialog.open(EditComponent, {
       minWidth: '400px',
       data: { id: item.id }
@@ -107,7 +131,7 @@ export class IndexComponent implements OnInit {
   }
 
 
-  deleteConfirm(item: {$EntityName}ItemDto): void {
+  deleteConfirm(item: #@EntityName#ItemDto): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       hasBackdrop: true,
       disableClose: false,
@@ -123,7 +147,7 @@ export class IndexComponent implements OnInit {
       }
     });
   }
-  delete(item: {$EntityName}ItemDto): void {
+  delete(item: #@EntityName#ItemDto): void {
     this.isProcessing = true;
     this.service.delete(item.id)
     .subscribe({

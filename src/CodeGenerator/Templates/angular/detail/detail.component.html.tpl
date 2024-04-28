@@ -12,7 +12,7 @@
     </mat-card-header> -->
     <!-- <img mat-card-image src="" alt=""> -->
     <mat-card-content>
-{$Content}
+//[@Content]
     </mat-card-content>
     <mat-card-actions>
       <!-- <button mat-button></button>

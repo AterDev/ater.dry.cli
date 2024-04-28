@@ -35,5 +35,5 @@
 </mat-sidenav-container>
 <!-- 自动生成菜单内容 -->
 <ng-template #automenu>
-{$Menus}
+#@Menus#
 </ng-template>

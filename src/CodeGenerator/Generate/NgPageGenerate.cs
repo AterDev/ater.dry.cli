@@ -25,8 +25,8 @@ public class NgPageGenerate : GenerateBase
         // 生成.ts
         string tplContent = GetTplContent("angular.add.add.component.ts");
         // 替换名称
-        tplContent = tplContent.Replace("{$EntityName}", EntityName)
-            .Replace("{$EntityPathName}", EntityName.ToHyphen());
+        tplContent = tplContent.Replace(TplConst.ENTITY_NAME, EntityName)
+            .Replace(TplConst.ENTITY_PATH_NAME, EntityName.ToHyphen());
         // 解析属性，并生成相应代码
         EntityParseHelper typeHelper = new(Path.Combine(DtoPath, "models", DtoDirName, EntityName + "AddDto.cs"));
         typeHelper.Parse();
@@ -42,9 +42,9 @@ public class NgPageGenerate : GenerateBase
             GetFormControlAndValidate(props, false, ref definedProperties, ref definedFormControls, ref definedValidatorMessage);
         }
 
-        tplContent = tplContent.Replace("{$DefinedProperties}", definedProperties)
-            .Replace("{$DefinedFormControls}", definedFormControls)
-            .Replace("{$DefinedValidatorMessage}", definedValidatorMessage);
+        tplContent = tplContent.Replace(TplConst.DEFINED_PROPERTIES, definedProperties)
+            .Replace(TplConst.DEFINED_FORM_CONTROLS, definedFormControls)
+            .Replace(TplConst.DEFINED_VALIDATOR_MESSAGE, definedValidatorMessage);
 
         // 是否需要引用富文本编辑器
         if (props != null && props.Any(p => p.MaxLength > 1000 || p.MinLength >= 100))
@@ -103,10 +103,10 @@ public class NgPageGenerate : GenerateBase
         // 生成.ts
         string tplContent = GetTplContent("angular.component.form.component.ts");
         // 替换名称
-        tplContent = tplContent.Replace("{$ModelName}", modelName)
-            .Replace("{$ServiceName}", serviceName)
-            .Replace("{$ServicePathName}", serviceName.ToHyphen())
-            .Replace("{$ModelPathName}", modelName.ToHyphen());
+        tplContent = tplContent.Replace(TplConst.MODEL_NAME, modelName)
+            .Replace(TplConst.SERVICE_NAME, serviceName)
+            .Replace(TplConst.SERVICE_PATH_NAME, serviceName.ToHyphen())
+            .Replace(TplConst.MODEL_PATH_NAME, modelName.ToHyphen());
         string definedProperties = "";
         string definedFormControls = "";
         string definedValidatorMessage = "";
@@ -115,9 +115,9 @@ public class NgPageGenerate : GenerateBase
             GetFormControlAndValidate(props, false, ref definedProperties, ref definedFormControls, ref definedValidatorMessage);
         }
 
-        tplContent = tplContent.Replace("{$DefinedProperties}", definedProperties)
-            .Replace("{$DefinedFormControls}", definedFormControls)
-            .Replace("{$DefinedValidatorMessage}", definedValidatorMessage);
+        tplContent = tplContent.Replace(TplConst.DEFINED_PROPERTIES, definedProperties)
+            .Replace(TplConst.DEFINED_FORM_CONTROLS, definedFormControls)
+            .Replace(TplConst.DEFINED_VALIDATOR_MESSAGE, definedValidatorMessage);
 
         // 是否需要引用富文本编辑器
         if (props != null && props.Any(p => p.MaxLength >= 1000 || p.MinLength >= 100))
@@ -186,7 +186,7 @@ public class NgPageGenerate : GenerateBase
         }
 
         string htmlContent = GetTplContent("angular.component.table.component.html.tpl");
-        htmlContent = htmlContent.Replace("{$ColumnsDef}", string.Join("", columnsDef));
+        htmlContent = htmlContent.Replace(TplConst.COLUMNS_DEF, string.Join("", columnsDef));
 
         // 解析属性，并生成相应ts代码
         columnsDef = [];
@@ -217,12 +217,12 @@ public class NgPageGenerate : GenerateBase
             }
         }
 
-        tplContent = tplContent.Replace("{$ModelName}", modelName)
-            .Replace("{$EntityName}", entityName)
-            .Replace("{$ModelPathName}", modelName.ToHyphen())
-            .Replace("{$ServiceName}", serviceName)
-            .Replace("{$ServicePathName}", serviceName.ToHyphen())
-            .Replace("{$Columns}", string.Join(", ", columnsDef));
+        tplContent = tplContent.Replace(TplConst.MODEL_NAME, modelName)
+            .Replace(TplConst.ENTITY_NAME, entityName)
+            .Replace(TplConst.MODEL_PATH_NAME, modelName.ToHyphen())
+            .Replace(TplConst.SERVICE_NAME, serviceName)
+            .Replace(TplConst.SERVICE_PATH_NAME, serviceName.ToHyphen())
+            .Replace(TplConst.COLUMNS, string.Join(", ", columnsDef));
 
         NgComponentInfo component = new("index")
         {
@@ -237,8 +237,8 @@ public class NgPageGenerate : GenerateBase
         // 生成.ts
         string tplContent = GetTplContent("angular.edit.edit.component.ts");
         // 替换名称
-        tplContent = tplContent.Replace("{$EntityName}", EntityName)
-            .Replace("{$EntityPathName}", EntityName.ToHyphen());
+        tplContent = tplContent.Replace(TplConst.ENTITY_NAME, EntityName)
+            .Replace(TplConst.ENTITY_PATH_NAME, EntityName.ToHyphen());
         // 解析属性，并生成相应代码
         EntityParseHelper typeHelper = new(Path.Combine(DtoPath, "models", DtoDirName, EntityName + "UpdateDto.cs"));
         typeHelper.Parse();
@@ -252,9 +252,9 @@ public class NgPageGenerate : GenerateBase
         if (props != null)
         {
             GetFormControlAndValidate(props, true, ref definedProperties, ref definedFormControls, ref definedValidatorMessage);
-            tplContent = tplContent.Replace("{$DefinedProperties}", definedProperties)
-                .Replace("{$DefinedFormControls}", definedFormControls)
-                .Replace("{$DefinedValidatorMessage}", definedValidatorMessage);
+            tplContent = tplContent.Replace(TplConst.DEFINED_PROPERTIES, definedProperties)
+                .Replace(TplConst.DEFINED_FORM_CONTROLS, definedFormControls)
+                .Replace(TplConst.DEFINED_VALIDATOR_MESSAGE, definedValidatorMessage);
         }
         // 是否需要引用富文本编辑器
         if (props != null && props.Any(p => p.MaxLength > 1000 || p.MinLength >= 100))
@@ -326,7 +326,7 @@ public class NgPageGenerate : GenerateBase
         }
 
         string htmlContent = GetTplContent("angular.index.index.component.html.tpl");
-        htmlContent = htmlContent.Replace("{$ColumnsDef}", string.Join("", columnsDef));
+        htmlContent = htmlContent.Replace(TplConst.COLUMNS_DEF, string.Join("", columnsDef));
 
         // 解析属性，并生成相应ts代码
         columnsDef = [];
@@ -341,9 +341,9 @@ public class NgPageGenerate : GenerateBase
         }
 
         string tplContent = GetTplContent("angular.index.index.component.ts");
-        tplContent = tplContent.Replace("{$EntityName}", EntityName)
-            .Replace("{$EntityPathName}", EntityName.ToHyphen())
-            .Replace("{$Columns}", string.Join(", ", columnsDef));
+        tplContent = tplContent.Replace(TplConst.ENTITY_NAME, EntityName)
+            .Replace(TplConst.ENTITY_PATH_NAME, EntityName.ToHyphen())
+            .Replace(TplConst.COLUMNS, string.Join(", ", columnsDef));
 
         NgComponentInfo component = new("index")
         {
@@ -391,11 +391,11 @@ public class NgPageGenerate : GenerateBase
               </tbody>
             </table>
             """;
-        htmlContent = htmlContent.Replace("{$Content}", string.Join("", tableContent));
+        htmlContent = htmlContent.Replace(TplConst.CONTENT, string.Join("", tableContent));
         // ts
         string tplContent = GetTplContent("angular.detail.detail.component.ts");
-        tplContent = tplContent.Replace("{$EntityName}", EntityName)
-            .Replace("{$EntityPathName}", EntityName.ToHyphen());
+        tplContent = tplContent.Replace(TplConst.ENTITY_NAME, EntityName)
+            .Replace(TplConst.ENTITY_PATH_NAME, EntityName.ToHyphen());
 
         NgComponentInfo component = new("detail")
         {
@@ -410,7 +410,7 @@ public class NgPageGenerate : GenerateBase
         string cssContent = GetTplContent("angular.layout.layout.component.css.tpl");
         string htmlContent = GetTplContent("angular.layout.layout.component.html.tpl");
         string tplContent = GetTplContent("angular.layout.layout.component.ts");
-        tplContent = tplContent.Replace("{$ModulePathName}", EntityName.ToHyphen());
+        tplContent = tplContent.Replace(TplConst.MODULE_PATH_NAME, EntityName.ToHyphen());
 
         NgComponentInfo component = new("layout")
         {
@@ -443,8 +443,8 @@ public class NgPageGenerate : GenerateBase
     {
         string tplContent = GetTplContent("angular.module.ts");
         string pathName = route?.ToHyphen() ?? EntityName.ToHyphen();
-        tplContent = tplContent.Replace("{$ModuleName}", route ?? EntityName)
-            .Replace("{$ModulePathName}", pathName);
+        tplContent = tplContent.Replace(TplConst.MODULE_NAME, route ?? EntityName)
+            .Replace(TplConst.MODULE_PATH_NAME, pathName);
         return tplContent;
 
     }
@@ -496,9 +496,9 @@ public class NgPageGenerate : GenerateBase
     {
         string pathName = route?.ToHyphen() ?? EntityName.ToHyphen();
         string tplContent = GetTplContent("angular.routing.module.ts");
-        tplContent = tplContent.Replace("{$ModuleName}", route ?? EntityName)
-            .Replace("{$RoutePathName}", pathName)
-            .Replace("{$ModulePathName}", modulePath ?? "");
+        tplContent = tplContent.Replace(TplConst.MODULE_NAME, route ?? EntityName)
+            .Replace(TplConst.ROUTE_PATH_NAME, pathName)
+            .Replace(TplConst.MODULE_PATH_NAME, modulePath ?? "");
         return tplContent;
     }
 
@@ -512,8 +512,8 @@ public class NgPageGenerate : GenerateBase
     {
         string tplContent = GetTplContent("angular.group.module.ts");
         string pathName = groupName.ToHyphen();
-        tplContent = tplContent.Replace("{$ModuleName}", groupName)
-            .Replace("{$ModulePathName}", pathName);
+        tplContent = tplContent.Replace(TplConst.MODULE_NAME, groupName)
+            .Replace(TplConst.MODULE_PATH_NAME, pathName);
 
         // 导入的模块内容
         string importModules = string.Join("""
@@ -527,8 +527,8 @@ public class NgPageGenerate : GenerateBase
 
 
             """, importString);
-        tplContent = tplContent.Replace("{$ImportModulesPath}", importModulesPath)
-            .Replace("{$ImportModules}", importModules);
+        tplContent = tplContent.Replace(TplConst.IMPORT_MODULES_PATH, importModulesPath)
+            .Replace(TplConst.IMPORT_MODULES, importModules);
 
         return tplContent;
     }
@@ -541,8 +541,8 @@ public class NgPageGenerate : GenerateBase
     public static string GetGroupRoutingModule(string groupName)
     {
         string tplContent = GetTplContent("angular.group.routing.module.ts");
-        tplContent = tplContent.Replace("{$ModuleName}", groupName)
-            .Replace("{$ModulePathName}", groupName.ToHyphen() ?? "");
+        tplContent = tplContent.Replace(TplConst.MODULE_NAME, groupName)
+            .Replace(TplConst.MODULE_PATH_NAME, groupName.ToHyphen() ?? "");
 
         return tplContent;
     }
@@ -567,8 +567,8 @@ public class NgPageGenerate : GenerateBase
             importStrings += @$"import {{ {item.Type} }} from 'src/app/services/admin/enum/models/{item.Type.ToHyphen()}.model';" + Environment.NewLine;
             declareStrings += @$"  {item.Type} = {item.Type};" + Environment.NewLine;
         }
-        return content.Replace("[@Imports]", importStrings + "[@Imports]")
-            .Replace("[@Declares]", declareStrings + "[@Declares]");
+        return content.Replace(TplConst.IMPORTS, importStrings + TplConst.IMPORTS)
+            .Replace(TplConst.DECLARES, declareStrings + TplConst.DECLARES);
     }
 
     /// <summary>
@@ -578,16 +578,16 @@ public class NgPageGenerate : GenerateBase
     /// <returns></returns>
     private static string InsertEditor(string tsContent)
     {
-        return tsContent.Replace("[@Imports]", """
+        return tsContent.Replace(TplConst.IMPORTS, $$"""
             import { environment } from 'src/environments/environment';
-            [@Imports]
+            {{TplConst.IMPORTS}}
             """)
-            .Replace("[@Declares]", @"[@Declares]")
-            .Replace("[@DI]", @"")
-            .Replace("[@Methods]", """
+            .Replace(TplConst.DECLARES, @TplConst.DECLARES)
+            .Replace(TplConst.DI, @"")
+            .Replace(TplConst.METHODS, """
               initEditor(): void {  }
 
-            """).Replace("[@Init]", "this.initEditor();");
+            """).Replace(TplConst.INIT, "this.initEditor();");
     }
 
 
@@ -598,14 +598,14 @@ public class NgPageGenerate : GenerateBase
     private static string CleanTsTplVariables(string tplContent)
     {
         string[] TplVariables = [
-            "[@Imports]",
-            "[@Declares]",
-            "[@DI]",
-            "[@Init]",
-            "[@Methods]",
-            "{$DefinedProperties}",
-            "{$DefinedFormControls}",
-            "{$DefinedValidatorMessage}"
+            TplConst.IMPORTS,
+            TplConst.DECLARES,
+            TplConst.DI,
+            TplConst.INIT,
+            TplConst.METHODS,
+            TplConst.DEFINED_PROPERTIES,
+            TplConst.DEFINED_FORM_CONTROLS,
+            TplConst.DEFINED_VALIDATOR_MESSAGE
         ];
         foreach (string item in TplVariables)
         {
