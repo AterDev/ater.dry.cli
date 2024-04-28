@@ -298,23 +298,30 @@ public class NgPageGenerate : GenerateBase
             columnsDef = props.Select(p =>
             {
                 string? type = p.Type;
-                string pipe = "";
+                string tdContent = "";
                 if (type != null)
                 {
                     if (type.Equals("DateTime") || type.Equals("DateTimeOffset"))
                     {
-                        pipe = p.Name.EndsWith("Date") ? " | date: 'yyyy-MM-dd'" : " | date: 'yyy-MM-dd HH:mm:ss'";
+                        var pipe = p.Name.EndsWith("Date") ? " | date: 'yyyy-MM-dd'" : " | date: 'yyy-MM-dd HH:mm:ss'";
+                        tdContent = $$$"""{{element.{{{p.Name.ToCamelCase()}}}}}{{{pipe}}}}}""";
+                    }
+
+                    if (type.Equals("bool"))
+                    {
+                        tdContent = $"<mat-slide-toggle class=\"my-2\" color=\"primary\" disabled [checked]=\"element.{p.Name.ToCamelCase()}\"></mat-slide-toggle>";
                     }
                 }
 
-                return $@"
-  <ng-container matColumnDef=""{p.Name.ToCamelCase()}"">
-    <th mat-header-cell *matHeaderCellDef>{p.CommentSummary ?? p.Name ?? p.Type}</th>
-    <td mat-cell *matCellDef=""let element;table:table"">
-      {{{{element.{p.Name.ToCamelCase()}{pipe}}}}}
-    </td>
-  </ng-container>
-";
+                return $"""
+                  <ng-container matColumnDef="{p.Name.ToCamelCase()}">
+                    <th mat-header-cell *matHeaderCellDef>{p.CommentSummary ?? p.Name ?? p.Type}</th>
+                    <td mat-cell *matCellDef="let element;table:table">
+                      {tdContent}
+                    </td>
+                  </ng-container>
+
+                """;
             }).ToArray();
         }
 
@@ -454,25 +461,29 @@ public class NgPageGenerate : GenerateBase
         string navListTmp = "";
         foreach (string item in modules)
         {
-            navListTmp += $@"
-    <mat-nav-list>
-      <a mat-list-item routerLink=""/{groupName.ToHyphen()}/{item.ToHyphen()}"" routerLinkActive=""active"">
-        <mat-icon>edit_note</mat-icon>
-        <span *ngIf=""opened"">{map.Where(m => m.Key == item).FirstOrDefault().Value}</span>
-      </a>
-    </mat-nav-list>";
+            navListTmp += $"""
+
+                    <mat-nav-list>
+                      <a mat-list-item routerLink="/{groupName.ToHyphen()}/{item.ToHyphen()}" routerLinkActive="active">
+                        <mat-icon>edit_note</mat-icon>
+                        <span *ngIf="opened">{map.Where(m => m.Key == item).FirstOrDefault().Value}</span>
+                      </a>
+                    </mat-nav-list>
+                """;
         }
-        string temp = @$"      
-  <mat-expansion-panel hideToggle>
-    <mat-expansion-panel-header>
-      <mat-panel-title>
-        <mat-icon>view_list</mat-icon>
-          <span *ngIf=""opened"">{groupName.ToHyphen()}</span>
-      </mat-panel-title>
-    </mat-expansion-panel-header>
-{navListTmp}
-  </mat-expansion-panel>
-";
+        string temp = $"""
+
+              <mat-expansion-panel hideToggle>
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    <mat-icon>view_list</mat-icon>
+                      <span *ngIf="opened">{groupName.ToHyphen()}</span>
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+            {navListTmp}
+              </mat-expansion-panel>
+
+            """;
         return temp;
     }
 
@@ -505,11 +516,17 @@ public class NgPageGenerate : GenerateBase
             .Replace("{$ModulePathName}", pathName);
 
         // 导入的模块内容
-        string importModules = string.Join(",\n    ", modules.Select(m => m + "Module").ToArray());
+        string importModules = string.Join("""
+            ,
+                
+            """, modules.Select(m => m + "Module").ToArray());
 
         string[] importString = modules.Select(s => $@"import {{ {s}Module }} from './{s.ToHyphen()}/{s.ToHyphen()}.module';")
             .ToArray();
-        string importModulesPath = string.Join("\n", importString);
+        string importModulesPath = string.Join("""
+
+
+            """, importString);
         tplContent = tplContent.Replace("{$ImportModulesPath}", importModulesPath)
             .Replace("{$ImportModules}", importModules);
 
@@ -561,12 +578,16 @@ public class NgPageGenerate : GenerateBase
     /// <returns></returns>
     private static string InsertEditor(string tsContent)
     {
-        return tsContent.Replace("[@Imports]", @"import { environment } from 'src/environments/environment';
-[@Imports]")
+        return tsContent.Replace("[@Imports]", """
+            import { environment } from 'src/environments/environment';
+            [@Imports]
+            """)
             .Replace("[@Declares]", @"[@Declares]")
             .Replace("[@DI]", @"")
-            .Replace("[@Methods]", @"  initEditor(): void {  }
-").Replace("[@Init]", "this.initEditor();");
+            .Replace("[@Methods]", """
+              initEditor(): void {  }
+
+            """).Replace("[@Init]", "this.initEditor();");
     }
 
 
@@ -597,8 +618,10 @@ public class NgPageGenerate : GenerateBase
         foreach (PropertyInfo property in props)
         {
             string name = property.Name.ToCamelCase();
-            definedProperties += $@"    get {name}() {{ return this.formGroup.get('{name}'); }}
-";
+            definedProperties += $$"""
+                    get {{name}}() { return this.formGroup.get('{{name}}'); }
+
+                """;
             List<string> validators = [];
             if (property.IsRequired)
             {
@@ -616,13 +639,17 @@ public class NgPageGenerate : GenerateBase
             }
 
             string defaultValue = isEdit ? $"this.data.{name}" : property.Type.Equals("bool") ? "false" : "null";
-            definedFormControls += $@"      {name}: new FormControl({defaultValue}, [{string.Join(",", validators)}]),
-";
-            definedValidatorMessage += @$"      case '{name}':
-        return this.{name}?.errors?.['required'] ? '{property.CommentSummary ?? property.Name}必填' :
-          this.{name}?.errors?.['minlength'] ? '{property.CommentSummary ?? property.Name}长度最少{property.MinLength}位' :
-          this.{name}?.errors?.['maxlength'] ? '{property.CommentSummary ?? property.Name}长度最多{property.MaxLength}位' : '';
-";
+            definedFormControls += $"""
+                      {name}: new FormControl({defaultValue}, [{string.Join(",", validators)}]),
+
+                """;
+            definedValidatorMessage += $"""
+                      case '{name}':
+                        return this.{name}?.errors?.['required'] ? '{property.CommentSummary ?? property.Name}必填' :
+                          this.{name}?.errors?.['minlength'] ? '{property.CommentSummary ?? property.Name}长度最少{property.MinLength}位' :
+                          this.{name}?.errors?.['maxlength'] ? '{property.CommentSummary ?? property.Name}长度最多{property.MaxLength}位' : '';
+
+                """;
         }
     }
 }

@@ -4,8 +4,8 @@
       <div class="d-flex gap-1">
         <!-- 筛选 -->
         <!--<mat-form-field subscriptSizing="dynamic">
-          <mat-label>名称</mat-label>
-          <input matInput placeholder="名称" [(ngModel)]="filter.name" (keyup.enter)="getList()">
+          <mat-label>搜索</mat-label>
+          <input matInput placeholder="名称;回车搜索" [(ngModel)]="filter.name" (keyup.enter)="getList()">
         </mat-form-field> -->
         <!-- <mat-form-field subscriptSizing="dynamic">
           <mat-label>筛选示例</mat-label>
