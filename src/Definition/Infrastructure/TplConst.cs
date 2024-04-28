@@ -34,6 +34,7 @@ public static class TplConst
     public const string DI = "//[@DI]";
     public const string METHODS = "//[@Methods]";
     public const string INIT = "//[@Init]";
+    public const string FORM_CONTROLS = "//[@FormControls]";
 
     public const string DEPEND_STORE = "#@DependStore#";
     public const string DBCONTEXT_NAME = "#@DbContextName#";

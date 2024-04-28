@@ -35,7 +35,7 @@ public class NgFormGenerate : GenerateBase
         }
 
         string tplContent = GetTplContent("angular.add.add.component.html.tpl");
-        tplContent = tplContent.Replace("{$FormControls}", formControls);
+        tplContent = tplContent.Replace(TplConst.FORM_CONTROLS, formControls);
         return tplContent;
     }
 
@@ -65,7 +65,7 @@ public class NgFormGenerate : GenerateBase
         }
 
         string tplContent = GetTplContent("angular.component.form.component.html.tpl");
-        tplContent = tplContent.Replace("{$FormControls}", formControls);
+        tplContent = tplContent.Replace(TplConst.FORM_CONTROLS, formControls);
         return tplContent;
     }
 
@@ -90,7 +90,7 @@ public class NgFormGenerate : GenerateBase
         }
 
         string tplContent = GetTplContent("angular.edit.edit.component.html.tpl");
-        tplContent = tplContent.Replace("{$FormControls}", formControls);
+        tplContent = tplContent.Replace(TplConst.FORM_CONTROLS, formControls);
         return tplContent;
     }
 

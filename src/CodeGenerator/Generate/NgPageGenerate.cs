@@ -376,20 +376,21 @@ public class NgPageGenerate : GenerateBase
                     pipe = "| date:'yyyy-MM-dd HH:mm:ss'";
                 }
                 return $$$"""
-                <tr>
-                  <th>{{{p.CommentSummary ?? p.Name}}}</th>
-                  <td class="text-primary">{{data.{{{p.Name.ToCamelCase()}}} {{{pipe}}}}}</td>
-                </tr>
+
+                          <tr>
+                            <th>{{{p.CommentSummary ?? p.Name}}}</th>
+                            <td class="text-primary">{{data.{{{p.Name.ToCamelCase()}}} {{{pipe}}}}}</td>
+                          </tr>
                 """;
             }).ToArray();
         }
 
         var tableContent = $"""
-            <table class="table">
-              <tbody>
-              {string.Join("", trRows)}
-              </tbody>
-            </table>
+                    <table class="table">
+                      <tbody>
+            {string.Join("", trRows)}
+                      </tbody>
+                    </table>
             """;
         htmlContent = htmlContent.Replace(TplConst.CONTENT, string.Join("", tableContent));
         // ts
