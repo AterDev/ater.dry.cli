@@ -11,10 +11,12 @@ public class NgPageGenerate : GenerateBase
     public string DtoPath { get; }
     public string Output { get; }
     public string DtoDirName { get; set; }
+    public bool IsMobile { get; set; }
 
-    public NgPageGenerate(string entityName, string dtoPath, string output)
+    public NgPageGenerate(string entityName, string dtoPath, string output, bool isMobile = false)
     {
         EntityName = entityName;
+        IsMobile = isMobile;
         DtoPath = dtoPath;
         Output = Path.Combine(output, "src", "app", entityName.ToHyphen());
         DtoDirName = EntityName + "Dtos";
@@ -22,8 +24,9 @@ public class NgPageGenerate : GenerateBase
 
     public NgComponentInfo BuildAddPage()
     {
+        var tplDir = IsMobile ? "mobile-add" : "add";
         // 生成.ts
-        string tplContent = GetTplContent("angular.add.add.component.ts");
+        string tplContent = GetTplContent($"angular.{tplDir}.add.component.ts");
         // 替换名称
         tplContent = tplContent.Replace(TplConst.ENTITY_NAME, EntityName)
             .Replace(TplConst.ENTITY_PATH_NAME, EntityName.ToHyphen());
@@ -62,7 +65,7 @@ public class NgPageGenerate : GenerateBase
         // 生成html
         NgFormGenerate formGen = new();
         string htmlContent = NgFormGenerate.GenerateAddForm(props);
-        string cssContent = GetTplContent("angular.add.add.component.css.tpl");
+        string cssContent = GetTplContent($"angular.{tplDir}.add.component.css.tpl");
 
         NgComponentInfo component = new("add")
         {
@@ -81,7 +84,6 @@ public class NgPageGenerate : GenerateBase
     /// <returns></returns>
     public static NgComponentInfo GenFormComponent(EntityInfo modelInfo, string serviceName)
     {
-
         List<PropertyInfo>? props = [.. modelInfo.PropertyInfos];
         string modelName = modelInfo.Name;
         var entityName = modelName;
@@ -234,8 +236,9 @@ public class NgPageGenerate : GenerateBase
     }
     public NgComponentInfo BuildEditPage()
     {
+        var tplDir = IsMobile ? "mobile-edit" : "edit";
         // 生成.ts
-        string tplContent = GetTplContent("angular.edit.edit.component.ts");
+        string tplContent = GetTplContent($"angular.{tplDir}.edit.component.ts");
         // 替换名称
         tplContent = tplContent.Replace(TplConst.ENTITY_NAME, EntityName)
             .Replace(TplConst.ENTITY_PATH_NAME, EntityName.ToHyphen());
@@ -272,7 +275,7 @@ public class NgPageGenerate : GenerateBase
         // 生成html
         NgFormGenerate formGen = new();
         string htmlContent = NgFormGenerate.GenerateEditForm(props);
-        string cssContent = GetTplContent("angular.edit.edit.component.css.tpl");
+        string cssContent = GetTplContent($"angular.{tplDir}.edit.component.css.tpl");
 
         NgComponentInfo component = new("edit")
         {
@@ -284,7 +287,8 @@ public class NgPageGenerate : GenerateBase
     }
     public NgComponentInfo BuildIndexPage()
     {
-        string cssContent = GetTplContent("angular.index.index.component.css.tpl");
+        var tplDir = IsMobile ? "mobile-index" : "index";
+        string cssContent = GetTplContent($"angular.{tplDir}.index.component.css.tpl");
         EntityParseHelper typeHelper = new(Path.Combine(DtoPath, "models", DtoDirName, EntityName + "ItemDto.cs"));
         typeHelper.Parse();
         // 需要展示的列
@@ -292,40 +296,53 @@ public class NgPageGenerate : GenerateBase
             .Where(p => p.Name.ToLower() != "id")
             .ToList();
 
-        string[] columnsDef = [];
+        List<string> columnsDef = [];
         if (props != null && props.Count != 0)
         {
             columnsDef = props.Select(p =>
             {
                 string? type = p.Type;
-                string tdContent = "";
+                string rowContent = "";
                 if (type != null)
                 {
                     if (type.Equals("DateTime") || type.Equals("DateTimeOffset"))
                     {
                         var pipe = p.Name.EndsWith("Date") ? " | date: 'yyyy-MM-dd'" : " | date: 'yyy-MM-dd HH:mm:ss'";
-                        tdContent = $$$"""{{element.{{{p.Name.ToCamelCase()}}}{{{pipe}}}}}""";
+                        rowContent = $$$"""{{element.{{{p.Name.ToCamelCase()}}}{{{pipe}}}}}""";
+                    }
+                    if (p.IsEnum)
+                    {
+                        rowContent = $$$"""{{element.{{{p.Name.ToCamelCase()}}}| enumText:{{{p.Type}}}}}""";
                     }
 
                     if (type.Equals("bool"))
                     {
-                        tdContent = $"<mat-slide-toggle class=\"my-2\" color=\"primary\" disabled [checked]=\"element.{p.Name.ToCamelCase()}\"></mat-slide-toggle>";
+                        rowContent = $"<mat-slide-toggle class=\"my-2\" color=\"primary\" disabled [checked]=\"element.{p.Name.ToCamelCase()}\"></mat-slide-toggle>";
                     }
                 }
-
-                return $"""
+                if (IsMobile)
+                {
+                    return $"""
+                      <span matListItemLine>{p.CommentSummary ?? p.Name ?? p.Type}:{rowContent}</span>
+                    """;
+                }
+                else
+                {
+                    return $"""
 
                       <ng-container matColumnDef="{p.Name.ToCamelCase()}">
                         <th mat-header-cell *matHeaderCellDef>{p.CommentSummary ?? p.Name ?? p.Type}</th>
                         <td mat-cell *matCellDef="let element;table:table">
-                          {tdContent}
+                          {rowContent}
                         </td>
                       </ng-container>
                 """;
-            }).ToArray();
+                }
+            }).ToList();
+
         }
 
-        string htmlContent = GetTplContent("angular.index.index.component.html.tpl");
+        string htmlContent = GetTplContent($"angular.{tplDir}.index.component.html.tpl");
         htmlContent = htmlContent.Replace(TplConst.COLUMNS_DEF, string.Join("", columnsDef));
 
         // 解析属性，并生成相应ts代码
@@ -337,10 +354,10 @@ public class NgPageGenerate : GenerateBase
             columnsDef = columns.Select(s =>
             {
                 return $@"'{s.ToCamelCase()}'";
-            }).ToArray();
+            }).ToList();
         }
 
-        string tplContent = GetTplContent("angular.index.index.component.ts");
+        string tplContent = GetTplContent($"angular.{tplDir}.index.component.ts");
         tplContent = tplContent.Replace(TplConst.ENTITY_NAME, EntityName)
             .Replace(TplConst.ENTITY_PATH_NAME, EntityName.ToHyphen())
             .Replace(TplConst.COLUMNS, string.Join(", ", columnsDef));
@@ -355,15 +372,14 @@ public class NgPageGenerate : GenerateBase
     }
     public NgComponentInfo BuildDetailPage()
     {
-        string cssContent = GetTplContent("angular.detail.detail.component.css.tpl");
+        var tplDir = IsMobile ? "mobile-detail" : "detail";
+        string cssContent = GetTplContent($"angular.{tplDir}.detail.component.css.tpl");
         EntityParseHelper typeHelper = new(Path.Combine(DtoPath, "models", DtoDirName, EntityName + "ShortDto.cs"));
         typeHelper.Parse();
         List<PropertyInfo>? props = typeHelper.PropertyInfos?.Where(p => !p.IsList && !p.IsNavigation)?.ToList();
 
         // html
-        string htmlContent = GetTplContent("angular.detail.detail.component.html.tpl");
-
-
+        string htmlContent = GetTplContent($"angular.{tplDir}.detail.component.html.tpl");
         string[] trRows = [];
         if (props != null)
         {
@@ -394,7 +410,7 @@ public class NgPageGenerate : GenerateBase
             """;
         htmlContent = htmlContent.Replace(TplConst.CONTENT, string.Join("", tableContent));
         // ts
-        string tplContent = GetTplContent("angular.detail.detail.component.ts");
+        string tplContent = GetTplContent($"angular.{tplDir}.detail.component.ts");
         tplContent = tplContent.Replace(TplConst.ENTITY_NAME, EntityName)
             .Replace(TplConst.ENTITY_PATH_NAME, EntityName.ToHyphen());
 
@@ -406,22 +422,7 @@ public class NgPageGenerate : GenerateBase
         };
         return component;
     }
-    public NgComponentInfo BuildLayout()
-    {
-        string cssContent = GetTplContent("angular.layout.layout.component.css.tpl");
-        string htmlContent = GetTplContent("angular.layout.layout.component.html.tpl");
-        string tplContent = GetTplContent("angular.layout.layout.component.ts");
-        tplContent = tplContent.Replace(TplConst.MODULE_PATH_NAME, EntityName.ToHyphen());
 
-        NgComponentInfo component = new("layout")
-        {
-            HtmlContent = htmlContent,
-            TsContent = tplContent,
-            CssContent = cssContent,
-        };
-        return component;
-
-    }
     public static NgComponentInfo BuildConfirmDialog()
     {
         string cssContent = GetTplContent("angular.confirmDialog.confirm-dialog.component.css.tpl");

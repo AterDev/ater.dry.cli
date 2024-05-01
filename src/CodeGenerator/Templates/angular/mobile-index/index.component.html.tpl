@@ -28,7 +28,7 @@
       <h4>暂无数据！</h4>
     }@else {
     <mat-nav-list>
-      @for (item of data; track $index) {
+      @for (element of data; track $index) {
       <mat-list-item (click)="toDetail(item.id)">
 //[@ColumnsDef]        
       </mat-list-item>

@@ -86,7 +86,7 @@ public class ViewCommand : CommandBase
             DtoPath = Path.Combine(SolutionPath, "src", "Modules", moduleName);
         }
 
-        Gen = new NgPageGenerate(EntityName, DtoPath, OutputPath);
+        Gen = new NgPageGenerate(EntityName, DtoPath, OutputPath, IsMobile);
 
         Console.WriteLine(Instructions[0]);
         await GenerateModuleWithRoutingAsync();
