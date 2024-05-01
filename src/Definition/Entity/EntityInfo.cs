@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Definition.Entity;
+﻿namespace Definition.Entity;
 /// <summary>
 /// 实体
 /// </summary>
@@ -40,7 +38,7 @@ public class EntityInfo : EntityBase
     public bool? IsEnum { get; set; } = false;
     public bool IsList { get; set; }
 
-    public Project Project { get; set; } = null!;
+    public Project? Project { get; set; }
     public Guid ProjectId { get; set; } = default!;
 
     /// <summary>
@@ -58,6 +56,13 @@ public class EntityInfo : EntityBase
             && p.HasMany == false
             && p.IsRequired)
             .ToList();
+    }
+
+
+    void test()
+    {
+        new EntityInfo() { Name = "", };
+
     }
 }
 public enum EntityKeyType

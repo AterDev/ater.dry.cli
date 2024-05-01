@@ -1,8 +1,11 @@
 ﻿using System.Text;
+
 using Ater.Web.Abstraction;
+
 using Definition.Entity;
 using Definition.Models;
 using Definition.Share.Models.ApiDocInfoDtos;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -136,7 +139,11 @@ public class ApiDocInfoController(
         }
 
         var entity = await manager.GetCurrentAsync(id);
-        if (entity == null) return NotFound("未找到文档配置");
+        if (entity == null)
+        {
+            return NotFound("未找到文档配置");
+        }
+
         await manager.GenerateRequestAsync(entity, webPath, type, swaggerPath);
         return true;
     }
@@ -157,7 +164,11 @@ public class ApiDocInfoController(
             return NotFound("项目不存在");
         }
         var entity = await manager.GetCurrentAsync(id);
-        if (entity == null) return NotFound("未找到文档配置");
+        if (entity == null)
+        {
+            return NotFound("未找到文档配置");
+        }
+
         await manager.GenerateClientRequestAsync(entity, webPath, type, swaggerPath);
         return true;
     }

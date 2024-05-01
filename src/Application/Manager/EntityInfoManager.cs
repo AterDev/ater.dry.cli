@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
+
 using Definition.Share.Models.EntityInfoDtos;
+
 using Microsoft.CodeAnalysis;
 
 using Project = Definition.Entity.Project;
@@ -450,17 +452,24 @@ public partial class EntityInfoManager(
         await CommandRunner.SyncToAngularAsync(swaggerPath, _projectContext.EntityPath!, _projectContext.SharePath!, _projectContext.ApiPath!);
     }
 
-    public async Task GenerateNgModuleAsync(string entityName, string rootPath)
+    /// <summary>
+    /// 生成NG组件页面
+    /// </summary>
+    /// <param name="entityName"></param>
+    /// <param name="rootPath"></param>
+    /// <param name="isMobile"></param>
+    /// <returns></returns>
+    /// <exception cref="FileNotFoundException"></exception>
+    public async Task GenerateNgModuleAsync(string entityName, string rootPath, bool isMobile = false)
     {
         var dtoPath = Path.Combine(_projectContext.SolutionPath!, Config.SharePath);
         var entityDir = Path.Combine(_projectContext.SolutionPath!, Config.EntityPath);
         var entityPath = Directory.GetFiles(entityDir, entityName, SearchOption.AllDirectories)
             .FirstOrDefault();
 
-
         if (entityPath != null)
         {
-            await CommandRunner.GenerateNgPagesAsync(entityPath, dtoPath, rootPath);
+            await CommandRunner.GenerateNgPagesAsync(entityPath, dtoPath, rootPath, isMobile);
         }
         else
         {

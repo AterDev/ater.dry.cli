@@ -9,7 +9,7 @@ export class EnumTextPipe implements PipeTransform {
   transform(value: unknown, type: string): string {
     let result = '';
     switch (type) {
-      #@EnumBlocks#
+      //[@EnumBlocks]
       default:
         break;
     }

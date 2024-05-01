@@ -24,13 +24,14 @@ public static class TplConst
     public const string DEFINED_FORM_CONTROLS = "//[@DefinedFormControls]";
     public const string DEFINED_PROPERTIES = "//[@DefinedProperties]";
     public const string DEFINED_VALIDATOR_MESSAGE = "//[@DefinedValidatorMessage]";
-    public const string COLUMNS_DEF = "#@ColumnsDef#";
+    public const string COLUMNS_DEF = "//[@ColumnsDef]";
     public const string COLUMNS = "#@Columns#";
     public const string IMPORT_MODULES = "#@#ImportModules";
     public const string IMPORT_MODULES_PATH = "#@ImportMODULESPATH#";
     public const string CONTENT = "//[@Content]";
     public const string IMPORTS = "//[@Imports]";
     public const string DECLARES = "//[@Declares]";
+    public const string ENUM_BLOCKS = "//[@EnumBlocks]";
     public const string DI = "//[@DI]";
     public const string METHODS = "//[@Methods]";
     public const string INIT = "//[@Init]";

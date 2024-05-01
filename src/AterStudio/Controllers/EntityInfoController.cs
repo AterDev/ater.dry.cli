@@ -1,4 +1,7 @@
 ﻿using Ater.Web.Abstraction;
+
+using Definition.Share.Models.EntityInfoDtos;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -138,20 +141,18 @@ public class EntityInfoController(
     /// <summary>
     /// 生成NG组件模块
     /// </summary>
-    /// <param name="entityName"></param>
-    /// <param name="rootPath"></param>
     /// <returns></returns>
     [HttpPost("generateNgModule")]
-    public async Task<ActionResult<bool>> GenerateNgModuleAsync(string entityName, string rootPath)
+    public async Task<ActionResult<bool>> GenerateNgModuleAsync(NgModuleDto dto)
     {
         if (_project.Project == null)
         {
             return NotFound("项目不存在");
         }
-        _project.Project.FrontPath = rootPath;
+        _project.Project.FrontPath = dto.RootPath;
         await manager.SaveChangesAsync();
 
-        await manager.GenerateNgModuleAsync(entityName, rootPath);
+        await manager.GenerateNgModuleAsync(dto.EntityName, dto.RootPath, dto.IsMobile);
         return true;
     }
 

@@ -11,6 +11,7 @@ public class ViewCommand : CommandBase
     public string? Route { get; set; }
     public string? EntityComment { get; set; }
     public string SolutionPath { get; }
+    public bool IsMobile { get; set; } = false;
     public NgPageGenerate? Gen { get; set; }
     /// <summary>
     /// 模块与子模块路由map
@@ -34,7 +35,7 @@ public class ViewCommand : CommandBase
     }
 
 
-    public ViewCommand(string entityPath, string dtoPath, string outputPath)
+    public ViewCommand(string entityPath, string dtoPath, string outputPath, bool isMobile)
     {
         if (!File.Exists(entityPath))
         {
@@ -43,6 +44,7 @@ public class ViewCommand : CommandBase
         EntityFilePath = entityPath;
         DtoPath = dtoPath;
         OutputPath = outputPath;
+        IsMobile = isMobile;
         Instructions.Add($"  🔹 generate module, routing.");
         Instructions.Add($"  🔹 generate pages.");
 

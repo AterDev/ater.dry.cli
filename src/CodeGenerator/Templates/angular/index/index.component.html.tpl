@@ -44,7 +44,7 @@
   </ng-container>
   <ng-template #elseTemplate>
     <table mat-table [dataSource]="dataSource" style="width: 100%;" #table="matTable">
-#@ColumnsDef#
+//[@ColumnsDef]
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef>操作</th>
         <td mat-cell *matCellDef="let element;table:table">

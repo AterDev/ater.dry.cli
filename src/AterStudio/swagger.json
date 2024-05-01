@@ -793,24 +793,25 @@
         ],
         "summary": "生成NG组件模块",
         "operationId": "EntityInfo_GenerateNgModule",
-        "parameters": [
-          {
-            "name": "entityName",
-            "in": "query",
-            "description": "",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "rootPath",
-            "in": "query",
-            "description": "",
-            "schema": {
-              "type": "string"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NgModuleDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NgModuleDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/NgModuleDto"
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
             "description": "Success",
@@ -2271,6 +2272,24 @@
           "moduleName": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NgModuleDto": {
+        "type": "object",
+        "properties": {
+          "entityName": {
+            "type": "string",
+            "description": "实体名"
+          },
+          "rootPath": {
+            "type": "string",
+            "description": "目标路径"
+          },
+          "isMobile": {
+            "type": "boolean",
+            "description": "是否移动端"
           }
         },
         "additionalProperties": false

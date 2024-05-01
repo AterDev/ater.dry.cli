@@ -192,10 +192,10 @@ public static class CommandRunner
     /// <param name="dtoPath">service根目录</param>
     /// <param name="entityPah">实体路径</param>
     /// <param name="output">前端根目录</param>
-    public static async Task GenerateNgPagesAsync(string entityPah, string dtoPath, string output = "")
+    public static async Task GenerateNgPagesAsync(string entityPah, string dtoPath, string output = "", bool isMobile = false)
     {
         Console.WriteLine("🚀 Generate view");
-        ViewCommand viewCmd = new ViewCommand(entityPah, dtoPath, output);
+        ViewCommand viewCmd = new ViewCommand(entityPah, dtoPath, output, isMobile);
         await viewCmd.RunAsync();
     }
 

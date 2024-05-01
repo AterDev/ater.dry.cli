@@ -13,6 +13,7 @@ import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confir
 import { BatchGenerateDto } from 'src/app/share/models/entity-info/batch-generate-dto.model';
 import { EntityFile } from 'src/app/share/models/entity-info/entity-file.model';
 import { GenerateDto } from 'src/app/share/models/entity-info/generate-dto.model';
+import { NgModuleDto } from 'src/app/share/models/entity-info/ng-module-dto.model';
 import { CommandType } from 'src/app/share/models/enum/command-type.model';
 import { ProjectType } from 'src/app/share/models/enum/project-type.model';
 import { RequestLibType } from 'src/app/share/models/enum/request-lib-type.model';
@@ -78,6 +79,7 @@ export class IndexComponent implements OnInit {
   isBatch = false;
   isCopied = false;
   isLogin = false;
+  isMobile = false;
   showModuleEntity = true;
   config: ConfigOptions | null = null;
 
@@ -466,7 +468,12 @@ export class IndexComponent implements OnInit {
   genNgModule(): void {
     if (this.currentEntity && this.webPath) {
       this.isSync = true;
-      this.service.generateNgModule(this.currentEntity.name!, this.webPath)
+      const dto: NgModuleDto = {
+        entityName: this.currentEntity.name!,
+        rootPath: this.webPath,
+        isMobile: this.isMobile
+      };
+      this.service.generateNgModule(dto)
         .subscribe({
           next: (res) => {
             if (res) {

@@ -75,7 +75,7 @@ public class NgInputBuilder(string type, string name, string? label)
             html = $$$"""
                 <mat-form-field>
                 <mat-label>{{{Label}}}</mat-label>
-                  <textarea matInput placeholder="{{{Label}}},不超过{{{MaxLength}}}字" formControlName="{name}" {{{(IsRequired ? "required" : "")}}} minlength="{{{MinLength}}}" maxlength="{{{MaxLength}}}" rows="6" ></textarea>
+                  <textarea matInput placeholder="{{{Label}}},不超过{{{MaxLength}}}字" formControlName="{{{name}}}" {{{(IsRequired ? "required" : "")}}} minlength="{{{MinLength}}}" maxlength="{{{MaxLength}}}" rows="6" ></textarea>
                   <mat-error *ngIf="{{{name}}}?.invalid">
                     {{getValidatorMessage('{{{name}}}')}}
                   </mat-error>

@@ -7,6 +7,18 @@
 		<RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
 	</PropertyGroup>
 	<ItemGroup>
+		<None Remove="Templates\angular\mobile-detail\detail.component.css.tpl" />
+		<None Remove="Templates\angular\mobile-detail\detail.component.html.tpl" />
+		<None Remove="Templates\angular\mobile-detail\detail.component.ts" />
+		<None Remove="Templates\angular\mobile-edit\edit.component.css.tpl" />
+		<None Remove="Templates\angular\mobile-edit\edit.component.html.tpl" />
+		<None Remove="Templates\angular\mobile-edit\edit.component.ts" />
+		<None Remove="Templates\angular\mobile-index\index.component.css.tpl" />
+		<None Remove="Templates\angular\mobile-index\index.component.html.tpl" />
+		<None Remove="Templates\angular\mobile-index\index.component.ts" />
+		<None Remove="Templates\angular\moblie-add\add.component.css.tpl" />
+		<None Remove="Templates\angular\moblie-add\add.component.html.tpl" />
+		<None Remove="Templates\angular\moblie-add\add.component.ts" />
 		<None Remove="Templates\angular\add\add.component.css.tpl" />
 		<None Remove="Templates\angular\add\add.component.html.tpl" />
 		<None Remove="Templates\angular\add\add.component.ts" />
@@ -54,6 +66,18 @@
 		<None Remove="Templates\RequestService\service.ts" />
 	</ItemGroup>
 	<ItemGroup>
+		<EmbeddedResource Include="Templates\angular\mobile-detail\detail.component.css.tpl" />
+		<EmbeddedResource Include="Templates\angular\mobile-detail\detail.component.html.tpl" />
+		<EmbeddedResource Include="Templates\angular\mobile-detail\detail.component.ts" />
+		<EmbeddedResource Include="Templates\angular\mobile-edit\edit.component.css.tpl" />
+		<EmbeddedResource Include="Templates\angular\mobile-edit\edit.component.html.tpl" />
+		<EmbeddedResource Include="Templates\angular\mobile-edit\edit.component.ts" />
+		<EmbeddedResource Include="Templates\angular\mobile-index\index.component.css.tpl" />
+		<EmbeddedResource Include="Templates\angular\mobile-index\index.component.html.tpl" />
+		<EmbeddedResource Include="Templates\angular\mobile-index\index.component.ts" />
+		<EmbeddedResource Include="Templates\angular\moblie-add\add.component.css.tpl" />
+		<EmbeddedResource Include="Templates\angular\moblie-add\add.component.html.tpl" />
+		<EmbeddedResource Include="Templates\angular\moblie-add\add.component.ts" />
 		<EmbeddedResource Include="Templates\angular\component\form.component.html.tpl" />
 		<EmbeddedResource Include="Templates\angular\component\form.component.ts" />
 		<EmbeddedResource Include="Templates\angular\component\table.component.ts" />
