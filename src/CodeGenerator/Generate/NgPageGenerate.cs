@@ -302,7 +302,7 @@ public class NgPageGenerate : GenerateBase
             columnsDef = props.Select(p =>
             {
                 string? type = p.Type;
-                string rowContent = "";
+                string rowContent = $$$"""{{element.{{{p.Name.ToCamelCase()}}}}}""";
                 if (type != null)
                 {
                     if (type.Equals("DateTime") || type.Equals("DateTimeOffset"))
