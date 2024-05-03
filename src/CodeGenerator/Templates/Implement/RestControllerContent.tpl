@@ -7,7 +7,6 @@ public class #@EntityName##@APISuffix#(
     IUserContext user,
     ILogger<#@EntityName##@APISuffix#> logger,
     #@EntityName#Manager manager
-
     ) : RestControllerBase<#@EntityName#Manager>(manager, user, logger)
 {
 //[@AdditionManagersProps]

@@ -615,6 +615,10 @@ public class NgPageGenerate : GenerateBase
     }
     private static void GetFormControlAndValidate(List<PropertyInfo> props, bool isEdit, ref string definedProperties, ref string definedFormControls, ref string definedValidatorMessage)
     {
+        var ignoreFields = new string[] { "Id", "CreatedTime", "UpdatedTime", "IsDeleted" };
+        props = props.Where(p => !ignoreFields.Any(f => f.Equals(p.Name)))
+            .Where(p => !p.IsNavigation && !p.Type.StartsWith("Guid"))
+            .ToList();
         foreach (PropertyInfo property in props)
         {
             string name = property.Name.ToCamelCase();
