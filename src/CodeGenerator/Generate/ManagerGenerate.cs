@@ -95,7 +95,9 @@ public class ManagerGenerate : GenerateBase
             };
             content += string.IsNullOrWhiteSpace(row) ? "" : $"{row + Environment.NewLine}".Indent(3);
             if (!p.Name.EndsWith("Id"))
+            {
                 assertContent += $"Assert.Equal(entity.{p.Name}, res.{p.Name});{Environment.NewLine}".Indent(2);
+            }
         });
 
         content += $$"""
@@ -135,7 +137,9 @@ public class ManagerGenerate : GenerateBase
             };
             content += $"{row + Environment.NewLine}".Indent(3);
             if (!p.Name.EndsWith("Id"))
+            {
                 assertContent += $"Assert.Equal(entity.{p.Name}, res.{p.Name});{Environment.NewLine}".Indent(3);
+            }
         });
 
         content += $$"""
@@ -185,9 +189,9 @@ public class ManagerGenerate : GenerateBase
         string tplContent = GetTplContent($"Implement.Manager.tpl");
 
         // 方法内容
-        tplContent = tplContent.Replace("${AddActionBlock}", GetAddMethodContent())
-            .Replace("${UpdateActionBlock}", GetUpdateMethodContent())
-            .Replace("${FilterActionBlock}", GetFilterMethodContent());
+        tplContent = tplContent.Replace(TplConst.ADD_ACTION_BLOCK, GetAddMethodContent())
+            .Replace(TplConst.UPDATE_ACTION_BLOCK, GetUpdateMethodContent())
+            .Replace(TplConst.FILTER_ACTION_BLOCK, GetFilterMethodContent());
 
         Console.WriteLine(ShareNamespace);
 

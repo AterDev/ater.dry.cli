@@ -3,12 +3,14 @@ namespace #@Namespace#.Controllers;
 
 #@Comment#
 public class #@EntityName##@APISuffix#(
+//[@AdditionManagersDI]
     IUserContext user,
     ILogger<#@EntityName##@APISuffix#> logger,
-    #@EntityName#Manager manager#@AdditionManagersDI#
+    #@EntityName#Manager manager
+
     ) : RestControllerBase<#@EntityName#Manager>(manager, user, logger)
 {
-#@AdditionManagersProps#
+//[@AdditionManagersProps]
     /// <summary>
     /// 筛选
     /// </summary>
@@ -28,7 +30,7 @@ public class #@EntityName##@APISuffix#(
     [HttpPost]
     public async Task<ActionResult<#@EntityName#>> AddAsync(#@EntityName#AddDto dto)
     {
-#@AddActionBlock#
+//[@AddActionBlock]
     }
 
     /// <summary>
@@ -40,7 +42,7 @@ public class #@EntityName##@APISuffix#(
     [HttpPatch("{id}")]
     public async Task<ActionResult<#@EntityName#?>> UpdateAsync([FromRoute] #@IdType# id, #@EntityName#UpdateDto dto)
     {
-#@UpdateActionBlock#
+//[@UpdateActionBlock]
     }
 
     /// <summary>

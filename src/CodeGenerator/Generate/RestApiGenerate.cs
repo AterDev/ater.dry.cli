@@ -1,10 +1,4 @@
-﻿using Definition;
-using Definition.Entity;
-using Definition.Infrastructure;
-using Definition.Infrastructure.Helper;
-using Definition.Infrastructure.Utils;
-
-namespace CodeGenerator.Generate;
+﻿namespace CodeGenerator.Generate;
 
 /// <summary>
 /// 生成Rest API控制器
@@ -39,7 +33,7 @@ public class RestApiGenerate : GenerateBase
     public string? ApplicationNamespace { get; set; }
     public string? ApiNamespace { get; set; }
     public readonly EntityInfo EntityInfo;
-    
+
     public RestApiGenerate(string entityPath, string dtoPath, string applicationPath, string apiPath, string? suffix = null)
     {
         EntityPath = entityPath;
@@ -129,15 +123,15 @@ public class RestApiGenerate : GenerateBase
             additionManagerDI += $",{Environment.NewLine}        {name}Manager {name.ToCamelCase()}Manager";
 
         });
-        tplContent = tplContent.Replace("${AdditionManagersProps}", additionManagerProps)
-            .Replace("${AdditionManagersDI}", additionManagerDI);
+        tplContent = tplContent.Replace(TplConst.ADDICTION_MANAGER_PROPS, additionManagerProps)
+            .Replace(TplConst.ADDICTION_MANAGER_DI, additionManagerDI);
 
 
         var addContent = GetAddApiContent();
         var updateContent = GetUpdateApiContent();
 
-        tplContent = tplContent.Replace("${AddActionBlock}", addContent)
-            .Replace("${UpdateActionBlock}", updateContent);
+        tplContent = tplContent.Replace(TplConst.ADD_ACTION_BLOCK, addContent)
+            .Replace(TplConst.UPDATE_ACTION_BLOCK, updateContent);
 
         // add see cref comment
         var comment = EntityInfo?.Comment + Environment.NewLine + $"/// <see cref=\"{ApplicationNamespace}.Manager.{entityName}Manager\"/>";
@@ -263,8 +257,8 @@ public class RestApiGenerate : GenerateBase
 
     private string ClearTemplate(string tplContent)
     {
-        return tplContent.Replace("${AdditionManagersProps}", "")
-            .Replace("${AdditionManagersDI}", "")
-            .Replace("${AdditionManagersInit}", "");
+        return tplContent.Replace(TplConst.ADDICTION_MANAGER_PROPS, "")
+            .Replace(TplConst.ADDICTION_MANAGER_DI, "");
+
     }
 }

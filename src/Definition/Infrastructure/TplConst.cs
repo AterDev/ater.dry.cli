@@ -37,6 +37,16 @@ public static class TplConst
     public const string INIT = "//[@Init]";
     public const string FORM_CONTROLS = "//[@FormControls]";
 
+    // manager tpl
+    public const string ADD_ACTION_BLOCK = "//[@AddActionBlock]";
+    public const string UPDATE_ACTION_BLOCK = "//[@UpdateActionBlock]";
+    public const string FILTER_ACTION_BLOCK = "//[@FilterActionBlock]";
+
+    // controller tpl
+    public const string ADDICTION_MANAGER_DI = "//[@AdditionManagersDI]";
+    public const string ADDICTION_MANAGER_PROPS = "//[@AdditionManagersProps]";
+
+
     public const string DEPEND_STORE = "#@DependStore#";
     public const string DBCONTEXT_NAME = "#@DbContextName#";
     public const string ADDITION_ACTION = "#@AdditionAction#";

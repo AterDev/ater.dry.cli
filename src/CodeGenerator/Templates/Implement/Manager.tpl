@@ -17,17 +17,17 @@ public class #@EntityName#Manager(
     /// <returns></returns>
     public async Task<#@EntityName#> CreateNewEntityAsync(#@EntityName#AddDto dto)
     {
-#@AddActionBlock#
+//[@AddActionBlock]
     }
 
     public override async Task<#@EntityName#> UpdateAsync(#@EntityName# entity, #@EntityName#UpdateDto dto)
     {
-#@UpdateActionBlock#
+//[@UpdateActionBlock]
     }
 
     public override async Task<PageList<#@EntityName#ItemDto>> FilterAsync(#@EntityName#FilterDto filter)
     {
-#@FilterActionBlock#
+//[@FilterActionBlock]
     }
 
 
