@@ -5,7 +5,6 @@ using CodeGenerator.Generate;
 using CodeGenerator.Test.Entity;
 
 using Definition.Entity;
-using Definition.EntityFramework;
 using Definition.Infrastructure.Helper;
 
 namespace CodeGenerator.Test;
@@ -79,7 +78,7 @@ public class DtoGenerateTest
         string filePath = PathHelper.GetProjectFilePath(@"Entity\Blog.cs");
         filePath = @"D:\codes\ater.web\templates\apistd\src\Entity\SystemEntities\SystemPermission.cs";
         string dtoPath = PathHelper.GetProjectPath();
-        DtoCodeGenerate gen = new(filePath, dtoPath, new DryContext());
+        DtoCodeGenerate gen = new(filePath, dtoPath, new());
         string? addDto = gen.GetAddDto();
         string? shortDto = gen.GetShortDto();
         string? filterDto = gen.GetFilterDto();

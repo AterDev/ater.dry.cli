@@ -91,10 +91,10 @@ public class CommandBuilder
         // dto 生成命令
         System.CommandLine.Command dtoCommand = new("dto", "generate entity dto files");
         Argument<string> path = new("entity path", "The entity file path");
-        Option<string> outputOption = new(new[] { "--output", "-o" },
+        Option<string> outputOption = new(["--output", "-o"],
             "output project directory");
         outputOption.SetDefaultValue(Config.SharePath);
-        Option<bool> forceOption = new(new[] { "--force", "-f" },
+        Option<bool> forceOption = new(["--force", "-f"],
             "force overwrite file");
         forceOption.SetDefaultValue(true);
 
@@ -113,13 +113,13 @@ public class CommandBuilder
         System.CommandLine.Command reqCommand = new("request", "generate request service and interface using openApi json");
         reqCommand.AddAlias("request");
         Argument<string> url = new("OpenApi Url", "openApi json file url");
-        Option<string> outputOption = new(new[] { "--output", "-o" })
+        Option<string> outputOption = new(["--output", "-o"])
         {
             IsRequired = true,
             Description = "output path"
         };
 
-        Option<RequestLibType> typeOption = new(new[] { "--type", "-t" }, "request lib type:axios or NgHttp");
+        Option<RequestLibType> typeOption = new(["--type", "-t"], "request lib type:axios or NgHttp");
         reqCommand.AddArgument(url);
         reqCommand.AddOption(outputOption);
         reqCommand.AddOption(typeOption);
@@ -137,15 +137,15 @@ public class CommandBuilder
         System.CommandLine.Command apiCommand = new("manager", "generate dtos, datastore, manager");
         apiCommand.AddAlias("manager");
         Argument<string> path = new("entity path", "The entity file path");
-        Option<string> dtoOption = new(new[] { "--dto", "-d" },
+        Option<string> dtoOption = new(["--dto", "-d"],
             "dto project directory");
         dtoOption.SetDefaultValue(Config.SharePath);
-        Option<string> storeOption = new(new[] { "--manager", "-m" },
+        Option<string> storeOption = new(["--manager", "-m"],
             "application project directory");
         storeOption.SetDefaultValue(Config.ApplicationPath);
-        Option<string> typeOption = new(new[] { "--type", "-t" },
+        Option<string> typeOption = new(["--type", "-t"],
             "api type, valid values:rest/grpc/graph");
-        Option<bool> forceOption = new(new[] { "--force", "-f" },
+        Option<bool> forceOption = new(["--force", "-f"],
            "force overwrite file");
         forceOption.SetDefaultValue(false);
 
@@ -169,24 +169,24 @@ public class CommandBuilder
         System.CommandLine.Command apiCommand = new("webapi", "generate dtos, datastore, manager,api controllers");
         apiCommand.AddAlias("api");
         Argument<string> path = new("entity path", "The entity file path");
-        Option<string> dtoOption = new(new[] { "--dto", "-d" },
+        Option<string> dtoOption = new(["--dto", "-d"],
             "dto project director");
         dtoOption.SetDefaultValue(Config.SharePath);
 
-        Option<string> managerOption = new(new[] { "--manager", "-m" },
+        Option<string> managerOption = new(["--manager", "-m"],
             "manager and datastore project directory");
         managerOption.SetDefaultValue(Config.ApplicationPath);
 
-        Option<string> apiOption = new(new[] { "--output", "-o" },
+        Option<string> apiOption = new(["--output", "-o"],
             "api controller project directory");
         apiOption.SetDefaultValue(Config.ApiPath);
 
-        Option<string> suffixOption = new(new[] { "--suffix", "-s" },
+        Option<string> suffixOption = new(["--suffix", "-s"],
             "the controller suffix");
         suffixOption.SetDefaultValue("Controller");
-        Option<string> typeOption = new(new[] { "--type", "-t" },
+        Option<string> typeOption = new(["--type", "-t"],
             "api type, valid values:rest/grpc/graph, just support rest");
-        Option<bool> forceOption = new(new[] { "--force", "-f" },
+        Option<bool> forceOption = new(["--force", "-f"],
       "force overwrite file");
         forceOption.SetDefaultValue(false);
 
@@ -211,7 +211,7 @@ public class CommandBuilder
         System.CommandLine.Command docCommand = new("doc", "generate models doc using openApi json");
         docCommand.AddAlias("doc");
         Argument<string> url = new("OpenApi Url", "openApi json file url");
-        Option<string> outputOption = new(new[] { "--output", "-o" })
+        Option<string> outputOption = new(["--output", "-o"])
         {
             IsRequired = true,
             Description = "generate markdown doc"
@@ -227,7 +227,7 @@ public class CommandBuilder
         System.CommandLine.Command ngCommand = new("angular", "generate angular service and interface using openApi json");
         ngCommand.AddAlias("ng");
         Argument<string> url = new("OpenApi Json", "openApi json file url or local path");
-        Option<string> outputOption = new(new[] { "--output", "-o" })
+        Option<string> outputOption = new(["--output", "-o"])
         {
             IsRequired = true,
             Description = "angular project root path"
@@ -244,17 +244,19 @@ public class CommandBuilder
         System.CommandLine.Command viewCommand = new("view", "generate front view page, only support angular. ");
         viewCommand.AddAlias("view");
         Argument<string> entityArgument = new("entity path", "The entity file path, like path/xxx.cs");
-        Option<string> dtoOption = new(new[] { "--dto", "-d" }, "dto project directory");
+        Option<string> dtoOption = new(["--dto", "-d"], "dto project directory");
         dtoOption.SetDefaultValue(Config.SharePath);
-        Option<string> outputOption = new(new[] { "--output", "-o" }, "angular project root path")
+        Option<string> outputOption = new(["--output", "-o"], "angular project root path")
         {
             IsRequired = true,
         };
 
+        Option<bool> mobileOption = new(["--mobile", "-m"], "mobile page style");
+
         viewCommand.AddArgument(entityArgument);
         viewCommand.AddOption(dtoOption);
         viewCommand.AddOption(outputOption);
-        viewCommand.SetHandler(CommandRunner.GenerateNgPagesAsync, entityArgument, dtoOption, outputOption);
+        viewCommand.SetHandler(CommandRunner.GenerateNgPagesAsync, entityArgument, dtoOption, outputOption, mobileOption);
         RootCommand.Add(viewCommand);
     }
 
