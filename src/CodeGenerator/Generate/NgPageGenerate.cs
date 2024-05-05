@@ -444,7 +444,9 @@ public class NgPageGenerate : GenerateBase
         string cssContent = GetTplContent($"angular.{tplDir}.detail.component.css.tpl");
         EntityParseHelper typeHelper = new(Path.Combine(DtoPath, "models", DtoDirName, EntityName + "ShortDto.cs"));
         typeHelper.Parse();
-        List<PropertyInfo>? props = typeHelper.PropertyInfos?.Where(p => !p.IsList && !p.IsNavigation)?.ToList();
+        List<PropertyInfo>? props = typeHelper.PropertyInfos?.Where(p => !p.IsList)
+            .Where(p => !(p.IsNavigation && !p.IsEnum))
+            .ToList();
 
         // html
         string htmlContent = GetTplContent($"angular.{tplDir}.detail.component.html.tpl");
