@@ -14,7 +14,7 @@
   <div class="col" *ngIf="!isLoading">
     <mat-toolbar-row class="d-flex">
       <span></span>
-      <span class="example-spacer"></span>
+         <div class="d-flex flex-grow-1"></div>
       <button mat-icon-button color="primary" (click)="save()" matTooltip="保存" [disabled]="templateFile?.content==null">
         <mat-icon>save</mat-icon>
       </button>

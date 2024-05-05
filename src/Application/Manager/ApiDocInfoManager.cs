@@ -1,4 +1,5 @@
 using System.Text;
+
 using Definition.Share.Models.ApiDocInfoDtos;
 
 namespace Application.Manager;
@@ -208,6 +209,8 @@ public class ApiDocInfoManager(
         {
             ComponentType.Form => NgPageGenerate.GenFormComponent(dto.ModelInfo, dto.ServiceName),
             ComponentType.Table => NgPageGenerate.GenTableComponent(dto.ModelInfo, dto.ServiceName),
+            ComponentType.Detail => NgPageGenerate.GenDetailComponent(dto.ModelInfo, dto.ServiceName),
+
             _ => default!,
         };
     }

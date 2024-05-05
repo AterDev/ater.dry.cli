@@ -1,6 +1,4 @@
-﻿using Definition.Entity;
-
-namespace Application.Models;
+﻿namespace Application.Models;
 /// <summary>
 /// 生成组件模型
 /// </summary>
@@ -30,6 +28,16 @@ public enum UIType
 }
 public enum ComponentType
 {
+    /// <summary>
+    /// 提交表单
+    /// </summary>
     Form,
-    Table
+    /// <summary>
+    /// 展示表格
+    /// </summary>
+    Table,
+    /// <summary>
+    /// 详情字段
+    /// </summary>
+    Detail
 }

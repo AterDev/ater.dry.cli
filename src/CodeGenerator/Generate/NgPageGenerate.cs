@@ -234,6 +234,74 @@ public class NgPageGenerate : GenerateBase
         };
         return component;
     }
+
+    public static NgComponentInfo GenDetailComponent(EntityInfo modelInfo, string serviceName)
+    {
+        var props = modelInfo.PropertyInfos?.Where(p => !p.IsList)
+            .Where(p => !(p.IsNavigation && !p.IsEnum))
+            .ToList();
+
+        string[] trRows = [];
+        if (props != null)
+        {
+            trRows = props.Select(p =>
+            {
+                // 管道处理
+                string pipe = "";
+                if (p.Type.ToLower().Contains("datetime"))
+                {
+                    pipe = "| date:'yyyy-MM-dd HH:mm:ss'";
+                }
+                return $$$"""
+
+                          <tr>
+                            <th>{{{p.CommentSummary ?? p.Name}}}</th>
+                            <td class="text-primary">{{data.{{{p.Name.ToCamelCase()}}} {{{pipe}}}}}</td>
+                          </tr>
+                """;
+            }).ToArray();
+        }
+
+        var tableContent = $"""
+                    <table class="table">
+                      <tbody>
+            {string.Join("", trRows)}
+                      </tbody>
+                    </table>
+            """;
+
+        string htmlContent = GetTplContent("angular.detail.detail.component.html.tpl");
+        htmlContent = htmlContent.Replace(TplConst.CONTENT, string.Join("", tableContent));
+
+        // ts
+        var entityName = modelInfo.Name;
+        var suffix = new string[] { "AddDto", "ItemDto", "UpdateDto", "ShortDto", "FilterDto" };
+
+        foreach (var item in suffix)
+        {
+            if (entityName.EndsWith(item))
+            {
+                entityName = entityName.Replace(item, "");
+            }
+            if (serviceName.EndsWith(item))
+            {
+                serviceName = serviceName.Replace(item, "");
+                break;
+            }
+        }
+        string tplContent = GetTplContent($"angular.detail.detail.component.ts");
+        tplContent = tplContent.Replace(TplConst.ENTITY_NAME, entityName)
+            .Replace(TplConst.ENTITY_PATH_NAME, entityName.ToHyphen());
+
+        NgComponentInfo component = new("index")
+        {
+            HtmlContent = htmlContent,
+            TsContent = tplContent,
+            CssContent = "",
+        };
+        return component;
+    }
+
     public NgComponentInfo BuildEditPage()
     {
         var tplDir = IsMobile ? "mobile-edit" : "edit";

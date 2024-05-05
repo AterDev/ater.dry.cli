@@ -23,7 +23,7 @@
         <mat-icon>delete</mat-icon>
       </button>
     </span>
-    <span class="example-spacer"></span>
+    <div class="d-flex flex-grow-1"></div>
     <button mat-icon-button matTooltip="导出markdown" color="primary" [disabled]="isSync" (click)="export()">
       <mat-icon>download_file</mat-icon>
     </button>
@@ -254,7 +254,8 @@
                 <button mat-flat-button [matMenuTriggerFor]="menu" color="primary">生成</button>
                 <mat-menu #menu="matMenu">
                   <button mat-menu-item (click)="generateUIComponent(ComponentType.Form)">提交表单</button>
-                  <button mat-menu-item (click)="generateUIComponent(ComponentType.Table)">展示列表</button>
+                  <button mat-menu-item (click)="generateUIComponent(ComponentType.Table)">展示表格</button>
+                  <button mat-menu-item (click)="generateUIComponent(ComponentType.Detail)">详情页</button>
                 </mat-menu>
               </div>
               <div *ngIf="currentModel.propertyInfos">

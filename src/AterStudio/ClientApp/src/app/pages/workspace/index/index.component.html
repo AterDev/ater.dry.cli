@@ -6,7 +6,7 @@
 <div class="container-fluid p-0" *ngIf="!isLoading">
   <mat-toolbar>
     <span>{{project.displayName}}</span>
-    <span class="example-spacer"></span>
+    <div class="d-flex flex-grow-1"></div>
     <button mat-icon-button matTooltip="添加微服务项目" color="primary" (click)="openAddService()">
       <mat-icon>add_link</mat-icon>
     </button>
@@ -33,7 +33,7 @@
       <mat-icon [color]="showModuleEntity?'primary':''">visibility_off</mat-icon>
     </button>
 
-    <span class="example-spacer"></span>
+    <div class="d-flex flex-grow-1"></div>
     <button mat-icon-button matTooltip="添加实体" color="primary" (click)="openAddEntity()" *ngIf="isLogin">
       <mat-icon>add_circle_outline</mat-icon>
     </button>
