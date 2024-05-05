@@ -1,4 +1,4 @@
-<mat-sidenav-container class="example-container">
+<mat-sidenav-container class="sidenav-container">
   <mat-sidenav #sidenav mode="side" opened="true">
     <div class="d-flex flex-row-reverse">
       <button mat-icon-button *ngIf="opened" (click)="toggle()">
@@ -8,13 +8,15 @@
         <mat-icon>keyboard_double_arrow_right</mat-icon>
       </button>
     </div>
-    <mat-accordion class="example-headers-align" multi>
+    <mat-accordion multi>
       <!-- 工作台 -->
       <mat-expansion-panel hideToggle>
         <mat-expansion-panel-header>
           <mat-panel-title>
-            <mat-icon>grid_view</mat-icon>
-            <span *ngIf="opened">工作台</span>
+            <a class="nav-title">
+              <mat-icon fontSet="material-icons-outlined">grid_view</mat-icon>
+              <span *ngIf="opened">工作台</span>
+            </a>
           </mat-panel-title>
         </mat-expansion-panel-header>
         <mat-nav-list>
@@ -48,8 +50,10 @@
       <mat-expansion-panel hideToggle>
         <mat-expansion-panel-header>
           <mat-panel-title>
-            <mat-icon>home_repair_service </mat-icon>
-            <span *ngIf="opened">实用工具</span>
+            <a class="nav-title">
+              <mat-icon fontSet="material-icons-outlined">home_repair_service</mat-icon>
+              <span *ngIf="opened">实用工具</span>
+            </a>
           </mat-panel-title>
         </mat-expansion-panel-header>
         <mat-nav-list>
