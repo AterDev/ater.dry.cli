@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Project } from './models/project/project.model';
-import { EntityFile } from './models/entity-info/entity-file.model';
+import { EntityFile } from '../services/entity-info/models/entity-file.model';
+import { Project } from '../services/project/models/project.model';
 
 @Injectable({
   providedIn: 'root'

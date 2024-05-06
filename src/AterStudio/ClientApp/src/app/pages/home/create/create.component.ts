@@ -2,12 +2,12 @@ import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CacheType } from 'src/app/share/models/enum/cache-type.model';
-import { DBType } from 'src/app/share/models/enum/dbtype.model';
-import { ProjectType } from 'src/app/share/models/enum/project-type.model';
-import { CreateSolutionDto } from 'src/app/share/models/feature/create-solution-dto.model';
-import { ModuleInfo } from 'src/app/share/models/feature/module-info.model';
-import { FeatureService } from 'src/app/share/services/feature.service';
+import { CacheType } from 'src/app/services/enum/models/cache-type.model';
+import { DBType } from 'src/app/services/enum/models/dbtype.model';
+import { ProjectType } from 'src/app/services/enum/models/project-type.model';
+import { CreateSolutionDto } from 'src/app/services/feature/models/create-solution-dto.model';
+import { ModuleInfo } from 'src/app/services/feature/models/module-info.model';
+import { FeatureService } from 'src/app/services/feature/feature.service';
 
 @Component({
   selector: 'app-create',

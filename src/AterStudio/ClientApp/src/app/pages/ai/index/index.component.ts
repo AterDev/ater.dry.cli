@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { MatSelectionListChange } from '@angular/material/list';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, ActivatedRoute } from '@angular/router';
-import { AdvanceService } from 'src/app/share/services/advance.service';
+import { AdvanceService } from 'src/app/services/advance/advance.service';
 
 
 import 'prismjs/plugins/line-numbers/prism-line-numbers.js';

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ProjectStateService } from 'src/app/share/project-state.service';
-import { ProjectService } from 'src/app/share/services/project.service';
+import { ProjectService } from 'src/app/services/project/project.service';
 
 import 'prismjs/plugins/line-numbers/prism-line-numbers.js';
 import 'prismjs/components/prism-markup.min.js';

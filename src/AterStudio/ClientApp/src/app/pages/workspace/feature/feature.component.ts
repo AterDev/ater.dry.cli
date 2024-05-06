@@ -5,10 +5,10 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SubProjectInfo } from 'src/app/share/models/feature/sub-project-info.model';
-import { Project } from 'src/app/share/models/project/project.model';
+import { SubProjectInfo } from 'src/app/services/feature/models/sub-project-info.model';
+import { Project } from 'src/app/services/project/models/project.model';
 import { ProjectStateService } from 'src/app/share/project-state.service';
-import { FeatureService } from 'src/app/share/services/feature.service';
+import { FeatureService } from 'src/app/services/feature/feature.service';
 
 @Component({
   selector: 'app-feature',

@@ -4,18 +4,18 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Route, Router } from '@angular/router';
 import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confirm-dialog.component';
-import { SolutionType } from 'src/app/share/models/enum/solution-type.model';
-import { ConfigOptions } from 'src/app/share/models/project/config-options.model';
-import { Project } from 'src/app/share/models/project/project.model';
-import { UpdateConfigOptionsDto } from 'src/app/share/models/project/update-config-options-dto.model';
+import { SolutionType } from 'src/app/services/enum/models/solution-type.model';
+import { ConfigOptions } from 'src/app/services/project/models/config-options.model';
+import { Project } from 'src/app/services/project/models/project.model';
+import { UpdateConfigOptionsDto } from 'src/app/services/project/models/update-config-options-dto.model';
 import { ProjectStateService } from 'src/app/share/project-state.service';
-import { ProjectService } from 'src/app/share/services/project.service';
+import { ProjectService } from 'src/app/services/project/project.service';
 
 import 'prismjs/plugins/line-numbers/prism-line-numbers.js';
 import 'prismjs/components/prism-markup.min.js';
 import 'prismjs/components/prism-csharp.min.js';
-import { AdvanceService } from 'src/app/share/services/advance.service';
-import { ControllerType } from 'src/app/share/models/enum/controller-type.model';
+import { AdvanceService } from 'src/app/services/advance/advance.service';
+import { ControllerType } from 'src/app/services/enum/models/controller-type.model';
 
 @Component({
   selector: 'app-index',

@@ -9,6 +9,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import { MarkdownModule } from 'ngx-markdown';
+import { EnumTextPipeModule } from 'src/app/pipe/enum-text.pipe';
 
 
 @NgModule({
@@ -24,6 +25,7 @@ import { MarkdownModule } from 'ngx-markdown';
     MatPaginatorModule,
     MatSortModule,
     MonacoEditorModule,
+    EnumTextPipeModule,
     MarkdownModule.forRoot()
   ]
 })

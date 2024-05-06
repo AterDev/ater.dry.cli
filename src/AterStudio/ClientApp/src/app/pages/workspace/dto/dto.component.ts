@@ -4,8 +4,8 @@ import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { ProjectStateService } from 'src/app/share/project-state.service';
 import { MatTabChangeEvent } from '@angular/material/tabs';
-import { EntityInfoService } from 'src/app/share/services/entity-info.service';
-import { EntityFile } from 'src/app/share/models/entity-info/entity-file.model';
+import { EntityInfoService } from 'src/app/services/entity-info/entity-info.service';
+import { EntityFile } from 'src/app/services/entity-info/models/entity-file.model';
 
 @Component({
   selector: 'app-dto',

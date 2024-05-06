@@ -10,19 +10,19 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { lastValueFrom } from 'rxjs';
 import { LoginService } from 'src/app/auth/login.service';
 import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confirm-dialog.component';
-import { BatchGenerateDto } from 'src/app/share/models/entity-info/batch-generate-dto.model';
-import { EntityFile } from 'src/app/share/models/entity-info/entity-file.model';
-import { GenerateDto } from 'src/app/share/models/entity-info/generate-dto.model';
-import { NgModuleDto } from 'src/app/share/models/entity-info/ng-module-dto.model';
-import { CommandType } from 'src/app/share/models/enum/command-type.model';
-import { ProjectType } from 'src/app/share/models/enum/project-type.model';
-import { RequestLibType } from 'src/app/share/models/enum/request-lib-type.model';
-import { SubProjectInfo } from 'src/app/share/models/feature/sub-project-info.model';
-import { ConfigOptions } from 'src/app/share/models/project/config-options.model';
-import { Project } from 'src/app/share/models/project/project.model';
+import { BatchGenerateDto } from 'src/app/services/entity-info/models/batch-generate-dto.model';
+import { EntityFile } from 'src/app/services/entity-info/models/entity-file.model';
+import { GenerateDto } from 'src/app/services/entity-info/models/generate-dto.model';
+import { NgModuleDto } from 'src/app/services/entity-info/models/ng-module-dto.model';
+import { CommandType } from 'src/app/services/enum/models/command-type.model';
+import { ProjectType } from 'src/app/services/enum/models/project-type.model';
+import { RequestLibType } from 'src/app/services/enum/models/request-lib-type.model';
+import { SubProjectInfo } from 'src/app/services/feature/models/sub-project-info.model';
+import { ConfigOptions } from 'src/app/services/project/models/config-options.model';
+import { Project } from 'src/app/services/project/models/project.model';
 import { ProjectStateService } from 'src/app/share/project-state.service';
-import { EntityInfoService } from 'src/app/share/services/entity-info.service';
-import { ProjectService } from 'src/app/share/services/project.service';
+import { EntityInfoService } from 'src/app/services/entity-info/entity-info.service';
+import { ProjectService } from 'src/app/services/project/project.service';
 
 @Component({
   selector: 'app-index',

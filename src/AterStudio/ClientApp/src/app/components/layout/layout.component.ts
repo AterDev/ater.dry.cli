@@ -1,9 +1,9 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { LoginService } from 'src/app/auth/login.service';
-import { Project } from 'src/app/share/models/project/project.model';
+import { Project } from 'src/app/services/project/models/project.model';
 import { ProjectStateService } from 'src/app/share/project-state.service';
-import { ProjectService } from 'src/app/share/services/project.service';
+import { ProjectService } from 'src/app/services/project/project.service';
 import { MatBottomSheet, MatBottomSheetRef } from '@angular/material/bottom-sheet';
 @Component({
   selector: 'app-layout',

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Location } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { AdvanceService } from 'src/app/share/services/advance.service';
+import { AdvanceService } from 'src/app/services/advance/advance.service';
 import { ProjectStateService } from 'src/app/share/project-state.service';
 
 @Component({

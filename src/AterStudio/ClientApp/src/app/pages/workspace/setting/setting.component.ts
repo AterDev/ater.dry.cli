@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { TemplateFile } from 'src/app/share/models/project/template-file.model';
+import { TemplateFile } from 'src/app/services/project/models/template-file.model';
 import { ProjectStateService } from 'src/app/share/project-state.service';
-import { ProjectService } from 'src/app/share/services/project.service';
+import { ProjectService } from 'src/app/services/project/project.service';
 
 @Component({
   selector: 'app-setting',
