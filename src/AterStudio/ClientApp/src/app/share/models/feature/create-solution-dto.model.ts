@@ -16,11 +16,8 @@ export interface CreateSolutionDto {
   queryDbConnStrings?: string | null;
   cacheConnStrings?: string | null;
   cacheInstanceName?: string | null;
-  hasSystemFeature: boolean;
-  hasCmsFeature: boolean;
-  hasFileManagerFeature: boolean;
-  hasOrderFeature: boolean;
   projectType?: ProjectType | null;
   defaultPassword?: string | null;
+  modules: string[];
 
 }

@@ -12,6 +12,15 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
     public string ErrorMsg { get; set; } = string.Empty;
 
     /// <summary>
+    /// 获取默认模块
+    /// </summary>
+    /// <returns></returns>
+    public List<ModuleInfo> GetDefaultModules()
+    {
+        return ModuleInfo.GetModules();
+    }
+
+    /// <summary>
     /// 创建新解决方案
     /// </summary>
     /// <returns></returns>
@@ -69,37 +78,18 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
             }
         }
 
-
-        // 默认包含SystemMod
         if (!dto.IsLight)
         {
-            var moduleCommand = new ModuleCommand(path, ModuleCommand.System);
-            await moduleCommand.CreateModuleAsync();
-
-            if (dto.HasFileManagerFeature)
+            var allModules = ModuleInfo.GetModules().Select(m => m.Value).ToList();
+            var moduleCommand = new ModuleCommand(path, allModules);
+            var notChoseModules = allModules.Except(dto.Modules).ToList();
+            foreach (var item in notChoseModules)
             {
-                await moduleCommand.CreateModuleAsync();
+                moduleCommand.CleanModule(item);
             }
-            else
+            foreach (var item in dto.Modules)
             {
-                moduleCommand.CleanModule();
-            }
-            if (dto.HasOrderFeature)
-            {
-                await moduleCommand.CreateModuleAsync();
-            }
-            else
-            {
-                moduleCommand.CleanModule();
-            }
-
-            if (dto.HasCmsFeature)
-            {
-                await moduleCommand.CreateModuleAsync();
-            }
-            else
-            {
-                moduleCommand.CleanModule();
+                await moduleCommand.CreateModuleAsync(item);
             }
         }
 
@@ -244,7 +234,9 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
     {
         try
         {
-            await new ModuleCommand(_projectContext.SolutionPath!, name).CreateModuleAsync();
+            var allModules = ModuleInfo.GetModules().Select(m => m.Value).ToList();
+            await new ModuleCommand(_projectContext.SolutionPath!, allModules)
+                .CreateModuleAsync(name);
         }
         catch (Exception e)
         {

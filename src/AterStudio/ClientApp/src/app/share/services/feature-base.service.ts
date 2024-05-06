@@ -3,6 +3,7 @@ import { BaseService } from './base.service';
 import { Observable } from 'rxjs';
 import { CreateSolutionDto } from '../models/feature/create-solution-dto.model';
 import { SubProjectInfo } from '../models/feature/sub-project-info.model';
+import { ModuleInfo } from '../models/feature/module-info.model';
 
 /**
  * 功能模块
@@ -27,11 +28,19 @@ export class FeatureBaseService extends BaseService {
   }
 
   /**
+   * 获取默认模块
+   */
+  getDefaultModules(): Observable<ModuleInfo[]> {
+    const _url = `/api/Feature/defaultModules`;
+    return this.request<ModuleInfo[]>('get', _url);
+  }
+
+  /**
    * 创建模块
    * @param name 
    */
   createModule(name: string | null): Observable<boolean> {
-    const _url = `/api/Feature/createModule?name=${name ?? ''}`;
+    const _url = `/api/Feature/createModule?name=${name}`;
     return this.request<boolean>('post', _url);
   }
 

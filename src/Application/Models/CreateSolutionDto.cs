@@ -72,23 +72,6 @@ public class CreateSolutionDto
     /// </summary>
     [MaxLength(60)]
     public string? CacheInstanceName { get; set; }
-    /// <summary>
-    /// 系统管理模块
-    /// </summary>
-    public bool HasSystemFeature { get; set; }
-    /// <summary>
-    /// 内容管理模块
-    /// </summary>
-    public bool HasCmsFeature { get; set; }
-    /// <summary>
-    /// 用户文件模块
-    /// </summary>
-    public bool HasFileManagerFeature { get; set; }
-
-    /// <summary>
-    /// 订单模块
-    /// </summary>
-    public bool HasOrderFeature { get; set; }
 
     /// <summary>
     /// 项目类型
@@ -97,6 +80,11 @@ public class CreateSolutionDto
 
     [MaxLength(60)]
     public string? DefaultPassword { get; set; }
+
+    /// <summary>
+    /// 选择的模块
+    /// </summary>
+    public List<string> Modules { get; set; } = [];
 }
 
 public enum DBType

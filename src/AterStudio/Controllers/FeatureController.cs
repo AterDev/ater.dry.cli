@@ -34,6 +34,16 @@ public class FeatureController(FeatureManager feature, ProjectContext projectCon
     }
 
     /// <summary>
+    /// 获取默认模块
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("defaultModules")]
+    public List<ModuleInfo> GetDefaultModules()
+    {
+        return _feature.GetDefaultModules();
+    }
+
+    /// <summary>
     /// 创建模块
     /// </summary>
     /// <param name="name"></param>

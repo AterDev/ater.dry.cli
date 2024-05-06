@@ -916,6 +916,46 @@
         }
       }
     },
+    "/api/Feature/defaultModules": {
+      "get": {
+        "tags": [
+          "Feature"
+        ],
+        "summary": "获取默认模块",
+        "operationId": "Feature_GetDefaultModules",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ModuleInfo"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ModuleInfo"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ModuleInfo"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Feature/createModule": {
       "post": {
         "tags": [
@@ -1986,18 +2026,6 @@
             "type": "string",
             "nullable": true
           },
-          "hasSystemFeature": {
-            "type": "boolean"
-          },
-          "hasCmsFeature": {
-            "type": "boolean"
-          },
-          "hasFileManagerFeature": {
-            "type": "boolean"
-          },
-          "hasOrderFeature": {
-            "type": "boolean"
-          },
           "projectType": {
             "$ref": "#/components/schemas/ProjectType"
           },
@@ -2005,6 +2033,12 @@
             "maxLength": 60,
             "type": "string",
             "nullable": true
+          },
+          "modules": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         },
         "additionalProperties": false
@@ -2248,6 +2282,21 @@
           "CSharp"
         ],
         "x-enumData": [ ]
+      },
+      "ModuleInfo": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
       },
       "NgComponentInfo": {
         "type": "object",

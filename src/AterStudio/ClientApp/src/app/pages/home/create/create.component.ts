@@ -6,6 +6,7 @@ import { CacheType } from 'src/app/share/models/enum/cache-type.model';
 import { DBType } from 'src/app/share/models/enum/dbtype.model';
 import { ProjectType } from 'src/app/share/models/enum/project-type.model';
 import { CreateSolutionDto } from 'src/app/share/models/feature/create-solution-dto.model';
+import { ModuleInfo } from 'src/app/share/models/feature/module-info.model';
 import { FeatureService } from 'src/app/share/services/feature.service';
 
 @Component({
@@ -17,9 +18,11 @@ export class CreateComponent {
   addForm!: FormGroup;
   data = {} as CreateSolutionDto;
   isProcess = false;
+  isLoading = true;
   DBType = DBType;
   CacheType = CacheType;
   ProjectType = ProjectType;
+  defaultModules: ModuleInfo[] = [];
 
   constructor(
     private service: FeatureService,
@@ -42,18 +45,29 @@ export class CreateComponent {
   get queryDbConnStrings() { return this.addForm.get('queryDbConnStrings'); }
   get cacheConnStrings() { return this.addForm.get('cacheConnStrings'); }
   get cacheInstanceName() { return this.addForm.get('cacheInstanceName'); }
-  get hasSystemFeature() { return this.addForm.get('hasSystemFeature'); }
-  get hasCmsFeature() { return this.addForm.get('hasCmsFeature'); }
-  get hasFileManagerFeature() { return this.addForm.get('hasFileManagerFeature'); }
-  get hasOrderFeature() { return this.addForm.get('hasOrderFeature'); }
   get projectType() { return this.addForm.get('projectType'); }
 
   ngOnInit(): void {
-    this.initForm();
-    this.name?.valueChanges.subscribe(val => {
-      this.commandDbConnStrings?.setValue(`Server=localhost;Port=5432;Database=${val};User Id=postgres;Password=root;`);
-      this.queryDbConnStrings?.setValue(`Server=localhost;Port=5432;Database=${val};User Id=postgres;Password=root;`);
-    });
+    this.getDefaultModules();
+  }
+
+  getDefaultModules(): void {
+    this.service.getDefaultModules()
+      .subscribe({
+        next: (res) => {
+          if (res) {
+            this.defaultModules = res;
+            this.initForm();
+          }
+        },
+        error: (error) => {
+          this.snb.open(error.detail);
+          this.isLoading = false;
+        },
+        complete: () => {
+          this.isLoading = false;
+        }
+      });
   }
 
   initForm(): void {
@@ -71,13 +85,14 @@ export class CreateComponent {
       queryDbConnStrings: new FormControl('Server=localhost;Port=5432;Database=MyProjectName;User Id=postgres;Password=root;', [Validators.maxLength(300)]),
       cacheConnStrings: new FormControl('localhost:6379', [Validators.maxLength(200)]),
       cacheInstanceName: new FormControl('Dev', [Validators.maxLength(60)]),
-      hasCmsFeature: new FormControl(false, []),
-      hasFileManagerFeature: new FormControl(false, []),
-      hasSystemFeature: new FormControl(true, []),
-      hasOrderFeature: new FormControl(false, []),
-      projectType: new FormControl(ProjectType.WebAPI, [Validators.required])
+      projectType: new FormControl(ProjectType.WebAPI, [Validators.required]),
+      modules: new FormControl(['SystemMod'], [])
     });
-    this.hasSystemFeature?.disable();
+
+    this.name?.valueChanges.subscribe(val => {
+      this.commandDbConnStrings?.setValue(`Server=localhost;Port=5432;Database=${val};User Id=postgres;Password=root;`);
+      this.queryDbConnStrings?.setValue(`Server=localhost;Port=5432;Database=${val};User Id=postgres;Password=root;`);
+    });
   }
 
   addSolution(): void {

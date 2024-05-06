@@ -1,4 +1,4 @@
-<div class="container p-2">
+<div class="container p-2" *ngIf="!isLoading">
   <h1 class="mt-1">创建新解决方案</h1>
   <form [formGroup]="addForm" class="d-flex  flex-column">
     <div class="d-flex flex-column">
@@ -103,14 +103,13 @@
         <small>(预览)</small>
       </h2>
       <div class="d-flex gap-2 align-items-center ">
-        <mat-checkbox formControlName="hasSystemFeature" matTooltip="系统管理员、角色、权限相关功能"
-          matTooltipPosition="below">后台管理</mat-checkbox>
-        <mat-checkbox formControlName="hasCmsFeature" matTooltip="内容管理基础接口"
-          matTooltipPosition="below">内容管理</mat-checkbox>
-        <!-- <mat-icon class="ms-1" fontSet="material-icons-outlined">info</mat-icon> -->
-        <mat-checkbox formControlName="hasFileManagerFeature" matTooltip="文件管理"
-          matTooltipPosition="below">文件管理</mat-checkbox>
-        <mat-checkbox formControlName="hasOrderFeature" matTooltip="订单模块" matTooltipPosition="below">订单模块</mat-checkbox>
+        <mat-selection-list formControlName="modules">
+          @for (module of defaultModules; track $index) {
+          <mat-list-option [matTooltip]="module.description" matTooltipPosition="right" [value]="module.value" [disabled]="module.value=='SystemMod'">
+            {{module.name}}
+          </mat-list-option>
+          }
+        </mat-selection-list>
       </div>
     </div>
     }

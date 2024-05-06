@@ -87,7 +87,7 @@ export class ApiDocInfoBaseService extends BaseService {
    * @param swaggerPath 
    */
   generateRequest(id: string, webPath: string | null, type: RequestLibType | null, swaggerPath: string | null): Observable<boolean> {
-    const _url = `/api/ApiDocInfo/generateRequest/${id}?webPath=${webPath ?? ''}&type=${type ?? ''}&swaggerPath=${swaggerPath ?? ''}`;
+    const _url = `/api/ApiDocInfo/generateRequest/${id}?webPath=${webPath}&type=${type}&swaggerPath=${swaggerPath}`;
     return this.request<boolean>('get', _url);
   }
 
@@ -99,7 +99,7 @@ export class ApiDocInfoBaseService extends BaseService {
    * @param swaggerPath 
    */
   generateClientRequest(id: string, webPath: string | null, type: LanguageType | null, swaggerPath: string | null): Observable<boolean> {
-    const _url = `/api/ApiDocInfo/generateClientRequest/${id}?webPath=${webPath ?? ''}&type=${type ?? ''}&swaggerPath=${swaggerPath ?? ''}`;
+    const _url = `/api/ApiDocInfo/generateClientRequest/${id}?webPath=${webPath}&type=${type}&swaggerPath=${swaggerPath}`;
     return this.request<boolean>('get', _url);
   }
 
