@@ -7,13 +7,22 @@ param (
 $location = Get-Location
 $OutputEncoding = [System.Console]::OutputEncoding = [System.Console]::InputEncoding = [System.Text.Encoding]::UTF8
 try {
-
     Set-Location $location
     # get package name and version
     $VersionNode = Select-Xml -Path ../src/CommandLine/CommandLine.csproj -XPath '/Project//PropertyGroup/Version'
     $PackageNode = Select-Xml -Path ../src/CommandLine/CommandLine.csproj -XPath '/Project//PropertyGroup/PackageId'
     $Version = $VersionNode.Node.InnerText
     $PackageId = $PackageNode.Node.InnerText
+
+    # 支持的runtimes
+    $supportRuntimes = @(
+        "linux-arm64",
+        "linux-x64",
+        "win-x64",
+        "win-arm64",
+        "osx-x64",
+        "osx-arm64"
+    );
 
     # sync studio version
     Set-Location $location
@@ -48,24 +57,48 @@ try {
             ".\publish\Microsoft.CodeAnalysis.CSharp.dll",
             ".\publish\Microsoft.CodeAnalysis.Workspaces.dll",
             ".\publish\Microsoft.CodeAnalysis.dll",
+            ".\publish\Microsoft.EntityFrameworkCore.dll",
+            ".\publish\Microsoft.EntityFrameworkCore.Relational.dll",
             ".\publish\Microsoft.CodeAnalysis.CSharp.Workspaces.dll",
-            ".\publish\Microsoft.CodeAnalysis.Workspaces.MSBuild.dll"
-            ".\publish\Microsoft.Build.dll",
-            ".\publish\Microsoft.Build.Framework.dll",
             ".\publish\Humanizer.dll",
-            ".\publish\LiteDB.dll",
-            ".\publish\Microsoft.OpenApi.Readers.dll",
+            ".\publish\Microsoft.IdentityModel.Tokens.dll",
+            ".\publish\Microsoft.EntityFrameworkCore.Sqlite.dll",
             ".\publish\Microsoft.OpenApi.dll",
-            ".\publish\SharpYaml.dll",
-            ".\publish\AterStudio.exe",
             ".\publish\CodeGenerator.dll",
+            ".\publish\SharpYaml.dll",
+            ".\publish\Microsoft.Data.Sqlite.dll",
+            ".\publish\Mapster.dll",
+            ".\publish\Microsoft.OpenApi.Readers.dll",
+            ".\publish\Definition.dll",
+            ".\publish\Microsoft.IdentityModel.JsonWebTokens.dll",
             ".\publish\Command.Share.dll",
-            ".\publish\Core.dll",
-            ".\publish\Datastore.dll",
+            ".\publish\System.IdentityModel.Tokens.Jwt.dll",
+            ".\publish\Microsoft.Extensions.DependencyModel.dll",
+            ".\publish\Microsoft.CodeAnalysis.Workspaces.MSBuild.dll"
             ".\publish\NuGet.Versioning.dll",
+            ".\publish\System.Composition.TypedParts.dll",
             ".\publish\PluralizeService.Core.dll",
+            ".\publish\System.Composition.Hosting.dll",
+            ".\publish\System.Composition.Convention.dll",
+            ".\publish\SQLitePCLRaw.core.dll",
+            ".\publish\Ater.Web.Abstraction.dll",
+            ".\publish\Microsoft.Build.Locator.dll",
+            ".\publish\Microsoft.IdentityModel.Logging.dll",
+            ".\publish\Ater.Web.Core.dll",
+            ".\publish\SQLitePCLRaw.provider.e_sqlite3.dll",
+            ".\publish\Mapster.Core.dll",
+            ".\publish\System.Composition.Runtime.dll",
+            ".\publish\System.Composition.AttributedModel.dll",
+            ".\publish\Microsoft.IdentityModel.Abstractions.dll",
+            ".\publish\Microsoft.Bcl.AsyncInterfaces.dll",
+            ".\publish\SQLitePCLRaw.batteries_v2.dll",
+
+            ".\publish\AterStudio.exe",
             ".\publish\swagger.json"
-        )
+        );
+
+        # 移除runtime目录
+        Remove-Item .\publish\runtimes -Recurse -Force
 
         foreach ($path in $pathsToRemove) {
             if (Test-Path $path) {
@@ -88,6 +121,15 @@ try {
     Write-Host 'build and pack new version...'
     # build & pack
     dotnet build -c release
+
+    # 从runtime目录中移除其他目录
+    $runtimes = Get-ChildItem -Path .\bin\release\net8.0\runtimes -Directory
+    foreach ($runtime in $runtimes) {
+        if ($supportRuntimes -notcontains $runtime.Name) {
+            Remove-Item $runtime.FullName -Recurse -Force
+        }
+    }
+
     dotnet pack --no-build -c release
     
     # uninstall old version

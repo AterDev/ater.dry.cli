@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
-
-using Definition.EntityFramework.DBProvider;
 using Definition.Infrastructure;
 
 namespace Command.Share.Commands;
@@ -25,8 +23,6 @@ public class StudioCommand
             // 更新程序
             UpdateStudio();
         }
-        // 更新项目信息
-        await UpdateProjectAsync();
 
         Console.WriteLine("🚀 start studio...");
         // 运行
@@ -78,7 +74,7 @@ public class StudioCommand
             }
             else
             {
-                Console.WriteLine("start browserr failed:" + ex.Message);
+                Console.WriteLine("start browser failed:" + ex.Message);
             }
         }
         process.WaitForExit();
@@ -93,24 +89,44 @@ public class StudioCommand
 
         var copyFiles = new string[]
         {
-            "Microsoft.CodeAnalysis",
             "Microsoft.CodeAnalysis.CSharp",
             "Microsoft.CodeAnalysis.Workspaces",
-            "Microsoft.CodeAnalysis.Workspaces.MSBuild",
+            "Microsoft.CodeAnalysis",
+            "Microsoft.EntityFrameworkCore",
+            "Microsoft.EntityFrameworkCore.Relational",
             "Microsoft.CodeAnalysis.CSharp.Workspaces",
-            "Microsoft.Build",
-            "Microsoft.Build.Framework",
             "Humanizer",
-            "LiteDB",
-            "SharpYaml",
+            "Microsoft.IdentityModel.Tokens",
+            "Microsoft.EntityFrameworkCore.Sqlite",
             "Microsoft.OpenApi",
-            "Microsoft.OpenApi.Readers",
-            "Core",
             "CodeGenerator",
+            "SharpYaml",
+            "Microsoft.Data.Sqlite",
+            "Mapster",
+            "Microsoft.OpenApi.Readers",
+            "Definition",
+            "Microsoft.IdentityModel.JsonWebTokens",
             "Command.Share",
-            "Datastore",
+            "System.IdentityModel.Tokens.Jwt",
+            "Microsoft.Extensions.DependencyModel",
+            "Microsoft.CodeAnalysis.Workspaces.MSBuild",
             "NuGet.Versioning",
-            "PluralizeService.Core"
+            "System.Composition.TypedParts",
+            "PluralizeService.Core",
+            "System.Composition.Hosting",
+            "System.Composition.Convention",
+            "SQLitePCLRaw.core",
+            "Ater.Web.Abstraction",
+            "Microsoft.Build.Locator",
+            "Microsoft.IdentityModel.Logging",
+            "Ater.Web.Core",
+            "SQLitePCLRaw.provider.e_sqlite3",
+            "Mapster.Core",
+            "System.Composition.Runtime",
+            "System.Composition.AttributedModel",
+            "Microsoft.IdentityModel.Abstractions",
+            "Microsoft.Bcl.AsyncInterfaces",
+            "SQLitePCLRaw.batteries_v2"
         };
 
         var version = AssemblyHelper.GetCurrentToolVersion();
@@ -160,6 +176,20 @@ public class StudioCommand
                 File.Copy(sourceFile, Path.Combine(studioPath, file + ".dll"), true);
             }
         });
+
+        // copy runtimes目录
+        var runtimesDir = Path.Combine(toolRootPath, "runtimes");
+        if (Directory.Exists(runtimesDir))
+        {
+            var targetDir = Path.Combine(studioPath, "runtimes");
+            if (Directory.Exists(targetDir))
+            {
+                Directory.Delete(targetDir, true);
+            }
+            Directory.CreateSymbolicLink(targetDir, runtimesDir);
+
+        }
+
         UpdateTemplate();
         Console.WriteLine("✅ update complete!");
     }
@@ -183,45 +213,5 @@ public class StudioCommand
             {
             }
         }
-    }
-
-    /// <summary>
-    /// 更新项目数据
-    /// </summary>
-    public static async Task UpdateProjectAsync()
-    {
-        var db = new ContextBase();
-        var projects = db.Projects.ToList();
-        foreach (var project in projects)
-        {
-            var solutionDir = project.Path;
-
-            if (File.Exists(project.Path))
-            {
-                solutionDir = Path.Combine(project.Path, "..");
-            }
-            if (!Directory.Exists(solutionDir))
-            {
-                db.Remove(project);
-                continue;
-            }
-            solutionDir = Path.Combine(solutionDir, Config.ConfigFileName);
-
-            // read config file
-            if (!File.Exists(solutionDir))
-            {
-                continue;
-            }
-            string configJson = await File.ReadAllTextAsync(solutionDir);
-            ConfigOptions? options = ConfigOptions.ParseJson(configJson);
-            if (options != null)
-            {
-            }
-            else
-            {
-                Console.WriteLine("config file parsing error! : " + solutionDir);
-            }
-        }
-        db.Dispose();
     }
 }

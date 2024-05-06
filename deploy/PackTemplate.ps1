@@ -5,6 +5,10 @@ param (
     [System.String]
     $relativePath = "../../ater.web"
 )
+
+# 模块名称
+$modulesNames = @("CMSMod", "FileManagerMod", "OrderMod", "SystemMod", "CustomerMod")
+
 # 路径定义
 $deployPath = Get-Location
 $rootPath = [IO.Path]::GetFullPath("$deployPath/..")
@@ -39,8 +43,6 @@ if (!(Test-Path $destModulesPath)) {
     New-Item -ItemType Directory -Path $destModulesPath -Force | Out-Null
 }
 
-# 模块名称
-$modulesNames = @("CMSMod", "FileManagerMod", "OrderMod", "SystemMod")
 
 # 模块的copy
 foreach ($moduleName in $modulesNames) {
