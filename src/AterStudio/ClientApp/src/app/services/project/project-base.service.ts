@@ -4,9 +4,9 @@ import { Observable } from 'rxjs';
 import { UpdateConfigOptionsDto } from './models/update-config-options-dto.model';
 import { TemplateFileUpsert } from './models/template-file-upsert.model';
 import { Project } from './models/project.model';
+import { SubProjectInfo } from '../feature/models/sub-project-info.model';
 import { ConfigOptions } from './models/config-options.model';
 import { TemplateFile } from './models/template-file.model';
-import { SubProjectInfo } from '../feature/models/sub-project-info.model';
 
 /**
  * 项目

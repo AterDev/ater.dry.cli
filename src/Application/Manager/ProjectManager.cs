@@ -6,12 +6,10 @@ public class ProjectManager(CommandDbContext dbContext, ProjectContext projectCo
 {
     private readonly CommandDbContext _db = dbContext;
     private readonly ProjectContext _projectContext = projectContext;
-
     public string GetToolVersion()
     {
         return AssemblyHelper.GetCurrentToolVersion();
     }
-
     public async Task<List<Project>> GetProjectsAsync()
     {
         var projects = _db.Projects.ToList();
@@ -139,7 +137,9 @@ public class ProjectManager(CommandDbContext dbContext, ProjectContext projectCo
         var res = new List<SubProjectInfo>();
         try
         {
-            var subProjectFiles = new DirectoryInfo(pathString).GetFiles($"*{Const.CSharpProjectExtention}", SearchOption.AllDirectories).ToList();
+            var subProjectFiles = new DirectoryInfo(pathString)
+                .GetFiles($"*{Const.CSharpProjectExtention}", SearchOption.AllDirectories)
+                .ToList();
 
             if (subProjectFiles.Count != 0)
             {

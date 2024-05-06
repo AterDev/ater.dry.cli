@@ -245,7 +245,7 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
 
                 sb.AppendLine(caseString);
             }
-            sb.AppendLine("default: '默认'; break;".Indent(6));
+            sb.AppendLine("default: result = '默认'; break;".Indent(6));
         }
 
         sb.AppendLine("}".Indent(5));
@@ -450,7 +450,14 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
                     string? dirName = TsModelFiles?.Where(f => f.ModelName == t)
                         .Select(f => f.Path).FirstOrDefault();
 
-                    importModels += $"import {{ {t} }} from './models/{t.ToHyphen()}.model';{Environment.NewLine}";
+                    if (dirName != serviceFile.Name.ToHyphen())
+                    {
+                        importModels += $"import {{ {t} }} from '../{dirName}/models/{t.ToHyphen()}.model';{Environment.NewLine}";
+                    }
+                    else
+                    {
+                        importModels += $"import {{ {t} }} from './models/{t.ToHyphen()}.model';{Environment.NewLine}";
+                    }
                 }
 
             });
