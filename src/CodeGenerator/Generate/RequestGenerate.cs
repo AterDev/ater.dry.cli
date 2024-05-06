@@ -232,8 +232,7 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
         TabConst.TabSize = 2;
         sb.AppendLine($"case '{enumType}':".Indent(3));
         sb.AppendLine("{".Indent(4));
-        sb.AppendLine($"  switch (value)".Indent(5));
-        sb.AppendLine("{".Indent(4));
+        sb.AppendLine($"switch (value) {{".Indent(5));
 
         if (enumData.Value is OpenApiArray array)
         {
