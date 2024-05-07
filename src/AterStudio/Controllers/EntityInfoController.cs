@@ -149,8 +149,6 @@ public class EntityInfoController(
         {
             return NotFound("项目不存在");
         }
-        _project.Project.FrontPath = dto.RootPath;
-        await manager.SaveChangesAsync();
 
         await manager.GenerateNgModuleAsync(dto.EntityName, dto.RootPath, dto.IsMobile);
         return true;

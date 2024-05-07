@@ -180,9 +180,11 @@ export class IndexComponent implements OnInit {
     });
 
     let defaultPath = `\\src\\app\\pages`;
+    console.log(this.projectState.project);
 
 
     if (this.projectState.project?.frontPath) {
+
       this.webPath = this.projectState.project?.frontPath
     } else {
       this.webPath = this.config?.rootPath! + '\\' + this.config?.apiPath + '\\ClientApp' + defaultPath;
@@ -497,6 +499,7 @@ export class IndexComponent implements OnInit {
       this.snb.open('请填写路径');
     }
   }
+
   generate(): void {
     if (this.isBatch) {
       this.batch(this.currentType!);

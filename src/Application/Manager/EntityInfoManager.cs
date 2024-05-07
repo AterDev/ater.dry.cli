@@ -467,6 +467,10 @@ public partial class EntityInfoManager(
         var entityPath = Directory.GetFiles(entityDir, entityName, SearchOption.AllDirectories)
             .FirstOrDefault();
 
+        var project = CommandContext.Projects.Find(_projectContext.ProjectId);
+        project!.FrontPath = rootPath;
+        await CommandContext.SaveChangesAsync();
+
         if (entityPath != null)
         {
             await CommandRunner.GenerateNgPagesAsync(entityPath, dtoPath, rootPath, isMobile);
