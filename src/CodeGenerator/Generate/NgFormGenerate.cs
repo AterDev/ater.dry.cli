@@ -14,7 +14,7 @@ public class NgFormGenerate : GenerateBase
     /// <summary>
     /// 生成添加组件
     /// </summary>
-    public static string GenerateAddForm(List<PropertyInfo>? propertyInfos)
+    public static string GenerateAddForm(List<PropertyInfo>? propertyInfos, bool isMobile = false)
     {
         string formControls = "";
         if (propertyInfos != null)
@@ -33,8 +33,8 @@ public class NgFormGenerate : GenerateBase
                 formControls += inputBuilder.ToFormControl();
             }
         }
-
-        string tplContent = GetTplContent("angular.add.add.component.html.tpl");
+        var tplDir = isMobile ? "mobileAdd" : "add";
+        string tplContent = GetTplContent($"angular.{tplDir}.add.component.html.tpl");
         tplContent = tplContent.Replace(TplConst.FORM_CONTROLS, formControls);
         return tplContent;
     }
@@ -69,7 +69,7 @@ public class NgFormGenerate : GenerateBase
         return tplContent;
     }
 
-    public static string GenerateEditForm(List<PropertyInfo>? propertyInfos)
+    public static string GenerateEditForm(List<PropertyInfo>? propertyInfos, bool isMobile = false)
     {
         string formControls = "";
         if (propertyInfos != null)
@@ -88,8 +88,8 @@ public class NgFormGenerate : GenerateBase
                 formControls += inputBuilder.ToFormControl();
             }
         }
-
-        string tplContent = GetTplContent("angular.edit.edit.component.html.tpl");
+        var tplDir = isMobile ? "mobileEdit" : "edit";
+        string tplContent = GetTplContent($"angular.{tplDir}.edit.component.html.tpl");
         tplContent = tplContent.Replace(TplConst.FORM_CONTROLS, formControls);
         return tplContent;
     }

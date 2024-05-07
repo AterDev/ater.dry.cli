@@ -290,7 +290,7 @@ public class NgPageGenerate : GenerateBase
 
         // 生成html
         NgFormGenerate formGen = new();
-        string htmlContent = NgFormGenerate.GenerateAddForm(props);
+        string htmlContent = NgFormGenerate.GenerateAddForm(props, IsMobile);
         string cssContent = GetTplContent($"angular.{tplDir}.add.component.css.tpl");
 
         NgComponentInfo component = new("add")
@@ -341,7 +341,7 @@ public class NgPageGenerate : GenerateBase
 
         // 生成html
         NgFormGenerate formGen = new();
-        string htmlContent = NgFormGenerate.GenerateEditForm(props);
+        string htmlContent = NgFormGenerate.GenerateEditForm(props, IsMobile);
         string cssContent = GetTplContent($"angular.{tplDir}.edit.component.css.tpl");
 
         NgComponentInfo component = new("edit")
