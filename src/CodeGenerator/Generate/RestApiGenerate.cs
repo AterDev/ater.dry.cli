@@ -120,7 +120,7 @@ public class RestApiGenerate : GenerateBase
         {
             var name = navigation.Type;
             additionManagerProps += $"    private readonly {name}Manager _{name.ToCamelCase()}Manager = {name.ToCamelCase()}Manager;" + Environment.NewLine;
-            additionManagerDI += $",{Environment.NewLine}        {name}Manager {name.ToCamelCase()}Manager";
+            additionManagerDI += $"  {name}Manager {name.ToCamelCase()}Manager,{Environment.NewLine}";
 
         });
         tplContent = tplContent.Replace(TplConst.ADDICTION_MANAGER_PROPS, additionManagerProps)

@@ -29,7 +29,7 @@
     }@else {
     <mat-nav-list>
       @for (element of data; track $index) {
-      <mat-list-item (click)="toDetail(item.id)">
+      <mat-list-item (click)="toDetail(element.id)">
 //[@ColumnsDef]        
       </mat-list-item>
       }

@@ -22,60 +22,6 @@ public class NgPageGenerate : GenerateBase
         DtoDirName = EntityName + "Dtos";
     }
 
-    public NgComponentInfo BuildAddPage()
-    {
-        var tplDir = IsMobile ? "mobile-add" : "add";
-        // 生成.ts
-        string tplContent = GetTplContent($"angular.{tplDir}.add.component.ts");
-        // 替换名称
-        tplContent = tplContent.Replace(TplConst.ENTITY_NAME, EntityName)
-            .Replace(TplConst.ENTITY_PATH_NAME, EntityName.ToHyphen());
-        // 解析属性，并生成相应代码
-        EntityParseHelper typeHelper = new(Path.Combine(DtoPath, "models", DtoDirName, EntityName + "AddDto.cs"));
-        typeHelper.Parse();
-        List<PropertyInfo>? props = typeHelper.PropertyInfos?
-            .Where(p => !p.IsNavigation && !p.Type.StartsWith("Guid"))
-            .ToList();
-
-        string definedProperties = "";
-        string definedFormControls = "";
-        string definedValidatorMessage = "";
-        if (props != null)
-        {
-            GetFormControlAndValidate(props, false, ref definedProperties, ref definedFormControls, ref definedValidatorMessage);
-        }
-
-        tplContent = tplContent.Replace(TplConst.DEFINED_PROPERTIES, definedProperties)
-            .Replace(TplConst.DEFINED_FORM_CONTROLS, definedFormControls)
-            .Replace(TplConst.DEFINED_VALIDATOR_MESSAGE, definedValidatorMessage);
-
-        // 是否需要引用富文本编辑器
-        if (props != null && props.Any(p => p.MaxLength > 1000 || p.MinLength >= 100))
-        {
-            tplContent = InsertEditor(tplContent);
-        }
-        // 是否需要引用枚举类型
-        if (props != null && props.Any(p => p.IsEnum))
-        {
-            tplContent = InsertEnum(tplContent, props.Where(p => p.IsEnum).ToList());
-        }
-
-        tplContent = CleanTsTplVariables(tplContent);
-
-        // 生成html
-        NgFormGenerate formGen = new();
-        string htmlContent = NgFormGenerate.GenerateAddForm(props);
-        string cssContent = GetTplContent($"angular.{tplDir}.add.component.css.tpl");
-
-        NgComponentInfo component = new("add")
-        {
-            HtmlContent = htmlContent,
-            TsContent = tplContent,
-            CssContent = cssContent,
-        };
-        return component;
-    }
-
     /// <summary>
     /// 创建生成表单组件
     /// </summary>
@@ -302,9 +248,62 @@ public class NgPageGenerate : GenerateBase
         return component;
     }
 
+    public NgComponentInfo BuildAddPage()
+    {
+        var tplDir = IsMobile ? "mobileAdd" : "add";
+        // 生成.ts
+        string tplContent = GetTplContent($"angular.{tplDir}.add.component.ts");
+        // 替换名称
+        tplContent = tplContent.Replace(TplConst.ENTITY_NAME, EntityName)
+            .Replace(TplConst.ENTITY_PATH_NAME, EntityName.ToHyphen());
+        // 解析属性，并生成相应代码
+        EntityParseHelper typeHelper = new(Path.Combine(DtoPath, "models", DtoDirName, EntityName + "AddDto.cs"));
+        typeHelper.Parse();
+        List<PropertyInfo>? props = typeHelper.PropertyInfos?
+            .Where(p => !p.IsNavigation && !p.Type.StartsWith("Guid"))
+            .ToList();
+
+        string definedProperties = "";
+        string definedFormControls = "";
+        string definedValidatorMessage = "";
+        if (props != null)
+        {
+            GetFormControlAndValidate(props, false, ref definedProperties, ref definedFormControls, ref definedValidatorMessage);
+        }
+
+        tplContent = tplContent.Replace(TplConst.DEFINED_PROPERTIES, definedProperties)
+            .Replace(TplConst.DEFINED_FORM_CONTROLS, definedFormControls)
+            .Replace(TplConst.DEFINED_VALIDATOR_MESSAGE, definedValidatorMessage);
+
+        // 是否需要引用富文本编辑器
+        if (props != null && props.Any(p => p.MaxLength > 1000 || p.MinLength >= 100))
+        {
+            tplContent = InsertEditor(tplContent);
+        }
+        // 是否需要引用枚举类型
+        if (props != null && props.Any(p => p.IsEnum))
+        {
+            tplContent = InsertEnum(tplContent, props.Where(p => p.IsEnum).ToList());
+        }
+
+        tplContent = CleanTsTplVariables(tplContent);
+
+        // 生成html
+        NgFormGenerate formGen = new();
+        string htmlContent = NgFormGenerate.GenerateAddForm(props);
+        string cssContent = GetTplContent($"angular.{tplDir}.add.component.css.tpl");
+
+        NgComponentInfo component = new("add")
+        {
+            HtmlContent = htmlContent,
+            TsContent = tplContent,
+            CssContent = cssContent,
+        };
+        return component;
+    }
     public NgComponentInfo BuildEditPage()
     {
-        var tplDir = IsMobile ? "mobile-edit" : "edit";
+        var tplDir = IsMobile ? "mobileEdit" : "edit";
         // 生成.ts
         string tplContent = GetTplContent($"angular.{tplDir}.edit.component.ts");
         // 替换名称
@@ -355,7 +354,7 @@ public class NgPageGenerate : GenerateBase
     }
     public NgComponentInfo BuildIndexPage()
     {
-        var tplDir = IsMobile ? "mobile-index" : "index";
+        var tplDir = IsMobile ? "mobileIndex" : "index";
         string cssContent = GetTplContent($"angular.{tplDir}.index.component.css.tpl");
         EntityParseHelper typeHelper = new(Path.Combine(DtoPath, "models", DtoDirName, EntityName + "ItemDto.cs"));
         typeHelper.Parse();
@@ -390,9 +389,7 @@ public class NgPageGenerate : GenerateBase
                 }
                 if (IsMobile)
                 {
-                    return $"""
-                      <span matListItemLine>{p.CommentSummary ?? p.Name ?? p.Type}:{rowContent}</span>
-                    """;
+                    return $"        <span matListItemLine>{p.CommentSummary ?? p.Name ?? p.Type}:{rowContent}</span>" + Environment.NewLine;
                 }
                 else
                 {
@@ -440,7 +437,7 @@ public class NgPageGenerate : GenerateBase
     }
     public NgComponentInfo BuildDetailPage()
     {
-        var tplDir = IsMobile ? "mobile-detail" : "detail";
+        var tplDir = IsMobile ? "mobileDetail" : "detail";
         string cssContent = GetTplContent($"angular.{tplDir}.detail.component.css.tpl");
         EntityParseHelper typeHelper = new(Path.Combine(DtoPath, "models", DtoDirName, EntityName + "ShortDto.cs"));
         typeHelper.Parse();
