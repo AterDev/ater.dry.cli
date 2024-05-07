@@ -30,7 +30,7 @@
 		<PackageTags>ater;cli;code generate;angular;webapi;asp.net core</PackageTags>
 		<Nullable>enable</Nullable>
 		<Title>Ater.Dry</Title>
-		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+		<SatelliteResourceLanguages>None</SatelliteResourceLanguages>
 	</PropertyGroup>
 	
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

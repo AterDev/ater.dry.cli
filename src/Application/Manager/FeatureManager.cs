@@ -102,6 +102,7 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
         }
 
         // restore & build solution
+        Console.WriteLine("⛏️ restore & build project!");
         if (!ProcessHelper.RunCommand("dotnet", $"build {path}", out _))
         {
             ErrorMsg = "项目创建成功，但构建失败，请查看错误信息!";

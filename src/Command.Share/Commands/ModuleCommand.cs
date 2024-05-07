@@ -26,7 +26,8 @@ public class ModuleCommand(string solutionPath, List<string> moduleNames)
         }
         if (Directory.Exists(Path.Combine(moduleDir, moduleName)))
         {
-            throw new Exception("该模块已存在");
+            Console.WriteLine("⚠️ 该模块已存在");
+            return;
         }
 
         // 基础类
@@ -336,6 +337,7 @@ public class ModuleCommand(string solutionPath, List<string> moduleNames)
 
             if (!compilation.PropertyExist(plural))
             {
+                compilation.AddClassProperty(propertyString);
                 Console.WriteLine($"  ℹ️ add new property {plural} ➡️ ContextBase");
             }
         });

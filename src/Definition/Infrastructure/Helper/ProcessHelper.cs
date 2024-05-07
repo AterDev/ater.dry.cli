@@ -29,10 +29,12 @@ public static class ProcessHelper
         if (string.IsNullOrWhiteSpace(output))
         {
             output = process.StandardOutput.ReadToEnd();
+            Console.WriteLine(output);
             return true;
         }
         else
         {
+            Console.WriteLine(output);
             return false;
         }
     }

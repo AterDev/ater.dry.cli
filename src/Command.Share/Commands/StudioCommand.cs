@@ -6,7 +6,7 @@ using Definition.Infrastructure;
 namespace Command.Share.Commands;
 public class StudioCommand
 {
-    public static async Task RunStudioAsync()
+    public static void RunStudio()
     {
         Console.WriteLine("🙌 Welcome Ater studio!");
         var studioPath = AssemblyHelper.GetStudioPath();
