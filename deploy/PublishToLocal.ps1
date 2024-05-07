@@ -72,6 +72,7 @@ try {
             ".\publish\Definition.dll",
             ".\publish\Microsoft.IdentityModel.JsonWebTokens.dll",
             ".\publish\Command.Share.dll",
+            ".\publish\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll"
             ".\publish\System.IdentityModel.Tokens.Jwt.dll",
             ".\publish\Microsoft.Extensions.DependencyModel.dll",
             ".\publish\Microsoft.CodeAnalysis.Workspaces.MSBuild.dll"
@@ -97,8 +98,10 @@ try {
             ".\publish\swagger.json"
         );
 
-        # 移除runtime目录
-        Remove-Item .\publish\runtimes -Recurse -Force
+        if (Test-Path -Path ".\publish\runtimes") {
+            # 移除runtime目录
+            Remove-Item .\publish\runtimes -Recurse -Force
+        }
 
         foreach ($path in $pathsToRemove) {
             if (Test-Path $path) {
@@ -118,20 +121,38 @@ try {
 
     Set-Location $location
     Set-Location ../src/CommandLine
-    Write-Host 'build and pack new version...'
-    # build & pack
-    dotnet build -c release
+    Write-Host 'Packing new version...'
 
-    # 从runtime目录中移除其他目录
-    $runtimes = Get-ChildItem -Path .\bin\release\net8.0\runtimes -Directory
+    # pack
+    dotnet pack --no-build -c release
+
+    $newPackName = $PackageId + "." + $Version + ".nupkg"
+
+    # 将nupkg修改成zip，并解压
+    $zipPackName = $newPackName.Replace(".nupkg", ".zip")
+    Rename-Item -Path "./nupkg/$newPackName" -NewName "$zipPackName"
+    Expand-Archive -Path "./nupkg/$zipPackName" -DestinationPath "./nupkg/$Version"
+
+    # 移除 tools\net8.0\any\runtimes 中不需要的文件
+    $runtimes = Get-ChildItem -Path "./nupkg/$Version/tools/net8.0/any/runtimes" -Directory
     foreach ($runtime in $runtimes) {
         if ($supportRuntimes -notcontains $runtime.Name) {
-            Remove-Item $runtime.FullName -Recurse -Force
+            Remove-Item -Path $runtime.FullName -Recurse -Force
         }
     }
+    ## 移除pdb xml文件
+    $files = Get-ChildItem -Path "./nupkg/$Version/tools/net8.0/any" -Recurse -Include *.pdb
+    foreach ($file in $files) {
+        Remove-Item $file.FullName -Force
+    }
 
-    dotnet pack --no-build -c release
-    
+    # 重新将文件压缩，不包含最外层目录
+    Compress-Archive -Path "./nupkg/$Version/*" -DestinationPath "./nupkg/$newPackName" -CompressionLevel Optimal -Force
+
+    # 删除临时文件
+    Remove-Item -Path "./nupkg/$Version" -Recurse -Force
+    Remove-Item -Path "./nupkg/$zipPackName" -Force
+
     # uninstall old version
     Write-Host 'uninstall old version'
     dotnet tool uninstall -g $PackageId
@@ -142,5 +163,6 @@ try {
     Set-Location $location
 }
 catch {
+    Set-Location $location
     Write-Host $_.Exception.Message
 }

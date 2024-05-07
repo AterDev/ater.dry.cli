@@ -107,6 +107,7 @@ public class StudioCommand
             "Definition",
             "Microsoft.IdentityModel.JsonWebTokens",
             "Command.Share",
+            "Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost",
             "System.IdentityModel.Tokens.Jwt",
             "Microsoft.Extensions.DependencyModel",
             "Microsoft.CodeAnalysis.Workspaces.MSBuild",
