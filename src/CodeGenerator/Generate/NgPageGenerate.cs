@@ -379,7 +379,7 @@ public class NgPageGenerate : GenerateBase
                     }
                     if (p.IsEnum)
                     {
-                        rowContent = $$$"""{{element.{{{p.Name.ToCamelCase()}}}| enumText:{{{p.Type}}}}}""";
+                        rowContent = $$$"""{{element.{{{p.Name.ToCamelCase()}}}| enumText:'{{{p.Type}}}'}}""";
                     }
 
                     if (type.Equals("bool"))
@@ -469,7 +469,7 @@ public class NgPageGenerate : GenerateBase
         }
 
         var tableContent = $"""
-                    <table class="table">
+                    <table class="default w-100">
                       <tbody>
             {string.Join("", trRows)}
                       </tbody>
