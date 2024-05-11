@@ -9,7 +9,7 @@ public class #@ClassName#Client
     public ErrorResult? ErrorMsg { get; set; } = null;
 
     #region api services
-#@Properties#
+//[@Properties]
     #endregion
 
     public #@ClassName#Client(HttpClient http)
@@ -22,7 +22,7 @@ public class #@ClassName#Client
         };
 
         #region api services
-#@InitProperties#
+//[@InitProperties]
         #endregion
     }
 

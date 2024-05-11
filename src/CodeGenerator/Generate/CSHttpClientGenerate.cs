@@ -1,8 +1,5 @@
 ﻿using System.Data;
 
-using Definition.Infrastructure.Utils;
-using Definition.Models;
-
 using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
 
@@ -23,7 +20,7 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
     public static string GetBaseService(string namespaceName)
     {
         var content = GetTplContent("RequestService.CsharpeBaseService.tpl");
-        content = content.Replace("${Namespace}", namespaceName);
+        content = content.Replace("#@Namespace#", namespaceName);
         return content;
     }
 
@@ -35,7 +32,7 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
     {
         var tplContent = GetTplContent("RequestService.CsharpClient.tpl");
         tplContent = tplContent.Replace("${Namespace}", namespaceName)
-            .Replace("${ClassName}", className);
+            .Replace("#@ClassName#", className);
 
         var propsString = "";
         var initPropsString = "";
@@ -46,8 +43,8 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
             initPropsString += $"        {info.ModelName} = new {info.ModelName}Service(http);" + Environment.NewLine;
         });
 
-        tplContent = tplContent.Replace("${Properties}", propsString)
-            .Replace("${InitProperties}", initPropsString);
+        tplContent = tplContent.Replace("//[@Properties]", propsString)
+            .Replace("//[@InitProperties]", initPropsString);
 
         return tplContent;
     }
@@ -92,14 +89,14 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
     {
         var tplContent = GetTplContent("RequestService.Extension.tpl");
         Console.WriteLine(tplContent);
-        tplContent = tplContent.Replace("${Namespace}", namespaceName);
+        tplContent = tplContent.Replace("#@Namespace#", namespaceName);
 
         var serviceContent = "";
         services.ForEach(service =>
         {
             serviceContent += $"        services.AddSingleton<{service}>();" + Environment.NewLine;
         });
-        tplContent = tplContent.Replace("${AddServices}", serviceContent);
+        tplContent = tplContent.Replace("#@AddServices#", serviceContent);
         return tplContent;
     }
 
