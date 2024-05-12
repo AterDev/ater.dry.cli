@@ -12,22 +12,20 @@ $dark-accent: mat.define-palette(mat.$orange-palette, 300, 400, 500);
 $dark-warn: mat.define-palette(mat.$red-palette);
 
 $dark-theme: mat.define-dark-theme((color: (primary: $dark-primary,
-        accent: $dark-accent,
-        warn: $dark-warn,
-      ),
-      typography: mat.define-typography-config(),
-      density: 0,
-    ));
-
+  accent: $dark-accent,
+  warn: $dark-warn,
+),
+  typography: mat.define-typography-config(),
+  density: 0,
+));
 
 $light-theme: mat.define-light-theme((color: (primary: $light-primary,
-        accent: $light-accent,
-        warn: $light-warn,
-      ),
-      typography: mat.define-typography-config(),
-      density: 0,
-    ));
-
+  accent: $light-accent,
+  warn: $light-warn,
+),
+  typography: mat.define-typography-config(),
+  density: 0,
+));
 
 @include mat.all-component-themes($dark-theme);
 

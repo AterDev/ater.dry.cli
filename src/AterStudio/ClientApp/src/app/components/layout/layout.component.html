@@ -1,27 +1,29 @@
 <div class="page" *ngIf="this.type!='desktop'">
-  <mat-toolbar color="primary" class="d-flex flex-row">
+  <mat-toolbar class="d-flex flex-row">
     <div class="flex-start">
       Ater.Dry
     </div>
     <div class="d-flex flex-fill justify-content-center flex-grow-1 gap-1">
-      <button mat-flat-button [routerLink]="['/index']" routerLinkActive="active">解决方案</button>
+      <button mat-button [routerLink]="['/index']" routerLinkActive="active">解决方案</button>
       <button mat-button [routerLink]="['/tools']" routerLinkActive="active">快捷工具</button>
     </div>
     <div class="flex-end align-items-center align-content-center d-flex">
-      @if(isLogin){
-      <button [matMenuTriggerFor]="appMenu" mat-button style="flex-direction: row-reverse;">
-        您已登录
-        <mat-icon>arrow_drop_down</mat-icon>
-      </button>
-      <mat-menu #appMenu="matMenu">
-        <button mat-menu-item (click)="logout()">
-          <span>登出</span>
-          <mat-icon>exit_to_app</mat-icon>
+      @if (isLogin) {
+        <button [matMenuTriggerFor]="appMenu" mat-button style="flex-direction: row-reverse;">
+          您已登录
+          <mat-icon>arrow_drop_down</mat-icon>
         </button>
-      </mat-menu>
+        <mat-menu #appMenu="matMenu">
+          <button mat-menu-item (click)="logout()">
+            <span>登出</span>
+            <mat-icon>exit_to_app</mat-icon>
+          </button>
+        </mat-menu>
       }
       <a href="https://docs.dusi.dev" target="_blank" style="color: inherit;">
-        <button mat-icon-button matTooltip="文档"><mat-icon>article</mat-icon></button>
+        <button mat-icon-button matTooltip="文档">
+          <mat-icon>article</mat-icon>
+        </button>
       </a>
       <button mat-icon-button matTooltip="Studio版本" [matTooltip]="version!">
         <mat-icon fontSet="material-icons-outlined">info</mat-icon>
@@ -44,9 +46,9 @@
   <mat-nav-list *ngFor="let item of projects">
     <a mat-list-item (click)="changeSolution(item.id)">
       <span matListItemTitle [style.color]="item.displayName==projectName?'#3f51b5':''">
-        {{item.displayName}}
+        {{ item.displayName }}
       </span>
-      <span matLine>{{item.name}}</span>
+      <span matLine>{{ item.name }}</span>
     </a>
   </mat-nav-list>
 </ng-template>

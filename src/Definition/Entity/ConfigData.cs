@@ -1,12 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Definition.Entity;
+﻿namespace Definition.Entity;
 /// <summary>
 /// 配置
 /// </summary>
 public class ConfigData : EntityBase
 {
-
     public const string OpenAI = "openAIKey";
 
     /// <summary>
@@ -32,4 +29,8 @@ public enum ValueType
     Double,
     String,
     Boolean,
+    /// <summary>
+    /// 加密字符串
+    /// </summary>
+    Encrypt
 }

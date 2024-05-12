@@ -13,7 +13,6 @@ public class AdvanceController(AdvanceManager entityAdvance) : ControllerBase
 {
     private readonly AdvanceManager _entityAdvance = entityAdvance;
 
-
     /// <summary>
     /// 获取配置
     /// </summary>
@@ -23,7 +22,7 @@ public class AdvanceController(AdvanceManager entityAdvance) : ControllerBase
     public ActionResult<ConfigData> GetConfig(string key)
     {
         var data = _entityAdvance.GetConfig(key);
-        return data != null ? (ActionResult<ConfigData>)data : (ActionResult<ConfigData>)Ok();
+        return data != null ? data : Ok();
     }
 
     /// <summary>

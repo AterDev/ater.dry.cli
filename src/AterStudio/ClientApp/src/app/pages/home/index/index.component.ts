@@ -42,7 +42,7 @@ export class IndexComponent implements OnInit {
   updated = false;
   updateResult: string | null = null;
   version: string | null;
-  openAIKey: string | null = null;
+  deepSeekApiKey: string | null = null;
 
   constructor(
     private service: ProjectService,
@@ -82,7 +82,7 @@ export class IndexComponent implements OnInit {
       .subscribe({
         next: (res) => {
           if (res) {
-            this.openAIKey = res.value;
+            this.deepSeekApiKey = res.value;
           }
         },
         error: (error) => {
@@ -223,8 +223,8 @@ export class IndexComponent implements OnInit {
   }
 
   addOpenAiKey(): void {
-    if (this.openAIKey) {
-      this.advance.setConfig("openAIKey", this.openAIKey)
+    if (this.deepSeekApiKey) {
+      this.advance.setConfig("openAIKey", this.deepSeekApiKey)
         .subscribe({
           next: (res) => {
             this.snb.open('保存成功');
@@ -236,6 +236,7 @@ export class IndexComponent implements OnInit {
         });
     }
   }
+  
   deleteConfirm(item: string): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       hasBackdrop: true,
