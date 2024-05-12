@@ -40,7 +40,6 @@ public class Project : EntityBase
 
     public List<EntityInfo> EntityInfos { get; set; } = [];
     public List<ApiDocInfo> ApiDocInfos { get; set; } = [];
-    public List<ConfigData> ConfigDatas { get; set; } = [];
     public List<TemplateFile> TemplateFiles { get; set; } = [];
 }
 

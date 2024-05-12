@@ -2,13 +2,18 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
+
 using Application;
+
 using Ater.Web.Abstraction;
+
 using AterStudio;
 using AterStudio.Worker;
 
 using Definition.EntityFramework.DBProvider;
+
 using EntityFramework.DBProvider;
+
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.EntityFrameworkCore;
@@ -40,6 +45,7 @@ builder.Services.AddDbContext<QueryDbContext>(options =>
 });
 
 builder.Services.AddManager();
+builder.Services.AddScoped(typeof(AIService));
 
 #if DEBUG 
 builder.Services.AddSwaggerGen(c =>

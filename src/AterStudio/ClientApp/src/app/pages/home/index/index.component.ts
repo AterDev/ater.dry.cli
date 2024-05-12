@@ -224,7 +224,7 @@ export class IndexComponent implements OnInit {
 
   addOpenAiKey(): void {
     if (this.deepSeekApiKey) {
-      this.advance.setConfig("openAIKey", this.deepSeekApiKey)
+      this.advance.setConfig("deepSeekApiKey", this.deepSeekApiKey)
         .subscribe({
           next: (res) => {
             this.snb.open('保存成功');
@@ -236,7 +236,7 @@ export class IndexComponent implements OnInit {
         });
     }
   }
-  
+
   deleteConfirm(item: string): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       hasBackdrop: true,

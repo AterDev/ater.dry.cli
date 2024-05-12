@@ -3,5 +3,6 @@ export enum ValueType {
   Double = 1,
   String = 2,
   Boolean = 3,
+  Encrypt = 4,
 
 }

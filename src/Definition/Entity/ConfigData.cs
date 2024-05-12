@@ -4,8 +4,6 @@
 /// </summary>
 public class ConfigData : EntityBase
 {
-    public const string OpenAI = "openAIKey";
-
     /// <summary>
     /// 键
     /// </summary>
@@ -18,9 +16,6 @@ public class ConfigData : EntityBase
     public required string Value { get; set; }
 
     public ValueType ValueType { get; set; } = ValueType.String;
-
-    public Project Project { get; set; } = null!;
-    public Guid ProjectId { get; set; } = default!;
 }
 
 public enum ValueType

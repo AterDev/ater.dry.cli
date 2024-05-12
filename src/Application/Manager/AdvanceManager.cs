@@ -11,11 +11,6 @@ public class AdvanceManager
     {
         _dbContext = dbContext;
         _projectContext = projectContext;
-
-        var openAIKey = _dbContext.Configs.Where(c => c.Key == ConfigData.OpenAI).FirstOrDefault();
-        if (openAIKey != null)
-        {
-        }
     }
 
     /// <summary>
@@ -23,7 +18,7 @@ public class AdvanceManager
     /// </summary>
     /// <param name="key"></param>
     /// <param name="value"></param>
-    public void SetConfig(string key, string value)
+    public async Task SetConfigAsync(string key, string value)
     {
         var config = _dbContext.Configs.FirstOrDefault(c => c.Key == key);
         if (config != null)
@@ -36,10 +31,13 @@ public class AdvanceManager
             config = new ConfigData
             {
                 Key = key,
-                Value = value
+                Value = value,
             };
+
             _dbContext.Configs.Add(config);
         }
+
+        await _dbContext.SaveChangesAsync();
     }
 
     /// <summary>

@@ -27,4 +27,13 @@ export class AdvanceBaseService extends BaseService {
     return this.request<any>('put', _url);
   }
 
+  /**
+   * test
+   * @param str string
+   */
+  test(str: string | null): Observable<string> {
+    const _url = `/api/Advance/test?str=${str ?? ''}`;
+    return this.request<string>('get', _url);
+  }
+
 }

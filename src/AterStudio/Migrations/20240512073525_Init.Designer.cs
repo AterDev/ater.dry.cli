@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AterStudio.Migrations
 {
     [DbContext(typeof(CommandDbContext))]
-    [Migration("20240427070305_Init")]
+    [Migration("20240512073525_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -83,9 +83,6 @@ namespace AterStudio.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("UpdatedTime")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -99,8 +96,6 @@ namespace AterStudio.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ProjectId");
 
                     b.ToTable("Configs");
                 });
@@ -374,17 +369,6 @@ namespace AterStudio.Migrations
                     b.Navigation("Project");
                 });
 
-            modelBuilder.Entity("Definition.Entity.ConfigData", b =>
-                {
-                    b.HasOne("Definition.Entity.Project", "Project")
-                        .WithMany("ConfigDatas")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Project");
-                });
-
             modelBuilder.Entity("Definition.Entity.EntityInfo", b =>
                 {
                     b.HasOne("Definition.Entity.Project", "Project")
@@ -426,8 +410,6 @@ namespace AterStudio.Migrations
             modelBuilder.Entity("Definition.Entity.Project", b =>
                 {
                     b.Navigation("ApiDocInfos");
-
-                    b.Navigation("ConfigDatas");
 
                     b.Navigation("EntityInfos");
 

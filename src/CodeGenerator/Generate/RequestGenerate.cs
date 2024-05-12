@@ -51,7 +51,6 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
         }
         catch (Exception ex)
         {
-
             Console.WriteLine("request base service:" + ex.Message + ex.StackTrace + ex.InnerException);
             return default!;
         }

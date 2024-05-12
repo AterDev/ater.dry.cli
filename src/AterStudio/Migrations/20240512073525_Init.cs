@@ -12,6 +12,23 @@ namespace AterStudio.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Configs",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Key = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    Value = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: false),
+                    ValueType = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedTime = table.Column<string>(type: "TEXT", nullable: false),
+                    UpdatedTime = table.Column<string>(type: "TEXT", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Configs", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Projects",
                 columns: table => new
                 {
@@ -50,30 +67,6 @@ namespace AterStudio.Migrations
                     table.PrimaryKey("PK_ApiDocInfos", x => x.Id);
                     table.ForeignKey(
                         name: "FK_ApiDocInfos_Projects_ProjectId",
-                        column: x => x.ProjectId,
-                        principalTable: "Projects",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Configs",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Key = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    Value = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: false),
-                    ValueType = table.Column<int>(type: "INTEGER", nullable: false),
-                    ProjectId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    CreatedTime = table.Column<string>(type: "TEXT", nullable: false),
-                    UpdatedTime = table.Column<string>(type: "TEXT", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Configs", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Configs_Projects_ProjectId",
                         column: x => x.ProjectId,
                         principalTable: "Projects",
                         principalColumn: "Id",
@@ -179,11 +172,6 @@ namespace AterStudio.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_ApiDocInfos_ProjectId",
                 table: "ApiDocInfos",
-                column: "ProjectId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Configs_ProjectId",
-                table: "Configs",
                 column: "ProjectId");
 
             migrationBuilder.CreateIndex(

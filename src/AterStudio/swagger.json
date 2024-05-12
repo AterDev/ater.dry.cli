@@ -77,6 +77,45 @@
         }
       }
     },
+    "/api/Advance/test": {
+      "get": {
+        "tags": [
+          "Advance"
+        ],
+        "operationId": "Advance_Test",
+        "parameters": [
+          {
+            "name": "str",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/ApiDocInfo": {
       "get": {
         "tags": [
@@ -1851,13 +1890,6 @@
           },
           "valueType": {
             "$ref": "#/components/schemas/ValueType"
-          },
-          "project": {
-            "$ref": "#/components/schemas/Project"
-          },
-          "projectId": {
-            "type": "string",
-            "format": "uuid"
           }
         },
         "additionalProperties": false,
@@ -2430,12 +2462,6 @@
               "$ref": "#/components/schemas/ApiDocInfo"
             }
           },
-          "configDatas": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ConfigData"
-            }
-          },
           "templateFiles": {
             "type": "array",
             "items": {
@@ -2835,7 +2861,8 @@
           0,
           1,
           2,
-          3
+          3,
+          4
         ],
         "type": "integer",
         "format": "int32",
@@ -2843,7 +2870,8 @@
           "Integer",
           "Double",
           "String",
-          "Boolean"
+          "Boolean",
+          "Encrypt"
         ],
         "x-enumData": [ ]
       }
