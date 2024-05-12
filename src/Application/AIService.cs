@@ -4,10 +4,11 @@ namespace Application;
 /// <summary>
 /// AI服务
 /// </summary>
-public class AIService(CommandDbContext dbContext)
+public class AIService(CommandDbContext dbContext, ILogger<AIService> logger)
 {
     public Kernel? Kernel { get; private set; }
     private readonly CommandDbContext _dbContext = dbContext;
+    private readonly ILogger<AIService> _logger = logger;
 
     /// <summary>
     /// build kernel
@@ -35,19 +36,17 @@ public class AIService(CommandDbContext dbContext)
         return Kernel;
     }
 
-
-
-    public async Task<string> TestAsync(string prompt)
+    public async IAsyncEnumerable<StreamingChatMessageContent?> StreamCompletionAsync(string prompt)
     {
-        var results = Kernel.InvokePromptStreamingAsync(prompt);
-
-        await foreach (var result in results)
+        if (Kernel == null)
         {
-            Console.Write(".");
+            throw new Exception("Kernel is not built");
         }
 
-        Console.WriteLine("done");
-
-        return "";
+        var results = Kernel.InvokePromptStreamingAsync(prompt);
+        await foreach (var result in results)
+        {
+            yield return result as StreamingChatMessageContent;
+        }
     }
 }

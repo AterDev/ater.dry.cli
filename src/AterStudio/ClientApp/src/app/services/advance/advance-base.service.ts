@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BaseService } from '../base.service';
 import { Observable } from 'rxjs';
 import { ConfigData } from './models/config-data.model';
+import { StreamingChatMessageContent } from './models/streaming-chat-message-content.model';
 
 /**
  * 高级功能
@@ -31,9 +32,18 @@ export class AdvanceBaseService extends BaseService {
    * test
    * @param str string
    */
-  test(str: string | null): Observable<string> {
+  test(str: string | null): Observable<StreamingChatMessageContent[]> {
     const _url = `/api/Advance/test?str=${str ?? ''}`;
-    return this.request<string>('get', _url);
+    return this.request<StreamingChatMessageContent[]>('get', _url);
+  }
+
+  /**
+   * test1
+   * @param str string
+   */
+  test1(str: string | null): Observable<any> {
+    const _url = `/api/Advance/test1?str=${str ?? ''}`;
+    return this.request<any>('get', _url);
   }
 
 }

@@ -41,12 +41,30 @@ public class AdvanceController(AdvanceManager entityAdvance, AIService aiService
         return Ok();
     }
 
+
+    /// <summary>
+    /// 测试AI对话
+    /// </summary>
+    /// <param name="str"></param>
+    /// <returns></returns>
     [HttpGet("test")]
-    public async Task<ActionResult<string>> TestAsync(string str)
+    public async Task TestAsync(string str)
     {
+        Response.ContentType = "text/text;charset=utf-8";
         _aiService.BuildKernel("deepSeekApiKey");
-        var res = await _aiService.TestAsync(str);
-        return Ok(res);
+        try
+        {
+            var results = _aiService.StreamCompletionAsync(str);
+            await foreach (var result in results)
+            {
+                await Response.WriteAsync(result.Content);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        await Response.CompleteAsync();
     }
 }
 
