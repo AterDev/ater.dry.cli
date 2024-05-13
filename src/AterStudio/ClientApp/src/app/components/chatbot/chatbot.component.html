@@ -1,0 +1,21 @@
+<div class="container p-0" style="min-width: 420px;">
+  <div class="d-flex">
+    <!-- 对话内容 -->
+    <div class="d-flex flex-column flex-fill">
+      <div class="d-flex flex-column dialog">
+        <div class="flex-fill answer-area">
+          <markdown [data]="answerContent" *ngIf="answerContent" lineNumbers [start]="1" style="display: grid;">
+          </markdown>
+        </div>
+        <div class="fixed-bottom input-block d-flex">
+          <mat-form-field subscriptSizing="dynamic" appearance="outline" class="w-100">
+            <input matInput placeholder="输入您的问题" [(ngModel)]="content">
+            <button mat-icon-button matSuffix>
+              <mat-icon>send</mat-icon>
+            </button>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

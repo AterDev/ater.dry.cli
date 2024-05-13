@@ -11,7 +11,6 @@ import { CustomerHttpInterceptor } from './share/customer-http.interceptor';
 import { WorkspaceModule } from './pages/workspace/workspace.module';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import { MarkdownModule, MarkedOptions, ClipboardOptions, ClipboardButtonComponent, MarkedRenderer, CLIPBOARD_OPTIONS, MARKED_OPTIONS } from 'ngx-markdown';
-import { AiModule } from './pages/ai/ai.module';
 import { ToolsModule } from './pages/tools/tools.module';
 
 @NgModule({
@@ -26,7 +25,6 @@ import { ToolsModule } from './pages/tools/tools.module';
     ComponentsModule,
     HomeModule,
     WorkspaceModule,
-    AiModule,
     ToolsModule,
     MarkdownModule.forRoot({
       markedOptions: {

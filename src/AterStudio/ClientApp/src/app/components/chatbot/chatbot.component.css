@@ -1,0 +1,15 @@
+.dialog {
+    height: calc(100vh - 42px);
+}
+
+.answer-area {
+    padding: 8px;
+    margin: 4px 0;
+    border: 1px solid #666666;
+    overflow-y: auto;
+}
+
+.input-block {
+    padding-bottom: 1px;
+    margin-bottom: 1px;
+}

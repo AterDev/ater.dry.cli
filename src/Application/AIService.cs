@@ -1,52 +1,49 @@
-﻿using Microsoft.SemanticKernel;
+﻿
+using Ater.Web.Abstraction;
+using DeepSeek.Core;
 
 namespace Application;
 /// <summary>
 /// AI服务
 /// </summary>
-public class AIService(CommandDbContext dbContext, ILogger<AIService> logger)
+public class AIService
 {
-    public Kernel? Kernel { get; private set; }
-    private readonly CommandDbContext _dbContext = dbContext;
-    private readonly ILogger<AIService> _logger = logger;
+    private readonly CommandDbContext _dbContext;
+    private readonly ILogger<AIService> _logger;
+    public DeepSeekClient? Client { get; private set; }
+
+    public AIService(ILogger<AIService> logger)
+    {
+        _logger = logger;
+        _dbContext = WebAppContext.GetScopeService<CommandDbContext>()
+            ?? throw new Exception("CommandDBContext is not inject");
+    }
+
 
     /// <summary>
-    /// build kernel
+    /// SetApiKey
     /// </summary>
     /// <param name="key">模型配置key</param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public Kernel BuildKernel(string key)
+    public void SetApiKey(string key)
     {
         var apiKey = _dbContext.Configs.Where(c => c.Key == key)
            .Select(c => c.Value)
-           .FirstOrDefault();
+           .FirstOrDefault() ?? throw new Exception("apiKey is null");
 
-        var builder = Kernel.CreateBuilder();
-
-        if (string.IsNullOrWhiteSpace(apiKey))
-        {
-            throw new Exception("deepSeekApiKey is not set");
-        }
-
-#pragma warning disable SKEXP0010
-        builder.AddOpenAIChatCompletion("deepseek-chat", new Uri("https://api.deepseek.com/"), apiKey);
-
-        Kernel = builder.Build();
-        return Kernel;
+        Client = new DeepSeekClient(apiKey);
     }
 
-    public async IAsyncEnumerable<StreamingChatMessageContent?> StreamCompletionAsync(string prompt)
+
+    public async Task<string> GetAnswerAsync(string question)
     {
-        if (Kernel == null)
+        if (Client == null)
         {
-            throw new Exception("Kernel is not built");
+            throw new Exception("Client is null");
         }
 
-        var results = Kernel.InvokePromptStreamingAsync(prompt);
-        await foreach (var result in results)
-        {
-            yield return result as StreamingChatMessageContent;
-        }
+        return "";
     }
+
 }

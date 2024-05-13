@@ -2,10 +2,9 @@
 <div class="container p-2">
   <div class="d-flex flex-row align-items-center">
     <button *ngIf=" type!='desktop'" mat-raised-button (click)="addProjectDialog()" matTooltip="添加本地已有项目"
-            color="primary">添加项目
+      color="primary">添加项目
     </button>
-    <a *ngIf="type!='desktop'" class="ms-2" mat-mini-fab matTooltip="创建新解决方案" routerLink="/create"
-       color="accent">
+    <a *ngIf="type!='desktop'" class="ms-2" mat-mini-fab matTooltip="创建新解决方案" routerLink="/create" color="accent">
       <mat-icon>add</mat-icon>
     </a>
     <div class="d-flex flex-grow-1 "></div>
@@ -26,13 +25,12 @@
           <span class="ms-1">
             {{ item.displayName }}
           </span>
-          <button *ngIf="item.solutionType==SolutionType.DotNet" mat-icon-button matTooltip="项目路径配置"
-                  color="primary"
-                  (click)="openSetting(item)">
+          <button *ngIf="item.solutionType==SolutionType.DotNet" mat-icon-button matTooltip="项目路径配置" color="primary"
+            (click)="openSetting(item)">
             <mat-icon>settings</mat-icon>
           </button>
           <button *ngIf="item.solutionType==SolutionType.DotNet && needUpdate(item.version!)" mat-icon-button
-                  matTooltip="更新提示" color="warn" (click)="openUpdate(item)">
+            matTooltip="更新提示" color="warn" (click)="openUpdate(item)">
             <mat-icon>info</mat-icon>
           </button>
         </mat-card-title>
@@ -43,9 +41,8 @@
       <mat-card-content style="word-break: break-all;" class="d-flex align-items-center">
         <div class="d-flex align-items-center gap-1">
           {{ item.path }}
-          <mat-icon *ngIf="item.solutionType==SolutionType.DotNet" color="primary" matTooltip="打开项目"
-                    class="clickable"
-                    (click)="openSolution(item.path)">launch
+          <mat-icon *ngIf="item.solutionType==SolutionType.DotNet" color="primary" matTooltip="打开项目" class="clickable"
+            (click)="openSolution(item.path)">launch
           </mat-icon>
         </div>
       </mat-card-content>
@@ -96,8 +93,7 @@
         </mat-form-field>
         <mat-form-field appearance="outline" class="mt-2">
           <mat-label>EntityFramework目录</mat-label>
-          <input matInput placeholder="EntityFramework项目目录,1-200字符" formControlName="entityFrameworkPath"
-                 required>
+          <input matInput placeholder="EntityFramework项目目录,1-200字符" formControlName="entityFrameworkPath" required>
         </mat-form-field>
         <mat-form-field appearance="outline">
           <mat-label>Dto目录</mat-label>
@@ -119,7 +115,7 @@
         <mat-label>控制器类型</mat-label>
         <mat-radio-group formControlName="controllerType" class="d-flex gap-2">
           @for (item of ControllerType | toKeyValue; track $index) {
-            <mat-radio-button [value]="item.value"> {{ item.value | enumText:'ControllerType' }}</mat-radio-button>
+          <mat-radio-button [value]="item.value"> {{ item.value | enumText:'ControllerType' }}</mat-radio-button>
           }
         </mat-radio-group>
       </form>
@@ -172,8 +168,7 @@
     <form class="d-flex flex-column">
       <mat-form-field>
         <mat-label>ApiKey</mat-label>
-        <input type="password" matInput placeholder="输入ApiKey，以解锁AI相关功能" [(ngModel)]="deepSeekApiKey"
-               name="key">
+        <input type="password" matInput placeholder="输入ApiKey，以解锁AI相关功能" [(ngModel)]="deepSeekApiKey" name="key">
         <mat-hint>秘钥仅存储在本地数据库</mat-hint>
       </mat-form-field>
     </form>

@@ -82,59 +82,13 @@
         "tags": [
           "Advance"
         ],
+        "summary": "测试AI对话",
         "operationId": "Advance_Test",
         "parameters": [
           {
             "name": "str",
             "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/StreamingChatMessageContent"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/StreamingChatMessageContent"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/StreamingChatMessageContent"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Advance/test1": {
-      "get": {
-        "tags": [
-          "Advance"
-        ],
-        "operationId": "Advance_Test1",
-        "parameters": [
-          {
-            "name": "str",
-            "in": "query",
+            "description": "",
             "schema": {
               "type": "string"
             }
@@ -1797,15 +1751,6 @@
         },
         "additionalProperties": false
       },
-      "AuthorRole": {
-        "type": "object",
-        "properties": {
-          "label": {
-            "type": "string"
-          }
-        },
-        "additionalProperties": false
-      },
       "BatchGenerateDto": {
         "type": "object",
         "properties": {
@@ -2746,39 +2691,6 @@
           "Node"
         ],
         "x-enumData": [ ]
-      },
-      "StreamingChatMessageContent": {
-        "type": "object",
-        "properties": {
-          "choiceIndex": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "modelId": {
-            "type": "string",
-            "nullable": true,
-            "readOnly": true
-          },
-          "metadata": {
-            "type": "object",
-            "additionalProperties": { },
-            "nullable": true,
-            "readOnly": true
-          },
-          "content": {
-            "type": "string",
-            "nullable": true
-          },
-          "authorName": {
-            "type": "string",
-            "nullable": true
-          },
-          "role": {
-            "$ref": "#/components/schemas/AuthorRole"
-          }
-        },
-        "additionalProperties": false
       },
       "SubProjectInfo": {
         "type": "object",

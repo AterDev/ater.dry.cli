@@ -8,11 +8,12 @@ import { MatBottomSheet, MatBottomSheetRef } from '@angular/material/bottom-shee
 @Component({
   selector: 'app-layout',
   templateUrl: './layout.component.html',
-  styleUrls: ['./layout.component.css']
+  styleUrls: ['./layout.component.css'],
 })
 export class LayoutComponent implements OnInit {
   isLogin = false;
   isAdmin = false;
+  openChat = false;
   username?: string | null = null;
   type: string | null = null;
   projects = [] as Project[];

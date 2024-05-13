@@ -45,7 +45,7 @@ builder.Services.AddDbContext<QueryDbContext>(options =>
 });
 
 builder.Services.AddManager();
-builder.Services.AddScoped(typeof(AIService));
+builder.Services.AddSingleton(typeof(AIService));
 
 #if DEBUG 
 builder.Services.AddSwaggerGen(c =>
@@ -95,7 +95,9 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
         options.JsonSerializerOptions.ReadCommentHandling = JsonCommentHandling.Skip;
     });
+
 WebApplication app = builder.Build();
+app.UseWebAppContext();
 
 // 异常统一处理
 app.UseExceptionHandler(handler =>

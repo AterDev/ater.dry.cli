@@ -6,10 +6,10 @@
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
-	<ItemGroup>
-	  <PackageReference Include="Microsoft.SemanticKernel" Version="1.11.1" />
-	</ItemGroup>
 
+	<ItemGroup>
+		<PackageReference Include="Ater.DeepSeek.Core" Version="1.0.0-RC1" />
+	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Definition\Definition.csproj" />
 		<ProjectReference Include="..\Command.Share\Command.Share.csproj" />

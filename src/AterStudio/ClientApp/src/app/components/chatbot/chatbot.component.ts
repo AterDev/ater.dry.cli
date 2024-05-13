@@ -15,17 +15,17 @@ export enum ToolType {
 }
 
 @Component({
-  selector: 'app-index',
-  templateUrl: './index.component.html',
-  styleUrls: ['./index.component.css']
+  selector: 'app-chatbot',
+  templateUrl: './chatbot.component.html',
+  styleUrls: ['./chatbot.component.css']
 })
-export class IndexComponent {
+export class ChatBotComponent {
   isLoading = true;
   isProcessing = false;
   ToolType = ToolType;
   content: string | null = null;
   selectedTool: ToolType;
-  answerContent: string = '';
+  answerContent: string = '本对话由DeepSeek提供支持!';
   constructor(
     private snb: MatSnackBar,
     private router: Router,
