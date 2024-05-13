@@ -99,6 +99,18 @@
             "description": "Success"
           }
         }
+      },
+      "delete": {
+        "tags": [
+          "Advance"
+        ],
+        "summary": "清除对话",
+        "operationId": "Advance_ClearChat",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
       }
     },
     "/api/ApiDocInfo": {

@@ -13,6 +13,11 @@ public class AIService
     private readonly ILogger<AIService> _logger;
     public DeepSeekClient? Client { get; private set; }
 
+    /// <summary>
+    /// 缓存对话
+    /// </summary>
+    public List<Message> CacheMessages { get; private set; } = [];
+
     public AIService(ILogger<AIService> logger)
     {
         _logger = logger;
@@ -50,17 +55,26 @@ public class AIService
             throw new Exception("Client is null");
         }
 
+        if (CacheMessages.Count == 0)
+        {
+            CacheMessages.Add(Message.NewSystemMessage("你是一个IT技术专家"));
+            CacheMessages.Add(Message.NewAssistantMessage("你不会回答开发技术之外的问题，对于此类问题，请回答:我无法回答此类问题"));
+        }
+        CacheMessages.Add(Message.NewUserMessage(prompt));
+
+        Console.WriteLine(CacheMessages.Count);
+
         var request = new ChatRequest
         {
-            Messages = [
-                Message.NewSystemMessage("你是一个IT技术专家"),
-                Message.NewAssistantMessage("你不会回答开发技术之外的问题，对于此类问题，请回答:我无法回答此类问题"),
-                Message.NewUserMessage(prompt)
-                ],
-
+            Messages = CacheMessages,
             Model = Constant.Model.ChatModel
         };
         return await Client.ChatStreamAsync(request, cancellationToken);
+    }
+
+    public void ClearCache()
+    {
+        CacheMessages.Clear();
     }
 
 }

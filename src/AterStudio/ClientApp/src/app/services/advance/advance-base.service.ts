@@ -36,4 +36,12 @@ export class AdvanceBaseService extends BaseService {
     return this.request<any>('get', _url);
   }
 
+  /**
+   * 清除对话
+   */
+  clearChat(): Observable<any> {
+    const _url = `/api/Advance/chat`;
+    return this.request<any>('delete', _url);
+  }
+
 }

@@ -26,7 +26,7 @@ export class ChatBotComponent {
   ToolType = ToolType;
   content: string | null = null;
   selectedTool: ToolType;
-  answerContent: string = '本对话由DeepSeek提供支持!';
+  answerContent: string = '本对话由DeepSeek V2模型提供支持!';
   constructor(
     private snb: MatSnackBar,
     private router: Router,
@@ -49,7 +49,7 @@ export class ChatBotComponent {
 
   send() {
     if (this.content != null && this.content != "") {
-      this.answerContent += "  \r\n";
+      this.answerContent += `</br>`;
       this.isProcessing = true;
 
       this.generatorAnswer();
@@ -60,7 +60,18 @@ export class ChatBotComponent {
   }
 
   clear() {
-    this.answerContent = '本对话由DeepSeek提供支持!'
+    this.service.clearChat().subscribe({
+      next: (res) => {
+        if (res) {
+          this.answerContent = '本对话由DeepSeek提供支持!'
+        }
+      },
+      error: (error) => {
+        this.snb.open(error.detail);
+      },
+      complete: () => {
+      }
+    });;
   }
 
   generatorAnswer(): void {
@@ -80,7 +91,7 @@ export class ChatBotComponent {
             return;
           }
           const res = decoder.decode(value);
-          if (res) {
+          if (res && res != '') {
             self.answerContent += res;
           }
           reader.read().then(processText);

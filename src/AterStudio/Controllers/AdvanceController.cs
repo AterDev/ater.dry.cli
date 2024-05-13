@@ -69,5 +69,14 @@ public class AdvanceController(AdvanceManager entityAdvance, AIService aiService
         }
         await Response.CompleteAsync();
     }
+
+    /// <summary>
+    /// 清除对话
+    /// </summary>
+    [HttpDelete("chat")]
+    public void ClearChat()
+    {
+        _aiService.CacheMessages.Clear();
+    }
 }
 
