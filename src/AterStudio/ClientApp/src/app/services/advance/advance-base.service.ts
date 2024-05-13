@@ -29,10 +29,10 @@ export class AdvanceBaseService extends BaseService {
 
   /**
    * 测试AI对话
-   * @param str 
+   * @param prompt 
    */
-  test(str: string | null): Observable<any> {
-    const _url = `/api/Advance/test?str=${str ?? ''}`;
+  chat(prompt: string | null): Observable<any> {
+    const _url = `/api/Advance/chat?prompt=${prompt ?? ''}`;
     return this.request<any>('get', _url);
   }
 

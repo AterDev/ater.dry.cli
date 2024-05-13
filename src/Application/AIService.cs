@@ -1,6 +1,7 @@
 ﻿
 using Ater.Web.Abstraction;
 using DeepSeek.Core;
+using DeepSeek.Core.Models;
 
 namespace Application;
 /// <summary>
@@ -36,14 +37,30 @@ public class AIService
     }
 
 
-    public async Task<string> GetAnswerAsync(string question)
+    /// <summary>
+    /// 对话
+    /// </summary>
+    /// <param name="prompt"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
+    public async Task<IAsyncEnumerable<Choice>?> GetAnswerAsync(string prompt, CancellationToken cancellationToken)
     {
         if (Client == null)
         {
             throw new Exception("Client is null");
         }
 
-        return "";
+        var request = new ChatRequest
+        {
+            Messages = [
+                Message.NewSystemMessage("你是一个IT技术专家"),
+                Message.NewAssistantMessage("你不会回答开发技术之外的问题，对于此类问题，请回答:我无法回答此类问题"),
+                Message.NewUserMessage(prompt)
+                ],
+
+            Model = Constant.Model.ChatModel
+        };
+        return await Client.ChatStreamAsync(request, cancellationToken);
     }
 
 }

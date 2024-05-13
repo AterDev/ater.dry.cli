@@ -77,16 +77,16 @@
         }
       }
     },
-    "/api/Advance/test": {
+    "/api/Advance/chat": {
       "get": {
         "tags": [
           "Advance"
         ],
         "summary": "测试AI对话",
-        "operationId": "Advance_Test",
+        "operationId": "Advance_Chat",
         "parameters": [
           {
-            "name": "str",
+            "name": "prompt",
             "in": "query",
             "description": "",
             "schema": {

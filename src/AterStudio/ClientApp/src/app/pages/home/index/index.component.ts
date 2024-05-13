@@ -78,7 +78,7 @@ export class IndexComponent implements OnInit {
   }
 
   getOpenAIKey(): void {
-    this.advance.getConfig("openAIKey")
+    this.advance.getConfig("deepSeekApiKey")
       .subscribe({
         next: (res) => {
           if (res) {
@@ -174,7 +174,6 @@ export class IndexComponent implements OnInit {
       minWidth: 450,
       hasBackdrop: true,
       closeOnNavigation: false,
-      disableClose: true
     })
   }
 

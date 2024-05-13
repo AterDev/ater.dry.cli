@@ -8,6 +8,7 @@ import { AdvanceService } from 'src/app/services/advance/advance.service';
 
 import 'prismjs/plugins/line-numbers/prism-line-numbers.js';
 import 'prismjs/components/prism-markup.min.js';
+
 export enum ToolType {
   Entity = 0,
   File = 1,
@@ -50,21 +51,21 @@ export class ChatBotComponent {
     if (this.content != null && this.content != "") {
       this.answerContent += "  \r\n";
       this.isProcessing = true;
-      switch (this.selectedTool) {
-        case ToolType.Entity:
-          this.generateEntity();
-          break;
-        case ToolType.Answer:
-          this.generatorAnswer();
-          break;
-      }
+
+      this.generatorAnswer();
+      this.content = null;
     } else {
       this.snb.open('请输入内容');
     }
   }
 
+  clear() {
+    this.answerContent = '本对话由DeepSeek提供支持!'
+  }
+
   generatorAnswer(): void {
-    const url = this.service.baseUrl + `/api/Advance/answer?content=${this.content}`;
+    const propmt = encodeURIComponent(this.content || '');
+    const url = this.service.baseUrl + `/api/Advance/chat?prompt=${propmt}`;
     const self = this;
     fetch(url, { method: 'GET' }).then((response) => {
       if (!response.ok) {

@@ -5,6 +5,8 @@ import { Project } from 'src/app/services/project/models/project.model';
 import { ProjectStateService } from 'src/app/share/project-state.service';
 import { ProjectService } from 'src/app/services/project/project.service';
 import { MatBottomSheet, MatBottomSheetRef } from '@angular/material/bottom-sheet';
+import { AdvanceService } from 'src/app/services/advance/advance.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-layout',
   templateUrl: './layout.component.html',
@@ -13,7 +15,7 @@ import { MatBottomSheet, MatBottomSheetRef } from '@angular/material/bottom-shee
 export class LayoutComponent implements OnInit {
   isLogin = false;
   isAdmin = false;
-  openChat = false;
+  openedChat = false;
   username?: string | null = null;
   type: string | null = null;
   projects = [] as Project[];
@@ -27,6 +29,8 @@ export class LayoutComponent implements OnInit {
     private service: ProjectService,
     private projectState: ProjectStateService,
     private bottomSheet: MatBottomSheet,
+    private advance: AdvanceService,
+    public snb: MatSnackBar,
     private router: Router,
     private route: ActivatedRoute
   ) {
@@ -58,6 +62,35 @@ export class LayoutComponent implements OnInit {
     }
     this.getVersion();
     this.getProjects();
+  }
+
+  openChat(): void {
+
+    if (!this.openedChat) {
+      this.getOpenAIKey();
+    } else {
+      this.openedChat = false;
+    }
+
+  }
+
+  getOpenAIKey(): void {
+    this.advance.getConfig("deepSeekApiKey")
+      .subscribe({
+        next: (res) => {
+          if (!res || !res.value) {
+            this.snb.open('您还未配置ApiKey!', '', {
+              verticalPosition: 'top',
+              horizontalPosition: 'end',
+            });
+          } else {
+            this.openedChat = true;
+          }
+        },
+        error: (error) => {
+          this.snb.open(error.detail);
+        }
+      });
   }
 
   getVersion(): void {

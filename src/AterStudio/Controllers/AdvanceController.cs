@@ -45,26 +45,29 @@ public class AdvanceController(AdvanceManager entityAdvance, AIService aiService
     /// <summary>
     /// 测试AI对话
     /// </summary>
-    /// <param name="str"></param>
+    /// <param name="prompt"></param>
     /// <returns></returns>
-    [HttpGet("test")]
-    public async Task TestAsync(string str)
+    [HttpGet("chat")]
+    public async Task ChatAsync(string prompt, CancellationToken cancellationToken)
     {
-        //Response.ContentType = "text/text;charset=utf-8";
-        //_aiService.BuildKernel("deepSeekApiKey");
-        //try
-        //{
-        //    var results = _aiService.StreamCompletionAsync(str);
-        //    await foreach (var result in results)
-        //    {
-        //        await Response.WriteAsync(result.Content);
-        //    }
-        //}
-        //catch (Exception ex)
-        //{
-        //    Console.WriteLine(ex.Message);
-        //}
-        //await Response.CompleteAsync();
+        Response.ContentType = "text/text;charset=utf-8";
+        _aiService.SetApiKey("deepSeekApiKey");
+        try
+        {
+            var choices = await _aiService.GetAnswerAsync(prompt, cancellationToken);
+            if (choices != null)
+            {
+                await foreach (var choice in choices)
+                {
+                    await Response.WriteAsync(choice.Delta!.Content);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            await Response.WriteAsync("暂时无法提供服务" + ex.Message);
+        }
+        await Response.CompleteAsync();
     }
 }
 
