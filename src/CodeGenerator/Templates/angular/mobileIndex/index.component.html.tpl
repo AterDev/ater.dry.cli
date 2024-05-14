@@ -1,4 +1,6 @@
-<div class="d-flex">
+
+<div class="d-flex flex-column" style="height: 100vh;">
+<div class="top-bar">
   <mat-toolbar>
     <mat-toolbar-row style="font-size:16px" class="d-flex gap-1">
       <button mat-icon-button color="primary" matTooltip="筛选" (click)="toggleFilter()">
@@ -18,11 +20,9 @@
   <mat-spinner mode="indeterminate">
   </mat-spinner>
 </div>
-}@else {
+}@else {}
 
-}
-
-<div class="px-2">
+<div class="list-container">
   <!-- 无数据时显示 -->
     @if(data && data.length<=0){ 
       <h4>暂无数据！</h4>
@@ -35,8 +35,9 @@
       }
     </mat-nav-list>
     }
-
 </div>
+</div>
+
 
 <!-- 筛选控件 -->
 <ng-template #filterSheet>
