@@ -7,7 +7,7 @@
   <mat-toolbar>
     <span>{{project.displayName}}</span>
     <div class="d-flex flex-grow-1"></div>
-    <button mat-icon-button matTooltip="添加微服务项目" color="primary" (click)="openAddService()">
+    <button mat-icon-button matTooltip="添加独立服务" color="primary" (click)="openAddService()">
       <mat-icon>add_link</mat-icon>
     </button>
   </mat-toolbar>
@@ -47,7 +47,7 @@
     </button>
 
     <button mat-icon-button color="primary" [matMenuTriggerFor]="menu" matTooltip="批量操作">
-      <mat-icon fontSet="material-icons-outlined">library_add_check</mat-icon>
+      <mat-icon fontSet="">library_add_check</mat-icon>
     </button>
     <mat-menu #menu="matMenu">
       <button mat-menu-item (click)="openGenerateDialog(CommandType.Dto,null)" matTooltip="生成dto,不会覆盖原内容"
@@ -104,7 +104,7 @@
       <th mat-header-cell *matHeaderCellDef>操作</th>
       <td mat-cell *matCellDef="let element">
         <button mat-icon-button color="accent" matTooltip="代码生成" [matMenuTriggerFor]="menu">
-          <mat-icon fontSet="material-icons-outlined">add_box</mat-icon>
+          <mat-icon fontSet="">add_box</mat-icon>
         </button>
         <mat-menu #menu="matMenu">
           <button mat-menu-item (click)="openGenerateDialog(CommandType.Dto,element)" matTooltip="生成dto"
@@ -214,7 +214,7 @@
 <ng-template #addsServiceDialog>
   <h2 mat-dialog-title class="d-flex align-items-center">
     创建微服务项目
-    <mat-icon fontSet="material-icons-outlined" class="clickable" matTooltip="微服务说明"
+    <mat-icon fontSet="" class="clickable" matTooltip="微服务说明"
       (click)="openInfo('https://docs.dusi.dev/zh/ater.web/%E6%95%99%E7%A8%8B/%E7%BB%84%E7%BB%87%E4%BB%A3%E7%A0%81.html#%E6%AF%8F%E4%B8%AA%E6%9C%8D%E5%8A%A1%E7%8B%AC%E7%AB%8B%E9%A1%B9%E7%9B%AE')">info</mat-icon>
   </h2>
   <mat-dialog-content>

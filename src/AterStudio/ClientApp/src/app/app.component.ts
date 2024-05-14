@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { MatIconRegistry } from '@angular/material/icon';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,7 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'Admin';
+  constructor(private matIconReg: MatIconRegistry) {
+    this.matIconReg.setDefaultFontSetClass('material-symbols-outlined');
+  }
 }

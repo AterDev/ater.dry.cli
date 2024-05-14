@@ -13,16 +13,24 @@ public class AIService
     private readonly ILogger<AIService> _logger;
     public DeepSeekClient? Client { get; private set; }
 
+    public const string Answer = "answer";
+    public const string Completion = "completion";
+    public const string Coder = "coder";
+
     /// <summary>
     /// 缓存对话
     /// </summary>
-    public List<Message> CacheMessages { get; private set; } = [];
+    public Dictionary<string, List<Message>> CacheMessages { get; private set; } = [];
 
     public AIService(ILogger<AIService> logger)
     {
         _logger = logger;
         _dbContext = WebAppContext.GetScopeService<CommandDbContext>()
             ?? throw new Exception("CommandDBContext is not inject");
+
+        CacheMessages.Add(Answer, []);
+        CacheMessages.Add(Completion, []);
+        CacheMessages.Add(Coder, []);
     }
 
 
@@ -54,23 +62,83 @@ public class AIService
         {
             throw new Exception("Client is null");
         }
-
-        if (CacheMessages.Count == 0)
+        var messages = CacheMessages[Answer];
+        if (messages.Count == 0)
         {
-            CacheMessages.Add(Message.NewSystemMessage("你是一个IT技术专家"));
-            CacheMessages.Add(Message.NewAssistantMessage("你不会回答开发技术之外的问题，对于此类问题，请回答:我无法回答此类问题"));
+            messages.Add(Message.NewSystemMessage("你是一个IT技术专家"));
+            messages.Add(Message.NewAssistantMessage("你不会回答开发技术之外的问题，对于此类问题，请回答:我无法回答此类问题"));
         }
-        CacheMessages.Add(Message.NewUserMessage(prompt));
-
-        Console.WriteLine(CacheMessages.Count);
+        messages.Add(Message.NewUserMessage(prompt));
+        CacheMessages[Answer] = messages;
 
         var request = new ChatRequest
         {
-            Messages = CacheMessages,
+            Messages = messages,
             Model = Constant.Model.ChatModel
         };
         return await Client.ChatStreamAsync(request, cancellationToken);
     }
+
+
+    /// <summary>
+    /// completion
+    /// </summary>
+    /// <param name="messages"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
+    public async Task<IAsyncEnumerable<Choice>?> CompletionAsync(List<Message> messages, CancellationToken cancellationToken)
+    {
+        if (Client == null)
+        {
+            throw new Exception("Client is null");
+        }
+        var cache = CacheMessages[Completion];
+        if (cache.Count == 0)
+        {
+            cache.Add(Message.NewSystemMessage("你是一个IT技术专家"));
+            cache.Add(Message.NewAssistantMessage("你不会回答开发技术之外的问题，对于此类问题，请回答:我无法回答此类问题"));
+        }
+        cache.AddRange(messages);
+        CacheMessages[Completion] = cache;
+
+        var request = new ChatRequest
+        {
+            Messages = cache,
+            Model = Constant.Model.ChatModel
+        };
+        return await Client.ChatStreamAsync(request, cancellationToken);
+    }
+
+    /// <summary>
+    /// code
+    /// </summary>
+    /// <param name="messages"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
+    public async Task<IAsyncEnumerable<Choice>?> CodeAsync(List<Message> messages, CancellationToken cancellationToken)
+    {
+        if (Client == null)
+        {
+            throw new Exception("Client is null");
+        }
+        var cache = CacheMessages[Coder];
+        if (cache.Count == 0)
+        {
+            cache.Add(Message.NewSystemMessage("你是一个IT技术专家"));
+        }
+        cache.AddRange(messages);
+        CacheMessages[Coder] = cache;
+
+        var request = new ChatRequest
+        {
+            Messages = cache,
+            Model = Constant.Model.CoderModel
+        };
+        return await Client.ChatStreamAsync(request, cancellationToken);
+    }
+
 
     public void ClearCache()
     {

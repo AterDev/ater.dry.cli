@@ -1,5 +1,5 @@
 .dialog {
-    height: calc(100vh - 36px);
+    height: calc(100vh - 8px);
     width: auto;
     max-width: 800px;
     min-width: 420px;

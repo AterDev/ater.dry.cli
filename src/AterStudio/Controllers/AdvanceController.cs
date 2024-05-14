@@ -46,6 +46,7 @@ public class AdvanceController(AdvanceManager entityAdvance, AIService aiService
     /// 测试AI对话
     /// </summary>
     /// <param name="prompt"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpGet("chat")]
     public async Task ChatAsync(string prompt, CancellationToken cancellationToken)
