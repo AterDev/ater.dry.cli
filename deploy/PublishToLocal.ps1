@@ -124,6 +124,7 @@ try {
     Write-Host 'Packing new version...'
 
     # pack
+    dotnet build -c release
     dotnet pack --no-build -c release
 
     $newPackName = $PackageId + "." + $Version + ".nupkg"

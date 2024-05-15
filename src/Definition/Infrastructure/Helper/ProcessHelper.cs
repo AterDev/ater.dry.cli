@@ -23,19 +23,42 @@ public static class ProcessHelper
         process.StartInfo.UseShellExecute = false;
         process.StartInfo.RedirectStandardError = true;
         process.StartInfo.RedirectStandardOutput = true;
-        process.Start();
-        output = process.StandardError.ReadToEnd();
-        process.WaitForExit();
-        if (string.IsNullOrWhiteSpace(output))
+
+        var outputBuilder = new StringBuilder();
+        var outputErrorBuilder = new StringBuilder();
+
+        process.OutputDataReceived += (sender, e) =>
         {
-            output = process.StandardOutput.ReadToEnd();
-            Console.WriteLine(output);
-            return true;
+            if (!string.IsNullOrEmpty(e.Data))
+            {
+                outputBuilder.AppendLine(e.Data);
+            }
+        };
+
+        process.ErrorDataReceived += (sender, e) =>
+        {
+            if (!string.IsNullOrEmpty(e.Data))
+            {
+                outputErrorBuilder.AppendLine(e.Data);
+            }
+        };
+
+        process.Start();
+        process.BeginOutputReadLine();
+        process.BeginErrorReadLine();
+        process.WaitForExit();
+
+        var errorOutput = outputErrorBuilder.ToString();
+        output = outputBuilder.ToString();
+        if (!string.IsNullOrWhiteSpace(errorOutput))
+        {
+            Console.WriteLine(errorOutput);
+            return false;
         }
         else
         {
             Console.WriteLine(output);
-            return false;
+            return true;
         }
     }
 
