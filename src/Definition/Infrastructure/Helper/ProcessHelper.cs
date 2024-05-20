@@ -37,6 +37,7 @@ public static class ProcessHelper
 
         process.ErrorDataReceived += (sender, e) =>
         {
+
             if (!string.IsNullOrEmpty(e.Data))
             {
                 outputErrorBuilder.AppendLine(e.Data);

@@ -115,7 +115,9 @@ public class RestApiGenerate : GenerateBase
         string additionManagerProps = "";
         string additionManagerDI = "";
 
-        var requiredNavigations = EntityInfo.GetRequiredNavigation();
+        var requiredNavigations = EntityInfo.GetRequiredNavigation()?
+            .DistinctBy(n => n.Type).ToList();
+
         requiredNavigations?.ForEach(navigation =>
         {
             var name = navigation.Type;
