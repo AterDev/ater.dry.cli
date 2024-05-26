@@ -374,7 +374,7 @@ public class NgPageGenerate : GenerateBase
                 {
                     if (type.Equals("DateTime") || type.Equals("DateTimeOffset"))
                     {
-                        var pipe = p.Name.EndsWith("Date") ? " | date: 'yyyy-MM-dd'" : " | date: 'yyy-MM-dd HH:mm:ss'";
+                        var pipe = p.Name.EndsWith("Date") ? " | date: 'yyyy-MM-dd'" : " | date: 'yyy-MM-dd HH:mm'";
                         rowContent = $$$"""{{element.{{{p.Name.ToCamelCase()}}}{{{pipe}}}}}""";
                     }
                     if (p.IsEnum)

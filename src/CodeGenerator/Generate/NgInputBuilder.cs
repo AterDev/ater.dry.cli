@@ -129,7 +129,7 @@ public class NgInputBuilder(string type, string name, string? label)
                 <mat-label>{{{Label}}}</mat-label>
                 <input matInput [matDatepicker]="{{{name}}}Picker" placeholder="{{{Label}}}" formControlName="{{{name}}}">
                 <mat-datepicker-toggle matSuffix [for]="{{{name}}}Picker"></mat-datepicker-toggle>
-                <mat-datepicker #{{{name}}}Picker startView="multi-year"></mat-datepicker>
+                <mat-datepicker #{{{name}}}Picker></mat-datepicker>
                 <mat-error *ngIf="{{{name}}}?.invalid">
                 {{getValidatorMessage('{{{name}}}')}}
                 </mat-error>

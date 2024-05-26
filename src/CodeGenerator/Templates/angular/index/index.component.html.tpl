@@ -49,7 +49,7 @@
         <th mat-header-cell *matHeaderCellDef>操作</th>
         <td mat-cell *matCellDef="let element;table:table">
           <button mat-icon-button color="link" [routerLink]="['../detail',element.id]" matTooltip="查看">
-            <mat-icon>pages</mat-icon>
+            <mat-icon>preview</mat-icon>
           </button>
           <button mat-icon-button color="primary" (click)="openEditDialog(element)" matTooltip="编辑">
             <mat-icon>edit</mat-icon>
