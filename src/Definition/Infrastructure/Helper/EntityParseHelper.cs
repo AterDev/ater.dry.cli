@@ -53,6 +53,11 @@ public class EntityParseHelper
     /// </summary>
     public string[] ValidAttributes = ["MaxLength", "MinLength", "StringLength", "Length", "Range", "AllowedValues"];
 
+    /// <summary>
+    /// 解决方案代码文件路径
+    /// </summary>
+    public List<string> CodeFilesPath { get; set; } = [];
+
     public EntityParseHelper(string filePath)
     {
         if (!File.Exists(filePath))
@@ -65,6 +70,8 @@ public class EntityParseHelper
             ?? throw new ArgumentException("can't find project file");
 
         ProjectFile = projectFile;
+        CodeFilesPath = ProjectFile.Directory!.GetFiles("*.cs", SearchOption.AllDirectories)
+            .Select(f => f.FullName).ToList();
         AssemblyName = GetAssemblyName();
         CompilationHelper = new CompilationHelper(ProjectFile.Directory!.FullName);
 
@@ -83,6 +90,19 @@ public class EntityParseHelper
     public string GetAssemblyName()
     {
         return AssemblyHelper.GetAssemblyName(ProjectFile);
+    }
+
+    /// <summary>
+    /// 加载内容
+    /// </summary>
+    /// <param name="content"></param>
+    public void LoadEntityContent(string content)
+    {
+        CompilationHelper.LoadContent(content);
+        SyntaxTree = CompilationHelper.SyntaxTree;
+        Compilation = CompilationHelper.Compilation;
+        SemanticModel = CompilationHelper.SemanticModel;
+        RootNodes = SyntaxTree?.GetCompilationUnitRoot().DescendantNodes();
     }
 
     public void Parse()
@@ -218,9 +238,8 @@ public class EntityParseHelper
         List<PropertyInfo>? parentProperties = [];
         if (parentClassName != null)
         {
-            var solutionFile = AssemblyHelper.GetSlnFile(ProjectFile.Directory!, ProjectFile.Directory!.Root);
-            string? filePath = solutionFile?.Directory?.GetFiles($"{parentClassName}.cs", SearchOption.AllDirectories)
-                .FirstOrDefault()?.FullName;
+            string? filePath = CodeFilesPath.Where(c => c.EndsWith($"{parentClassName}.cs"))
+                .FirstOrDefault();
 
             if (filePath != null)
             {
@@ -254,7 +273,6 @@ public class EntityParseHelper
         {
             properties.AddRange(parentProperties);
         }
-
 
         return properties.GroupBy(p => p.Name)
              .Select(s => s.FirstOrDefault()!)

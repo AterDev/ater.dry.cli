@@ -57,36 +57,30 @@ public class AdvanceManager
     public string GetDatabaseStructureAsync()
     {
         var sb = new StringBuilder();
-        // get contextbase path 
-        var contextPath = Directory.GetFiles(_projectContext.SolutionPath!, "ContextBase.cs", SearchOption.AllDirectories)
-            .FirstOrDefault();
-        if (contextPath != null)
+        var entityFiles = Directory.GetFiles(Path.Combine(_projectContext.SolutionPath!, Config.EntityPath), $"*.cs", SearchOption.AllDirectories).ToList();
+
+        entityFiles = entityFiles.Where(f => !(f.EndsWith(".g.cs")
+                || f.EndsWith(".AssemblyAttributes.cs")
+                || f.EndsWith(".AssemblyInfo.cs")
+                || f.EndsWith("GlobalUsings.cs")
+                || f.EndsWith("Modules.cs"))
+                ).ToList();
+
+        if (entityFiles.Count > 0)
         {
-            // parse context content and get all properties 
-            var compilation = new CompilationHelper(Path.Combine(_projectContext.SolutionPath!, Config.EntityPath));
-            compilation.LoadContent(File.ReadAllText(contextPath));
-
-            var propertyTypes = compilation.GetPropertyTypes();
-
-            var entityFiles = Directory.GetFiles(Path.Combine(_projectContext.SolutionPath!, Config.EntityPath), $"*.cs", SearchOption.AllDirectories).ToList();
-
-            if (entityFiles.Count > 0)
+            var entityCompilation = new EntityParseHelper(entityFiles[0]);
+            entityFiles.ForEach(entityPath =>
             {
-                propertyTypes.ForEach(propertyType =>
+                if (entityPath != null)
                 {
-                    var entityPath = entityFiles.Where(e => e.EndsWith($"{propertyType}.cs")).FirstOrDefault();
-
-                    if (entityPath != null)
-                    {
-                        var entityCompilation = new EntityParseHelper(entityPath);
-                        var entityInfo = entityCompilation.GetEntity();
-                        var content = ToMarkdown(entityInfo);
-                        sb.AppendLine(content);
-                    }
-                });
-            }
+                    entityCompilation.LoadEntityContent(File.ReadAllText(entityPath));
+                    var entityInfo = entityCompilation.GetEntity();
+                    var content = ToMarkdown(entityInfo);
+                    sb.AppendLine(content);
+                }
+            });
         }
-        return string.Join(Environment.NewLine, sb.ToString());
+        return sb.ToString();
     }
 
     /// <summary>
