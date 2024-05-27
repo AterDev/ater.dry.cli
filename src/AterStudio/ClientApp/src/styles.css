@@ -72,6 +72,11 @@ mat-panel-title .mat-icon {
   vertical-align: middle;
 }
 
+.paginator {
+  margin: 2px auto;
+  background-color: var(--mat-paginator-container-background-color);
+}
+
 .mat-mdc-dialog-container .mdc-dialog__content {
     min-height: 60px;
 }
