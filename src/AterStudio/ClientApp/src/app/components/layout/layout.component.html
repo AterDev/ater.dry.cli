@@ -46,20 +46,16 @@
     </mat-toolbar>
     <router-outlet></router-outlet>
   </mat-drawer-content>
-
-
 </mat-drawer-container>
 
 <!-- 快捷操作 -->
-@if(!openChat){
+@if(!openedChat){
 <div class="shortcuts">
   <button mat-mini-fab color="warn" matTooltip="切换解决方案" (click)="openSolutionSheet()">
     <mat-icon fontSet="">change_circle</mat-icon>
   </button>
 </div>
 }
-
-
 <ng-template #projectSheet>
   <mat-nav-list *ngFor="let item of projects">
     <a mat-list-item (click)="changeSolution(item.id)">

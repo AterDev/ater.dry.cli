@@ -65,13 +65,11 @@ export class LayoutComponent implements OnInit {
   }
 
   openChat(): void {
-
     if (!this.openedChat) {
       this.getOpenAIKey();
     } else {
       this.openedChat = false;
     }
-
   }
 
   getOpenAIKey(): void {
