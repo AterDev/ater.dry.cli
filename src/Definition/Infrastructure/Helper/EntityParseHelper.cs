@@ -1,8 +1,5 @@
-﻿using System.Text.RegularExpressions;
-
-using Definition.Infrastructure.Utils;
-
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Text.RegularExpressions;
 
 namespace Definition.Infrastructure.Helper;
 
@@ -114,7 +111,6 @@ public class EntityParseHelper
         Comment = GetClassComment(classDeclarationSyntax);
         CommentContent = GetComment();
         PropertyInfos = GetPropertyInfos();
-        GetNgPageAttribute();
     }
 
     public async Task<EntityInfo?> ParseEntityAsync(string filePath)
@@ -197,30 +193,7 @@ public class EntityParseHelper
                 .FirstOrDefault();
     }
 
-    /// <summary>
-    /// 解析类特性，获取Ng需要的模块和路由内容
-    /// </summary>
-    private void GetNgPageAttribute()
-    {
-        CompilationUnitSyntax root = SyntaxTree!.GetCompilationUnitRoot();
-        ClassDeclarationSyntax? syntax = root.DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
-        List<AttributeSyntax> attributesSyntax = syntax!.DescendantNodes().OfType<AttributeSyntax>().ToList();
-        if (attributesSyntax != null && attributesSyntax.Count != 0)
-        {
-            AttributeArgumentSyntax[]? attributes = GetAttributeArguments(attributesSyntax, "NgPage")?.ToArray();
-            if (attributes != null)
-            {
-                NgModuleName = attributes[0]?.GetText()
-                    .ToString().Replace("\"", "")
-                    ?? Name?.ToHyphen();
 
-                NgRoute = attributes[1]?.GetText()
-                    .ToString().Replace("\"", "")
-                    ?? Name?.ToHyphen();
-
-            }
-        }
-    }
 
     /// <summary>
     /// 获取该类的所有属性

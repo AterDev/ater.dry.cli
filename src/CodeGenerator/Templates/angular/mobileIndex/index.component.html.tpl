@@ -48,21 +48,7 @@
     </button>
   </div>
   <div class="d-flex gap-1 flex-column">
-  <!--
-    <mat-form-field subscriptSizing="dynamic">
-      <mat-label>姓名</mat-label>
-      <input matInput placeholder="真实姓名,不超过40字" [(ngModel)]="filter.name" minlength="" maxlength="40">
-    </mat-form-field>
-    
-    <mat-form-field subscriptSizing="dynamic">
-      <mat-label>客户跟进状态</mat-label>
-      <mat-select [(ngModel)]="filter.followUpStatus">
-        <mat-option *ngFor="let item of FollowUpStatus | toKeyValue" [value]="item.value">
-          {{item.value | enumText:'FollowUpStatus'}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    -->
+//[@FilterForm]
     <button mat-raised-button color="primary" (click)="search()">提交筛选</button>
   </div>
 </ng-template>

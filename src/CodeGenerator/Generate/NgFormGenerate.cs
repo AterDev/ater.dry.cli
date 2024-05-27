@@ -11,17 +11,14 @@ public class NgFormGenerate : GenerateBase
     {
     }
 
-    /// <summary>
-    /// 生成添加组件
-    /// </summary>
     public static string GenerateAddForm(List<PropertyInfo>? propertyInfos, bool isMobile = false)
     {
-        string formControls = "";
+        StringBuilder formControls = new StringBuilder();
         if (propertyInfos != null)
         {
             foreach (PropertyInfo input in propertyInfos)
             {
-                NgInputBuilder inputBuilder = new(input.Type, input.Name, input.CommentSummary ?? input.DisplayName)
+                NgComponentBuilder inputBuilder = new(input.Type, input.Name, input.CommentSummary ?? input.DisplayName)
                 {
                     IsDecimal = input.IsDecimal,
                     IsRequired = input.IsRequired,
@@ -30,28 +27,23 @@ public class NgFormGenerate : GenerateBase
                     IsEnum = input.IsEnum,
                     IsList = input.IsList
                 };
-                formControls += inputBuilder.ToFormControl();
+                formControls.AppendLine(inputBuilder.ToFormControl());
             }
         }
         var tplDir = isMobile ? "mobileAdd" : "add";
         string tplContent = GetTplContent($"angular.{tplDir}.add.component.html.tpl");
-        tplContent = tplContent.Replace(TplConst.FORM_CONTROLS, formControls);
+        tplContent = tplContent.Replace(TplConst.FORM_CONTROLS, formControls.ToString());
         return tplContent;
     }
 
-    /// <summary>
-    /// 生成表单
-    /// </summary>
-    /// <param name="propertyInfos"></param>
-    /// <returns></returns>
     public static string GenerateForm(List<PropertyInfo>? propertyInfos)
     {
-        string formControls = "";
+        StringBuilder formControls = new StringBuilder();
         if (propertyInfos != null)
         {
             foreach (PropertyInfo input in propertyInfos)
             {
-                NgInputBuilder inputBuilder = new(input.Type, input.Name, input.CommentSummary ?? input.DisplayName)
+                NgComponentBuilder inputBuilder = new(input.Type, input.Name, input.CommentSummary ?? input.DisplayName)
                 {
                     IsDecimal = input.IsDecimal,
                     IsRequired = input.IsRequired,
@@ -60,23 +52,23 @@ public class NgFormGenerate : GenerateBase
                     IsEnum = input.IsEnum,
                     IsList = input.IsList
                 };
-                formControls += inputBuilder.ToFormControl();
+                formControls.AppendLine(inputBuilder.ToFormControl());
             }
         }
 
         string tplContent = GetTplContent("angular.component.form.component.html.tpl");
-        tplContent = tplContent.Replace(TplConst.FORM_CONTROLS, formControls);
+        tplContent = tplContent.Replace(TplConst.FORM_CONTROLS, formControls.ToString());
         return tplContent;
     }
 
     public static string GenerateEditForm(List<PropertyInfo>? propertyInfos, bool isMobile = false)
     {
-        string formControls = "";
+        StringBuilder formControls = new StringBuilder();
         if (propertyInfos != null)
         {
             foreach (PropertyInfo input in propertyInfos)
             {
-                NgInputBuilder inputBuilder = new(input.Type, input.Name, input.CommentSummary ?? input.DisplayName)
+                NgComponentBuilder inputBuilder = new(input.Type, input.Name, input.CommentSummary ?? input.DisplayName)
                 {
                     IsDecimal = input.IsDecimal,
                     IsRequired = input.IsRequired,
@@ -85,13 +77,12 @@ public class NgFormGenerate : GenerateBase
                     IsEnum = input.IsEnum,
                     IsList = input.IsList
                 };
-                formControls += inputBuilder.ToFormControl();
+                formControls.AppendLine(inputBuilder.ToFormControl());
             }
         }
         var tplDir = isMobile ? "mobileEdit" : "edit";
         string tplContent = GetTplContent($"angular.{tplDir}.edit.component.html.tpl");
-        tplContent = tplContent.Replace(TplConst.FORM_CONTROLS, formControls);
+        tplContent = tplContent.Replace(TplConst.FORM_CONTROLS, formControls.ToString());
         return tplContent;
     }
-
 }

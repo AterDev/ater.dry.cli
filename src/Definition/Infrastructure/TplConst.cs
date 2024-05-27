@@ -36,6 +36,7 @@ public static class TplConst
     public const string METHODS = "//[@Methods]";
     public const string INIT = "//[@Init]";
     public const string FORM_CONTROLS = "//[@FormControls]";
+    public const string FILTER_FORM = "//[@FilterForm]";
 
     // manager tpl
     public const string ADD_ACTION_BLOCK = "//[@AddActionBlock]";

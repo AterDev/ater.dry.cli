@@ -356,10 +356,10 @@ public class NgPageGenerate : GenerateBase
     {
         var tplDir = IsMobile ? "mobileIndex" : "index";
         string cssContent = GetTplContent($"angular.{tplDir}.index.component.css.tpl");
-        EntityParseHelper typeHelper = new(Path.Combine(DtoPath, "models", DtoDirName, EntityName + "ItemDto.cs"));
-        typeHelper.Parse();
+        var entityHelper = new EntityParseHelper(Path.Combine(DtoPath, "models", DtoDirName, EntityName + "ItemDto.cs"));
+        entityHelper.Parse();
         // 需要展示的列
-        List<PropertyInfo>? props = typeHelper.PropertyInfos?.Where(p => !p.IsList && !p.IsNavigation)
+        List<PropertyInfo>? props = entityHelper.PropertyInfos?.Where(p => !p.IsList && !p.IsNavigation)
             .Where(p => p.Name.ToLower() != "id")
             .ToList();
 
@@ -404,11 +404,28 @@ public class NgPageGenerate : GenerateBase
                 """;
                 }
             }).ToList();
+        }
+        // 筛选组件
+        entityHelper.LoadEntityContent(Path.Combine(DtoPath, "models", DtoDirName, EntityName + "FilterDto.cs"));
+        entityHelper.Parse();
 
+        var filterContent = "";
+        if (entityHelper.PropertyInfos != null)
+        {
+            var sb = new StringBuilder();
+            foreach (var property in entityHelper.PropertyInfos)
+            {
+                var builder = new NgComponentBuilder(property.Type, property.Name, property.CommentSummary ?? property.DisplayName);
+
+                builder.IsFilter = true;
+                sb.AppendLine(builder.ToFormControl());
+            }
+            filterContent = sb.ToString();
         }
 
         string htmlContent = GetTplContent($"angular.{tplDir}.index.component.html.tpl");
-        htmlContent = htmlContent.Replace(TplConst.COLUMNS_DEF, string.Join("", columnsDef));
+        htmlContent = htmlContent.Replace(TplConst.COLUMNS_DEF, string.Join("", columnsDef))
+            .Replace(TplConst.FILTER_FORM, filterContent);
 
         // 解析属性，并生成相应ts代码
         columnsDef = [];
@@ -425,6 +442,7 @@ public class NgPageGenerate : GenerateBase
         string tplContent = GetTplContent($"angular.{tplDir}.index.component.ts");
         tplContent = tplContent.Replace(TplConst.ENTITY_NAME, EntityName)
             .Replace(TplConst.ENTITY_PATH_NAME, EntityName.ToHyphen())
+            .Replace(TplConst.FILTER_FORM, "")
             .Replace(TplConst.COLUMNS, string.Join(", ", columnsDef));
 
         NgComponentInfo component = new("index")
@@ -454,9 +472,13 @@ public class NgPageGenerate : GenerateBase
             {
                 // 管道处理
                 string pipe = "";
-                if (p.Type.ToLower().Contains("datetime"))
+                if (p.Type.Contains("datetime", StringComparison.CurrentCultureIgnoreCase))
                 {
-                    pipe = "| date:'yyyy-MM-dd HH:mm:ss'";
+                    pipe = "| date:'yyyy-MM-dd HH:mm'";
+                }
+                else if (p.IsEnum)
+                {
+                    pipe = $"| enumText:'{p.Type}'";
                 }
                 return $$$"""
 

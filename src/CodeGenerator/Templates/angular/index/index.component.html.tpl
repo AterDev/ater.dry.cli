@@ -3,19 +3,7 @@
     <mat-toolbar-row style="font-size:16px">
       <div class="d-flex gap-1 align-items-center">
         <!-- 筛选 -->
-        <!--<mat-form-field subscriptSizing="dynamic">
-          <mat-label>搜索</mat-label>
-          <input type="search" matInput placeholder="名称;回车搜索" [(ngModel)]="filter.name" (keyup.enter)="getList()">
-        </mat-form-field> -->
-        <!-- <mat-form-field subscriptSizing="dynamic">
-          <mat-label>筛选示例</mat-label>
-          <mat-select placeholder="筛选示例" [(ngModel)]="filter.language" (selectionChange)="getList()">
-            <mat-option [value]="null">全部</mat-option>
-            <mat-option *ngFor="let item of DictLanguage | toKeyValue" [value]="item.value">
-              {{item.value | enumText:'DictLanguage'}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field> -->
+//[@FilterForm]
         <div class="d-flex">
           <button mat-flat-button (click)="getList()" color="primary">搜索</button>
         </div>
@@ -33,7 +21,6 @@
   <mat-spinner mode="indeterminate" *ngIf="isLoading">
   </mat-spinner>
 </div>
-
 
 <div *ngIf="!isLoading" class="px-2">
   <!-- 无数据时显示 -->
