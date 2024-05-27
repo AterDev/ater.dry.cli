@@ -49,6 +49,6 @@
   </div>
   <div class="d-flex gap-1 flex-column">
 //[@FilterForm]
-    <button mat-raised-button color="primary" (click)="search()">提交筛选</button>
+    <button mat-flat-button color="primary" (click)="search()">提交筛选</button>
   </div>
 </ng-template>

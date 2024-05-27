@@ -13,16 +13,6 @@
   </mat-toolbar>
 
   <div class="d-flex align-items-center my-2 gap-1">
-    <mat-form-field subscriptSizing="dynamic">
-      <mat-label>服务</mat-label>
-      <mat-select placeholder="请选择服务" (selectionChange)="searchEntity($event)" [value]="selectedService">
-        <mat-option [value]="null">默认</mat-option>
-        <mat-option *ngFor="let item of webProjects" [value]="item.name">
-          {{item.name}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-
     <mat-form-field style="min-width: 300px;" subscriptSizing="dynamic">
       <mat-label>
         搜索实体
@@ -56,8 +46,8 @@
         matTooltip="生成dto/dataStore/manager,不会覆盖原内容" matTooltipPosition="right">生成Manager</button>
       <button mat-menu-item (click)="openSelectProjectDialog(CommandType.API,null)"
         matTooltip="生成dto/dataStore/manager/api,不会覆盖原内容" matTooltipPosition="right">生成APIControler</button>
-      <button mat-menu-item (click)="openSelectProjectDialog(CommandType.Protobuf,null)" matTooltip="生成proto协议文件"
-        matTooltipPosition="right">生成Protobuf</button>
+      <!-- <button mat-menu-item (click)="openSelectProjectDialog(CommandType.Protobuf,null)" matTooltip="生成proto协议文件"
+        matTooltipPosition="right">生成Protobuf</button> -->
       <button mat-menu-item (click)="clearCodesDialog()" matTooltip="清理实体相关的生成代码"
         matTooltipPosition="right">清理生成代码</button>
     </mat-menu>
@@ -116,18 +106,17 @@
 
           <button mat-menu-item (click)="openNgPagesDialog(element)" matTooltip="生成angular curd组件模块"
             matTooltipPosition="right">生成NG组件模块</button>
-
-          <button mat-menu-item (click)="openSelectProjectDialog(CommandType.Protobuf,element)"
-            matTooltip="生成proto协议文件">生成Protobuf</button>
+          <!-- <button mat-menu-item (click)="openSelectProjectDialog(CommandType.Protobuf,element)"
+            matTooltip="生成proto协议文件">生成Protobuf</button> -->
         </mat-menu>
         <button mat-icon-button matTooltip="编辑DTO" matTooltipPosition="below" color="primary" (click)="goToDto(element)"
           [disabled]="!element.hasDto">
-          <mat-icon>code</mat-icon>
+          <mat-icon>data_object</mat-icon>
         </button>
 
         <button mat-icon-button [disabled]="!element.hasManager" color="primary" matTooltip="已生成Manager"
           (click)="openPreviewDialog(element,true)">
-          <mat-icon>linear_scale</mat-icon>
+          <mat-icon>code_blocks</mat-icon>
         </button>
         <button mat-icon-button [disabled]="!element.hasAPI" color="primary" matTooltip="已生成API">
           <mat-icon>api</mat-icon>
