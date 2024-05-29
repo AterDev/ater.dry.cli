@@ -18,17 +18,8 @@ export class NavigationComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.expanded) {
-      this.accordion?.openAll();
-    } else {
-      this.accordion?.closeAll();
-    }
   }
 
-  ngAfterViewInit(): void {
-
-
-  }
   toggle(): void {
     this.opened = !this.opened;
   }

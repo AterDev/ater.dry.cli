@@ -3,6 +3,10 @@
 @import './assets/vs-dark-plus.css';
 @import 'prismjs/plugins/line-numbers/prism-line-numbers.css';
 
+:root {
+  --mat-list-active-indicator-shape: 4px;
+}
+
 html,
 body {
   height: 100%;
@@ -78,5 +82,5 @@ mat-panel-title .mat-icon {
 }
 
 .mat-mdc-dialog-container .mdc-dialog__content {
-    min-height: 60px;
+  min-height: 60px;
 }

@@ -34,22 +34,21 @@ html {
     @include mat.all-component-colors($light-theme);
 
     .active {
-      background-color: mat.get-theme-color($light-theme, primary, 30) !important;
+      background-color: mat.get-theme-color($light-theme, primary, 100) !important;
     }
 
     a {
-      color: mat.get-theme-color($light-theme, primary, 90);
+      color: mat.get-theme-color($light-theme, primary, 900);
     }
-
   }
 
   @media (prefers-color-scheme: dark) {
     .active {
-      background-color: mat.get-theme-color($dark-theme, primary, 40) !important;
+      background-color: mat.get-theme-color($dark-theme, primary, 600) !important;
     }
 
     a {
-      color: mat.get-theme-color($dark-theme, primary, 30);
+      color: mat.get-theme-color($dark-theme, primary, 300);
     }
   }
 }
