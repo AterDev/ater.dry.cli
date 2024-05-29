@@ -36,9 +36,10 @@ export class ApiDocInfoBaseService extends BaseService {
   /**
    * 获取某个文档信息
    * @param id 
+   * @param isFresh 
    */
-  getApiDocContent(id: string): Observable<ApiDocContent> {
-    const _url = `/api/ApiDocInfo/${id}`;
+  getApiDocContent(id: string, isFresh: boolean | null): Observable<ApiDocContent> {
+    const _url = `/api/ApiDocInfo/${id}?isFresh=${isFresh ?? ''}`;
     return this.request<ApiDocContent>('get', _url);
   }
 

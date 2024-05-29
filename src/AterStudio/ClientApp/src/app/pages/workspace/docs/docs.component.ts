@@ -129,8 +129,6 @@ export class DocsComponent implements OnInit {
     this.getDocs();
   }
 
-
-
   initForm(): void {
     // 添加表单
     this.addForm = new FormGroup({
@@ -175,7 +173,7 @@ export class DocsComponent implements OnInit {
             this.docs = res;
             if (res.length > 0) {
               this.currentDoc = res[0];
-              this.getDocContent();
+              this.getDocContent(false);
             } else {
               this.isLoading = false;
             }
@@ -361,10 +359,10 @@ export class DocsComponent implements OnInit {
     }
   }
 
-  getDocContent(): void {
+  getDocContent(isFresh: boolean = true): void {
     const id = this.currentDoc!.id;
     if (id) {
-      this.service.getApiDocContent(id)
+      this.service.getApiDocContent(id, isFresh)
         .subscribe(
           {
             next: res => {
@@ -478,6 +476,6 @@ export class DocsComponent implements OnInit {
 
   refresh(): void {
     this.isLoading = true;
-    this.getDocContent();
+    this.getDocContent(true);
   }
 }

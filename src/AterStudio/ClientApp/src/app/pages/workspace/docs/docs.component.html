@@ -6,7 +6,7 @@
 <div *ngIf="!isLoading">
   <mat-toolbar class="d-flex align-items-center">
     <mat-form-field subscriptSizing="dynamic">
-      <mat-select placeholder="选择Swagger文档" [(ngModel)]="currentDoc" (selectionChange)="getDocContent()">
+      <mat-select placeholder="选择Swagger文档" [(ngModel)]="currentDoc" (selectionChange)="getDocContent(false)">
         <mat-option *ngFor="let item of docs" [value]="item">
           {{item.name}}
         </mat-option>
@@ -46,10 +46,10 @@
         <!-- 左边接口树型列表 -->
         <div class="col col-auto api-list" *ngIf="currentDoc!=null">
           <!-- 搜索 -->
-          <mat-form-field class="w-100 mt-2">
-            <input matInput placeholder="搜索接口" [(ngModel)]="searchKey" (keyup.enter)="filterApis()">
+          <mat-form-field class="w-100 mt-2 top-search" subscriptSizing="dynamic">
+            <input matInput type="search" placeholder="搜索接口" [(ngModel)]="searchKey" (keyup.enter)="filterApis()">
           </mat-form-field>
-          <mat-accordion class="example-headers-align" multi>
+          <mat-accordion class="list-container" multi>
             <mat-expansion-panel hideToggle [expanded]="true" *ngFor="let group of filterApiGroups">
               <mat-expansion-panel-header>
                 <!-- 控制器名(Tag)/描述 -->
@@ -225,15 +225,17 @@
         <!-- 左边接口树型列表 -->
         <div class="col col-auto api-list" *ngIf="currentDoc!=null">
           <!-- 搜索 -->
-          <mat-form-field class="w-100 mt-2">
+          <mat-form-field class="w-100 mt-2 top-search" subscriptSizing="dynamic">
             <input matInput placeholder="搜索模型" [(ngModel)]="modelSearchKey" (keyup.enter)="filterModels()">
           </mat-form-field>
-          <mat-nav-list *ngFor="let model of filterModelInfos" style="margin:0;padding:0">
-            <!-- [请求方法] 描述(Route) -->
-            <a mat-list-item class="api-item" (click)="selectModel(model)" [matTooltip]="model.comment??''">
-              <span>{{model.name}}</span>
-            </a>
-          </mat-nav-list>
+          <div class="list-container">
+            <mat-nav-list *ngFor="let model of filterModelInfos" style="margin:0;padding:0">
+              <!-- [请求方法] 描述(Route) -->
+              <a mat-list-item class="api-item" (click)="selectModel(model)" [matTooltip]="model.comment??''">
+                <span>{{model.name}}</span>
+              </a>
+            </mat-nav-list>
+          </div>
         </div>
         <!-- 右边内容 -->
         <div class="col p-2" *ngIf="currentModel">

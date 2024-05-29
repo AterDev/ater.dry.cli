@@ -40,11 +40,12 @@ public class ApiDocInfoController(
     /// 获取某个文档信息
     /// </summary>
     /// <param name="id"></param>
+    /// <param name="isFresh"></param>
     /// <returns></returns>
     [HttpGet("{id}")]
-    public async Task<ActionResult<ApiDocContent?>> GetApiDocContentAsync([FromRoute] Guid id)
+    public async Task<ActionResult<ApiDocContent?>> GetApiDocContentAsync([FromRoute] Guid id, bool isFresh = true)
     {
-        var res = await manager.GetContentAsync(id);
+        var res = await manager.GetContentAsync(id, isFresh);
         if (res == null)
         {
             return Problem(manager.ErrorMsg);

@@ -45,49 +45,56 @@ public class ApiDocInfoManager(
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public async Task<ApiDocContent?> GetContentAsync(Guid id)
+    public async Task<ApiDocContent?> GetContentAsync(Guid id, bool isFresh)
     {
-        var apiDocInfo = await FindAsync(id);
+        var apiDocInfo = await GetCurrentAsync(id);
         var path = apiDocInfo!.Path;
-
         string openApiContent = "";
-        try
+
+        if (!isFresh && apiDocInfo.Content.NotEmpty())
         {
-            if (path.StartsWith("http://") || path.StartsWith("https://"))
+            openApiContent = apiDocInfo.Content;
+        }
+        else
+        {
+            try
             {
-                var handler = new HttpClientHandler
+                if (path.StartsWith("http://") || path.StartsWith("https://"))
                 {
-                    ServerCertificateCustomValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true
-                };
-
-                using HttpClient http = new(handler);
-
-                http.Timeout = TimeSpan.FromSeconds(60);
-                openApiContent = await http.GetStringAsync(path);
+                    var handler = new HttpClientHandler
+                    {
+                        ServerCertificateCustomValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true
+                    };
+                    using HttpClient http = new(handler);
+                    http.Timeout = TimeSpan.FromSeconds(60);
+                    openApiContent = await http.GetStringAsync(path);
+                }
+                else
+                {
+                    openApiContent = File.ReadAllText(path);
+                }
+                apiDocInfo.Content = openApiContent;
+                await SaveChangesAsync();
             }
-            else
+            catch (Exception ex)
             {
-                openApiContent = File.ReadAllText(path);
+                ErrorMsg = $"{path} 请求失败！" + ex.Message;
+                return default;
             }
-            openApiContent = openApiContent
-                .Replace("«", "")
-                .Replace("»", "");
-
-            var apiDocument = new OpenApiStringReader().Read(openApiContent, out _);
-            var helper = new OpenApiHelper(apiDocument);
-
-            return new ApiDocContent
-            {
-                ModelInfos = helper.ModelInfos,
-                OpenApiTags = helper.OpenApiTags,
-                RestApiGroups = helper.RestApiGroups
-            };
         }
-        catch (Exception ex)
+
+        openApiContent = openApiContent
+               .Replace("«", "")
+               .Replace("»", "");
+
+        var apiDocument = new OpenApiStringReader().Read(openApiContent, out _);
+        var helper = new OpenApiHelper(apiDocument);
+        return new ApiDocContent
         {
-            ErrorMsg = $"{path} 请求失败！" + ex.Message;
-            return default;
-        }
+            ModelInfos = helper.ModelInfos,
+            OpenApiTags = helper.OpenApiTags,
+            RestApiGroups = helper.RestApiGroups
+        };
     }
 
     /// <summary>

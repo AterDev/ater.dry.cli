@@ -24,6 +24,10 @@ export interface ApiDocInfo {
    */
   localPath?: string | null;
   /**
+   * 文档内容
+   */
+  content?: string | null;
+  /**
    * 项目
    */
   project?: Project | null;

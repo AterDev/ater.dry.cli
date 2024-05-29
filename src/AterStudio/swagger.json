@@ -193,6 +193,15 @@
               "type": "string",
               "format": "uuid"
             }
+          },
+          {
+            "name": "isFresh",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
           }
         ],
         "responses": {
@@ -1640,6 +1649,11 @@
             "maxLength": 200,
             "type": "string",
             "description": "生成路径",
+            "nullable": true
+          },
+          "content": {
+            "type": "string",
+            "description": "文档内容",
             "nullable": true
           },
           "project": {

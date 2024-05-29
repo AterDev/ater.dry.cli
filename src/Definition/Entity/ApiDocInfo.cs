@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Definition.Entity;
+﻿namespace Definition.Entity;
 /// <summary>
 /// 接口文档
 /// </summary>
@@ -29,6 +27,11 @@ public class ApiDocInfo : EntityBase
     /// </summary>
     [MaxLength(200)]
     public string? LocalPath { get; set; }
+
+    /// <summary>
+    /// 文档内容
+    /// </summary>
+    public string? Content { get; set; }
 
     public Project Project { get; set; } = null!;
     public Guid ProjectId { get; set; } = default!;

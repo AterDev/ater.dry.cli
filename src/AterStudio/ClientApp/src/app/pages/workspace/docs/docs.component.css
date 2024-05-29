@@ -1,10 +1,6 @@
-.example-headers-align {
-    justify-content: space-between;
-    align-items: center;
-}
-
-.example-headers-align {
-    margin-left: 6px;
+.list-container {
+    flex: 1;
+    overflow-y: auto;
 }
 
 .mat-expansion-panel-spacing {
@@ -30,13 +26,10 @@ tr.example-detail-row {
     height: 0;
 }
 
-
 .example-element-detail {
     overflow: hidden;
     display: flex;
 }
-
-
 
 .request-type {
     font-weight: bold;
@@ -45,7 +38,6 @@ tr.example-detail-row {
 }
 
 .api-item {
-    height: 40px;
     font-size: 0.9rem;
 }
 
@@ -57,9 +49,14 @@ tr.example-detail-row {
 }
 
 .api-list {
+    display: flex;
+    flex-direction: column;
     max-width: 260px;
-    height: calc(100vh - 112px);
-    overflow-y: auto;
+    height: calc(100vh - 176px);
+}
+
+.top-search {
+    z-index: 1;
 }
 
 .api-summary {
