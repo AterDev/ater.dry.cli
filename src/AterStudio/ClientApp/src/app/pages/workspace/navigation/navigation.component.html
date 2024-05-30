@@ -28,19 +28,21 @@
           </a>
         </mat-nav-list>
         <mat-nav-list>
-          <a mat-list-item [matTooltip]="opened?'': '模块管理'" matTooltipPosition="right" routerLink="/workspace/feature"
-            routerLinkActive="active">
-            <mat-icon color="link">hive</mat-icon>
-            <span *ngIf="opened">模块管理</span>
-          </a>
-        </mat-nav-list>
-        <mat-nav-list>
           <a mat-list-item [matTooltip]="opened?'': 'Swagger'" matTooltipPosition="right" routerLink="/workspace/docs"
             routerLinkActive="active">
             <mat-icon color="link">api</mat-icon>
             <span *ngIf="opened">OpenAPI</span>
           </a>
         </mat-nav-list>
+        @if(!isNodeJs){
+        <mat-nav-list>
+          <a mat-list-item [matTooltip]="opened?'': '模块管理'" matTooltipPosition="right" routerLink="/workspace/feature"
+            routerLinkActive="active">
+            <mat-icon color="link">hive</mat-icon>
+            <span *ngIf="opened">模块管理</span>
+          </a>
+        </mat-nav-list>
+
         <mat-nav-list>
           <a mat-list-item [matTooltip]="opened?'': '实体表结构'" matTooltipPosition="right" routerLink="/workspace/database"
             routerLinkActive="active">
@@ -48,13 +50,15 @@
             <span *ngIf="opened">实体表结构</span>
           </a>
         </mat-nav-list>
-        <mat-nav-list>
+        }
+
+        <!-- <mat-nav-list>
           <a mat-list-item [matTooltip]="opened?'': '模板配置'" matTooltipPosition="right" routerLink="/workspace/setting"
             routerLinkActive="active">
             <mat-icon color="link">settings</mat-icon>
             <span *ngIf="opened">模板配置</span>
           </a>
-        </mat-nav-list>
+        </mat-nav-list> -->
       </mat-expansion-panel>
 
       <mat-expansion-panel hideToggle [expanded]="expanded">

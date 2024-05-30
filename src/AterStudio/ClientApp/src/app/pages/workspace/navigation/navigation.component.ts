@@ -11,10 +11,18 @@ export class NavigationComponent implements OnInit {
   events: string[] = [];
   opened = true;
   expanded = true;
+  isNodeJs = false;
   @ViewChild(MatAccordion, { static: true }) accordion!: MatAccordion;
   constructor(
     public route: ActivatedRoute,
   ) {
+    const project = localStorage.getItem('project');
+    if (project) {
+      let solutionType = JSON.parse(project).solutionType;
+      if (solutionType === 1) {
+        this.isNodeJs = true;
+      }
+    }
   }
 
   ngOnInit(): void {
