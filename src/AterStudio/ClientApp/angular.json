@@ -29,6 +29,7 @@
             "tsConfig": "tsconfig.app.json",
             "allowedCommonJsDependencies": [],
             "assets": [
+              "src/favicon.ico",
               "src/assets",
               {
                 "glob": "**/*",
