@@ -1,5 +1,7 @@
 ﻿using System.Text.RegularExpressions;
+
 using Definition.EntityFramework.DBProvider;
+
 using PropertyInfo = Definition.Entity.PropertyInfo;
 
 namespace CodeGenerator.Generate;
@@ -17,6 +19,9 @@ public class DtoCodeGenerate : GenerateBase
     public string DtoPath { get; init; }
     public List<PropertyChange> PropertyChanges = [];
     public readonly ContextBase dbContext;
+
+    private readonly string[] IgnoreTypes = ["JsonDocument"];
+
     public DtoCodeGenerate(string entityPath, string dtoPath, ContextBase dbContext)
     {
         DtoPath = dtoPath;
@@ -158,6 +163,7 @@ public class DtoCodeGenerate : GenerateBase
                         && !p.IsNavigation
                         && !p.IsComplexType
                         && !filterFields.Contains(p.Name))
+                        && !IgnoreTypes.Contains(p.Type)
                     || p.IsEnum
                     )
                 .Where(p => p.MaxLength is not (not null and >= 1000))
@@ -211,6 +217,7 @@ public class DtoCodeGenerate : GenerateBase
             Tag = EntityInfo.Name,
             Properties = EntityInfo.PropertyInfos?.Where(p => !p.IsNavigation
                 && p.HasSet
+                && !IgnoreTypes.Contains(p.Type)
                 && p.Name != "Id"
                 && p.Name != "CreatedTime"
                 && p.Name != "UpdatedTime"
@@ -266,9 +273,10 @@ public class DtoCodeGenerate : GenerateBase
             Tag = EntityInfo.Name,
 
         };
-        // 处理非required的都设置为nullable
+        // 处理非 required的都设置为 nullable
         List<PropertyInfo>? properties = EntityInfo.PropertyInfos?.Where(p => !p.IsNavigation
                 && p.HasSet
+                && !IgnoreTypes.Contains(p.Type)
                 && p.Name != "Id"
                 && p.Name != "CreatedTime"
                 && p.Name != "UpdatedTime"
@@ -296,6 +304,7 @@ public class DtoCodeGenerate : GenerateBase
     {
         return [
         "global using System;",
+        "global using System.Text.Json;",
         "global using System.ComponentModel.DataAnnotations;",
         $"global using {AssemblyName}.Models;",
         "global using Ater.Web.Core.Models;",
