@@ -145,9 +145,9 @@ export class DocsComponent implements OnInit {
     });
 
     // 生成请求表单
-    let defaultPath = `\\src\\app\\share`;
+    let defaultPath = `\\src\\app`;
     if (this.projectState.project?.path?.endsWith(".sln")) {
-      defaultPath = this.config?.rootPath! + '\\' + this.config?.apiPath + '\\ClientApp' + defaultPath;
+      defaultPath = this.config?.rootPath! + '\\' + (this.config?.webAppPath ?? 'src') + '\\WebApp' + defaultPath;
     } else {
       defaultPath = this.config?.rootPath! + defaultPath;
     }

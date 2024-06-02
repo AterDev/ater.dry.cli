@@ -122,7 +122,7 @@ export class IndexComponent implements OnInit {
   openEditDialog(item: #@EntityName#ItemDto): void {
     this.dialogRef = this.dialog.open(EditComponent, {
       minWidth: '400px',
-      maxHeight: '98vh'
+      maxHeight: '98vh',
       data: { id: item.id }
     })
       this.dialogRef.afterClosed()

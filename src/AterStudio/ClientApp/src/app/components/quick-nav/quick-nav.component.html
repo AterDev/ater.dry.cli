@@ -1,0 +1,13 @@
+<div class="quick-nav">
+  <div class="d-flex gap-1">
+    @if(showMore){
+    <button mat-fab matTooltip="记词本" (click)="goToNote()">
+      <mat-icon class="text-white">edit_note</mat-icon>
+    </button>
+    }
+    <button mat-fab (click)="toggle()" matTooltip="快捷功能">
+      <mat-icon class="text-white">more_horiz</mat-icon>
+    </button>
+  </div>
+
+</div>
