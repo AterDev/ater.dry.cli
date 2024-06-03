@@ -18,7 +18,6 @@ $commandLinePath = Join-Path $rootPath "src" "CommandLine"
 $destPath = Join-Path $commandLinePath "template"
 $destModulesPath = Join-Path $destPath "Modules" 
 $destInfrastructure = Join-Path $destPath "Infrastructure"
-$destServicePath = Join-Path $destPath "Microservice"
 
 # 移动模块到临时目录
 function CopyModule([string]$solutionPath, [string]$moduleName, [string]$destModulesPath) {
@@ -73,15 +72,11 @@ Copy-Item $infrastructurePath $destInfrastructure -Recurse -Force
 Remove-Item "$destInfrastructure/**/obj" -Recurse -Force -ErrorAction SilentlyContinue
 Remove-Item "$destInfrastructure/**/bin" -Recurse -Force -ErrorAction SilentlyContinue
 
-# copy service
-$servicePath = Join-Path $templatePath "templates" "ApiStandard" "src" "Microservice" "StandaloneService"
-Copy-Item $servicePath $destServicePath -Recurse -Force
-Remove-Item "$destServicePath/obj" -Recurse -Force -ErrorAction SilentlyContinue
-Remove-Item "$destServicePath/bin" -Recurse -Force -ErrorAction SilentlyContinue
+
 
 # zip
 $zipPath = Join-Path $commandLinePath "template.zip"
-Compress-Archive -Path $destModulesPath, $destInfrastructure, $destServicePath -DestinationPath $zipPath -CompressionLevel Optimal -Force
+Compress-Archive -Path $destModulesPath, $destInfrastructure -DestinationPath $zipPath -CompressionLevel Optimal -Force
 Write-Host "🗜️ $zipPath"
 
 # remove modules

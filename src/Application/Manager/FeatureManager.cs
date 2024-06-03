@@ -235,6 +235,10 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
     {
         try
         {
+            if (!name.EndsWith("Mod"))
+            {
+                name += "Mod";
+            }
             var allModules = ModuleInfo.GetModules().Select(m => m.Value).ToList();
             await new ModuleCommand(_projectContext.SolutionPath!, allModules)
                 .CreateModuleAsync(name);
