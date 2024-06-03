@@ -58,7 +58,7 @@
 <ng-template #quickDialog>
   <mat-dialog-content>
     <mat-form-field class="w-100">
-      <mat-label>搜索工具</mat-label>
+      <mat-label>快捷搜索</mat-label>
       <input matInput placeholder="选择工具" [(ngModel)]="toolName" name="toolName" [matAutocomplete]="auto"
         (input)="filter(input.value)" (focus)="filter(input.value)" #input>
       <mat-autocomplete requireSelection #auto="matAutocomplete" (optionSelected)="selectTool($event)">

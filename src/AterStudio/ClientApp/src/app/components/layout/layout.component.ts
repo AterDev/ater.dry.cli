@@ -25,7 +25,7 @@ export class LayoutComponent implements OnInit {
   projects = [] as Project[];
   projectName = '';
   toolName: string | null = null;
-  toolsOptions: string[] = ['字符串转换'];
+  toolsOptions: string[] = ['StringConvert', 'JsonToCSharp'];
   filteredOptions: string[];
   version: string | null = null;
   @ViewChild("projectSheet", { static: true }) projectSheet!: TemplateRef<{}>;
@@ -113,10 +113,12 @@ export class LayoutComponent implements OnInit {
   selectTool(event: MatAutocompleteSelectedEvent): void {
     this.toolName = event.option.value;
     this.dialogRef.close();
-    if (this.toolName == '字符串转换') {
+    if (this.toolName === 'StringConvert') {
       this.dialogRef = this.dialog.open(StringComponent, {
         minWidth: '400px'
       });
+    } else if (this.toolName === 'JsonToCSharp') {
+      this.router.navigateByUrl('/tools/json2Type');
     }
     this.toolName = null;
   }
