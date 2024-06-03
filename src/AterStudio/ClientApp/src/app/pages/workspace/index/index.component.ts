@@ -36,7 +36,7 @@ export class IndexComponent implements OnInit {
   projectId: string;
   entityFiles = [] as EntityFile[];
   baseEntityPath = '';
-  columns: string[] = ['select', 'name', 'description', 'path', 'actions'];
+  columns: string[] = ['select', 'name', 'description', 'actions'];
   dataSource!: MatTableDataSource<EntityFile>;
   isLoading = true;
   requestForm!: FormGroup;
