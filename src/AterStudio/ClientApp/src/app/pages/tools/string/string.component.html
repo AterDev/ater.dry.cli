@@ -3,9 +3,9 @@
   <mat-dialog-content>
     <div class="d-flex flex-column">
       <mat-form-field>
+        <mat-label>要转换的字符串</mat-label>
         <input matInput placeholder="输入要处理的字符串" [(ngModel)]="content" name="content">
       </mat-form-field>
-
       <div class="mt-2 gap-1 d-flex">
         @for (item of StringConvertType|toKeyValue; track $index) {
         <button mat-flat-button color="primary" (click)="convertString(item.value)">{{item.value |

@@ -51,6 +51,21 @@
 <!-- 快捷操作 -->
 @if(!openedChat){
 
-<app-quick-nav></app-quick-nav>
+<app-quick-nav (click)="openQuick()"></app-quick-nav>
 
 }
+
+<ng-template #quickDialog>
+  <mat-dialog-content>
+    <mat-form-field class="w-100">
+      <mat-label>搜索工具</mat-label>
+      <input matInput placeholder="选择工具" [(ngModel)]="toolName" name="toolName" [matAutocomplete]="auto"
+        (input)="filter(input.value)" (focus)="filter(input.value)" #input>
+      <mat-autocomplete requireSelection #auto="matAutocomplete" (optionSelected)="selectTool($event)">
+        @for (option of filteredOptions; track option) {
+        <mat-option [value]="option">{{option}}</mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+  </mat-dialog-content>
+</ng-template>

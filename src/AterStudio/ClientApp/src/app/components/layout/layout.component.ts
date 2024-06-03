@@ -7,7 +7,10 @@ import { ProjectService } from 'src/app/services/project/project.service';
 import { MatBottomSheet, MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { AdvanceService } from 'src/app/services/advance/advance.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { QuickNavComponent } from '../quick-nav/quick-nav.component';
+import { Subscription, fromEvent } from 'rxjs';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { StringComponent } from 'src/app/pages/tools/string/string.component';
 @Component({
   selector: 'app-layout',
   templateUrl: './layout.component.html',
@@ -21,15 +24,23 @@ export class LayoutComponent implements OnInit {
   type: string | null = null;
   projects = [] as Project[];
   projectName = '';
+  toolName: string | null = null;
+  toolsOptions: string[] = ['字符串转换'];
+  filteredOptions: string[];
   version: string | null = null;
   @ViewChild("projectSheet", { static: true }) projectSheet!: TemplateRef<{}>;
   bottomSheetRef!: MatBottomSheetRef<{}>;
+  dialogRef!: MatDialogRef<{}, any>;
+  @ViewChild('quickDialog', { static: true }) quickTmpl!: TemplateRef<{}>;
+
+  keyboardSubscription: Subscription | null = null;
 
   constructor(
     private auth: LoginService,
     private service: ProjectService,
     private projectState: ProjectStateService,
     private bottomSheet: MatBottomSheet,
+    private dialog: MatDialog,
     private advance: AdvanceService,
     public snb: MatSnackBar,
     private router: Router,
@@ -53,6 +64,12 @@ export class LayoutComponent implements OnInit {
     });
     this.projectName = this.projectState.project?.displayName || '';
     this.version = this.projectState.version;
+    this.filteredOptions = this.toolsOptions.slice();
+  }
+
+  filter(value: string): void {
+    const filterValue = value;
+    this.filteredOptions = this.toolsOptions.filter(o => o.toLowerCase().includes(filterValue));
   }
 
   ngOnInit(): void {
@@ -63,14 +80,45 @@ export class LayoutComponent implements OnInit {
     }
     this.getVersion();
     this.getProjects();
+    this.listenKeyboard();
   }
 
+  ngOnDestroy(): void {
+    this.keyboardSubscription?.unsubscribe();
+  }
+
+  listenKeyboard() {
+    this.keyboardSubscription?.unsubscribe();
+    this.keyboardSubscription = fromEvent<KeyboardEvent>(document, 'keydown')
+      .subscribe((event: KeyboardEvent) => {
+        if (event.ctrlKey && event.key === '/') {
+          this.openQuick();
+        }
+      });
+  }
   openChat(): void {
     if (!this.openedChat) {
       this.getOpenAIKey();
     } else {
       this.openedChat = false;
     }
+  }
+
+  openQuick(): void {
+    this.dialogRef = this.dialog.open(this.quickTmpl, {
+      minWidth: '400px'
+    });
+  }
+
+  selectTool(event: MatAutocompleteSelectedEvent): void {
+    this.toolName = event.option.value;
+    this.dialogRef.close();
+    if (this.toolName == '字符串转换') {
+      this.dialogRef = this.dialog.open(StringComponent, {
+        minWidth: '400px'
+      });
+    }
+    this.toolName = null;
   }
 
   getOpenAIKey(): void {
@@ -114,20 +162,8 @@ export class LayoutComponent implements OnInit {
       });
   }
 
-  openSolutionSheet() {
-    this.bottomSheetRef = this.bottomSheet.open(this.projectSheet, {});
-  }
 
-  changeSolution(id: string) {
-    const project = this.projects.find(p => p.id == id);
-    if (project) {
-      this.projectState.setProject(project);
-      // reload current page
-      window.location.reload();
 
-      this.bottomSheetRef.dismiss();
-    }
-  }
 
   login(): void {
     this.router.navigateByUrl('/login')
