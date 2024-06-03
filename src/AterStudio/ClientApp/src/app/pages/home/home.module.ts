@@ -10,6 +10,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import { MarkdownModule } from 'ngx-markdown';
 import { EnumTextPipeModule } from 'src/app/pipe/enum-text.pipe';
+import { ToKeyValuePipeModule } from 'src/app/share/pipe/to-key-value.pipe';
 
 
 @NgModule({
@@ -26,6 +27,7 @@ import { EnumTextPipeModule } from 'src/app/pipe/enum-text.pipe';
     MatSortModule,
     MonacoEditorModule,
     EnumTextPipeModule,
+    ToKeyValuePipeModule,
     MarkdownModule.forRoot()
   ]
 })

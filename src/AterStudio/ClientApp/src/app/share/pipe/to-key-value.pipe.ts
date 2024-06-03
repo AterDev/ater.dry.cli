@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { NgModule, Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
   name: 'toKeyValue'
@@ -14,3 +14,7 @@ export class ToKeyValuePipe implements PipeTransform {
   }
 }
 
+@NgModule({
+  declarations: [ToKeyValuePipe], exports: [ToKeyValuePipe]
+})
+export class ToKeyValuePipeModule { }

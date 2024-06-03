@@ -12,6 +12,7 @@ import { SettingComponent } from './setting/setting.component';
 import { DatabaseComponent } from './database/database.component';
 import { EntityComponent } from './entity/entity.component';
 import { FeatureComponent } from './feature/feature.component';
+import { ToKeyValuePipeModule } from 'src/app/share/pipe/to-key-value.pipe';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { FeatureComponent } from './feature/feature.component';
     ShareModule,
     WorkspaceRoutingModule,
     MonacoEditorModule,
+    ToKeyValuePipeModule,
     MarkdownModule.forRoot()
   ]
 })

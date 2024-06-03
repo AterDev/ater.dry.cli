@@ -1583,6 +1583,64 @@
           }
         }
       }
+    },
+    "/api/Tools/string": {
+      "get": {
+        "tags": [
+          "Tools"
+        ],
+        "summary": "字符串处理",
+        "operationId": "Tools_ConvertString",
+        "parameters": [
+          {
+            "name": "content",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "$ref": "#/components/schemas/StringConvertType"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2717,6 +2775,51 @@
           "Node"
         ],
         "x-enumData": [ ]
+      },
+      "StringConvertType": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "type": "integer",
+        "format": "int32",
+        "x-enumNames": [
+          "Guid",
+          "NamePolicy",
+          "Encode",
+          "Decode",
+          "EnCrypt"
+        ],
+        "x-enumData": [
+          {
+            "name": "Guid",
+            "value": 0,
+            "description": "Guid"
+          },
+          {
+            "name": "NamePolicy",
+            "value": 1,
+            "description": "命名转换"
+          },
+          {
+            "name": "Encode",
+            "value": 2,
+            "description": "编码"
+          },
+          {
+            "name": "Decode",
+            "value": 3,
+            "description": "解码"
+          },
+          {
+            "name": "EnCrypt",
+            "value": 4,
+            "description": "加密"
+          }
+        ]
       },
       "SubProjectInfo": {
         "type": "object",

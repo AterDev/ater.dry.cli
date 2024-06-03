@@ -47,6 +47,18 @@ export class EnumTextPipe implements PipeTransform {
           }
         }
         break;
+      case 'StringConvertType':
+        {
+          switch (value) {
+            case 0: result = 'Guid'; break;
+            case 1: result = '命名转换'; break;
+            case 2: result = '编码'; break;
+            case 3: result = '解码'; break;
+            case 4: result = '加密'; break;
+            default: result = '默认'; break;
+          }
+        }
+        break;
 
       default:
         break;

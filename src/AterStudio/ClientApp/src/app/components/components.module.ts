@@ -42,6 +42,7 @@ import { SyncButtonComponent } from './sync-button/sync-button.component';
 import { ChatBotComponent } from './chatbot/chatbot.component';
 import { MarkdownModule } from 'ngx-markdown';
 import { FormsModule } from '@angular/forms';
+import { QuickNavComponent } from './quick-nav/quick-nav.component';
 
 const MaterialModules = [
   MatToolbarModule,
@@ -96,6 +97,7 @@ const components = [
     FormsModule,
     ...MaterialModules,
     MarkdownModule.forRoot(),
+    QuickNavComponent
   ],
   exports: [
     CommonModule,

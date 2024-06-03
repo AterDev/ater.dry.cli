@@ -7,6 +7,7 @@ import { ProjectService } from 'src/app/services/project/project.service';
 import { MatBottomSheet, MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { AdvanceService } from 'src/app/services/advance/advance.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { QuickNavComponent } from '../quick-nav/quick-nav.component';
 @Component({
   selector: 'app-layout',
   templateUrl: './layout.component.html',
