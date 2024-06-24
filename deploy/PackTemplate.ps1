@@ -11,7 +11,7 @@ $modulesNames = @("CMSMod", "FileManagerMod", "OrderMod", "SystemMod", "Customer
 
 # 路径定义
 $deployPath = Get-Location
-$rootPath = [IO.Path]::GetFullPath("$deployPath/..")
+$rootPath = Join-Path $deployPath ../
 $templatePath = Join-Path $deployPath $relativePath
 $entityPath = Join-Path $templatePath "templates" "ApiStandard" "src" "Definition" "Entity"
 $commandLinePath = Join-Path $rootPath "src" "CommandLine"

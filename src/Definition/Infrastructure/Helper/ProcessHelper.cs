@@ -49,6 +49,8 @@ public static class ProcessHelper
         process.BeginErrorReadLine();
         process.WaitForExit();
 
+        Console.WriteLine("exit code:" + process.ExitCode);
+
         var errorOutput = outputErrorBuilder.ToString();
         output = outputBuilder.ToString();
         if (!string.IsNullOrWhiteSpace(errorOutput))
@@ -90,15 +92,40 @@ public static class ProcessHelper
                 FileName = shell,
                 Arguments = $"{argument} \"{commandString}\"",
                 RedirectStandardOutput = true,
+                RedirectStandardError = true,
                 UseShellExecute = false,
                 CreateNoWindow = true
             }
         };
 
+        var outputBuilder = new StringBuilder();
+        var outputErrorBuilder = new StringBuilder();
+
+        process.OutputDataReceived += (sender, e) =>
+        {
+            if (!string.IsNullOrEmpty(e.Data))
+            {
+                outputBuilder.AppendLine(e.Data);
+            }
+        };
+
+        process.ErrorDataReceived += (sender, e) =>
+        {
+
+            if (!string.IsNullOrEmpty(e.Data))
+            {
+                outputErrorBuilder.AppendLine(e.Data);
+            }
+        };
+
         process.Start();
-        string output = process.StandardOutput.ReadToEnd();
+        process.BeginOutputReadLine();
+        process.BeginErrorReadLine();
         process.WaitForExit();
-        return output;
+
+        var errorOutput = outputErrorBuilder.ToString();
+        var output = outputBuilder.ToString();
+        return string.IsNullOrWhiteSpace(errorOutput) ? output : errorOutput;
     }
 
 
