@@ -44,6 +44,8 @@ public partial class EntityInfoManager(
             // get files in directory
             List<string> filePaths = [.. Directory.GetFiles(entityPath, "*.cs", SearchOption.AllDirectories)];
 
+
+
             if (filePaths.Count != 0)
             {
                 filePaths = filePaths.Where(f => !(f.EndsWith(".g.cs")
@@ -107,8 +109,9 @@ public partial class EntityInfoManager(
             // 排序
             entityFiles = [.. entityFiles.OrderByDescending(e => e.Module).ThenBy(e => e.Name)];
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            Console.WriteLine(ex);
             return entityFiles;
         }
 
@@ -149,11 +152,15 @@ public partial class EntityInfoManager(
             apiPath = Path.Combine(servicePath, "Modules", moduleName, "Controllers");
         }
 
-        var apiFiles = Directory.GetFiles(apiPath, $"{entityName}Controller.cs", SearchOption.AllDirectories);
+        if (Directory.Exists(apiPath))
+        {
+            var apiFiles = Directory.GetFiles(apiPath, $"{entityName}Controller.cs", SearchOption.AllDirectories);
+            if (apiFiles.Count() > 0) { hasAPI = true; }
+        }
 
         if (File.Exists(dtoPath)) { hasDto = true; }
         if (File.Exists(managerPath)) { hasManager = true; }
-        if (apiFiles.Count() > 0) { hasAPI = true; }
+
 
         return (hasDto, hasManager, hasAPI);
     }
