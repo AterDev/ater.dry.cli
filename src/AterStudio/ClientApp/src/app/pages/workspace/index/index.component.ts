@@ -574,12 +574,14 @@ export class IndexComponent implements OnInit {
                 selected.forEach(e => e.hasDto = true);
               }
               if (type == CommandType.Manager) {
+                selected.forEach(e => e.hasDto = true);
                 selected.forEach(e => e.hasManager = true);
               }
               if (type == CommandType.API) {
+                selected.forEach(e => e.hasDto = true);
+                selected.forEach(e => e.hasManager = true);
                 selected.forEach(e => e.hasAPI = true);
               }
-
             } else {
               this.snb.open('生成失败');
             }
