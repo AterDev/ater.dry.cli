@@ -166,7 +166,7 @@ public class DtoCodeGenerate : GenerateBase
                         && !IgnoreTypes.Contains(p.Type)
                     || p.IsEnum
                     )
-                .Where(p => p.MaxLength is not (not null and >= 1000))
+                .Where(p => p.MaxLength is not (not null and >= 100))
                 .ToList();
         dto.Properties = properties.Copy() ?? [];
 

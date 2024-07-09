@@ -243,17 +243,16 @@ public class ManagerGenerate : GenerateBase
             if (name is not "User" and not "SystemUser")
             {
                 content += $$"""
-                        Command.Db.Entry(entity).Property("{{idName}}").CurrentValue = dto.{{name}}Id;
-                        // or entity.{{idName}} = dto.{{name}}Id;
+                        entity.{{idName}} = dto.{{name}}Id;
+                        // or Command.Db.Entry(entity).Property("{{idName}}").CurrentValue = dto.{{name}}Id;
 
                 """;
             }
             else
             {
                 content += $$"""
-                        Command.Db.Entry(entity).Property("{{idName}}").CurrentValue = _userContext.UserId;
-                        // or entity.{{idName}} = _userContext.UserId;
-
+                        entity.{{idName}} = _userContext.UserId;
+                        // or Command.Db.Entry(entity).Property("{{idName}}").CurrentValue = _userContext.UserId;
                 """;
             }
         });
