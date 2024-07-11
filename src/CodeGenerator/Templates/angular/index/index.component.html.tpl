@@ -24,13 +24,12 @@
 
 <div *ngIf="!isLoading" class="px-2">
   <!-- 无数据时显示 -->
-  <ng-container *ngIf="data && data.length<=0; else elseTemplate">
-    <h4>
+  @if(data && data.length<=0){
+      <h4>
       暂无数据！
     </h4>
-  </ng-container>
-  <ng-template #elseTemplate>
-    <table mat-table [dataSource]="dataSource" style="width: 100%;" #table="matTable">
+  }@else{
+    <table class="default" mat-table [dataSource]="dataSource" style="width: 100%;" #table="matTable">
 //[@ColumnsDef]
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef>操作</th>
@@ -59,18 +58,13 @@
         [length]="total" (page)="getList($event)" showFirstLastButtons>
       </mat-paginator>
     </div>
-  </ng-template>
+  }
 </div>
 
 <ng-template #myDialog>
   <h2 mat-dialog-title>标题</h2>
   <mat-dialog-content>
-    <form [formGroup]="mydialogForm">
-      <mat-form-field appearance="fill">
-        <mat-label>名称</mat-label>
-        <input matInput placeholder="名称" formControlName="name" required>
-      </mat-form-field>
-    </form>
+
   </mat-dialog-content>
   <mat-dialog-actions class="justify-content-end">
     <button mat-button mat-dialog-close>取消</button>
