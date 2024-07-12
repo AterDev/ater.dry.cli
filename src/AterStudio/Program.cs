@@ -26,10 +26,9 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ProjectContext>();
 
-var path = Path.Combine(AssemblyHelper.GetStudioPath(), "ater.dry.db");
+var path = Path.Combine(AssemblyHelper.GetStudioPath(), ContextBase.DbName);
 builder.Services.AddDbContext<CommandDbContext>(options =>
 {
-
     options.UseSqlite($"DataSource={path}", _ =>
     {
         _.MigrationsAssembly("AterStudio");

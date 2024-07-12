@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using Definition.Infrastructure.Helper;
+﻿using Definition.Infrastructure.Helper;
 
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -8,6 +7,9 @@ namespace Definition.EntityFramework.DBProvider;
 
 public class ContextBase : DbContext
 {
+    public const string DbName = "ater.dry.db";
+
+
     public DbSet<Project> Projects { get; set; }
 
     public DbSet<EntityInfo> EntityInfos { get; set; }
@@ -30,7 +32,7 @@ public class ContextBase : DbContext
     {
         if (!optionsBuilder.IsConfigured)
         {
-            var path = Path.Combine(AssemblyHelper.GetStudioPath(), "ater.dry.db");
+            var path = Path.Combine(AssemblyHelper.GetStudioPath(), DbName);
             optionsBuilder.UseSqlite($"DataSource={path}");
         }
         base.OnConfiguring(optionsBuilder);

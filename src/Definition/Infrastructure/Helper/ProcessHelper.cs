@@ -49,8 +49,6 @@ public static class ProcessHelper
         process.BeginErrorReadLine();
         process.WaitForExit();
 
-        Console.WriteLine("exit code:" + process.ExitCode);
-
         var errorOutput = outputErrorBuilder.ToString();
         output = outputBuilder.ToString();
         if (!string.IsNullOrWhiteSpace(errorOutput))

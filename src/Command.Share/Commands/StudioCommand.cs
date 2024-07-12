@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
+using Definition.EntityFramework.DBProvider;
 using Definition.Infrastructure;
 
 namespace Command.Share.Commands;
@@ -141,8 +142,8 @@ public class StudioCommand
             return;
         }
         var studioPath = AssemblyHelper.GetStudioPath();
-        var dbFile = Path.Combine(studioPath, "dry.db");
-        var tempDbFile = Path.Combine(Path.GetTempPath(), "dry.db");
+        var dbFile = Path.Combine(studioPath, ContextBase.DbName);
+        var tempDbFile = Path.Combine(Path.GetTempPath(), ContextBase.DbName);
 
         // 删除旧文件
         if (Directory.Exists(studioPath))
