@@ -145,12 +145,7 @@ export class DocsComponent implements OnInit {
     });
 
     // 生成请求表单
-    let defaultPath = `\\src\\app`;
-    if (this.projectState.project?.path?.endsWith(".sln")) {
-      defaultPath = this.config?.rootPath! + '\\' + (this.config?.webAppPath ?? 'src') + '\\WebApp' + defaultPath;
-    } else {
-      defaultPath = this.config?.rootPath! + defaultPath;
-    }
+    let defaultPath = this.config?.rootPath! + '\\src\\app';
 
     this.requestForm = new FormGroup({
       swagger: new FormControl<string | null>('./swagger.json', []),
@@ -228,6 +223,7 @@ export class DocsComponent implements OnInit {
             this.snb.open('添加成功');
             this.getDocs();
             this.addForm.reset();
+            this.addForm.get('path')?.setValue('http://localhost:5002/swagger/name/swagger.json');
             this.dialogRef.close();
           }
         });
