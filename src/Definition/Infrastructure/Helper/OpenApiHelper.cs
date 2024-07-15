@@ -162,6 +162,21 @@ public class OpenApiHelper
 
             apiGroups.Add(group);
         });
+        // tag不在OpenApiTags中的api infos
+        var tags = OpenApiTags.Select(t => t.Name).ToList();
+        var noTagApisInfo = apiInfos.Where(a => !tags.Contains(a.Tag)).ToList();
+
+        if (noTagApisInfo.Any())
+        {
+            var group = new RestApiGroup
+            {
+                Name = "No Tags",
+                Description = "无tag接口",
+                ApiInfos = noTagApisInfo
+            };
+            apiGroups.Add(group);
+        }
+
         return apiGroups;
     }
 
