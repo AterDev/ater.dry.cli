@@ -13,33 +13,35 @@ import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import { MarkdownModule, MarkedOptions, ClipboardOptions, ClipboardButtonComponent, MarkedRenderer, CLIPBOARD_OPTIONS, MARKED_OPTIONS } from 'ngx-markdown';
 import { ToolsModule } from './pages/tools/tools.module';
 
-@NgModule({ declarations: [
-        AppComponent
-    ],
-    bootstrap: [AppComponent], imports: [BrowserModule,
-        BrowserAnimationsModule,
-        AppRoutingModule,
-        ComponentsModule,
-        HomeModule,
-        WorkspaceModule,
-        ToolsModule,
-        MarkdownModule.forRoot({
-            markedOptions: {
-                provide: MARKED_OPTIONS,
-                useFactory: markedOptionsFactory
-            },
-            clipboardOptions: {
-                provide: CLIPBOARD_OPTIONS,
-                useValue: {
-                    buttonComponent: ClipboardButtonComponent,
-                },
-            },
-        }),
-        MonacoEditorModule.forRoot()], providers: [
-        { provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: { duration: 2500 } },
-        { provide: HTTP_INTERCEPTORS, useClass: CustomerHttpInterceptor, multi: true },
-        provideHttpClient(withInterceptorsFromDi()),
-    ] })
+@NgModule({
+  declarations: [
+    AppComponent
+  ],
+  bootstrap: [AppComponent], imports: [BrowserModule,
+    BrowserAnimationsModule,
+    AppRoutingModule,
+    ComponentsModule,
+    HomeModule,
+    WorkspaceModule,
+    ToolsModule,
+    MarkdownModule.forRoot({
+      markedOptions: {
+        provide: MARKED_OPTIONS,
+        useFactory: markedOptionsFactory
+      },
+      clipboardOptions: {
+        provide: CLIPBOARD_OPTIONS,
+        useValue: {
+          buttonComponent: ClipboardButtonComponent,
+        },
+      },
+    }),
+    MonacoEditorModule.forRoot()], providers: [
+      { provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: { duration: 2500 } },
+      { provide: HTTP_INTERCEPTORS, useClass: CustomerHttpInterceptor, multi: true },
+      provideHttpClient(withInterceptorsFromDi()),
+    ]
+})
 export class AppModule { }
 
 export function markedOptionsFactory(): MarkedOptions {

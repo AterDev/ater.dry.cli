@@ -465,6 +465,11 @@ public class EntityParseHelper
     /// </summary>
     protected void ParsePropertyAttributes(PropertyDeclarationSyntax syntax, PropertyInfo propertyInfo)
     {
+        if (propertyInfo.Type.ToLower() == "string")
+        {
+            propertyInfo.MaxLength = 200;
+        }
+
         List<AttributeSyntax> attributes = syntax.DescendantNodes().OfType<AttributeSyntax>().ToList();
         if (attributes != null && attributes.Count > 0)
         {

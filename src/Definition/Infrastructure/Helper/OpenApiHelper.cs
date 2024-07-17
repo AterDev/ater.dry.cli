@@ -171,12 +171,11 @@ public class OpenApiHelper
             var group = new RestApiGroup
             {
                 Name = "No Tags",
-                Description = "无tag接口",
+                Description = "无tag分组接口",
                 ApiInfos = noTagApisInfo
             };
             apiGroups.Add(group);
         }
-
         return apiGroups;
     }
 
