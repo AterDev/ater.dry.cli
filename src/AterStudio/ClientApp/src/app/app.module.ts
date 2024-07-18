@@ -12,6 +12,7 @@ import { WorkspaceModule } from './pages/workspace/workspace.module';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import { MarkdownModule, MarkedOptions, ClipboardOptions, ClipboardButtonComponent, MarkedRenderer, CLIPBOARD_OPTIONS, MARKED_OPTIONS } from 'ngx-markdown';
 import { ToolsModule } from './pages/tools/tools.module';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { ToolsModule } from './pages/tools/tools.module';
     MonacoEditorModule.forRoot()], providers: [
       { provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: { duration: 2500 } },
       { provide: HTTP_INTERCEPTORS, useClass: CustomerHttpInterceptor, multi: true },
+      { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } },
       provideHttpClient(withInterceptorsFromDi()),
     ]
 })

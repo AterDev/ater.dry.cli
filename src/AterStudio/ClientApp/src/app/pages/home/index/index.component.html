@@ -10,7 +10,7 @@
     <div class="d-flex flex-grow-1 "></div>
     <div>
       <button mat-icon-button matTooltip="AI配置" (click)="openOpenAI()">
-        <mat-icon color="primary">smart_toy</mat-icon>
+        <mat-icon class="text-primary">smart_toy</mat-icon>
       </button>
     </div>
   </div>
@@ -48,7 +48,7 @@
       </mat-card-content>
       <mat-card-actions class="justify-content-end" style="height: 32px;">
         <button mat-icon-button matTooltip="删除项目" class="delete-action" (click)="deleteConfirm(item.id)">
-          <mat-icon color="warn" fontSet="">delete</mat-icon>
+          <mat-icon color="warn" >delete</mat-icon>
         </button>
         <button mat-button (click)="selectProject(item.id)" color="primary">进入工作台</button>
       </mat-card-actions>

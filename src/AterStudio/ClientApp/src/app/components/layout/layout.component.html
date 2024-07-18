@@ -28,8 +28,8 @@
         </mat-menu>
         }
 
-        <button mat-icon-button color="primary" matTooltip="ChatBot" (click)="openChat()">
-          <mat-icon fontSet="">assistant</mat-icon>
+        <button mat-icon-button matTooltip="ChatBot" (click)="openChat()">
+          <mat-icon class="text-primary">assistant</mat-icon>
         </button>
         <a href="https://docs.dusi.dev" target="_blank" style="color: inherit;">
           <button mat-icon-button matTooltip="文档">
@@ -37,7 +37,7 @@
           </button>
         </a>
         <button mat-icon-button matTooltip="Studio版本" [matTooltip]="version!">
-          <mat-icon fontSet="">info</mat-icon>
+          <mat-icon>info</mat-icon>
         </button>
       </div>
       <!-- <span *ngIf="!isLogin">
