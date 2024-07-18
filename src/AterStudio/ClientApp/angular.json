@@ -7,7 +7,7 @@
       "projectType": "application",
       "schematics": {
         "@schematics/angular:application": {
-          "strict": true
+          "style": "scss"
         }
       },
       "root": "",
@@ -23,9 +23,6 @@
             "polyfills": [
               "zone.js"
             ],
-            "optimization": {
-              "fonts": false
-            },
             "tsConfig": "tsconfig.app.json",
             "allowedCommonJsDependencies": [],
             "assets": [

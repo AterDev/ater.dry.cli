@@ -1,54 +1,43 @@
+@use 'sass:map';
 @use '@angular/material' as mat;
 @import './vars.scss';
 
 @include mat.core();
 
-$light-primary: mat.define-palette(mat.$light_blue-palette, 600, 700, 900);
-$light-accent: mat.define-palette(mat.$orange-palette, 700, 800, 900);
-$light-warn: mat.define-palette(mat.$red-palette);
-
-$dark-primary: mat.define-palette(mat.$light_blue-palette, 400, 500, 600);
-$dark-accent: mat.define-palette(mat.$orange-palette, 300, 400, 500);
-$dark-warn: mat.define-palette(mat.$red-palette);
-
-$dark-theme: mat.define-dark-theme((color: (primary: $dark-primary,
-        accent: $dark-accent,
-        warn: $dark-warn,
+$dark-theme: mat.define-theme((color: (theme-type: dark,
+        primary: mat.$blue-palette,
+        tertiary: mat.$yellow-palette,
       ),
-      typography: mat.define-typography-config(),
-      density: 0,
+      typography: (use-system-variables: false),
     ));
 
-$light-theme: mat.define-light-theme((color: (primary: $light-primary,
-        accent: $light-accent,
-        warn: $light-warn,
+$light-theme: mat.define-theme((color: (theme-type: light,
+        primary: mat.$blue-palette,
+        tertiary: mat.$yellow-palette,
       ),
-      typography: mat.define-typography-config(),
-      density: 0,
+      typography: (use-system-variables: false),
     ));
 
 html {
   @include mat.all-component-themes($dark-theme);
 
+  .active {
+    background-color: mat.get-theme-color($dark-theme, primary, 60) !important;
+  }
+
+  a {
+    color: mat.get-theme-color($dark-theme, primary, 30);
+  }
+
   @media (prefers-color-scheme: light) {
     @include mat.all-component-colors($light-theme);
 
     .active {
-      background-color: mat.get-theme-color($light-theme, primary, 100) !important;
+      background-color: mat.get-theme-color($light-theme, primary, 10) !important;
     }
 
     a {
-      color: mat.get-theme-color($light-theme, primary, 900);
-    }
-  }
-
-  @media (prefers-color-scheme: dark) {
-    .active {
-      background-color: mat.get-theme-color($dark-theme, primary, 600) !important;
-    }
-
-    a {
-      color: mat.get-theme-color($dark-theme, primary, 300);
+      color: mat.get-theme-color($light-theme, primary, 90);
     }
   }
 }
