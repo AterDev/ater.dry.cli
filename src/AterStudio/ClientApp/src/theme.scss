@@ -23,10 +23,13 @@ html {
 
   .text-primary {
     @include mat.icon-color($dark-theme, $color-variant: primary);
+    @include mat.chips-color($dark-theme, $color-variant: primary);
+    @include mat.button-color($dark-theme, $color-variant: primary);
   }
 
   .text-accent {
     @include mat.icon-color($dark-theme, $color-variant: tertiary);
+    @include mat.button-color($dark-theme, $color-variant: tertiary);
   }
 
   .text-danger {
@@ -46,6 +49,8 @@ html {
 
     .text-primary {
       @include mat.icon-color($light-theme, $color-variant: primary);
+      @include mat.chips-color($light-theme, $color-variant: primary);
+      @include mat.button-color($light-theme, $color-variant: primary);
     }
 
     .text-accent {

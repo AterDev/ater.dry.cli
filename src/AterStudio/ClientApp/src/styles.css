@@ -37,6 +37,10 @@ img {
   cursor: pointer;
 }
 
+.strong {
+  font-weight: bold;
+}
+
 mat-nav-list .mat-icon {
   margin-right: 4px;
   vertical-align: middle;

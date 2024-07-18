@@ -13,29 +13,31 @@
       </mat-select>
     </mat-form-field>
     <span>
-      <button mat-icon-button matTooltip="添加Swagger文档" color="primary" (click)="openAddDocDialog()">
+      <button mat-icon-button matTooltip="添加Swagger文档" class="text-primary" (click)="openAddDocDialog()">
         <mat-icon>note_add</mat-icon>
       </button>
-      <button *ngIf="docs.length>0" mat-icon-button matTooltip="编辑文档" color="primary" (click)="openEditDocDialog()">
+      <button *ngIf="docs.length>0" mat-icon-button matTooltip="编辑文档" class="text-primary"
+        (click)="openEditDocDialog()">
         <mat-icon>edit</mat-icon>
       </button>
-      <button *ngIf="docs.length > 0" mat-icon-button matTooltip="删除文档" color="warn" (click)="delete()">
-        <mat-icon>delete</mat-icon>
+      <button *ngIf="docs.length > 0" mat-icon-button matTooltip="删除文档" (click)="delete()">
+        <mat-icon class="text-danger">delete</mat-icon>
       </button>
     </span>
     <div class="d-flex flex-grow-1"></div>
-    <button mat-icon-button matTooltip="导出markdown" color="primary" [disabled]="isSync" (click)="export()">
+    <button mat-icon-button matTooltip="导出markdown" class="text-primary" [disabled]="isSync" (click)="export()">
       <mat-icon>download_file</mat-icon>
     </button>
-    <button mat-icon-button matTooltip="生成客户端请求" color="primary" [disabled]="isLoading"
+    <button mat-icon-button matTooltip="生成客户端请求" class="text-primary" [disabled]="isLoading"
       (click)="openClientRequestDialog()">
       <mat-icon>code</mat-icon>
     </button>
-    <button mat-icon-button matTooltip="生成前端请求服务" color="primary" [disabled]="isLoading" (click)="openRequestDialog()">
+    <button mat-icon-button matTooltip="生成前端请求服务" class="text-primary" [disabled]="isLoading"
+      (click)="openRequestDialog()">
       <mat-icon>javascript</mat-icon>
     </button>
     <!-- 手动更新 -->
-    <button mat-icon-button matTooltip="刷新文档" color="primary" [disabled]="isLoading" (click)="refresh()">
+    <button mat-icon-button matTooltip="刷新文档" class="text-accent" [disabled]="isLoading" (click)="refresh()">
       <mat-icon>refresh</mat-icon>
     </button>
   </mat-toolbar>
@@ -90,7 +92,7 @@
             <!-- query -->
             <div *ngIf="currentApi.queryParameters!.length > 0">
               <mat-chip-set>
-                <mat-chip color="primary">Query</mat-chip>
+                <mat-chip class="text-primary">Query</mat-chip>
               </mat-chip-set>
               <table mat-table #table [dataSource]="currentApi.queryParameters!" class="my-2">
                 <ng-container matColumnDef="name">
@@ -109,7 +111,6 @@
                   <th mat-header-cell *matHeaderCellDef> 说明 </th>
                   <td mat-cell *matCellDef="let row"> {{row.commentSummary}} </td>
                 </ng-container>
-
                 <tr mat-header-row *matHeaderRowDef="tableColumns"></tr>
                 <tr mat-row *matRowDef="let row; columns: tableColumns"></tr>
               </table>
@@ -117,8 +118,8 @@
             <!-- body -->
             <div *ngIf="currentApi.requestInfo">
               <mat-chip-set>
-                <mat-chip color="primary">application/json</mat-chip>
-                <mat-chip color="primary" selected matTooltip="请求类型">
+                <mat-chip class="text-primary" selected>application/json</mat-chip>
+                <mat-chip class="text-primary" selected matTooltip="请求类型">
                   <strong>
                     {{currentApi.requestInfo.name}}
                   </strong>
@@ -248,12 +249,14 @@
                 </span>
               </div>
               <div class="d-flex align-items-center gap-1 my-2">
-                <mat-select class="d-flex select" [(ngModel)]="uiType" matTooltip="选择UI框架">
-                  <mat-option *ngFor="let item of UIType| toKeyValue" [value]="item.value">
-                    {{item.key}}
-                  </mat-option>
-                </mat-select>
-                <button mat-flat-button [matMenuTriggerFor]="menu" color="primary">生成</button>
+                <mat-form-field subscriptSizing="dynamic">
+                  <mat-select class="d-flex" [(ngModel)]="uiType" matTooltip="选择UI框架">
+                    <mat-option *ngFor="let item of UIType| toKeyValue" [value]="item.value">
+                      {{item.key}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <button mat-flat-button [matMenuTriggerFor]="menu">生成</button>
                 <mat-menu #menu="matMenu">
                   <button mat-menu-item (click)="generateUIComponent(ComponentType.Form)">提交表单</button>
                   <button mat-menu-item (click)="generateUIComponent(ComponentType.Table)">展示表格</button>
