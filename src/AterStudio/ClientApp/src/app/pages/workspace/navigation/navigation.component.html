@@ -14,8 +14,8 @@
       <mat-expansion-panel hideToggle [expanded]="expanded">
         <mat-expansion-panel-header>
           <mat-panel-title>
-            <div class="nav-title">
-              <mat-icon >grid_view</mat-icon>
+            <div class="nav-title" [matTooltip]="opened?'': '工作台'" matTooltipPosition="right">
+              <mat-icon>grid_view</mat-icon>
               <span *ngIf="opened">工作台</span>
             </div>
           </mat-panel-title>
@@ -23,7 +23,7 @@
         <mat-nav-list>
           <a mat-list-item [matTooltip]="opened?'': '实体管理'" matTooltipPosition="right" routerLink="/workspace/index"
             routerLinkActive="active">
-            <mat-icon color="link" >integration_instructions</mat-icon>
+            <mat-icon color="link">integration_instructions</mat-icon>
             <span *ngIf="opened">实体管理</span>
           </a>
         </mat-nav-list>
@@ -64,8 +64,8 @@
       <mat-expansion-panel hideToggle [expanded]="expanded">
         <mat-expansion-panel-header>
           <mat-panel-title>
-            <div class="nav-title">
-              <mat-icon >home_repair_service</mat-icon>
+            <div class="nav-title" [matTooltip]="opened?'': '实用工具'" matTooltipPosition="right">
+              <mat-icon>home_repair_service</mat-icon>
               <span *ngIf="opened">实用工具</span>
             </div>
           </mat-panel-title>
@@ -73,7 +73,7 @@
         <mat-nav-list>
           <a mat-list-item [matTooltip]="opened?'': 'JsonToClass'" matTooltipPosition="right"
             routerLink="/workspace/jsonToType" routerLinkActive="active">
-            <mat-icon color="link" >integration_instructions</mat-icon>
+            <mat-icon color="link">integration_instructions</mat-icon>
             <span *ngIf="opened">JsonToType</span>
           </a>
         </mat-nav-list>

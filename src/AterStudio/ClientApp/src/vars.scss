@@ -1,3 +1,22 @@
+@use '@angular/material' as mat;
+
+$dark-theme: mat.define-theme((color: (theme-type: dark,
+        primary: mat.$violet-palette,
+        tertiary: mat.$orange-palette,
+      ),
+      typography: (use-system-variables: false),
+    ));
+
+$light-theme: mat.define-theme((color: (theme-type: light,
+        primary: mat.$violet-palette,
+        tertiary: mat.$orange-palette,
+      ),
+      typography: (use-system-variables: false),
+    ));
+
+$dark-primary-color: mat.get-theme-color($dark-theme, primary, 60);
+$light-primary-color: mat.get-theme-color($light-theme, primary, 40);
+
 $dark-primary-text: rgba(black, 0.87);
 $dark-secondary-text: rgba(black, 0.54);
 $dark-disabled-text: rgba(black, 0.38);
@@ -9,8 +28,3 @@ $light-disabled-text: rgba(white, 0.5);
 $light-dividers: rgba(white, 0.12);
 $light-focused: rgba(white, 0.12);
 $dark-color: #212121;
-
-
-// 字体颜色
-$dark-primary-color: #5ab8f7;
-$light-primary-color: #2b66d3;

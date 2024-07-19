@@ -34,13 +34,10 @@ export class Json2TypeComponent {
       return;
     }
 
-
     this.service.convertToClass({
       content: this.jsonContent
-    })
-      .subscribe(res => {
-        this.classCode = res.join('\n');
-      });
+    }).subscribe(res => {
+      this.classCode = res.join('\n');
+    });
   }
-
 }

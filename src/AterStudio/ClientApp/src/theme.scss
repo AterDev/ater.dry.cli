@@ -4,20 +4,6 @@
 
 @include mat.core();
 
-$dark-theme: mat.define-theme((color: (theme-type: dark,
-        primary: mat.$violet-palette,
-        tertiary: mat.$orange-palette,
-      ),
-      typography: (use-system-variables: false),
-    ));
-
-$light-theme: mat.define-theme((color: (theme-type: light,
-        primary: mat.$violet-palette,
-        tertiary: mat.$orange-palette,
-      ),
-      typography: (use-system-variables: false),
-    ));
-
 html {
   @include mat.all-component-themes($dark-theme);
 
