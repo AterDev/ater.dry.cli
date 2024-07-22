@@ -142,13 +142,14 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
                 _ => ""
             };
 
+            var path = currentTag.Name?.ToHyphen() ?? "";
             switch (LibType)
             {
                 // 同时生成基类和继承类，继承类可自定义
                 case RequestLibType.NgHttp:
                 {
                     string baseFileName = currentTag.Name?.ToHyphen() + "-base.service.ts";
-                    var path = currentTag.Name?.ToHyphen() ?? "";
+
                     GenFileInfo file = new(baseFileName, content)
                     {
                         Path = path
@@ -168,7 +169,10 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
                 case RequestLibType.Axios:
                 {
                     string fileName = currentTag.Name?.ToHyphen() + ".service.ts";
-                    GenFileInfo file = new(fileName, content);
+                    GenFileInfo file = new(fileName, content)
+                    {
+                        Path = path,
+                    };
                     files.Add(file);
                     break;
                 }

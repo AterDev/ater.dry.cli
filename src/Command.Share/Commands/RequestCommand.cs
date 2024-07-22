@@ -35,11 +35,6 @@ public class RequestCommand : CommandBase
         {
             DocName = string.Empty;
         }
-        if (DocName == "v1")
-        {
-            DocName = string.Empty;
-        }
-
         Instructions.Add($"  🔹 generate ts interfaces.");
         Instructions.Add($"  🔹 generate request services.");
     }
@@ -102,6 +97,7 @@ public class RequestCommand : CommandBase
         List<GenFileInfo> models = ngGen.GetTSInterfaces();
         foreach (GenFileInfo model in models)
         {
+
             string dir = Path.Combine(OutputPath, "services", DocName, model.Path, "models");
             await GenerateFileAsync(dir, model.Name, model.Content, true);
         }
