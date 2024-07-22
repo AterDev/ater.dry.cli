@@ -42,6 +42,7 @@ public class ContextBase : DbContext
     {
 
         OnSQLiteModelCreating(modelBuilder);
+        OnModelExtendCreating(modelBuilder);
         base.OnModelCreating(modelBuilder);
     }
 

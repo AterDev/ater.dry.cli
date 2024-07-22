@@ -104,8 +104,9 @@ public partial class ManagerBase<TEntity, TUpdate, TFilter, TItem>
     {
         Command.EnableSoftDelete = softDelete;
         TEntity? res = Command.Remove(entity);
-        await AutoSaveAsync();
+        Command.Db.Entry(entity).Property(e => e.IsDeleted).IsModified = true;
 
+        await AutoSaveAsync();
         if (AutoLogType is LogActionType.Delete or LogActionType.All)
         {
         }
