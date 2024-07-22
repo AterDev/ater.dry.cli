@@ -52,7 +52,12 @@ tr.example-detail-row {
     display: flex;
     flex-direction: column;
     max-width: 260px;
-    height: calc(100vh - 176px);
+    height: calc(100vh - 188px);
+}
+
+.api-content {
+    height: calc(100vh - 188px);
+    overflow-y: auto;
 }
 
 .top-search {

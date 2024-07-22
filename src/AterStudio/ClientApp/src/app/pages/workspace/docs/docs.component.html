@@ -75,7 +75,7 @@
           </mat-accordion>
         </div>
         <!-- 右边内容 -->
-        <div class="col p-2" *ngIf="currentApi">
+        <div class="col api-content" *ngIf="currentApi">
           <div class="section-block">
             <legend>{{currentApi.summary}}</legend>
             <div class="api-summary">
@@ -239,7 +239,7 @@
           </div>
         </div>
         <!-- 右边内容 -->
-        <div class="col p-2" *ngIf="currentModel">
+        <div class="col api-content" *ngIf="currentModel">
           <div class="d-flex gap-1 ">
             <div class="col-auto">
               <legend>{{currentModel.name}} {{currentModel.comment}}</legend>

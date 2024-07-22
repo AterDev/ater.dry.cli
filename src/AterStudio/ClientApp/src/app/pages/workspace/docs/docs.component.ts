@@ -456,17 +456,16 @@ export class DocsComponent implements OnInit {
     switch (type) {
       case OperationType.Get:
         return '#318deb';
-
       case OperationType.Post:
         return '#14cc78';
-
       case OperationType.Put:
         return '#fca130';
-
+      case OperationType.Patch:
+        return '#fca130';
       case OperationType.Delete:
         return '#f93e3e';
       default:
-        return '#222222';
+        return '#888888';
     }
   }
 
