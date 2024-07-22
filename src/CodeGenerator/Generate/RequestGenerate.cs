@@ -513,7 +513,10 @@ export class {{serviceFile.Name}}Service extends {{serviceFile.Name}}BaseService
         string Path = function.Path;
         if (Server != null)
         {
-            Path = Server + Path;
+            if (!Server.StartsWith("http://") && Server.StartsWith("https://"))
+            {
+                Path = Server + Path;
+            }
         }
 
         // 函数名处理，去除tag前缀，然后格式化

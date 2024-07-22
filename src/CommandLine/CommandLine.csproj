@@ -19,8 +19,9 @@
     <RepositoryUrl>https://github.com/AterDev/cli.git</RepositoryUrl>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <PackageReleaseNotes>
-            - 使用sqlite，仅支持64位系统。
-            - 对模块进行了更好的支持。
+            - 兼容OpenAPI的Server路径
+            - 页面改进
+            - 其他内容完善
         </PackageReleaseNotes>
     <PackageIcon>logo.jpg</PackageIcon>
     <ImplicitUsings>enable</ImplicitUsings>
