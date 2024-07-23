@@ -1,5 +1,3 @@
-using Definition.EntityFramework.DBProvider;
-
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Interfaces;
@@ -25,26 +23,12 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
     {
         try
         {
-            var db = new ContextBase();
-            string? content = null;
-            var data = db.TemplateFiles?.ToList();
             switch (libType)
             {
                 case RequestLibType.NgHttp:
-                    content = data?
-                        .Where(t => t.Name == "angular.base.service.tpl")
-                        .Where(t => t.ProjectId == Const.PROJECT_ID)
-                        .Select(t => t.Content)
-                        .FirstOrDefault();
-                    return content ?? GetTplContent("angular.base.service.tpl");
-
+                    return GetTplContent("angular.base.service.tpl");
                 case RequestLibType.Axios:
-                    content = data?
-                        .Where(t => t.Name == "RequestService.axios.service.tpl")
-                        .Where(t => t.ProjectId == Const.PROJECT_ID)
-                        .Select(t => t.Content)
-                        .FirstOrDefault();
-                    return content ?? GetTplContent("RequestService.axios.service.tpl");
+                    return GetTplContent("RequestService.axios.service.tpl");
                 default:
                     break;
             }

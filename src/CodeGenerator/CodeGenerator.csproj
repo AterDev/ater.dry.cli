@@ -1,17 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-		<Trimming>full</Trimming>
-		<RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
-	</PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <Trimming>full</Trimming>
+        <RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<EmbeddedResource Include="Templates\**\*">
-		</EmbeddedResource>
-	</ItemGroup>
-	<ItemGroup>
-	  <ProjectReference Include="..\Definition\Definition.csproj" />
-	</ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="Templates\**\*">
+        </EmbeddedResource>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Definition\Definition.csproj" />
+    </ItemGroup>
 </Project>
