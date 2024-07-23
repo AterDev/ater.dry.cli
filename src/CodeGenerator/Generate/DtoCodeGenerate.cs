@@ -91,7 +91,7 @@ public class DtoCodeGenerate : GenerateBase
             p => p.Name != "Content"
                 && p.Name != "UpdatedTime"
                 && p.Name != "CreatedTime"
-                && p.MaxLength < 1000
+                && p.MaxLength is not (not null and >= 100)
                 && !p.Name.EndsWith("Id") && p.Name != "Id"
                 && !(p.IsList && p.IsNavigation)
             )
@@ -122,7 +122,7 @@ public class DtoCodeGenerate : GenerateBase
 
         dto.Properties = dto.Properties?
             .Where(p => !p.IsList
-                && p.MaxLength < 1000
+                && (p.MaxLength is not (not null and >= 100))
                 && (!p.Name.EndsWith("Id") || p.Name.Equals("Id"))
                 && !p.IsNavigation).ToList();
 
