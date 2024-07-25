@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Remove="Templates\axios.service.tpl" />
+        <None Remove="Templates\base.service.tpl" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="Templates\axios.service.tpl" />
+        <EmbeddedResource Include="Templates\base.service.tpl" />
+    </ItemGroup>
+
+    <ItemGroup>
+
+        <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.15" />
+    </ItemGroup>
+
+</Project>
