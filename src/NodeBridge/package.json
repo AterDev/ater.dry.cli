@@ -10,6 +10,6 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
-    "node-api-dotnet": "^0.7.33"
+    "node-api-dotnet": "^0.7.34"
   }
 }

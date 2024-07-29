@@ -26,9 +26,9 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
             switch (libType)
             {
                 case RequestLibType.NgHttp:
-                    return GetTplContent("angular.base.service.tpl");
+                    return GetTplContent("base.service.tpl");
                 case RequestLibType.Axios:
-                    return GetTplContent("RequestService.axios.service.tpl");
+                    return GetTplContent("axios.service.tpl");
                 default:
                     break;
             }
@@ -185,7 +185,7 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
 
     public static string GetEnumPipeContent(IDictionary<string, OpenApiSchema> schemas)
     {
-        string tplContent = GetTplContent("angular.enum.pipe.ts");
+        string tplContent = GetTplContent("enum.pipe.ts");
         string codeBlocks = "";
         foreach (KeyValuePair<string, OpenApiSchema> item in schemas)
         {
@@ -353,7 +353,7 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
 
     public string ToAxiosRequestService(RequestServiceFile serviceFile)
     {
-        string tplContent = GetTplContent("RequestService.service.ts");
+        string tplContent = GetTplContent("axios.service.ts");
         string functionString = "";
         List<RequestServiceFunction>? functions = serviceFile.Functions;
         // import引用的models

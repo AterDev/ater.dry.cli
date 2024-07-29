@@ -34,7 +34,7 @@ public class Runner
         }
     }
 
-    public async Task ParseOpenApi()
+    public async Task ParseOpenApiAsync()
     {
         string openApiContent = "";
         if (DocUrl.StartsWith("http://") || DocUrl.StartsWith("https://"))

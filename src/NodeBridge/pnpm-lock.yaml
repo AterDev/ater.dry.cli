@@ -9,14 +9,14 @@ importers:
   .:
     dependencies:
       node-api-dotnet:
-        specifier: ^0.7.33
-        version: 0.7.33
+        specifier: ^0.7.34
+        version: 0.7.34
 
 packages:
 
-  node-api-dotnet@0.7.33:
-    resolution: {integrity: sha512-So9tqHJfAVo5G+yUgkGPY2LB+Rxe59f/PweUctuyiQWKAD2wQcI3tttzk8gFyidOc/OMSTs+2jkotl3Zrmi7cQ==}
+  node-api-dotnet@0.7.34:
+    resolution: {integrity: sha512-L/BA4CPVtUj2Z0+st7zGUL8x50gk5+40U8BC3c6DFwxQdqAWAM9q0nCeqFlfb2AX7UYN6wzsgwf8f6WcVzma1Q==}
 
 snapshots:
 
-  node-api-dotnet@0.7.33: {}
+  node-api-dotnet@0.7.34: {}
