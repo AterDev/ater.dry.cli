@@ -57,18 +57,26 @@ public class Runner
             .Replace("»", "");
         ApiDocument = new OpenApiStringReader()
             .Read(openApiContent, out _);
+
+        await GenerateCommonFilesAsync();
+        await GenerateRequestServicesAsync();
+        Console.WriteLine("😀 Request services generate completed!" + Environment.NewLine);
     }
 
-    public string GetBaseServiceContent(RequestLibType libType)
+    public async Task GenerateCommonFilesAsync()
     {
-        return RequestGenerate.GetBaseService(LibType);
+        string content = RequestGenerate.GetBaseService(LibType);
+        string dir = Path.Combine(OutputPath, "services", DocName);
+        await GenerateFileAsync(dir, "base.service.ts", content, false);
 
-    }
-
-    public string GetPipeContent()
-    {
-        var schemas = ApiDocument!.Components.Schemas;
-        return RequestGenerate.GetEnumPipeContent(schemas);
+        // 枚举pipe
+        if (LibType == RequestLibType.NgHttp)
+        {
+            var schemas = ApiDocument!.Components.Schemas;
+            string pipeContent = RequestGenerate.GetEnumPipeContent(schemas);
+            dir = Path.Combine(OutputPath, "pipe", DocName);
+            await GenerateFileAsync(dir, "enum-text.pipe.ts", pipeContent, true);
+        }
     }
 
     public async Task GenerateRequestServicesAsync()

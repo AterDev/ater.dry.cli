@@ -1,15 +1,26 @@
 {
   "name": "ater.dry",
-  "version": "1.0.0",
+  "version": "0.1.0",
+  "bin": {
+    "drygen": "./index.js"
+  },
   "description": "generate request service from openapi ",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "NilTor",
-  "license": "ISC",
+  "license": "MIT",
+  "keywords": [
+    "swagger",
+    "openapi",
+    "code generate",
+    "typescript",
+    "service"
+  ],
   "type": "module",
   "dependencies": {
+    "commander": "^12.1.0",
     "node-api-dotnet": "^0.7.34"
   }
 }
