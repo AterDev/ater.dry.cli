@@ -1,0 +1,6 @@
+/bin/*.d.ts
+/bin/*.pdb
+/bin/*.xml
+/obj
+*.csproj
+*.sln

@@ -1,6 +1,6 @@
 # 前端请求服务代码生成器
 
-本工具是通过后端提供的`openapi`文档，通常是通过 `swagger` 生成的`json`文档，生成前端请求服务代码。
+本工具是通过后端提供的`OpenApi`文档，通常是通过 `swagger` 生成的`json`文档，生成前端请求服务代码。
 
 目前支持使用`axios`与`angular HttpClient`的请求类库生成的内容，其中包含了请求依赖的所有的`typescript`类型文件。
 
@@ -20,4 +20,10 @@ npm install -g ater.dry
 drygen service <url> -o ./output -t axios
 ```
 
-其中url是你的`openapi`文档的地址，`-o`是输出的目录，`-t`是生成的请求类库，目前支持`axios`与`ngHttp`。
+其中
+
+- url是`openapi`文档的地址
+- `-o`是输出的目录
+- `-t`是生成的请求类库，目前支持`axios`与`ngHttp`。
+
+

@@ -1,14 +1,20 @@
 {
   "name": "ater.dry",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "bin": {
     "drygen": "./index.js"
   },
-  "description": "generate request service from openapi ",
+  "description": "Generate request service from OpenApi 3.0",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AterDev/ater.dry.cli"
+  },
+  "homepage": "https://github.com/AterDev/ater.dry.cli",
+  "readme": "README.md",
   "author": "NilTor",
   "license": "MIT",
   "keywords": [
