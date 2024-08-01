@@ -161,8 +161,6 @@ public class StudioCommand
             ZipFile.ExtractToDirectory(templatePath, studioPath, true);
         }
         ZipFile.ExtractToDirectory(zipPath, studioPath, true);
-        // create version file
-        File.Create(Path.Combine(studioPath, $"{version}.txt")).Close();
 
         if (File.Exists(tempDbFile))
         {
@@ -188,9 +186,18 @@ public class StudioCommand
             {
                 Directory.Delete(targetDir, true);
             }
-            Directory.CreateSymbolicLink(targetDir, runtimesDir);
-
+            try
+            {
+                Directory.CreateSymbolicLink(targetDir, runtimesDir);
+            }
+            catch (Exception)
+            {
+                IOHelper.CopyDirectory(runtimesDir, targetDir);
+            }
         }
+
+        // create version file
+        File.Create(Path.Combine(studioPath, $"{version}.txt")).Close();
 
         UpdateTemplate();
         Console.WriteLine("✅ update complete!");

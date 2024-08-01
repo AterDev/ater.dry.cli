@@ -50,8 +50,10 @@ public class IOHelper
         DirectoryInfo[] dirs = dir.GetDirectories();
 
         // Create the destination directory
-        Directory.CreateDirectory(destinationDir);
-
+        if (!Directory.Exists(destinationDir))
+        {
+            Directory.CreateDirectory(destinationDir);
+        }
         // Get the files in the source directory and copy to the destination directory
         foreach (FileInfo file in dir.GetFiles())
         {
