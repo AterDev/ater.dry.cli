@@ -18,7 +18,7 @@ public class #@EntityName##@APISuffix#(
     [HttpPost("filter")]
     public async Task<ActionResult<PageList<#@EntityName#ItemDto>>> FilterAsync(#@EntityName#FilterDto filter)
     {
-        return await manager.FilterAsync(filter);
+        return await _manager.FilterAsync(filter);
     }
 
     /// <summary>
@@ -52,7 +52,7 @@ public class #@EntityName##@APISuffix#(
     [HttpGet("{id}")]
     public async Task<ActionResult<#@EntityName#?>> GetDetailAsync([FromRoute] #@IdType# id)
     {
-        var res = await manager.FindAsync(id);
+        var res = await _manager.FindAsync(id);
         return (res == null) ? NotFound() : res;
     }
 
@@ -66,9 +66,9 @@ public class #@EntityName##@APISuffix#(
     public async Task<ActionResult<#@EntityName#?>> DeleteAsync([FromRoute] #@IdType# id)
     {
         // 注意删除权限
-        var entity = await manager.GetCurrentAsync(id);
+        var entity = await _manager.GetCurrentAsync(id);
         if (entity == null) { return NotFound(); };
         // return Forbid();
-        return await manager.DeleteAsync(entity);
+        return await _manager.DeleteAsync(entity);
     }
 }

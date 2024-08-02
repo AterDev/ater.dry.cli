@@ -178,8 +178,8 @@ public class RestApiGenerate : GenerateBase
             };
         });
         content += """
-                    var entity = await manager.CreateNewEntityAsync(dto);
-                    return await manager.AddAsync(entity);
+                    var entity = await _manager.CreateNewEntityAsync(dto);
+                    return await _manager.AddAsync(entity);
             """;
         return content;
     }
@@ -191,7 +191,7 @@ public class RestApiGenerate : GenerateBase
     public string? GetUpdateApiContent()
     {
         string content = """
-                    var current = await manager.GetCurrentAsync(id);
+                    var current = await _manager.GetCurrentAsync(id);
                     if (current == null) { return NotFound("不存在的资源"); };
 
             """;
@@ -217,7 +217,7 @@ public class RestApiGenerate : GenerateBase
             }
         });
         content += """
-                    return await manager.UpdateAsync(current, dto);
+                    return await _manager.UpdateAsync(current, dto);
             """;
         return content;
     }
