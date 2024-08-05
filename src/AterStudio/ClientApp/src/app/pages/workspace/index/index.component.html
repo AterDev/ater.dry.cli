@@ -110,7 +110,7 @@
         </mat-menu>
         <button mat-icon-button matTooltip="编辑DTO" matTooltipPosition="below" (click)="goToDto(element)"
           [disabled]="!element.hasDto">
-          <mat-icon [class]="element.hasDto? 'text-primary':''">data_object</mat-icon>
+          <mat-icon [class]="element.hasDto?'text-primary':''">data_object</mat-icon>
         </button>
 
         <button mat-icon-button [disabled]="!element.hasManager" matTooltip="已生成Manager"

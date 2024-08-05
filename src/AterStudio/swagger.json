@@ -2960,11 +2960,10 @@
         "type": "object",
         "properties": {
           "fileName": {
-            "maxLength": 100,
+            "maxLength": 200,
             "type": "string"
           },
           "content": {
-            "maxLength": 2000,
             "type": "string"
           }
         },
