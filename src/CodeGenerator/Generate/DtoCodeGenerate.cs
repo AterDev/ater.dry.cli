@@ -20,7 +20,7 @@ public class DtoCodeGenerate : GenerateBase
     public List<PropertyChange> PropertyChanges = [];
     public readonly ContextBase dbContext;
 
-    private readonly string[] IgnoreTypes = ["JsonDocument"];
+    private readonly string[] IgnoreTypes = ["JsonDocument?"];
 
     public DtoCodeGenerate(string entityPath, string dtoPath, ContextBase dbContext)
     {
@@ -162,8 +162,8 @@ public class DtoCodeGenerate : GenerateBase
                     || (!p.IsList
                         && !p.IsNavigation
                         && !p.IsComplexType
-                        && !filterFields.Contains(p.Name))
-                        && !IgnoreTypes.Contains(p.Type)
+                        && !filterFields.Contains(p.Name)
+                        && !IgnoreTypes.Contains(p.Type))
                     || p.IsEnum
                     )
                 .Where(p => p.MaxLength is not (not null and >= 100))

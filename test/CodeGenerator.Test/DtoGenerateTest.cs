@@ -76,7 +76,7 @@ public class DtoGenerateTest
     public void Shoud_generate_dto_content()
     {
         string filePath = PathHelper.GetProjectFilePath(@"Entity\Blog.cs");
-        filePath = @"D:\codes\ater.web\templates\apistd\src\Entity\SystemEntities\SystemPermission.cs";
+        filePath = @"E:\work\tenk\src\Definition\Entity\CustomerMod\MemberWorkflow.cs";
         string dtoPath = PathHelper.GetProjectPath();
         DtoCodeGenerate gen = new(filePath, dtoPath, new());
         string? addDto = gen.GetAddDto();

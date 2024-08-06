@@ -1,5 +1,5 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Definition.Infrastructure.Helper;
 
@@ -203,7 +203,11 @@ public class EntityParseHelper
     {
         List<PropertyInfo> properties = [];
         CompilationUnitSyntax root = SyntaxTree!.GetCompilationUnitRoot();
-        IEnumerable<PropertyDeclarationSyntax> propertySyntax = root.DescendantNodes().OfType<PropertyDeclarationSyntax>();
+        var matchClassName = parentClassName ?? Name;
+
+        var classDeclarationSyntax = root.DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
+
+        var propertySyntax = classDeclarationSyntax?.DescendantNodes().OfType<PropertyDeclarationSyntax>();
 
         // 如果指定父类名称
         parentClassName ??= GetParentClassName();
@@ -617,6 +621,6 @@ public class EntityParseHelper
     public bool HasBaseType(INamedTypeSymbol? baseType, string baseName)
     {
         return baseType != null
-            && (baseType.Name == baseName || baseType.BaseType != null && HasBaseType(baseType.BaseType, baseName));
+            && (baseType.Name == baseName || (baseType.BaseType != null && HasBaseType(baseType.BaseType, baseName)));
     }
 }
