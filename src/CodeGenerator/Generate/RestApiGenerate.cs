@@ -191,7 +191,7 @@ public class RestApiGenerate : GenerateBase
     public string? GetUpdateApiContent()
     {
         string content = """
-                    var current = await _manager.GetCurrentAsync(id);
+                    var current = await _manager.GetOwnedAsync(id);
                     if (current == null) { return NotFound("不存在的资源"); };
 
             """;

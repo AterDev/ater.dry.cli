@@ -295,12 +295,16 @@ public class ManagerGenerate : GenerateBase
     {
         string content = "";
         string entityName = EntityInfo?.Name ?? "";
-        var props = EntityInfo?.PropertyInfos.Where(p => !p.IsList)
-            .Where(p => (p.IsRequired && !p.IsNullable)
-              || p.IsEnum
-              || (p.Type.StartsWith("bool") && p.Name != "IsDeleted"))
-            .Where(p => !p.Name.EndsWith("Id"))
-            .Where(p => p.MaxLength is not (not null and >= 200))
+        var props = EntityInfo?.PropertyInfos
+               .Where(p => (p.IsRequired && !p.IsNavigation)
+                    || (!p.IsList
+                        && !p.IsNavigation
+                        && !p.IsComplexType
+                        && !Const.IgnoreProperties.Contains(p.Name)
+                        && !Const.IgnoreTypes.Contains(p.Type))
+                    || p.IsEnum
+                    )
+                .Where(p => p.MaxLength is not (not null and >= 100))
             .ToList();
 
         if (props != null && props.Count != 0)

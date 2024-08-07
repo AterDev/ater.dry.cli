@@ -66,7 +66,7 @@ public class #@EntityName##@APISuffix#(
     public async Task<ActionResult<#@EntityName#?>> DeleteAsync([FromRoute] #@IdType# id)
     {
         // 注意删除权限
-        var entity = await _manager.GetCurrentAsync(id);
+        var entity = await _manager.GetOwnedAsync(id);
         if (entity == null) { return NotFound(); };
         // return Forbid();
         return await _manager.DeleteAsync(entity);
