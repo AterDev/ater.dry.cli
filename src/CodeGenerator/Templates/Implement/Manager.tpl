@@ -53,5 +53,4 @@ public class #@EntityName#Manager(
         // query = query.Where(q => q.User.Id == _userContext.UserId);
         return await query.FirstOrDefaultAsync();
     }
-
 }

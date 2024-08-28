@@ -214,7 +214,7 @@ public class DtoCodeGenerate : GenerateBase
             Tag = EntityInfo.Name,
             Properties = EntityInfo.PropertyInfos?.Where(p => !p.IsNavigation
                 && p.HasSet
-                && !IgnoreTypes.Contains(p.Type)
+                && !Const.IgnoreTypes.Contains(p.Type)
                 && p.Name != "Id"
                 && p.Name != "CreatedTime"
                 && p.Name != "UpdatedTime"
@@ -273,7 +273,7 @@ public class DtoCodeGenerate : GenerateBase
         // 处理非 required的都设置为 nullable
         List<PropertyInfo>? properties = EntityInfo.PropertyInfos?.Where(p => !p.IsNavigation
                 && p.HasSet
-                && !IgnoreTypes.Contains(p.Type)
+                && !Const.IgnoreTypes.Contains(p.Type)
                 && p.Name != "Id"
                 && p.Name != "CreatedTime"
                 && p.Name != "UpdatedTime"
