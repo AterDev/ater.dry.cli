@@ -22,7 +22,8 @@ public class #@EntityName#Manager(
 
     public override async Task<#@EntityName#> UpdateAsync(#@EntityName# entity, #@EntityName#UpdateDto dto)
     {
-//[@UpdateActionBlock]
+        entity.Merge(dto);
+        return await base.UpdateAsync(entity);
     }
 
     public override async Task<PageList<#@EntityName#ItemDto>> FilterAsync(#@EntityName#FilterDto filter)

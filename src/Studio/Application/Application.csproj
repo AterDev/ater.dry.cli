@@ -6,7 +6,6 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
-
     <ItemGroup>
         <PackageReference Include="Ater.DeepSeek.Core" Version="1.0.1" />
     </ItemGroup>

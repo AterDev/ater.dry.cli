@@ -13,6 +13,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.OpenApi.Readers;
 
 using NuGet.Versioning;
+using RazorEngineCore;
 
 namespace CodeGenerator.Test;
 public class FunctionTest
@@ -269,4 +270,33 @@ public class FunctionTest
         Assert.NotNull(baseTypes);
         Assert.Equal("IEntityBase", baseTypes[0].ToString());
     }
+
+
+    [Fact]
+    public void ShouldParseRazorEngine()
+    {
+        var templateStr = """
+            using @(Model.Namespace).Manager;
+            using @(Model.EntityName??"123")Manager;
+            """;
+
+        IRazorEngine razorEngine = new RazorEngine();
+        var template = razorEngine.Compile<RazorEngineTemplateBase<Model>>(templateStr);
+
+        string result = template.Run(instance =>
+        {
+            instance.Model = new Model
+            {
+                Namespace = "System",
+                //EntityName = "User"
+            };
+        });
+        Console.WriteLine(result);
+    }
+}
+
+public class Model
+{
+    public string Namespace { get; set; } = "";
+    public string? EntityName { get; set; }
 }

@@ -11,6 +11,10 @@
         <EmbeddedResource Include="Templates\**\*">
         </EmbeddedResource>
     </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="RazorEngineCore" Version="2024.4.1" />
+    </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Definition\Definition.csproj" />
     </ItemGroup>
