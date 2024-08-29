@@ -1,0 +1,34 @@
+<Solution>
+  <Folder Name="/deploy/">
+    <File Path="deploy\PackTemplate.ps1" />
+    <File Path="deploy\PublishToLocal.ps1" />
+    <File Path="deploy\SetVersion.ps1" />
+  </Folder>
+  <Folder Name="/src/">
+  </Folder>
+
+  <Folder Name="/src/Share/">
+    <Project Path="src\Share\CodeGenerator\CodeGenerator.csproj" />
+    <Project Path="src\Share\Definition\Definition.csproj" />
+  </Folder>
+
+  <Folder Name="/src/Command/">
+    <Project Path="src\Command\Command.Share\Command.Share.csproj" />
+    <Project Path="src\Command\CommandLine\CommandLine.csproj" />
+    <Project Path="src\Command\GeneratorForNode\GeneratorForNode.csproj" />
+    <Project Path="src\Command\NodeBridge\NodeBridge.csproj" />
+  </Folder>
+  <Folder Name="/src/Studio/">
+    <Project Path="src\Studio\Application\Application.csproj" />
+    <Project Path="src\Studio\AterStudio\AterStudio.csproj" />
+  </Folder>
+  
+  <Folder Name="/test/">
+    <Project Path="test\CodeGenerator.Test\CodeGenerator.Test.csproj" />
+    <Project Path="test\CommandLine.Test\CommandLine.Test.csproj" />
+  </Folder>
+  <Properties Name="Visual Studio">
+    <Property Name="OpenWith" Value="Visual Studio Version 17" />
+  </Properties>
+
+</Solution>
