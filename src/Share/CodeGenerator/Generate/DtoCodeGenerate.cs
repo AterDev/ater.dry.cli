@@ -1,8 +1,7 @@
 ﻿using System.Text.RegularExpressions;
-
-using Definition.EntityFramework.DBProvider;
-
-using PropertyInfo = Definition.Entity.PropertyInfo;
+using CodeGenerator.Helper;
+using CodeGenerator.Models;
+using Entity;
 
 namespace CodeGenerator.Generate;
 /// <summary>
@@ -17,7 +16,6 @@ public class DtoCodeGenerate : GenerateBase
     /// </summary>
     public string? AssemblyName { get; set; }
     public string DtoPath { get; init; }
-    public List<PropertyChange> PropertyChanges = [];
     public readonly ContextBase dbContext;
 
 

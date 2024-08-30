@@ -1,5 +1,5 @@
 using Definition.Entity;
-namespace Definition.Share.Models.EntityInfoDtos;
+namespace Share.Share.Models.EntityInfoDtos;
 /// <summary>
 /// 实体概要
 /// </summary>
@@ -38,5 +38,5 @@ public class EntityInfoShortDto
     public bool? IsEnum { get; set; }
     public bool IsList { get; set; }
     public Project Project { get; set; } = default!;
-    
+
 }

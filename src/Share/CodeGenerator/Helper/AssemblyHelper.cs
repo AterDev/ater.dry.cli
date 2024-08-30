@@ -1,13 +1,6 @@
-﻿using System.Xml.Linq;
+﻿using NuGet.Versioning;
 
-using Definition;
-using Definition.Entity;
-using Definition.Infrastructure;
-using Definition.Models;
-
-using NuGet.Versioning;
-
-namespace Definition.Infrastructure.Helper;
+namespace CodeGenerator.Helper;
 
 /// <summary>
 /// 项目帮助类
@@ -227,16 +220,17 @@ public class AssemblyHelper
     /// 判断是否需要更新
     /// </summary>
     /// <param name="minVersionStr">最小版本号</param>
+    /// <param name="version"></param>
     /// <returns></returns>
-    public static bool NeedUpdate(string minVersionStr)
+    public static bool NeedUpdate(string minVersionStr, string version)
     {
         var minVersion = NuGetVersion.Parse(minVersionStr);
-        var oldVerion = NuGetVersion.Parse(Config.Version);
+        var oldVersion = NuGetVersion.Parse(version);
         var currentVersion = NuGetVersion.Parse(GetCurrentToolVersion());
 
-        Console.WriteLine($"project version:{oldVerion}; studio version:{currentVersion}");
-        return VersionComparer.Compare(oldVerion, minVersion, VersionComparison.Version) >= 0
-            && VersionComparer.Compare(oldVerion, currentVersion, VersionComparison.Version) < 0;
+        Console.WriteLine($"project version:{oldVersion}; studio version:{currentVersion}");
+        return VersionComparer.Compare(oldVersion, minVersion, VersionComparison.Version) >= 0
+            && VersionComparer.Compare(oldVersion, currentVersion, VersionComparison.Version) < 0;
     }
 
     /// <summary>
@@ -301,7 +295,7 @@ public class AssemblyHelper
             {
                 Console.WriteLine(@$"  ✅ generate file {fileName}.");
             }
-            
+
         }
         else
         {
@@ -383,8 +377,6 @@ public class AssemblyHelper
                 Console.WriteLine("dotnet remove error:" + error);
             }
         });
-
-
     }
 
     /// <summary>

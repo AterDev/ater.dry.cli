@@ -1,5 +1,5 @@
 using Definition.Entity;
-namespace Definition.Share.Models.EntityInfoDtos;
+namespace Share.Share.Models.EntityInfoDtos;
 /// <summary>
 /// 实体列表元素
 /// </summary>
@@ -39,5 +39,5 @@ public class EntityInfoItemDto
     public bool IsList { get; set; }
     public Guid Id { get; set; } = Guid.NewGuid();
     public DateTimeOffset CreatedTime { get; set; }
-    
+
 }

@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using CodeGenerator;
+using CodeGenerator.Helper;
+using Microsoft.AspNetCore.Http;
+using Share.EntityFramework.DBProvider;
 
 namespace Application.Implement;
 

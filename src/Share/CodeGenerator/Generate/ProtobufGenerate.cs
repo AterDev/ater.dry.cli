@@ -1,6 +1,5 @@
-﻿using Definition.Entity;
-using Definition.Infrastructure;
-using Definition.Infrastructure.Helper;
+﻿using CodeGenerator.Helper;
+using Definition.Entity;
 using Definition.Infrastructure.Utils;
 
 using PropertyInfo = Definition.Entity.PropertyInfo;

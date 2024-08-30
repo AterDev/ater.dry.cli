@@ -120,5 +120,4 @@ export class IndexComponent implements OnInit {
   toDetail(id: string): void {
     this.router.navigate([`../detail/${id}`], { relativeTo: this.route });
   }
-
 }

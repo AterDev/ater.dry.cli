@@ -1,4 +1,4 @@
-﻿namespace Definition.EntityFramework.DBProvider;
+﻿namespace Share.EntityFramework.DBProvider;
 public class CommandDbContext(DbContextOptions<CommandDbContext> options) : ContextBase(options)
 {
     protected override void OnModelCreating(ModelBuilder builder)

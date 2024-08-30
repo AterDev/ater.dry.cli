@@ -1,6 +1,7 @@
 using System.Text;
-
-using Definition.Share.Models.ApiDocInfoDtos;
+using Share.EntityFramework;
+using Share.Models;
+using Share.Share.Models.ApiDocInfoDtos;
 
 namespace Application.Manager;
 /// <summary>

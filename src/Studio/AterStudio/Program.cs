@@ -9,15 +9,13 @@ using Ater.Web.Abstraction;
 
 using AterStudio;
 using AterStudio.Worker;
-
-using Definition.EntityFramework.DBProvider;
-
-using EntityFramework.DBProvider;
+using CodeGenerator.Helper;
 
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Share.EntityFramework.DBProvider;
 
 Console.OutputEncoding = Encoding.UTF8;
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);

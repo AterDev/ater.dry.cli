@@ -1,4 +1,5 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using CodeGenerator.Models;
+using Microsoft.OpenApi.Models;
 namespace Command.Share.Commands;
 /// <summary>
 /// 客户端请求生成

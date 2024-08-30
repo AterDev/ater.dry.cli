@@ -1,19 +1,19 @@
 ﻿using System.Security.Cryptography;
 
-namespace Definition.Infrastructure.Utils;
+namespace Share.Infrastructure.Utils;
 
 /// <summary>
 /// hash加密
 /// </summary>
 public class CryptHelper
 {
-    public static string HashString(string str, HashType type)
+    public static string HashString(string str, HashType type = HashType.MD5)
     {
         var bytes = HashData(str, type);
         return BitConverter.ToString(bytes).Replace("-", "").ToLower();
     }
 
-    private static byte[] HashData(string str, HashType type)
+    private static byte[] HashData(string str, HashType type = HashType.MD5)
     {
         var bytes = Encoding.UTF8.GetBytes(str);
         return type switch

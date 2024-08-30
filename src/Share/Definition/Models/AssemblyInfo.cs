@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Definition.Models;
+namespace Share.Models;
 /// <summary>
 /// csproj 程序集信息
 /// </summary>
@@ -29,7 +29,7 @@ public class AssemblyInfo
     /// <summary>
     /// grpc类型
     /// </summary>
-    public GrpcType? GrpcType { get; set; } = Models.GrpcType.Default;
+    public GrpcType? GrpcType { get; set; } = Share.Models.GrpcType.Default;
 
 }
 

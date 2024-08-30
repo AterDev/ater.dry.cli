@@ -1,9 +1,9 @@
 ﻿using Ater.Web.Abstraction;
 
-using Definition.Share.Models.EntityInfoDtos;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Share.Share;
+using Share.Share.Models.EntityInfoDtos;
 
 namespace AterStudio.Controllers;
 

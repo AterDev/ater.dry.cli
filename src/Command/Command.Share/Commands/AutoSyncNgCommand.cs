@@ -1,4 +1,6 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using CodeGenerator.Helper;
+using CodeGenerator.Models;
+using Microsoft.OpenApi.Models;
 
 namespace Command.Share.Commands;
 public class AutoSyncNgCommand(string swaggerPath, string entityPath, string dtoPath, string httpPath) : CommandBase

@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.MSBuild;
 
-namespace Definition.Infrastructure.Helper;
+namespace CodeGenerator.Helper;
 /// <summary>
 /// 解决方案解析帮助类
 /// </summary>

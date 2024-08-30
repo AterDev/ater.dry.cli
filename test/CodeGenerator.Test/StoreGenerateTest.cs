@@ -2,8 +2,7 @@
 using System.Text;
 
 using CodeGenerator.Generate;
-
-using Definition.Infrastructure.Helper;
+using CodeGenerator.Helper;
 
 namespace CodeGenerator.Test;
 

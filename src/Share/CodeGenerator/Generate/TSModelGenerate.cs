@@ -1,7 +1,4 @@
-﻿using Definition;
-using Definition.Infrastructure.Utils;
-using Definition.Models;
-
+﻿using CodeGenerator.Models;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Interfaces;
 using Microsoft.OpenApi.Models;
@@ -137,7 +134,7 @@ public class TSModelGenerate : GenerateBase
         if (schema.Enum.Count > 0)
         {
             tsContent = ToEnumString(schema, schemaKey);
-            Config.EnumModels.Add(schemaKey);
+            // TODO: Config.EnumModels.Add(schemaKey);
             path = "enum";
         }
         else
@@ -198,7 +195,7 @@ public class TSModelGenerate : GenerateBase
                 if (extend != name)
                 {
                     string? dirName = GetDirName(name);
-                    dirName = dirName.NotNull() ? dirName!.ToHyphen() + "/" : "";
+                    dirName = dirName.NotEmpty() ? dirName!.ToHyphen() + "/" : "";
                     importString += @$"import {{ {extend} }} from '{relatePath}{dirName}models/{extend.ToHyphen()}.model';"
                         + Environment.NewLine;
                 }
@@ -231,7 +228,7 @@ public class TSModelGenerate : GenerateBase
             if (ip.Reference != name)
             {
                 string? dirName = GetDirName(ip.Reference);
-                dirName = dirName.NotNull() ? dirName!.ToHyphen() + "/" : "";
+                dirName = dirName.NotEmpty() ? dirName!.ToHyphen() + "/" : "";
                 if (ip.IsEnum)
                 {
                     dirName = "enum/";

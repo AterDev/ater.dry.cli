@@ -1,4 +1,4 @@
-﻿namespace Definition.Models;
+﻿namespace Share.Models;
 /// <summary>
 /// 服务文件
 /// </summary>

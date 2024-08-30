@@ -1,3 +1,5 @@
+using CodeGenerator.Helper;
+
 namespace CodeGenerator.Generate;
 
 /// <summary>
@@ -179,25 +181,15 @@ public class ManagerGenerate : GenerateBase
 
             """;
         });
-        content += "return await base.UpdateAsync(entity, dto);".Indent(2);
+        content += "return await base.UpdateAsync(entity, dto);";
         return content;
     }
+
     public string GetFilterMethodContent()
     {
         string content = "";
         string entityName = EntityInfo?.Name ?? "";
-        var props = EntityInfo?.PropertyInfos
-               .Where(p => (p.IsRequired && !p.IsNavigation)
-                    || (!p.IsList
-                        && !p.IsNavigation
-                        && !p.IsComplexType
-                        && !Const.IgnoreProperties.Contains(p.Name)
-                        && !Const.IgnoreTypes.Contains(p.Type))
-                    || p.IsEnum
-                    )
-                .Where(p => p.MaxLength is not (not null and >= 100))
-            .ToList();
-
+        var props = EntityInfo?.GetFilterProperties();
         if (props != null && props.Count != 0)
         {
             content += """

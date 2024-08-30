@@ -1,23 +1,17 @@
-﻿using Definition.Infrastructure.Helper;
-
-using Microsoft.EntityFrameworkCore.Query;
+﻿using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Definition.EntityFramework.DBProvider;
+namespace Share.EntityFramework.DBProvider;
 
 public class ContextBase : DbContext
 {
     public const string DbName = "ater.dry.db";
 
-
     public DbSet<Project> Projects { get; set; }
-
     public DbSet<EntityInfo> EntityInfos { get; set; }
-
     public DbSet<ApiDocInfo> ApiDocInfos { get; set; }
-
-    public DbSet<TemplateFile> TemplateFiles { get; set; }
-
+    public DbSet<GenAction> GenActions { get; set; }
+    public DbSet<GenStep> GenSteps { get; set; }
     public DbSet<ConfigData> Configs { get; set; }
 
 
@@ -38,12 +32,17 @@ public class ContextBase : DbContext
         base.OnConfiguring(optionsBuilder);
     }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder builder)
     {
+        builder.Entity<Project>(e =>
+        {
+            e.OwnsOne(p => p.Config).ToJson();
+        });
 
-        OnSQLiteModelCreating(modelBuilder);
-        OnModelExtendCreating(modelBuilder);
-        base.OnModelCreating(modelBuilder);
+
+        OnSQLiteModelCreating(builder);
+        OnModelExtendCreating(builder);
+        base.OnModelCreating(builder);
     }
 
 

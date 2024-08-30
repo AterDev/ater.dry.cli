@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel;
 using System.Net;
 using System.Text;
-using Definition.Infrastructure.Utils;
+using CodeGenerator.Helper;
+using Share.Infrastructure.Utils;
 
 namespace Application.Manager;
 
@@ -54,7 +55,7 @@ public class ToolsManager
             },
             StringConvertType.Decode => new Dictionary<string, string>
             {
-                { "Base64",  content.FromBase64String()??""},
+                { "Base64",  Basse64ToString(content)??""},
                 { "UrlDecode", WebUtility.UrlDecode(content) },
                 { "HtmlDecode", WebUtility.HtmlDecode(content) },
             },
@@ -68,6 +69,19 @@ public class ToolsManager
         };
 
         return res;
+
+        string Basse64ToString(string str)
+        {
+            byte[] buffer = new byte[str.Length * 3 / 4];
+            if (Convert.TryFromBase64String(str, buffer, out int bytesWritten))
+            {
+                return Encoding.UTF8.GetString(buffer, 0, bytesWritten);
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 }
 

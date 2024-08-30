@@ -1,8 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-
 using Definition.Entity;
 
-namespace Definition;
+namespace Share;
 public class PropertyEquality : IEqualityComparer<PropertyInfo>
 {
     public bool Equals(PropertyInfo? x, PropertyInfo? y)

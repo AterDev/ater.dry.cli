@@ -1,4 +1,5 @@
-﻿using Definition.Infrastructure;
+﻿using CodeGenerator;
+using CodeGenerator.Helper;
 
 using PluralizeService.Core;
 

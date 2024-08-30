@@ -1,4 +1,4 @@
-﻿namespace Definition.Infrastructure.Helper;
+﻿namespace Share.Infrastructure.Helper;
 /// <summary>
 /// 文件IO帮助类
 /// </summary>

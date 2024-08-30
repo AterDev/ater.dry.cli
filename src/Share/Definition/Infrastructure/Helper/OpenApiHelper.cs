@@ -1,9 +1,10 @@
 ﻿using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
+using Share.Models;
 
 
-namespace Definition.Infrastructure.Helper;
+namespace Share.Infrastructure.Helper;
 /// <summary>
 /// openapi 解析帮助类
 /// </summary>

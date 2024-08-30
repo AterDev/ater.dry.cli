@@ -2,10 +2,10 @@
 using System.Linq;
 
 using CodeGenerator.Generate;
+using CodeGenerator.Helper;
 using CodeGenerator.Test.Entity;
 
 using Definition.Entity;
-using Definition.Infrastructure.Helper;
 
 namespace CodeGenerator.Test;
 

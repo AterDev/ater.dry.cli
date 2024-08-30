@@ -1,5 +1,5 @@
 using Definition.Entity;
-namespace Definition.Share.Models.ApiDocInfoDtos;
+namespace Share.Share.Models.ApiDocInfoDtos;
 /// <summary>
 /// 接口文档查询筛选
 /// </summary>

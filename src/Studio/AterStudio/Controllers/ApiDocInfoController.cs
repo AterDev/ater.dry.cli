@@ -3,11 +3,11 @@
 using Ater.Web.Abstraction;
 
 using Definition.Entity;
-using Definition.Models;
-using Definition.Share.Models.ApiDocInfoDtos;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Share.Models;
+using Share.Share.Models.ApiDocInfoDtos;
 
 namespace AterStudio.Controllers;
 

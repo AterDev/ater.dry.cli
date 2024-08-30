@@ -1,4 +1,4 @@
-﻿namespace Definition;
+﻿namespace Share;
 
 public static class Extention
 {

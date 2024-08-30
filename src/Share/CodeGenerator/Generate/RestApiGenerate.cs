@@ -1,4 +1,6 @@
-﻿namespace CodeGenerator.Generate;
+﻿using CodeGenerator.Helper;
+
+namespace CodeGenerator.Generate;
 
 /// <summary>
 /// 生成Rest API控制器

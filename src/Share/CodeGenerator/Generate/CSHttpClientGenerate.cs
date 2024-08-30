@@ -1,5 +1,5 @@
 ﻿using System.Data;
-
+using CodeGenerator.Models;
 using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
 

@@ -1,4 +1,4 @@
-﻿namespace Definition.Infrastructure;
+﻿namespace CodeGenerator;
 public class Const
 {
     public static Guid PROJECT_ID;
@@ -22,7 +22,4 @@ public class Const
     public const string AbstractionLibName = "Ater.Web.Abstraction";
     public const string ExtensionLibName = "Ater.Web.Extension";
 
-
-    public static string[] IgnoreTypes = ["JsonDocument?"];
-    public static string[] IgnoreProperties = ["Id", "CreatedTime", "UpdatedTime", "IsDeleted", "PageSize", "PageIndex"];
 }

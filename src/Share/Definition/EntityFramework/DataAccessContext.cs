@@ -1,8 +1,7 @@
 ﻿using Ater.Web.Abstraction.EntityFramework;
+using Share.EntityFramework.DBProvider;
 
-using EntityFramework.DBProvider;
-
-namespace Definition.EntityFramework;
+namespace Share.EntityFramework;
 /// <summary>
 /// 数据访问层抽象
 /// </summary>

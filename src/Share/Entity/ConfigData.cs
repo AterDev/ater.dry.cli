@@ -1,4 +1,4 @@
-﻿namespace Definition.Entity;
+﻿namespace Entity;
 /// <summary>
 /// 配置
 /// </summary>

@@ -1,4 +1,5 @@
-﻿using PropertyInfo = Definition.Entity.PropertyInfo;
+﻿using CodeGenerator.Helper;
+using PropertyInfo = Definition.Entity.PropertyInfo;
 
 namespace CodeGenerator.Generate;
 

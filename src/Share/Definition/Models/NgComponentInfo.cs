@@ -1,4 +1,4 @@
-﻿namespace Definition.Models;
+﻿namespace Share.Models;
 public class NgComponentInfo(string name)
 {
     public string Name { get; set; } = name;

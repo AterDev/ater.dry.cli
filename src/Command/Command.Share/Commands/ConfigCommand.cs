@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Text.Json;
-
-using Definition.Infrastructure;
+using CodeGenerator;
+using CodeGenerator.Helper;
 
 namespace Command.Share.Commands;
 

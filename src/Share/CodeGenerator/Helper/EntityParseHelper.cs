@@ -1,7 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace Definition.Infrastructure.Helper;
+namespace CodeGenerator.Helper;
 
 /// <summary>
 /// 类型解析帮助类
@@ -621,6 +621,6 @@ public class EntityParseHelper
     public bool HasBaseType(INamedTypeSymbol? baseType, string baseName)
     {
         return baseType != null
-            && (baseType.Name == baseName || (baseType.BaseType != null && HasBaseType(baseType.BaseType, baseName)));
+            && (baseType.Name == baseName || baseType.BaseType != null && HasBaseType(baseType.BaseType, baseName));
     }
 }

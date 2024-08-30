@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace Definition.Infrastructure.Helper;
+namespace CodeGenerator.Helper;
 /// <summary>
 /// csharp 转换帮助
 /// </summary>

@@ -2,7 +2,7 @@
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 
-namespace Definition.Infrastructure.Helper;
+namespace CodeGenerator.Helper;
 /// <summary>
 /// 调用帮助类
 /// </summary>

@@ -8,25 +8,21 @@
         <NoWarn>1701;1702;1591</NoWarn>
     </PropertyGroup>
 
-
     <ItemGroup>
-        <PackageReference Include="Ater.Web.Abstraction" Version="0.1.2" />
-        <!--<PackageReference Include="Microsoft.Build" Version="17.9.5" ExcludeAssets="runtime" />-->
-        <PackageReference Include="Microsoft.Build.Locator" Version="1.7.8" />
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.12.0-1.final" />
-        <!--<PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.8.0" />-->
-        <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.12.0-1.final" />
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0-1.final" />
+        <PackageReference Include="Ater.Web.Abstraction" Version="0.2.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0-preview.7.24405.3" />
-        <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.18" />
-        <PackageReference Include="NuGet.Versioning" Version="6.11.0" />
         <PackageReference Include="PluralizeService.Core" Version="1.2.21147.2" />
 
         <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="9.0.0-preview.7.24405.3" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0-preview.7.24405.3" />
+        <!--<PackageReference Include="System.Formats.Asn1" Version="8.0.1" />-->
     </ItemGroup>
 
     <ItemGroup>
         <Folder Include="Share\Models\ToolsDtos\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Entity\Entity.csproj" />
     </ItemGroup>
 </Project>

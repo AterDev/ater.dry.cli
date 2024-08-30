@@ -1,5 +1,5 @@
 using Definition.Entity;
-namespace Definition.Share.Models.ApiDocInfoDtos;
+namespace Share.Share.Models.ApiDocInfoDtos;
 /// <summary>
 /// 接口文档概要
 /// </summary>
@@ -22,5 +22,5 @@ public class ApiDocInfoShortDto
     [MaxLength(200)]
     public string? LocalPath { get; set; }
     public Project Project { get; set; } = default!;
-    
+
 }

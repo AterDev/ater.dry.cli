@@ -1,10 +1,13 @@
-﻿namespace Definition.Entity;
+﻿namespace Entity;
 /// <summary>
 /// 实体
 /// </summary>
 [Index(nameof(Name))]
 public class EntityInfo : EntityBase
 {
+    public static string[] IgnoreTypes = ["JsonDocument?"];
+    public static string[] IgnoreProperties = ["Id", "CreatedTime", "UpdatedTime", "IsDeleted", "PageSize", "PageIndex"];
+
     /// <summary>
     /// 类名
     /// </summary>
@@ -58,11 +61,23 @@ public class EntityInfo : EntityBase
             .ToList();
     }
 
-
-    void test()
+    /// <summary>
+    /// 获取筛选属性
+    /// </summary>
+    /// <returns></returns>
+    public List<PropertyInfo>? GetFilterProperties()
     {
-        new EntityInfo() { Name = "", };
-
+        return PropertyInfos
+            .Where(p => p.IsRequired && !p.IsNavigation
+                    || !p.IsList
+                        && !p.IsNavigation
+                        && !p.IsComplexType
+                        && !IgnoreProperties.Contains(p.Name)
+                        && !IgnoreTypes.Contains(p.Type)
+                    || p.IsEnum
+                    )
+                .Where(p => p.MaxLength is not (not null and >= 100))
+            .ToList();
     }
 }
 public enum EntityKeyType

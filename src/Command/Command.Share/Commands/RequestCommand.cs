@@ -1,3 +1,4 @@
+using CodeGenerator.Models;
 using Microsoft.OpenApi.Models;
 namespace Command.Share.Commands;
 

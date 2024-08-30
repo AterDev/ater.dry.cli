@@ -1,4 +1,4 @@
-﻿namespace Definition.Models;
+﻿namespace CodeGenerator.Models;
 
 public class DtoInfo
 {

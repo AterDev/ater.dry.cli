@@ -1,4 +1,7 @@
 ﻿using System.Text;
+using CodeGenerator;
+using CodeGenerator.Helper;
+using Share.EntityFramework.DBProvider;
 
 namespace Application.Manager;
 

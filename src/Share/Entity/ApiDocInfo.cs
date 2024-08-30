@@ -1,4 +1,5 @@
-﻿namespace Definition.Entity;
+﻿
+namespace Entity;
 /// <summary>
 /// 接口文档
 /// </summary>

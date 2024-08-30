@@ -2,7 +2,7 @@
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Formatting;
 
-namespace Definition.Infrastructure.Helper;
+namespace CodeGenerator.Helper;
 /// <summary>
 /// c# 分析帮助类
 /// </summary>

@@ -2,10 +2,10 @@
 using System.Text;
 using System.Text.RegularExpressions;
 
-using Definition.Share.Models.EntityInfoDtos;
-
 using Microsoft.CodeAnalysis;
-
+using Share.EntityFramework;
+using Share.Share;
+using Share.Share.Models.EntityInfoDtos;
 using Project = Definition.Entity.Project;
 
 namespace Application.Manager;

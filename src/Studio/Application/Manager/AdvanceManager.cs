@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Share.EntityFramework.DBProvider;
 
 namespace Application.Manager;
 

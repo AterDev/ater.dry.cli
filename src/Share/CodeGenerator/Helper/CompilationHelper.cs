@@ -1,7 +1,4 @@
-﻿using Definition.Infrastructure.Utils;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-
-namespace Definition.Infrastructure.Helper;
+﻿namespace CodeGenerator.Helper;
 
 public class CompilationHelper
 {
@@ -142,7 +139,7 @@ public class CompilationHelper
         // 筛选出baseTypeName 的基类
         var baseTypes = baseList?.Types.ToList();
 
-        if (baseTypeName.NotNull())
+        if (baseTypeName.NotEmpty())
         {
             baseTypes = baseTypes?.Where(t => t.ToString().Equals(baseTypeName)).ToList();
         }

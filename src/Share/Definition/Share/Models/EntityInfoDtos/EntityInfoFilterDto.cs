@@ -1,5 +1,5 @@
 using Definition.Entity;
-namespace Definition.Share.Models.EntityInfoDtos;
+namespace Share.Share.Models.EntityInfoDtos;
 /// <summary>
 /// 实体查询筛选
 /// </summary>
@@ -38,5 +38,5 @@ public class EntityInfoFilterDto : FilterBase
     public bool? IsEnum { get; set; }
     public bool? IsList { get; set; }
     public Guid? ProjectId { get; set; }
-    
+
 }

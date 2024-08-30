@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Nodes;
 
-namespace Definition.Infrastructure.Helper;
+namespace Share.Infrastructure.Helper;
 /// <summary>
 /// json帮助类
 /// </summary>

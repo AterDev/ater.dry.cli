@@ -1,7 +1,4 @@
-﻿using Definition;
-using Definition.Infrastructure.Utils;
-using Definition.Models;
-
+﻿using CodeGenerator.Models;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Interfaces;
 using Microsoft.OpenApi.Models;
@@ -193,7 +190,7 @@ public class CsharpModelGenerate : GenerateBase
                 if (extend != name)
                 {
                     string? dirName = GetDirName(name);
-                    dirName = dirName.NotNull() ? dirName!.ToHyphen() + "/" : "";
+                    dirName = dirName.NotEmpty() ? dirName!.ToHyphen() + "/" : "";
                     importString += @$"using {nspName}.Models;"
                         + Environment.NewLine;
                 }

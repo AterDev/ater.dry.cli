@@ -1,3 +1,4 @@
+using CodeGenerator.Helper;
 using PluralizeService.Core;
 
 namespace Command.Share.Commands;

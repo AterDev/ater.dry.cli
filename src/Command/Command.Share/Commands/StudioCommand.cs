@@ -1,8 +1,9 @@
 ﻿using System.Diagnostics;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
+using CodeGenerator;
+using CodeGenerator.Helper;
 using Definition.EntityFramework.DBProvider;
-using Definition.Infrastructure;
 
 namespace Command.Share.Commands;
 public class StudioCommand

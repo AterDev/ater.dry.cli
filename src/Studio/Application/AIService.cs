@@ -2,6 +2,7 @@
 using Ater.Web.Abstraction;
 using DeepSeek.Core;
 using DeepSeek.Core.Models;
+using Share.EntityFramework.DBProvider;
 
 namespace Application;
 /// <summary>

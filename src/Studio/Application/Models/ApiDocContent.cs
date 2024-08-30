@@ -1,5 +1,5 @@
 ﻿using Definition.Entity;
-using Definition.Models;
+using Share.Models;
 
 namespace Application.Models;
 

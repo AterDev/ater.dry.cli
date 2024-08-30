@@ -1,4 +1,4 @@
-﻿namespace Definition.Entity;
+﻿namespace Entity;
 /// <summary>
 /// 提示词
 /// </summary>

@@ -1,4 +1,6 @@
-﻿namespace Command.Share.Commands;
+﻿using CodeGenerator.Helper;
+
+namespace Command.Share.Commands;
 
 /// <summary>
 /// 项目管理命令

@@ -1,3 +1,5 @@
+using CodeGenerator.Helper;
+
 namespace Command.Share.Commands;
 
 /// <summary>

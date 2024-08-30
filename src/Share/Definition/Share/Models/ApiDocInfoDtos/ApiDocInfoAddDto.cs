@@ -1,5 +1,5 @@
 using Definition.Entity;
-namespace Definition.Share.Models.ApiDocInfoDtos;
+namespace Share.Share.Models.ApiDocInfoDtos;
 /// <summary>
 /// 接口文档添加时请求结构
 /// </summary>
@@ -26,5 +26,5 @@ public class ApiDocInfoAddDto
     /// </summary>
     [MaxLength(200)]
     public string? LocalPath { get; set; }
-    
+
 }

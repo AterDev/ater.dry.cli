@@ -1,4 +1,4 @@
-﻿namespace Definition.Infrastructure;
+﻿namespace CodeGenerator;
 
 public static class TplConst
 {

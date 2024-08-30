@@ -1,4 +1,4 @@
-﻿namespace Definition.Models;
+﻿namespace Share.Models;
 
 /// <summary>
 /// 生成文件的信息，主要用来存储多个文件生成的内容

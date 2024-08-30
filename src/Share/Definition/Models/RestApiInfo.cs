@@ -1,7 +1,6 @@
 ﻿using Definition.Entity;
-
 using Microsoft.OpenApi.Models;
-namespace Definition.Models;
+namespace Share.Models;
 
 /// <summary>
 /// 接口信息

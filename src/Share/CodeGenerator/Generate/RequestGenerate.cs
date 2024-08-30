@@ -1,3 +1,4 @@
+using CodeGenerator.Models;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Interfaces;
@@ -216,10 +217,9 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
 
         var sb = new StringBuilder();
 
-        TabConst.TabSize = 2;
-        sb.AppendLine($"case '{enumType}':".Indent(3));
-        sb.AppendLine("{".Indent(4));
-        sb.AppendLine($"switch (value) {{".Indent(5));
+        sb.AppendLine($"case '{enumType}':");
+        sb.AppendLine("{");
+        sb.AppendLine($"switch (value) {{");
 
         if (enumData.Value is OpenApiArray array)
         {
@@ -227,16 +227,16 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
             {
                 var item = (OpenApiObject)array[i];
 
-                string caseString = string.Format("case {0}: result = '{1}'; break;".Indent(6), ((OpenApiInteger)item["value"]).Value, ((OpenApiString)item["description"]).Value);
+                string caseString = string.Format("case {0}: result = '{1}'; break;", ((OpenApiInteger)item["value"]).Value, ((OpenApiString)item["description"]).Value);
 
                 sb.AppendLine(caseString);
             }
-            sb.AppendLine("default: result = '默认'; break;".Indent(6));
+            sb.AppendLine("default: result = '默认'; break;");
         }
 
-        sb.AppendLine("}".Indent(5));
-        sb.AppendLine("}".Indent(4));
-        sb.AppendLine("break;".Indent(4));
+        sb.AppendLine("}");
+        sb.AppendLine("}");
+        sb.AppendLine("break;");
         return sb.ToString();
     }
 
@@ -427,7 +427,9 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
 
             refTypes.ForEach(t =>
             {
-                if (Config.EnumModels.Contains(t))
+                // TODO:
+                // if (Config.EnumModels.Contains(t))
+                if (true)
                 {
                     importModels += $"import {{ {t} }} from '../enum/models/{t.ToHyphen()}.model';{Environment.NewLine}";
                 }
