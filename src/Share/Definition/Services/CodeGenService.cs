@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 
-using CodeGenerator;
 using CodeGenerator.Generate;
 
 using Share.Models;
@@ -24,7 +23,7 @@ public class CodeGenService
     /// <param name="outputPath">输出项目目录</param>
     /// <param name="isCover">是否覆盖</param>
     /// <returns></returns>
-    public List<GenFileInfo> GenerateDto(EntityInfo entityInfo, string outputPath, bool isCover = false, string? moduleName = null)
+    public List<GenFileInfo> GenerateDto(EntityInfo entityInfo, string outputPath, bool isCover = false)
     {
         // 生成Dto
         var dtoGen = new DtoCodeGenerate(entityInfo, outputPath);
@@ -34,53 +33,90 @@ public class CodeGenService
             new GenFileInfo
             {
                 IsCover = isCover,
-                Name = $"{entityInfo.Name}Dto.cs",
+                Name = $"{entityInfo.Name}{Const.AddDto}.cs",
                 Content = dtoGen.GetAddDto(),
                 Path = Path.Combine(outputPath, ModelDirName, dirName, $"{entityInfo.Name}{Const.AddDto}.cs"),
-                ModelName = moduleName
+                ModuleName = entityInfo.ModuleName
             },
             new GenFileInfo
             {
                 IsCover = isCover,
-                Name = $"{entityInfo.Name}Dto.cs",
+                Name = $"{entityInfo.Name}{Const.UpdateDto}.cs",
                 Content = dtoGen.GetUpdateDto(),
                 Path = Path.Combine(outputPath, ModelDirName, dirName, $"{entityInfo.Name}{Const.UpdateDto}.cs"),
-                ModelName = moduleName
+                ModuleName = entityInfo.ModuleName
             },
             new GenFileInfo
             {
                 IsCover = isCover,
-                Name = $"{entityInfo.Name}Dto.cs",
+                Name = $"{entityInfo.Name}{Const.FilterDto}.cs",
                 Content = dtoGen.GetFilterDto(),
                 Path = Path.Combine(outputPath, ModelDirName, dirName, $"{entityInfo.Name}{Const.FilterDto}.cs"),
-                ModelName = moduleName
+                ModuleName = entityInfo.ModuleName
             },
             new GenFileInfo
             {
                 IsCover = isCover,
-                Name = $"{entityInfo.Name}Dto.cs",
+                Name = $"{entityInfo.Name}{Const.ItemDto}.cs",
                 Content = dtoGen.GetItemDto(),
                 Path = Path.Combine(outputPath, ModelDirName, dirName, $"{entityInfo.Name}{Const.ItemDto}.cs"),
-                ModelName = moduleName
+                ModuleName = entityInfo.ModuleName
             },
             new GenFileInfo
             {
                 IsCover = isCover,
-                Name = $"{entityInfo.Name}Dto.cs",
+                Name = $"{entityInfo.Name}{Const.DetailDto}.cs",
                 Content = dtoGen.GetDetailDto(),
                 Path = Path.Combine(outputPath, ModelDirName, dirName, $"{entityInfo.Name}{Const.DetailDto}.cs"),
-                ModelName = moduleName
+                ModuleName = entityInfo.ModuleName
             }
         ];
     }
 
 
-    public GenFileInfo GenerateManager(EntityInfo entityInfo, string dtoPath, string outputPath, bool isCover = false, string? moduleName = null)
+    /// <summary>
+    /// 生成manager的文件
+    /// </summary>
+    /// <param name="entityInfo"></param>
+    /// <param name="dtoPath"></param>
+    /// <param name="outputPath"></param>
+    /// <param name="isCover"></param>
+    /// <returns></returns>
+    public GenFileInfo GenerateManager(EntityInfo entityInfo, string dtoPath, string outputPath, bool isCover = false)
     {
-
         var managerGen = new ManagerGenerate(entityInfo, dtoPath, outputPath);
+        // manager content
+        var content = managerGen.GetManagerContent();
+        return new GenFileInfo
+        {
+            IsCover = isCover,
+            Name = $"{entityInfo.Name}Manager.cs",
+            Content = content,
+            Path = Path.Combine(outputPath, Const.Manager, $"{entityInfo.Name}{Const.Manager}.cs"),
+            ModuleName = entityInfo.ModuleName
+        };
 
-        return default;
+    }
+
+    /// <summary>
+    /// Manager服务注入内容
+    /// </summary>
+    /// <returns></returns>
+    public GenFileInfo GetManagerService(EntityInfo entityInfo, string solutionPath)
+    {
+        string content = ManagerGenerate.GetManagerServiceContent(entityInfo);
+        string name = entityInfo.ModuleName.IsEmpty()
+            ? "ManagerServiceCollectionExtensions.cs"
+            : "ServiceCollectionExtensions.cs";
+
+        return new GenFileInfo
+        {
+            IsCover = true,
+            Name = name,
+            Content = content,
+            Path = Path.Combine(entityInfo.GetManagerPath(), name),
+            ModuleName = entityInfo.ModuleName
+        };
     }
 }
 

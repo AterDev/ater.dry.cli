@@ -1,6 +1,5 @@
 ﻿using System.Text;
 
-using CodeGenerator;
 using CodeGenerator.Helper;
 
 namespace Application.Manager;

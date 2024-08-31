@@ -1,5 +1,6 @@
-﻿using CodeGenerator;
-using CodeGenerator.Helper;
+﻿using CodeGenerator.Helper;
+
+using Entity;
 
 namespace Command.Share.Commands;
 /// <summary>

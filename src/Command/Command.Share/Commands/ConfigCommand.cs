@@ -1,8 +1,9 @@
 using System.Diagnostics;
 using System.Text.Json;
 
-using CodeGenerator;
 using CodeGenerator.Helper;
+
+using Entity;
 
 namespace Command.Share.Commands;
 

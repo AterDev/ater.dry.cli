@@ -1,5 +1,4 @@
-﻿using CodeGenerator;
-using CodeGenerator.Helper;
+﻿using CodeGenerator.Helper;
 
 using Microsoft.AspNetCore.Http;
 

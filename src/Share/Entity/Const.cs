@@ -1,7 +1,12 @@
-﻿namespace CodeGenerator;
+﻿namespace Entity;
 public class Const
 {
     public static Guid PROJECT_ID;
+
+    public const string ApplicationName = "Application";
+    public const string ModuleName = "Modules";
+    public const string Manager = "Manager";
+
 
     public const string DetailDto = "DetailDto";
     public const string ItemDto = "ItemDto";

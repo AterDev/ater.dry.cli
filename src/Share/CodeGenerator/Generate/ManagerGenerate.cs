@@ -60,7 +60,7 @@ public class ManagerGenerate : GenerateBase
         return genContext.GenManager(tplContent, model);
     }
 
-    public string GetFilterMethodContent()
+    private string GetFilterMethodContent()
     {
         string content = "";
         string entityName = EntityInfo?.Name ?? "";
@@ -100,57 +100,22 @@ public class ManagerGenerate : GenerateBase
     }
 
     /// <summary>
-    /// 生成注入服务
+    /// Manager服务注入内容
     /// </summary>
-    /// <param name="managerPath"></param>
-    /// <param name="nspName"></param>
+    /// <param name="entityInfo"></param>
+    /// <param name="solutionPath"></param>
     /// <returns></returns>
-    public static string GetManagerDIExtensions(string managerPath, string nspName)
+    public static string GetManagerServiceContent(EntityInfo entityInfo, string solutionPath)
     {
-        string managerServiceContent = "";
-        // 获取所有manager
+        var managerPath = entityInfo.GetManagerPath(solutionPath);
+        var nspName = entityInfo.GetManagerNamespace();
+
         if (!Directory.Exists(managerPath))
         {
             return string.Empty;
         }
-
-        string[] files = Directory.GetFiles(Path.Combine(managerPath, "Manager"), "*Manager.cs", SearchOption.TopDirectoryOnly);
-
-        files?.ToList().ForEach(file =>
-        {
-            string name = Path.GetFileNameWithoutExtension(file);
-            string row = $"        services.AddScoped(typeof({name}));";
-            managerServiceContent += row + Environment.NewLine;
-        });
-
-        // 构建服务
-        string content = GetTplContent("Implement.ManagerServiceCollectionExtensions.tpl");
-        content = content.Replace(TplConst.NAMESPACE, nspName);
-        content = content.Replace(TplConst.SERVICE_MANAGER, managerServiceContent);
-        return content;
-    }
-
-    /// <summary>
-    /// 生成模块的注入服务
-    /// </summary>
-    /// <param name="solutionPath"></param>
-    /// <param name="ModuleName">模块名称</param>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    public static string GetManagerModuleDIExtensions(string solutionPath, string ModuleName)
-    {
-        // 获取所有manager
-        string modulePath = Path.Combine(solutionPath, "src", "Modules", ModuleName);
-        string managerDir = Path.Combine(modulePath, "Manager");
-        if (!Directory.Exists(managerDir))
-        {
-            return string.Empty;
-        }
-
-        string[] files = [];
         string managerServiceContent = "";
-
-        files = Directory.GetFiles(managerDir, "*Manager.cs", SearchOption.TopDirectoryOnly);
+        var files = Directory.GetFiles(managerPath, "*Manager.cs", SearchOption.TopDirectoryOnly);
         files?.ToList().ForEach(file =>
         {
             object name = Path.GetFileNameWithoutExtension(file);
@@ -158,10 +123,14 @@ public class ManagerGenerate : GenerateBase
             managerServiceContent += row + Environment.NewLine;
         });
 
-        // 构建服务
-        string content = GetTplContent("Implement.ModuleManagerServiceCollectionExtensions.tpl");
-        content = content.Replace(TplConst.NAMESPACE, ModuleName);
-        content = content.Replace(TplConst.SERVICE_MANAGER, managerServiceContent);
-        return content;
+        var genContext = new GenContext();
+        var managerModel = new ManagerServiceViewModel
+        {
+            Namespace = nspName,
+            ManagerServices = managerServiceContent
+        };
+        var tplContent = TplContent.GetManagerServiceExtensionTpl(EntityInfo.ModuleName.NotEmpty());
+        return genContext.GenCode(tplContent, managerModel);
+
     }
 }

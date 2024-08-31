@@ -1,4 +1,6 @@
-﻿namespace Entity;
+﻿using Ater.Web.Core.Utils;
+
+namespace Entity;
 /// <summary>
 /// 实体
 /// </summary>
@@ -13,6 +15,11 @@ public class EntityInfo : EntityBase
     /// </summary>
     [MaxLength(32)]
     public required string Md5Hash { get; set; }
+
+    /// <summary>
+    /// module name
+    /// </summary>
+    public string? ModuleName { get; set; }
 
     /// <summary>
     /// file path
@@ -59,6 +66,25 @@ public class EntityInfo : EntityBase
     /// 属性
     /// </summary>
     public List<PropertyInfo> PropertyInfos { get; set; } = [];
+
+    /// <summary>
+    /// 获取manager路径
+    /// </summary>
+    /// <param name="solutionPath"></param>
+    /// <returns></returns>
+    public string GetManagerPath(string solutionPath)
+    {
+        return ModuleName.IsEmpty()
+            ? Path.Combine(solutionPath, "src", Const.ApplicationName)
+            : Path.Combine(solutionPath, "src", Const.ModuleName, ModuleName);
+    }
+
+    public string GetManagerNamespace()
+    {
+        return ModuleName.IsEmpty()
+            ? Const.ApplicationName
+            : ModuleName;
+    }
 
     /// <summary>
     /// 获取导航属性

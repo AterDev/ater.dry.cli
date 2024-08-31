@@ -2,8 +2,9 @@
 using System.IO.Compression;
 using System.Runtime.InteropServices;
 
-using CodeGenerator;
 using CodeGenerator.Helper;
+
+using Entity;
 
 namespace Command.Share.Commands;
 public class StudioCommand
