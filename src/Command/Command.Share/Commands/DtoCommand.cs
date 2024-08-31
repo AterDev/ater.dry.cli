@@ -1,5 +1,3 @@
-using Definition.EntityFramework.DBProvider;
-
 namespace Command.Share.Commands;
 
 public class DtoCommand : CommandBase
@@ -50,7 +48,7 @@ public class DtoCommand : CommandBase
         {
             // 是否为模块
             var compilation = new CompilationHelper(OutputPath, "Entity");
-            var content = File.ReadAllText(EntityPath);
+            string content = File.ReadAllText(EntityPath);
             compilation.LoadContent(content);
             var attributes = compilation.GetClassAttribution("Module");
             if (attributes != null && attributes.Count != 0)
@@ -70,7 +68,7 @@ public class DtoCommand : CommandBase
             }
             Console.WriteLine(Instructions[0]);
             await SaveToFileAsync("Item", CodeGen.GetItemDto(), cover);
-            await SaveToFileAsync("Short", CodeGen.GetShortDto(), cover);
+            await SaveToFileAsync("Short", CodeGen.GetDetailDto(), cover);
             await SaveToFileAsync("Filter", CodeGen.GetFilterDto(), cover);
             await SaveToFileAsync("Add", CodeGen.GetAddDto(), cover);
             await SaveToFileAsync("Update", CodeGen.GetUpdateDto(), cover);
@@ -91,7 +89,7 @@ public class DtoCommand : CommandBase
         if (File.Exists(filePath))
         {
             string content = File.ReadAllText(filePath);
-            var newUsings = globalUsings.Where(g => !content.Contains(g))
+            List<string> newUsings = globalUsings.Where(g => !content.Contains(g))
                 .ToList();
             if (newUsings.Count != 0)
             {

@@ -27,14 +27,9 @@ public class NgComponentBuilder(string type, string name, string? label)
         {
             return string.Empty;
         }
-        var formControl = "";
-        if (IsEnum)
-        {
-            formControl = BuildSelect();
-        }
-        else
-        {
-            formControl = Type switch
+        string formControl = IsEnum
+            ? BuildSelect()
+            : Type switch
             {
                 "string" => BuildInputText(),
                 "DateTimeOffset" or "DateTime" => BuildInputDate(),
@@ -42,17 +37,14 @@ public class NgComponentBuilder(string type, string name, string? label)
                 "bool" => BuildSlide(),
                 _ => BuildInputText(),
             };
-        }
         return formControl;
     }
     public string BuildInputText()
     {
         string name = Name.ToCamelCase();
         string bindValue = IsFilter ? $"[(ngModel)]=\"filter.{name}\"" : $"formControlName=\"{name}\"";
-        string html = "";
-        if (MaxLength <= 200)
-        {
-            html = $$$"""
+        string html = MaxLength <= 200
+            ? $$$"""
                     <mat-form-field>
                       <mat-label>{{{Label}}}</mat-label>
                       <input matInput placeholder="{{{Label}}},不超过{{{MaxLength}}}字" {{{bindValue}}} {{{(IsRequired ? "required" : "")}}} minlength="{{{MinLength}}}" maxlength="{{{MaxLength}}}">
@@ -60,11 +52,9 @@ public class NgComponentBuilder(string type, string name, string? label)
                         {{getValidatorMessage('{{{name}}}')}}
                       </mat-error>
                     </mat-form-field>
-                """;
-        }
-        else if (MaxLength <= 1000)
-        {
-            html = $$$"""
+                """
+            : MaxLength <= 1000
+                ? $$$"""
                   <mat-form-field>
                     <mat-label>{{{Label}}}</mat-label>
                     <textarea matInput placeholder="{{{Label}}},不超过{{{MaxLength}}}字" {{{bindValue}}} {{{(IsRequired ? "required" : "")}}} minlength="{{{MinLength}}}" maxlength="{{{MaxLength}}}"
@@ -73,11 +63,9 @@ public class NgComponentBuilder(string type, string name, string? label)
                     {{getValidatorMessage('{{{name}}}')}}
                     </mat-error>
                   </mat-form-field>
-                """;
-        }
-        else if (MaxLength > 1000 || MinLength >= 100)
-        {
-            html = $$$"""
+                """
+                : MaxLength > 1000 || MinLength >= 100
+                            ? $$$"""
                 <mat-form-field>
                 <mat-label>{{{Label}}}</mat-label>
                   <textarea matInput placeholder="{{{Label}}},不超过{{{MaxLength}}}字" {{{bindValue}}} {{{(IsRequired ? "required" : "")}}} minlength="{{{MinLength}}}" maxlength="{{{MaxLength}}}" rows="6" ></textarea>
@@ -85,11 +73,8 @@ public class NgComponentBuilder(string type, string name, string? label)
                     {{getValidatorMessage('{{{name}}}')}}
                   </mat-error>
                 </mat-form-field>
-                """;
-        }
-        else
-        {
-            html = $$$"""
+                """
+                            : $$$"""
                   <mat-form-field>
                     <mat-label>{{{Label}}}</mat-label>
                     <input matInput placeholder="{{{Label}}}" {{{bindValue}}} {{{(IsRequired ? "required" : "")}}}>
@@ -98,7 +83,6 @@ public class NgComponentBuilder(string type, string name, string? label)
                     </mat-error>
                   </mat-form-field>
                 """;
-        }
         return html;
     }
     public string BuildInputNumber()

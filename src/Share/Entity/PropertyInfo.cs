@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
 namespace Entity;
 
@@ -95,7 +94,7 @@ public class PropertyInfo : EntityBase
     {
         string? attributeText = AttributeText;
         // 默认值
-        var defaultValue = DefaultValue;
+        string defaultValue = DefaultValue;
 
         if (!string.IsNullOrEmpty(attributeText))
         {
@@ -119,11 +118,11 @@ public class PropertyInfo : EntityBase
         {
             defaultValue = $" = {defaultValue};";
         }
-        string content = @$"    public {requiredKeyword}{Type}{nullableMark} {Name} {{ get; set; }}{defaultValue}";
+        string content = @$"public {requiredKeyword}{Type}{nullableMark} {Name} {{ get; set; }}{defaultValue}";
         if (!isInput && Name.ToLower().Contains("password"))
         {
             attributeText = attributeText?.Replace("    ", "    // ");
-            content = @$"    // public {Type}{nullableMark} {Name} {{ get; set; }}{defaultValue}";
+            content = @$"// public {Type}{nullableMark} {Name} {{ get; set; }}{defaultValue}";
         }
         return $@"{CommentXml}{attributeText}{content}{SuffixContent}
 ";

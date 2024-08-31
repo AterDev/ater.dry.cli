@@ -19,7 +19,7 @@ public class FeatureController(FeatureManager feature, ProjectContext projectCon
     [HttpPost("newSolution")]
     public async Task<ActionResult<bool>> CreateNewSolution(CreateSolutionDto dto)
     {
-        var res = await _feature.CreateNewSolutionAsync(dto);
+        bool res = await _feature.CreateNewSolutionAsync(dto);
         return res ? true : Problem(_feature.ErrorMsg);
     }
 
@@ -51,7 +51,7 @@ public class FeatureController(FeatureManager feature, ProjectContext projectCon
     [HttpPost("createModule")]
     public async Task<ActionResult<bool>> CreateModule(string name)
     {
-        var res = await _feature.CreateModuleAsync(name);
+        bool res = await _feature.CreateModuleAsync(name);
         return res ? true : Problem(_feature.ErrorMsg);
     }
 }

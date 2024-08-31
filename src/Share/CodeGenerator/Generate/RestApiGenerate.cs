@@ -1,6 +1,4 @@
-﻿using CodeGenerator.Helper;
-
-namespace CodeGenerator.Generate;
+﻿namespace CodeGenerator.Generate;
 
 /// <summary>
 /// 生成Rest API控制器
@@ -117,12 +115,12 @@ public class RestApiGenerate : GenerateBase
         string additionManagerProps = "";
         string additionManagerDI = "";
 
-        var requiredNavigations = EntityInfo.GetRequiredNavigation()?
+        List<Entity.PropertyInfo>? requiredNavigations = EntityInfo.GetRequiredNavigation()?
             .DistinctBy(n => n.Type).ToList();
 
         requiredNavigations?.ForEach(navigation =>
         {
-            var name = navigation.Type;
+            string name = navigation.Type;
             additionManagerProps += $"    private readonly {name}Manager _{name.ToCamelCase()}Manager = {name.ToCamelCase()}Manager;" + Environment.NewLine;
             additionManagerDI += $"  {name}Manager {name.ToCamelCase()}Manager,{Environment.NewLine}";
 
@@ -131,14 +129,14 @@ public class RestApiGenerate : GenerateBase
             .Replace(TplConst.ADDICTION_MANAGER_DI, additionManagerDI);
 
 
-        var addContent = GetAddApiContent();
-        var updateContent = GetUpdateApiContent();
+        string? addContent = GetAddApiContent();
+        string? updateContent = GetUpdateApiContent();
 
         tplContent = tplContent.Replace(TplConst.ADD_ACTION_BLOCK, addContent)
             .Replace(TplConst.UPDATE_ACTION_BLOCK, updateContent);
 
         // add see cref comment
-        var comment = EntityInfo?.Comment + Environment.NewLine + $"/// <see cref=\"{ApplicationNamespace}.Manager.{entityName}Manager\"/>";
+        string comment = EntityInfo?.Comment + Environment.NewLine + $"/// <see cref=\"{ApplicationNamespace}.Manager.{entityName}Manager\"/>";
         tplContent = tplContent.Replace(TplConst.NAMESPACE, ApiNamespace)
             .Replace(TplConst.SHARE_NAMESPACE, ShareNamespace)
             .Replace(TplConst.ENTITY_NAME, entityName)
@@ -158,11 +156,11 @@ public class RestApiGenerate : GenerateBase
     {
         string content = "";
         string entityName = EntityInfo.Name;
-        var requiredNavigations = EntityInfo.GetRequiredNavigation();
+        List<Entity.PropertyInfo>? requiredNavigations = EntityInfo.GetRequiredNavigation();
 
         requiredNavigations?.ForEach(nav =>
         {
-            var manager = "_" + nav.Type.ToCamelCase() + "Manager";
+            string manager = "_" + nav.Type.ToCamelCase() + "Manager";
             // 如果关联的是用户
             content += nav.Type switch
             {
@@ -198,13 +196,13 @@ public class RestApiGenerate : GenerateBase
 
             """;
         string entityName = EntityInfo.Name;
-        var requiredNavigations = EntityInfo.GetRequiredNavigation();
+        List<Entity.PropertyInfo>? requiredNavigations = EntityInfo.GetRequiredNavigation();
 
         requiredNavigations?.ForEach(nav =>
         {
             string name = nav.Type;
-            var manager = "_" + name.ToCamelCase() + "Manager";
-            var variable = name.ToCamelCase();
+            string manager = "_" + name.ToCamelCase() + "Manager";
+            string variable = name.ToCamelCase();
             if (!name.Equals("User") && !name.Equals("SystemUser"))
             {
                 content += $$"""

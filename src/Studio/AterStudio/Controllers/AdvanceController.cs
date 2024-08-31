@@ -1,7 +1,5 @@
 ﻿using Application;
 
-using Definition.Entity;
-
 using Microsoft.AspNetCore.Mvc;
 
 namespace AterStudio.Controllers;
@@ -24,7 +22,7 @@ public class AdvanceController(AdvanceManager entityAdvance, AIService aiService
     [HttpGet("config")]
     public ActionResult<ConfigData> GetConfig(string key)
     {
-        var data = _entityAdvance.GetConfig(key);
+        Entity.ConfigData? data = _entityAdvance.GetConfig(key);
         return data != null ? data : Ok();
     }
 
@@ -55,10 +53,10 @@ public class AdvanceController(AdvanceManager entityAdvance, AIService aiService
         _aiService.SetApiKey("deepSeekApiKey");
         try
         {
-            var choices = await _aiService.GetAnswerAsync(prompt, cancellationToken);
+            IAsyncEnumerable<DeepSeek.Core.Models.Choice>? choices = await _aiService.GetAnswerAsync(prompt, cancellationToken);
             if (choices != null)
             {
-                await foreach (var choice in choices)
+                await foreach (DeepSeek.Core.Models.Choice choice in choices)
                 {
                     await Response.WriteAsync(choice.Delta!.Content);
                 }

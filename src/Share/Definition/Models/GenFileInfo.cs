@@ -12,11 +12,12 @@ public class GenFileInfo(string name, string content)
     public string Content { get; set; } = content;
 
     /// <summary>
-    /// 是否可被用户编辑，如果可编辑，则不能覆盖用户代码
+    /// 是否覆盖
     /// </summary>
-    public bool CanModify { get; set; }
+    public bool IsCover { get; set; }
+
     /// <summary>
-    /// 相对文件夹名称
+    /// file path
     /// </summary>
     public string Path { get; set; } = string.Empty;
     /// <summary>

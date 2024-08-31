@@ -2,6 +2,7 @@
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 using Share.Share;
 using Share.Share.Models.EntityInfoDtos;
 
@@ -54,7 +55,7 @@ public class EntityInfoController(
         {
             return NotFound("不存在的文件");
         }
-        var res = await manager.CreateDtoAsync(entityFilePath, name, summary);
+        string? res = await manager.CreateDtoAsync(entityFilePath, name, summary);
         return res == null ? BadRequest("创建失败") : res;
     }
 
@@ -65,7 +66,7 @@ public class EntityInfoController(
     [HttpDelete]
     public string CleanSolution()
     {
-        var res = manager.CleanSolution(out var errorMsg);
+        bool res = manager.CleanSolution(out string? errorMsg);
         return res ? "清理成功" : errorMsg;
 
     }

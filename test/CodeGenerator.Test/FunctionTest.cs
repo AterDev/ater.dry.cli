@@ -6,14 +6,10 @@ using System.Threading.Tasks;
 
 using CodeGenerator.Generate;
 using CodeGenerator.Helper;
-using Definition.Infrastructure.Helper;
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.OpenApi.Readers;
-
-using NuGet.Versioning;
-using RazorEngineCore;
 
 namespace CodeGenerator.Test;
 public class FunctionTest
@@ -22,9 +18,9 @@ public class FunctionTest
     public void Should_parse_entity_attribute()
     {
         string filePath = PathHelper.GetProjectFilePath(@"Entity\Blog.cs");
-        var helper = new EntityParseHelper(filePath);
+        EntityParseHelper helper = new(filePath);
         helper.Parse();
-        var props = helper.PropertyInfos;
+        List<global::Entity.PropertyInfo> props = helper.PropertyInfos;
         Console.WriteLine();
     }
 
@@ -34,7 +30,7 @@ public class FunctionTest
         string? a = string.Empty;
         string? b = string.Empty;
 
-        var c = a == b;
+        bool c = a == b;
         Assert.True(c);
     }
 
@@ -48,7 +44,7 @@ public class FunctionTest
             .Replace("«", "")
             .Replace("»", "");
 
-        var apiDocument = new OpenApiStringReader().Read(openApiContent, out _);
+        Microsoft.OpenApi.Models.OpenApiDocument apiDocument = new OpenApiStringReader().Read(openApiContent, out _);
         var helper = new OpenApiHelper(apiDocument);
 
         var apis = helper.RestApiGroups;
@@ -59,11 +55,11 @@ public class FunctionTest
     public void Should_parse_enum()
     {
         string filePath = PathHelper.GetProjectFilePath(@"Entity\Blog.cs");
-        var helper = new EntityParseHelper(filePath);
+        EntityParseHelper helper = new(filePath);
         helper.Parse();
-        var members = helper.GetEnumMembers("EnumType");
+        List<IFieldSymbol?>? members = helper.GetEnumMembers("EnumType");
         Assert.NotNull(members);
-        var condition = members.Any(m => m!.Name.Equals("Default"));
+        bool condition = members.Any(m => m!.Name.Equals("Default"));
         Assert.True(condition);
     }
 
@@ -71,8 +67,8 @@ public class FunctionTest
     public void Should_generate_protobuf()
     {
         string filePath = PathHelper.GetProjectFilePath(@"Entity\Blog.cs");
-        var gen = new ProtobufGenerate(filePath);
-        var proto = gen.GenerateProtobuf();
+        ProtobufGenerate gen = new(filePath);
+        string proto = gen.GenerateProtobuf();
         Console.WriteLine(proto);
     }
 
@@ -83,32 +79,32 @@ public class FunctionTest
     [InlineData("IEnumerable<abc>")]
     public void Should_regex_listType(string type)
     {
-        var originType = EntityParseHelper.GetTypeFromList(type);
+        string? originType = EntityParseHelper.GetTypeFromList(type);
         Assert.Equal("abc", originType);
     }
 
     [Fact]
     public void Should_get_projectType()
     {
-        var current = PathHelper.GetProjectPath();
+        string current = PathHelper.GetProjectPath();
 
-        var projectFile = Path.Combine(current, "CodeGenerator.Test.csproj");
+        string projectFile = Path.Combine(current, "CodeGenerator.Test.csproj");
 
-        var type = AssemblyHelper.GetProjectType(new FileInfo(projectFile));
+        string? type = AssemblyHelper.GetProjectType(new FileInfo(projectFile));
         Assert.Equal("console", type);
     }
 
     [Fact]
     public void Should_Parse_Interface()
     {
-        var projectPath = @"C:\codes\ater.web\templates\apistd\src\Application\";
-        var interfaceName = "ISystemConfigManager";
-        var filePath = Path.Combine(projectPath, "IManager", interfaceName + ".cs");
+        string projectPath = @"C:\codes\ater.web\templates\apistd\src\Application\";
+        string interfaceName = "ISystemConfigManager";
+        string filePath = Path.Combine(projectPath, "IManager", interfaceName + ".cs");
 
-        var compilation = new CompilationHelper(projectPath);
+        CompilationHelper compilation = new(projectPath);
         compilation.LoadContent(File.ReadAllText(filePath));
 
-        var exist = compilation.MethodExist("Task<SystemConfig?> GetOwnedAsync(Guid id);");
+        bool exist = compilation.MethodExist("Task<SystemConfig?> GetOwnedAsync(Guid id);");
         Assert.True(exist);
 
         compilation.InsertInterfaceMethod("Task<SystemConfig?> GetOwnedAsync(int id);");
@@ -121,7 +117,7 @@ public class FunctionTest
     [Fact]
     public void Test_JsonNode()
     {
-        var jsonString = """
+        string jsonString = """
             {
               "Logging": {
                 "LogLevel": {
@@ -152,7 +148,7 @@ public class FunctionTest
             }
             
             """;
-        var jsonNode = JsonNode.Parse(jsonString, documentOptions: new JsonDocumentOptions
+        JsonNode? jsonNode = JsonNode.Parse(jsonString, documentOptions: new JsonDocumentOptions
         {
             CommentHandling = JsonCommentHandling.Skip
         });
@@ -170,7 +166,7 @@ public class FunctionTest
         var v70 = NuGetVersion.Parse("7.0");
         var v700 = NuGetVersion.Parse("7.0.0");
         var v71 = NuGetVersion.Parse("7.1");
-        var equal = VersionComparer.Compare(v70, v700, VersionComparison.Version) == 0;
+        bool equal = VersionComparer.Compare(v70, v700, VersionComparison.Version) == 0;
 
         Assert.True(equal);
 
@@ -179,10 +175,10 @@ public class FunctionTest
     [Fact]
     public async Task Should_Analysis_CodeAsync()
     {
-        var content = File.ReadAllText(@"D:\codes\v7.0\src\Application\IManager\ISystemRoleManager.cs");
-        var tree = CSharpSyntaxTree.ParseText(content);
-        var mscorlib = MetadataReference.CreateFromFile(typeof(object).Assembly.Location);
-        var compilation = CSharpCompilation.Create("MyCompilation", syntaxTrees: new[] { tree }, references: new[] { mscorlib });
+        string content = File.ReadAllText(@"D:\codes\v7.0\src\Application\IManager\ISystemRoleManager.cs");
+        SyntaxTree tree = CSharpSyntaxTree.ParseText(content);
+        PortableExecutableReference mscorlib = MetadataReference.CreateFromFile(typeof(object).Assembly.Location);
+        CSharpCompilation compilation = CSharpCompilation.Create("MyCompilation", syntaxTrees: new[] { tree }, references: new[] { mscorlib });
         await CSharpAnalysisHelper.GetBaseInterfaceInfoAsync(compilation, tree);
 
     }
@@ -190,7 +186,7 @@ public class FunctionTest
     [Fact]
     public void Should_ConvertJsonToCsharp()
     {
-        var json = """
+        string json = """
             {
               "description": {
                 "title": "Contiguous U.S., Average Temperature",
@@ -234,18 +230,18 @@ public class FunctionTest
             }
             """;
 
-        var helper = new CSharpCovertHelper();
+        CSharpCovertHelper helper = new();
         if (CSharpCovertHelper.CheckJson(json))
         {
-            var jsonElement = JsonSerializer.Deserialize<JsonElement>(json);
+            JsonElement jsonElement = JsonSerializer.Deserialize<JsonElement>(json);
 
             helper.ToCsharpClassContent(jsonElement);
 
-            var meta = helper.JsonMetadataList;
+            List<JsonMetadata> meta = helper.JsonMetadataList;
             helper.GenerateClass(jsonElement);
 
 
-            var classcodes = helper.ClassCodes;
+            List<string> classcodes = helper.ClassCodes;
             Console.WriteLine(classcodes.Count);
 
         }
@@ -255,11 +251,11 @@ public class FunctionTest
     public void GetBaseLists_Should_Return_BaseTypes()
     {
         // Arrange
-        var compilationHelper = new CompilationHelper("./");
+        CompilationHelper compilationHelper = new("./");
         compilationHelper.LoadContent("public class MyClass : MyBaseClass, IEntityBase { }");
 
         // Act
-        var baseTypes = compilationHelper.GetBaseLists();
+        List<BaseTypeSyntax> baseTypes = compilationHelper.GetBaseLists();
 
         // Assert
         Assert.NotNull(baseTypes);
@@ -271,28 +267,6 @@ public class FunctionTest
         Assert.Equal("IEntityBase", baseTypes[0].ToString());
     }
 
-
-    [Fact]
-    public void ShouldParseRazorEngine()
-    {
-        var templateStr = """
-            using @(Model.Namespace).Manager;
-            using @(Model.EntityName??"123")Manager;
-            """;
-
-        IRazorEngine razorEngine = new RazorEngine();
-        var template = razorEngine.Compile<RazorEngineTemplateBase<Model>>(templateStr);
-
-        string result = template.Run(instance =>
-        {
-            instance.Model = new Model
-            {
-                Namespace = "System",
-                //EntityName = "User"
-            };
-        });
-        Console.WriteLine(result);
-    }
 }
 
 public class Model

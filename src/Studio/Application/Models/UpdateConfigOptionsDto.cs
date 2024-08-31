@@ -1,6 +1,4 @@
-﻿using Definition.Models;
-
-namespace Application.Models;
+﻿namespace Application.Models;
 
 public class UpdateConfigOptionsDto
 {

@@ -1,7 +1,7 @@
 ﻿using System.Text;
+
 using CodeGenerator;
 using CodeGenerator.Helper;
-using Share.EntityFramework.DBProvider;
 
 namespace Application.Manager;
 
@@ -15,12 +15,12 @@ public class ProjectManager(CommandDbContext dbContext, ProjectContext projectCo
     }
     public async Task<List<Project>> GetProjectsAsync()
     {
-        var projects = _db.Projects.ToList();
+        List<Project> projects = _db.Projects.ToList();
 
         for (int i = 0; i < projects.Count; i++)
         {
-            var p = projects[i];
-            var configFilePath = Path.Combine(p.Path, "..", Config.ConfigFileName);
+            Project p = projects[i];
+            string configFilePath = Path.Combine(p.Path, "..", Config.ConfigFileName);
             if (File.Exists(configFilePath))
             {
                 string configJson = await File.ReadAllTextAsync(configFilePath);
@@ -46,7 +46,7 @@ public class ProjectManager(CommandDbContext dbContext, ProjectContext projectCo
     {
         // 获取并构造参数
         FileInfo projectFile = new(path);
-        var projectFilePath = Directory.GetFiles(path, "*.sln", SearchOption.TopDirectoryOnly).FirstOrDefault();
+        string? projectFilePath = Directory.GetFiles(path, "*.sln", SearchOption.TopDirectoryOnly).FirstOrDefault();
 
         projectFilePath ??= Directory.GetFiles(path, $"*{Const.CSharpProjectExtention}", SearchOption.TopDirectoryOnly).FirstOrDefault();
         projectFilePath ??= Directory.GetFiles(path, "package.json", SearchOption.TopDirectoryOnly).FirstOrDefault();
@@ -55,7 +55,7 @@ public class ProjectManager(CommandDbContext dbContext, ProjectContext projectCo
         {
             return "未找到有效的项目";
         }
-        var solutionType = AssemblyHelper.GetSolutionType(projectFilePath);
+        SolutionType? solutionType = AssemblyHelper.GetSolutionType(projectFilePath);
 
         string configFilePath = Path.Combine(path!, Config.ConfigFileName);
 
@@ -82,18 +82,18 @@ public class ProjectManager(CommandDbContext dbContext, ProjectContext projectCo
 
     public bool DeleteProject(Guid id)
     {
-        var project = _db.Projects.Find(id);
+        Project? project = _db.Projects.Find(id);
         _db.Projects.Remove(project);
         return _db.SaveChanges() > 0;
     }
 
     public async Task<Project> GetProjectAsync(Guid id)
     {
-        var project = _db.Projects.Find(id);
+        Project? project = _db.Projects.Find(id);
         if (string.IsNullOrWhiteSpace(project.Version))
         {
-            var solutionPath = Path.Combine(project.Path, "..");
-            var version = await AssemblyHelper.GetSolutionVersionAsync(solutionPath);
+            string solutionPath = Path.Combine(project.Path, "..");
+            string? version = await AssemblyHelper.GetSolutionVersionAsync(solutionPath);
             project.Version = version;
         }
         return project;
@@ -122,8 +122,8 @@ public class ProjectManager(CommandDbContext dbContext, ProjectContext projectCo
         }
         try
         {
-            var path = _projectContext.Project.Path;
-            var version = await AssemblyHelper.GetSolutionVersionAsync(_projectContext.SolutionPath!);
+            string path = _projectContext.Project.Path;
+            string? version = await AssemblyHelper.GetSolutionVersionAsync(_projectContext.SolutionPath!);
             return version == null ? "未找到项目配置文件，无法进行更新" : "暂不支持该功能";
         }
         catch (Exception ex)
@@ -135,12 +135,12 @@ public class ProjectManager(CommandDbContext dbContext, ProjectContext projectCo
 
     public async Task<List<SubProjectInfo>?> GetAllProjectsAsync(Guid id)
     {
-        var project = await GetProjectAsync(id);
-        var pathString = Path.Combine(project.Path, "../");
-        var res = new List<SubProjectInfo>();
+        Project project = await GetProjectAsync(id);
+        string pathString = Path.Combine(project.Path, "../");
+        List<SubProjectInfo> res = [];
         try
         {
-            var subProjectFiles = new DirectoryInfo(pathString)
+            List<FileInfo> subProjectFiles = new DirectoryInfo(pathString)
                 .GetFiles($"*{Const.CSharpProjectExtention}", SearchOption.AllDirectories)
                 .ToList();
 
@@ -149,7 +149,7 @@ public class ProjectManager(CommandDbContext dbContext, ProjectContext projectCo
                 subProjectFiles.ForEach(f =>
                 {
                     // 判断类型
-                    var type = AssemblyHelper.GetProjectType(f);
+                    string? type = AssemblyHelper.GetProjectType(f);
                     res.Add(new SubProjectInfo
                     {
                         Name = f.Name,
@@ -177,7 +177,7 @@ public class ProjectManager(CommandDbContext dbContext, ProjectContext projectCo
     /// <returns></returns>
     public ConfigOptions? GetConfigOptions()
     {
-        var options = ConfigCommand.ReadConfigFile(_projectContext.SolutionPath!);
+        ConfigOptions? options = ConfigCommand.ReadConfigFile(_projectContext.SolutionPath!);
         if (options != null)
         {
             options.RootPath = _projectContext.SolutionPath!;
@@ -192,7 +192,7 @@ public class ProjectManager(CommandDbContext dbContext, ProjectContext projectCo
     /// <returns></returns>
     public async Task<bool> UpdateConfigAsync(UpdateConfigOptionsDto dto)
     {
-        var options = ConfigCommand.ReadConfigFile(_projectContext.SolutionPath!);
+        ConfigOptions? options = ConfigCommand.ReadConfigFile(_projectContext.SolutionPath!);
         if (options == null)
         {
             return false;
@@ -307,7 +307,7 @@ public class ProjectManager(CommandDbContext dbContext, ProjectContext projectCo
     /// <returns></returns>
     public TemplateFile GetTemplate(Guid id, string name)
     {
-        var project = GetProjectAsync(id);
+        Task<Project> project = GetProjectAsync(id);
         // 从库中获取，如果没有，则从模板中读取
         var file = _db.TemplateFiles
             .Where(f => f.Name.Equals(name))

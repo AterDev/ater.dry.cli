@@ -1,10 +1,13 @@
 ﻿namespace CodeGenerator.Models;
 
+/// <summary>
+/// DTO 
+/// </summary>
 public class DtoInfo
 {
     public string? Name { get; set; }
     public string? BaseType { get; set; }
-    public List<PropertyInfo>? Properties { get; set; }
+    public List<Entity.PropertyInfo> Properties { get; set; } = [];
     public string? Tag { get; set; }
     public string? NamespaceName { get; set; }
     public string? Comment { get; set; }
@@ -28,22 +31,24 @@ public class DtoInfo
 
         // 对region进行处理
         int regionCount = propStrings.Split("#region").Length - 1;
-        int endregionCount = propStrings.Split("#endregion").Length - 1;
-        if (endregionCount < regionCount)
+        int endRegionCount = propStrings.Split("#endregion").Length - 1;
+        if (endRegionCount < regionCount)
         {
             propStrings += Environment.NewLine + "\t#endregion";
         }
 
         string baseType = string.IsNullOrEmpty(BaseType) ? "" : " : " + BaseType;
-        string tpl = $@"using {NamespaceName};
-namespace {projectName}.Models.{entityName}Dtos;
-{Comment}
-/// <see cref=""{EntityNamespace}""/>
-public class {Name}{baseType}
-{{
-{propStrings}    
-}}
-";
+        string tpl = $$"""
+            using {{NamespaceName}};
+            namespace {{projectName}}.Models.{{entityName}}Dtos;
+            {{Comment}}
+            /// <see cref="{{EntityNamespace}}"/>
+            public class {{Name}}{{baseType}}
+            {
+            {{propStrings}}    
+            }
+
+            """;
         return tpl;
     }
 }

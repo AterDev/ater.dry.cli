@@ -156,7 +156,7 @@ public class TSModelGenerate : GenerateBase
     /// <returns></returns>
     private string? GetDirName(string searchKey)
     {
-        var dirName = ModelDictionary.Where(m => m.Key.StartsWith(searchKey))
+        string? dirName = ModelDictionary.Where(m => m.Key.StartsWith(searchKey))
             .Select(m => m.Value)
             .FirstOrDefault();
         return dirName;

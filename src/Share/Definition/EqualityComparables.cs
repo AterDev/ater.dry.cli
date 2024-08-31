@@ -1,12 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Definition.Entity;
 
 namespace Share;
 public class PropertyEquality : IEqualityComparer<PropertyInfo>
 {
     public bool Equals(PropertyInfo? x, PropertyInfo? y)
     {
-        var res = x?.Name == y?.Name
+        bool res = x?.Name == y?.Name
             && x?.Type == y?.Type
             && x?.IsRequired == y?.IsRequired
             && x?.IsNullable == y?.IsNullable

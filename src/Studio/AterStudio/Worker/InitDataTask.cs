@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+
 using Share.EntityFramework.DBProvider;
 
 namespace AterStudio.Worker;
@@ -11,7 +12,7 @@ public class InitDataTask
     /// <returns></returns>
     public static async Task InitDataAsync(IServiceProvider provider)
     {
-        var context = provider.GetRequiredService<CommandDbContext>();
+        CommandDbContext context = provider.GetRequiredService<CommandDbContext>();
         ILoggerFactory loggerFactory = provider.GetRequiredService<ILoggerFactory>();
         ILogger<InitDataTask> logger = loggerFactory.CreateLogger<InitDataTask>();
         try

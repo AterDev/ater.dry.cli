@@ -1,9 +1,3 @@
-using Ater.Web.Abstraction.EntityFramework;
-
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Share.EntityFramework;
-using Share.EntityFramework.DBProvider;
-
 namespace Application.Implement;
 
 /// <summary>

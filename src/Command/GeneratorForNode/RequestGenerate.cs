@@ -126,7 +126,7 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
                 _ => ""
             };
 
-            var path = currentTag.Name?.ToHyphen() ?? "";
+            string path = currentTag.Name?.ToHyphen() ?? "";
             switch (LibType)
             {
                 // 同时生成基类和继承类，继承类可自定义
@@ -214,7 +214,7 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
             if (!data.Any()) { return string.Empty; }
         }
 
-        var sb = new StringBuilder();
+        StringBuilder sb = new();
 
         TabConst.TabSize = 2;
         sb.AppendLine($"case '{enumType}':".Indent(3));
@@ -225,7 +225,7 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
         {
             for (int i = 0; i < array.Count; i++)
             {
-                var item = (OpenApiObject)array[i];
+                OpenApiObject item = (OpenApiObject)array[i];
 
                 string caseString = string.Format("case {0}: result = '{1}'; break;".Indent(6), ((OpenApiInteger)item["value"]).Value, ((OpenApiString)item["description"]).Value);
 
@@ -333,7 +333,7 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
                 // TODO:object  字典
                 if (schema.AdditionalProperties != null)
                 {
-                    var (inType, inRefType) = GetTypescriptParamType(schema.AdditionalProperties);
+                    (string inType, string inRefType) = GetTypescriptParamType(schema.AdditionalProperties);
                     refType = inRefType;
                     type = $"Map<string, {inType}>";
                 }
@@ -382,7 +382,7 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
     /// <returns></returns>
     public string ToNgRequestBaseService(RequestServiceFile serviceFile)
     {
-        var functions = serviceFile.Functions;
+        List<RequestServiceFunction>? functions = serviceFile.Functions;
         string functionstr = "";
         // import引用的models
         string importModels = "";
@@ -681,8 +681,8 @@ export class {{serviceFile.Name}}Service extends {{serviceFile.Name}}BaseService
             dataString = $", {file.Name}";
         }
 
-        var method = "request";
-        var generics = $"<{ResponseType}>";
+        string method = "request";
+        string generics = $"<{ResponseType}>";
         if (ResponseType.Equals("FormData"))
         {
             ResponseType = "Blob";

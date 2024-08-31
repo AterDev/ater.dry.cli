@@ -1,6 +1,7 @@
 ﻿using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
+
 using Share.Models;
 
 
@@ -44,7 +45,7 @@ public class OpenApiHelper
     /// <returns></returns>
     public List<RestApiGroup> GetRestApiGroups()
     {
-        var apiInfos = new List<RestApiInfo>();
+        List<RestApiInfo> apiInfos = [];
         foreach (KeyValuePair<string, OpenApiPathItem> path in OpenApi.Paths)
         {
             foreach (KeyValuePair<OperationType, OpenApiOperation> operation in path.Value.Operations)
@@ -59,16 +60,16 @@ public class OpenApiHelper
                 };
 
                 // 处理请求内容
-                var requestBody = operation.Value.RequestBody;
-                var requestParameters = operation.Value.Parameters;
-                var responseBody = operation.Value.Responses;
+                OpenApiRequestBody requestBody = operation.Value.RequestBody;
+                IList<OpenApiParameter> requestParameters = operation.Value.Parameters;
+                OpenApiResponses responseBody = operation.Value.Responses;
 
                 // 请求类型
                 if (requestBody != null)
                 {
-                    var (RequestType, RequestRefType) = GetParamType(requestBody.Content.Values.FirstOrDefault()?.Schema);
+                    (string RequestType, string RequestRefType) = GetParamType(requestBody.Content.Values.FirstOrDefault()?.Schema);
                     // 关联的类型
-                    var model = ModelInfos.FirstOrDefault(m => m.Name == RequestRefType);
+                    EntityInfo? model = ModelInfos.FirstOrDefault(m => m.Name == RequestRefType);
 
                     if (model == null)
                     {
@@ -80,14 +81,14 @@ public class OpenApiHelper
 
                         if (!string.IsNullOrWhiteSpace(RequestType))
                         {
-                            apiInfo.RequestInfo.PropertyInfos = new List<PropertyInfo>
-                            {
+                            apiInfo.RequestInfo.PropertyInfos =
+                            [
                                 new PropertyInfo
                                 {
                                     Name = RequestType,
                                     Type = RequestRefType ?? RequestType,
                                 }
-                            };
+                            ];
                         }
                     }
                     else
@@ -98,11 +99,11 @@ public class OpenApiHelper
                 // 响应类型
                 if (responseBody != null)
                 {
-                    var (ResponseType, ResponseRefType) = GetParamType(responseBody
+                    (string ResponseType, string ResponseRefType) = GetParamType(responseBody
                        .FirstOrDefault().Value?.Content
                        .FirstOrDefault().Value?.Schema);
                     // 关联的类型
-                    var model = ModelInfos.FirstOrDefault(m => m.Name == ResponseRefType);
+                    EntityInfo? model = ModelInfos.FirstOrDefault(m => m.Name == ResponseRefType);
 
                     // 返回内容没有对应类型
                     if (model == null)
@@ -114,14 +115,14 @@ public class OpenApiHelper
                         };
                         if (!string.IsNullOrWhiteSpace(ResponseType))
                         {
-                            apiInfo.ResponseInfo.PropertyInfos = new List<PropertyInfo>
-                            {
+                            apiInfo.ResponseInfo.PropertyInfos =
+                            [
                                 new PropertyInfo
                                 {
                                     Name = ResponseType,
                                     Type = ResponseRefType ?? ResponseType,
                                 }
-                            };
+                            ];
                         }
                     }
                     else
@@ -133,7 +134,7 @@ public class OpenApiHelper
                 // 请求的参数
                 if (requestParameters != null)
                 {
-                    var parammeters = requestParameters?.Select(p =>
+                    List<PropertyInfo>? parammeters = requestParameters?.Select(p =>
                     {
                         string? location = p.In?.GetDisplayName();
                         bool? inpath = location?.ToLower()?.Equals("path");
@@ -151,10 +152,10 @@ public class OpenApiHelper
                 apiInfos.Add(apiInfo);
             }
         }
-        var apiGroups = new List<RestApiGroup>();
+        List<RestApiGroup> apiGroups = [];
         OpenApiTags.ForEach(tag =>
         {
-            var group = new RestApiGroup
+            RestApiGroup group = new()
             {
                 Name = tag.Name,
                 Description = tag.Description,
@@ -164,12 +165,12 @@ public class OpenApiHelper
             apiGroups.Add(group);
         });
         // tag不在OpenApiTags中的api infos
-        var tags = OpenApiTags.Select(t => t.Name).ToList();
-        var noTagApisInfo = apiInfos.Where(a => !tags.Contains(a.Tag)).ToList();
+        List<string> tags = OpenApiTags.Select(t => t.Name).ToList();
+        List<RestApiInfo> noTagApisInfo = apiInfos.Where(a => !tags.Contains(a.Tag)).ToList();
 
         if (noTagApisInfo.Any())
         {
-            var group = new RestApiGroup
+            RestApiGroup group = new()
             {
                 Name = "No Tags",
                 Description = "无tag分组接口",
@@ -186,7 +187,7 @@ public class OpenApiHelper
     /// <returns></returns>
     public List<EntityInfo> GetEntityInfos()
     {
-        var models = new List<EntityInfo>();
+        List<EntityInfo> models = [];
 
         foreach (KeyValuePair<string, OpenApiSchema> schema in OpenApi.Components.Schemas)
         {
@@ -196,7 +197,7 @@ public class OpenApiHelper
             description = description?.Replace("\n", " ") ?? "";
             List<PropertyInfo> props = ParseProperties(schema.Value);
 
-            var model = new EntityInfo
+            EntityInfo model = new()
             {
                 Name = name,
                 ProjectId = Const.PROJECT_ID,
@@ -204,7 +205,7 @@ public class OpenApiHelper
                 Comment = description,
             };
             // 判断是否为枚举类
-            var enumNode = schema.Value.Enum;
+            IList<IOpenApiAny> enumNode = schema.Value.Enum;
             if (enumNode.Any())
             {
                 model.IsEnum = true;
@@ -222,17 +223,17 @@ public class OpenApiHelper
     /// <returns></returns>
     public static List<PropertyInfo> GetEnumProperties(OpenApiSchema schema)
     {
-        var props = new List<PropertyInfo>();
-        var enums = schema.Enum.ToList();
+        List<PropertyInfo> props = [];
+        List<IOpenApiAny> enums = schema.Enum.ToList();
 
-        var extEnum = schema.Extensions.Where(e => e.Key == "x-enumNames").FirstOrDefault();
-        var extEnumData = schema.Extensions.Where(e => e.Key == "x-enumData").FirstOrDefault();
+        KeyValuePair<string, Microsoft.OpenApi.Interfaces.IOpenApiExtension> extEnum = schema.Extensions.Where(e => e.Key == "x-enumNames").FirstOrDefault();
+        KeyValuePair<string, Microsoft.OpenApi.Interfaces.IOpenApiExtension> extEnumData = schema.Extensions.Where(e => e.Key == "x-enumData").FirstOrDefault();
         if (extEnumData.Value != null)
         {
-            var data = extEnumData.Value as OpenApiArray;
+            OpenApiArray? data = extEnumData.Value as OpenApiArray;
             data?.ForEach(item =>
             {
-                var prop = new PropertyInfo
+                PropertyInfo prop = new()
                 {
                     Name = ((item as OpenApiObject)?["name"] as OpenApiString)?
                         .Value.ToString() ?? "",
@@ -252,7 +253,7 @@ public class OpenApiHelper
         {
             for (int i = 0; i < enums.Count; i++)
             {
-                var prop = new PropertyInfo
+                PropertyInfo prop = new()
                 {
                     Name = (enums[i] as OpenApiInteger)?.Value.ToString() ?? i.ToString(),
                     Type = "Enum:int",
@@ -512,7 +513,7 @@ public class OpenApiHelper
                 // TODO:object  字典
                 if (schema.AdditionalProperties != null)
                 {
-                    var (inType, inRefType) = GetParamType(schema.AdditionalProperties);
+                    (string inType, string inRefType) = GetParamType(schema.AdditionalProperties);
                     refType = inRefType;
                     type = $"Map<string, {inType}>";
                 }

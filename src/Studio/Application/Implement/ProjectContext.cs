@@ -1,7 +1,7 @@
 ﻿using CodeGenerator;
 using CodeGenerator.Helper;
+
 using Microsoft.AspNetCore.Http;
-using Share.EntityFramework.DBProvider;
 
 namespace Application.Implement;
 
@@ -22,7 +22,7 @@ public class ProjectContext
 
     public ProjectContext(IHttpContextAccessor httpContextAccessor, CommandDbContext context)
     {
-        var id = httpContextAccessor.HttpContext?.Request.Headers["projectId"].ToString();
+        string? id = httpContextAccessor.HttpContext?.Request.Headers["projectId"].ToString();
         if (!string.IsNullOrWhiteSpace(id))
         {
             if (Guid.TryParse(id, out Guid projectId))
@@ -33,7 +33,7 @@ public class ProjectContext
                 {
                     Const.PROJECT_ID = projectId;
                     SolutionPath = GetProjectRootPath(Project.Path);
-                    var options = ConfigCommand.ReadConfigFile(SolutionPath);
+                    ConfigOptions? options = ConfigCommand.ReadConfigFile(SolutionPath);
                     if (options != null)
                     {
                         Config.SetConfig(options);

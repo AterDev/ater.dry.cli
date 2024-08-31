@@ -17,7 +17,7 @@ public class CSharpCovertHelper
     {
         try
         {
-            var obj = JsonSerializer.Deserialize<object>(json);
+            object? obj = JsonSerializer.Deserialize<object>(json);
             return obj != null;
         }
         catch (Exception)
@@ -36,7 +36,7 @@ public class CSharpCovertHelper
     public void GenerateClass(JsonElement jsonElement, string className = "Model")
     {
         className = className.ToPascalCase();
-        var sb = new StringBuilder();
+        StringBuilder sb = new();
         sb.AppendLine($"public class {className}");
         sb.AppendLine("{");
         if (jsonElement.ValueKind == JsonValueKind.Array)
@@ -44,13 +44,13 @@ public class CSharpCovertHelper
             jsonElement = jsonElement.EnumerateArray().First();
         }
 
-        foreach (var property in jsonElement.EnumerateObject())
+        foreach (JsonProperty property in jsonElement.EnumerateObject())
         {
-            var propertyName = property.Name;
-            var propertyValue = property.Value;
-            var defaultValue = "";
+            string propertyName = property.Name;
+            JsonElement propertyValue = property.Value;
+            string defaultValue = "";
 
-            var csharpType = ConvertToType(propertyValue, propertyName);
+            string csharpType = ConvertToType(propertyValue, propertyName);
             if (propertyValue.ValueKind == JsonValueKind.Array)
             {
                 defaultValue = "[]";
@@ -71,7 +71,7 @@ public class CSharpCovertHelper
                 propertyName = "The" + propertyName;
             }
 
-            var propertyLine = $"public {csharpType} {propertyName.ToPascalCase()} {{ get; set; }}";
+            string propertyLine = $"public {csharpType} {propertyName.ToPascalCase()} {{ get; set; }}";
             if (!string.IsNullOrEmpty(defaultValue))
             {
                 propertyLine += $" = {defaultValue};";
@@ -116,7 +116,7 @@ public class CSharpCovertHelper
 
             foreach (JsonProperty property in jsonElement.EnumerateObject())
             {
-                var child = ConvertJsonToMetadata(property.Value, property.Name.ToPascalCase());
+                JsonMetadata child = ConvertJsonToMetadata(property.Value, property.Name.ToPascalCase());
                 child.Parent = metadata;
                 metadata.Descents.Add(child);
             }
@@ -128,7 +128,7 @@ public class CSharpCovertHelper
             if (jsonElement.GetArrayLength() > 0)
             {
                 JsonElement firstChild = jsonElement.EnumerateArray().First();
-                var child = ConvertJsonToMetadata(firstChild, metadata.Name);
+                JsonMetadata child = ConvertJsonToMetadata(firstChild, metadata.Name);
                 child.Parent = metadata;
                 metadata.Descents.Add(child);
             }
@@ -145,7 +145,7 @@ public class CSharpCovertHelper
     private string ConvertToType(JsonElement element, string? propertyName = null)
     {
         // 类型处理
-        var csharpType = element.ValueKind switch
+        string? csharpType = element.ValueKind switch
         {
             JsonValueKind.Number => "int",
             JsonValueKind.String => "string?",
@@ -192,7 +192,7 @@ public class CSharpCovertHelper
                     csharpType = "DateOnly";
                 }
             }
-            var stringValue = element.GetString();
+            string? stringValue = element.GetString();
             string[] formats = ["HH:mm:ss", "HH:mm"];
             if (DateTime.TryParseExact(stringValue, formats, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out _))
             {

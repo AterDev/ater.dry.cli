@@ -11,11 +11,11 @@ public class TestGenerate(OpenApiDocument openApi) : GenerateBase
     public string GetFilterTestContent()
     {
         // 查询 路由以 filter 结尾的接口
-        var filterPaths = PathsPairs.Where(p => p.Key.EndsWith("filter")).ToList();
-        var content = "";
-        foreach (var path in filterPaths)
+        List<KeyValuePair<string, OpenApiPathItem>> filterPaths = PathsPairs.Where(p => p.Key.EndsWith("filter")).ToList();
+        string content = "";
+        foreach (KeyValuePair<string, OpenApiPathItem> path in filterPaths)
         {
-            var operation = path.Value.Operations.FirstOrDefault();
+            KeyValuePair<OperationType, OpenApiOperation> operation = path.Value.Operations.FirstOrDefault();
             content += GenerateFilterTestMethod(path.Key, operation.Value.OperationId.Replace("_", ""), operation.Key == OperationType.Get);
         }
         return content;
@@ -31,7 +31,7 @@ public class TestGenerate(OpenApiDocument openApi) : GenerateBase
     /// <returns></returns>
     public string GenerateFilterTestMethod(string url, string name, bool isGet = false)
     {
-        var request = isGet ? "GetAsync(url);" : "PostAsJsonAsync(url, data);";
+        string request = isGet ? "GetAsync(url);" : "PostAsJsonAsync(url, data);";
 
         return $$"""
     [Theory]
@@ -52,8 +52,8 @@ public class TestGenerate(OpenApiDocument openApi) : GenerateBase
 
     public string GenerateFilterMethod(string url, string name, OperationType type)
     {
-        var dataString = "";
-        var requestString = "GetAsync(url);";
+        string dataString = "";
+        string requestString = "GetAsync(url);";
         if (type is OperationType.Post or OperationType.Put)
         {
             dataString = "var data = new {};";

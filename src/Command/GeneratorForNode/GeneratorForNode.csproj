@@ -23,7 +23,7 @@
 
     <ItemGroup>
 
-        <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.18" />
+        <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.19" />
     </ItemGroup>
 
 </Project>

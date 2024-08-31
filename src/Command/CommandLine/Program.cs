@@ -20,7 +20,7 @@ internal class Program
 
     private static void ShowLogo()
     {
-        var logo = """
+        string logo = """
                  _____    _____   __     __
                 |  __ \  |  __ \  \ \   / /
                 | |  | | | |__) |  \ \_/ / 

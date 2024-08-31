@@ -9,13 +9,13 @@ public class CryptHelper
 {
     public static string HashString(string str, HashType type = HashType.MD5)
     {
-        var bytes = HashData(str, type);
+        byte[] bytes = HashData(str, type);
         return BitConverter.ToString(bytes).Replace("-", "").ToLower();
     }
 
     private static byte[] HashData(string str, HashType type = HashType.MD5)
     {
-        var bytes = Encoding.UTF8.GetBytes(str);
+        byte[] bytes = Encoding.UTF8.GetBytes(str);
         return type switch
         {
             HashType.MD5 => MD5.HashData(bytes),

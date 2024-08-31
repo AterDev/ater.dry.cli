@@ -1,7 +1,8 @@
 ﻿using System.Text.RegularExpressions;
-using CodeGenerator.Helper;
-using CodeGenerator.Models;
-using Entity;
+
+using Mapster;
+
+using PropertyInfo = Entity.PropertyInfo;
 
 namespace CodeGenerator.Generate;
 /// <summary>
@@ -16,23 +17,12 @@ public class DtoCodeGenerate : GenerateBase
     /// </summary>
     public string? AssemblyName { get; set; }
     public string DtoPath { get; init; }
-    public readonly ContextBase dbContext;
 
-
-    public DtoCodeGenerate(string entityPath, string dtoPath, ContextBase dbContext)
+    public DtoCodeGenerate(EntityInfo entityInfo, string dtoPath)
     {
         DtoPath = dtoPath;
-        this.dbContext = dbContext;
-
         AssemblyName = AssemblyHelper.GetNamespaceName(new DirectoryInfo(dtoPath));
-
-        if (!File.Exists(entityPath))
-        {
-            throw new FileNotFoundException();
-        }
-
-        var entityHelper = new EntityParseHelper(entityPath);
-        EntityInfo = entityHelper.GetEntity();
+        EntityInfo = entityInfo;
         KeyType = EntityInfo.KeyType switch
         {
             EntityKeyType.Int => "Int",
@@ -65,12 +55,12 @@ public class DtoCodeGenerate : GenerateBase
         return comment;
     }
 
-    public string? GetShortDto()
+    /// <summary>
+    /// the detail dto
+    /// </summary>
+    /// <returns></returns>
+    public string GetDetailDto()
     {
-        if (EntityInfo == null)
-        {
-            return default;
-        }
         DtoInfo dto = new()
         {
             EntityNamespace = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
@@ -79,31 +69,22 @@ public class DtoCodeGenerate : GenerateBase
             Comment = FormatComment(EntityInfo.Comment, "概要"),
             Tag = EntityInfo.Name,
             Properties = EntityInfo.PropertyInfos?
-                .Where(p => p.Name != "IsDeleted")
+                .Where(p => p.Name is not "IsDeleted")
                 .Where(p => !p.IsJsonIgnore)
-                .ToList()
+                .Where(p => !EntityInfo.IgnoreTypes.Contains(p.Type))
+                .Where(p => !(p.IsList && p.IsNavigation))
+                .ToList() ?? []
         };
-
-        dto.Properties = dto.Properties?.Where(
-            p => p.Name != "Content"
-                && p.Name != "UpdatedTime"
-                && p.Name != "CreatedTime"
-                && p.MaxLength is not (not null and >= 100)
-                && !p.Name.EndsWith("Id") && p.Name != "Id"
-                && !(p.IsList && p.IsNavigation)
-            )
-            .ToList();
 
         return dto.ToDtoContent(AssemblyName, EntityInfo.Name);
     }
 
-    public string? GetItemDto()
+    /// <summary>
+    /// the list item dto
+    /// </summary>
+    /// <returns></returns>
+    public string GetItemDto()
     {
-        if (EntityInfo == null)
-        {
-            return default;
-        }
-
         DtoInfo dto = new()
         {
             EntityNamespace = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
@@ -114,24 +95,24 @@ public class DtoCodeGenerate : GenerateBase
             Properties = EntityInfo.PropertyInfos?
                 .Where(p => p.Name is not "IsDeleted" and not "UpdatedTime")
                 .Where(p => !p.IsJsonIgnore)
-                .ToList()
+                .ToList() ?? []
         };
 
         dto.Properties = dto.Properties?
             .Where(p => !p.IsList
-                && (p.MaxLength is not (not null and >= 100))
+                && (p.MaxLength is not (not null and >= 200))
                 && (!p.Name.EndsWith("Id") || p.Name.Equals("Id"))
-                && !p.IsNavigation).ToList();
+                && !p.IsNavigation).ToList() ?? [];
 
         return dto.ToDtoContent(AssemblyName, EntityInfo.Name);
     }
 
-    public string? GetFilterDto()
+    /// <summary>
+    /// the filter dto
+    /// </summary>
+    /// <returns></returns>
+    public string GetFilterDto()
     {
-        if (EntityInfo == null)
-        {
-            return default;
-        }
         List<PropertyInfo>? referenceProps = EntityInfo.PropertyInfos?
             .Where(p => p.IsNavigation && !p.IsList)
             .Where(p => !p.IsJsonIgnore)
@@ -150,23 +131,13 @@ public class DtoCodeGenerate : GenerateBase
             Comment = FormatComment(EntityInfo.Comment, "查询筛选"),
             Tag = EntityInfo.Name,
             BaseType = "FilterBase",
+            Properties = EntityInfo.GetFilterProperties()
+                .Select(p => p.Adapt<PropertyInfo>())
+                .ToList() ?? []
         };
 
-        List<PropertyInfo>? properties = EntityInfo.PropertyInfos?
-                .Where(p => (p.IsRequired && !p.IsNavigation)
-                    || (!p.IsList
-                        && !p.IsNavigation
-                        && !p.IsComplexType
-                        && !Const.IgnoreProperties.Contains(p.Name)
-                        && !Const.IgnoreTypes.Contains(p.Type))
-                    || p.IsEnum
-                    )
-                .Where(p => p.MaxLength is not (not null and >= 100))
-                .ToList();
-        dto.Properties = properties.Copy() ?? [];
-
         // 筛选条件调整为可空
-        foreach (var item in dto.Properties)
+        foreach (PropertyInfo item in dto.Properties)
         {
             item.IsNullable = true;
             item.IsRequired = false;
@@ -181,13 +152,9 @@ public class DtoCodeGenerate : GenerateBase
         return dto.ToDtoContent(AssemblyName, EntityInfo.Name);
     }
 
-    public string? GetAddDto()
+    public string GetAddDto()
     {
-        if (EntityInfo == null)
-        {
-            return default;
-        }
-
+        // 导航属性处理
         List<PropertyInfo>? referenceProps = EntityInfo.PropertyInfos?
             .Where(p => !p.IsJsonIgnore && !p.IsList)
             .Where(p => p.IsNavigation &&
@@ -212,7 +179,7 @@ public class DtoCodeGenerate : GenerateBase
             Tag = EntityInfo.Name,
             Properties = EntityInfo.PropertyInfos?.Where(p => !p.IsNavigation
                 && p.HasSet
-                && !Const.IgnoreTypes.Contains(p.Type)
+                && !EntityInfo.IgnoreTypes.Contains(p.Type)
                 && p.Name != "Id"
                 && p.Name != "CreatedTime"
                 && p.Name != "UpdatedTime"
@@ -220,7 +187,6 @@ public class DtoCodeGenerate : GenerateBase
             .ToList() ?? []
         };
 
-        // 初次创建
         referenceProps?.ForEach(item =>
         {
             if (!dto.Properties.Any(p => p.Name.Equals(item.Name)))
@@ -228,7 +194,6 @@ public class DtoCodeGenerate : GenerateBase
                 dto.Properties.Add(item);
             }
         });
-
 
         return dto.ToDtoContent(AssemblyName, EntityInfo.Name, true);
     }
@@ -238,12 +203,8 @@ public class DtoCodeGenerate : GenerateBase
     /// 导航属性 Name+Id,过滤列表属性
     /// </summary>
     /// <returns></returns>
-    public string? GetUpdateDto()
+    public string GetUpdateDto()
     {
-        if (EntityInfo == null)
-        {
-            return default;
-        }
         // 导航属性处理
         List<PropertyInfo>? referenceProps = EntityInfo.PropertyInfos?
             .Where(p => !p.IsJsonIgnore)
@@ -266,19 +227,17 @@ public class DtoCodeGenerate : GenerateBase
             NamespaceName = EntityInfo.NamespaceName,
             Comment = FormatComment(EntityInfo.Comment, "更新时请求结构"),
             Tag = EntityInfo.Name,
-
+            // 处理非 required的都设置为 nullable
+            Properties = EntityInfo.PropertyInfos?.Where(p => !p.IsNavigation
+                    && p.HasSet
+                    && !EntityInfo.IgnoreTypes.Contains(p.Type)
+                    && p.Name != "Id"
+                    && p.Name != "CreatedTime"
+                    && p.Name != "UpdatedTime"
+                    && p.Name != "IsDeleted")
+            .Select(p => p.Adapt<PropertyInfo>())
+            .ToList() ?? []
         };
-        // 处理非 required的都设置为 nullable
-        List<PropertyInfo>? properties = EntityInfo.PropertyInfos?.Where(p => !p.IsNavigation
-                && p.HasSet
-                && !Const.IgnoreTypes.Contains(p.Type)
-                && p.Name != "Id"
-                && p.Name != "CreatedTime"
-                && p.Name != "UpdatedTime"
-                && p.Name != "IsDeleted")
-            .ToList();
-
-        dto.Properties = properties?.Copy() ?? [];
 
         referenceProps?.ForEach(item =>
         {

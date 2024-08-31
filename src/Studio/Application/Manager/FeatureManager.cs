@@ -1,5 +1,7 @@
 ﻿using System.Text.Json.Nodes;
+
 using CodeGenerator.Helper;
+
 using Share.Infrastructure.Helper;
 
 namespace Application.Manager;
@@ -29,11 +31,11 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
     public async Task<bool> CreateNewSolutionAsync(CreateSolutionDto dto)
     {
         // 生成项目
-        var path = Path.Combine(dto.Path, dto.Name);
-        var apiName = "Http.API";
-        var templateType = dto.IsLight ? "atlight" : "atapi";
+        string path = Path.Combine(dto.Path, dto.Name);
+        string apiName = "Http.API";
+        string templateType = dto.IsLight ? "atlight" : "atapi";
 
-        var version = AssemblyHelper.GetCurrentToolVersion();
+        string version = AssemblyHelper.GetCurrentToolVersion();
 
         if (ProcessHelper.RunCommand("dotnet", $"new list atapi", out _))
         {
@@ -62,7 +64,7 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
         ChooseDatabase(dto.DBType, path, dto.IsLight);
 
         // 移除默认的微服务
-        var defaultServicePath = Path.Combine(path, "src", "Microservice", "StandaloneService");
+        string defaultServicePath = Path.Combine(path, "src", "Microservice", "StandaloneService");
         if (Directory.Exists(defaultServicePath))
         {
             // 从解决方案移除项目
@@ -73,7 +75,7 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
         // 前端项目处理
         if (dto.FrontType == FrontType.None)
         {
-            var appPath = Path.Combine(path, "src", "ClientApp");
+            string appPath = Path.Combine(path, "src", "ClientApp");
             if (Directory.Exists(appPath))
             {
                 Directory.Delete(appPath, true);
@@ -82,21 +84,21 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
 
         if (!dto.IsLight)
         {
-            var allModules = ModuleInfo.GetModules().Select(m => m.Value).ToList();
-            var moduleCommand = new ModuleCommand(path, allModules);
-            var notChoseModules = allModules.Except(dto.Modules).ToList();
-            foreach (var item in notChoseModules)
+            List<string> allModules = ModuleInfo.GetModules().Select(m => m.Value).ToList();
+            ModuleCommand moduleCommand = new(path, allModules);
+            List<string> notChoseModules = allModules.Except(dto.Modules).ToList();
+            foreach (string? item in notChoseModules)
             {
                 moduleCommand.CleanModule(item);
             }
-            foreach (var item in dto.Modules)
+            foreach (string item in dto.Modules)
             {
                 await moduleCommand.CreateModuleAsync(item);
             }
         }
 
         // 保存项目信息
-        var addRes = await _projectManager.AddProjectAsync(dto.Name, path);
+        string? addRes = await _projectManager.AddProjectAsync(dto.Name, path);
         if (addRes != null)
         {
             ErrorMsg = addRes;
@@ -122,9 +124,9 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
     private static void UpdateAppSettings(CreateSolutionDto dto, string path, string apiName)
     {
         // 修改配置文件
-        var configFile = Path.Combine(path, "src", apiName, "appsettings.json");
-        var jsonString = File.ReadAllText(configFile);
-        var jsonNode = JsonNode.Parse(jsonString, documentOptions: new JsonDocumentOptions
+        string configFile = Path.Combine(path, "src", apiName, "appsettings.json");
+        string jsonString = File.ReadAllText(configFile);
+        JsonNode? jsonNode = JsonNode.Parse(jsonString, documentOptions: new JsonDocumentOptions
         {
             CommentHandling = JsonCommentHandling.Skip
         });
@@ -151,14 +153,15 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
     /// <param name="isLight"></param>
     private void ChooseDatabase(DBType dBType, string path, bool isLight)
     {
-        var packageNames = new List<string> {
+        List<string> packageNames =
+        [
             "Microsoft.EntityFrameworkCore.Sqlite",
             "Microsoft.EntityFrameworkCore.SqlServer",
             "Npgsql.EntityFrameworkCore.PostgreSQL"
-        };
+        ];
 
-        var useMethod = "UseNpgsql";
-        var packageName = "Npgsql.EntityFrameworkCore.PostgreSQL";
+        string useMethod = "UseNpgsql";
+        string packageName = "Npgsql.EntityFrameworkCore.PostgreSQL";
         if (dBType == DBType.SQLite)
         {
             useMethod = "UseSqlite";
@@ -170,24 +173,24 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
             packageName = "Microsoft.EntityFrameworkCore.SqlServer";
         }
 
-        var appServiceFile = Path.Combine(path, "src", "Application", "AppServiceCollectionExtensions.cs");
-        var content = File.ReadAllText(appServiceFile);
+        string appServiceFile = Path.Combine(path, "src", "Application", "AppServiceCollectionExtensions.cs");
+        string content = File.ReadAllText(appServiceFile);
         content = content.Replace("option.UseNpgsql", "option." + useMethod);
         File.WriteAllText(appServiceFile, content);
 
-        var queryFactoryFile = Path.Combine(path, "src", "Definition", "EntityFramework", "DBProvider", "QueryDbContextFactory.cs");
+        string queryFactoryFile = Path.Combine(path, "src", "Definition", "EntityFramework", "DBProvider", "QueryDbContextFactory.cs");
         content = File.ReadAllText(queryFactoryFile);
 
         content = content.Replace("builder.UseNpgsql", "builder." + useMethod);
         File.WriteAllText(queryFactoryFile, content);
 
-        var commandFactoryFile = Path.Combine(path, "src", "Definition", "EntityFramework", "DBProvider", "CommandDbContextFactory.cs");
+        string commandFactoryFile = Path.Combine(path, "src", "Definition", "EntityFramework", "DBProvider", "CommandDbContextFactory.cs");
         content = File.ReadAllText(commandFactoryFile);
         content = content.Replace("builder.UseNpgsql", "builder." + useMethod);
         File.WriteAllText(commandFactoryFile, content);
 
         // 项目引用处理
-        var entityProjectFile = Path.Combine(path, "src", "Definition", "Definition.csproj");
+        string entityProjectFile = Path.Combine(path, "src", "Definition", "Definition.csproj");
         if (!isLight)
         {
             entityProjectFile = Path.Combine(path, "src", "Definition", "EntityFramework", "EntityFramework.csproj");
@@ -196,10 +199,10 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
         packageNames.Remove(packageName);
 
         // 移除无用包
-        var lines = File.ReadAllLines(entityProjectFile).ToList();
-        foreach (var item in packageNames)
+        List<string> lines = File.ReadAllLines(entityProjectFile).ToList();
+        foreach (string item in packageNames)
         {
-            var index = lines.FindIndex(x => x.Contains(item));
+            int index = lines.FindIndex(x => x.Contains(item));
             if (index > 0)
             {
                 lines.RemoveAt(index);
@@ -214,11 +217,11 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
     /// <returns></returns>
     public List<SubProjectInfo> GetModulesInfo()
     {
-        var res = new List<SubProjectInfo>();
-        var paths = ModuleCommand.GetModulesPaths(_projectContext.SolutionPath!);
+        List<SubProjectInfo> res = [];
+        List<string>? paths = ModuleCommand.GetModulesPaths(_projectContext.SolutionPath!);
         paths?.ForEach(path =>
         {
-            var moduleInfo = new SubProjectInfo
+            SubProjectInfo moduleInfo = new()
             {
                 Name = Path.GetFileNameWithoutExtension(path),
                 Path = path,
@@ -241,7 +244,7 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
             {
                 name += "Mod";
             }
-            var allModules = ModuleInfo.GetModules().Select(m => m.Value).ToList();
+            List<string> allModules = ModuleInfo.GetModules().Select(m => m.Value).ToList();
             await new ModuleCommand(_projectContext.SolutionPath!, allModules)
                 .CreateModuleAsync(name);
         }

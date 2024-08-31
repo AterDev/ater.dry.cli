@@ -29,8 +29,8 @@ public class ViewCommand : CommandBase
         Instructions.Add($"  🔹 generate module,routing and menu.");
         Instructions.Add($"  🔹 generate pages.");
 
-        var currentDir = new DirectoryInfo(dtoPath);
-        var solutionFile = AssemblyHelper.GetSlnFile(currentDir, currentDir.Root)
+        DirectoryInfo currentDir = new(dtoPath);
+        FileInfo solutionFile = AssemblyHelper.GetSlnFile(currentDir, currentDir.Root)
             ?? throw new Exception("not found solution file");
 
         SolutionPath = solutionFile.DirectoryName!;
@@ -51,8 +51,8 @@ public class ViewCommand : CommandBase
         Instructions.Add($"  🔹 generate pages.");
 
         EntityName = Path.GetFileNameWithoutExtension(entityPath);
-        var currentDir = new DirectoryInfo(dtoPath);
-        var solutionFile = AssemblyHelper.GetSlnFile(currentDir, currentDir.Root)
+        DirectoryInfo currentDir = new(dtoPath);
+        FileInfo solutionFile = AssemblyHelper.GetSlnFile(currentDir, currentDir.Root)
             ?? throw new Exception("not found solution file");
 
         SolutionPath = solutionFile.DirectoryName!;
@@ -73,11 +73,11 @@ public class ViewCommand : CommandBase
     public async Task RunAsync()
     {
         // 是否为模块
-        var compilation = new CompilationHelper(DtoPath, "Entity");
-        var content = File.ReadAllText(EntityFilePath);
+        CompilationHelper compilation = new(DtoPath, "Entity");
+        string content = File.ReadAllText(EntityFilePath);
         compilation.LoadContent(content);
-        var attributes = compilation.GetClassAttribution("Module");
-        var moduleName = string.Empty;
+        List<AttributeSyntax>? attributes = compilation.GetClassAttribution("Module");
+        string moduleName = string.Empty;
         if (attributes != null && attributes.Count != 0)
         {
             var argument = attributes.First().ArgumentList!.Arguments[0];

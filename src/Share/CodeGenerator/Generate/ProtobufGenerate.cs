@@ -1,8 +1,4 @@
-﻿using CodeGenerator.Helper;
-using Definition.Entity;
-using Definition.Infrastructure.Utils;
-
-using PropertyInfo = Definition.Entity.PropertyInfo;
+﻿using PropertyInfo = Definition.Entity.PropertyInfo;
 
 namespace CodeGenerator.Generate;
 public class ProtobufGenerate : GenerateBase
@@ -19,10 +15,10 @@ public class ProtobufGenerate : GenerateBase
 
     public string GenerateProtobuf()
     {
-        var tpl = GetTplContent("Protobuf.tpl");
+        string tpl = GetTplContent("Protobuf.tpl");
 
-        var services = GenerateServices();
-        var messages = GenerateMessages();
+        string services = GenerateServices();
+        string messages = GenerateMessages();
 
         tpl = tpl.Replace(TplConst.PROTOBUF_SERVICES, services)
             .Replace(TplConst.PROTOBUF_MESSAGES, messages)
@@ -33,7 +29,7 @@ public class ProtobufGenerate : GenerateBase
 
     public string GenerateServices()
     {
-        var content = $@"
+        string content = $@"
 service {EntityInfo.Name} {{
   rpc Filter (FilterRequest) returns (PageReply);
   rpc Add (AddRequest) returns ({EntityInfo.Name}Reply);
@@ -47,7 +43,7 @@ service {EntityInfo.Name} {{
 
     public string GenerateMessages()
     {
-        var content = "";
+        string content = "";
         content += GenerateEntityMessage();
         content += GenerateFilterMessage();
         content += GenerateAddMessage();
@@ -67,26 +63,15 @@ service {EntityInfo.Name} {{
     internal static string ToProtobufField(PropertyInfo property, int sort)
     {
         // TODO:未处理字典情况
-        if (ProtobufHelper.TypeMap.TryGetValue(property.Type, out var value))
-        {
-            if (property.IsList)
-            {
-                return $@"    repeated {value} {property.Name.ToHyphen('_')} = {sort};{Environment.NewLine}";
-            }
-            return $@"    {value} {property.Name.ToHyphen('_')} = {sort};{Environment.NewLine}";
-        }
-        else
-        {
-            if (property.IsList)
-            {
-                return $@"    repeated {EntityParseHelper.GetTypeFromList(property.Type)} {property.Name.ToHyphen('_')} = {sort};{Environment.NewLine}";
-            }
-            if (property.IsEnum || property.IsNavigation)
-            {
-                return $@"    {property.Type} {property.Name.ToHyphen('_')} = {sort};{Environment.NewLine}";
-            }
-            return $@"    google.protobuf.Value {property.Name.ToHyphen('_')} = {sort};{Environment.NewLine}";
-        }
+        return ProtobufHelper.TypeMap.TryGetValue(property.Type, out var value)
+            ? property.IsList
+                ? $@"    repeated {value} {property.Name.ToHyphen('_')} = {sort};{Environment.NewLine}"
+                : $@"    {value} {property.Name.ToHyphen('_')} = {sort};{Environment.NewLine}"
+            : property.IsList
+                ? $@"    repeated {EntityParseHelper.GetTypeFromList(property.Type)} {property.Name.ToHyphen('_')} = {sort};{Environment.NewLine}"
+                : property.IsEnum || property.IsNavigation
+                ? $@"    {property.Type} {property.Name.ToHyphen('_')} = {sort};{Environment.NewLine}"
+                : $@"    google.protobuf.Value {property.Name.ToHyphen('_')} = {sort};{Environment.NewLine}";
     }
 
     /// <summary>
@@ -97,7 +82,7 @@ service {EntityInfo.Name} {{
     /// <returns></returns>
     internal static string BuildMessage(string name, string fields)
     {
-        var sb = new StringBuilder();
+        StringBuilder sb = new();
         sb.Append("message ").Append(name);
         sb.Append(Environment.NewLine);
         sb.Append('{');
@@ -117,12 +102,12 @@ service {EntityInfo.Name} {{
     /// <returns></returns>
     internal static string BuildEnumMessage(string name, List<IFieldSymbol?> fields)
     {
-        var sb = new StringBuilder();
+        StringBuilder sb = new();
         sb.Append("enum ").Append(name);
         sb.Append(Environment.NewLine);
         sb.Append('{');
         sb.Append(Environment.NewLine);
-        var content = "";
+        string content = "";
         fields.ForEach(f =>
         {
             if (f != null)
@@ -141,16 +126,16 @@ service {EntityInfo.Name} {{
     /// <returns></returns>
     public string GenerateEnumMessage()
     {
-        var content = "";
+        string content = "";
         for (int i = 0; i < EntityInfo.PropertyInfos.Count; i++)
         {
-            var prop = EntityInfo.PropertyInfos[i];
+            Entity.PropertyInfo prop = EntityInfo.PropertyInfos[i];
             // 枚举类型
             if (prop.IsEnum)
             {
                 if (!EnumList.Any(e => e == prop.Type))
                 {
-                    var members = EntityHelper.GetEnumMembers(prop.Type);
+                    List<IFieldSymbol?>? members = EntityHelper.GetEnumMembers(prop.Type);
                     if (members != null)
                     {
                         EnumList.Add(prop.Type);
@@ -168,11 +153,11 @@ service {EntityInfo.Name} {{
     /// <returns></returns>
     public string GenerateEntityMessage()
     {
-        var fields = "";
+        string fields = "";
         // 选择合适的属性
         for (int i = 0; i < EntityInfo.PropertyInfos.Count; i++)
         {
-            var prop = EntityInfo.PropertyInfos[i];
+            Entity.PropertyInfo prop = EntityInfo.PropertyInfos[i];
             fields += ToProtobufField(prop, i + 1);
         }
         return BuildMessage(EntityInfo.Name + "Reply", fields);
@@ -180,12 +165,12 @@ service {EntityInfo.Name} {{
 
     public string GenerateFilterMessage()
     {
-        var fields =
+        string fields =
 @"    int32 page_size = 1;
     int32 page_index = 2;
 ";
         string[] filterFields = ["Id", "CreatedTime", "UpdatedTime", "IsDeleted", "PageSize", "PageIndex"];
-        var properties = EntityInfo.PropertyInfos?
+        List<Entity.PropertyInfo>? properties = EntityInfo.PropertyInfos?
             .Where(p => (p.IsRequired && !p.IsNavigation)
                 || (!p.IsList
                     && !p.IsNavigation
@@ -196,7 +181,7 @@ service {EntityInfo.Name} {{
             .ToList();
         for (int i = 0; i < properties?.Count; i++)
         {
-            var prop = properties[i];
+            Entity.PropertyInfo prop = properties[i];
             fields += ToProtobufField(prop, i + 3);
         }
         return BuildMessage("FilterRequest", fields);
@@ -204,8 +189,8 @@ service {EntityInfo.Name} {{
 
     public string GenerateAddMessage()
     {
-        var fields = "";
-        var properties = EntityInfo.PropertyInfos?.Where(p => p.Name is not "Id"
+        string fields = "";
+        List<Entity.PropertyInfo>? properties = EntityInfo.PropertyInfos?.Where(p => p.Name is not "Id"
                 and not "CreatedTime"
                 and not "UpdatedTime"
                 and not "IsDeleted")
@@ -213,7 +198,7 @@ service {EntityInfo.Name} {{
 
         for (int i = 0; i < properties?.Count; i++)
         {
-            var prop = properties[i];
+            Entity.PropertyInfo prop = properties[i];
             fields += ToProtobufField(prop, i + 1);
         }
         return BuildMessage("AddRequest", fields);
@@ -221,8 +206,8 @@ service {EntityInfo.Name} {{
 
     public string GenerateUpdateMessage()
     {
-        var fields = "";
-        var properties = EntityInfo.PropertyInfos?.Where(p => p.Name is not "Id"
+        string fields = "";
+        List<Entity.PropertyInfo>? properties = EntityInfo.PropertyInfos?.Where(p => p.Name is not "Id"
                 and not "CreatedTime"
                 and not "UpdatedTime"
                 and not "IsDeleted")
@@ -230,7 +215,7 @@ service {EntityInfo.Name} {{
 
         for (int i = 0; i < properties?.Count; i++)
         {
-            var prop = properties[i];
+            Entity.PropertyInfo prop = properties[i];
             prop.IsNullable = true;
             fields += ToProtobufField(prop, i + 1);
         }
@@ -240,7 +225,7 @@ service {EntityInfo.Name} {{
 
     public static string GenerateIdMessage()
     {
-        var fields = "    string id = 1;" + Environment.NewLine;
+        string fields = "    string id = 1;" + Environment.NewLine;
         return BuildMessage("IdRequest", fields);
 
     }
@@ -249,7 +234,7 @@ service {EntityInfo.Name} {{
         //        public int Count { get; set; } = 0;
         //public List<T> Data { get; set; } = new List<T>();
         //public int PageIndex { get; set; } = 1;
-        var fields = $@"
+        string fields = $@"
     int32 count = 1;
     repeated {EntityInfo.Name}Reply data = 2;
     int32 page_index = 3;

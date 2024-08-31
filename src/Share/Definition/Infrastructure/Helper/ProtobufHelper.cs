@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Share.Infrastructure.Helper;
+﻿namespace Share.Infrastructure.Helper;
 public class ProtobufHelper
 {
     public static Dictionary<string, string> TypeMap = new()

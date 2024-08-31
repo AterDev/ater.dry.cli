@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel;
 using System.Net;
 using System.Text;
+
 using CodeGenerator.Helper;
+
 using Share.Infrastructure.Utils;
 
 namespace Application.Manager;
@@ -22,8 +24,8 @@ public class ToolsManager
     {
         if (CSharpCovertHelper.CheckJson(json))
         {
-            var jsonElement = JsonSerializer.Deserialize<JsonElement>(json);
-            var helper = new CSharpCovertHelper();
+            JsonElement jsonElement = JsonSerializer.Deserialize<JsonElement>(json);
+            CSharpCovertHelper helper = new();
             helper.GenerateClass(jsonElement);
             return helper.ClassCodes;
         }
@@ -33,7 +35,7 @@ public class ToolsManager
 
     public Dictionary<string, string> ConvertString(string content, StringConvertType type)
     {
-        var res = type switch
+        Dictionary<string, string> res = type switch
         {
             StringConvertType.NamePolicy =>
                     new Dictionary<string, string>
@@ -73,14 +75,7 @@ public class ToolsManager
         string Basse64ToString(string str)
         {
             byte[] buffer = new byte[str.Length * 3 / 4];
-            if (Convert.TryFromBase64String(str, buffer, out int bytesWritten))
-            {
-                return Encoding.UTF8.GetString(buffer, 0, bytesWritten);
-            }
-            else
-            {
-                return null;
-            }
+            return Convert.TryFromBase64String(str, buffer, out int bytesWritten) ? Encoding.UTF8.GetString(buffer, 0, bytesWritten) : null;
         }
     }
 }

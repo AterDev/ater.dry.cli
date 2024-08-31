@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
+
 using CodeGenerator;
 using CodeGenerator.Helper;
-using Definition.EntityFramework.DBProvider;
 
 namespace Command.Share.Commands;
 public class StudioCommand
@@ -11,7 +11,7 @@ public class StudioCommand
     public static void RunStudio()
     {
         Console.WriteLine("🙌 Welcome Ater studio!");
-        var studioPath = AssemblyHelper.GetStudioPath();
+        string studioPath = AssemblyHelper.GetStudioPath();
 
         int sleepTime = 1500;
         // 检查并更新
@@ -32,7 +32,7 @@ public class StudioCommand
         var port = ProcessHelper.GetAvailablePort();
         Console.WriteLine("可用端口:" + port);
 
-        var url = $"http://localhost:{port}";
+        string url = $"http://localhost:{port}";
         Process process = new()
         {
             StartInfo = new ProcessStartInfo
@@ -53,7 +53,7 @@ public class StudioCommand
         // 启动浏览器
         try
         {
-            var pr = Process.Start(url);
+            Process pr = Process.Start(url);
             pr.Close();
         }
         catch (Exception ex)
@@ -89,7 +89,7 @@ public class StudioCommand
     {
         Console.WriteLine($"☑️ check&update studio...");
 
-        var copyFiles = new string[]
+        string[] copyFiles = new string[]
         {
             "Microsoft.CodeAnalysis.CSharp",
             "Microsoft.CodeAnalysis.Workspaces",
@@ -132,19 +132,19 @@ public class StudioCommand
             "SQLitePCLRaw.batteries_v2"
         };
 
-        var version = AssemblyHelper.GetCurrentToolVersion();
-        var toolRootPath = AssemblyHelper.GetToolPath();
-        var zipPath = Path.Combine(toolRootPath, Const.StudioZip);
-        var templatePath = Path.Combine(toolRootPath, Const.TemplateZip);
+        string version = AssemblyHelper.GetCurrentToolVersion();
+        string toolRootPath = AssemblyHelper.GetToolPath();
+        string zipPath = Path.Combine(toolRootPath, Const.StudioZip);
+        string templatePath = Path.Combine(toolRootPath, Const.TemplateZip);
 
         if (!File.Exists(zipPath))
         {
             Console.WriteLine($"not found studio.zip in:{toolRootPath}");
             return;
         }
-        var studioPath = AssemblyHelper.GetStudioPath();
-        var dbFile = Path.Combine(studioPath, ContextBase.DbName);
-        var tempDbFile = Path.Combine(Path.GetTempPath(), ContextBase.DbName);
+        string studioPath = AssemblyHelper.GetStudioPath();
+        string dbFile = Path.Combine(studioPath, ContextBase.DbName);
+        string tempDbFile = Path.Combine(Path.GetTempPath(), ContextBase.DbName);
 
         // 删除旧文件
         if (Directory.Exists(studioPath))
@@ -171,7 +171,7 @@ public class StudioCommand
         // copy其他文件
         copyFiles.ToList().ForEach(file =>
         {
-            var sourceFile = Path.Combine(toolRootPath, file + ".dll");
+            string sourceFile = Path.Combine(toolRootPath, file + ".dll");
             if (File.Exists(sourceFile))
             {
                 File.Copy(sourceFile, Path.Combine(studioPath, file + ".dll"), true);
@@ -179,10 +179,10 @@ public class StudioCommand
         });
 
         // copy runtimes目录
-        var runtimesDir = Path.Combine(toolRootPath, "runtimes");
+        string runtimesDir = Path.Combine(toolRootPath, "runtimes");
         if (Directory.Exists(runtimesDir))
         {
-            var targetDir = Path.Combine(studioPath, "runtimes");
+            string targetDir = Path.Combine(studioPath, "runtimes");
             if (Directory.Exists(targetDir))
             {
                 Directory.Delete(targetDir, true);

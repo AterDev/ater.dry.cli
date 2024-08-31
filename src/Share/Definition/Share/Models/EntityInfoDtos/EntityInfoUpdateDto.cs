@@ -1,4 +1,3 @@
-using Definition.Entity;
 namespace Share.Share.Models.EntityInfoDtos;
 /// <summary>
 /// 实体更新时请求结构

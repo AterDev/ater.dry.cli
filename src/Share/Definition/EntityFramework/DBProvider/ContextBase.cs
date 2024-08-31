@@ -26,7 +26,7 @@ public class ContextBase : DbContext
     {
         if (!optionsBuilder.IsConfigured)
         {
-            var path = Path.Combine(AssemblyHelper.GetStudioPath(), DbName);
+            string path = Path.Combine(AssemblyHelper.GetStudioPath(), DbName);
             optionsBuilder.UseSqlite($"DataSource={path}");
         }
         base.OnConfiguring(optionsBuilder);
@@ -48,7 +48,7 @@ public class ContextBase : DbContext
 
     public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
     {
-        var entries = ChangeTracker.Entries().Where(e => e.State == EntityState.Added).ToList();
+        List<Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry> entries = ChangeTracker.Entries().Where(e => e.State == EntityState.Added).ToList();
         foreach (Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry? entityEntry in entries)
         {
             Microsoft.EntityFrameworkCore.Metadata.IProperty? property = entityEntry.Metadata.FindProperty("CreatedTime");
@@ -98,11 +98,11 @@ public class ContextBase : DbContext
     {
         if (Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
         {
-            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            foreach (Microsoft.EntityFrameworkCore.Metadata.IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
             {
-                var properties = entityType.ClrType.GetProperties()
+                IEnumerable<System.Reflection.PropertyInfo> properties = entityType.ClrType.GetProperties()
                     .Where(p => p.PropertyType == typeof(DateTimeOffset) || p.PropertyType == typeof(DateTimeOffset?));
-                foreach (var property in properties)
+                foreach (System.Reflection.PropertyInfo? property in properties)
                 {
                     modelBuilder
                         .Entity(entityType.Name)

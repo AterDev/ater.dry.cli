@@ -5,8 +5,6 @@ using CodeGenerator.Generate;
 using CodeGenerator.Helper;
 using CodeGenerator.Test.Entity;
 
-using Definition.Entity;
-
 namespace CodeGenerator.Test;
 
 public class DtoGenerateTest
@@ -80,7 +78,7 @@ public class DtoGenerateTest
         string dtoPath = PathHelper.GetProjectPath();
         DtoCodeGenerate gen = new(filePath, dtoPath, new());
         string? addDto = gen.GetAddDto();
-        string? shortDto = gen.GetShortDto();
+        string? shortDto = gen.GetDetailDto();
         string? filterDto = gen.GetFilterDto();
         string? updateDto = gen.GetUpdateDto();
         string? itemDto = gen.GetItemDto();

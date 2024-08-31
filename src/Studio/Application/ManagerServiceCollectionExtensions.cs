@@ -1,6 +1,4 @@
 // 本文件由 ater.dry工具自动生成.
-using Share.EntityFramework;
-
 namespace Application;
 
 public static partial class ManagerServiceCollectionExtensions

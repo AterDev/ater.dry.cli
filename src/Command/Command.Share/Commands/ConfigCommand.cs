@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text.Json;
+
 using CodeGenerator;
 using CodeGenerator.Helper;
 
@@ -97,15 +98,9 @@ public class ConfigCommand
     {
         DirectoryInfo currentDir = new(Environment.CurrentDirectory);
         FileInfo? solutionPath = AssemblyHelper.GetSlnFile(currentDir, currentDir.Root);
-        string configPath;
-        if (solutionPath == null)
-        {
-            configPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        }
-        else
-        {
-            configPath = solutionPath.Directory!.FullName;
-        }
+        string configPath = solutionPath == null
+            ? Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)
+            : solutionPath.Directory!.FullName;
         return configPath;
     }
 }

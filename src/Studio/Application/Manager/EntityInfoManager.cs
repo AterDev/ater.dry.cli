@@ -3,9 +3,10 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 using Microsoft.CodeAnalysis;
-using Share.EntityFramework;
+
 using Share.Share;
 using Share.Share.Models.EntityInfoDtos;
+
 using Project = Definition.Entity.Project;
 
 namespace Application.Manager;
@@ -60,9 +61,9 @@ public partial class EntityInfoManager(
                 {
                     FileInfo file = new(path);
 
-                    var content = File.ReadAllText(path);
+                    string content = File.ReadAllText(path);
                     // 备注
-                    var comment = SummaryCommentRegex().Match(content)?.Groups[1]?.Value.Trim();
+                    string? comment = SummaryCommentRegex().Match(content)?.Groups[1]?.Value.Trim();
                     comment = comment?.Replace("/", "").Trim();
 
                     // 解析
@@ -94,7 +95,7 @@ public partial class EntityInfoManager(
                     }
 
                     // 查询生成的dto\manager\api状态
-                    var (hasDto, hasManager, hasAPI) = GetEntityStates(
+                    (bool hasDto, bool hasManager, bool hasAPI) = GetEntityStates(
                         Path.GetFileNameWithoutExtension(file.Name),
                         serviceName,
                         item.Module);
@@ -131,10 +132,10 @@ public partial class EntityInfoManager(
         bool hasManager = false;
         bool hasAPI = false;
 
-        var dtoPath = Path.Combine(_projectContext.SolutionPath!, Config.SharePath, "Models", $"{entityName}Dtos", $"{entityName}AddDto.cs");
-        var managerPath = Path.Combine(_projectContext.SolutionPath!, Config.ApplicationPath, "Manager", $"{entityName}Manager.cs");
-        var apiPath = Path.Combine(_projectContext.SolutionPath!, Config.ApiPath, "Controllers");
-        var servicePath = Path.Combine(_projectContext.SolutionPath!, "src");
+        string dtoPath = Path.Combine(_projectContext.SolutionPath!, Config.SharePath, "Models", $"{entityName}Dtos", $"{entityName}AddDto.cs");
+        string managerPath = Path.Combine(_projectContext.SolutionPath!, Config.ApplicationPath, "Manager", $"{entityName}Manager.cs");
+        string apiPath = Path.Combine(_projectContext.SolutionPath!, Config.ApiPath, "Controllers");
+        string servicePath = Path.Combine(_projectContext.SolutionPath!, "src");
 
         if (!string.IsNullOrWhiteSpace(serviceName))
         {
@@ -154,7 +155,7 @@ public partial class EntityInfoManager(
 
         if (Directory.Exists(apiPath))
         {
-            var apiFiles = Directory.GetFiles(apiPath, $"{entityName}Controller.cs", SearchOption.AllDirectories);
+            string[] apiFiles = Directory.GetFiles(apiPath, $"{entityName}Controller.cs", SearchOption.AllDirectories);
             if (apiFiles.Count() > 0) { hasAPI = true; }
         }
 
@@ -211,7 +212,7 @@ public partial class EntityInfoManager(
     {
         // 解析特性
         string? moduleName = null;
-        var content = File.ReadAllText(entityFilePath);
+        string content = File.ReadAllText(entityFilePath);
         var compilation = new CompilationHelper(Path.Combine(_projectContext.SolutionPath!, Config.EntityPath));
 
         compilation.LoadContent(content);
@@ -225,7 +226,7 @@ public partial class EntityInfoManager(
             }
         }
 
-        var entityName = Path.GetFileNameWithoutExtension(entityFilePath);
+        string entityName = Path.GetFileNameWithoutExtension(entityFilePath);
 
         string dtoPath = moduleName == null ?
             Path.Combine(_projectContext.SolutionPath!, Config.SharePath, "Models", $"{entityName}Dtos") :
@@ -241,28 +242,28 @@ public partial class EntityInfoManager(
     {
         errorMsg = string.Empty;
         // delete all bin/obj dir  in solution path 
-        var dirPaths = new string[] { Config.ApiPath, Config.EntityPath, Config.ApplicationPath, Config.SharePath };
-        var dirs = new string[] { };
+        string[] dirPaths = new string[] { Config.ApiPath, Config.EntityPath, Config.ApplicationPath, Config.SharePath };
+        string[] dirs = new string[] { };
 
-        foreach (var path in dirPaths)
+        foreach (string path in dirPaths)
         {
-            var rootPath = Path.Combine(_projectContext.SolutionPath!, path);
+            string rootPath = Path.Combine(_projectContext.SolutionPath!, path);
             dirs = dirs.Union(Directory.GetDirectories(rootPath, "bin", SearchOption.TopDirectoryOnly))
                 .Union(Directory.GetDirectories(rootPath, "obj", SearchOption.TopDirectoryOnly))
                 .ToArray();
         }
         try
         {
-            foreach (var dir in dirs)
+            foreach (string dir in dirs)
             {
                 Directory.Delete(dir, true);
             }
-            var apiFiePath = Directory.GetFiles(_projectContext.ApiPath!, "*.csproj", SearchOption.TopDirectoryOnly).FirstOrDefault();
+            string? apiFiePath = Directory.GetFiles(_projectContext.ApiPath!, "*.csproj", SearchOption.TopDirectoryOnly).FirstOrDefault();
 
             if (apiFiePath != null)
             {
                 Console.WriteLine($"⛏️ build project:{apiFiePath}");
-                var process = Process.Start("dotnet", $"build {apiFiePath}");
+                Process process = Process.Start("dotnet", $"build {apiFiePath}");
                 process.WaitForExit();
                 // if process has error message 
                 if (process.ExitCode != 0)
@@ -309,13 +310,13 @@ public partial class EntityInfoManager(
         }
         else
         {
-            var entityDir = Path.Combine(_projectContext.SolutionPath!, Config.EntityPath, "Entities");
+            string entityDir = Path.Combine(_projectContext.SolutionPath!, Config.EntityPath, "Entities");
             filePath = Directory.GetFiles(entityDir, $"{entityName}.cs", SearchOption.AllDirectories)
                 .FirstOrDefault();
         }
         if (filePath != null)
         {
-            var file = new FileInfo(filePath);
+            FileInfo file = new(filePath);
 
             return new EntityFile()
             {
@@ -357,9 +358,9 @@ public partial class EntityInfoManager(
 
     public async Task GenerateAsync(Project project, GenerateDto dto)
     {
-        var dtoPath = _projectContext.SharePath!;
-        var applicationPath = _projectContext.ApplicationPath!;
-        var apiPath = _projectContext.ApiPath!;
+        string dtoPath = _projectContext.SharePath!;
+        string applicationPath = _projectContext.ApplicationPath!;
+        string apiPath = _projectContext.ApiPath!;
 
         if (!string.IsNullOrWhiteSpace(dto.ServiceName))
         {
@@ -395,10 +396,10 @@ public partial class EntityInfoManager(
     /// <returns></returns>
     public async Task BatchGenerateAsync(BatchGenerateDto dto)
     {
-        var dtoPath = _projectContext.SharePath!;
-        var applicationPath = _projectContext.ApplicationPath!;
-        var apiPath = _projectContext.ApiPath!;
-        var entityPath = _projectContext.EntityPath!;
+        string dtoPath = _projectContext.SharePath!;
+        string applicationPath = _projectContext.ApplicationPath!;
+        string apiPath = _projectContext.ApiPath!;
+        string entityPath = _projectContext.EntityPath!;
 
         if (!string.IsNullOrWhiteSpace(dto.ServiceName))
         {
@@ -444,7 +445,7 @@ public partial class EntityInfoManager(
             case CommandType.Clear:
                 foreach (string item in dto.EntityPaths)
                 {
-                    var entityName = Path.GetFileNameWithoutExtension(item);
+                    string entityName = Path.GetFileNameWithoutExtension(item);
                     await CommandRunner.ClearCodesAsync(entityPath, dtoPath, applicationPath, apiPath, entityName);
                 }
                 break;
@@ -469,12 +470,12 @@ public partial class EntityInfoManager(
     /// <exception cref="FileNotFoundException"></exception>
     public async Task GenerateNgModuleAsync(string entityName, string rootPath, bool isMobile = false)
     {
-        var dtoPath = Path.Combine(_projectContext.SolutionPath!, Config.SharePath);
-        var entityDir = Path.Combine(_projectContext.SolutionPath!, Config.EntityPath);
-        var entityPath = Directory.GetFiles(entityDir, entityName, SearchOption.AllDirectories)
+        string dtoPath = Path.Combine(_projectContext.SolutionPath!, Config.SharePath);
+        string entityDir = Path.Combine(_projectContext.SolutionPath!, Config.EntityPath);
+        string? entityPath = Directory.GetFiles(entityDir, entityName, SearchOption.AllDirectories)
             .FirstOrDefault();
 
-        var project = CommandContext.Projects.Find(_projectContext.ProjectId);
+        Entity.Project? project = CommandContext.Projects.Find(_projectContext.ProjectId);
         project!.FrontPath = rootPath;
         await CommandContext.SaveChangesAsync();
 
@@ -500,7 +501,7 @@ public partial class EntityInfoManager(
     {
         // 解析特性
         string? moduleName = null;
-        var content = File.ReadAllText(entityFilePath);
+        string content = File.ReadAllText(entityFilePath);
         var compilation = new CompilationHelper(Path.Combine(_projectContext.SolutionPath!, Config.EntityPath));
 
         compilation.LoadContent(content);
@@ -516,7 +517,7 @@ public partial class EntityInfoManager(
         var entityHelper = new EntityParseHelper(entityFilePath);
         var entityInfo = entityHelper.GetEntity();
 
-        var entityName = Path.GetFileNameWithoutExtension(entityFilePath);
+        string entityName = Path.GetFileNameWithoutExtension(entityFilePath);
 
         string dtoPath = moduleName == null ?
             Path.Combine(_projectContext.SolutionPath!, Config.SharePath, "Models", $"{entityName}Dtos") :
@@ -524,7 +525,7 @@ public partial class EntityInfoManager(
 
         if (Directory.Exists(dtoPath))
         {
-            var fileName = name;
+            string fileName = name;
             if (!fileName.EndsWith(".cs"))
             {
                 fileName += ".cs";

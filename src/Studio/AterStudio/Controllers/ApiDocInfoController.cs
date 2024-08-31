@@ -2,10 +2,9 @@
 
 using Ater.Web.Abstraction;
 
-using Definition.Entity;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 using Share.Models;
 using Share.Share.Models.ApiDocInfoDtos;
 
@@ -31,8 +30,8 @@ public class ApiDocInfoController(
     [HttpGet]
     public async Task<ActionResult<List<ApiDocInfoItemDto>>> ListAsync()
     {
-        var filter = new ApiDocInfoFilterDto { PageSize = 999, ProjectId = _project.ProjectId };
-        var pager = await manager.FilterAsync(filter);
+        ApiDocInfoFilterDto filter = new() { PageSize = 999, ProjectId = _project.ProjectId };
+        Ater.Web.Core.Models.PageList<ApiDocInfoItemDto> pager = await manager.FilterAsync(filter);
         return pager.Data;
     }
 
@@ -45,12 +44,8 @@ public class ApiDocInfoController(
     [HttpGet("{id}")]
     public async Task<ActionResult<ApiDocContent?>> GetApiDocContentAsync([FromRoute] Guid id, bool isFresh = true)
     {
-        var res = await manager.GetContentAsync(id, isFresh);
-        if (res == null)
-        {
-            return Problem(manager.ErrorMsg);
-        }
-        return res;
+        ApiDocContent? res = await manager.GetContentAsync(id, isFresh);
+        return res == null ? (ActionResult<ApiDocContent?>)Problem(manager.ErrorMsg) : (ActionResult<ApiDocContent?>)res;
     }
 
     /// <summary>
@@ -62,7 +57,7 @@ public class ApiDocInfoController(
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FileContentResult))]
     public async Task<ActionResult> ExportAsync([FromRoute] Guid id)
     {
-        var content = await manager.ExportDocAsync(id);
+        string content = await manager.ExportDocAsync(id);
         return File(Encoding.UTF8.GetBytes(content), "application/octet-stream", "api-doc.md");
     }
 
@@ -75,7 +70,7 @@ public class ApiDocInfoController(
     [HttpPost]
     public async Task<ActionResult<ApiDocInfo>> AddAsync(ApiDocInfoAddDto apiDocInfo)
     {
-        var entity = await manager.CreateNewEntityAsync(apiDocInfo);
+        Entity.ApiDocInfo entity = await manager.CreateNewEntityAsync(apiDocInfo);
         return await manager.AddAsync(entity);
     }
 
@@ -88,12 +83,8 @@ public class ApiDocInfoController(
     [HttpPut("{id}")]
     public async Task<ActionResult<ApiDocInfo>> UpdateAsync([FromRoute] Guid id, ApiDocInfoUpdateDto dto)
     {
-        var entity = await manager.GetCurrentAsync(id);
-        if (entity == null)
-        {
-            return NotFound("未找到该对象");
-        }
-        return await manager.UpdateAsync(entity, dto);
+        Entity.ApiDocInfo? entity = await manager.GetCurrentAsync(id);
+        return entity == null ? (ActionResult<ApiDocInfo>)NotFound("未找到该对象") : (ActionResult<ApiDocInfo>)await manager.UpdateAsync(entity, dto);
     }
 
     /// <summary>
@@ -104,12 +95,8 @@ public class ApiDocInfoController(
     [HttpDelete("{id}")]
     public async Task<ActionResult<ApiDocInfo?>> Delete([FromRoute] Guid id)
     {
-        var entity = await manager.FindAsync(id);
-        if (entity == null)
-        {
-            return NotFound("未找到该对象");
-        }
-        return await manager.DeleteAsync(entity);
+        Entity.ApiDocInfo? entity = await manager.FindAsync(id);
+        return entity == null ? (ActionResult<ApiDocInfo?>)NotFound("未找到该对象") : (ActionResult<ApiDocInfo?>?)await manager.DeleteAsync(entity);
     }
 
     /// <summary>
@@ -139,7 +126,7 @@ public class ApiDocInfoController(
             return NotFound("项目不存在");
         }
 
-        var entity = await manager.GetCurrentAsync(id);
+        Entity.ApiDocInfo? entity = await manager.GetCurrentAsync(id);
         if (entity == null)
         {
             return NotFound("未找到文档配置");
@@ -164,7 +151,7 @@ public class ApiDocInfoController(
         {
             return NotFound("项目不存在");
         }
-        var entity = await manager.GetCurrentAsync(id);
+        Entity.ApiDocInfo? entity = await manager.GetCurrentAsync(id);
         if (entity == null)
         {
             return NotFound("未找到文档配置");

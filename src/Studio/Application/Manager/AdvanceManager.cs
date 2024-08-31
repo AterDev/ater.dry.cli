@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using Share.EntityFramework.DBProvider;
 
 namespace Application.Manager;
 
@@ -21,7 +20,7 @@ public class AdvanceManager
     /// <param name="value"></param>
     public async Task SetConfigAsync(string key, string value)
     {
-        var config = _dbContext.Configs.FirstOrDefault(c => c.Key == key);
+        ConfigData? config = _dbContext.Configs.FirstOrDefault(c => c.Key == key);
         if (config != null)
         {
             config.Value = value;
@@ -57,8 +56,8 @@ public class AdvanceManager
     /// <returns>markdown format</returns>
     public string GetDatabaseStructureAsync()
     {
-        var sb = new StringBuilder();
-        var entityFiles = Directory.GetFiles(Path.Combine(_projectContext.SolutionPath!, Config.EntityPath), $"*.cs", SearchOption.AllDirectories).ToList();
+        StringBuilder sb = new();
+        List<string> entityFiles = Directory.GetFiles(Path.Combine(_projectContext.SolutionPath!, Config.EntityPath), $"*.cs", SearchOption.AllDirectories).ToList();
 
         entityFiles = entityFiles.Where(f => !(f.EndsWith(".g.cs")
                 || f.EndsWith(".AssemblyAttributes.cs")
@@ -76,7 +75,7 @@ public class AdvanceManager
                 {
                     entityCompilation.LoadEntityContent(File.ReadAllText(entityPath));
                     var entityInfo = entityCompilation.GetEntity();
-                    var content = ToMarkdown(entityInfo);
+                    string content = ToMarkdown(entityInfo);
                     sb.AppendLine(content);
                 }
             });
@@ -91,13 +90,13 @@ public class AdvanceManager
     /// <returns></returns>
     public string ToMarkdown(EntityInfo entityInfo)
     {
-        var sb = new StringBuilder();
+        StringBuilder sb = new();
         sb.AppendLine($"## {entityInfo.Name} ({entityInfo.Summary})");
         sb.AppendLine($"|字段名|类型|是否可空|说明|");
         sb.AppendLine($"|---|---|---|---|");
-        foreach (var property in entityInfo.PropertyInfos)
+        foreach (PropertyInfo property in entityInfo.PropertyInfos)
         {
-            var comment = string.IsNullOrWhiteSpace(property.CommentSummary)
+            string comment = string.IsNullOrWhiteSpace(property.CommentSummary)
                 ? "无"
                 : property.CommentSummary;
 

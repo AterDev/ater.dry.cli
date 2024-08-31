@@ -13,7 +13,7 @@ public class NgFormGenerate : GenerateBase
 
     public static string GenerateAddForm(List<PropertyInfo>? propertyInfos, bool isMobile = false)
     {
-        StringBuilder formControls = new StringBuilder();
+        StringBuilder formControls = new();
         if (propertyInfos != null)
         {
             foreach (PropertyInfo input in propertyInfos)
@@ -30,7 +30,7 @@ public class NgFormGenerate : GenerateBase
                 formControls.AppendLine(inputBuilder.ToFormControl());
             }
         }
-        var tplDir = isMobile ? "mobileAdd" : "add";
+        string tplDir = isMobile ? "mobileAdd" : "add";
         string tplContent = GetTplContent($"angular.{tplDir}.add.component.html.tpl");
         tplContent = tplContent.Replace(TplConst.FORM_CONTROLS, formControls.ToString());
         return tplContent;
@@ -38,7 +38,7 @@ public class NgFormGenerate : GenerateBase
 
     public static string GenerateForm(List<PropertyInfo>? propertyInfos)
     {
-        StringBuilder formControls = new StringBuilder();
+        StringBuilder formControls = new();
         if (propertyInfos != null)
         {
             foreach (PropertyInfo input in propertyInfos)
@@ -63,7 +63,7 @@ public class NgFormGenerate : GenerateBase
 
     public static string GenerateEditForm(List<PropertyInfo>? propertyInfos, bool isMobile = false)
     {
-        StringBuilder formControls = new StringBuilder();
+        StringBuilder formControls = new();
         if (propertyInfos != null)
         {
             foreach (PropertyInfo input in propertyInfos)
@@ -80,7 +80,7 @@ public class NgFormGenerate : GenerateBase
                 formControls.AppendLine(inputBuilder.ToFormControl());
             }
         }
-        var tplDir = isMobile ? "mobileEdit" : "edit";
+        string tplDir = isMobile ? "mobileEdit" : "edit";
         string tplContent = GetTplContent($"angular.{tplDir}.edit.component.html.tpl");
         tplContent = tplContent.Replace(TplConst.FORM_CONTROLS, formControls.ToString());
         return tplContent;

@@ -1,5 +1,4 @@
-﻿using CodeGenerator.Helper;
-using PropertyInfo = Definition.Entity.PropertyInfo;
+﻿using PropertyInfo = Definition.Entity.PropertyInfo;
 
 namespace CodeGenerator.Generate;
 
@@ -33,9 +32,9 @@ public class NgPageGenerate : GenerateBase
     {
         List<PropertyInfo>? props = [.. modelInfo.PropertyInfos];
         string modelName = modelInfo.Name;
-        var entityName = modelName;
-        var suffix = new string[] { "AddDto", "ItemDto", "UpdateDto", "ShortDto", "FilterDto" };
-        foreach (var item in suffix)
+        string entityName = modelName;
+        string[] suffix = new string[] { "AddDto", "ItemDto", "UpdateDto", "ShortDto", "FilterDto" };
+        foreach (string item in suffix)
         {
             if (entityName.EndsWith(item))
             {
@@ -109,11 +108,11 @@ public class NgPageGenerate : GenerateBase
         {
             columnsDef = columns.Select(s =>
             {
-                var prop = modelInfo.PropertyInfos?
+                Entity.PropertyInfo? prop = modelInfo.PropertyInfos?
                     .Where(p => p.Name.Equals(s))
                     .FirstOrDefault();
 
-                var type = prop?.Type;
+                string? type = prop?.Type;
                 string pipe = "";
                 if (type != null)
                 {
@@ -150,10 +149,10 @@ public class NgPageGenerate : GenerateBase
         string modelName = modelInfo.Name;
         string tplContent = GetTplContent("angular.component.table.component.ts");
 
-        var entityName = modelName;
-        var suffix = new string[] { "AddDto", "ItemDto", "UpdateDto", "ShortDto", "FilterDto" };
+        string entityName = modelName;
+        string[] suffix = new string[] { "AddDto", "ItemDto", "UpdateDto", "ShortDto", "FilterDto" };
 
-        foreach (var item in suffix)
+        foreach (string item in suffix)
         {
             if (entityName.EndsWith(item))
             {
@@ -184,7 +183,7 @@ public class NgPageGenerate : GenerateBase
 
     public static NgComponentInfo GenDetailComponent(EntityInfo modelInfo, string serviceName)
     {
-        var props = modelInfo.PropertyInfos?.Where(p => !p.IsList)
+        List<Entity.PropertyInfo>? props = modelInfo.PropertyInfos?.Where(p => !p.IsList)
             .Where(p => !(p.IsNavigation && !p.IsEnum))
             .ToList();
 
@@ -209,7 +208,7 @@ public class NgPageGenerate : GenerateBase
             }).ToArray();
         }
 
-        var tableContent = $"""
+        string tableContent = $"""
                     <table class="table">
                       <tbody>
             {string.Join("", trRows)}
@@ -221,10 +220,10 @@ public class NgPageGenerate : GenerateBase
         htmlContent = htmlContent.Replace(TplConst.CONTENT, string.Join("", tableContent));
 
         // ts
-        var entityName = modelInfo.Name;
-        var suffix = new string[] { "AddDto", "ItemDto", "UpdateDto", "ShortDto", "FilterDto" };
+        string entityName = modelInfo.Name;
+        string[] suffix = new string[] { "AddDto", "ItemDto", "UpdateDto", "ShortDto", "FilterDto" };
 
-        foreach (var item in suffix)
+        foreach (string item in suffix)
         {
             if (entityName.EndsWith(item))
             {
@@ -251,7 +250,7 @@ public class NgPageGenerate : GenerateBase
 
     public NgComponentInfo BuildAddPage()
     {
-        var tplDir = IsMobile ? "mobileAdd" : "add";
+        string tplDir = IsMobile ? "mobileAdd" : "add";
         // 生成.ts
         string tplContent = GetTplContent($"angular.{tplDir}.add.component.ts");
         // 替换名称
@@ -304,7 +303,7 @@ public class NgPageGenerate : GenerateBase
     }
     public NgComponentInfo BuildEditPage()
     {
-        var tplDir = IsMobile ? "mobileEdit" : "edit";
+        string tplDir = IsMobile ? "mobileEdit" : "edit";
         // 生成.ts
         string tplContent = GetTplContent($"angular.{tplDir}.edit.component.ts");
         // 替换名称
@@ -355,9 +354,9 @@ public class NgPageGenerate : GenerateBase
     }
     public NgComponentInfo BuildIndexPage()
     {
-        var tplDir = IsMobile ? "mobileIndex" : "index";
+        string tplDir = IsMobile ? "mobileIndex" : "index";
         string cssContent = GetTplContent($"angular.{tplDir}.index.component.css.tpl");
-        var entityHelper = new EntityParseHelper(Path.Combine(DtoPath, "models", DtoDirName, EntityName + "ItemDto.cs"));
+        EntityParseHelper entityHelper = new(Path.Combine(DtoPath, "models", DtoDirName, EntityName + "ItemDto.cs"));
         entityHelper.Parse();
         // 需要展示的列
         List<PropertyInfo>? props = entityHelper.PropertyInfos?.Where(p => !p.IsList && !p.IsNavigation)
@@ -375,7 +374,7 @@ public class NgPageGenerate : GenerateBase
                 {
                     if (type.Equals("DateTime") || type.Equals("DateTimeOffset"))
                     {
-                        var pipe = p.Name.EndsWith("Date") ? " | date: 'yyyy-MM-dd'" : " | date: 'yyy-MM-dd HH:mm'";
+                        string pipe = p.Name.EndsWith("Date") ? " | date: 'yyyy-MM-dd'" : " | date: 'yyy-MM-dd HH:mm'";
                         rowContent = $$$"""{{element.{{{p.Name.ToCamelCase()}}}{{{pipe}}}}}""";
                     }
                     if (p.IsEnum)
@@ -388,13 +387,9 @@ public class NgPageGenerate : GenerateBase
                         rowContent = $"<mat-slide-toggle class=\"my-2\" color=\"primary\" disabled [checked]=\"element.{p.Name.ToCamelCase()}\"></mat-slide-toggle>";
                     }
                 }
-                if (IsMobile)
-                {
-                    return $"        <span matListItemLine>{p.CommentSummary ?? p.Name ?? p.Type}:{rowContent}</span>" + Environment.NewLine;
-                }
-                else
-                {
-                    return $"""
+                return IsMobile
+                    ? $"        <span matListItemLine>{p.CommentSummary ?? p.Name ?? p.Type}:{rowContent}</span>" + Environment.NewLine
+                    : $"""
 
                       <ng-container matColumnDef="{p.Name.ToCamelCase()}">
                         <th mat-header-cell *matHeaderCellDef>{p.CommentSummary ?? p.Name ?? p.Type}</th>
@@ -403,22 +398,22 @@ public class NgPageGenerate : GenerateBase
                         </td>
                       </ng-container>
                 """;
-                }
             }).ToList();
         }
         // 筛选组件
         entityHelper.LoadEntityContent(Path.Combine(DtoPath, "models", DtoDirName, EntityName + "FilterDto.cs"));
         entityHelper.Parse();
 
-        var filterContent = "";
+        string filterContent = "";
         if (entityHelper.PropertyInfos != null)
         {
-            var sb = new StringBuilder();
-            foreach (var property in entityHelper.PropertyInfos)
+            StringBuilder sb = new();
+            foreach (Entity.PropertyInfo property in entityHelper.PropertyInfos)
             {
-                var builder = new NgComponentBuilder(property.Type, property.Name, property.CommentSummary ?? property.DisplayName);
-
-                builder.IsFilter = true;
+                NgComponentBuilder builder = new(property.Type, property.Name, property.CommentSummary ?? property.DisplayName)
+                {
+                    IsFilter = true
+                };
                 sb.AppendLine(builder.ToFormControl());
             }
             filterContent = sb.ToString();
@@ -456,7 +451,7 @@ public class NgPageGenerate : GenerateBase
     }
     public NgComponentInfo BuildDetailPage()
     {
-        var tplDir = IsMobile ? "mobileDetail" : "detail";
+        string tplDir = IsMobile ? "mobileDetail" : "detail";
         string cssContent = GetTplContent($"angular.{tplDir}.detail.component.css.tpl");
         EntityParseHelper typeHelper = new(Path.Combine(DtoPath, "models", DtoDirName, EntityName + "ShortDto.cs"));
         typeHelper.Parse();
@@ -491,7 +486,7 @@ public class NgPageGenerate : GenerateBase
             }).ToArray();
         }
 
-        var tableContent = $"""
+        string tableContent = $"""
                     <table class="default w-100">
                       <tbody>
             {string.Join("", trRows)}
@@ -705,7 +700,7 @@ public class NgPageGenerate : GenerateBase
     }
     private static void GetFormControlAndValidate(List<PropertyInfo> props, bool isEdit, ref string definedProperties, ref string definedFormControls, ref string definedValidatorMessage)
     {
-        var ignoreFields = new string[] { "Id", "CreatedTime", "UpdatedTime", "IsDeleted" };
+        string[] ignoreFields = new string[] { "Id", "CreatedTime", "UpdatedTime", "IsDeleted" };
         props = props.Where(p => !ignoreFields.Any(f => f.Equals(p.Name)))
             .Where(p => !p.IsNavigation && !p.Type.StartsWith("Guid"))
             .ToList();

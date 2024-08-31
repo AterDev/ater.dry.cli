@@ -1,5 +1,4 @@
 ﻿using Ater.Web.Abstraction.EntityFramework;
-using Share.EntityFramework.DBProvider;
 
 namespace Share.EntityFramework;
 /// <summary>

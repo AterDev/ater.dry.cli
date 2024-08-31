@@ -16,17 +16,17 @@ public class CSharpAnalysisHelper
     /// <returns></returns>
     public static async Task<INamedTypeSymbol?> GetBaseInterfaceInfoAsync(CSharpCompilation compilation, SyntaxTree tree)
     {
-        var root = await tree.GetRootAsync();
+        SyntaxNode root = await tree.GetRootAsync();
         compilation = compilation.AddSyntaxTrees(tree);
         var semanticModel = compilation.GetSemanticModel(tree);
 
-        var interfaceDeclaration = root?.DescendantNodes().OfType<InterfaceDeclarationSyntax>()
+        InterfaceDeclarationSyntax? interfaceDeclaration = root?.DescendantNodes().OfType<InterfaceDeclarationSyntax>()
             .FirstOrDefault();
         if (interfaceDeclaration != null)
         {
-            var baseInterface = interfaceDeclaration.BaseList?.Types.First().Type;
+            TypeSyntax? baseInterface = interfaceDeclaration.BaseList?.Types.First().Type;
             if (baseInterface == null) { return default; }
-            var baseType = semanticModel.GetTypeInfo(baseInterface).Type as INamedTypeSymbol;
+            INamedTypeSymbol baseType = semanticModel.GetTypeInfo(baseInterface).Type as INamedTypeSymbol;
             return baseType;
         }
         return default;
@@ -37,8 +37,8 @@ public class CSharpAnalysisHelper
 
     public static string FormatChanges(SyntaxNode node)
     {
-        var workspace = new AdhocWorkspace();
-        var options = workspace.Options
+        AdhocWorkspace workspace = new();
+        Microsoft.CodeAnalysis.Options.OptionSet options = workspace.Options
             // change these values to fit your environment / preferences 
             .WithChangedOption(FormattingOptions.UseTabs, LanguageNames.CSharp, value: true)
             .WithChangedOption(FormattingOptions.NewLine, LanguageNames.CSharp, value: "\r\n");

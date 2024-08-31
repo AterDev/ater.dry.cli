@@ -1,4 +1,3 @@
-using CodeGenerator.Models;
 using RazorEngineCore;
 
 /// <summary>
@@ -15,7 +14,7 @@ public class GenContext
 
     public string GenCode<T>(string templateContent, T model)
     {
-        var template = RazorEngine.Compile<RazorEngineTemplateBase<T>>(templateContent);
+        IRazorEngineCompiledTemplate<RazorEngineTemplateBase<T>> template = RazorEngine.Compile<RazorEngineTemplateBase<T>>(templateContent);
         string result = template.Run(instance =>
         {
             instance.Model = model;

@@ -16,8 +16,8 @@ public class EnumSchemaFilter : ISchemaFilter
     {
         if (context.Type.IsEnum)
         {
-            var name = new OpenApiArray();
-            var enumData = new OpenApiArray();
+            OpenApiArray name = [];
+            OpenApiArray enumData = [];
             System.Reflection.FieldInfo[] fields = context.Type.GetFields();
             foreach (System.Reflection.FieldInfo f in fields)
             {

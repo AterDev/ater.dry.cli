@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CodeGenerator.Helper;
@@ -72,7 +73,7 @@ public class EntityParseHelper
         AssemblyName = GetAssemblyName();
         CompilationHelper = new CompilationHelper(ProjectFile.Directory!.FullName);
 
-        var content = File.ReadAllTextAsync(fileInfo.FullName).Result;
+        string content = File.ReadAllTextAsync(fileInfo.FullName).Result;
 
         CompilationHelper.LoadContent(content);
         SyntaxTree = CompilationHelper.SyntaxTree;
@@ -117,7 +118,7 @@ public class EntityParseHelper
     {
         if (File.Exists(filePath))
         {
-            var content = await File.ReadAllTextAsync(filePath);
+            string content = await File.ReadAllTextAsync(filePath);
             CompilationHelper = new CompilationHelper(ProjectFile.Directory!.FullName);
             CompilationHelper.LoadContent(content);
             SyntaxTree = CompilationHelper.SyntaxTree;
@@ -157,7 +158,7 @@ public class EntityParseHelper
     public List<IFieldSymbol?>? GetEnumMembers(string name)
     {
         // 获取指定枚举类字段内容
-        var enumSymbol = CompilationHelper.GetEnum(name);
+        INamedTypeSymbol? enumSymbol = CompilationHelper.GetEnum(name);
         return enumSymbol?.GetMembers()
             .Where(m => m.Name is not "value__")
             .Select(m => m as IFieldSymbol)
@@ -203,11 +204,11 @@ public class EntityParseHelper
     {
         List<PropertyInfo> properties = [];
         CompilationUnitSyntax root = SyntaxTree!.GetCompilationUnitRoot();
-        var matchClassName = parentClassName ?? Name;
+        string? matchClassName = parentClassName ?? Name;
 
-        var classDeclarationSyntax = root.DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
+        ClassDeclarationSyntax? classDeclarationSyntax = root.DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
 
-        var propertySyntax = classDeclarationSyntax?.DescendantNodes().OfType<PropertyDeclarationSyntax>();
+        IEnumerable<PropertyDeclarationSyntax>? propertySyntax = classDeclarationSyntax?.DescendantNodes().OfType<PropertyDeclarationSyntax>();
 
         // 如果指定父类名称
         parentClassName ??= GetParentClassName();
@@ -275,7 +276,7 @@ public class EntityParseHelper
     protected static string GetCommentXml(PropertyDeclarationSyntax syntax)
     {
 
-        var trivia = syntax.GetLeadingTrivia()
+        DocumentationCommentTriviaSyntax? trivia = syntax.GetLeadingTrivia()
             .Select(x => x.GetStructure()).OfType<DocumentationCommentTriviaSyntax>()
             .FirstOrDefault();
 
@@ -295,18 +296,18 @@ public class EntityParseHelper
     /// <returns></returns>
     protected static string? GetCommentSummary(PropertyDeclarationSyntax syntax)
     {
-        var trivia = syntax.GetLeadingTrivia()
+        DocumentationCommentTriviaSyntax? trivia = syntax.GetLeadingTrivia()
             .Select(x => x.GetStructure()).OfType<DocumentationCommentTriviaSyntax>()
             .FirstOrDefault();
         if (trivia == null)
         {
             return null;
         }
-        var summary = trivia.Content.OfType<XmlElementSyntax>().Where(e => e.StartTag.Name.ToString() == "summary").FirstOrDefault();
+        XmlElementSyntax? summary = trivia.Content.OfType<XmlElementSyntax>().Where(e => e.StartTag.Name.ToString() == "summary").FirstOrDefault();
 
         if (summary == null) return null;
 
-        var contentNode = summary?.ChildNodes().OfType<XmlTextSyntax>().FirstOrDefault();
+        XmlTextSyntax? contentNode = summary?.ChildNodes().OfType<XmlTextSyntax>().FirstOrDefault();
         return contentNode != null
             ? string.Join(' ', contentNode.TextTokens.Where(x => x.IsKind(SyntaxKind.XmlTextLiteralToken))
                 .Select(x => x.Text.Trim()).Where(x => !string.IsNullOrWhiteSpace(x)).ToList())
@@ -451,7 +452,7 @@ public class EntityParseHelper
             propertyInfo.NavigationName = navigationType.Name;
             propertyInfo.HasMany = hasMany;
 
-            var parentClassName = GetParentClassName(navigationType);
+            string? parentClassName = GetParentClassName(navigationType);
 
             // TODO:暂时用指定名称判断
             if (parentClassName is "EntityBase" or "IEntityBase")
@@ -581,7 +582,7 @@ public class EntityParseHelper
         // 获取当前类名
         ClassDeclarationSyntax? classDeclarationSyntax = RootNodes!.OfType<ClassDeclarationSyntax>().FirstOrDefault();
         if (classDeclarationSyntax == null) return null;
-        var classSymbol = SemanticModel.GetDeclaredSymbol(classDeclarationSyntax!);
+        ISymbol? classSymbol = SemanticModel.GetDeclaredSymbol(classDeclarationSyntax!);
 
         return classSymbol?.BaseType?.Name;
     }
@@ -600,14 +601,14 @@ public class EntityParseHelper
     {
         ClassDeclarationSyntax? classDeclarationSyntax = RootNodes!.OfType<ClassDeclarationSyntax>().FirstOrDefault();
         if (classDeclarationSyntax == null) return;
-        var classSymbol = SemanticModel.GetDeclaredSymbol(classDeclarationSyntax!);
+        ISymbol? classSymbol = SemanticModel.GetDeclaredSymbol(classDeclarationSyntax!);
 
         // get base class's properties
         INamedTypeSymbol? baseType = classSymbol?.BaseType;
         if (baseType == null) return;
-        var baseProperties = baseType.GetMembers().Where(m => m.Kind == SymbolKind.Property);
+        IEnumerable<ISymbol> baseProperties = baseType.GetMembers().Where(m => m.Kind == SymbolKind.Property);
 
-        foreach (var property in baseProperties)
+        foreach (ISymbol? property in baseProperties)
         {
         }
     }

@@ -1,5 +1,4 @@
-﻿using CodeGenerator.Models;
-using Microsoft.OpenApi.Any;
+﻿using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Interfaces;
 using Microsoft.OpenApi.Models;
 
@@ -127,7 +126,7 @@ public class CsharpModelGenerate : GenerateBase
         // 文件名及内容
         string fileName = schemaKey.ToPascalCase() + ".cs";
         string tsContent;
-        var dirName = GetDirName(schemaKey);
+        string? dirName = GetDirName(schemaKey);
         string path = Path.Combine("Models", dirName ?? "");
 
         if (schema.Enum.Count > 0)
@@ -219,7 +218,7 @@ public class CsharpModelGenerate : GenerateBase
             })
             .ToList();
 
-        var namespaceString = $"namespace {nspName}.Models;" + Environment.NewLine;
+        string namespaceString = $"namespace {nspName}.Models;" + Environment.NewLine;
 
         res = @$"{importString}{namespaceString}{comment}public class {name} {extendString}{{
 {propertyString}
@@ -278,7 +277,7 @@ public class CsharpModelGenerate : GenerateBase
                 }
             }
         }
-        var namespaceString = $"namespace {nspName}.Models;" + Environment.NewLine;
+        string namespaceString = $"namespace {nspName}.Models;" + Environment.NewLine;
         res = @$"{namespaceString}{comment}public enum {name} {{
 {propertyString}
 }}
@@ -382,7 +381,7 @@ public class CSProperty
         // 引用的类型可空
         string type = Type + (IsNullable ? "?" : "");
 
-        var defaultValue = string.Empty;
+        string defaultValue = string.Empty;
         if (!IsNullable && !IsEnum && !IsList)
         {
             defaultValue = " = default!;";

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Share.Models;
+﻿namespace Share.Models;
 /// <summary>
 /// csproj 程序集信息
 /// </summary>

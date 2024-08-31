@@ -1,7 +1,5 @@
 ﻿using Ater.Web.Abstraction;
-using Definition.Entity;
-using Definition.Models;
-using Microsoft.AspNetCore.Authorization;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace AterStudio.Controllers;
@@ -65,7 +63,7 @@ public class ProjectController(ProjectManager manager, AdvanceManager advance) :
         {
             return Problem("未找到该路径");
         }
-        var res = await _manager.AddProjectAsync(name, path);
+        string? res = await _manager.AddProjectAsync(name, path);
         return res != null ? Problem(res) : Ok("添加成功");
     }
 
@@ -77,7 +75,7 @@ public class ProjectController(ProjectManager manager, AdvanceManager advance) :
     [HttpPost("service")]
     public ActionResult<bool> AddService(string name)
     {
-        var res = _manager.AddServiceProject(name);
+        bool res = _manager.AddServiceProject(name);
         return res;
     }
 
@@ -88,7 +86,7 @@ public class ProjectController(ProjectManager manager, AdvanceManager advance) :
     [HttpGet("setting")]
     public ActionResult<ConfigOptions> GetConfigOptions()
     {
-        var config = _manager.GetConfigOptions();
+        ConfigOptions? config = _manager.GetConfigOptions();
         return config == null ? Problem("配置文件加载失败") : config;
     }
 

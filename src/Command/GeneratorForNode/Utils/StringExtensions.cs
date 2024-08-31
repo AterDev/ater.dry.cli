@@ -10,14 +10,7 @@ public static class StringExtensions
     public static string? FromBase64String(this string str)
     {
         byte[] buffer = new byte[str.Length * 3 / 4];
-        if (Convert.TryFromBase64String(str, buffer, out int bytesWritten))
-        {
-            return Encoding.UTF8.GetString(buffer, 0, bytesWritten);
-        }
-        else
-        {
-            return null;
-        }
+        return Convert.TryFromBase64String(str, buffer, out int bytesWritten) ? Encoding.UTF8.GetString(buffer, 0, bytesWritten) : null;
     }
     public static bool NotNull(this string? str)
     {
@@ -37,12 +30,12 @@ public static class StringExtensions
         }
 
         StringBuilder builder = new();
-        var upperNumber = 0;
-        for (var i = 0; i < str.Length; i++)
+        int upperNumber = 0;
+        for (int i = 0; i < str.Length; i++)
         {
-            var item = str[i];
+            char item = str[i];
             // 连续的大写只添加一个-
-            var pre = i >= 1 ? str[i - 1] : 'a';
+            char pre = i >= 1 ? str[i - 1] : 'a';
             if (char.IsUpper(item) && char.IsLower(pre))
             {
                 upperNumber++;
@@ -82,11 +75,11 @@ public static class StringExtensions
             return string.Empty;
         }
         StringBuilder resultBuilder = new();
-        foreach (var c in str)
+        foreach (char c in str)
         {
             _ = !char.IsLetterOrDigit(c) ? resultBuilder.Append(' ') : resultBuilder.Append(c);
         }
-        var result = resultBuilder.ToString();
+        string result = resultBuilder.ToString();
         result = string.Join(string.Empty, result.Split(' ').Select(r => r.ToUpperFirst()).ToArray());
         return result;
     }
@@ -118,7 +111,7 @@ public static class StringExtensions
         }
 
         MemoryStream stream = new();
-        var jsonOption = new JsonSerializerOptions
+        JsonSerializerOptions jsonOption = new()
         {
             ReferenceHandler = ReferenceHandler.IgnoreCycles
         };

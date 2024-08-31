@@ -1,5 +1,4 @@
-﻿using Definition.Entity;
-using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi.Models;
 namespace Share.Models;
 
 /// <summary>

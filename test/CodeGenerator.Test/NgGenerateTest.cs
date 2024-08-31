@@ -1,7 +1,6 @@
 ﻿using System.IO;
 
 using CodeGenerator.Generate;
-using CodeGenerator.Models;
 
 using Microsoft.OpenApi.Readers;
 

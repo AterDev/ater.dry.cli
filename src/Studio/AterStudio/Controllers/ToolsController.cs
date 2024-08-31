@@ -17,12 +17,8 @@ public class ToolsController(ToolsManager toolsManager) : ControllerBase
     [HttpPost("classModel")]
     public ActionResult<List<string>?> ConvertToClass([FromBody] ConvertDto dto)
     {
-        var res = _toolsManager.ConvertToClass(dto.Content);
-        if (res == null)
-        {
-            return Problem("未能转换成功,请输入合法的json");
-        }
-        return res;
+        List<string>? res = _toolsManager.ConvertToClass(dto.Content);
+        return res == null ? (ActionResult<List<string>?>)Problem("未能转换成功,请输入合法的json") : (ActionResult<List<string>?>)res;
     }
 
     /// <summary>
@@ -34,7 +30,7 @@ public class ToolsController(ToolsManager toolsManager) : ControllerBase
     [HttpGet("string")]
     public ActionResult<Dictionary<string, string>> ConvertString(string content, StringConvertType type)
     {
-        var res = _toolsManager.ConvertString(content, type);
+        Dictionary<string, string> res = _toolsManager.ConvertString(content, type);
         return res;
     }
 }

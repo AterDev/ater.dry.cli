@@ -15,8 +15,8 @@ public class ProtoCommand(string entityPath, string projectPath) : CommandBase
 
     public async Task RunAsync(bool cover = false)
     {
-        var projectName = Path.GetFileNameWithoutExtension(ProjectPath);
-        var projectDir = Path.GetDirectoryName(ProjectPath);
+        string projectName = Path.GetFileNameWithoutExtension(ProjectPath);
+        string? projectDir = Path.GetDirectoryName(ProjectPath);
         if (!File.Exists(EntityPath))
         {
             Console.WriteLine("🛑 Entity not exist!");
@@ -40,7 +40,7 @@ public class ProtoCommand(string entityPath, string projectPath) : CommandBase
                 projectName,
                 Path.GetFileName(EntityPath));
 
-            var content = CodeGen.GenerateProtobuf();
+            string content = CodeGen.GenerateProtobuf();
 
             await SaveToFileAsync(projectDir, content, cover);
             Console.WriteLine("😀 Protobuf generate completed!" + Environment.NewLine);

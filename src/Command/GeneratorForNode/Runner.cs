@@ -24,14 +24,7 @@ public class Runner
         OutputPath = output;
         LibType = libType;
 
-        if (docUrl.Contains("http"))
-        {
-            DocName = docUrl.Split('/').Reverse().Skip(1).First();
-        }
-        else
-        {
-            DocName = string.Empty;
-        }
+        DocName = docUrl.Contains("http") ? docUrl.Split('/').Reverse().Skip(1).First() : string.Empty;
     }
 
     public async Task ParseOpenApiAsync()
@@ -39,7 +32,7 @@ public class Runner
         string openApiContent = "";
         if (DocUrl.StartsWith("http://") || DocUrl.StartsWith("https://"))
         {
-            var handler = new HttpClientHandler
+            HttpClientHandler handler = new()
             {
                 ServerCertificateCustomValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true
             };
@@ -72,7 +65,7 @@ public class Runner
         // 枚举pipe
         if (LibType == RequestLibType.NgHttp)
         {
-            var schemas = ApiDocument!.Components.Schemas;
+            IDictionary<string, OpenApiSchema> schemas = ApiDocument!.Components.Schemas;
             string pipeContent = RequestGenerate.GetEnumPipeContent(schemas);
             dir = Path.Combine(OutputPath, "pipe", DocName);
             await GenerateFileAsync(dir, "enum-text.pipe.ts", pipeContent, true);
@@ -96,7 +89,7 @@ public class Runner
         }
 
         // 获取请求服务并生成文件
-        var services = ngGen.GetServices(ApiDocument!.Tags);
+        List<GenFileInfo> services = ngGen.GetServices(ApiDocument!.Tags);
         foreach (GenFileInfo service in services)
         {
             string dir = Path.Combine(OutputPath, "services", DocName, service.Path);

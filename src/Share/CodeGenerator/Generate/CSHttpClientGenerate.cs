@@ -1,5 +1,5 @@
 ﻿using System.Data;
-using CodeGenerator.Models;
+
 using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
 
@@ -19,7 +19,7 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
 
     public static string GetBaseService(string namespaceName)
     {
-        var content = GetTplContent("RequestService.CsharpeBaseService.tpl");
+        string content = GetTplContent("RequestService.CsharpeBaseService.tpl");
         content = content.Replace("#@Namespace#", namespaceName);
         return content;
     }
@@ -30,12 +30,12 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
     /// <returns></returns>
     public static string GetClient(List<GenFileInfo> infos, string namespaceName, string className)
     {
-        var tplContent = GetTplContent("RequestService.CsharpClient.tpl");
+        string tplContent = GetTplContent("RequestService.CsharpClient.tpl");
         tplContent = tplContent.Replace("${Namespace}", namespaceName)
             .Replace("#@ClassName#", className);
 
-        var propsString = "";
-        var initPropsString = "";
+        string propsString = "";
+        string initPropsString = "";
 
         infos.ForEach(info =>
         {
@@ -51,7 +51,7 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
 
     public static string GetGlobalUsing(string name)
     {
-        var content = GetTplContent("RequestService.GlobalUsings.tpl");
+        string content = GetTplContent("RequestService.GlobalUsings.tpl");
         content = content + $"global using {name}.Models;" + Environment.NewLine;
         return content;
     }
@@ -62,7 +62,7 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
     /// <returns></returns>
     public static string GetCsprojContent()
     {
-        var content = """
+        string content = """
             <Project Sdk="Microsoft.NET.Sdk">
               <PropertyGroup>
                 <TargetFramework>net8.0</TargetFramework>
@@ -87,11 +87,11 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
     /// <returns></returns>
     public static string GetExtensionContent(string namespaceName, List<string> services)
     {
-        var tplContent = GetTplContent("RequestService.Extension.tpl");
+        string tplContent = GetTplContent("RequestService.Extension.tpl");
         Console.WriteLine(tplContent);
         tplContent = tplContent.Replace("#@Namespace#", namespaceName);
 
-        var serviceContent = "";
+        string serviceContent = "";
         services.ForEach(service =>
         {
             serviceContent += $"        services.AddSingleton<{service}>();" + Environment.NewLine;
@@ -144,7 +144,7 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
     /// <returns></returns>
     public List<GenFileInfo> GetModelFiles(string nspName)
     {
-        var csGen = new CsharpModelGenerate(OpenApi);
+        CsharpModelGenerate csGen = new(OpenApi);
         List<GenFileInfo> files = [];
         foreach (KeyValuePair<string, OpenApiSchema> item in Schemas)
         {
@@ -156,7 +156,7 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
 
     public static string ToRequestService(RequestServiceFile serviceFile, string namespaceName)
     {
-        var functions = serviceFile.Functions;
+        List<RequestServiceFunction>? functions = serviceFile.Functions;
         string functionstr = "";
         List<string> refTypes = [];
         if (functions != null)
@@ -206,7 +206,7 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
         }
         if (!string.IsNullOrEmpty(function.RequestType))
         {
-            var requestType = function.RequestType == "IFile" ? "Stream" : function.RequestType;
+            string requestType = function.RequestType == "IFile" ? "Stream" : function.RequestType;
             if (function.Params?.Count > 0)
             {
                 paramsString += $", {requestType} data";
@@ -251,9 +251,9 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
             dataString = $", {file.Name}";
         }
 
-        var returnType = function.ResponseType == "IFile" ? "Stream" : function.ResponseType;
+        string returnType = function.ResponseType == "IFile" ? "Stream" : function.ResponseType;
 
-        var method = function.ResponseType == "IFile"
+        string method = function.ResponseType == "IFile"
             ? $"DownloadFileAsync(url{dataString})"
             : $"{function.Method}JsonAsync<{function.ResponseType}?>(url{dataString})";
 
@@ -407,7 +407,7 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : GenerateBase
                 // TODO:object  字典
                 if (schema.AdditionalProperties != null)
                 {
-                    var (inType, inRefType) = GetCsharpParamType(schema.AdditionalProperties);
+                    (string inType, string inRefType) = GetCsharpParamType(schema.AdditionalProperties);
                     refType = inRefType;
                     type = $"Dictionary<string, {inType}>";
                 }

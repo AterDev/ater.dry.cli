@@ -1,6 +1,4 @@
-﻿using NuGet.Versioning;
-
-namespace CodeGenerator.Helper;
+﻿namespace CodeGenerator.Helper;
 
 /// <summary>
 /// 项目帮助类
@@ -162,11 +160,10 @@ public class AssemblyHelper
     /// <returns></returns>
     public static string GetCurrentToolVersion()
     {
-        var version = Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
-        if (version != null)
-            return version.Split('+')[0];
-
-        return Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version
+        string? version = Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+        return version != null
+            ? version.Split('+')[0]
+            : Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version
             ?? Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyVersionAttribute>()?.Version
             ?? string.Empty;
     }
@@ -178,7 +175,7 @@ public class AssemblyHelper
     /// <returns></returns>
     public static async Task<string?> GetSolutionVersionAsync(string solutionPath)
     {
-        var configFilePath = Path.Combine(solutionPath, Config.ConfigFileName);
+        string configFilePath = Path.Combine(solutionPath, Config.ConfigFileName);
         if (File.Exists(configFilePath))
         {
             string configJson = await File.ReadAllTextAsync(configFilePath);
@@ -283,7 +280,7 @@ public class AssemblyHelper
 
     public static async Task GenerateFileAsync(string filePath, string content, bool cover = false)
     {
-        var fileName = Path.GetFileName(filePath);
+        string fileName = Path.GetFileName(filePath);
         if (!File.Exists(filePath) || cover)
         {
             await File.WriteAllTextAsync(filePath, content);
@@ -330,10 +327,10 @@ public class AssemblyHelper
     /// <param name="solutionPath"></param>
     public static void RemoveModuleEntityFiles(string solutionPath)
     {
-        var entityPath = Path.Combine(solutionPath, Config.EntityPath, "Entities");
+        string entityPath = Path.Combine(solutionPath, Config.EntityPath, "Entities");
         // remove files which cotains "Module[]"
         string moduleSign = "[Module(";
-        var files = Directory.GetFiles(entityPath, "*.cs", SearchOption.AllDirectories)
+        List<string> files = Directory.GetFiles(entityPath, "*.cs", SearchOption.AllDirectories)
             .Where(s => File.ReadAllText(s).Contains(moduleSign))
             .ToList();
         files.ForEach(file =>

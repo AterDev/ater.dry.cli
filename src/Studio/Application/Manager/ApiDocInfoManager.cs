@@ -1,5 +1,5 @@
 using System.Text;
-using Share.EntityFramework;
+
 using Share.Models;
 using Share.Share.Models.ApiDocInfoDtos;
 
@@ -22,7 +22,7 @@ public class ApiDocInfoManager(
     /// <returns></returns>
     public async Task<ApiDocInfo> CreateNewEntityAsync(ApiDocInfoAddDto dto)
     {
-        var entity = dto.MapTo<ApiDocInfoAddDto, ApiDocInfo>();
+        ApiDocInfo entity = dto.MapTo<ApiDocInfoAddDto, ApiDocInfo>();
         entity.ProjectId = _project.ProjectId;
         return await Task.FromResult(entity);
     }
@@ -48,8 +48,8 @@ public class ApiDocInfoManager(
     /// <returns></returns>
     public async Task<ApiDocContent?> GetContentAsync(Guid id, bool isFresh)
     {
-        var apiDocInfo = await GetCurrentAsync(id);
-        var path = apiDocInfo!.Path;
+        ApiDocInfo? apiDocInfo = await GetCurrentAsync(id);
+        string path = apiDocInfo!.Path;
         string openApiContent = "";
 
         if (!isFresh && apiDocInfo.Content.NotEmpty())
@@ -62,7 +62,7 @@ public class ApiDocInfoManager(
             {
                 if (path.StartsWith("http://") || path.StartsWith("https://"))
                 {
-                    var handler = new HttpClientHandler
+                    HttpClientHandler handler = new()
                     {
                         ServerCertificateCustomValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true
                     };
@@ -88,7 +88,7 @@ public class ApiDocInfoManager(
                .Replace("«", "")
                .Replace("»", "");
 
-        var apiDocument = new OpenApiStringReader().Read(openApiContent, out _);
+        Microsoft.OpenApi.Models.OpenApiDocument apiDocument = new OpenApiStringReader().Read(openApiContent, out _);
         var helper = new OpenApiHelper(apiDocument);
         return new ApiDocContent
         {
@@ -105,9 +105,9 @@ public class ApiDocInfoManager(
     /// <returns></returns>
     public async Task<string> ExportDocAsync(Guid id)
     {
-        var apiDocInfo = await FindAsync(id);
+        ApiDocInfo? apiDocInfo = await FindAsync(id);
         if (apiDocInfo == null) return string.Empty;
-        var path = apiDocInfo.Path;
+        string path = apiDocInfo.Path;
         string openApiContent = "";
         if (path.StartsWith("http://") || path.StartsWith("https://"))
         {
@@ -123,11 +123,11 @@ public class ApiDocInfoManager(
             .Replace("«", "")
             .Replace("»", "");
 
-        var apiDocument = new OpenApiStringReader().Read(openApiContent, out _);
+        Microsoft.OpenApi.Models.OpenApiDocument apiDocument = new OpenApiStringReader().Read(openApiContent, out _);
         var helper = new OpenApiHelper(apiDocument);
         var groups = helper.RestApiGroups;
 
-        var sb = new StringBuilder();
+        StringBuilder sb = new();
         foreach (var group in groups)
         {
             sb.AppendLine("## " + group.Description);

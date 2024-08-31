@@ -34,17 +34,17 @@ public class RestApiGenerateTest
     [Fact]
     public async Task Should_generate_csharpe_requestAsync()
     {
-        var url = "http://localhost:5002/swagger/client/swagger.json";
+        string url = "http://localhost:5002/swagger/client/swagger.json";
         using HttpClient http = new();
-        var openApiContent = await http.GetStringAsync(url);
+        string openApiContent = await http.GetStringAsync(url);
         // 过滤特殊符号
         openApiContent = openApiContent
             .Replace("«", "")
             .Replace("»", "");
 
-        var ApiDocument = new OpenApiStringReader()
+        Microsoft.OpenApi.Models.OpenApiDocument ApiDocument = new OpenApiStringReader()
            .Read(openApiContent, out _);
-        var gen = new CSHttpClientGenerate(ApiDocument);
+        CSHttpClientGenerate gen = new(ApiDocument);
         gen.GetServices("test");
 
     }

@@ -5,9 +5,20 @@
 [Index(nameof(Name))]
 public class EntityInfo : EntityBase
 {
-    public static string[] IgnoreTypes = ["JsonDocument?"];
+    public static string[] IgnoreTypes = ["JsonDocument?", "byte[]"];
     public static string[] IgnoreProperties = ["Id", "CreatedTime", "UpdatedTime", "IsDeleted", "PageSize", "PageIndex"];
 
+    /// <summary>
+    /// file content md5 hash
+    /// </summary>
+    [MaxLength(32)]
+    public required string Md5Hash { get; set; }
+
+    /// <summary>
+    /// file path
+    /// </summary>
+    [MaxLength(200)]
+    public string FilePath { get; set; }
     /// <summary>
     /// 类名
     /// </summary>
@@ -17,7 +28,7 @@ public class EntityInfo : EntityBase
     /// 命名空间
     /// </summary>
     [MaxLength(100)]
-    public string? NamespaceName { get; set; }
+    public required string NamespaceName { get; set; }
     /// <summary>
     /// 程序集名称
     /// </summary>

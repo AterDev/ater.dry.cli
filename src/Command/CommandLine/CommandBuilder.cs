@@ -39,7 +39,7 @@ public class CommandBuilder
     public void AddStudio()
     {
         System.CommandLine.Command studioCommand = new("studio", "studio management");
-        var update = new System.CommandLine.Command("update", "update studio");
+        System.CommandLine.Command update = new("update", "update studio");
         update.SetHandler(StudioCommand.UpdateStudio);
         studioCommand.SetHandler(StudioCommand.RunStudio);
 
@@ -271,9 +271,9 @@ public class CommandBuilder
             async () =>
             {
                 // 默认会在HttpAPI目录下执行同步
-                var defaultEntityPath = Path.Combine("..", ConfigOptions!.EntityPath);
-                var defaultDtoPath = Path.Combine("..", ConfigOptions.DtoPath);
-                var defaultApiPath = Path.Combine("..", ConfigOptions.ApiPath);
+                string defaultEntityPath = Path.Combine("..", ConfigOptions!.EntityPath);
+                string defaultDtoPath = Path.Combine("..", ConfigOptions.DtoPath);
+                string defaultApiPath = Path.Combine("..", ConfigOptions.ApiPath);
                 await CommandRunner.SyncToAngularAsync(
                     "./swagger.json", defaultEntityPath, defaultDtoPath, defaultApiPath);
             }

@@ -1,8 +1,8 @@
 ﻿
 using Ater.Web.Abstraction;
+
 using DeepSeek.Core;
 using DeepSeek.Core.Models;
-using Share.EntityFramework.DBProvider;
 
 namespace Application;
 /// <summary>
@@ -43,7 +43,7 @@ public class AIService
     /// <exception cref="Exception"></exception>
     public void SetApiKey(string key)
     {
-        var apiKey = _dbContext.Configs.Where(c => c.Key == key)
+        string apiKey = _dbContext.Configs.Where(c => c.Key == key)
            .Select(c => c.Value)
            .FirstOrDefault() ?? throw new Exception("apiKey is null");
 
@@ -63,7 +63,7 @@ public class AIService
         {
             throw new Exception("Client is null");
         }
-        var messages = CacheMessages[Answer];
+        List<Message> messages = CacheMessages[Answer];
         if (messages.Count == 0)
         {
             messages.Add(Message.NewSystemMessage("你是一个IT技术专家"));
@@ -72,7 +72,7 @@ public class AIService
         messages.Add(Message.NewUserMessage(prompt));
         CacheMessages[Answer] = messages;
 
-        var request = new ChatRequest
+        ChatRequest request = new()
         {
             Messages = messages,
             Model = Constant.Model.ChatModel
@@ -94,7 +94,7 @@ public class AIService
         {
             throw new Exception("Client is null");
         }
-        var cache = CacheMessages[Completion];
+        List<Message> cache = CacheMessages[Completion];
         if (cache.Count == 0)
         {
             cache.Add(Message.NewSystemMessage("你是一个IT技术专家"));
@@ -103,7 +103,7 @@ public class AIService
         cache.AddRange(messages);
         CacheMessages[Completion] = cache;
 
-        var request = new ChatRequest
+        ChatRequest request = new()
         {
             Messages = cache,
             Model = Constant.Model.ChatModel
@@ -124,7 +124,7 @@ public class AIService
         {
             throw new Exception("Client is null");
         }
-        var cache = CacheMessages[Coder];
+        List<Message> cache = CacheMessages[Coder];
         if (cache.Count == 0)
         {
             cache.Add(Message.NewSystemMessage("你是一个IT技术专家"));
@@ -132,7 +132,7 @@ public class AIService
         cache.AddRange(messages);
         CacheMessages[Coder] = cache;
 
-        var request = new ChatRequest
+        ChatRequest request = new()
         {
             Messages = cache,
             Model = Constant.Model.CoderModel

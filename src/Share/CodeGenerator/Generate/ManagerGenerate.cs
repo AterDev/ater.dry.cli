@@ -1,5 +1,3 @@
-using CodeGenerator.Helper;
-
 namespace CodeGenerator.Generate;
 
 /// <summary>
@@ -104,12 +102,12 @@ public class ManagerGenerate : GenerateBase
 
             """;
         // 包含的关联内容
-        var navigations = EntityInfo?.PropertyInfos.Where(p => p.IsNavigation && p.HasMany == true)
+        List<Entity.PropertyInfo>? navigations = EntityInfo?.PropertyInfos.Where(p => p.IsNavigation && p.HasMany == true)
           .ToList();
         navigations?.ForEach(nav =>
         {
-            var name = nav.NavigationName ?? nav.Type;
-            var variable = nav.Name.ToCamelCase();
+            string name = nav.NavigationName ?? nav.Type;
+            string variable = nav.Name.ToCamelCase();
             content += $$"""
                     /*
                     if (dto.{{name}}Ids != null && dto.{{name}}Ids.Count > 0)
@@ -127,12 +125,12 @@ public class ManagerGenerate : GenerateBase
             """;
         });
         // 所属的关联内容
-        var requiredNavigations = EntityInfo?.GetRequiredNavigation();
+        List<Entity.PropertyInfo>? requiredNavigations = EntityInfo?.GetRequiredNavigation();
         requiredNavigations?.ForEach(nav =>
         {
-            var name = nav.NavigationName ?? nav.Type;
-            var manager = "_" + name.ToCamelCase() + "Manager";
-            var idName = nav.Name + "Id";
+            string name = nav.NavigationName ?? nav.Type;
+            string manager = "_" + name.ToCamelCase() + "Manager";
+            string idName = nav.Name + "Id";
             if (name is not "User" and not "SystemUser")
             {
                 content += $$"""
@@ -159,12 +157,12 @@ public class ManagerGenerate : GenerateBase
     {
         string content = "";
         // 包含的关联内容
-        var navigations = EntityInfo?.PropertyInfos.Where(p => p.IsNavigation && p.HasMany == true)
+        List<Entity.PropertyInfo>? navigations = EntityInfo?.PropertyInfos.Where(p => p.IsNavigation && p.HasMany == true)
           .ToList();
         navigations?.ForEach(nav =>
         {
-            var name = nav.NavigationName ?? nav.Type;
-            var variable = nav.Name.ToCamelCase();
+            string name = nav.NavigationName ?? nav.Type;
+            string variable = nav.Name.ToCamelCase();
             content += $$"""
                     /*
                     if (dto.{{name}}Ids != null && dto.{{name}}Ids.Count > 0)
@@ -189,7 +187,7 @@ public class ManagerGenerate : GenerateBase
     {
         string content = "";
         string entityName = EntityInfo?.Name ?? "";
-        var props = EntityInfo?.GetFilterProperties();
+        List<Entity.PropertyInfo>? props = EntityInfo?.GetFilterProperties();
         if (props != null && props.Count != 0)
         {
             content += """
@@ -197,11 +195,11 @@ public class ManagerGenerate : GenerateBase
 
             """;
         }
-        var last = props?.LastOrDefault();
+        Entity.PropertyInfo? last = props?.LastOrDefault();
         props?.ForEach(p =>
         {
             bool isLast = p == last;
-            var name = p.Name;
+            string name = p.Name;
             if (p.IsNavigation && !p.IsComplexType)
             {
                 content += $$"""
@@ -276,7 +274,7 @@ public class ManagerGenerate : GenerateBase
             return string.Empty;
         }
 
-        var files = Directory.GetFiles(Path.Combine(managerPath, "Manager"), "*Manager.cs", SearchOption.TopDirectoryOnly);
+        string[] files = Directory.GetFiles(Path.Combine(managerPath, "Manager"), "*Manager.cs", SearchOption.TopDirectoryOnly);
 
         files?.ToList().ForEach(file =>
         {
@@ -302,7 +300,7 @@ public class ManagerGenerate : GenerateBase
     public static string GetManagerModuleDIExtensions(string solutionPath, string ModuleName)
     {
         // 获取所有manager
-        var modulePath = Path.Combine(solutionPath, "src", "Modules", ModuleName);
+        string modulePath = Path.Combine(solutionPath, "src", "Modules", ModuleName);
         string managerDir = Path.Combine(modulePath, "Manager");
         if (!Directory.Exists(managerDir))
         {
@@ -310,7 +308,7 @@ public class ManagerGenerate : GenerateBase
         }
 
         string[] files = [];
-        var managerServiceContent = "";
+        string managerServiceContent = "";
 
         files = Directory.GetFiles(managerDir, "*Manager.cs", SearchOption.TopDirectoryOnly);
         files?.ToList().ForEach(file =>

@@ -19,10 +19,11 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Folder Include="Managers\" />
         <Folder Include="Share\Models\ToolsDtos\" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Entity\Entity.csproj" />
+      <ProjectReference Include="..\CodeGenerator\CodeGenerator.csproj" />
     </ItemGroup>
 </Project>

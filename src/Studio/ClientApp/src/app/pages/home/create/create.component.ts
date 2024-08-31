@@ -75,7 +75,7 @@ export class CreateComponent {
       name: new FormControl('', [Validators.required, Validators.maxLength(50)]),
       path: new FormControl('', [Validators.required, Validators.maxLength(50)]),
       isLight: new FormControl(false, [Validators.required]),
-      dbType: new FormControl(DBType.PostgreSQL, []),
+      dbType: new FormControl<DBType>(DBType.PostgreSQL, []),
       cacheType: new FormControl(CacheType.Redis, []),
       defaultPassword: new FormControl('Hello.Net', []),
       hasTenant: new FormControl(false, []),

@@ -9,12 +9,14 @@ using Ater.Web.Abstraction;
 
 using AterStudio;
 using AterStudio.Worker;
+
 using CodeGenerator.Helper;
 
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+
 using Share.EntityFramework.DBProvider;
 
 Console.OutputEncoding = Encoding.UTF8;
@@ -24,7 +26,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ProjectContext>();
 
-var path = Path.Combine(AssemblyHelper.GetStudioPath(), ContextBase.DbName);
+string path = Path.Combine(AssemblyHelper.GetStudioPath(), ContextBase.DbName);
 builder.Services.AddDbContext<CommandDbContext>(options =>
 {
     options.UseSqlite($"DataSource={path}", _ =>
@@ -121,7 +123,7 @@ app.MapFallbackToFile("index.html");
 
 using (app)
 {
-    var scope = app.Services.CreateScope();
+    IServiceScope scope = app.Services.CreateScope();
     await InitDataTask.InitDataAsync(scope.ServiceProvider);
     app.Run();
 }

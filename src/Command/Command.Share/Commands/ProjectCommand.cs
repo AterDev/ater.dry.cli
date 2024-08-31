@@ -10,11 +10,11 @@ public class ProjectCommand
     public static void CreateService(string solutionPath, string serviceName)
     {
         string projectName = serviceName.ToPascalCase();
-        var path = Path.Combine(solutionPath, Config.MicroservicePath, projectName);
+        string path = Path.Combine(solutionPath, Config.MicroservicePath, projectName);
 
-        var studioPath = AssemblyHelper.GetStudioPath();
+        string studioPath = AssemblyHelper.GetStudioPath();
 
-        var sourcePath = Path.Combine(studioPath, "Microservice");
+        string sourcePath = Path.Combine(studioPath, "Microservice");
         if (!Directory.Exists(sourcePath))
         {
             Console.WriteLine("🦘 Microservice template not found!");

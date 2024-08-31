@@ -32,7 +32,7 @@ public static class CommandRunner
         try
         {
             Console.WriteLine("🚀 Generating ts models and ng services...");
-            var cmd = new RequestCommand(url, output, RequestLibType.NgHttp);
+            RequestCommand cmd = new(url, output, RequestLibType.NgHttp);
             await cmd.RunAsync();
         }
         catch (WebException webExp)
@@ -104,7 +104,7 @@ public static class CommandRunner
         Console.WriteLine("🚀 Generate manager");
         ManagerCommand storeCmd = new(path, dtoPath, applicationPath);
         await storeCmd.RunAsync(force);
-        var entityFrameworkPath = Path.Combine(Config.SolutionPath, Config.EntityFrameworkPath);
+        string entityFrameworkPath = Path.Combine(Config.SolutionPath, Config.EntityFrameworkPath);
         if (!string.IsNullOrWhiteSpace(Config.ServiceName))
         {
             entityFrameworkPath = Path.Combine(Config.SolutionPath, Config.GetServiceConfig(Config.ServiceName).DbContextPath);
@@ -132,7 +132,7 @@ public static class CommandRunner
             Console.WriteLine("🚀 Generate manager");
             ManagerCommand storeCmd = new(path, dtoPath, applicationPath);
             await storeCmd.RunAsync(force);
-            var entityFrameworkPath = Path.Combine(Config.SolutionPath, Config.EntityFrameworkPath);
+            string entityFrameworkPath = Path.Combine(Config.SolutionPath, Config.EntityFrameworkPath);
             if (!string.IsNullOrWhiteSpace(Config.ServiceName))
             {
                 entityFrameworkPath = Path.Combine(Config.SolutionPath, Config.GetServiceConfig(Config.ServiceName).DbContextPath);
@@ -161,7 +161,7 @@ public static class CommandRunner
             $"global using {serviceName}.Definition.Entity;"
             ];
 
-        var servicePath = Path.Combine(Config.SolutionPath, "src", "Microservice", serviceName);
+        string servicePath = Path.Combine(Config.SolutionPath, "src", "Microservice", serviceName);
         string filePath = Path.Combine(servicePath, "GlobalUsings.cs");
         if (!string.IsNullOrWhiteSpace(moduleName))
         {
@@ -172,7 +172,7 @@ public static class CommandRunner
         if (File.Exists(filePath))
         {
             string content = File.ReadAllText(filePath);
-            var newUsings = nsp.Where(g => !content.Contains(g))
+            List<string> newUsings = nsp.Where(g => !content.Contains(g))
                 .ToList();
             if (newUsings.Count != 0)
             {
@@ -195,7 +195,7 @@ public static class CommandRunner
     public static async Task GenerateNgPagesAsync(string entityPah, string dtoPath, string output = "", bool isMobile = false)
     {
         Console.WriteLine("🚀 Generate view");
-        ViewCommand viewCmd = new ViewCommand(entityPah, dtoPath, output, isMobile);
+        ViewCommand viewCmd = new(entityPah, dtoPath, output, isMobile);
         await viewCmd.RunAsync();
     }
 
@@ -213,7 +213,7 @@ public static class CommandRunner
     /// <returns></returns>
     public static async Task<string?> GenerateProtobufAsync(string entityPath, string projectPath)
     {
-        var cmd = new ProtoCommand(entityPath, projectPath);
+        ProtoCommand cmd = new(entityPath, projectPath);
         await cmd.RunAsync();
         return cmd.ErrorMessage;
     }
@@ -231,7 +231,7 @@ public static class CommandRunner
         }
         await Console.Out.WriteLineAsync($"start cleaning {EntityName}");
         // 清理dto
-        var dtoPath = Path.Combine(sharePath, "Models", EntityName + "Dtos");
+        string dtoPath = Path.Combine(sharePath, "Models", EntityName + "Dtos");
         if (Directory.Exists(dtoPath))
         {
             Directory.Delete(dtoPath, true);
@@ -239,7 +239,7 @@ public static class CommandRunner
         }
 
         // 清理data store
-        var storePath = Path.Combine(applicationPath, "CommandStore", EntityName + "CommandStore.cs");
+        string storePath = Path.Combine(applicationPath, "CommandStore", EntityName + "CommandStore.cs");
         if (File.Exists(storePath))
         {
             File.Delete(storePath);
@@ -254,7 +254,7 @@ public static class CommandRunner
 
 
         // 清理manager
-        var managerPath = Path.Combine(applicationPath, "Manager", EntityName + "Manager.cs");
+        string managerPath = Path.Combine(applicationPath, "Manager", EntityName + "Manager.cs");
         if (File.Exists(managerPath))
         {
             File.Delete(managerPath);
@@ -264,23 +264,23 @@ public static class CommandRunner
         try
         {
             // 更新 依赖注入
-            var entityFilePath = Directory.GetFiles(entityPath, EntityName + ".cs", SearchOption.AllDirectories).First();
-            var managerCmd = new ManagerCommand(entityFilePath, sharePath, applicationPath);
+            string entityFilePath = Directory.GetFiles(entityPath, EntityName + ".cs", SearchOption.AllDirectories).First();
+            ManagerCommand managerCmd = new(entityFilePath, sharePath, applicationPath);
             await managerCmd.GenerateDIExtensionsAsync();
 
             await Console.Out.WriteLineAsync("✔️ update manager service extention");
 
             // 清除web api 
-            var apiControllerPath = Path.Combine(apiPath, "Controllers");
+            string apiControllerPath = Path.Combine(apiPath, "Controllers");
 
-            var files = Directory.GetFiles(apiControllerPath, $"{EntityName}Controller.cs", SearchOption.AllDirectories).ToList();
+            List<string> files = Directory.GetFiles(apiControllerPath, $"{EntityName}Controller.cs", SearchOption.AllDirectories).ToList();
             files.ForEach(f =>
             {
                 File.Delete(f);
                 Console.WriteLine($"✔️ clear api {f}");
             });
 
-            var microPath = Path.Combine(apiPath, "..", "Microservice", "Controllers");
+            string microPath = Path.Combine(apiPath, "..", "Microservice", "Controllers");
             if (Directory.Exists(microPath))
             {
                 files = [.. Directory.GetFiles(microPath, $"{EntityName}Controller.cs", SearchOption.AllDirectories)
@@ -292,10 +292,10 @@ public static class CommandRunner
                 });
             }
             // 清除test
-            var testPath = Path.Combine(apiPath, "..", "..", "test", "Application.Test");
+            string testPath = Path.Combine(apiPath, "..", "..", "test", "Application.Test");
             if (Directory.Exists(testPath))
             {
-                var testFile = Path.Combine(testPath, "Managers", $"{EntityName}ManagerTest.cs");
+                string testFile = Path.Combine(testPath, "Managers", $"{EntityName}ManagerTest.cs");
                 if (File.Exists(testFile))
                 {
                     File.Delete(testFile);
@@ -318,7 +318,7 @@ public static class CommandRunner
     /// <returns></returns>
     public static async Task GenerateCSharpApiClientAsync(string swaggerUrl, string outputPath, LanguageType language = LanguageType.CSharp)
     {
-        var cmd = new ApiClientCommand(swaggerUrl, outputPath, language);
+        ApiClientCommand cmd = new(swaggerUrl, outputPath, language);
         await cmd.RunAsync();
     }
 }

@@ -42,7 +42,7 @@ public class IOHelper
 
     public static void CopyDirectory(string sourceDir, string destinationDir)
     {
-        var dir = new DirectoryInfo(sourceDir);
+        DirectoryInfo dir = new(sourceDir);
 
         if (!dir.Exists)
             throw new DirectoryNotFoundException($"Source directory not found: {dir.FullName}");
@@ -78,17 +78,17 @@ public class IOHelper
     {
         if (Directory.Exists(path))
         {
-            var dir = new DirectoryInfo(path);
-            foreach (var file in dir.GetFiles())
+            DirectoryInfo dir = new(path);
+            foreach (FileInfo file in dir.GetFiles())
             {
-                var content = File.ReadAllText(file.FullName);
+                string content = File.ReadAllText(file.FullName);
                 content = content.Replace(templateName, newName);
                 File.WriteAllText(file.FullName, content);
                 // replace file name 
-                var newFileName = file.Name.Replace(templateName, newName);
+                string newFileName = file.Name.Replace(templateName, newName);
                 File.Move(file.FullName, Path.Combine(file.DirectoryName!, newFileName));
             }
-            foreach (var subDir in dir.GetDirectories())
+            foreach (DirectoryInfo subDir in dir.GetDirectories())
             {
                 ReplaceTemplate(subDir.FullName, templateName, newName);
             }

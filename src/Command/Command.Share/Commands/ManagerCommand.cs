@@ -1,5 +1,4 @@
 using CodeGenerator.Helper;
-using PluralizeService.Core;
 
 namespace Command.Share.Commands;
 
@@ -24,8 +23,8 @@ public class ManagerCommand : CommandBase
         EntityFilePath = entityFilePath;
         ApplicationPath = applicationPath;
         SharePath = dtoPath;
-        var currentDir = new DirectoryInfo(applicationPath);
-        var solutionFile = AssemblyHelper.GetSlnFile(currentDir, currentDir.Root)
+        DirectoryInfo currentDir = new(applicationPath);
+        FileInfo solutionFile = AssemblyHelper.GetSlnFile(currentDir, currentDir.Root)
             ?? throw new Exception("not found solution file");
 
         SolutionPath = solutionFile.DirectoryName!;
@@ -45,10 +44,10 @@ public class ManagerCommand : CommandBase
         }
         try
         {
-            var compilation = new CompilationHelper(ApplicationPath, "Entity");
-            var content = File.ReadAllText(EntityFilePath);
+            CompilationHelper compilation = new(ApplicationPath, "Entity");
+            string content = File.ReadAllText(EntityFilePath);
             compilation.LoadContent(content);
-            var attributes = compilation.GetClassAttribution("Module");
+            List<AttributeSyntax>? attributes = compilation.GetClassAttribution("Module");
             if (attributes != null && attributes.Count != 0)
             {
                 var argument = attributes.First().ArgumentList!.Arguments[0];
@@ -57,7 +56,7 @@ public class ManagerCommand : CommandBase
             // 生成到模块项目中
             if (!string.IsNullOrWhiteSpace(ModuleName))
             {
-                var modulePath = Path.Combine(ApplicationPath, "..", "Modules", ModuleName);
+                string modulePath = Path.Combine(ApplicationPath, "..", "Modules", ModuleName);
                 if (!Directory.Exists(ApplicationPath))
                 {
                     Console.WriteLine($"⚠️ module {ModuleName} not exist, please create first!");
@@ -103,8 +102,8 @@ public class ManagerCommand : CommandBase
     /// <returns></returns>
     private async Task GenerateModuleDIExtensionsAsync()
     {
-        var modulePath = Path.Combine(ApplicationPath, "..", "Modules", ModuleName!);
-        var content = ManagerGenerate.GetManagerModuleDIExtensions(SolutionPath, ModuleName!);
+        string modulePath = Path.Combine(ApplicationPath, "..", "Modules", ModuleName!);
+        string content = ManagerGenerate.GetManagerModuleDIExtensions(SolutionPath, ModuleName!);
         await GenerateFileAsync(modulePath, "ServiceCollectionExtensions.cs", content, true);
     }
 
@@ -115,21 +114,21 @@ public class ManagerCommand : CommandBase
     public void AddToDbContext(string entityFrameworkPath)
     {
         Console.WriteLine("🚀 update ContextBase DbSet");
-        var dbContextFile = Path.Combine(entityFrameworkPath, "DBProvider", "ContextBase.cs");
+        string dbContextFile = Path.Combine(entityFrameworkPath, "DBProvider", "ContextBase.cs");
 
         if (!File.Exists(dbContextFile))
         {
             Console.WriteLine($"  ⚠️ Not found:{dbContextFile}");
             return;
         }
-        var dbContextContent = File.ReadAllText(dbContextFile);
+        string dbContextContent = File.ReadAllText(dbContextFile);
 
-        var compilation = new CompilationHelper(entityFrameworkPath);
+        CompilationHelper compilation = new(entityFrameworkPath);
         compilation.LoadContent(dbContextContent);
 
-        var entityName = Path.GetFileNameWithoutExtension(EntityFilePath);
+        string entityName = Path.GetFileNameWithoutExtension(EntityFilePath);
         var plural = PluralizationProvider.Pluralize(entityName);
-        var propertyString = $@"public DbSet<{entityName}> {plural} {{ get; set; }}";
+        string propertyString = $@"public DbSet<{entityName}> {plural} {{ get; set; }}";
         if (!compilation.PropertyExist(plural))
         {
             Console.WriteLine($"  ℹ️ add new property {plural} ➡️ ContextBase");
@@ -172,7 +171,7 @@ public class ManagerCommand : CommandBase
         if (File.Exists(filePath))
         {
             string content = File.ReadAllText(filePath);
-            var newUsings = globalUsings.Where(g => !content.Contains(g))
+            List<string> newUsings = globalUsings.Where(g => !content.Contains(g))
                 .ToList();
             if (newUsings.Count != 0)
             {
@@ -193,9 +192,9 @@ public class ManagerCommand : CommandBase
     /// <returns></returns>
     public async Task GenerateDIExtensionsAsync()
     {
-        var applicationNamespace = AssemblyHelper.GetNamespaceByPath(Config.ApplicationPath);
+        string applicationNamespace = AssemblyHelper.GetNamespaceByPath(Config.ApplicationPath);
         var nsp = Config.IsMicroservice ? Config.ServiceName + $".{applicationNamespace}" : applicationNamespace;
-        var content = ManagerGenerate.GetManagerDIExtensions(ApplicationPath, nsp);
+        string content = ManagerGenerate.GetManagerDIExtensions(ApplicationPath, nsp);
         await GenerateFileAsync(ApplicationPath, "ManagerServiceCollectionExtensions.cs", content, true);
     }
 }

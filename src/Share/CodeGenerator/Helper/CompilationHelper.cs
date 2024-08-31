@@ -97,10 +97,10 @@ public class CompilationHelper
     /// <returns></returns>
     public bool IsEnum()
     {
-        var hasClass = SyntaxTree.GetCompilationUnitRoot().DescendantNodes()
+        int hasClass = SyntaxTree.GetCompilationUnitRoot().DescendantNodes()
             .OfType<ClassDeclarationSyntax>().Count();
 
-        var hasEnum = SyntaxTree.GetCompilationUnitRoot().DescendantNodes()
+        int hasEnum = SyntaxTree.GetCompilationUnitRoot().DescendantNodes()
             .OfType<EnumDeclarationSyntax>().Count();
 
         return hasClass == 0 && hasEnum > 0;
@@ -464,11 +464,11 @@ public class CompilationHelper
             var className = ((IdentifierNameSyntax)memberAccess.Expression).Identifier.Text;
             var varName = memberAccess.Name.ToString();
 
-            var constClass = GetClass(className);
+            INamedTypeSymbol constClass = GetClass(className);
 
             if (constClass != null)
             {
-                var field = constClass.GetMembers()
+                ISymbol field = constClass.GetMembers()
                     .Where(m => m.Name == varName)
                     .FirstOrDefault();
                 name = (field as IFieldSymbol)?.ConstantValue?.ToString();

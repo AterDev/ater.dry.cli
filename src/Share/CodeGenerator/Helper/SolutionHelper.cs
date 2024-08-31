@@ -63,7 +63,7 @@ public class SolutionHelper : IDisposable
         {
             return false;
         }
-        var project = Workspace.OpenProjectAsync(projectPath).Result;
+        Microsoft.CodeAnalysis.Project project = Workspace.OpenProjectAsync(projectPath).Result;
         // add opened project to solution
         Solution = project.Solution;
         return true;
@@ -92,7 +92,7 @@ public class SolutionHelper : IDisposable
     /// <param name="projectName"></param>
     public void RenameNamespace(string oldName, string newName, string? projectName = null)
     {
-        var projects = Solution.Projects.GroupBy(p => p.AssemblyName)
+        IEnumerable<Microsoft.CodeAnalysis.Project> projects = Solution.Projects.GroupBy(p => p.AssemblyName)
             .Select(g => g.First());
         if (projectName != null)
         {
@@ -108,16 +108,16 @@ public class SolutionHelper : IDisposable
                 }
                 if (d.FilePath != null)
                 {
-                    var path = d.FilePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+                    string path = d.FilePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
 
                     if (!File.Exists(path))
                     {
                         return;
                     }
-                    var content = File.ReadAllText(path);
+                    string content = File.ReadAllText(path);
 
-                    var newNamespace = string.IsNullOrWhiteSpace(newName) ? string.Empty : "namespace " + newName;
-                    var newUsing = string.IsNullOrWhiteSpace(newName) ? string.Empty : "using " + newName;
+                    string newNamespace = string.IsNullOrWhiteSpace(newName) ? string.Empty : "namespace " + newName;
+                    string newUsing = string.IsNullOrWhiteSpace(newName) ? string.Empty : "using " + newName;
                     content = content.Replace("namespace " + oldName, newNamespace)
                                      .Replace("using " + oldName, newUsing)
                                      .Replace("cref=\"" + oldName, "cref=\"" + newName);
@@ -129,25 +129,25 @@ public class SolutionHelper : IDisposable
 
     public void RemoveAttributes(string projectName, string attributeName)
     {
-        var project = Solution.Projects.FirstOrDefault(p => p.AssemblyName == projectName);
+        Microsoft.CodeAnalysis.Project? project = Solution.Projects.FirstOrDefault(p => p.AssemblyName == projectName);
         if (project != null)
         {
             DocumentEditor editor;
-            var documents = project.Documents.Where(d => d.FilePath != null && d.FilePath.EndsWith(".cs")).ToList();
+            List<Document> documents = project.Documents.Where(d => d.FilePath != null && d.FilePath.EndsWith(".cs")).ToList();
 
             documents.ForEach(document =>
             {
                 editor = DocumentEditor.CreateAsync(document).Result;
-                var nodes = editor.OriginalRoot
+                IEnumerable<AttributeSyntax> nodes = editor.OriginalRoot
                     .DescendantNodes().OfType<AttributeSyntax>()
                     .Where(a => a.Name.ToString() == attributeName);
 
                 if (nodes == null) { return; }
-                foreach (var node in nodes)
+                foreach (AttributeSyntax? node in nodes)
                 {
                     editor.RemoveNode(node);
                 }
-                var newContent = CSharpAnalysisHelper.FormatChanges(editor.GetChangedRoot());
+                string newContent = CSharpAnalysisHelper.FormatChanges(editor.GetChangedRoot());
 
                 File.WriteAllText(document.FilePath!, newContent, new UTF8Encoding(false));
             });
@@ -160,7 +160,7 @@ public class SolutionHelper : IDisposable
     /// <param name="projectName"></param>
     public bool RemoveProject(string projectName)
     {
-        var project = Solution.Projects.FirstOrDefault(p => p.AssemblyName == projectName);
+        Microsoft.CodeAnalysis.Project? project = Solution.Projects.FirstOrDefault(p => p.AssemblyName == projectName);
         if (project != null)
         {
             if (!ProcessHelper.RunCommand("dotnet", $"sln {Solution.FilePath} remove {project.FilePath}", out string _))
@@ -180,9 +180,9 @@ public class SolutionHelper : IDisposable
     /// <returns></returns>
     public List<Microsoft.CodeAnalysis.Project>? GetReferenceProject(string pName)
     {
-        var project = Solution.Projects.FirstOrDefault(p => p.AssemblyName == pName);
+        Microsoft.CodeAnalysis.Project? project = Solution.Projects.FirstOrDefault(p => p.AssemblyName == pName);
         if (project == null) return default;
-        var projects = Solution.Projects.Where(p => p.AllProjectReferences.Any(r => r.ProjectId == project.Id))
+        List<Microsoft.CodeAnalysis.Project> projects = Solution.Projects.Where(p => p.AllProjectReferences.Any(r => r.ProjectId == project.Id))
             .ToList();
         return projects;
     }
@@ -214,24 +214,24 @@ public class SolutionHelper : IDisposable
     /// <returns></returns>
     public async Task MoveDocumentAsync(string projectName, string documentPath, string newPath, string? namespaceName = null)
     {
-        var project = Solution.Projects.FirstOrDefault(p => p.AssemblyName == projectName);
+        Microsoft.CodeAnalysis.Project? project = Solution.Projects.FirstOrDefault(p => p.AssemblyName == projectName);
         if (project == null)
         {
             await Console.Out.WriteLineAsync(" can't find project:" + projectName);
             return;
         }
 
-        var document = project?.Documents.FirstOrDefault(d => d.FilePath == documentPath);
+        Document? document = project?.Documents.FirstOrDefault(d => d.FilePath == documentPath);
         if (document != null)
         {
             namespaceName ??= project!.Name;
-            var oldClassName = Path.GetFileNameWithoutExtension(documentPath);
-            var newClassName = Path.GetFileNameWithoutExtension(newPath);
+            string oldClassName = Path.GetFileNameWithoutExtension(documentPath);
+            string newClassName = Path.GetFileNameWithoutExtension(newPath);
 
-            var unitRoot = await document.GetSyntaxRootAsync();
+            SyntaxNode? unitRoot = await document.GetSyntaxRootAsync();
 
             // 同步命名空间
-            var namespaceSyntax = unitRoot!.DescendantNodes()
+            FileScopedNamespaceDeclarationSyntax? namespaceSyntax = unitRoot!.DescendantNodes()
                 .OfType<FileScopedNamespaceDeclarationSyntax>().FirstOrDefault();
 
             if (namespaceSyntax != null)
@@ -241,7 +241,7 @@ public class SolutionHelper : IDisposable
             }
 
             // 同步文件类名
-            var classSyntax = unitRoot!.DescendantNodes()
+            ClassDeclarationSyntax? classSyntax = unitRoot!.DescendantNodes()
                 .OfType<ClassDeclarationSyntax>().FirstOrDefault();
             if (classSyntax != null && oldClassName != newClassName)
             {
@@ -275,15 +275,15 @@ public class SolutionHelper : IDisposable
         {
             return;
         }
-        var project = Solution.Projects.FirstOrDefault(p => p.AssemblyName == projectName);
+        Microsoft.CodeAnalysis.Project? project = Solution.Projects.FirstOrDefault(p => p.AssemblyName == projectName);
         if (project == null)
         {
             await Console.Out.WriteLineAsync(" can't find project:" + projectName);
             return;
         }
-        foreach (var documentPath in documentPaths)
+        foreach (string documentPath in documentPaths)
         {
-            var document = project?.Documents.FirstOrDefault(d => d.FilePath == documentPath);
+            Document? document = project?.Documents.FirstOrDefault(d => d.FilePath == documentPath);
             if (document != null)
             {
                 project = project!.RemoveDocument(document.Id);

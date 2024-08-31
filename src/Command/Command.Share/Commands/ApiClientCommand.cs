@@ -1,5 +1,4 @@
-﻿using CodeGenerator.Models;
-using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi.Models;
 namespace Command.Share.Commands;
 /// <summary>
 /// 客户端请求生成
@@ -61,7 +60,7 @@ public class ApiClientCommand : CommandBase
 
     public async Task GenerateCommonFilesAsync()
     {
-        var nspName = new DirectoryInfo(OutputPath).Name;
+        string nspName = new DirectoryInfo(OutputPath).Name;
         string baseContent = CSHttpClientGenerate.GetBaseService(nspName);
         string globalUsingContent = CSHttpClientGenerate.GetGlobalUsing(DocName.ToPascalCase() + "API");
 
@@ -74,20 +73,20 @@ public class ApiClientCommand : CommandBase
 
     public async Task GenerateRequestServicesAsync()
     {
-        var gen = new CSHttpClientGenerate(ApiDocument!);
+        CSHttpClientGenerate gen = new(ApiDocument!);
         // 获取请求服务并生成文件
-        var nspName = new DirectoryInfo(OutputPath).Name;
+        string nspName = new DirectoryInfo(OutputPath).Name;
         List<GenFileInfo> services = gen.GetServices(nspName);
         foreach (GenFileInfo service in services)
         {
             string dir = Path.Combine(OutputPath, "Services");
             await GenerateFileAsync(dir, service.Name, service.Content, true);
         }
-        var serviceNames = services.Select(s => s.Name.TrimEnd(".cs".ToCharArray())).ToList();
-        var extensionContent = CSHttpClientGenerate.GetExtensionContent(nspName, serviceNames);
+        List<object> serviceNames = services.Select(s => s.Name.TrimEnd(".cs".ToCharArray())).ToList();
+        string extensionContent = CSHttpClientGenerate.GetExtensionContent(nspName, serviceNames);
         await GenerateFileAsync(OutputPath, "Extension.cs", extensionContent, true);
 
-        var models = gen.GetModelFiles(nspName);
+        List<GenFileInfo> models = gen.GetModelFiles(nspName);
         foreach (GenFileInfo model in models)
         {
             string dir = Path.Combine(OutputPath, "Models");
@@ -98,7 +97,7 @@ public class ApiClientCommand : CommandBase
         //string clientContent = CSHttpClientGenerate.GetClient(services, nspName, className);
         //await GenerateFileAsync(OutputPath, DocName.ToPascalCase() + "API.cs", clientContent, true);
 
-        var csProjectContent = CSHttpClientGenerate.GetCsprojContent();
+        string csProjectContent = CSHttpClientGenerate.GetCsprojContent();
         await GenerateFileAsync(OutputPath, $"{DocName.ToPascalCase()}API.csproj", csProjectContent);
     }
 }

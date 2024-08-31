@@ -1,4 +1,3 @@
-using CodeGenerator.Models;
 using Microsoft.OpenApi.Models;
 namespace Command.Share.Commands;
 
@@ -28,14 +27,7 @@ public class RequestCommand : CommandBase
         OutputPath = output;
         LibType = libType;
 
-        if (docUrl.Contains("http"))
-        {
-            DocName = docUrl.Split('/').Reverse().Skip(1).First();
-        }
-        else
-        {
-            DocName = string.Empty;
-        }
+        DocName = docUrl.Contains("http") ? docUrl.Split('/').Reverse().Skip(1).First() : string.Empty;
         Instructions.Add($"  🔹 generate ts interfaces.");
         Instructions.Add($"  🔹 generate request services.");
     }
@@ -45,7 +37,7 @@ public class RequestCommand : CommandBase
         string openApiContent = "";
         if (DocUrl.StartsWith("http://") || DocUrl.StartsWith("https://"))
         {
-            var handler = new HttpClientHandler
+            HttpClientHandler handler = new()
             {
                 ServerCertificateCustomValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true
             };
@@ -80,7 +72,7 @@ public class RequestCommand : CommandBase
         // 枚举pipe
         if (LibType == RequestLibType.NgHttp)
         {
-            var schemas = ApiDocument!.Components.Schemas;
+            IDictionary<string, OpenApiSchema> schemas = ApiDocument!.Components.Schemas;
             string pipeContent = RequestGenerate.GetEnumPipeContent(schemas);
             dir = Path.Combine(OutputPath, "pipe", DocName);
             await GenerateFileAsync(dir, "enum-text.pipe.ts", pipeContent, true);

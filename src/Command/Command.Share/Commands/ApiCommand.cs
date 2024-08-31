@@ -36,8 +36,8 @@ public class ApiCommand : CommandBase
         ApplicationPath = applicationPath;
         ApiPath = apiPath;
 
-        var currentDir = new DirectoryInfo(apiPath);
-        var solutionFile = AssemblyHelper.GetSlnFile(currentDir, currentDir.Root)
+        DirectoryInfo currentDir = new(apiPath);
+        FileInfo solutionFile = AssemblyHelper.GetSlnFile(currentDir, currentDir.Root)
             ?? throw new Exception("not found solution file");
 
         SolutionPath = solutionFile.DirectoryName!;
@@ -57,10 +57,10 @@ public class ApiCommand : CommandBase
         }
 
         // 是否为模块
-        var compilation = new CompilationHelper(ApplicationPath, "Entity");
-        var content = File.ReadAllText(EntityFilePath);
+        CompilationHelper compilation = new(ApplicationPath, "Entity");
+        string content = File.ReadAllText(EntityFilePath);
         compilation.LoadContent(content);
-        var attributes = compilation.GetClassAttribution("Module");
+        List<AttributeSyntax>? attributes = compilation.GetClassAttribution("Module");
         if (attributes != null && attributes.Count != 0)
         {
             var argument = attributes.First().ArgumentList!.Arguments[0];
