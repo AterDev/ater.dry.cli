@@ -1,7 +1,5 @@
 ﻿using System.Text.RegularExpressions;
 
-using Mapster;
-
 using PropertyInfo = Entity.PropertyInfo;
 
 namespace CodeGenerator.Generate;
@@ -64,7 +62,7 @@ public class DtoCodeGenerate : GenerateBase
         DtoInfo dto = new()
         {
             EntityNamespace = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
-            Name = EntityInfo.Name + Const.ShortDto,
+            Name = EntityInfo.Name + Const.DetailDto,
             NamespaceName = EntityInfo.NamespaceName,
             Comment = FormatComment(EntityInfo.Comment, "概要"),
             Tag = EntityInfo.Name,

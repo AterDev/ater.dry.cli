@@ -13,6 +13,14 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Compile Remove="Templates\TplContent.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="TplContent.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="RazorEngineCore" Version="2024.4.1" />
         <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.19" />
         <PackageReference Include="Microsoft.Build.Locator" Version="1.7.8" />

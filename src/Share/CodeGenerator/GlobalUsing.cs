@@ -11,4 +11,6 @@ global using CodeGenerator.Models;
 
 global using Entity;
 
+global using Mapster;
+
 global using Microsoft.CodeAnalysis;

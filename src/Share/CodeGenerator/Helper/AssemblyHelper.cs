@@ -1,4 +1,6 @@
-﻿namespace CodeGenerator.Helper;
+﻿using System.Xml.Linq;
+
+namespace CodeGenerator.Helper;
 
 /// <summary>
 /// 项目帮助类
@@ -85,7 +87,8 @@ public class AssemblyHelper
     }
 
     /// <summary>
-    /// 获取命名空间名称， 不支持MSBuildProjectName表达式
+    /// 获取命名空间名称
+    /// 优先级，配置>项目名
     /// </summary>
     /// <param name="dir"></param>
     /// <returns></returns>
@@ -94,9 +97,8 @@ public class AssemblyHelper
         FileInfo? file = FindProjectFile(dir);
         if (file == null)
         {
-            return GetNamespaceByPath(dir.FullName.Replace(Config.SolutionPath, ""));
+            return null;
         }
-
         XElement xml = XElement.Load(file.FullName);
         XElement? node = xml.Descendants("PropertyGroup")
             .SelectMany(pg => pg.Elements())
@@ -210,24 +212,6 @@ public class AssemblyHelper
             }
         }
         return null;
-    }
-
-
-    /// <summary>
-    /// 判断是否需要更新
-    /// </summary>
-    /// <param name="minVersionStr">最小版本号</param>
-    /// <param name="version"></param>
-    /// <returns></returns>
-    public static bool NeedUpdate(string minVersionStr, string version)
-    {
-        var minVersion = NuGetVersion.Parse(minVersionStr);
-        var oldVersion = NuGetVersion.Parse(version);
-        var currentVersion = NuGetVersion.Parse(GetCurrentToolVersion());
-
-        Console.WriteLine($"project version:{oldVersion}; studio version:{currentVersion}");
-        return VersionComparer.Compare(oldVersion, minVersion, VersionComparison.Version) >= 0
-            && VersionComparer.Compare(oldVersion, currentVersion, VersionComparison.Version) < 0;
     }
 
     /// <summary>

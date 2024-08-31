@@ -1,24 +1,12 @@
 ﻿using System.IO;
 using System.Text;
 
-using CodeGenerator.Generate;
 using CodeGenerator.Helper;
 
 namespace CodeGenerator.Test;
 
 public class StoreGenerateTest
 {
-
-    [Fact]
-    public void Should_get_dbcontext_name()
-    {
-        string entityPath = PathHelper.GetProjectFilePath("Entity/Blog.cs");
-        string projectPath = PathHelper.GetProjectPath();
-        ManagerGenerate gen = new(entityPath, projectPath, projectPath);
-        string contextName = gen.GetContextName();
-        Assert.Equal("TestDbContext", contextName);
-    }
-
     [Fact]
     public void Should_generate_store_content()
     {
