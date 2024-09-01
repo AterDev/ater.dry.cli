@@ -59,7 +59,7 @@ public class EntityInfo : EntityBase
     public bool? IsEnum { get; set; } = false;
     public bool IsList { get; set; }
 
-    public Project? Project { get; set; }
+    public Project Project { get; set; } = null!;
     public Guid ProjectId { get; set; } = default!;
 
     /// <summary>
@@ -72,11 +72,24 @@ public class EntityInfo : EntityBase
     /// </summary>
     /// <param name="solutionPath"></param>
     /// <returns></returns>
-    public string GetManagerPath(string solutionPath)
+    public string GetManagerPath()
     {
         return ModuleName.IsEmpty()
-            ? Path.Combine(solutionPath, "src", Const.ApplicationName)
-            : Path.Combine(solutionPath, "src", Const.ModuleName, ModuleName);
+            ? Path.Combine(Project.Path, PathConst.ApplicationPath, Const.ManagersDir)
+            : Path.Combine(Project.Path, PathConst.ModulesPath, ModuleName, Const.ManagersDir);
+    }
+
+    public string GetDtoPath()
+    {
+        return ModuleName.IsEmpty()
+            ? Path.Combine(Project.Path, PathConst.SharePath, Const.ModelsDir, $"{Name}Dtos")
+            : Path.Combine(Project.Path, PathConst.ModulesPath, ModuleName, Const.ModelsDir, $"{Name}Dtos");
+    }
+    public string GetControllerPath()
+    {
+        return ModuleName.IsEmpty()
+            ? Path.Combine(Project.Path, PathConst.APIPath, Const.ControllersDir)
+            : Path.Combine(Project.Path, PathConst.ModulesPath, ModuleName, Const.ControllersDir);
     }
 
     public string GetManagerNamespace()

@@ -6,7 +6,7 @@ namespace CodeGenerator.Generate;
 /// <summary>
 /// dto generate
 /// </summary>
-public class DtoCodeGenerate : GenerateBase
+public class DtoCodeGenerate
 {
     public EntityInfo EntityInfo { get; init; }
     public string KeyType { get; set; } = "Guid";

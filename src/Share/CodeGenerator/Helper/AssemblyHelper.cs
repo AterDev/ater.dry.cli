@@ -17,7 +17,7 @@ public class AssemblyHelper
     {
         try
         {
-            FileInfo? file = dir.GetFiles($"*{Const.CSharpProjectExtention}")?.FirstOrDefault();
+            FileInfo? file = dir.GetFiles($"*{Const.CSharpProjectExtension}")?.FirstOrDefault();
             return root == null ? file : file == null && dir != root ? FindProjectFile(dir.Parent!, root) : file;
         }
         catch (DirectoryNotFoundException)
@@ -193,7 +193,7 @@ public class AssemblyHelper
     /// <returns></returns>
     public static List<XmlCommentMember>? GetXmlMembers(DirectoryInfo dir)
     {
-        FileInfo? projectFile = dir.GetFiles($"*{Const.CSharpProjectExtention}")?.FirstOrDefault();
+        FileInfo? projectFile = dir.GetFiles($"*{Const.CSharpProjectExtension}")?.FirstOrDefault();
         if (projectFile != null)
         {
             string assemblyName = GetAssemblyName(projectFile);
@@ -335,8 +335,8 @@ public class AssemblyHelper
         if (fileName == "package.json") return SolutionType.Node;
         switch (fileExt)
         {
-            case Const.SolutionExtention:
-            case Const.CSharpProjectExtention:
+            case Const.SolutionExtension:
+            case Const.CSharpProjectExtension:
                 return SolutionType.DotNet;
             default:
                 break;

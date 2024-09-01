@@ -3,11 +3,23 @@ public class Const
 {
     public static Guid PROJECT_ID;
 
+    // assembly name
     public const string ApplicationName = "Application";
-    public const string ModuleName = "Modules";
+    public const string ShareName = "Share";
+    public const string EntityName = "Entity";
+    public const string APIName = "Http.API";
+    public const string EntityFrameworkName = "EntityFramework";
+
+    // dir names
+    public const string DefinitionDir = "Definition";
+    public const string ModulesDir = "Modules";
+    public const string ModelsDir = "Models";
+    public const string ManagersDir = "Managers";
+    public const string ControllersDir = "Controllers";
+    public const string SrcDir = "src";
+
+    // names
     public const string Manager = "Manager";
-
-
     public const string DetailDto = "DetailDto";
     public const string ItemDto = "ItemDto";
     public const string FilterDto = "FilterDto";
@@ -20,10 +32,23 @@ public class Const
     public const string TemplateZip = "template.zip";
     public const string StudioZip = "studio.zip";
 
-    public const string SolutionExtention = ".sln";
-    public const string CSharpProjectExtention = ".csproj";
+    public const string SolutionExtension = ".sln";
+    public const string CSharpProjectExtension = ".csproj";
     public const string CoreLibName = "Ater.Web.Core";
     public const string AbstractionLibName = "Ater.Web.Abstraction";
     public const string ExtensionLibName = "Ater.Web.Extension";
+}
 
+/// <summary>
+/// 路径
+/// </summary>
+public class PathConst
+{
+    public static string APIPath = Path.Combine(Const.SrcDir, Const.APIName);
+    public static string ApplicationPath = Path.Combine(Const.SrcDir, Const.ApplicationName);
+
+    public static string SharePath = Path.Combine(Const.SrcDir, Const.DefinitionDir, Const.ShareName);
+    public static string EntityPath = Path.Combine(Const.SrcDir, Const.DefinitionDir, Const.EntityName);
+    public static string EntityFrameworkPath = Path.Combine(Const.SrcDir, Const.DefinitionDir, Const.EntityFrameworkName);
+    public static string ModulesPath = Path.Combine(Const.SrcDir, Const.ModulesDir);
 }

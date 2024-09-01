@@ -3,7 +3,7 @@ namespace CodeGenerator.Generate;
 /// <summary>
 /// 数据仓储生成
 /// </summary>
-public class ManagerGenerate : GenerateBase
+public class ManagerGenerate
 {
     /// <summary>
     /// Application 项目目录路径
@@ -13,11 +13,10 @@ public class ManagerGenerate : GenerateBase
     /// DTO 所在项目目录路径
     /// </summary>
     public string DtoPath { get; init; }
-
     public string? ApplicationNamespace { get; init; }
     public string? ShareNamespace { get; init; }
     public EntityInfo EntityInfo { get; init; }
-    public ManagerGenerate(EntityInfo entityInfo, string dtoPath, string applicationPath)
+    public ManagerGenerate(EntityInfo entityInfo)
     {
         EntityInfo = entityInfo;
         DtoPath = dtoPath;
@@ -131,6 +130,5 @@ public class ManagerGenerate : GenerateBase
         };
         var tplContent = TplContent.GetManagerServiceExtensionTpl(EntityInfo.ModuleName.NotEmpty());
         return genContext.GenCode(tplContent, managerModel);
-
     }
 }

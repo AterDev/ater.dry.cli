@@ -47,7 +47,7 @@ public class ProjectManager(CommandDbContext dbContext, ProjectContext projectCo
         FileInfo projectFile = new(path);
         string? projectFilePath = Directory.GetFiles(path, "*.sln", SearchOption.TopDirectoryOnly).FirstOrDefault();
 
-        projectFilePath ??= Directory.GetFiles(path, $"*{Const.CSharpProjectExtention}", SearchOption.TopDirectoryOnly).FirstOrDefault();
+        projectFilePath ??= Directory.GetFiles(path, $"*{Const.CSharpProjectExtension}", SearchOption.TopDirectoryOnly).FirstOrDefault();
         projectFilePath ??= Directory.GetFiles(path, "package.json", SearchOption.TopDirectoryOnly).FirstOrDefault();
 
         if (projectFilePath == null)
@@ -140,7 +140,7 @@ public class ProjectManager(CommandDbContext dbContext, ProjectContext projectCo
         try
         {
             List<FileInfo> subProjectFiles = new DirectoryInfo(pathString)
-                .GetFiles($"*{Const.CSharpProjectExtention}", SearchOption.AllDirectories)
+                .GetFiles($"*{Const.CSharpProjectExtension}", SearchOption.AllDirectories)
                 .ToList();
 
             if (subProjectFiles.Count != 0)

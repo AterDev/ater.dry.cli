@@ -39,7 +39,7 @@ public class Project : EntityBase
     /// <summary>
     /// project config
     /// </summary>
-    public ProjectConfig Config { get; set; }
+    public ProjectConfig? Config { get; set; }
 
     public List<EntityInfo> EntityInfos { get; set; } = [];
     public List<ApiDocInfo> ApiDocInfos { get; set; } = [];
@@ -59,8 +59,8 @@ public class ProjectConfig
     public string UpdatedTimeName { get; private set; } = "UpdatedTime";
     public string Version { get; private set; } = "8.0";
     public string SharePath { get; private set; } = "src/Definition/Share";
-    public string EntityPath { get; private set; } = "src/Defination/Entity";
-    public string EntityFrameworkPath { get; private set; } = "src/Defination/EntityFramework";
+    public string EntityPath { get; private set; } = "src/Definition/Entity";
+    public string EntityFrameworkPath { get; private set; } = "src/Definition/EntityFramework";
     public string ApplicationPath { get; private set; } = "src/Application";
     public string ApiPath { get; private set; } = "src/Http.API";
     public string MicroservicePath { get; private set; } = "src/Microservice";

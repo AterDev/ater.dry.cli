@@ -3,7 +3,7 @@
 /// <summary>
 /// 生成Rest API控制器
 /// </summary>
-public class RestApiGenerate : GenerateBase
+public class RestApiGenerate
 {
     /// <summary>
     /// 实体文件路径
@@ -141,7 +141,6 @@ public class RestApiGenerate : GenerateBase
             .Replace(TplConst.SHARE_NAMESPACE, ShareNamespace)
             .Replace(TplConst.ENTITY_NAME, entityName)
             .Replace(TplConst.API_SUFFIX, Suffix)
-            .Replace(TplConst.ID_TYPE, Config.IdType)
             .Replace(TplConst.COMMENT, comment);
 
         // 清理模板未被替换的变量

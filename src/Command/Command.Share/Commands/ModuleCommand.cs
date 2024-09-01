@@ -41,13 +41,13 @@ public class ModuleCommand(string solutionPath, List<string> moduleNames)
 
         // project file
         string targetVersion = Const.Version;
-        string csprojFiles = Directory.GetFiles(Path.Combine(SolutionPath, Config.ApiPath), $"*{Const.CSharpProjectExtention}", SearchOption.TopDirectoryOnly).FirstOrDefault();
+        string csprojFiles = Directory.GetFiles(Path.Combine(SolutionPath, Config.ApiPath), $"*{Const.CSharpProjectExtension}", SearchOption.TopDirectoryOnly).FirstOrDefault();
         if (csprojFiles != null)
         {
             targetVersion = AssemblyHelper.GetTargetFramework(csprojFiles) ?? Const.Version;
         }
         string csprojContent = GetCsProjectContent(targetVersion);
-        await AssemblyHelper.GenerateFileAsync(projectPath, $"{moduleName}{Const.CSharpProjectExtention}", csprojContent);
+        await AssemblyHelper.GenerateFileAsync(projectPath, $"{moduleName}{Const.CSharpProjectExtension}", csprojContent);
 
         // create dirs
         Directory.CreateDirectory(Path.Combine(projectPath, "Models"));
@@ -62,7 +62,7 @@ public class ModuleCommand(string solutionPath, List<string> moduleNames)
             await AddDefaultModuleAsync(moduleName);
             await AddModuleConstFieldAsync(moduleName);
             // update solution file
-            UpdateSolutionFile(Path.Combine(projectPath, $"{moduleName}{Const.CSharpProjectExtention}"));
+            UpdateSolutionFile(Path.Combine(projectPath, $"{moduleName}{Const.CSharpProjectExtension}"));
 
         }
         catch (Exception ex)
@@ -117,7 +117,7 @@ public class ModuleCommand(string solutionPath, List<string> moduleNames)
             Directory.Delete(entityPath, true);
 
             // 从解决方案移除项目
-            ProcessHelper.RunCommand("dotnet", $"sln {SolutionPath} remove {Path.Combine(SolutionPath, "src", "Modules", moduleName + "Mod", $"{moduleName}Mod{Const.CSharpProjectExtention}")}", out string error);
+            ProcessHelper.RunCommand("dotnet", $"sln {SolutionPath} remove {Path.Combine(SolutionPath, "src", "Modules", moduleName + "Mod", $"{moduleName}Mod{Const.CSharpProjectExtension}")}", out string error);
         }
     }
 
@@ -133,7 +133,7 @@ public class ModuleCommand(string solutionPath, List<string> moduleNames)
         {
             return default;
         }
-        List<string> files = [.. Directory.GetFiles(modulesPath, $"*{Const.CSharpProjectExtention}", SearchOption.AllDirectories)];
+        List<string> files = [.. Directory.GetFiles(modulesPath, $"*{Const.CSharpProjectExtension}", SearchOption.AllDirectories)];
         return files.Count != 0 ? files : default;
     }
 
@@ -279,7 +279,7 @@ public class ModuleCommand(string solutionPath, List<string> moduleNames)
                 Console.WriteLine("✅ add project ➡️ solution!");
             }
         }
-        string csprojFiles = Directory.GetFiles(Path.Combine(SolutionPath, Config.ApiPath), $"*{Const.CSharpProjectExtention}", SearchOption.TopDirectoryOnly).FirstOrDefault();
+        string csprojFiles = Directory.GetFiles(Path.Combine(SolutionPath, Config.ApiPath), $"*{Const.CSharpProjectExtension}", SearchOption.TopDirectoryOnly).FirstOrDefault();
         if (File.Exists(csprojFiles))
         {
             // 添加到主服务
