@@ -1,3 +1,5 @@
+using Ater.Web.Abstraction;
+
 namespace Application.Implement;
 
 /// <summary>
@@ -81,7 +83,7 @@ public partial class ManagerBase<TEntity> : ManagerBase
     /// <returns></returns>
     public virtual async Task<TEntity?> FindAsync(Guid id)
     {
-        TEntity? entity = await Query.FindAsync(id);
+        var entity = await Query.FindAsync(id);
         if (entity != null)
         {
             Command.Attach(entity);
@@ -97,7 +99,7 @@ public partial class ManagerBase<TEntity> : ManagerBase
     /// <returns></returns>
     public async Task<TDto?> FindAsync<TDto>(Expression<Func<TEntity, bool>>? whereExp = null) where TDto : class
     {
-        TDto? model = await Query.AsNoTracking()
+        var model = await Query.AsNoTracking()
             .Where(whereExp ?? (e => true))
             .ProjectTo<TDto>()
             .FirstOrDefaultAsync();
@@ -156,13 +158,13 @@ public partial class ManagerBase<TEntity> : ManagerBase
     /// </summary>
     /// <param name="filter"></param>
     /// <returns></returns>
-    public virtual async Task<PageList<TItem>> ToPageAsync<TFilter, TItem>(TFilter filter) where TFilter : FilterBase where TItem : class
+    public async Task<PageList<TItem>> ToPageAsync<TFilter, TItem>(TFilter filter) where TFilter : FilterBase where TItem : class
     {
         Queryable = filter.OrderBy != null
             ? Queryable.OrderBy(filter.OrderBy)
             : Queryable.OrderByDescending(t => t.CreatedTime);
 
-        int count = Queryable.Count();
+        var count = Queryable.Count();
         List<TItem> data = await Queryable
             .AsNoTracking()
             .Skip((filter.PageIndex - 1) * filter.PageSize)
@@ -187,7 +189,16 @@ public partial class ManagerBase<TEntity> : ManagerBase
     public async Task<bool> AddAsync(TEntity entity)
     {
         await Command.AddAsync(entity);
-        return !AutoSave || await SaveChangesAsync() > 0;
+        if (AutoSave)
+        {
+            return await SaveChangesAsync() > 0;
+        }
+
+        if (AutoLogType is LogActionType.Add or LogActionType.All or LogActionType.AddOrUpdate)
+        {
+            SaveToLog(UserActionType.Add, entity.GetType().Name);
+        }
+        return true;
     }
 
     /// <summary>
@@ -198,8 +209,18 @@ public partial class ManagerBase<TEntity> : ManagerBase
     public async Task<bool> UpdateAsync(TEntity entity)
     {
         Command.Update(entity);
-        return !AutoSave || await SaveChangesAsync() > 0;
+        if (AutoSave)
+        {
+            return await SaveChangesAsync() > 0;
+        }
+
+        if (AutoLogType is LogActionType.Update or LogActionType.All or LogActionType.AddOrUpdate)
+        {
+            SaveToLog(UserActionType.Update, entity.GetType().Name);
+        }
+        return true;
     }
+
 
     /// <summary>
     /// 更新关联数据
@@ -210,7 +231,7 @@ public partial class ManagerBase<TEntity> : ManagerBase
     /// <param name="data">新数据</param>
     public void UpdateRelation<TProperty>(TEntity entity, Expression<Func<TEntity, IEnumerable<TProperty>>> propertyExpression, List<TProperty> data) where TProperty : class
     {
-        IEnumerable<TProperty>? currentValue = CommandContext.Entry(entity).Collection(propertyExpression).CurrentValue;
+        var currentValue = CommandContext.Entry(entity).Collection(propertyExpression).CurrentValue;
         if (currentValue != null && currentValue.Any())
         {
             CommandContext.RemoveRange(currentValue);
@@ -226,12 +247,12 @@ public partial class ManagerBase<TEntity> : ManagerBase
     /// <returns></returns>
     public async Task<bool> SaveAsync(List<TEntity> entityList)
     {
-        List<Guid> Ids = await Command.Select(e => e.Id).ToListAsync();
+        var Ids = await Command.Select(e => e.Id).ToListAsync();
         // new entity by id
-        List<TEntity> newEntities = entityList.Where(d => !Ids.Contains(d.Id)).ToList();
+        var newEntities = entityList.Where(d => !Ids.Contains(d.Id)).ToList();
 
-        List<TEntity> updateEntities = entityList.Where(d => Ids.Contains(d.Id)).ToList();
-        List<Guid> removeEntities = Ids.Where(d => !entityList.Select(e => e.Id).Contains(d)).ToList();
+        var updateEntities = entityList.Where(d => Ids.Contains(d.Id)).ToList();
+        var removeEntities = Ids.Where(d => !entityList.Select(e => e.Id).Contains(d)).ToList();
 
         if (newEntities.Any())
         {
@@ -265,10 +286,15 @@ public partial class ManagerBase<TEntity> : ManagerBase
     /// <returns></returns>
     public async Task<bool?> DeleteAsync(List<Guid> ids, bool softDelete = true)
     {
-        int res = softDelete
+        var res = softDelete
             ? await Command.Where(d => ids.Contains(d.Id))
                 .ExecuteUpdateAsync(d => d.SetProperty(d => d.IsDeleted, true))
             : await Command.Where(d => ids.Contains(d.Id)).ExecuteDeleteAsync();
+        if (AutoLogType is LogActionType.Delete or LogActionType.All)
+        {
+            var target = string.Join(",", ids);
+            SaveToLog(UserActionType.Delete, target);
+        }
         return res > 0;
     }
 
@@ -301,6 +327,23 @@ public partial class ManagerBase<TEntity> : ManagerBase
         return await CommandContext.SaveChangesAsync();
     }
 
+    /// <summary>
+    /// 日志记录
+    /// </summary>
+    /// <param name="actionType"></param>
+    /// <param name="targetName">对象名称</param>
+    /// <param name="description">描述</param>
+    /// <returns></returns>
+    private void SaveToLog(UserActionType actionType, string targetName, string? description = null)
+    {
+        var userContext = WebAppContext.GetScopeService<IUserContext>();
+
+        if (userContext == null)
+        {
+            _logger.LogWarning("UserContext is null, can't save log");
+            return;
+        }
+    }
 
     /// <summary>
     /// reset queryable

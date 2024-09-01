@@ -16,16 +16,11 @@ public class RestApiGenerateTest
         string projectPath = PathHelper.GetProjectPath();
         RestApiGenerate gen = new(entityPath, projectPath, projectPath, projectPath);
 
-        string restInterface = gen.GetRestApiInterface();
-        string restBase = gen.GetRestApiBase();
         string restContent = gen.GetRestApiContent();
         List<string> globalUsings = gen.GetGlobalUsings();
 
         Assert.NotNull(globalUsings);
-        Assert.NotNull(restBase);
         Assert.NotNull(restContent);
-        Assert.NotNull(restInterface);
-
     }
 
     /// <summary>

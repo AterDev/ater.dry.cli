@@ -26,6 +26,7 @@ public class TplContent
                 public async Task<Guid?> CreateNewEntityAsync(@(Model.EntityName)AddDto dto)
                 {
                     var entity = dto.MapTo<@(Model.EntityName)AddDto, @(Model.EntityName)>();
+                    // TODO:完善添加逻辑
                     return await base.AddAsync(entity) ? entity.Id : null;
                 }
 
@@ -38,6 +39,7 @@ public class TplContent
                 public async Task<@(Model.EntityName)> UpdateAsync(@(Model.EntityName) entity, @(Model.EntityName)UpdateDto dto)
                 {
                     entity.Merge(dto);
+                    // TODO:完善更新逻辑
                     return await base.UpdateAsync(entity);
                 }
 
@@ -46,15 +48,28 @@ public class TplContent
             @Model.FilterCode
                 }
 
+                /// <summary>
+                /// 获取实体详情
+                /// </summary>
+                /// <param name="id"></param>
+                /// <returns></returns>
+                public async Task<@(Model.EntityName)DetailDto?> GetDetailAsync(Guid id)
+                {
+                    return await FindAsync<@(Model.EntityName)DetailDto>(e => e.Id == id);
+                }
 
                 /// <summary>
-                /// 唯一性判断
+                /// TODO:唯一性判断
                 /// </summary>
+                /// <param name="unique">唯一标识</param>
+                /// <param name="id">排除当前</param>
                 /// <returns></returns>
-                public async Task<bool> IsUniqueAsync(string unique)
+                public async Task<bool> IsUniqueAsync(string unique, Guid? id = null)
                 {
-                    // TODO:自定义唯一性验证参数和逻辑
-                    return await Command.AnyAsync(q => q.Id == new Guid(unique));
+                    // 自定义唯一性验证参数和逻辑
+                    return await Command.Where(q => q.Id.ToString() == unique)
+                        .WhereNotNull(id, q => q.Id != id)
+                        .AnyAsync();
                 }
 
                 /// <summary>
@@ -69,14 +84,14 @@ public class TplContent
                 }
 
                 /// <summary>
-                /// 当前用户所拥有的对象
+                /// 数据权限验证
                 /// </summary>
                 /// <param name="id"></param>
                 /// <returns></returns>
                 public async Task<@(Model.EntityName)?> GetOwnedAsync(Guid id)
                 {
                     var query = Command.Where(q => q.Id == id);
-                    // 获取用户所属的对象
+                    // TODO:自定义数据权限验证
                     // query = query.Where(q => q.User.Id == _userContext.UserId);
                     return await query.FirstOrDefaultAsync();
                 }
@@ -89,7 +104,7 @@ public class TplContent
     /// </summary>
     /// <param name="isModule"></param>
     /// <returns></returns>
-    public static string GetManagerServiceExtensionTpl(bool isModule == false)
+    public static string GetManagerServiceExtensionTpl(bool isModule = false)
     {
         return isModule ?
             """
@@ -139,5 +154,90 @@ public class TplContent
             }
             """;
 
+    }
+
+
+    public static string GetControllerTpl()
+    {
+        return """
+            using @(Model.ShareNamespace).Models.@(Model.EntityName)Dtos;
+            namespace @(Model.Namespace).Controllers;
+
+            #@Comment#
+            public class @(Model.EntityName)Controller(
+                IUserContext user,
+                ILogger<@(Model.EntityName)Controller> logger,
+                @(Model.EntityName)Manager manager
+                ) : RestControllerBase<@(Model.EntityName)Manager>(manager, user, logger)
+            {
+                /// <summary>
+                /// 分页数据 🛑
+                /// </summary>
+                /// <param name="filter"></param>
+                /// <returns></returns>
+                [HttpPost("filter")]
+                public async Task<ActionResult<PageList<@(Model.EntityName)ItemDto>>> FilterAsync(@(Model.EntityName)FilterDto filter)
+                {
+                    return await _manager.FilterAsync(filter);
+                }
+
+                /// <summary>
+                /// 新增 🛑
+                /// </summary>
+                /// <param name="dto"></param>
+                /// <returns></returns>
+                [HttpPost]
+                public async Task<ActionResult<Guid?>> AddAsync(@(Model.EntityName)AddDto dto)
+                {
+                    // 冲突验证
+                    // if(await _manager.IsUniqueAsync(dto.xxx)) { return Conflict(ErrorMsg.ConflictResource); }
+                    var id = await _manager.AddAsync(dto);
+                    return id == null ? Problem(ErrorMsg.AddFailed) : id;
+                }
+
+                /// <summary>
+                /// 更新数据 🛑
+                /// </summary>
+                /// <param name="id"></param>
+                /// <param name="dto"></param>
+                /// <returns></returns>
+                [HttpPatch("{id}")]
+                public async Task<ActionResult<bool>> UpdateAsync([FromRoute] Guid id, @(Model.EntityName)UpdateDto dto)
+                {
+                    var entity = await _manager.GetOwnedAsync(id);
+                    if (entity == null) { return NotFound(ErrorMsg.NotFoundResource); }
+                    // 冲突验证
+                    return await _manager.UpdateAsync(entity, dto);
+                }
+
+                /// <summary>
+                /// 获取详情 🛑
+                /// </summary>
+                /// <param name="id"></param>
+                /// <returns></returns>
+                [HttpGet("{id}")]
+                public async Task<ActionResult<@(Model.EntityName)?>> GetDetailAsync([FromRoute] Guid id)
+                {
+                    var res = await _manager.GetDetailAsync(id);
+                    return (res == null) ? NotFound() : res;
+                }
+
+                /// <summary>
+                /// 删除 🛑
+                /// </summary>
+                /// <param name="id"></param>
+                /// <returns></returns>
+                [HttpDelete("{id}")]
+                [NonAction]
+                public async Task<ActionResult<@(Model.EntityName)?>> DeleteAsync([FromRoute] Guid id)
+                {
+                    // 注意删除权限
+                    var entity = await _manager.GetOwnedAsync(id);
+                    if (entity == null) { return NotFound(); };
+                    // return Forbid();
+                    return await _manager.DeleteAsync([id], true);
+                }
+            }
+            """;
     }
 }

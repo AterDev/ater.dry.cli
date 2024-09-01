@@ -99,6 +99,11 @@ public class EntityInfo : EntityBase
 
     public string GetDtoNamespace()
     {
+        return GetShareNamespace();
+    }
+
+    public string GetShareNamespace()
+    {
         return ModuleName.IsEmpty()
             ? Const.ShareName
             : ModuleName;
@@ -108,6 +113,13 @@ public class EntityInfo : EntityBase
     {
         return ModuleName.IsEmpty()
             ? Const.ApplicationName
+            : ModuleName;
+    }
+
+    public string GetAPINamespace()
+    {
+        return ModuleName.IsEmpty()
+            ? Const.APIName
             : ModuleName;
     }
 

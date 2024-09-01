@@ -24,7 +24,7 @@ public class CodeGenService
     public List<GenFileInfo> GenerateDto(EntityInfo entityInfo, string outputPath, bool isCover = false)
     {
         // 生成Dto
-        var dtoGen = new DtoCodeGenerate(entityInfo, outputPath);
+        var dtoGen = new DtoCodeGenerate(entityInfo);
         var dirName = entityInfo.Name + "Dtos";
         // TODO: GlobalUsing
 
@@ -67,16 +67,15 @@ public class CodeGenService
     /// 生成manager的文件
     /// </summary>
     /// <param name="entityInfo"></param>
-    /// <param name="dtoPath"></param>
     /// <param name="outputPath"></param>
+    /// <param name="tplContent">模板内容</param>
     /// <param name="isCover"></param>
     /// <returns></returns>
-    public GenFileInfo GenerateManager(EntityInfo entityInfo, string dtoPath, string outputPath, bool isCover = false)
+    public GenFileInfo GenerateManager(EntityInfo entityInfo, string outputPath, string tplContent, bool isCover = false)
     {
         // TODO: GlobalUsing
-
-        var managerGen = new ManagerGenerate(entityInfo, dtoPath, outputPath);
-        var content = managerGen.GetManagerContent();
+        var managerGen = new ManagerGenerate(entityInfo);
+        var content = managerGen.GetManagerContent(tplContent, entityInfo.GetManagerNamespace());
         return new GenFileInfo($"{entityInfo.Name}{Const.Manager}.cs", content)
         {
             IsCover = isCover,
@@ -89,9 +88,9 @@ public class CodeGenService
     /// Manager服务注入内容
     /// </summary>
     /// <returns></returns>
-    public GenFileInfo GetManagerService(EntityInfo entityInfo, string solutionPath)
+    public GenFileInfo GetManagerService(EntityInfo entityInfo)
     {
-        string content = ManagerGenerate.GetManagerServiceContent(entityInfo, solutionPath);
+        string content = ManagerGenerate.GetManagerServiceContent(entityInfo);
         string name = entityInfo.ModuleName.IsEmpty()
             ? "ManagerServiceCollectionExtensions.cs"
             : "ServiceCollectionExtensions.cs";
@@ -99,19 +98,32 @@ public class CodeGenService
         return new GenFileInfo(name, content)
         {
             IsCover = true,
-            Path = Path.Combine(entityInfo.GetManagerPath(solutionPath), name),
+            Path = Path.Combine(entityInfo.GetManagerPath(), name),
             ModuleName = entityInfo.ModuleName
         };
     }
 
-
-    public GenFileInfo GenerateController(EntityInfo entityInfo)
+    /// <summary>
+    /// RestAPI生成
+    /// </summary>
+    /// <param name="entityInfo"></param>
+    /// <param name="outputPath"></param>
+    /// <param name="tplContent"></param>
+    /// <param name="isCover"></param>
+    /// <returns></returns>
+    public GenFileInfo GenerateController(EntityInfo entityInfo, string outputPath, string tplContent, bool isCover = false)
     {
         // TODO: GlobalUsing
-
+        var managerGen = new RestApiGenerate(entityInfo);
+        var content = managerGen.GetRestApiContent(tplContent);
+        return new GenFileInfo($"{entityInfo.Name}{Const.Manager}.cs", content)
+        {
+            IsCover = isCover,
+            Path = Path.Combine(outputPath, Const.Manager, $"{entityInfo.Name}{Const.Manager}.cs"),
+            ModuleName = entityInfo.ModuleName
+        };
     }
 }
-
 
 public enum DtoType
 {

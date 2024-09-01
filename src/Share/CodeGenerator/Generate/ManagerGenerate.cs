@@ -3,27 +3,11 @@ namespace CodeGenerator.Generate;
 /// <summary>
 /// 数据仓储生成
 /// </summary>
-public class ManagerGenerate
+public class ManagerGenerate(EntityInfo entityInfo)
 {
-    /// <summary>
-    /// Application 项目目录路径
-    /// </summary>
-    public string ApplicationPath { get; init; }
-    /// <summary>
-    /// DTO 所在项目目录路径
-    /// </summary>
-    public string DtoPath { get; init; }
-    public string? ApplicationNamespace { get; init; }
-    public string? ShareNamespace { get; init; }
-    public EntityInfo EntityInfo { get; init; }
-    public ManagerGenerate(EntityInfo entityInfo)
-    {
-        EntityInfo = entityInfo;
-        DtoPath = dtoPath;
-        ApplicationPath = applicationPath;
-        ShareNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(DtoPath));
-        ApplicationNamespace = AssemblyHelper.GetNamespaceName(new DirectoryInfo(ApplicationPath));
-    }
+    public string ApplicationNamespace { get; init; } = entityInfo.GetManagerNamespace();
+    public string ShareNamespace { get; init; } = entityInfo.GetShareNamespace();
+    public EntityInfo EntityInfo { get; init; } = entityInfo;
 
     /// <summary>
     /// 全局依赖
@@ -35,7 +19,7 @@ public class ManagerGenerate
         [
             $"global using {EntityInfo.AssemblyName};",
             $"global using {EntityInfo.NamespaceName};",
-            $"global using {ApplicationNamespace}.Manager;",
+            $"global using {ApplicationNamespace}.{Const.Manager};",
             ""
         ];
     }
@@ -44,7 +28,7 @@ public class ManagerGenerate
     /// Manager默认代码内容
     /// </summary>
     /// <returns></returns>
-    public string GetManagerContent(string tplContent, string? nsp = null)
+    public string GetManagerContent(string tplContent, string nsp)
     {
         var genContext = new GenContext();
         var model = new ManagerViewModel
@@ -102,11 +86,10 @@ public class ManagerGenerate
     /// Manager服务注入内容
     /// </summary>
     /// <param name="entityInfo"></param>
-    /// <param name="solutionPath"></param>
     /// <returns></returns>
-    public static string GetManagerServiceContent(EntityInfo entityInfo, string solutionPath)
+    public static string GetManagerServiceContent(EntityInfo entityInfo)
     {
-        var managerPath = entityInfo.GetManagerPath(solutionPath);
+        var managerPath = entityInfo.GetManagerPath();
         var nspName = entityInfo.GetManagerNamespace();
 
         if (!Directory.Exists(managerPath))
@@ -128,7 +111,7 @@ public class ManagerGenerate
             Namespace = nspName,
             ManagerServices = managerServiceContent
         };
-        var tplContent = TplContent.GetManagerServiceExtensionTpl(EntityInfo.ModuleName.NotEmpty());
+        var tplContent = TplContent.GetManagerServiceExtensionTpl(entityInfo.ModuleName.NotEmpty());
         return genContext.GenCode(tplContent, managerModel);
     }
 }
