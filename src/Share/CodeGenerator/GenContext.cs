@@ -6,7 +6,6 @@ using RazorEngineCore;
 public class GenContext
 {
     public IRazorEngine RazorEngine { get; set; } = new RazorEngine();
-
     public string GenManager(string templateContent, ManagerViewModel model)
     {
         return GenCode(templateContent, model);

@@ -1,8 +1,6 @@
 ﻿using System.ComponentModel;
-
 using CodeGenerator.Generate;
-
-using Share.Models;
+using CodeGenerator.Models;
 
 namespace Share.Services;
 /// <summary>
@@ -26,10 +24,19 @@ public class CodeGenService
         // 生成Dto
         var dtoGen = new DtoCodeGenerate(entityInfo);
         var dirName = entityInfo.Name + "Dtos";
-        // TODO: GlobalUsing
+        // GlobalUsing
+        var globalContent = string.Join(Environment.NewLine, dtoGen.GetGlobalUsings());
+        var globalFile = new GenFileInfo(Const.GlobalUsingsFile, globalContent)
+        {
+            IsCover = isCover,
+            FileType = GenFileType.Global,
+            Path = Path.Combine(outputPath, Const.GlobalUsingsFile),
+            ModuleName = entityInfo.ModuleName
+        };
 
         return
         [
+            globalFile,
             new GenFileInfo($"{entityInfo.Name}{Const.AddDto}.cs", dtoGen.GetAddDto())
             {
                 IsCover = isCover,
@@ -71,17 +78,29 @@ public class CodeGenService
     /// <param name="tplContent">模板内容</param>
     /// <param name="isCover"></param>
     /// <returns></returns>
-    public GenFileInfo GenerateManager(EntityInfo entityInfo, string outputPath, string tplContent, bool isCover = false)
+    public List<GenFileInfo> GenerateManager(EntityInfo entityInfo, string outputPath, string tplContent, bool isCover = false)
     {
-        // TODO: GlobalUsing
         var managerGen = new ManagerGenerate(entityInfo);
+        // GlobalUsing
+        var globalContent = string.Join(Environment.NewLine, managerGen.GetGlobalUsings());
+        var globalFile = new GenFileInfo(Const.GlobalUsingsFile, globalContent)
+        {
+            IsCover = isCover,
+            FileType = GenFileType.Global,
+            Path = Path.Combine(outputPath, Const.GlobalUsingsFile),
+            ModuleName = entityInfo.ModuleName
+        };
+
         var content = managerGen.GetManagerContent(tplContent, entityInfo.GetManagerNamespace());
-        return new GenFileInfo($"{entityInfo.Name}{Const.Manager}.cs", content)
+        var managerFile = new GenFileInfo($"{entityInfo.Name}{Const.Manager}.cs", content)
         {
             IsCover = isCover,
             Path = Path.Combine(outputPath, Const.Manager, $"{entityInfo.Name}{Const.Manager}.cs"),
             ModuleName = entityInfo.ModuleName
         };
+
+        var managerService = GetManagerService(entityInfo);
+        return [globalFile, managerFile, managerService];
     }
 
     /// <summary>
@@ -92,8 +111,8 @@ public class CodeGenService
     {
         string content = ManagerGenerate.GetManagerServiceContent(entityInfo);
         string name = entityInfo.ModuleName.IsEmpty()
-            ? "ManagerServiceCollectionExtensions.cs"
-            : "ServiceCollectionExtensions.cs";
+            ? Const.ServiceExtensionsFile
+            : Const.ManagerServiceExtensionsFile;
 
         return new GenFileInfo(name, content)
         {
@@ -111,17 +130,26 @@ public class CodeGenService
     /// <param name="tplContent"></param>
     /// <param name="isCover"></param>
     /// <returns></returns>
-    public GenFileInfo GenerateController(EntityInfo entityInfo, string outputPath, string tplContent, bool isCover = false)
+    public List<GenFileInfo> GenerateController(EntityInfo entityInfo, string outputPath, string tplContent, bool isCover = false)
     {
-        // TODO: GlobalUsing
-        var managerGen = new RestApiGenerate(entityInfo);
-        var content = managerGen.GetRestApiContent(tplContent);
-        return new GenFileInfo($"{entityInfo.Name}{Const.Manager}.cs", content)
+        var apiGen = new RestApiGenerate(entityInfo);
+        // GlobalUsing
+        var globalContent = string.Join(Environment.NewLine, apiGen.GetGlobalUsings());
+        var globalFile = new GenFileInfo(Const.GlobalUsingsFile, globalContent)
+        {
+            IsCover = isCover,
+            FileType = GenFileType.Global,
+            Path = Path.Combine(outputPath, Const.GlobalUsingsFile),
+            ModuleName = entityInfo.ModuleName
+        };
+        var content = apiGen.GetRestApiContent(tplContent);
+        var controllerFile = new GenFileInfo($"{entityInfo.Name}{Const.Manager}.cs", content)
         {
             IsCover = isCover,
             Path = Path.Combine(outputPath, Const.Manager, $"{entityInfo.Name}{Const.Manager}.cs"),
             ModuleName = entityInfo.ModuleName
         };
+        return [globalFile, controllerFile];
     }
 }
 

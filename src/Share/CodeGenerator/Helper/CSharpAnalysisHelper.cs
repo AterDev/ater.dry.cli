@@ -1,5 +1,4 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Editing;
+﻿using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Formatting;
 
 namespace CodeGenerator.Helper;
@@ -26,7 +25,7 @@ public class CSharpAnalysisHelper
         {
             TypeSyntax? baseInterface = interfaceDeclaration.BaseList?.Types.First().Type;
             if (baseInterface == null) { return default; }
-            INamedTypeSymbol baseType = semanticModel.GetTypeInfo(baseInterface).Type as INamedTypeSymbol;
+            var baseType = semanticModel.GetTypeInfo(baseInterface).Type as INamedTypeSymbol;
             return baseType;
         }
         return default;

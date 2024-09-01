@@ -1,7 +1,5 @@
 ﻿using System.Text.RegularExpressions;
 
-using PropertyInfo = Entity.PropertyInfo;
-
 namespace CodeGenerator.Generate;
 /// <summary>
 /// dto generate

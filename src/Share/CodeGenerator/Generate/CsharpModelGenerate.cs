@@ -8,6 +8,7 @@ namespace CodeGenerator.Generate;
 /// </summary>
 public class CsharpModelGenerate : GenerateBase
 {
+    public static List<string> EnumModels { get; set; } = [];
     public Dictionary<string, string?> ModelDictionary { get; set; } = [];
 
     public CsharpModelGenerate(OpenApiDocument openApi)
@@ -125,24 +126,25 @@ public class CsharpModelGenerate : GenerateBase
     {
         // 文件名及内容
         string fileName = schemaKey.ToPascalCase() + ".cs";
-        string tsContent;
+        string modelContent;
         string? dirName = GetDirName(schemaKey);
         string path = Path.Combine("Models", dirName ?? "");
 
         if (schema.Enum.Count > 0)
         {
-            tsContent = ToEnumString(schema, schemaKey, nspName);
-            Config.EnumModels.Add(schemaKey);
+            modelContent = ToEnumString(schema, schemaKey, nspName);
+            EnumModels.Add(schemaKey);
             //path = "enum";
         }
         else
         {
-            tsContent = ToClassModelString(schema, schemaKey, nspName);
+            modelContent = ToClassModelString(schema, schemaKey, nspName);
         }
-        GenFileInfo file = new(fileName, tsContent)
+
+        GenFileInfo file = new(fileName, modelContent)
         {
             Path = path ?? "",
-            Content = tsContent,
+            Content = modelContent,
             ModelName = schemaKey
         };
         return file;

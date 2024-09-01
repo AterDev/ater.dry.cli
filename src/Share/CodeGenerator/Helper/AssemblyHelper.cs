@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using System.Text.Json;
+using System.Xml.Linq;
 
 namespace CodeGenerator.Helper;
 
@@ -177,11 +178,11 @@ public class AssemblyHelper
     /// <returns></returns>
     public static async Task<string?> GetSolutionVersionAsync(string solutionPath)
     {
-        string configFilePath = Path.Combine(solutionPath, Config.ConfigFileName);
+        string configFilePath = Path.Combine(solutionPath, Const.ConfigFileName);
         if (File.Exists(configFilePath))
         {
             string configJson = await File.ReadAllTextAsync(configFilePath);
-            ConfigOptions? config = ConfigOptions.ParseJson(configJson);
+            var config = JsonSerializer.Deserialize<ProjectConfig>(configJson);
             return config?.Version;
         }
         return default;
@@ -303,24 +304,6 @@ public class AssemblyHelper
             "tools",
             Const.NetVersion,
             "any");
-    }
-
-    /// <summary>
-    /// delete module entity files
-    /// </summary>
-    /// <param name="solutionPath"></param>
-    public static void RemoveModuleEntityFiles(string solutionPath)
-    {
-        string entityPath = Path.Combine(solutionPath, Config.EntityPath, "Entities");
-        // remove files which cotains "Module[]"
-        string moduleSign = "[Module(";
-        List<string> files = Directory.GetFiles(entityPath, "*.cs", SearchOption.AllDirectories)
-            .Where(s => File.ReadAllText(s).Contains(moduleSign))
-            .ToList();
-        files.ForEach(file =>
-        {
-            File.Delete(file);
-        });
     }
 
     /// <summary>

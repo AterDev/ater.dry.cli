@@ -2,7 +2,7 @@ namespace Share.Share.Models.ApiDocInfoDtos;
 /// <summary>
 /// 接口文档列表元素
 /// </summary>
-/// <see cref="Definition.Entity.ApiDocInfo"/>
+/// <see cref="Entity.ApiDocInfo"/>
 public class ApiDocInfoItemDto
 {
     /// <summary>

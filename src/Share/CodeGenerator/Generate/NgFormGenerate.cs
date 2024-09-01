@@ -1,6 +1,4 @@
-﻿using PropertyInfo = Definition.Entity.PropertyInfo;
-
-namespace CodeGenerator.Generate;
+﻿namespace CodeGenerator.Generate;
 
 /// <summary>
 /// 表单生成

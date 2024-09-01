@@ -17,6 +17,7 @@ public class Const
     public const string ManagersDir = "Managers";
     public const string ControllersDir = "Controllers";
     public const string SrcDir = "src";
+    public const string MicroserviceDir = "Microservice";
 
     // names
     public const string Manager = "Manager";
@@ -38,7 +39,7 @@ public class Const
     public const string IsDeleted = "IsDeleted";
 
 
-    public const string Version = "8.0";
+    public const string Version = "8.0.0";
     public const string NetVersion = "net8.0";
     public const string PackageId = "ater.dry";
     public const string TemplateZip = "template.zip";
@@ -49,6 +50,11 @@ public class Const
     public const string CoreLibName = "Ater.Web.Core";
     public const string AbstractionLibName = "Ater.Web.Abstraction";
     public const string ExtensionLibName = "Ater.Web.Extension";
+    public const string ConfigFileName = ".dry-config.json";
+
+    public const string GlobalUsingsFile = "GlobalUsings.cs";
+    public const string ServiceExtensionsFile = "ServiceCollectionExtensions.cs";
+    public const string ManagerServiceExtensionsFile = "ManagerServiceCollectionExtensions.cs";
 }
 
 /// <summary>
@@ -58,9 +64,9 @@ public class PathConst
 {
     public static string APIPath = Path.Combine(Const.SrcDir, Const.APIName);
     public static string ApplicationPath = Path.Combine(Const.SrcDir, Const.ApplicationName);
-
     public static string SharePath = Path.Combine(Const.SrcDir, Const.DefinitionDir, Const.ShareName);
     public static string EntityPath = Path.Combine(Const.SrcDir, Const.DefinitionDir, Const.EntityName);
     public static string EntityFrameworkPath = Path.Combine(Const.SrcDir, Const.DefinitionDir, Const.EntityFrameworkName);
     public static string ModulesPath = Path.Combine(Const.SrcDir, Const.ModulesDir);
+    public static string MicroservicePath = Path.Combine(Const.SrcDir, Const.MicroserviceDir);
 }

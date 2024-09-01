@@ -2,7 +2,7 @@ namespace Share.Share.Models.EntityInfoDtos;
 /// <summary>
 /// 实体查询筛选
 /// </summary>
-/// <see cref="Definition.Entity.EntityInfo"/>
+/// <see cref="Entity.EntityInfo"/>
 public class EntityInfoFilterDto : FilterBase
 {
     /// <summary>

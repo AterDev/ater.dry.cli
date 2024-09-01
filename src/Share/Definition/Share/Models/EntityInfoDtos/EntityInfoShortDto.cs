@@ -2,7 +2,7 @@ namespace Share.Share.Models.EntityInfoDtos;
 /// <summary>
 /// 实体概要
 /// </summary>
-/// <see cref="Definition.Entity.EntityInfo"/>
+/// <see cref="Entity.EntityInfo"/>
 public class EntityInfoShortDto
 {
     /// <summary>

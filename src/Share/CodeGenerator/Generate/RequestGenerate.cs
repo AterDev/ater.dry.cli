@@ -144,7 +144,7 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
                     content = ToNgRequestService(serviceFile);
                     file = new(fileName, content)
                     {
-                        CanModify = true,
+                        IsCover = false,
                         Path = path
                     };
                     files.Add(file);

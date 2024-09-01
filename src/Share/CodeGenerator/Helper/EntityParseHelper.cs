@@ -1,7 +1,5 @@
 ﻿using System.Text.RegularExpressions;
 
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-
 namespace CodeGenerator.Helper;
 
 /// <summary>
@@ -38,7 +36,7 @@ public class EntityParseHelper
     /// <summary>
     /// 属性
     /// </summary>
-    public List<PropertyInfo>? PropertyInfos { get; set; }
+    public List<Entity.PropertyInfo>? PropertyInfos { get; set; }
     public CSharpCompilation Compilation { get; set; }
     public SemanticModel? SemanticModel { get; set; }
     protected SyntaxTree? SyntaxTree { get; set; }
@@ -73,8 +71,7 @@ public class EntityParseHelper
         AssemblyName = GetAssemblyName();
         CompilationHelper = new CompilationHelper(ProjectFile.Directory!.FullName);
 
-        string content = File.ReadAllTextAsync(fileInfo.FullName).Result;
-
+        string content = File.ReadAllText(fileInfo.FullName);
         CompilationHelper.LoadContent(content);
         SyntaxTree = CompilationHelper.SyntaxTree;
         Compilation = CompilationHelper.Compilation;
@@ -125,29 +122,28 @@ public class EntityParseHelper
             Compilation = CompilationHelper.Compilation;
             SemanticModel = CompilationHelper.SemanticModel;
             RootNodes = SyntaxTree?.GetCompilationUnitRoot().DescendantNodes();
-            return GetEntity();
+
+            var classDeclarationSyntax = RootNodes?.OfType<ClassDeclarationSyntax>().FirstOrDefault();
+            Name = classDeclarationSyntax?.Identifier.ToString();
+            NamespaceName = CompilationHelper.GetNamespace();
+            Comment = GetClassComment(classDeclarationSyntax);
+
+            return new EntityInfo()
+            {
+                Name = Name!,
+                FilePath = filePath,
+                Md5Hash = HashCrypto.Md5Hash(content),
+                ProjectId = Const.PROJECT_ID,
+                AssemblyName = AssemblyName,
+                NamespaceName = NamespaceName ?? "",
+                Comment = Comment,
+                Summary = GetComment(),
+                PropertyInfos = GetPropertyInfos(),
+                KeyType = KeyType
+            };
+
         }
         return null;
-    }
-
-    public EntityInfo GetEntity()
-    {
-        ClassDeclarationSyntax? classDeclarationSyntax = RootNodes?.OfType<ClassDeclarationSyntax>().FirstOrDefault();
-        Name = classDeclarationSyntax?.Identifier.ToString();
-        NamespaceName = CompilationHelper.GetNamespace();
-        Comment = GetClassComment(classDeclarationSyntax);
-
-        return new EntityInfo()
-        {
-            Name = Name!,
-            ProjectId = Const.PROJECT_ID,
-            AssemblyName = AssemblyName,
-            NamespaceName = NamespaceName,
-            Comment = Comment,
-            Summary = GetComment(),
-            PropertyInfos = GetPropertyInfos(),
-            KeyType = KeyType
-        };
     }
 
     /// <summary>
@@ -208,7 +204,8 @@ public class EntityParseHelper
 
         ClassDeclarationSyntax? classDeclarationSyntax = root.DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
 
-        IEnumerable<PropertyDeclarationSyntax>? propertySyntax = classDeclarationSyntax?.DescendantNodes().OfType<PropertyDeclarationSyntax>();
+        var propertySyntax = classDeclarationSyntax?.DescendantNodes()
+            .OfType<PropertyDeclarationSyntax>() ?? [];
 
         // 如果指定父类名称
         parentClassName ??= GetParentClassName();
@@ -229,7 +226,7 @@ public class EntityParseHelper
                 //GetParentProperties();
             }
         }
-        foreach (PropertyDeclarationSyntax prop in propertySyntax)
+        foreach (var prop in propertySyntax)
         {
             // type and name
             PropertyInfo propertyInfo = ParsePropertyType(prop);
@@ -582,7 +579,7 @@ public class EntityParseHelper
         // 获取当前类名
         ClassDeclarationSyntax? classDeclarationSyntax = RootNodes!.OfType<ClassDeclarationSyntax>().FirstOrDefault();
         if (classDeclarationSyntax == null) return null;
-        ISymbol? classSymbol = SemanticModel.GetDeclaredSymbol(classDeclarationSyntax!);
+        var classSymbol = SemanticModel.GetDeclaredSymbol(classDeclarationSyntax!);
 
         return classSymbol?.BaseType?.Name;
     }
@@ -601,10 +598,10 @@ public class EntityParseHelper
     {
         ClassDeclarationSyntax? classDeclarationSyntax = RootNodes!.OfType<ClassDeclarationSyntax>().FirstOrDefault();
         if (classDeclarationSyntax == null) return;
-        ISymbol? classSymbol = SemanticModel.GetDeclaredSymbol(classDeclarationSyntax!);
+        var classSymbol = SemanticModel.GetDeclaredSymbol(classDeclarationSyntax!);
 
         // get base class's properties
-        INamedTypeSymbol? baseType = classSymbol?.BaseType;
+        var baseType = classSymbol?.BaseType;
         if (baseType == null) return;
         IEnumerable<ISymbol> baseProperties = baseType.GetMembers().Where(m => m.Kind == SymbolKind.Property);
 

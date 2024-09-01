@@ -31,12 +31,6 @@ public class Project : EntityBase
     public SolutionType? SolutionType { get; set; }
 
     /// <summary>
-    /// Front Path
-    /// </summary>
-    [MaxLength(200)]
-    public string? FrontPath { get; set; }
-
-    /// <summary>
     /// project config
     /// </summary>
     public ProjectConfig? Config { get; set; }
@@ -54,16 +48,16 @@ public class Project : EntityBase
 /// </summary>
 public class ProjectConfig
 {
-    public string IdType { get; private set; } = "Guid";
-    public string CreatedTimeName { get; private set; } = "CreatedTime";
-    public string UpdatedTimeName { get; private set; } = "UpdatedTime";
-    public string Version { get; private set; } = "8.0";
-    public string SharePath { get; private set; } = "src/Definition/Share";
-    public string EntityPath { get; private set; } = "src/Definition/Entity";
-    public string EntityFrameworkPath { get; private set; } = "src/Definition/EntityFramework";
-    public string ApplicationPath { get; private set; } = "src/Application";
-    public string ApiPath { get; private set; } = "src/Http.API";
-    public string MicroservicePath { get; private set; } = "src/Microservice";
+    public string IdType { get; private set; } = Const.Guid;
+    public string CreatedTimeName { get; private set; } = Const.CreatedTime;
+    public string UpdatedTimeName { get; private set; } = Const.UpdatedTime;
+    public string Version { get; private set; } = Const.Version;
+    public string SharePath { get; private set; } = PathConst.SharePath;
+    public string EntityPath { get; private set; } = PathConst.EntityPath;
+    public string EntityFrameworkPath { get; private set; } = PathConst.EntityFrameworkPath;
+    public string ApplicationPath { get; private set; } = PathConst.ApplicationPath;
+    public string ApiPath { get; private set; } = PathConst.APIPath;
+    public string MicroservicePath { get; private set; } = PathConst.MicroservicePath;
     public string SolutionPath { get; set; } = "";
     public bool IsLight { get; private set; } = false;
     public ControllerType ControllerType { get; set; } = ControllerType.Client;

@@ -2,7 +2,7 @@ namespace Share.Share.Models.ApiDocInfoDtos;
 /// <summary>
 /// 接口文档查询筛选
 /// </summary>
-/// <see cref="Definition.Entity.ApiDocInfo"/>
+/// <see cref="Entity.ApiDocInfo"/>
 public class ApiDocInfoFilterDto : FilterBase
 {
     /// <summary>

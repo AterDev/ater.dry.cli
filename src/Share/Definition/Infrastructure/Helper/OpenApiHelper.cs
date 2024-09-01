@@ -19,7 +19,7 @@ public class OpenApiHelper
     /// <summary>
     /// 所有请求及返回类型信息
     /// </summary>
-    public List<EntityInfo> ModelInfos { get; set; }
+    public List<ModelInfo> ModelInfos { get; set; }
     /// <summary>
     /// tag信息
     /// </summary>
@@ -35,7 +35,7 @@ public class OpenApiHelper
                 Description = s.Description
             })
             .ToList();
-        ModelInfos = GetEntityInfos();
+        ModelInfos = ParseModels();
         RestApiGroups = GetRestApiGroups();
     }
 
@@ -69,14 +69,13 @@ public class OpenApiHelper
                 {
                     (string RequestType, string RequestRefType) = GetParamType(requestBody.Content.Values.FirstOrDefault()?.Schema);
                     // 关联的类型
-                    EntityInfo? model = ModelInfos.FirstOrDefault(m => m.Name == RequestRefType);
+                    var model = ModelInfos.FirstOrDefault(m => m.Name == RequestRefType);
 
                     if (model == null)
                     {
-                        apiInfo.RequestInfo = new EntityInfo
+                        apiInfo.RequestInfo = new ModelInfo
                         {
                             Name = RequestType,
-                            ProjectId = Const.PROJECT_ID,
                         };
 
                         if (!string.IsNullOrWhiteSpace(RequestType))
@@ -103,15 +102,14 @@ public class OpenApiHelper
                        .FirstOrDefault().Value?.Content
                        .FirstOrDefault().Value?.Schema);
                     // 关联的类型
-                    EntityInfo? model = ModelInfos.FirstOrDefault(m => m.Name == ResponseRefType);
+                    var model = ModelInfos.FirstOrDefault(m => m.Name == ResponseRefType);
 
                     // 返回内容没有对应类型
                     if (model == null)
                     {
-                        apiInfo.ResponseInfo = new EntityInfo
+                        apiInfo.ResponseInfo = new ModelInfo
                         {
                             Name = ResponseType,
-                            ProjectId = Const.PROJECT_ID,
                         };
                         if (!string.IsNullOrWhiteSpace(ResponseType))
                         {
@@ -185,9 +183,9 @@ public class OpenApiHelper
     /// 解析模型
     /// </summary>
     /// <returns></returns>
-    public List<EntityInfo> GetEntityInfos()
+    public List<ModelInfo> ParseModels()
     {
-        List<EntityInfo> models = [];
+        List<ModelInfo> models = [];
 
         foreach (KeyValuePair<string, OpenApiSchema> schema in OpenApi.Components.Schemas)
         {
@@ -197,10 +195,9 @@ public class OpenApiHelper
             description = description?.Replace("\n", " ") ?? "";
             List<PropertyInfo> props = ParseProperties(schema.Value);
 
-            EntityInfo model = new()
+            var model = new ModelInfo()
             {
                 Name = name,
-                ProjectId = Const.PROJECT_ID,
                 PropertyInfos = props,
                 Comment = description,
             };

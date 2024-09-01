@@ -464,11 +464,11 @@ public class CompilationHelper
             var className = ((IdentifierNameSyntax)memberAccess.Expression).Identifier.Text;
             var varName = memberAccess.Name.ToString();
 
-            INamedTypeSymbol constClass = GetClass(className);
+            var constClass = GetClass(className);
 
             if (constClass != null)
             {
-                ISymbol field = constClass.GetMembers()
+                var field = constClass.GetMembers()
                     .Where(m => m.Name == varName)
                     .FirstOrDefault();
                 name = (field as IFieldSymbol)?.ConstantValue?.ToString();

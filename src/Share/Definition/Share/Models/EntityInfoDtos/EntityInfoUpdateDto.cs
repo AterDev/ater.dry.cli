@@ -2,7 +2,7 @@ namespace Share.Share.Models.EntityInfoDtos;
 /// <summary>
 /// 实体更新时请求结构
 /// </summary>
-/// <see cref="Definition.Entity.EntityInfo"/>
+/// <see cref="Entity.EntityInfo"/>
 public class EntityInfoUpdateDto
 {
     /// <summary>

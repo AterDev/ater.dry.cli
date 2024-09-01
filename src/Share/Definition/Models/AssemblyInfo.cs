@@ -20,11 +20,6 @@ public class AssemblyInfo
     /// 项目类型
     /// </summary>
     public AssemblyType Type { get; set; }
-    /// <summary>
-    /// grpc类型
-    /// </summary>
-    public GrpcType? GrpcType { get; set; } = Share.Models.GrpcType.Default;
-
 }
 
 public enum AssemblyType

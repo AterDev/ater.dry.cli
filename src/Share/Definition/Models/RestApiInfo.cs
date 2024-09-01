@@ -28,11 +28,11 @@ public class RestApiInfo
     /// <summary>
     /// 请求类型参数
     /// </summary>
-    public EntityInfo? RequestInfo { get; set; }
+    public ModelInfo? RequestInfo { get; set; }
     /// <summary>
-    /// 返回类型内容p
+    /// 返回类型内容
     /// </summary>
-    public EntityInfo? ResponseInfo { get; set; }
+    public ModelInfo? ResponseInfo { get; set; }
 }
 
 /// <summary>

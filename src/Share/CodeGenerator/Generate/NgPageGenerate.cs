@@ -1,6 +1,4 @@
-﻿using PropertyInfo = Definition.Entity.PropertyInfo;
-
-namespace CodeGenerator.Generate;
+﻿namespace CodeGenerator.Generate;
 
 /// <summary>
 /// angular 根据模型生成页面
@@ -408,7 +406,7 @@ public class NgPageGenerate : GenerateBase
         if (entityHelper.PropertyInfos != null)
         {
             StringBuilder sb = new();
-            foreach (Entity.PropertyInfo property in entityHelper.PropertyInfos)
+            foreach (PropertyInfo property in entityHelper.PropertyInfos)
             {
                 NgComponentBuilder builder = new(property.Type, property.Name, property.CommentSummary ?? property.DisplayName)
                 {

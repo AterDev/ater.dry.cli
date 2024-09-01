@@ -1,6 +1,5 @@
 using System.Text;
-
-using Share.Models;
+using CodeGenerator.Models;
 using Share.Share.Models.ApiDocInfoDtos;
 
 namespace Application.Manager;
