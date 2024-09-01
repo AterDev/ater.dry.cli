@@ -67,7 +67,7 @@ public class OpenApiHelper
                 // 请求类型
                 if (requestBody != null)
                 {
-                    (string RequestType, string RequestRefType) = GetParamType(requestBody.Content.Values.FirstOrDefault()?.Schema);
+                    (string RequestType, string? RequestRefType) = GetParamType(requestBody.Content.Values.FirstOrDefault()?.Schema);
                     // 关联的类型
                     var model = ModelInfos.FirstOrDefault(m => m.Name == RequestRefType);
 
@@ -98,7 +98,7 @@ public class OpenApiHelper
                 // 响应类型
                 if (responseBody != null)
                 {
-                    (string ResponseType, string ResponseRefType) = GetParamType(responseBody
+                    (string ResponseType, string? ResponseRefType) = GetParamType(responseBody
                        .FirstOrDefault().Value?.Content
                        .FirstOrDefault().Value?.Schema);
                     // 关联的类型
@@ -132,7 +132,7 @@ public class OpenApiHelper
                 // 请求的参数
                 if (requestParameters != null)
                 {
-                    List<PropertyInfo>? parammeters = requestParameters?.Select(p =>
+                    List<PropertyInfo>? parameters = requestParameters?.Select(p =>
                     {
                         string? location = p.In?.GetDisplayName();
                         bool? inpath = location?.ToLower()?.Equals("path");
@@ -145,7 +145,7 @@ public class OpenApiHelper
                             Type = type
                         };
                     }).ToList();
-                    apiInfo.QueryParameters = parammeters;
+                    apiInfo.QueryParameters = parameters;
                 }
                 apiInfos.Add(apiInfo);
             }
@@ -164,7 +164,8 @@ public class OpenApiHelper
         });
         // tag不在OpenApiTags中的api infos
         List<string> tags = OpenApiTags.Select(t => t.Name).ToList();
-        List<RestApiInfo> noTagApisInfo = apiInfos.Where(a => !tags.Contains(a.Tag)).ToList();
+        List<RestApiInfo> noTagApisInfo = apiInfos.Where(a => a.Tag != null && !tags.Contains(a.Tag))
+            .ToList();
 
         if (noTagApisInfo.Any())
         {
@@ -510,7 +511,7 @@ public class OpenApiHelper
                 // TODO:object  字典
                 if (schema.AdditionalProperties != null)
                 {
-                    (string inType, string inRefType) = GetParamType(schema.AdditionalProperties);
+                    (string inType, string? inRefType) = GetParamType(schema.AdditionalProperties);
                     refType = inRefType;
                     type = $"Map<string, {inType}>";
                 }
