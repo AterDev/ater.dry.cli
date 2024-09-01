@@ -20,11 +20,23 @@ public class Const
 
     // names
     public const string Manager = "Manager";
+    public const string Controller = "Controller";
     public const string DetailDto = "DetailDto";
     public const string ItemDto = "ItemDto";
     public const string FilterDto = "FilterDto";
     public const string AddDto = "AddDto";
     public const string UpdateDto = "UpdateDto";
+
+    // props & keys
+    public const string FilterBase = "FilterBase";
+    public const string EntityBase = "EntityBase";
+
+    public const string Id = "Id";
+    public const string Guid = "Guid";
+    public const string CreatedTime = "CreatedTime";
+    public const string UpdatedTime = "UpdatedTime";
+    public const string IsDeleted = "IsDeleted";
+
 
     public const string Version = "8.0";
     public const string NetVersion = "net8.0";

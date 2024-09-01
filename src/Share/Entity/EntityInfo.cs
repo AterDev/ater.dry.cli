@@ -8,7 +8,13 @@ namespace Entity;
 public class EntityInfo : EntityBase
 {
     public static string[] IgnoreTypes = ["JsonDocument?", "byte[]"];
-    public static string[] IgnoreProperties = ["Id", "CreatedTime", "UpdatedTime", "IsDeleted", "PageSize", "PageIndex"];
+    public static string[] IgnoreProperties = [
+        Const.Id,
+        Const.CreatedTime,
+        Const.UpdatedTime,
+        Const.IsDeleted,
+        "PageSize", "PageIndex"
+        ];
 
     /// <summary>
     /// file content md5 hash
@@ -25,7 +31,7 @@ public class EntityInfo : EntityBase
     /// file path
     /// </summary>
     [MaxLength(200)]
-    public string FilePath { get; set; }
+    public required string FilePath { get; set; }
     /// <summary>
     /// 类名
     /// </summary>
@@ -70,7 +76,6 @@ public class EntityInfo : EntityBase
     /// <summary>
     /// 获取manager路径
     /// </summary>
-    /// <param name="solutionPath"></param>
     /// <returns></returns>
     public string GetManagerPath()
     {
@@ -90,6 +95,13 @@ public class EntityInfo : EntityBase
         return ModuleName.IsEmpty()
             ? Path.Combine(Project.Path, PathConst.APIPath, Const.ControllersDir)
             : Path.Combine(Project.Path, PathConst.ModulesPath, ModuleName, Const.ControllersDir);
+    }
+
+    public string GetDtoNamespace()
+    {
+        return ModuleName.IsEmpty()
+            ? Const.ShareName
+            : ModuleName;
     }
 
     public string GetManagerNamespace()
@@ -115,7 +127,7 @@ public class EntityInfo : EntityBase
     /// 获取筛选属性
     /// </summary>
     /// <returns></returns>
-    public List<PropertyInfo>? GetFilterProperties()
+    public List<PropertyInfo> GetFilterProperties()
     {
         return PropertyInfos
             .Where(p => p.IsRequired && !p.IsNavigation
@@ -127,7 +139,7 @@ public class EntityInfo : EntityBase
                     || p.IsEnum
                     )
                 .Where(p => p.MaxLength is not (not null and >= 100))
-            .ToList();
+            .ToList() ?? [];
     }
 }
 public enum EntityKeyType

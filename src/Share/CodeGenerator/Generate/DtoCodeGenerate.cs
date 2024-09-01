@@ -9,17 +9,15 @@ namespace CodeGenerator.Generate;
 public class DtoCodeGenerate
 {
     public EntityInfo EntityInfo { get; init; }
-    public string KeyType { get; set; } = "Guid";
+    public string KeyType { get; set; } = Const.Guid;
     /// <summary>
     /// dto 输出的 程序集名称
     /// </summary>
-    public string? AssemblyName { get; set; }
-    public string DtoPath { get; init; }
+    public string Namespace { get; set; }
 
-    public DtoCodeGenerate(EntityInfo entityInfo, string dtoPath)
+    public DtoCodeGenerate(EntityInfo entityInfo)
     {
-        DtoPath = dtoPath;
-        AssemblyName = AssemblyHelper.GetNamespaceName(new DirectoryInfo(dtoPath));
+        Namespace = entityInfo.GetDtoNamespace();
         EntityInfo = entityInfo;
         KeyType = EntityInfo.KeyType switch
         {
@@ -61,20 +59,20 @@ public class DtoCodeGenerate
     {
         DtoInfo dto = new()
         {
-            EntityNamespace = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
+            EntityFullName = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
             Name = EntityInfo.Name + Const.DetailDto,
-            NamespaceName = EntityInfo.NamespaceName,
-            Comment = FormatComment(EntityInfo.Comment, "概要"),
+            EntityNamespace = EntityInfo.NamespaceName,
+            Comment = FormatComment(EntityInfo.Comment, "详情"),
             Tag = EntityInfo.Name,
             Properties = EntityInfo.PropertyInfos?
-                .Where(p => p.Name is not "IsDeleted")
+                .Where(p => p.Name is not Const.IsDeleted)
                 .Where(p => !p.IsJsonIgnore)
                 .Where(p => !EntityInfo.IgnoreTypes.Contains(p.Type))
                 .Where(p => !(p.IsList && p.IsNavigation))
                 .ToList() ?? []
         };
 
-        return dto.ToDtoContent(AssemblyName, EntityInfo.Name);
+        return dto.ToDtoContent(Namespace, EntityInfo.Name);
     }
 
     /// <summary>
@@ -85,13 +83,13 @@ public class DtoCodeGenerate
     {
         DtoInfo dto = new()
         {
-            EntityNamespace = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
+            EntityFullName = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
             Name = EntityInfo.Name + Const.ItemDto,
-            NamespaceName = EntityInfo.NamespaceName,
+            EntityNamespace = EntityInfo.NamespaceName,
             Comment = FormatComment(EntityInfo.Comment, "列表元素"),
             Tag = EntityInfo.Name,
             Properties = EntityInfo.PropertyInfos?
-                .Where(p => p.Name is not "IsDeleted" and not "UpdatedTime")
+                .Where(p => p.Name is not Const.IsDeleted and not Const.UpdatedTime)
                 .Where(p => !p.IsJsonIgnore)
                 .ToList() ?? []
         };
@@ -102,7 +100,7 @@ public class DtoCodeGenerate
                 && (!p.Name.EndsWith("Id") || p.Name.Equals("Id"))
                 && !p.IsNavigation).ToList() ?? [];
 
-        return dto.ToDtoContent(AssemblyName, EntityInfo.Name);
+        return dto.ToDtoContent(Namespace, EntityInfo.Name);
     }
 
     /// <summary>
@@ -123,12 +121,12 @@ public class DtoCodeGenerate
 
         DtoInfo dto = new()
         {
-            EntityNamespace = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
+            EntityFullName = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
             Name = EntityInfo.Name + Const.FilterDto,
-            NamespaceName = EntityInfo.NamespaceName,
-            Comment = FormatComment(EntityInfo.Comment, "查询筛选"),
+            EntityNamespace = EntityInfo.NamespaceName,
+            Comment = FormatComment(EntityInfo.Comment, "筛选条件"),
             Tag = EntityInfo.Name,
-            BaseType = "FilterBase",
+            BaseType = Const.FilterBase,
             Properties = EntityInfo.GetFilterProperties()
                 .Select(p => p.Adapt<PropertyInfo>())
                 .ToList() ?? []
@@ -147,7 +145,7 @@ public class DtoCodeGenerate
                 dto.Properties.Add(item);
             }
         });
-        return dto.ToDtoContent(AssemblyName, EntityInfo.Name);
+        return dto.ToDtoContent(Namespace, EntityInfo.Name);
     }
 
     public string GetAddDto()
@@ -170,18 +168,18 @@ public class DtoCodeGenerate
 
         DtoInfo dto = new()
         {
-            EntityNamespace = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
+            EntityFullName = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
             Name = EntityInfo.Name + Const.AddDto,
-            NamespaceName = EntityInfo.NamespaceName,
-            Comment = FormatComment(EntityInfo.Comment, "添加时请求结构"),
+            EntityNamespace = EntityInfo.NamespaceName,
+            Comment = FormatComment(EntityInfo.Comment, "添加时DTO"),
             Tag = EntityInfo.Name,
             Properties = EntityInfo.PropertyInfos?.Where(p => !p.IsNavigation
                 && p.HasSet
                 && !EntityInfo.IgnoreTypes.Contains(p.Type)
-                && p.Name != "Id"
-                && p.Name != "CreatedTime"
-                && p.Name != "UpdatedTime"
-                && p.Name != "IsDeleted")
+                && p.Name != Const.Id
+                && p.Name != Const.CreatedTime
+                && p.Name != Const.UpdatedTime
+                && p.Name != Const.IsDeleted)
             .ToList() ?? []
         };
 
@@ -193,7 +191,7 @@ public class DtoCodeGenerate
             }
         });
 
-        return dto.ToDtoContent(AssemblyName, EntityInfo.Name, true);
+        return dto.ToDtoContent(Namespace, EntityInfo.Name, true);
     }
 
     /// <summary>
@@ -220,19 +218,19 @@ public class DtoCodeGenerate
 
         DtoInfo dto = new()
         {
-            EntityNamespace = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
+            EntityFullName = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
             Name = EntityInfo.Name + Const.UpdateDto,
-            NamespaceName = EntityInfo.NamespaceName,
-            Comment = FormatComment(EntityInfo.Comment, "更新时请求结构"),
+            EntityNamespace = EntityInfo.NamespaceName,
+            Comment = FormatComment(EntityInfo.Comment, "更新时DTO"),
             Tag = EntityInfo.Name,
             // 处理非 required的都设置为 nullable
             Properties = EntityInfo.PropertyInfos?.Where(p => !p.IsNavigation
                     && p.HasSet
                     && !EntityInfo.IgnoreTypes.Contains(p.Type)
-                    && p.Name != "Id"
-                    && p.Name != "CreatedTime"
-                    && p.Name != "UpdatedTime"
-                    && p.Name != "IsDeleted")
+                    && p.Name != Const.Id
+                    && p.Name != Const.CreatedTime
+                    && p.Name != Const.UpdatedTime
+                    && p.Name != Const.IsDeleted)
             .Select(p => p.Adapt<PropertyInfo>())
             .ToList() ?? []
         };
@@ -249,7 +247,7 @@ public class DtoCodeGenerate
         {
             item.IsNullable = true;
         }
-        return dto.ToDtoContent(AssemblyName, EntityInfo.Name);
+        return dto.ToDtoContent(Namespace, EntityInfo.Name);
     }
 
     public List<string> GetGlobalUsings()
@@ -258,8 +256,8 @@ public class DtoCodeGenerate
         "global using System;",
         "global using System.Text.Json;",
         "global using System.ComponentModel.DataAnnotations;",
-        $"global using {AssemblyName}.Models;",
-        "global using Ater.Web.Core.Models;",
+        $"global using {Namespace}.{Const.ModelsDir};",
+        $"global using {Const.CoreLibName}.{Const.ModelsDir};",
         $"global using {EntityInfo.NamespaceName};"
         ];
     }

@@ -60,11 +60,11 @@ public class DtoCommand : CommandBase
             if (!string.IsNullOrWhiteSpace(ModuleName))
             {
                 OutputPath = Path.Combine(Config.SolutionPath, "src", "Modules", ModuleName);
-                CodeGen.AssemblyName = ModuleName;
+                CodeGen.Namespace = ModuleName;
             }
             if (Config.IsMicroservice)
             {
-                CodeGen.AssemblyName = Config.ServiceName + ".Definition.Share";
+                CodeGen.Namespace = Config.ServiceName + ".Definition.Share";
             }
             Console.WriteLine(Instructions[0]);
             await SaveToFileAsync("Item", CodeGen.GetItemDto(), cover);

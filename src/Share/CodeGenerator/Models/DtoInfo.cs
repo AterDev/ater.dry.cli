@@ -9,21 +9,21 @@ public class DtoInfo
     public string? BaseType { get; set; }
     public List<Entity.PropertyInfo> Properties { get; set; } = [];
     public string? Tag { get; set; }
-    public string? NamespaceName { get; set; }
+    public string? EntityNamespace { get; set; }
     public string? Comment { get; set; }
     /// <summary>
-    /// 原始实体的命名空间完整名称
+    /// 原实体含命名空间完整路径
     /// </summary>
-    public required string EntityNamespace { get; set; }
+    public required string EntityFullName { get; set; }
 
     /// <summary>
     /// dto class content
     /// </summary>
-    /// <param name="projectName"></param>
+    /// <param name="nsp"></param>
     /// <param name="entityName"></param>
     /// <param name="isInput"></param>
     /// <returns></returns>
-    public string ToDtoContent(string? projectName = "Share", string entityName = "", bool isInput = false)
+    public string ToDtoContent(string nsp, string entityName = "", bool isInput = false)
     {
         string[] props = Properties?.Select(p => p.ToCsharpLine(isInput)).ToArray()
             ?? [];
@@ -39,10 +39,10 @@ public class DtoInfo
 
         string baseType = string.IsNullOrEmpty(BaseType) ? "" : " : " + BaseType;
         string tpl = $$"""
-            using {{NamespaceName}};
-            namespace {{projectName}}.Models.{{entityName}}Dtos;
+            using {{EntityNamespace}};
+            namespace {{nsp}}.{{Const.ModelsDir}}.{{entityName}}Dtos;
             {{Comment}}
-            /// <see cref="{{EntityNamespace}}"/>
+            /// <see cref="{{EntityFullName}}"/>
             public class {{Name}}{{baseType}}
             {
             {{propStrings}}    
