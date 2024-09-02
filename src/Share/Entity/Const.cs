@@ -49,6 +49,7 @@ public class Const
 
     public const string SolutionExtension = ".sln";
     public const string CSharpProjectExtension = ".csproj";
+    public const string NodeProjectFile = "package.json";
     public const string CoreLibName = "Ater.Web.Core";
     public const string AbstractionLibName = "Ater.Web.Abstraction";
     public const string ExtensionLibName = "Ater.Web.Extension";

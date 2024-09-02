@@ -98,7 +98,7 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
         }
 
         // 保存项目信息
-        string? addRes = await _projectManager.AddProjectAsync(dto.Name, path);
+        string? addRes = await _projectManager.AddAsync(dto.Name, path);
         if (addRes != null)
         {
             ErrorMsg = addRes;

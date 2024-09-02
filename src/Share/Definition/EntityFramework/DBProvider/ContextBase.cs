@@ -37,8 +37,16 @@ public class ContextBase : DbContext
         builder.Entity<Project>(e =>
         {
             e.OwnsOne(p => p.Config).ToJson();
+            e.HasMany(p => p.GenActions)
+                .WithOne(a => a.Project)
+                .OnDelete(DeleteBehavior.Cascade);
+            e.HasMany(p => p.GenSteps)
+                .WithOne(a => a.Project)
+                .OnDelete(DeleteBehavior.Cascade);
+            e.HasMany(p => p.EntityInfos)
+                .WithOne(a => a.Project)
+                .OnDelete(DeleteBehavior.Cascade);
         });
-
 
         OnSQLiteModelCreating(builder);
         OnModelExtendCreating(builder);

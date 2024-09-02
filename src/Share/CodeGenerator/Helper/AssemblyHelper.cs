@@ -315,7 +315,7 @@ public class AssemblyHelper
     {
         string fileName = Path.GetFileName(filePath);
         string fileExt = Path.GetExtension(filePath);
-        if (fileName == "package.json") return SolutionType.Node;
+        if (fileName == Const.NodeProjectFile) return SolutionType.Node;
         switch (fileExt)
         {
             case Const.SolutionExtension:

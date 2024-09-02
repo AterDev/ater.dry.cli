@@ -10,7 +10,7 @@ public class ApiDocInfoManager(
     DataAccessContext<ApiDocInfo> dataContext,
     ProjectContext project,
     ILogger<ApiDocInfoManager> logger
-    ) : ManagerBase<ApiDocInfo, ApiDocInfoUpdateDto, ApiDocInfoFilterDto, ApiDocInfoItemDto>(dataContext, logger)
+    ) : ManagerBase<ApiDocInfo>(dataContext, logger)
 {
     private readonly ProjectContext _project = project;
 

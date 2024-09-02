@@ -146,7 +146,7 @@ public class CodeGenService
         var controllerFile = new GenFileInfo($"{entityInfo.Name}{Const.Manager}.cs", content)
         {
             IsCover = isCover,
-            Path = Path.Combine(outputPath, Const.Manager, $"{entityInfo.Name}{Const.Manager}.cs"),
+            Path = Path.Combine(outputPath, Const.ManagersDir, $"{entityInfo.Name}{Const.Manager}.cs"),
             ModuleName = entityInfo.ModuleName
         };
         return [globalFile, controllerFile];

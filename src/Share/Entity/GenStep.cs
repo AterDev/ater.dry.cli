@@ -1,4 +1,6 @@
-﻿namespace Entity;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Entity;
 /// <summary>
 /// task step
 /// </summary>
@@ -26,7 +28,11 @@ public class GenStep : EntityBase
     /// </summary>
     public GenStepType GenStepType { get; set; }
 
-    public ICollection<GenAction> GenActions { get; set; }
+    public ICollection<GenAction> GenActions { get; set; } = [];
+
+    [ForeignKey(nameof(ProjectId))]
+    public Project Project { get; set; } = null!;
+    public Guid ProjectId { get; set; } = default!;
 }
 
 /// <summary>

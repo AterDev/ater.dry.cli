@@ -1,5 +1,6 @@
-﻿using Ater.Web.Abstraction;
-
+﻿using Application;
+using Ater.Web.Abstraction;
+using Entity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AterStudio.Controllers;
@@ -8,7 +9,11 @@ namespace AterStudio.Controllers;
 /// 项目
 /// </summary>
 /// <see cref="ProjectManager"/>
-public class ProjectController(ProjectManager manager, AdvanceManager advance) : RestControllerBase
+public class ProjectController(
+    ProjectManager manager,
+    AdvanceManager advance,
+    IUserContext user,
+    ILogger<ProjectContext> logger) : RestControllerBase<ProjectManager>(manager, user, logger)
 {
     private readonly ProjectManager _manager = manager;
     private readonly AdvanceManager _advance = advance;
@@ -20,7 +25,7 @@ public class ProjectController(ProjectManager manager, AdvanceManager advance) :
     [HttpGet]
     public async Task<List<Project>> ListAsync()
     {
-        return await _manager.GetProjectsAsync();
+        return await _manager.ListAsync();
     }
 
     /// <summary>
@@ -41,13 +46,7 @@ public class ProjectController(ProjectManager manager, AdvanceManager advance) :
     [HttpGet("{id}")]
     public async Task<Project?> ProjectAsync([FromRoute] Guid id)
     {
-        return await _manager.GetProjectAsync(id);
-    }
-
-    [HttpGet("sub/{id}")]
-    public async Task<List<SubProjectInfo>?> GetAllProjectInfosAsync([FromRoute] Guid id)
-    {
-        return await _manager.GetAllProjectsAsync(id);
+        return await _manager.GetDetailAsync(id);
     }
 
     /// <summary>
@@ -57,14 +56,23 @@ public class ProjectController(ProjectManager manager, AdvanceManager advance) :
     /// <param name="path"></param>
     /// <returns></returns>
     [HttpPost]
-    public async Task<ActionResult<string?>> AddAsync(string name, string path)
+    public async Task<ActionResult<Guid?>> AddAsync(string name, string path)
     {
         if (!Directory.Exists(path))
         {
             return Problem("未找到该路径");
         }
-        string? res = await _manager.AddProjectAsync(name, path);
-        return res != null ? Problem(res) : Ok("添加成功");
+
+        string? projectFilePath = Directory.GetFiles(path, $"*{Const.SolutionExtension}", SearchOption.TopDirectoryOnly).FirstOrDefault();
+
+        projectFilePath ??= Directory.GetFiles(path, $"*{Const.CSharpProjectExtension}", SearchOption.TopDirectoryOnly).FirstOrDefault();
+        projectFilePath ??= Directory.GetFiles(path, Const.NodeProjectFile, SearchOption.TopDirectoryOnly).FirstOrDefault();
+
+        if (projectFilePath == null)
+        {
+            return Problem("Not Found valid Project!");
+        }
+        return await _manager.AddAsync(name, path);
     }
 
     /// <summary>
@@ -77,17 +85,6 @@ public class ProjectController(ProjectManager manager, AdvanceManager advance) :
     {
         bool res = _manager.AddServiceProject(name);
         return res;
-    }
-
-    /// <summary>
-    /// 获取项目配置文件内容
-    /// </summary>
-    /// <returns></returns>
-    [HttpGet("setting")]
-    public ActionResult<ConfigOptions> GetConfigOptions()
-    {
-        ConfigOptions? config = _manager.GetConfigOptions();
-        return config == null ? Problem("配置文件加载失败") : config;
     }
 
     /// <summary>
@@ -114,12 +111,17 @@ public class ProjectController(ProjectManager manager, AdvanceManager advance) :
     /// <summary>
     /// 更新配置
     /// </summary>
+    /// <param name="id"></param>
     /// <param name="dto"></param>
     /// <returns></returns>
-    [HttpPut("setting")]
-    public async Task<bool> UpdateConfigAsync(UpdateConfigOptionsDto dto)
+    [HttpPut("setting/{id}")]
+    public async Task<ActionResult<bool>> UpdateConfigAsync([FromRoute] Guid id, ProjectConfig dto)
     {
-        return await _manager.UpdateConfigAsync(dto);
+        if (!await _manager.ExistAsync(id))
+        {
+            return NotFound();
+        }
+        return await _manager.UpdateConfigAsync(id, dto);
     }
 
     /// <summary>
@@ -128,45 +130,9 @@ public class ProjectController(ProjectManager manager, AdvanceManager advance) :
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpDelete("{id}")]
-    public ActionResult<bool> Delete([FromRoute] Guid id)
+    public async Task<ActionResult<bool>> DeleteAsync([FromRoute] Guid id)
     {
-        return _manager.DeleteProject(id);
-    }
-
-
-    /// <summary>
-    /// 获取模板名称
-    /// </summary>
-    /// <returns></returns>
-    [HttpGet("tempaltes/{id}")]
-    public List<TemplateFile> GetTemplateFiles([FromRoute] Guid id)
-    {
-        return _manager.GetTemplateFiles(id);
-    }
-
-
-    /// <summary>
-    /// 获取模板内容
-    /// </summary>
-    /// <param name="id"></param>
-    /// <param name="name"></param>
-    /// <returns></returns>
-    [HttpGet("template/{id}")]
-    public TemplateFile GetTemplateFile([FromRoute] Guid id, string name)
-    {
-        return _manager.GetTemplate(id, name);
-    }
-
-    /// <summary>
-    /// 更新模板内容
-    /// </summary>
-    /// <param name="id"></param>
-    /// <param name="dto"></param>
-    /// <returns></returns>
-    [HttpPost("template/{id}")]
-    public bool SaveTemplateFile([FromRoute] Guid id, TemplateFileUpsert dto)
-    {
-        return _manager.SaveTemplate(id, dto.Name, dto.Content);
+        return await _manager.DeleteAsync([id], false);
     }
 
     /// <summary>
@@ -179,5 +145,4 @@ public class ProjectController(ProjectManager manager, AdvanceManager advance) :
     {
         return _advance.GetDatabaseStructureAsync();
     }
-
 }
