@@ -42,6 +42,8 @@ public class Const
     public const string Version = "8.0.0";
     public const string NetVersion = "net8.0";
     public const string PackageId = "ater.dry";
+
+    // files 
     public const string TemplateZip = "template.zip";
     public const string StudioZip = "studio.zip";
 

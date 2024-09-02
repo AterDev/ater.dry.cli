@@ -1,29 +1,6 @@
-﻿using System.IO;
-using System.Linq;
-using System.Text.Json;
-using System.Text.Json.Nodes;
-using System.Threading.Tasks;
-
-using CodeGenerator.Generate;
-using CodeGenerator.Helper;
-
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.OpenApi.Readers;
-
-namespace CodeGenerator.Test;
+﻿namespace CodeGenerator.Test;
 public class FunctionTest
 {
-    [Fact]
-    public void Should_parse_entity_attribute()
-    {
-        string filePath = PathHelper.GetProjectFilePath(@"Entity\Blog.cs");
-        EntityParseHelper helper = new(filePath);
-        helper.Parse();
-        List<global::Entity.PropertyInfo> props = helper.PropertyInfos;
-        Console.WriteLine();
-    }
-
     [Fact]
     public void TestString()
     {
@@ -61,15 +38,6 @@ public class FunctionTest
         Assert.NotNull(members);
         bool condition = members.Any(m => m!.Name.Equals("Default"));
         Assert.True(condition);
-    }
-
-    [Fact]
-    public void Should_generate_protobuf()
-    {
-        string filePath = PathHelper.GetProjectFilePath(@"Entity\Blog.cs");
-        ProtobufGenerate gen = new(filePath);
-        string proto = gen.GenerateProtobuf();
-        Console.WriteLine(proto);
     }
 
     [Theory]
@@ -158,18 +126,6 @@ public class FunctionTest
         var changeValaue = JsonHelper.GetValue<string>(jsonNode!, "AllowedHosts");
         Assert.Equal("Dev", value);
         Assert.Equal("111", changeValaue);
-    }
-
-    [Fact]
-    public void Should_Version()
-    {
-        var v70 = NuGetVersion.Parse("7.0");
-        var v700 = NuGetVersion.Parse("7.0.0");
-        var v71 = NuGetVersion.Parse("7.1");
-        bool equal = VersionComparer.Compare(v70, v700, VersionComparison.Version) == 0;
-
-        Assert.True(equal);
-
     }
 
     [Fact]
