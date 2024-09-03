@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Share;
 
 namespace Application.Implement;
 
 /// <summary>
 /// 项目上下文
 /// </summary>
-public class ProjectContext
+public class ProjectContext : IProjectContext
 {
     public Guid ProjectId { get; set; }
     public Project? Project { get; set; }
@@ -15,6 +16,7 @@ public class ProjectContext
     public string? EntityPath { get; set; }
     public string? ApiPath { get; set; }
     public string? EntityFrameworkPath { get; set; }
+    public string? ModulesPath { get; set; }
 
     public ProjectContext(IHttpContextAccessor httpContextAccessor, CommandDbContext context)
     {
@@ -28,13 +30,14 @@ public class ProjectContext
                 if (Project != null)
                 {
                     Const.PROJECT_ID = projectId;
-                    SolutionPath = GetProjectRootPath(Project.Path);
+                    SolutionPath = Project.Path;
                     var config = Project.Config;
                     SharePath = Path.Combine(SolutionPath, config.SharePath);
                     ApplicationPath = Path.Combine(SolutionPath, config.ApplicationPath);
                     EntityPath = Path.Combine(SolutionPath, config.EntityPath);
                     ApiPath = Path.Combine(SolutionPath, config.ApiPath);
                     EntityFrameworkPath = Path.Combine(SolutionPath, config.EntityFrameworkPath);
+                    ModulesPath = Path.Combine(SolutionPath, PathConst.ModulesPath);
                 }
             }
             else
@@ -43,10 +46,4 @@ public class ProjectContext
             }
         }
     }
-
-    public static string GetProjectRootPath(string projectPath)
-    {
-        return File.Exists(projectPath) ? Path.GetDirectoryName(projectPath)! : projectPath;
-    }
-
 }

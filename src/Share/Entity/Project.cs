@@ -33,7 +33,7 @@ public class Project : EntityBase
     /// <summary>
     /// project config
     /// </summary>
-    public ProjectConfig? Config { get; set; }
+    public ProjectConfig Config { get; set; } = new ProjectConfig();
 
     public List<EntityInfo> EntityInfos { get; set; } = [];
     public List<ApiDocInfo> ApiDocInfos { get; set; } = [];

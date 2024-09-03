@@ -24,7 +24,6 @@
 
     <ItemGroup>
         <Folder Include="Models\ToolsDtos\" />
-        <Folder Include="Share\" />
     </ItemGroup>
 
     <ItemGroup>

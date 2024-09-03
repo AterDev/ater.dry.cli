@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Share;
 
 namespace Http.API;
 
@@ -28,7 +29,7 @@ public static class ServiceCollectionExtension
         builder.Services.ConfigWebComponents(builder.Configuration);
         builder.Services.AddHttpContextAccessor();
 
-        builder.Services.AddScoped<ProjectContext>();
+        builder.Services.AddScoped<IProjectContext, ProjectContext>();
         builder.Services.AddSingleton(typeof(AIService));
         builder.Services.AddManager();
 
