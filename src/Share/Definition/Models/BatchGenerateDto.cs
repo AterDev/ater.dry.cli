@@ -1,4 +1,4 @@
-﻿namespace Share.Share;
+﻿namespace Share.Models;
 
 public class BatchGenerateDto
 {

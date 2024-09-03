@@ -1,9 +1,9 @@
-namespace Share.Share.Models.EntityInfoDtos;
+namespace Share.Models.EntityInfoDtos;
 /// <summary>
-/// 实体概要
+/// 实体列表元素
 /// </summary>
-/// <see cref="Entity.EntityInfo"/>
-public class EntityInfoShortDto
+/// <see cref="EntityInfo"/>
+public class EntityInfoItemDto
 {
     /// <summary>
     /// 类名
@@ -36,6 +36,7 @@ public class EntityInfoShortDto
     /// </summary>
     public bool? IsEnum { get; set; }
     public bool IsList { get; set; }
-    public Project Project { get; set; } = default!;
+    public Guid Id { get; set; } = Guid.NewGuid();
+    public DateTimeOffset CreatedTime { get; set; }
 
 }

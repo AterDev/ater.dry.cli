@@ -1,8 +1,8 @@
-namespace Share.Share.Models.EntityInfoDtos;
+namespace Share.Models.EntityInfoDtos;
 /// <summary>
 /// 实体添加时请求结构
 /// </summary>
-/// <see cref="Entity.EntityInfo"/>
+/// <see cref="EntityInfo"/>
 public class EntityInfoAddDto
 {
     /// <summary>

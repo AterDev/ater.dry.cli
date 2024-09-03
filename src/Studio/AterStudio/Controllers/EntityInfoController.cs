@@ -2,9 +2,8 @@
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
-using Share.Share;
-using Share.Share.Models.EntityInfoDtos;
+using Share.Models;
+using Share.Models.EntityInfoDtos;
 
 namespace AterStudio.Controllers;
 

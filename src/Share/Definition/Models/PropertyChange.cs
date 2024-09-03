@@ -1,4 +1,4 @@
-﻿namespace Share.Share;
+﻿namespace Share.Models;
 
 /// <summary>
 /// 属性变化

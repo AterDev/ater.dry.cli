@@ -1,15 +1,15 @@
-namespace Share.Share.Models.EntityInfoDtos;
+namespace Share.Models.EntityInfoDtos;
 /// <summary>
-/// 实体列表元素
+/// 实体更新时请求结构
 /// </summary>
-/// <see cref="Entity.EntityInfo"/>
-public class EntityInfoItemDto
+/// <see cref="EntityInfo"/>
+public class EntityInfoUpdateDto
 {
     /// <summary>
     /// 类名
     /// </summary>
     [MaxLength(100)]
-    public string Name { get; set; } = default!;
+    public string? Name { get; set; }
     /// <summary>
     /// 命名空间
     /// </summary>
@@ -30,13 +30,13 @@ public class EntityInfoItemDto
     /// </summary>
     [MaxLength(100)]
     public string? Summary { get; set; }
-    public EntityKeyType KeyType { get; set; } = EntityKeyType.Guid;
+    public EntityKeyType? KeyType { get; set; }
     /// <summary>
     /// 是否为枚举类
     /// </summary>
     public bool? IsEnum { get; set; }
-    public bool IsList { get; set; }
-    public Guid Id { get; set; } = Guid.NewGuid();
-    public DateTimeOffset CreatedTime { get; set; }
+    public bool? IsList { get; set; }
+    public Guid? ProjectId { get; set; }
+    public List<Guid>? PropertyInfoIds { get; set; }
 
 }

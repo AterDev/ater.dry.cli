@@ -7,6 +7,11 @@
         <SatelliteResourceLanguages>None</SatelliteResourceLanguages>
         <NoWarn>1701;1702;1591</NoWarn>
     </PropertyGroup>
+    <ItemGroup>
+      <Compile Remove="Managers\**" />
+      <EmbeddedResource Remove="Managers\**" />
+      <None Remove="Managers\**" />
+    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Ater.Web.Abstraction" Version="0.2.0" />
@@ -18,8 +23,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Managers\" />
-        <Folder Include="Share\Models\ToolsDtos\" />
+        <Folder Include="Models\ToolsDtos\" />
+        <Folder Include="Share\" />
     </ItemGroup>
 
     <ItemGroup>

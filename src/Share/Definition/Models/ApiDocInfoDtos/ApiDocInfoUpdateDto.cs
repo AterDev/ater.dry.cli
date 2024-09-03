@@ -1,15 +1,15 @@
-namespace Share.Share.Models.ApiDocInfoDtos;
+namespace Share.Models.ApiDocInfoDtos;
 /// <summary>
-/// 接口文档添加时请求结构
+/// 接口文档更新时请求结构
 /// </summary>
-/// <see cref="Entity.ApiDocInfo"/>
-public class ApiDocInfoAddDto
+/// <see cref="ApiDocInfo"/>
+public class ApiDocInfoUpdateDto
 {
     /// <summary>
     /// 文档名称
     /// </summary>
     [MaxLength(100)]
-    public required string Name { get; set; }
+    public string? Name { get; set; }
     /// <summary>
     /// 文档描述
     /// </summary>
@@ -19,7 +19,7 @@ public class ApiDocInfoAddDto
     /// 文档地址
     /// </summary>
     [MaxLength(300)]
-    public required string Path { get; set; }
+    public string? Path { get; set; }
     /// <summary>
     /// 生成路径
     /// </summary>

@@ -107,7 +107,7 @@ public class EntityParseHelper
         NamespaceName = CompilationHelper.GetNamespace();
         Name = classDeclarationSyntax?.Identifier.ToString();
         Comment = GetClassComment(classDeclarationSyntax);
-        CommentContent = GetComment();
+        CommentContent = GetCommentFromXmlDoc();
         PropertyInfos = GetPropertyInfos();
     }
 
@@ -137,7 +137,7 @@ public class EntityParseHelper
                 AssemblyName = AssemblyName,
                 NamespaceName = NamespaceName ?? "",
                 Comment = Comment,
-                Summary = GetComment(),
+                Summary = GetCommentFromXmlDoc(),
                 PropertyInfos = GetPropertyInfos(),
                 KeyType = KeyType
             };
@@ -179,18 +179,16 @@ public class EntityParseHelper
     }
 
     /// <summary>
-    /// 获取 类的注释
+    /// 获取类的注释
     /// </summary>
     /// <returns></returns>
-    private string? GetComment()
+    private string? GetCommentFromXmlDoc()
     {
         List<XmlCommentMember>? members = AssemblyHelper.GetXmlMembers(ProjectFile.Directory!);
         return members?.Where(m => m.FullName.EndsWith(NamespaceName + "." + Name))
                 .Select(s => s.Summary?.Trim())
                 .FirstOrDefault();
     }
-
-
 
     /// <summary>
     /// 获取该类的所有属性
@@ -272,7 +270,6 @@ public class EntityParseHelper
     /// <returns></returns>
     protected static string GetCommentXml(PropertyDeclarationSyntax syntax)
     {
-
         DocumentationCommentTriviaSyntax? trivia = syntax.GetLeadingTrivia()
             .Select(x => x.GetStructure()).OfType<DocumentationCommentTriviaSyntax>()
             .FirstOrDefault();

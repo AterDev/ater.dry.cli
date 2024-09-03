@@ -4,7 +4,7 @@ using Ater.Web.Abstraction;
 using CodeGenerator.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Share.Share.Models.ApiDocInfoDtos;
+using Share.Models.ApiDocInfoDtos;
 
 namespace AterStudio.Controllers;
 

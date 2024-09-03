@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using Microsoft.CodeAnalysis;
-using Share.Share;
+using Share.Models;
 
 namespace Share.Services;
 /// <summary>
@@ -17,9 +17,12 @@ public class CodeAnalysisService
             string content = File.ReadAllText(path);
             var compilation = new CompilationHelper(path);
             compilation.LoadContent(content);
-
             if (compilation.IsEntityClass())
             {
+                var comment = RegexSource.SummaryCommentRegex()
+                    .Match(content)?.Groups[1]?.Value.Trim();
+                comment = comment?.Replace("/", "").Trim();
+
                 entityFiles.Add(new EntityFile
                 {
                     Name = Path.GetFileName(path),
@@ -44,3 +47,6 @@ public class CodeAnalysisService
     }
 
 }
+
+
+

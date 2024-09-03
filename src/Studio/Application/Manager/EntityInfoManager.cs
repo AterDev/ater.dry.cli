@@ -1,10 +1,9 @@
 ﻿using System.Diagnostics;
 using System.Text;
-using System.Text.RegularExpressions;
 using CodeGenerator.Helper;
 using Microsoft.CodeAnalysis;
+using Share.Models;
 using Share.Services;
-using Share.Share;
 
 using Project = Entity.Project;
 
@@ -29,34 +28,15 @@ public partial class EntityInfoManager(
     {
         try
         {
-            var entityFiles = CodeAnalysisService.GetEntityFilePaths(entityPath);
-
-            string servicePath = Path.Combine(_projectContext.SolutionPath!, "src");
-            entityPath = Path.Combine(_projectContext.SolutionPath!, entityPath);
-
-            // get files in directory
-            List<string> filePaths = [.. Directory.GetFiles(entityPath, "*.cs", SearchOption.AllDirectories)];
-
-
+            var filePaths = CodeAnalysisService.GetEntityFilePaths(entityPath);
 
             if (filePaths.Count != 0)
             {
-                filePaths = filePaths.Where(f => !(f.EndsWith(".g.cs")
-                    || f.EndsWith(".AssemblyAttributes.cs")
-                    || f.EndsWith(".AssemblyInfo.cs")
-                    || f.EndsWith("GlobalUsings.cs")
-                    || f.EndsWith("Modules.cs"))
-                    ).ToList();
-
                 var compilation = new CompilationHelper(entityPath);
                 foreach (string? path in filePaths)
                 {
                     FileInfo file = new(path);
-
                     string content = File.ReadAllText(path);
-                    // 备注
-                    string? comment = SummaryCommentRegex().Match(content)?.Groups[1]?.Value.Trim();
-                    comment = comment?.Replace("/", "").Trim();
 
                     // 解析
                     compilation.LoadContent(content);
@@ -552,7 +532,4 @@ public partial class EntityInfoManager(
         }
         return null;
     }
-
-    [GeneratedRegex(@"/// <summary>([\s\S]*?)/// <\/summary>")]
-    private static partial Regex SummaryCommentRegex();
 }

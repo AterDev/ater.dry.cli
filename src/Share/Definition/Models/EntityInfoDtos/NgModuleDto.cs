@@ -1,4 +1,4 @@
-﻿namespace Share.Share.Models.EntityInfoDtos;
+﻿namespace Share.Models.EntityInfoDtos;
 public class NgModuleDto
 {
     /// <summary>

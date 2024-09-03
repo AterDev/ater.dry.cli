@@ -1,8 +1,8 @@
-namespace Share.Share.Models.ApiDocInfoDtos;
+namespace Share.Models.ApiDocInfoDtos;
 /// <summary>
 /// 接口文档概要
 /// </summary>
-/// <see cref="Entity.ApiDocInfo"/>
+/// <see cref="ApiDocInfo"/>
 public class ApiDocInfoShortDto
 {
     /// <summary>

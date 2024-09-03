@@ -1,8 +1,8 @@
-namespace Share.Share.Models.EntityInfoDtos;
+namespace Share.Models.EntityInfoDtos;
 /// <summary>
 /// 实体查询筛选
 /// </summary>
-/// <see cref="Entity.EntityInfo"/>
+/// <see cref="EntityInfo"/>
 public class EntityInfoFilterDto : FilterBase
 {
     /// <summary>
