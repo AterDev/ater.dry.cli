@@ -55,31 +55,35 @@ public class AdvanceManager
     /// 获取实体表结构
     /// </summary>
     /// <returns>markdown format</returns>
-    public string GetDatabaseStructureAsync()
+    public async Task<string> GetDatabaseStructureAsync()
     {
-        StringBuilder sb = new();
-        List<string> entityFiles = Directory.GetFiles(Path.Combine(_projectContext.SolutionPath!, Config.EntityPath), $"*.cs", SearchOption.AllDirectories).ToList();
+        var sb = new StringBuilder();
+        var entityFiles = Directory.GetFiles(_projectContext.EntityPath!, $"*.cs", SearchOption.AllDirectories)
+            .ToList();
 
         entityFiles = entityFiles.Where(f => !(f.EndsWith(".g.cs")
                 || f.EndsWith(".AssemblyAttributes.cs")
                 || f.EndsWith(".AssemblyInfo.cs")
                 || f.EndsWith("GlobalUsings.cs")
+                || f.EndsWith("Const.cs")
                 || f.EndsWith("Modules.cs"))
                 ).ToList();
 
         if (entityFiles.Count > 0)
         {
             var entityCompilation = new EntityParseHelper(entityFiles[0]);
-            entityFiles.ForEach(entityPath =>
+            foreach (var entityPath in entityFiles)
             {
                 if (entityPath != null)
                 {
-                    entityCompilation.LoadEntityContent(File.ReadAllText(entityPath));
-                    var entityInfo = entityCompilation.GetEntity();
-                    string content = ToMarkdown(entityInfo);
-                    sb.AppendLine(content);
+                    var entityInfo = await entityCompilation.ParseEntityAsync(entityPath);
+                    if (entityInfo != null)
+                    {
+                        string content = ToMarkdown(entityInfo);
+                        sb.AppendLine(content);
+                    }
                 }
-            });
+            }
         }
         return sb.ToString();
     }

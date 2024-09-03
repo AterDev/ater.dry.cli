@@ -1,6 +1,4 @@
-﻿using CodeGenerator.Helper;
-
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace Application.Implement;
 
@@ -16,7 +14,6 @@ public class ProjectContext
     public string? ApplicationPath { get; set; }
     public string? EntityPath { get; set; }
     public string? ApiPath { get; set; }
-    public string? Version { get; set; }
     public string? EntityFrameworkPath { get; set; }
 
     public ProjectContext(IHttpContextAccessor httpContextAccessor, CommandDbContext context)
@@ -32,19 +29,12 @@ public class ProjectContext
                 {
                     Const.PROJECT_ID = projectId;
                     SolutionPath = GetProjectRootPath(Project.Path);
-                    ConfigOptions? options = ConfigCommand.ReadConfigFile(SolutionPath);
-                    if (options != null)
-                    {
-                        Config.SetConfig(options);
-                        Config.SolutionPath = SolutionPath;
-                    }
-
-                    SharePath = Path.Combine(SolutionPath, Config.SharePath);
-                    ApplicationPath = Path.Combine(SolutionPath, Config.ApplicationPath);
-                    EntityPath = Path.Combine(SolutionPath, Config.EntityPath);
-                    ApiPath = Path.Combine(SolutionPath, Config.ApiPath);
-                    EntityFrameworkPath = Path.Combine(SolutionPath, Config.EntityFrameworkPath);
-                    Version = AssemblyHelper.GetSolutionVersionAsync(SolutionPath).Result;
+                    var config = Project.Config;
+                    SharePath = Path.Combine(SolutionPath, config.SharePath);
+                    ApplicationPath = Path.Combine(SolutionPath, config.ApplicationPath);
+                    EntityPath = Path.Combine(SolutionPath, config.EntityPath);
+                    ApiPath = Path.Combine(SolutionPath, config.ApiPath);
+                    EntityFrameworkPath = Path.Combine(SolutionPath, config.EntityFrameworkPath);
                 }
             }
             else

@@ -1,46 +1,38 @@
 ﻿using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
-
+using CodeGenerator.Helper;
 using Microsoft.CodeAnalysis;
-
+using Share.Services;
 using Share.Share;
-using Share.Share.Models.EntityInfoDtos;
 
-using Project = Definition.Entity.Project;
+using Project = Entity.Project;
 
 namespace Application.Manager;
 
 public partial class EntityInfoManager(
     DataAccessContext<EntityInfo> dataContext,
     ILogger<EntityInfoManager> logger,
+    CodeAnalysisService codeAnalysis,
     ProjectContext projectContext)
-    : ManagerBase<EntityInfo, EntityInfoUpdateDto, EntityInfoFilterDto, EntityInfoItemDto>(dataContext, logger)
+    : ManagerBase<EntityInfo>(dataContext, logger)
 {
     private readonly ProjectContext _projectContext = projectContext;
+    private readonly CodeAnalysisService _codeAnalysis = codeAnalysis;
 
     /// <summary>
     /// 获取实体列表
     /// </summary>
     /// <param name="serviceName">服务名称</param>
     /// <returns></returns>
-    public List<EntityFile> GetEntityFiles(string? serviceName)
+    public List<EntityFile> GetEntityFiles(string entityPath)
     {
-        List<EntityFile> entityFiles = [];
         try
         {
-            string entityPath = Config.EntityPath.Replace('\\', Path.DirectorySeparatorChar)
-                .Replace('/', Path.DirectorySeparatorChar);
-
+            var entityFiles = CodeAnalysisService.GetEntityFilePaths(entityPath);
 
             string servicePath = Path.Combine(_projectContext.SolutionPath!, "src");
             entityPath = Path.Combine(_projectContext.SolutionPath!, entityPath);
-
-            if (!string.IsNullOrWhiteSpace(serviceName))
-            {
-                servicePath = Path.Combine(_projectContext.SolutionPath!, Config.MicroservicePath, serviceName);
-                entityPath = Path.Combine(servicePath, "Definition", "Entity");
-            }
 
             // get files in directory
             List<string> filePaths = [.. Directory.GetFiles(entityPath, "*.cs", SearchOption.AllDirectories)];

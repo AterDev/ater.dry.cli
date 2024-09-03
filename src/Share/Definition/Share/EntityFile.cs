@@ -7,7 +7,7 @@ public class EntityFile
     /// 注释说明
     /// </summary>
     public string? Comment { get; set; }
-    public required string BaseDirPath { get; set; }
+    public string BaseDirPath { get; set; } = string.Empty;
     public required string Path { get; set; }
     public string? Content { get; set; }
     /// <summary>
