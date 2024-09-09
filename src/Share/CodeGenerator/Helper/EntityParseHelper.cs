@@ -25,6 +25,8 @@ public class EntityParseHelper
     /// </summary>
     public string? Comment { get; set; }
     public string? CommentContent { get; set; }
+
+    public string FilePath { get; set; }
     /// <summary>
     /// 前端对应模块
     /// </summary>
@@ -56,15 +58,14 @@ public class EntityParseHelper
 
     public EntityParseHelper(string filePath)
     {
+        FilePath = filePath;
         if (!File.Exists(filePath))
         {
             throw new FileNotFoundException(filePath);
         }
-
         FileInfo fileInfo = new(filePath);
         FileInfo? projectFile = AssemblyHelper.FindProjectFile(fileInfo.Directory!, fileInfo.Directory!.Root)
             ?? throw new ArgumentException("can't find project file");
-
         ProjectFile = projectFile;
         CodeFilesPath = ProjectFile.Directory!.GetFiles("*.cs", SearchOption.AllDirectories)
             .Select(f => f.FullName).ToList();
@@ -111,8 +112,9 @@ public class EntityParseHelper
         PropertyInfos = GetPropertyInfos();
     }
 
-    public async Task<EntityInfo?> ParseEntityAsync(string filePath)
+    public async Task<EntityInfo?> ParseEntityAsync(string? filePath = null)
     {
+        filePath ??= FilePath;
         if (File.Exists(filePath))
         {
             string content = await File.ReadAllTextAsync(filePath);

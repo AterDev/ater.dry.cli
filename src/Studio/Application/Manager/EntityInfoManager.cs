@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Text;
 using CodeGenerator.Helper;
+using CodeGenerator.Models;
 using Microsoft.CodeAnalysis;
 using Share;
 using Share.Models;
@@ -14,11 +15,13 @@ public partial class EntityInfoManager(
     DataAccessContext<EntityInfo> dataContext,
     ILogger<EntityInfoManager> logger,
     CodeAnalysisService codeAnalysis,
+    CodeGenService codeGenService,
     IProjectContext projectContext)
     : ManagerBase<EntityInfo>(dataContext, logger)
 {
     private readonly IProjectContext _projectContext = projectContext;
     private readonly CodeAnalysisService _codeAnalysis = codeAnalysis;
+    private readonly CodeGenService _codeGenService = codeGenService;
 
     /// <summary>
     /// 获取实体列表
@@ -205,27 +208,29 @@ public partial class EntityInfoManager(
         {
             entityName = entityName.Replace(".cs", "");
         }
+        var entityFile = new EntityFile
+        {
+            Name = entityName,
+            FullName = entityName,
+            ModuleName = moduleName
+        };
 
         string? filePath;
         if (isManager)
         {
-            filePath = Path.Combine(_projectContext.SolutionPath!, Config.ApplicationPath, "Manager", $"{entityName}Manager.cs");
 
-            if (!string.IsNullOrWhiteSpace(moduleName))
-            {
-                filePath = Path.Combine(_projectContext.SolutionPath!, "src", "Modules", moduleName, "Manager", $"{entityName}Manager.cs");
-            }
+            filePath = entityFile.GetManagerPath(_projectContext.SolutionPath!);
+            filePath = Path.Combine(filePath, $"{entityName}Manager.cs");
         }
         else
         {
-            string entityDir = Path.Combine(_projectContext.SolutionPath!, Config.EntityPath, "Entities");
+            string entityDir = Path.Combine(_projectContext.EntityPath!);
             filePath = Directory.GetFiles(entityDir, $"{entityName}.cs", SearchOption.AllDirectories)
                 .FirstOrDefault();
         }
         if (filePath != null)
         {
             FileInfo file = new(filePath);
-
             return new EntityFile()
             {
                 Name = file.Name,
@@ -233,7 +238,6 @@ public partial class EntityInfoManager(
                 FullName = file.FullName,
                 Content = File.ReadAllText(filePath)
             };
-
         }
         return default;
     }
@@ -244,16 +248,15 @@ public partial class EntityInfoManager(
     /// <param name="filePath"></param>
     /// <param name="Content"></param>
     /// <returns></returns>
-    public bool UpdateDtoContent(string filePath, string Content)
+    public async Task<bool> UpdateDtoContentAsync(string filePath, string Content)
     {
         try
         {
             if (filePath != null)
             {
-                File.WriteAllTextAsync(filePath, Content, new UTF8Encoding(false));
+                await File.WriteAllTextAsync(filePath, Content, Encoding.UTF8);
                 return true;
             }
-
         }
         catch (Exception ex)
         {
@@ -263,38 +266,42 @@ public partial class EntityInfoManager(
         return false;
     }
 
-
-    public async Task GenerateAsync(Project project, GenerateDto dto)
+    /// <summary>
+    /// 生成服务
+    /// </summary>
+    /// <param name="project"></param>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    public async Task GenerateAsync(GenerateDto dto)
     {
         string dtoPath = _projectContext.SharePath!;
         string applicationPath = _projectContext.ApplicationPath!;
         string apiPath = _projectContext.ApiPath!;
 
-        if (!string.IsNullOrWhiteSpace(dto.ServiceName))
-        {
-            Config.IsMicroservice = true;
-            Config.ServiceName = dto.ServiceName;
-            var serviceOptions = Config.GetServiceConfig(dto.ServiceName);
-            dtoPath = Path.Combine(_projectContext.SolutionPath!, serviceOptions.DtoPath);
-            applicationPath = Path.Combine(_projectContext.SolutionPath!, serviceOptions.ApplicationPath);
-            apiPath = Path.Combine(_projectContext.SolutionPath!, serviceOptions.ApiPath);
-            Config.IsMicroservice = false;
+        var helper = new EntityParseHelper(dto.EntityPath);
+        var entityInfo = await helper.ParseEntityAsync();
 
+        if (entityInfo == null)
+        {
+            throw new Exception("实体解析失败，请检查实体文件是否正确！");
         }
+
+        var files = new List<GenFileInfo>();
         switch (dto.CommandType)
         {
             case CommandType.Dto:
-                await CommandRunner.GenerateDtoAsync(dto.EntityPath, dtoPath, dto.Force);
+                files = _codeGenService.GenerateDto(entityInfo, dtoPath, dto.Force);
                 break;
             case CommandType.Manager:
-                await CommandRunner.GenerateManagerAsync(dto.EntityPath, dtoPath, applicationPath, dto.Force);
+                files = _codeGenService.GenerateManager(entityInfo, applicationPath, dtoPath, dto.Force);
                 break;
             case CommandType.API:
-                await CommandRunner.GenerateApiAsync(dto.EntityPath, dtoPath, applicationPath, apiPath, "Controller", dto.Force);
+                files = _codeGenService.GenerateController(entityInfo, apiPath, dtoPath, dto.Force);
                 break;
             default:
                 break;
         }
+        _codeGenService.GenerateFiles(files);
     }
 
     /// <summary>
@@ -309,22 +316,14 @@ public partial class EntityInfoManager(
         string apiPath = _projectContext.ApiPath!;
         string entityPath = _projectContext.EntityPath!;
 
-        if (!string.IsNullOrWhiteSpace(dto.ServiceName))
-        {
-            Config.IsSplitController = false;
-            Config.IsMicroservice = true;
-            Config.ServiceName = dto.ServiceName;
-            var serviceOptions = Config.GetServiceConfig(dto.ServiceName);
-            dtoPath = Path.Combine(_projectContext.SolutionPath!, serviceOptions.DtoPath);
-            applicationPath = Path.Combine(_projectContext.SolutionPath!, serviceOptions.ApplicationPath);
-            apiPath = Path.Combine(_projectContext.SolutionPath!, serviceOptions.ApiPath);
-            entityPath = Path.Combine(_projectContext.SolutionPath!, serviceOptions.EntityPath);
-        }
+        var files = new List<GenFileInfo>();
+        var entityInfos = CodeAnalysisService.GetEntityInfos(dto.EntityPaths) ?? [];
         switch (dto.CommandType)
         {
             case CommandType.Dto:
-                foreach (string item in dto.EntityPaths)
+                foreach (var item in entityInfos)
                 {
+                    files.AddRange(await _codeGenService.GenerateDto(item, dtoPath, dto.Force));
                     await CommandRunner.GenerateDtoAsync(item, dtoPath, dto.Force);
                 }
                 break;
@@ -360,6 +359,7 @@ public partial class EntityInfoManager(
             default:
                 break;
         }
+        _codeGenService.GenerateFiles(files);
     }
 
     public async Task GenerateSyncAsync(Project project)

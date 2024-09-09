@@ -92,7 +92,7 @@ public class EntityInfoController(
     [HttpPut("dto")]
     public bool UpdateDtoContent(UpdateDtoDto dto)
     {
-        return manager.UpdateDtoContent(dto.FileName, dto.Content);
+        return manager.UpdateDtoContentAsync(dto.FileName, dto.Content);
     }
 
     [HttpPost("generate")]

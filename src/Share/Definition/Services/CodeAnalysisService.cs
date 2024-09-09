@@ -11,7 +11,7 @@ public class CodeAnalysisService(IProjectContext projectContext)
     private readonly IProjectContext _projectContext = projectContext;
 
     /// <summary>
-    /// get entity parse info
+    /// get entity file info
     /// </summary>
     /// <param name="filePaths"></param>
     /// <returns></returns>
@@ -51,6 +51,24 @@ public class CodeAnalysisService(IProjectContext projectContext)
         return [.. entityFiles];
     }
 
+    /// <summary>
+    /// 分析实体信息
+    /// </summary>
+    /// <param name="entityFiles"></param>
+    /// <returns></returns>
+    public static List<EntityInfo> GetEntityInfos(List<string> entityFiles)
+    {
+        var entityInfos = new ConcurrentBag<EntityInfo>();
+        Parallel.ForEach(entityFiles, entityFile =>
+        {
+            var parse = new EntityParseHelper(entityFile);
+            var entityInfo = parse.ParseEntityAsync().Result;
+
+            entityInfos.Add(entityInfo);
+        });
+        return [.. entityInfos];
+    }
+
     public static EntityFile? GetEntityFile(string filePath)
     {
         return GetEntityFiles([filePath]).FirstOrDefault();
@@ -73,6 +91,3 @@ public class CodeAnalysisService(IProjectContext projectContext)
     }
 
 }
-
-
-

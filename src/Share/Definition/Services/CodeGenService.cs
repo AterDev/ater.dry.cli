@@ -1,16 +1,15 @@
 ﻿using System.ComponentModel;
 using CodeGenerator.Generate;
 using CodeGenerator.Models;
+using Microsoft.Extensions.Logging;
 
 namespace Share.Services;
 /// <summary>
 /// 代码生成服务
 /// </summary>
-public class CodeGenService
+public class CodeGenService(ILogger<CodeGenService> logger)
 {
-    public CodeGenService()
-    {
-    }
+    private readonly ILogger<CodeGenService> _logger = logger;
 
     /// <summary>
     /// 生成Dto
@@ -150,6 +149,32 @@ public class CodeGenService
             ModuleName = entityInfo.ModuleName
         };
         return [globalFile, controllerFile];
+    }
+
+
+    /// <summary>
+    /// 生成文件
+    /// </summary>
+    /// <param name="files"></param>
+    public void GenerateFiles(List<GenFileInfo>? files)
+    {
+        if (files == null || files.Count == 0)
+        {
+            return;
+        }
+        foreach (var file in files)
+        {
+            if (file.IsCover || !File.Exists(file.Path))
+            {
+                var dir = Path.GetDirectoryName(file.Path);
+                if (Directory.Exists(dir) == false)
+                {
+                    Directory.CreateDirectory(dir!);
+                }
+                File.WriteAllText(file.Path, file.Content, Encoding.UTF8);
+                _logger.LogInformation($"🆕 生成文件：{file.Path}");
+            }
+        }
     }
 }
 
