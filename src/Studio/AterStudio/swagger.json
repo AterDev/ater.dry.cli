@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "AterStudio API doc",
-    "description": "Studio API 文档. 更新时间:2024-09-10 17:11:29",
+    "description": "Studio API 文档. 更新时间:2024-09-10 17:56:56",
     "version": "v1"
   },
   "paths": {
@@ -2451,44 +2451,34 @@
         "type": "object",
         "properties": {
           "idType": {
-            "type": "string",
-            "readOnly": true
+            "type": "string"
           },
           "createdTimeName": {
-            "type": "string",
-            "readOnly": true
+            "type": "string"
           },
           "updatedTimeName": {
-            "type": "string",
-            "readOnly": true
+            "type": "string"
           },
           "version": {
-            "type": "string",
-            "readOnly": true
+            "type": "string"
           },
           "sharePath": {
-            "type": "string",
-            "readOnly": true
+            "type": "string"
           },
           "entityPath": {
-            "type": "string",
-            "readOnly": true
+            "type": "string"
           },
           "entityFrameworkPath": {
-            "type": "string",
-            "readOnly": true
+            "type": "string"
           },
           "applicationPath": {
-            "type": "string",
-            "readOnly": true
+            "type": "string"
           },
           "apiPath": {
-            "type": "string",
-            "readOnly": true
+            "type": "string"
           },
           "microservicePath": {
-            "type": "string",
-            "readOnly": true
+            "type": "string"
           },
           "solutionPath": {
             "type": "string"

@@ -48,16 +48,16 @@ public class Project : EntityBase
 /// </summary>
 public class ProjectConfig
 {
-    public string IdType { get; private set; } = Const.Guid;
-    public string CreatedTimeName { get; private set; } = Const.CreatedTime;
-    public string UpdatedTimeName { get; private set; } = Const.UpdatedTime;
-    public string Version { get; private set; } = Const.Version;
-    public string SharePath { get; private set; } = PathConst.SharePath;
-    public string EntityPath { get; private set; } = PathConst.EntityPath;
-    public string EntityFrameworkPath { get; private set; } = PathConst.EntityFrameworkPath;
-    public string ApplicationPath { get; private set; } = PathConst.ApplicationPath;
-    public string ApiPath { get; private set; } = PathConst.APIPath;
-    public string MicroservicePath { get; private set; } = PathConst.MicroservicePath;
+    public string IdType { get; set; } = Const.Guid;
+    public string CreatedTimeName { get; set; } = Const.CreatedTime;
+    public string UpdatedTimeName { get; set; } = Const.UpdatedTime;
+    public string Version { get; set; } = Const.Version;
+    public string SharePath { get; set; } = PathConst.SharePath;
+    public string EntityPath { get; set; } = PathConst.EntityPath;
+    public string EntityFrameworkPath { get; set; } = PathConst.EntityFrameworkPath;
+    public string ApplicationPath { get; set; } = PathConst.ApplicationPath;
+    public string ApiPath { get; set; } = PathConst.APIPath;
+    public string MicroservicePath { get; set; } = PathConst.MicroservicePath;
     public string SolutionPath { get; set; } = "";
     public bool IsLight { get; private set; } = false;
     public ControllerType ControllerType { get; set; } = ControllerType.Client;

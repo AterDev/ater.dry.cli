@@ -54,6 +54,9 @@ public class ProjectManager(DataAccessContext<Project> dataContext,
         return await base.AddAsync(entity) ? entity.Id : null;
     }
 
+
+
+
     public async Task<Project?> GetDetailAsync(Guid id)
     {
         return await FindAsync(id);
@@ -99,9 +102,8 @@ public class ProjectManager(DataAccessContext<Project> dataContext,
     /// </summary>
     /// <param name="dto"></param>
     /// <returns></returns>
-    public async Task<bool> UpdateConfigAsync(Guid id, ProjectConfig dto)
+    public async Task<bool> UpdateConfigAsync(Project project, ProjectConfig dto)
     {
-        var project = await GetCurrentAsync(id);
         project!.Config = dto;
         return await UpdateAsync(project);
     }

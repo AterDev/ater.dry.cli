@@ -116,11 +116,12 @@ public class ProjectController(
     [HttpPut("setting/{id}")]
     public async Task<ActionResult<bool>> UpdateConfigAsync([FromRoute] Guid id, ProjectConfig dto)
     {
-        if (!await _manager.ExistAsync(id))
+        var project = await _manager.GetCurrentAsync(id);
+        if (project == null)
         {
             return NotFound();
         }
-        return await _manager.UpdateConfigAsync(id, dto);
+        return await _manager.UpdateConfigAsync(project, dto);
     }
 
     /// <summary>

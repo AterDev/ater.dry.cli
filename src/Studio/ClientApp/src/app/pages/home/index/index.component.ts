@@ -135,9 +135,7 @@ export class IndexComponent implements OnInit {
     this.current = project;
     this.projectState.setProject(project);
     this.isProcessing = true;
-    this.config = project.config!;
-    console.log(this.config);
-    
+    this.config = project.config!;    
     this.buildSettingForm();
     this.dialogRef = this.dialog.open(this.settingTmpRef, {
       minWidth: 450,
@@ -165,10 +163,10 @@ export class IndexComponent implements OnInit {
 
   buildSettingForm(): void {
     this.settingForm = new FormGroup({
-      dtoPath: new FormControl(this.config?.sharePath, [Validators.required, Validators.minLength(1), Validators.maxLength(200)]),
+      sharePath: new FormControl(this.config?.sharePath, [Validators.required, Validators.minLength(1), Validators.maxLength(200)]),
       entityPath: new FormControl(this.config?.entityPath, [Validators.required, Validators.minLength(1), Validators.maxLength(200)]),
       entityFrameworkPath: new FormControl(this.config?.entityFrameworkPath, [Validators.required, Validators.minLength(1), Validators.maxLength(200)]),
-      storePath: new FormControl(this.config?.applicationPath, [Validators.required, Validators.minLength(1), Validators.maxLength(200)]),
+      applicationPath: new FormControl(this.config?.applicationPath, [Validators.required, Validators.minLength(1), Validators.maxLength(200)]),
       apiPath: new FormControl(this.config?.apiPath, [Validators.required, Validators.minLength(1), Validators.maxLength(200)]),
       idType: new FormControl(this.config?.idType ?? "Guid", [Validators.required, Validators.minLength(2), Validators.maxLength(20)]),
       controllerType: new FormControl(this.config?.controllerType ?? 0, [Validators.required]),
@@ -183,8 +181,23 @@ export class IndexComponent implements OnInit {
         return;
       }
       this.isProcessing = true;
-      const data = this.settingForm.value;
-      // TODO: save configs
+      const data = this.settingForm.value as ProjectConfig;
+      console.log(data);
+      
+      this.service.updateConfig(this.current.id, data)
+        .subscribe({
+          next: (res) => {
+            this.snb.open('保存成功');
+            this.dialogRef.close();
+            this.getProjects();
+          },
+          error: (error) => {
+            this.snb.open(error.detail);
+          },
+          complete: () => {
+            this.isProcessing = false;
+          }
+        });
     } else {
       console.log(this.settingForm.errors);
     }
