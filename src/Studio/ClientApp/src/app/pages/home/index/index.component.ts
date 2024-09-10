@@ -136,6 +136,8 @@ export class IndexComponent implements OnInit {
     this.projectState.setProject(project);
     this.isProcessing = true;
     this.config = project.config!;
+    console.log(this.config);
+    
     this.buildSettingForm();
     this.dialogRef = this.dialog.open(this.settingTmpRef, {
       minWidth: 450,

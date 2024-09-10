@@ -10,9 +10,9 @@
     </a>
     <div class="d-flex flex-grow-1 "></div>
     <div>
-      <button mat-icon-button matTooltip="AI配置" (click)="openOpenAI()">
+      <!-- <button mat-icon-button matTooltip="AI配置" (click)="openOpenAI()">
         <mat-icon class="text-primary">smart_toy</mat-icon>
-      </button>
+      </button> -->
     </div>
   </div>
 
@@ -81,16 +81,16 @@
 </ng-template>
 
 <ng-template #settingDialog>
-  <ng-container *ngIf="config && !isProcessing">
+  <ng-container *ngIf="config">
     <h2 mat-dialog-title>配置修改</h2>
     <mat-dialog-content class="my-1 py-2">
       <p>也可以直接编辑项目根目录中的.dry-config.json</p>
       <strong>以下路径相对于项目根路径,不用以/开头</strong>
-      <form [formGroup]="settingForm" class="d-flex flex-column">
+      <form [formGroup]="settingForm" class="d-flex flex-column mt-2">
         <mat-form-field appearance="outline">
           <mat-label>实体目录</mat-label>
           <input matInput placeholder="实体所在项目目录,1-200字符" formControlName="entityPath" required>
-          <mat-hint>实体需要在该项目下的Entities目录中，才会被识别为实体</mat-hint>
+          <mat-hint>继承自EntityBase的类会被识别为实体</mat-hint>
         </mat-form-field>
         <mat-form-field appearance="outline" class="mt-2">
           <mat-label>EntityFramework目录</mat-label>
