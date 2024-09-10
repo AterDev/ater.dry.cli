@@ -18,7 +18,7 @@ export class EntityInfoBaseService extends BaseService {
    * @param serviceName string
    */
   list(id: string, serviceName: string | null): Observable<EntityFile[]> {
-    const _url = `/api/EntityInfo/${id}?serviceName=${serviceName ?? ''}`;
+    const _url = `/api/admin/EntityInfo/${id}?serviceName=${serviceName ?? ''}`;
     return this.request<EntityFile[]>('get', _url);
   }
 
@@ -28,7 +28,7 @@ export class EntityInfoBaseService extends BaseService {
    * @param entityFilePath 
    */
   getDtos(entityFilePath: string | null): Observable<EntityFile[]> {
-    const _url = `/api/EntityInfo/dtos?entityFilePath=${entityFilePath ?? ''}`;
+    const _url = `/api/admin/EntityInfo/dtos?entityFilePath=${entityFilePath ?? ''}`;
     return this.request<EntityFile[]>('get', _url);
   }
 
@@ -39,7 +39,7 @@ export class EntityInfoBaseService extends BaseService {
    * @param summary 
    */
   createDto(entityFilePath: string | null, name: string | null, summary: string | null): Observable<string> {
-    const _url = `/api/EntityInfo/dto?entityFilePath=${entityFilePath ?? ''}&name=${name ?? ''}&summary=${summary ?? ''}`;
+    const _url = `/api/admin/EntityInfo/dto?entityFilePath=${entityFilePath ?? ''}&name=${name ?? ''}&summary=${summary ?? ''}`;
     return this.request<string>('post', _url);
   }
 
@@ -48,7 +48,7 @@ export class EntityInfoBaseService extends BaseService {
    * @param data UpdateDtoDto
    */
   updateDtoContent(data: UpdateDtoDto): Observable<boolean> {
-    const _url = `/api/EntityInfo/dto`;
+    const _url = `/api/admin/EntityInfo/dto`;
     return this.request<boolean>('put', _url, data);
   }
 
@@ -56,7 +56,7 @@ export class EntityInfoBaseService extends BaseService {
    * 清理解决方案
    */
   cleanSolution(): Observable<string> {
-    const _url = `/api/EntityInfo`;
+    const _url = `/api/admin/EntityInfo`;
     return this.request<string>('delete', _url);
   }
 
@@ -67,7 +67,7 @@ export class EntityInfoBaseService extends BaseService {
    * @param moduleName 
    */
   getFileContent(entityName: string | null, isManager: boolean | null, moduleName: string | null): Observable<EntityFile> {
-    const _url = `/api/EntityInfo/fileContent?entityName=${entityName ?? ''}&isManager=${isManager ?? ''}&moduleName=${moduleName ?? ''}`;
+    const _url = `/api/admin/EntityInfo/fileContent?entityName=${entityName ?? ''}&isManager=${isManager ?? ''}&moduleName=${moduleName ?? ''}`;
     return this.request<EntityFile>('get', _url);
   }
 
@@ -76,7 +76,7 @@ export class EntityInfoBaseService extends BaseService {
    * @param data GenerateDto
    */
   generate(data: GenerateDto): Observable<boolean> {
-    const _url = `/api/EntityInfo/generate`;
+    const _url = `/api/admin/EntityInfo/generate`;
     return this.request<boolean>('post', _url, data);
   }
 
@@ -85,7 +85,7 @@ export class EntityInfoBaseService extends BaseService {
    * @param data BatchGenerateDto
    */
   batchGenerate(data: BatchGenerateDto): Observable<boolean> {
-    const _url = `/api/EntityInfo/batch-generate`;
+    const _url = `/api/admin/EntityInfo/batch-generate`;
     return this.request<boolean>('post', _url, data);
   }
 
@@ -94,7 +94,7 @@ export class EntityInfoBaseService extends BaseService {
    * @param id 
    */
   generateSync(id: string): Observable<boolean> {
-    const _url = `/api/EntityInfo/generateSync/${id}`;
+    const _url = `/api/admin/EntityInfo/generateSync/${id}`;
     return this.request<boolean>('post', _url);
   }
 
@@ -103,7 +103,7 @@ export class EntityInfoBaseService extends BaseService {
    * @param data NgModuleDto
    */
   generateNgModule(data: NgModuleDto): Observable<boolean> {
-    const _url = `/api/EntityInfo/generateNgModule`;
+    const _url = `/api/admin/EntityInfo/generateNgModule`;
     return this.request<boolean>('post', _url, data);
   }
 

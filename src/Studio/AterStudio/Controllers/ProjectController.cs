@@ -8,8 +8,9 @@ namespace AterStudio.Controllers;
 /// <see cref="ProjectManager"/>
 public class ProjectController(
     ProjectManager manager,
+    IProjectContext project,
     AdvanceManager advance,
-    ILogger<ProjectContext> logger) : BaseController<ProjectManager>(manager, logger)
+    ILogger<ProjectContext> logger) : BaseController<ProjectManager>(manager, project, logger)
 {
     private readonly AdvanceManager _advance = advance;
 
@@ -55,10 +56,12 @@ public class ProjectController(
     {
         if (!Directory.Exists(path))
         {
-            return Problem("未找到该路径");
+            return Problem("未找到该目录");
         }
 
-        string? projectFilePath = Directory.GetFiles(path, $"*{Const.SolutionExtension}", SearchOption.TopDirectoryOnly).FirstOrDefault();
+        var projectFilePath = Directory.GetFiles(path, $"*{Const.SolutionExtension}", SearchOption.TopDirectoryOnly).FirstOrDefault();
+
+        projectFilePath ??= Directory.GetFiles(path, $"*{Const.SolutionXMLExtension}", SearchOption.TopDirectoryOnly).FirstOrDefault();
 
         projectFilePath ??= Directory.GetFiles(path, $"*{Const.CSharpProjectExtension}", SearchOption.TopDirectoryOnly).FirstOrDefault();
         projectFilePath ??= Directory.GetFiles(path, Const.NodeProjectFile, SearchOption.TopDirectoryOnly).FirstOrDefault();
@@ -67,7 +70,7 @@ public class ProjectController(
         {
             return Problem("Not Found valid Project!");
         }
-        return await _manager.AddAsync(name, path);
+        return await _manager.AddAsync(name, projectFilePath);
     }
 
     /// <summary>

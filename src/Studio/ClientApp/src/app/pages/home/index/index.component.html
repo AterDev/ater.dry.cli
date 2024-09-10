@@ -1,8 +1,9 @@
 <!-- project -->
 <div class="p-2">
   <div class="d-flex flex-row align-items-center">
-    <button *ngIf=" type!='desktop'" mat-raised-button (click)="addProjectDialog()" matTooltip="添加本地已有项目"
-      color="primary">添加项目
+    <button *ngIf=" type!='desktop'" mat-flat-button (click)="addProjectDialog()" matTooltip="添加本地已有项目"
+      color="primary">
+      添加本地项目
     </button>
     <a *ngIf="type!='desktop'" class="ms-2" mat-mini-fab matTooltip="创建新解决方案" routerLink="/create" color="accent">
       <mat-icon>add</mat-icon>
@@ -65,10 +66,10 @@
     <form [formGroup]="addForm" class="d-flex flex-column">
       <mat-form-field>
         <mat-label>项目名称</mat-label>
-        <input matInput placeholder="3-20字符" formControlName="displayName">
+        <input matInput placeholder="显示名称" formControlName="displayName">
       </mat-form-field>
       <mat-form-field>
-        <mat-label>项目路径</mat-label>
+        <mat-label>项目目录</mat-label>
         <input matInput placeholder="项目根目录路径，非文件路径" formControlName="path" (keyup.enter)="addProject()">
       </mat-form-field>
     </form>

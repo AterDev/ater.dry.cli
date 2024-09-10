@@ -51,6 +51,7 @@ public class Const
     public const string StudioZip = "studio.zip";
 
     public const string SolutionExtension = ".sln";
+    public const string SolutionXMLExtension = ".slnx";
     public const string CSharpProjectExtension = ".csproj";
     public const string NodeProjectFile = "package.json";
     public const string CoreLibName = "Ater.Web.Core";

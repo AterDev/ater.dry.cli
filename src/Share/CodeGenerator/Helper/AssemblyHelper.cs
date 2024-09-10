@@ -320,6 +320,7 @@ public class AssemblyHelper
         {
             case Const.SolutionExtension:
             case Const.CSharpProjectExtension:
+            case Const.SolutionXMLExtension:
                 return SolutionType.DotNet;
             default:
                 break;

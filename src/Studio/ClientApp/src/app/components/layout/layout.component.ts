@@ -79,7 +79,6 @@ export class LayoutComponent implements OnInit {
       this.username = this.auth.userName!;
     }
     this.getVersion();
-    this.getProjects();
     this.listenKeyboard();
   }
 
@@ -153,20 +152,6 @@ export class LayoutComponent implements OnInit {
         },
       });
   }
-  getProjects(): void {
-    this.service.list()
-      .subscribe({
-        next: (res) => {
-          if (res) {
-            this.projects = res;
-          }
-        },
-      });
-  }
-
-
-
-
   login(): void {
     this.router.navigateByUrl('/login')
   }

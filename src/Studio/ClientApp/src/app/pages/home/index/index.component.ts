@@ -57,9 +57,8 @@ export class IndexComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.initForm();
     this.getProjects();
-    this.getOpenAIKey();
+    this.initForm();
   }
 
   initForm(): void {

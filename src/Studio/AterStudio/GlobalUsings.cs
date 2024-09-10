@@ -9,3 +9,5 @@ global using Application.Manager;
 global using Application.Models;
 global using CodeGenerator.Generate;
 global using Entity;
+global using Share;
+global using Share.Models;

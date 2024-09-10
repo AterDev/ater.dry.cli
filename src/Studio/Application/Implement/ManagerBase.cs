@@ -1,5 +1,3 @@
-using Ater.Web.Abstraction;
-
 namespace Application.Implement;
 
 /// <summary>
@@ -193,11 +191,6 @@ public partial class ManagerBase<TEntity> : ManagerBase
         {
             return await SaveChangesAsync() > 0;
         }
-
-        if (AutoLogType is LogActionType.Add or LogActionType.All or LogActionType.AddOrUpdate)
-        {
-            SaveToLog(UserActionType.Add, entity.GetType().Name);
-        }
         return true;
     }
 
@@ -214,10 +207,6 @@ public partial class ManagerBase<TEntity> : ManagerBase
             return await SaveChangesAsync() > 0;
         }
 
-        if (AutoLogType is LogActionType.Update or LogActionType.All or LogActionType.AddOrUpdate)
-        {
-            SaveToLog(UserActionType.Update, entity.GetType().Name);
-        }
         return true;
     }
 
@@ -290,11 +279,6 @@ public partial class ManagerBase<TEntity> : ManagerBase
             ? await Command.Where(d => ids.Contains(d.Id))
                 .ExecuteUpdateAsync(d => d.SetProperty(d => d.IsDeleted, true))
             : await Command.Where(d => ids.Contains(d.Id)).ExecuteDeleteAsync();
-        if (AutoLogType is LogActionType.Delete or LogActionType.All)
-        {
-            var target = string.Join(",", ids);
-            SaveToLog(UserActionType.Delete, target);
-        }
         return res > 0;
     }
 
@@ -325,24 +309,6 @@ public partial class ManagerBase<TEntity> : ManagerBase
     protected async Task<int> SaveChangesAsync()
     {
         return await CommandContext.SaveChangesAsync();
-    }
-
-    /// <summary>
-    /// 日志记录
-    /// </summary>
-    /// <param name="actionType"></param>
-    /// <param name="targetName">对象名称</param>
-    /// <param name="description">描述</param>
-    /// <returns></returns>
-    private void SaveToLog(UserActionType actionType, string targetName, string? description = null)
-    {
-        var userContext = WebAppContext.GetScopeService<IUserContext>();
-
-        if (userContext == null)
-        {
-            _logger.LogWarning("UserContext is null, can't save log");
-            return;
-        }
     }
 
     /// <summary>

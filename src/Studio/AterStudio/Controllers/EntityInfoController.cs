@@ -1,8 +1,5 @@
-﻿using Ater.Web.Abstraction;
+﻿using Microsoft.AspNetCore.Mvc;
 
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Share.Models;
 using Share.Models.EntityInfoDtos;
 
 namespace AterStudio.Controllers;
@@ -10,16 +7,13 @@ namespace AterStudio.Controllers;
 /// <summary>
 ///  实体
 /// </summary>
-[AllowAnonymous]
 public class EntityInfoController(
     EntityInfoManager manager,
-    ProjectContext project,
+    IProjectContext project,
     ILogger<EntityInfoController> logger
-    ) : RestControllerBase
+    ) : BaseController<EntityInfoManager>(manager, project, logger)
 {
     private readonly EntityInfoManager manager = manager;
-    private readonly ProjectContext _project = project;
-    private readonly ILogger<EntityInfoController> logger = logger;
 
     [HttpGet("{id}")]
     public ActionResult<List<EntityFile>> List([FromRoute] Guid id, string? serviceName)

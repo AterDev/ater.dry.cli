@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "AterStudio API doc",
-    "description": "Studio API 文档. 更新时间:2024-09-10 16:21:44",
+    "description": "Studio API 文档. 更新时间:2024-09-10 17:11:29",
     "version": "v1"
   },
   "paths": {
@@ -433,7 +433,7 @@
         }
       }
     },
-    "/api/EntityInfo/{id}": {
+    "/api/admin/EntityInfo/{id}": {
       "get": {
         "tags": [
           "EntityInfo"
@@ -474,7 +474,7 @@
         }
       }
     },
-    "/api/EntityInfo/dtos": {
+    "/api/admin/EntityInfo/dtos": {
       "get": {
         "tags": [
           "EntityInfo"
@@ -508,7 +508,7 @@
         }
       }
     },
-    "/api/EntityInfo/dto": {
+    "/api/admin/EntityInfo/dto": {
       "post": {
         "tags": [
           "EntityInfo"
@@ -594,7 +594,7 @@
         }
       }
     },
-    "/api/EntityInfo": {
+    "/api/admin/EntityInfo": {
       "delete": {
         "tags": [
           "EntityInfo"
@@ -615,7 +615,7 @@
         }
       }
     },
-    "/api/EntityInfo/fileContent": {
+    "/api/admin/EntityInfo/fileContent": {
       "get": {
         "tags": [
           "EntityInfo"
@@ -662,7 +662,7 @@
         }
       }
     },
-    "/api/EntityInfo/generate": {
+    "/api/admin/EntityInfo/generate": {
       "post": {
         "tags": [
           "EntityInfo"
@@ -701,7 +701,7 @@
         }
       }
     },
-    "/api/EntityInfo/batch-generate": {
+    "/api/admin/EntityInfo/batch-generate": {
       "post": {
         "tags": [
           "EntityInfo"
@@ -742,7 +742,7 @@
         }
       }
     },
-    "/api/EntityInfo/generateSync/{id}": {
+    "/api/admin/EntityInfo/generateSync/{id}": {
       "post": {
         "tags": [
           "EntityInfo"
@@ -775,7 +775,7 @@
         }
       }
     },
-    "/api/EntityInfo/generateNgModule": {
+    "/api/admin/EntityInfo/generateNgModule": {
       "post": {
         "tags": [
           "EntityInfo"
@@ -2866,16 +2866,16 @@
       "description": "api文档"
     },
     {
-      "name": "EntityInfo",
-      "description": "实体"
-    },
-    {
       "name": "Feature",
       "description": "功能模块"
     },
     {
       "name": "Tools",
       "description": "Tools"
+    },
+    {
+      "name": "EntityInfo",
+      "description": "实体"
     },
     {
       "name": "Project",
