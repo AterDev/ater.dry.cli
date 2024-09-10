@@ -1,7 +1,4 @@
-﻿
-using Ater.Web.Abstraction;
-
-using DeepSeek.Core;
+﻿using DeepSeek.Core;
 using DeepSeek.Core.Models;
 
 namespace Application;
@@ -10,7 +7,6 @@ namespace Application;
 /// </summary>
 public class AIService
 {
-    private readonly CommandDbContext _dbContext;
     private readonly ILogger<AIService> _logger;
     public DeepSeekClient? Client { get; private set; }
 
@@ -26,14 +22,11 @@ public class AIService
     public AIService(ILogger<AIService> logger)
     {
         _logger = logger;
-        _dbContext = WebAppContext.GetScopeService<CommandDbContext>()
-            ?? throw new Exception("CommandDBContext is not inject");
 
         CacheMessages.Add(Answer, []);
         CacheMessages.Add(Completion, []);
         CacheMessages.Add(Coder, []);
     }
-
 
     /// <summary>
     /// SetApiKey
@@ -41,15 +34,10 @@ public class AIService
     /// <param name="key">模型配置key</param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public void SetApiKey(string key)
+    public void SetApiKey(string apiKey)
     {
-        string apiKey = _dbContext.Configs.Where(c => c.Key == key)
-           .Select(c => c.Value)
-           .FirstOrDefault() ?? throw new Exception("apiKey is null");
-
         Client = new DeepSeekClient(apiKey);
     }
-
 
     /// <summary>
     /// 对话

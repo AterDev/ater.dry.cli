@@ -1,5 +1,4 @@
-﻿using Ater.Web.Abstraction;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace AterStudio.Controllers;
 
@@ -10,8 +9,7 @@ namespace AterStudio.Controllers;
 public class ProjectController(
     ProjectManager manager,
     AdvanceManager advance,
-    IUserContext user,
-    ILogger<ProjectContext> logger) : RestControllerBase<ProjectManager>(manager, user, logger)
+    ILogger<ProjectContext> logger) : BaseController<ProjectManager>(manager, logger)
 {
     private readonly AdvanceManager _advance = advance;
 

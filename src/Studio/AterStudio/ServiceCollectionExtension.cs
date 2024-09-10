@@ -205,9 +205,7 @@ public static class ServiceCollectionExtension
     public static IServiceCollection AddAuthorize(this IServiceCollection services)
     {
         services.AddAuthorizationBuilder()
-            .AddPolicy(AterConst.User, policy => policy.RequireRole(AterConst.User))
-            .AddPolicy(AterConst.AdminUser, policy => policy.RequireRole(AterConst.SuperAdmin, AterConst.AdminUser))
-            .AddPolicy(AterConst.SuperAdmin, policy => policy.RequireRole(AterConst.SuperAdmin));
+            .AddPolicy(AterConst.AdminUser, policy => policy.RequireRole(""));
         return services;
     }
 }
