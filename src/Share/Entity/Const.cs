@@ -19,6 +19,9 @@ public class Const
     public const string SrcDir = "src";
     public const string MicroserviceDir = "Microservice";
 
+    public const string StudioDir = "DryStudio";
+
+
     // names
     public const string Manager = "Manager";
     public const string Controller = "Controller";
@@ -39,7 +42,7 @@ public class Const
     public const string IsDeleted = "IsDeleted";
 
 
-    public const string Version = "8.0.0";
+    public const string Version = "9.0.0";
     public const string NetVersion = "net8.0";
     public const string PackageId = "ater.dry";
 

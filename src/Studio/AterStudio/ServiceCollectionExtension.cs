@@ -158,7 +158,7 @@ public static class ServiceCollectionExtension
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(c =>
         {
-            c.SwaggerDoc("client", new OpenApiInfo
+            c.SwaggerDoc("admin", new OpenApiInfo
             {
                 Title = "AterStudio API doc",
                 Description = "Studio API 文档. 更新时间:" + DateTime.Now.ToString("yyyy-MM-dd H:mm:ss"),

@@ -4,17 +4,17 @@
     <legend class="h2 mt-2">
       选择模板文件
     </legend>
-    <mat-action-list>
+    <!-- <mat-action-list>
       <button mat-list-item *ngFor="let file of allFiles" (click)="selectFile(file.name!)">
         {{file.displayName}}
       </button>
-    </mat-action-list>
+    </mat-action-list> -->
   </div>
   <!-- file actions -->
-  <div class="col" *ngIf="!isLoading">
+  <!-- <div class="col" *ngIf="!isLoading">
     <mat-toolbar-row class="d-flex">
       <span></span>
-         <div class="d-flex flex-grow-1"></div>
+      <div class="d-flex flex-grow-1"></div>
       <button mat-icon-button color="primary" (click)="save()" matTooltip="保存" [disabled]="templateFile?.content==null">
         <mat-icon>save</mat-icon>
       </button>
@@ -23,5 +23,5 @@
       <ngx-monaco-editor class="editor" [options]="editorOptions" *ngIf="templateFile"
         [(ngModel)]="templateFile!.content"></ngx-monaco-editor>
     </div>
-  </div>
+  </div> -->
 </div>

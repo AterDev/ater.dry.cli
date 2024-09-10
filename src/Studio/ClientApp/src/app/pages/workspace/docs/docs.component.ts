@@ -10,11 +10,9 @@ import { NgComponentInfo } from 'src/app/services/api-doc-info/models/ng-compone
 import { ApiDocTag } from 'src/app/services/models/api-doc-tag.model';
 import { EntityInfo } from 'src/app/services/models/entity-info.model';
 import { ComponentType } from 'src/app/services/enum/models/component-type.model';
-import { LanguageType } from 'src/app/services/enum/models/language-type.model';
 import { OperationType } from 'src/app/services/enum/models/operation-type.model';
 import { RequestLibType } from 'src/app/services/enum/models/request-lib-type.model';
 import { UIType } from 'src/app/services/enum/models/uitype.model';
-import { ConfigOptions } from 'src/app/services/project/models/config-options.model';
 import { Project } from 'src/app/services/project/models/project.model';
 import { PropertyInfo } from 'src/app/services/models/property-info.model';
 import { RestApiGroup } from 'src/app/services/models/rest-api-group.model';
@@ -23,6 +21,8 @@ import { ProjectStateService } from 'src/app/share/project-state.service';
 import { ApiDocInfoService } from 'src/app/services/api-doc-info/api-doc-info.service';
 import { EntityInfoService } from 'src/app/services/entity-info/entity-info.service';
 import { ProjectService } from 'src/app/services/project/project.service';
+import { ProjectConfig } from 'src/app/services/project/models/project-config.model';
+import { ModelInfo } from 'src/app/services/models/model-info.model';
 
 @Component({
   selector: 'app-docs',
@@ -33,7 +33,6 @@ export class DocsComponent implements OnInit {
   OperationType = OperationType;
   RequestLibType = RequestLibType;
   ComponentType = ComponentType;
-  LanguageType = LanguageType;
   UIType = UIType;
   project = {} as Project;
   projectId: string;
@@ -42,8 +41,8 @@ export class DocsComponent implements OnInit {
   isLoading = true;
   isOccupying = false;
   currentApi: RestApiInfo | null = null;
-  currentModel: EntityInfo | null = null;
-  selectedModel: EntityInfo | null = null;
+  currentModel: ModelInfo | null = null;
+  selectedModel: ModelInfo | null = null;
   searchKey: string | null = null;
   modelSearchKey: string | null = null;
   /**
@@ -74,11 +73,11 @@ export class DocsComponent implements OnInit {
 
   @ViewChild("clientRequestDialog", { static: true })
   clientRequestTmpRef!: TemplateRef<{}>;
-  config: ConfigOptions | null = null;
+  config: ProjectConfig | null = null;
   restApiGroups = [] as RestApiGroup[];
   filterApiGroups = [] as RestApiGroup[];
-  filterModelInfos = [] as EntityInfo[];
-  modelInfos = [] as EntityInfo[];
+  filterModelInfos = [] as ModelInfo[];
+  modelInfos = [] as ModelInfo[];
   tags = [] as ApiDocTag[];
   tableColumns = ['name', 'type', 'requried', 'description'];
   modelTableColumns = ['name', 'type', 'requried', 'description', 'validator'];
@@ -111,21 +110,6 @@ export class DocsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // get config options
-    this.projectSrv.getConfigOptions()
-      .subscribe({
-        next: (res) => {
-          if (res) {
-            this.config = res;
-            this.initForm();
-          } else {
-            this.snb.open('获取失败');
-          }
-        },
-        error: (error) => {
-          this.snb.open(error.detail);
-        }
-      });
     this.getDocs();
   }
 
@@ -145,7 +129,7 @@ export class DocsComponent implements OnInit {
     });
 
     // 生成请求表单
-    let defaultPath = this.config?.rootPath! + '\\src\\app';
+    let defaultPath = this.config?.solutionPath! + '\\src\\app';
 
     this.requestForm = new FormGroup({
       swagger: new FormControl<string | null>('./swagger.json', []),
@@ -155,8 +139,8 @@ export class DocsComponent implements OnInit {
 
     this.clientRequestForm = new FormGroup({
       swagger: new FormControl<string | null>('./swagger.json', []),
-      type: new FormControl<LanguageType>(LanguageType.CSharp, []),
-      path: new FormControl<string | null>(this.config?.rootPath + "\\src\\SDK\\", [Validators.required])
+      type: new FormControl(null, []),
+      path: new FormControl<string | null>(this.config?.solutionPath + "\\src\\SDK\\", [Validators.required])
     });
   }
 
@@ -241,7 +225,7 @@ export class DocsComponent implements OnInit {
 
   openClientRequestDialog(): void {
     this.clientRequestForm.get('swagger')?.setValue(this.currentDoc?.path);
-    this.clientRequestForm.get('path')?.setValue(this.config?.rootPath + "\\src\\SDK\\");
+    this.clientRequestForm.get('path')?.setValue(this.config?.solutionPath + "\\src\\SDK\\");
     this.dialogRef = this.dialog.open(this.clientRequestTmpRef, {
       minWidth: 400
     });
@@ -306,19 +290,6 @@ export class DocsComponent implements OnInit {
     const swagger = this.clientRequestForm.get('swagger')?.value as string;
     const type = this.clientRequestForm.get('type')?.value as number;
     const path = this.clientRequestForm.get('path')?.value as string;
-    this.service.generateClientRequest(this.currentDoc?.id!, path, type, swagger)
-      .subscribe({
-        next: res => {
-          if (res) {
-            this.snb.open('生成成功');
-            this.dialogRef.close();
-          }
-          this.isSync = false;
-        },
-        error: () => {
-          this.isSync = false;
-        }
-      })
   }
 
   generateUIComponent(type: ComponentType): void {
@@ -333,8 +304,8 @@ export class DocsComponent implements OnInit {
       // 获取到模型对应的服务名称
       data.serviceName = this.restApiGroups.find(g =>
         g.apiInfos?.find(api =>
-          api.requestInfo?.id === this.currentModel?.id
-          || api.responseInfo?.id === this.currentModel?.id))?.name ?? this.currentModel.name;
+          api.requestInfo?.name === this.currentModel?.name
+          || api.responseInfo?.name === this.currentModel?.name))?.name ?? this.currentModel.name;
 
       this.service.createUIComponent(data)
         .subscribe({
@@ -431,7 +402,7 @@ export class DocsComponent implements OnInit {
   selectApi(api: RestApiInfo): void {
     this.currentApi = api;
   }
-  selectModel(model: EntityInfo): void {
+  selectModel(model: ModelInfo): void {
     this.currentModel = model;
   }
 

@@ -1,10 +1,11 @@
-﻿namespace Application.Models;
+﻿using Share.Models;
+
+namespace Application.Models;
 /// <summary>
 /// 生成组件模型
 /// </summary>
 public class CreateUIComponentDto
 {
-
     public UIType UIType { get; set; } = UIType.AngularMaterial;
     /// <summary>
     /// 组件类型
@@ -13,7 +14,7 @@ public class CreateUIComponentDto
     /// <summary>
     /// model info
     /// </summary>
-    public required EntityInfo ModelInfo { get; set; }
+    public required ModelInfo ModelInfo { get; set; }
     public required string ServiceName { get; set; }
 }
 

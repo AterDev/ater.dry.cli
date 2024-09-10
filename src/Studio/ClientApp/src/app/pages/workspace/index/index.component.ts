@@ -18,11 +18,11 @@ import { CommandType } from 'src/app/services/enum/models/command-type.model';
 import { ProjectType } from 'src/app/services/enum/models/project-type.model';
 import { RequestLibType } from 'src/app/services/enum/models/request-lib-type.model';
 import { SubProjectInfo } from 'src/app/services/feature/models/sub-project-info.model';
-import { ConfigOptions } from 'src/app/services/project/models/config-options.model';
 import { Project } from 'src/app/services/project/models/project.model';
 import { ProjectStateService } from 'src/app/share/project-state.service';
 import { EntityInfoService } from 'src/app/services/entity-info/entity-info.service';
 import { ProjectService } from 'src/app/services/project/project.service';
+import { ProjectConfig } from 'src/app/services/project/models/project-config.model';
 
 @Component({
   selector: 'app-index',
@@ -81,7 +81,7 @@ export class IndexComponent implements OnInit {
   isLogin = false;
   isMobile = false;
   showModuleEntity = true;
-  config: ConfigOptions | null = null;
+  config: ProjectConfig | null = null;
 
   editor: any;
   constructor(
@@ -105,24 +105,8 @@ export class IndexComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.projectSrv.getConfigOptions()
-      .subscribe({
-        next: (res) => {
-          if (res) {
-            this.config = res;
-            this.initForm();
-            this.getProjectInfo();
-
-          } else {
-            this.snb.open('获取失败');
-          }
-        },
-        error: (error) => {
-          this.snb.open(error.detail);
-        }
-      });
+    this.initForm();
     this.getEntity();
-    this.getProjects();
   }
 
   isAllSelected() {
@@ -144,7 +128,7 @@ export class IndexComponent implements OnInit {
     if (this.showModuleEntity) {
       this.dataSource.data = this.entityFiles;
     } else {
-      this.dataSource.data = this.entityFiles.filter(e => e.module === null || e.module === '');
+      this.dataSource.data = this.entityFiles.filter(e => e.moduleName === null || e.moduleName === '');
     }
 
   }
@@ -163,14 +147,6 @@ export class IndexComponent implements OnInit {
     this.editor = editor;
   }
 
-  getProjectInfo(): void {
-    this.projectSrv.getConfigOptions()
-      .subscribe(res => {
-        if (res) {
-          this.requestForm.get('path')?.setValue(res.webAppPath);
-        }
-      });
-  }
 
   initForm(): void {
     this.requestForm = new FormGroup({
@@ -178,17 +154,6 @@ export class IndexComponent implements OnInit {
       type: new FormControl<RequestLibType>(RequestLibType.NgHttp, []),
       path: new FormControl<string | null>(null, [Validators.required])
     });
-
-    let defaultPath = `\\src\\app\\pages`;
-    console.log(this.projectState.project);
-
-
-    if (this.projectState.project?.frontPath) {
-
-      this.webPath = this.projectState.project?.frontPath
-    } else {
-      this.webPath = this.config?.rootPath! + '\\' + this.config?.apiPath + '\\ClientApp' + defaultPath;
-    }
   }
 
   getEntity(): void {
@@ -203,7 +168,7 @@ export class IndexComponent implements OnInit {
           this.dataSource.filterPredicate = (data, filter: string) => {
             if (data.name) {
               return data.name.toLowerCase().indexOf(filter) > -1
-                || data.module?.toLowerCase() === filter;
+                || data.moduleName?.toLowerCase() === filter;
             }
             return false;
           }
@@ -262,7 +227,7 @@ export class IndexComponent implements OnInit {
   }
 
   openWithVSCode(data: EntityFile): void {
-    window.open(`vscode://file/${data.baseDirPath}${data.path}`);
+    window.open(`vscode://file/${data.baseDirPath}${data.baseDirPath}`);
     this.dialogRef.close();
   }
 
@@ -282,7 +247,7 @@ export class IndexComponent implements OnInit {
             if (selected.length > 0) {
               let data: BatchGenerateDto = {
                 projectId: this.projectId!,
-                entityPaths: selected.map(s => this.baseEntityPath + s.path),
+                entityPaths: selected.map(s => this.baseEntityPath + s.baseDirPath),
                 commandType: CommandType.Clear,
                 force: this.force
               };
@@ -331,7 +296,7 @@ export class IndexComponent implements OnInit {
   }
   async openPreviewDialog(item: EntityFile, isManager: boolean) {
     if (isManager) {
-      item = await this.getFileContent(item.name!, true, item.module ?? '');
+      item = await this.getFileContent(item.name!, true, item.moduleName ?? '');
     }
     this.previewItem = item;
     this.dialogRef = this.dialog.open(this.previewTmpl, {
@@ -357,8 +322,8 @@ export class IndexComponent implements OnInit {
       return;
     }
 
-    if (this.previewItem?.baseDirPath && this.previewItem?.path) {
-      const path = this.previewItem?.baseDirPath + this.previewItem?.path;
+    if (this.previewItem?.baseDirPath && this.previewItem?.baseDirPath) {
+      const path = this.previewItem?.baseDirPath + this.previewItem?.baseDirPath;
       this.service.createDto(path, this.newDtoFileName, this.newDtoDescription)
         .subscribe({
           next: (res) => {
@@ -377,32 +342,6 @@ export class IndexComponent implements OnInit {
           }
         });
     }
-  }
-
-  getProjects(): void {
-    this.projectSrv.getAllProjectInfos(this.projectId)
-      .subscribe({
-        next: (res) => {
-          if (res) {
-            this.webProjects = res.filter(p => {
-              return p.projectType == ProjectType.Web
-                && !p.name?.endsWith('Test.csproj')
-                && (p.path.includes('Microservice'));
-            });
-
-            // change webProjects name contont
-            this.webProjects.forEach(p => {
-              p.name = p.name.replace('.csproj', '');
-            });
-
-          } else {
-            this.snb.open('没有有效的项目');
-          }
-        },
-        error: (error) => {
-          this.snb.open(error);
-        }
-      });
   }
 
   openInfo(url: string): void {
@@ -508,9 +447,8 @@ export class IndexComponent implements OnInit {
         this.isSync = true;
         const dto: GenerateDto = {
           projectId: this.projectId!,
-          entityPath: this.baseEntityPath + this.currentEntity.path,
+          entityPath: this.baseEntityPath + this.currentEntity.baseDirPath,
           commandType: this.currentType,
-          serviceName: this.selectedService,
           force: this.force
         };
         this.service.generate(dto)
@@ -550,9 +488,8 @@ export class IndexComponent implements OnInit {
     if (selected.length > 0) {
       let data: BatchGenerateDto = {
         projectId: this.projectId!,
-        entityPaths: selected.map(s => this.baseEntityPath + s.path),
+        entityPaths: selected.map(s => this.baseEntityPath + s.baseDirPath),
         commandType: type,
-        serviceName: this.selectedService,
         force: this.force
       };
       // 参数

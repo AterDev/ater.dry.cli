@@ -1,5 +1,5 @@
 import { EntityKeyType } from '../enum/models/entity-key-type.model';
-import { Project } from '../models/project.model';
+import { Project } from '../project/models/project.model';
 import { PropertyInfo } from '../models/property-info.model';
 export interface EntityInfo {
   id: string;

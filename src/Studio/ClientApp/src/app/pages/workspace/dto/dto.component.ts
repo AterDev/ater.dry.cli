@@ -50,7 +50,7 @@ export class DtoComponent implements OnInit {
   }
   getDtos(): void {
     if (this.projectId && this.name && this.projectState.currentEntity) {
-      const path = this.projectState.currentEntity.baseDirPath + this.projectState.currentEntity.path;
+      const path = this.projectState.currentEntity.baseDirPath + this.projectState.currentEntity.baseDirPath;
       this.service.getDtos(path)
         .subscribe({
           next: (res) => {
@@ -81,7 +81,7 @@ export class DtoComponent implements OnInit {
 
   save(): void {
     const currentDto = this.dtos.filter((val) => val.name == this.currentTabName)[0];
-    const path = currentDto.baseDirPath + currentDto.path;
+    const path = currentDto.baseDirPath + currentDto.baseDirPath;
     if (path) {
       this.service.updateDtoContent({
         fileName: path,

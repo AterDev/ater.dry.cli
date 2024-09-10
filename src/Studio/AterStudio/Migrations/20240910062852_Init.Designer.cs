@@ -11,16 +11,16 @@ using Share.EntityFramework.DBProvider;
 namespace AterStudio.Migrations
 {
     [DbContext(typeof(CommandDbContext))]
-    [Migration("20240529112759_AddApiDocContent")]
-    partial class AddApiDocContent
+    [Migration("20240910062852_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.4");
+            modelBuilder.HasAnnotation("ProductVersion", "9.0.0-preview.7.24405.3");
 
-            modelBuilder.Entity("Definition.Entity.ApiDocInfo", b =>
+            modelBuilder.Entity("Entity.ApiDocInfo", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -68,7 +68,7 @@ namespace AterStudio.Migrations
                     b.ToTable("ApiDocInfos");
                 });
 
-            modelBuilder.Entity("Definition.Entity.ConfigData", b =>
+            modelBuilder.Entity("Entity.ConfigData", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -103,7 +103,7 @@ namespace AterStudio.Migrations
                     b.ToTable("Configs");
                 });
 
-            modelBuilder.Entity("Definition.Entity.EntityInfo", b =>
+            modelBuilder.Entity("Entity.EntityInfo", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -121,6 +121,11 @@ namespace AterStudio.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
@@ -133,12 +138,21 @@ namespace AterStudio.Migrations
                     b.Property<int>("KeyType")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Md5Hash")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ModuleName")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("NamespaceName")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
@@ -162,7 +176,87 @@ namespace AterStudio.Migrations
                     b.ToTable("EntityInfos");
                 });
 
-            modelBuilder.Entity("Definition.Entity.Project", b =>
+            modelBuilder.Entity("Entity.GenAction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CreatedTime")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("SourceType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UpdatedTime")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("GenActions");
+                });
+
+            modelBuilder.Entity("Entity.GenStep", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Command")
+                        .HasMaxLength(1000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CreatedTime")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("GenStepType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Path")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TemplateContent")
+                        .HasMaxLength(10000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UpdatedTime")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("GenSteps");
+                });
+
+            modelBuilder.Entity("Entity.Project", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -175,10 +269,6 @@ namespace AterStudio.Migrations
                     b.Property<string>("DisplayName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("FrontPath")
-                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("IsDeleted")
@@ -210,7 +300,7 @@ namespace AterStudio.Migrations
                     b.ToTable("Projects");
                 });
 
-            modelBuilder.Entity("Definition.Entity.PropertyInfo", b =>
+            modelBuilder.Entity("Entity.PropertyInfo", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -321,49 +411,24 @@ namespace AterStudio.Migrations
                     b.ToTable("PropertyInfo");
                 });
 
-            modelBuilder.Entity("Definition.Entity.TemplateFile", b =>
+            modelBuilder.Entity("GenActionGenStep", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("GenActionsId")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Content")
-                        .HasMaxLength(10000)
+                    b.Property<Guid>("GenStepsId")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("CreatedTime")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.HasKey("GenActionsId", "GenStepsId");
 
-                    b.Property<string>("DisplayName")
-                        .HasMaxLength(60)
-                        .HasColumnType("TEXT");
+                    b.HasIndex("GenStepsId");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UpdatedTime")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProjectId");
-
-                    b.ToTable("TemplateFiles");
+                    b.ToTable("GenActionGenStep");
                 });
 
-            modelBuilder.Entity("Definition.Entity.ApiDocInfo", b =>
+            modelBuilder.Entity("Entity.ApiDocInfo", b =>
                 {
-                    b.HasOne("Definition.Entity.Project", "Project")
+                    b.HasOne("Entity.Project", "Project")
                         .WithMany("ApiDocInfos")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -372,9 +437,9 @@ namespace AterStudio.Migrations
                     b.Navigation("Project");
                 });
 
-            modelBuilder.Entity("Definition.Entity.EntityInfo", b =>
+            modelBuilder.Entity("Entity.EntityInfo", b =>
                 {
-                    b.HasOne("Definition.Entity.Project", "Project")
+                    b.HasOne("Entity.Project", "Project")
                         .WithMany("EntityInfos")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -383,9 +448,105 @@ namespace AterStudio.Migrations
                     b.Navigation("Project");
                 });
 
-            modelBuilder.Entity("Definition.Entity.PropertyInfo", b =>
+            modelBuilder.Entity("Entity.GenAction", b =>
                 {
-                    b.HasOne("Definition.Entity.EntityInfo", "EntityInfo")
+                    b.HasOne("Entity.Project", "Project")
+                        .WithMany("GenActions")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("Entity.GenStep", b =>
+                {
+                    b.HasOne("Entity.Project", "Project")
+                        .WithMany("GenSteps")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("Entity.Project", b =>
+                {
+                    b.OwnsOne("Entity.ProjectConfig", "Config", b1 =>
+                        {
+                            b1.Property<Guid>("ProjectId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("ApiPath")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("ApplicationPath")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.Property<int>("ControllerType")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<string>("CreatedTimeName")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("EntityFrameworkPath")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("EntityPath")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("IdType")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.Property<bool>("IsLight")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<bool?>("IsSplitController")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<string>("MicroservicePath")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("SharePath")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("SolutionPath")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("UpdatedTimeName")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("Version")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.HasKey("ProjectId");
+
+                            b1.ToTable("Projects");
+
+                            b1.ToJson("Config");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ProjectId");
+                        });
+
+                    b.Navigation("Config")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Entity.PropertyInfo", b =>
+                {
+                    b.HasOne("Entity.EntityInfo", "EntityInfo")
                         .WithMany("PropertyInfos")
                         .HasForeignKey("EntityInfoId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -394,29 +555,35 @@ namespace AterStudio.Migrations
                     b.Navigation("EntityInfo");
                 });
 
-            modelBuilder.Entity("Definition.Entity.TemplateFile", b =>
+            modelBuilder.Entity("GenActionGenStep", b =>
                 {
-                    b.HasOne("Definition.Entity.Project", "Project")
-                        .WithMany("TemplateFiles")
-                        .HasForeignKey("ProjectId")
+                    b.HasOne("Entity.GenAction", null)
+                        .WithMany()
+                        .HasForeignKey("GenActionsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Project");
+                    b.HasOne("Entity.GenStep", null)
+                        .WithMany()
+                        .HasForeignKey("GenStepsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
-            modelBuilder.Entity("Definition.Entity.EntityInfo", b =>
+            modelBuilder.Entity("Entity.EntityInfo", b =>
                 {
                     b.Navigation("PropertyInfos");
                 });
 
-            modelBuilder.Entity("Definition.Entity.Project", b =>
+            modelBuilder.Entity("Entity.Project", b =>
                 {
                     b.Navigation("ApiDocInfos");
 
                     b.Navigation("EntityInfos");
 
-                    b.Navigation("TemplateFiles");
+                    b.Navigation("GenActions");
+
+                    b.Navigation("GenSteps");
                 });
 #pragma warning restore 612, 618
         }

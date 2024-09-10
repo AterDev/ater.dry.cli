@@ -30,8 +30,8 @@
     </ItemGroup>
     <!--生成swagger.json-->
     <Target Name="SwaggerPostBuildTarget" AfterTargets="Build" Condition="'$(Configuration)' == 'Debug'">
-        <Exec Command="dotnet tool restore" UseUtf8Encoding="Always" />
-        <Exec Command="dotnet swagger tofile --output ./swagger.json .\bin\Debug\net9.0\AterStudio.dll client" UseUtf8Encoding="Always" />
+        <!--<Exec Command="dotnet tool restore" UseUtf8Encoding="Always" />-->
+        <Exec Command="dotnet swagger tofile --output ./swagger.json .\bin\Debug\net9.0\AterStudio.dll admin" UseUtf8Encoding="Always" />
         <Exec Command="dry ng .\swagger.json -o ..\ClientApp\src\app" UseUtf8Encoding="Always" />
     </Target>
     <ItemGroup>

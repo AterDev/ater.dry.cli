@@ -1,6 +1,6 @@
 import { GenSourceType } from '../enum/models/gen-source-type.model';
 import { GenStep } from '../models/gen-step.model';
-import { Project } from '../models/project.model';
+import { Project } from '../project/models/project.model';
 export interface GenAction {
   id: string;
   createdTime: Date;

@@ -13,7 +13,6 @@ public class ProjectController(
     IUserContext user,
     ILogger<ProjectContext> logger) : RestControllerBase<ProjectManager>(manager, user, logger)
 {
-    private readonly ProjectManager _manager = manager;
     private readonly AdvanceManager _advance = advance;
 
     /// <summary>

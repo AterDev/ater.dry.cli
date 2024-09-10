@@ -5,9 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Route, Router } from '@angular/router';
 import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confirm-dialog.component';
 import { SolutionType } from 'src/app/services/enum/models/solution-type.model';
-import { ConfigOptions } from 'src/app/services/project/models/config-options.model';
 import { Project } from 'src/app/services/project/models/project.model';
-import { UpdateConfigOptionsDto } from 'src/app/services/project/models/update-config-options-dto.model';
 import { ProjectStateService } from 'src/app/share/project-state.service';
 import { ProjectService } from 'src/app/services/project/project.service';
 
@@ -16,6 +14,7 @@ import 'prismjs/components/prism-markup.min.js';
 import 'prismjs/components/prism-csharp.min.js';
 import { AdvanceService } from 'src/app/services/advance/advance.service';
 import { ControllerType } from 'src/app/services/enum/models/controller-type.model';
+import { ProjectConfig } from 'src/app/services/project/models/project-config.model';
 
 @Component({
   selector: 'app-index',
@@ -32,7 +31,7 @@ export class IndexComponent implements OnInit {
   dialogRef!: MatDialogRef<{}, any>;
   projects = [] as Project[];
   current: Project | null = null;
-  config: ConfigOptions | null = null;
+  config: ProjectConfig | null = null;
   addForm!: FormGroup;
   settingForm!: FormGroup;
   type: string | null = null;
@@ -137,25 +136,11 @@ export class IndexComponent implements OnInit {
     this.current = project;
     this.projectState.setProject(project);
     this.isProcessing = true;
-    this.service.getConfigOptions()
-      .subscribe({
-        next: (res) => {
-          if (res) {
-            this.config = res;
-            this.buildSettingForm();
-            this.dialogRef = this.dialog.open(this.settingTmpRef, {
-              minWidth: 450,
-            })
-          }
-        },
-        error: (error) => {
-          this.snb.open(error.detail);
-          this.isProcessing = false;
-        },
-        complete: () => {
-          this.isProcessing = false;
-        }
-      });
+    this.config = project.config!;
+    this.buildSettingForm();
+    this.dialogRef = this.dialog.open(this.settingTmpRef, {
+      minWidth: 450,
+    })
   }
 
   openUpdate(project: Project): void {
@@ -179,15 +164,16 @@ export class IndexComponent implements OnInit {
 
   buildSettingForm(): void {
     this.settingForm = new FormGroup({
-      dtoPath: new FormControl(this.config?.dtoPath, [Validators.required, Validators.minLength(1), Validators.maxLength(200)]),
+      dtoPath: new FormControl(this.config?.sharePath, [Validators.required, Validators.minLength(1), Validators.maxLength(200)]),
       entityPath: new FormControl(this.config?.entityPath, [Validators.required, Validators.minLength(1), Validators.maxLength(200)]),
-      entityFrameworkPath: new FormControl(this.config?.dbContextPath, [Validators.required, Validators.minLength(1), Validators.maxLength(200)]),
+      entityFrameworkPath: new FormControl(this.config?.entityFrameworkPath, [Validators.required, Validators.minLength(1), Validators.maxLength(200)]),
       storePath: new FormControl(this.config?.applicationPath, [Validators.required, Validators.minLength(1), Validators.maxLength(200)]),
       apiPath: new FormControl(this.config?.apiPath, [Validators.required, Validators.minLength(1), Validators.maxLength(200)]),
       idType: new FormControl(this.config?.idType ?? "Guid", [Validators.required, Validators.minLength(2), Validators.maxLength(20)]),
       controllerType: new FormControl(this.config?.controllerType ?? 0, [Validators.required]),
     });
   }
+
   saveSetting(): void {
     if (this.settingForm.valid && this.current) {
       const idType = this.settingForm.get('idType')?.value;
@@ -196,26 +182,8 @@ export class IndexComponent implements OnInit {
         return;
       }
       this.isProcessing = true;
-      const data = this.settingForm.value as UpdateConfigOptionsDto;
-
-      this.service.updateConfig(data)
-        .subscribe({
-          next: (res) => {
-            if (res) {
-              this.snb.open('保存成功');
-              this.dialogRef.close();
-            } else {
-              this.snb.open('保存失败');
-            }
-          },
-          error: (error) => {
-            this.snb.open(error.detail);
-            this.isProcessing = false;
-          },
-          complete: () => {
-            this.isProcessing = false;
-          }
-        });
+      const data = this.settingForm.value;
+      // TODO: save configs
     } else {
       console.log(this.settingForm.errors);
     }

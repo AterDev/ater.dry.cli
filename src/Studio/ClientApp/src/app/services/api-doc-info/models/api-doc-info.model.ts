@@ -1,4 +1,4 @@
-import { Project } from '../../models/project.model';
+import { Project } from '../../project/models/project.model';
 export interface ApiDocInfo {
   id: string;
   createdTime: Date;

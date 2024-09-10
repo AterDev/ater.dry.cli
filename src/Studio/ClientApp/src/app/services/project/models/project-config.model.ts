@@ -1,4 +1,4 @@
-import { ControllerType } from '../enum/models/controller-type.model';
+import { ControllerType } from '../../enum/models/controller-type.model';
 export interface ProjectConfig {
   idType: string;
   createdTimeName: string;

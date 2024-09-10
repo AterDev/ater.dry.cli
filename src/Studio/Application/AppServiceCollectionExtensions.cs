@@ -3,24 +3,6 @@
 namespace Application;
 
 /// <summary>
-/// 应用配置常量
-/// </summary>
-public static class AppSetting
-{
-    public const string Components = "Components";
-    public const string None = "None";
-    public const string Redis = "Redis";
-    public const string Memory = "Memory";
-    public const string Otlp = "otlp";
-
-    public const string CommandDB = "CommandDb";
-    public const string QueryDB = "QueryDb";
-    public const string Cache = "Cache";
-    public const string CacheInstanceName = "CacheInstanceName";
-    public const string Logging = "Logging";
-}
-
-/// <summary>
 /// 服务注册扩展
 /// </summary>
 public static partial class AppServiceCollectionExtensions
@@ -43,7 +25,12 @@ public static partial class AppServiceCollectionExtensions
     /// <returns></returns>
     public static IHostApplicationBuilder AddDbContext(this IHostApplicationBuilder builder)
     {
-        var path = Path.Combine(AssemblyHelper.GetStudioPath(), ContextBase.DbName);
+        var dir = AssemblyHelper.GetStudioPath();
+        if (!Directory.Exists(dir))
+        {
+            Directory.CreateDirectory(dir);
+        }
+        var path = Path.Combine(dir, ContextBase.DbName);
         builder.Services.AddDbContext<CommandDbContext>(options =>
         {
             options.UseSqlite($"DataSource={path}", _ =>

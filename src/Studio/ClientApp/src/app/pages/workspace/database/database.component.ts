@@ -24,7 +24,6 @@ export class DatabaseComponent implements OnInit {
     private snb: MatSnackBar,
     private sanitizer: DomSanitizer
   ) {
-
     this.projectId = projectState.project?.id!;
   }
 
@@ -32,19 +31,6 @@ export class DatabaseComponent implements OnInit {
     this.getContent();
   }
   getContent(): void {
-    if (this.projectId)
-      this.service.getDatabaseContent(this.projectId)
-        .subscribe({
-          next: (res) => {
-            this.content = res;
-          },
-          error: (error) => {
-            this.snb.open(error.detail);
-            this.isLoding = false;
-          },
-          complete: () => {
-            this.isLoding = false;
-          }
-        });
+    if (this.projectId) { }
   }
 }
