@@ -5,11 +5,9 @@ import { ApiDocInfoAddDto } from './models/api-doc-info-add-dto.model';
 import { ApiDocInfoUpdateDto } from './models/api-doc-info-update-dto.model';
 import { CreateUIComponentDto } from './models/create-uicomponent-dto.model';
 import { ApiDocInfoItemDto } from './models/api-doc-info-item-dto.model';
-import { ApiDocInfo } from './models/api-doc-info.model';
 import { ApiDocContent } from './models/api-doc-content.model';
 import { NgComponentInfo } from './models/ng-component-info.model';
 import { RequestLibType } from '../enum/models/request-lib-type.model';
-import { LanguageType } from '../enum/models/language-type.model';
 
 /**
  * api文档
@@ -28,9 +26,9 @@ export class ApiDocInfoBaseService extends BaseService {
    * 添加
    * @param data ApiDocInfoAddDto
    */
-  add(data: ApiDocInfoAddDto): Observable<ApiDocInfo> {
+  add(data: ApiDocInfoAddDto): Observable<string> {
     const _url = `/api/ApiDocInfo`;
-    return this.request<ApiDocInfo>('post', _url, data);
+    return this.request<string>('post', _url, data);
   }
 
   /**
@@ -48,18 +46,18 @@ export class ApiDocInfoBaseService extends BaseService {
    * @param id 
    * @param data ApiDocInfoUpdateDto
    */
-  update(id: string, data: ApiDocInfoUpdateDto): Observable<ApiDocInfo> {
+  update(id: string, data: ApiDocInfoUpdateDto): Observable<boolean> {
     const _url = `/api/ApiDocInfo/${id}`;
-    return this.request<ApiDocInfo>('put', _url, data);
+    return this.request<boolean>('put', _url, data);
   }
 
   /**
    * 删除
    * @param id 
    */
-  delete(id: string): Observable<ApiDocInfo> {
+  delete(id: string): Observable<boolean> {
     const _url = `/api/ApiDocInfo/${id}`;
-    return this.request<ApiDocInfo>('delete', _url);
+    return this.request<boolean>('delete', _url);
   }
 
   /**
@@ -89,18 +87,6 @@ export class ApiDocInfoBaseService extends BaseService {
    */
   generateRequest(id: string, webPath: string | null, type: RequestLibType | null, swaggerPath: string | null): Observable<boolean> {
     const _url = `/api/ApiDocInfo/generateRequest/${id}?webPath=${webPath ?? ''}&type=${type ?? ''}&swaggerPath=${swaggerPath ?? ''}`;
-    return this.request<boolean>('get', _url);
-  }
-
-  /**
-   * 生成客户端请求
-   * @param id 
-   * @param webPath 
-   * @param type 
-   * @param swaggerPath 
-   */
-  generateClientRequest(id: string, webPath: string | null, type: LanguageType | null, swaggerPath: string | null): Observable<boolean> {
-    const _url = `/api/ApiDocInfo/generateClientRequest/${id}?webPath=${webPath ?? ''}&type=${type ?? ''}&swaggerPath=${swaggerPath ?? ''}`;
     return this.request<boolean>('get', _url);
   }
 

@@ -7,8 +7,6 @@ using Share;
 using Share.Models;
 using Share.Services;
 
-using Project = Entity.Project;
-
 namespace Application.Manager;
 
 public partial class EntityInfoManager(
@@ -323,21 +321,22 @@ public partial class EntityInfoManager(
             case CommandType.Dto:
                 foreach (var item in entityInfos)
                 {
-                    files.AddRange(await _codeGenService.GenerateDto(item, dtoPath, dto.Force));
-                    await CommandRunner.GenerateDtoAsync(item, dtoPath, dto.Force);
+                    files.AddRange(_codeGenService.GenerateDto(item, dtoPath, dto.Force));
                 }
                 break;
             case CommandType.Manager:
-                foreach (string item in dto.EntityPaths)
+                foreach (var item in entityInfos)
                 {
-                    await CommandRunner.GenerateManagerAsync(item, dtoPath, applicationPath, dto.Force);
+
+                    files.AddRange(_codeGenService.GenerateManager(item, applicationPath, "", dto.Force));
                 }
 
                 break;
             case CommandType.API:
-                foreach (string item in dto.EntityPaths)
+                foreach (var item in entityInfos)
                 {
-                    CommandRunner.GenerateApiAsync(item, dtoPath, applicationPath, apiPath, "Controller", dto.Force).Wait();
+
+                    files.AddRange(_codeGenService.GenerateController(item, apiPath, "", dto.Force));
                 }
                 break;
             case CommandType.Protobuf:
@@ -345,7 +344,6 @@ public partial class EntityInfoManager(
                 {
                     dto.ProjectPath?.ForEach(p =>
                     {
-                        _ = CommandRunner.GenerateProtobufAsync(item, p).Result;
                     });
                 }
                 break;
@@ -353,119 +351,12 @@ public partial class EntityInfoManager(
                 foreach (string item in dto.EntityPaths)
                 {
                     string entityName = Path.GetFileNameWithoutExtension(item);
-                    await CommandRunner.ClearCodesAsync(entityPath, dtoPath, applicationPath, apiPath, entityName);
+
                 }
                 break;
             default:
                 break;
         }
         _codeGenService.GenerateFiles(files);
-    }
-
-    public async Task GenerateSyncAsync(Project project)
-    {
-        string swaggerPath = Path.Combine(_projectContext.ApiPath!, "swagger.json");
-        await CommandRunner.SyncToAngularAsync(swaggerPath, _projectContext.EntityPath!, _projectContext.SharePath!, _projectContext.ApiPath!);
-    }
-
-    /// <summary>
-    /// 生成NG组件页面
-    /// </summary>
-    /// <param name="entityName"></param>
-    /// <param name="rootPath"></param>
-    /// <param name="isMobile"></param>
-    /// <returns></returns>
-    /// <exception cref="FileNotFoundException"></exception>
-    public async Task GenerateNgModuleAsync(string entityName, string rootPath, bool isMobile = false)
-    {
-        string dtoPath = Path.Combine(_projectContext.SolutionPath!, Config.SharePath);
-        string entityDir = Path.Combine(_projectContext.SolutionPath!, Config.EntityPath);
-        string? entityPath = Directory.GetFiles(entityDir, entityName, SearchOption.AllDirectories)
-            .FirstOrDefault();
-
-        Entity.Project? project = CommandContext.Projects.Find(_projectContext.ProjectId);
-        project!.FrontPath = rootPath;
-        await CommandContext.SaveChangesAsync();
-
-        if (entityPath != null)
-        {
-            await CommandRunner.GenerateNgPagesAsync(entityPath, dtoPath, rootPath, isMobile);
-        }
-        else
-        {
-            throw new FileNotFoundException($"未找到实体文件:{entityPath}");
-        }
-    }
-
-    /// <summary>
-    /// 创建dto
-    /// </summary>
-    /// <param name="entityFilePath"></param>
-    /// <param name="name"></param>
-    /// <param name="summary"></param>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    public async Task<string?> CreateDtoAsync(string entityFilePath, string name, string summary = "")
-    {
-        // 解析特性
-        string? moduleName = null;
-        string content = File.ReadAllText(entityFilePath);
-        var compilation = new CompilationHelper(Path.Combine(_projectContext.SolutionPath!, Config.EntityPath));
-
-        compilation.LoadContent(content);
-        var moduleAttribution = compilation.GetClassAttribution("Module");
-        if (moduleAttribution != null && moduleAttribution.Count != 0)
-        {
-            var argument = moduleAttribution.Last().ArgumentList?.Arguments.FirstOrDefault();
-            if (argument != null)
-            {
-                moduleName = compilation.GetArgumentValue(argument);
-            }
-        }
-        var entityHelper = new EntityParseHelper(entityFilePath);
-        var entityInfo = entityHelper.GetEntity();
-
-        string entityName = Path.GetFileNameWithoutExtension(entityFilePath);
-
-        string dtoPath = moduleName == null ?
-            Path.Combine(_projectContext.SolutionPath!, Config.SharePath, "Models", $"{entityName}Dtos") :
-            Path.Combine(_projectContext.SolutionPath!, "src", "Modules", moduleName, "Models", $"{entityName}Dtos");
-
-        if (Directory.Exists(dtoPath))
-        {
-            string fileName = name;
-            if (!fileName.EndsWith(".cs"))
-            {
-                fileName += ".cs";
-            }
-            dtoPath = Path.Combine(dtoPath, fileName);
-
-            if (File.Exists(dtoPath))
-            {
-                return dtoPath;
-            }
-
-            Console.WriteLine($"🆕 Create new Dto:{dtoPath}");
-
-            string nspName = moduleName == null ?
-                $"namespace Share.Models.{entityName}Dtos;" :
-                $"namespace {moduleName}.Models.{entityName}Dtos;";
-            content = $$"""
-                {{nspName}}
-                /// <summary>
-                /// {{summary}}
-                /// </summary>
-                /// <see cref="{{entityInfo.NamespaceName}}.{{entityName}}"/>
-                public class {{name}}
-                {
-                    
-
-                }
-                
-                """;
-            await File.WriteAllTextAsync(dtoPath, content, new UTF8Encoding(false));
-            return dtoPath;
-        }
-        return null;
     }
 }

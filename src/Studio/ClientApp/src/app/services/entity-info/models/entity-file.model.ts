@@ -5,12 +5,12 @@ export interface EntityFile {
    */
   comment?: string | null;
   baseDirPath: string;
-  path: string;
+  fullName: string;
   content?: string | null;
   /**
    * 所属模块
    */
-  module?: string | null;
+  moduleName?: string | null;
   hasDto: boolean;
   hasManager: boolean;
   hasAPI: boolean;

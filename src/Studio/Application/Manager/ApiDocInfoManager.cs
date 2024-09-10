@@ -1,5 +1,4 @@
-using System.Text;
-using CodeGenerator.Models;
+using Share.Infrastructure.Helper;
 using Share.Models.ApiDocInfoDtos;
 
 namespace Application.Manager;
@@ -8,11 +7,11 @@ namespace Application.Manager;
 /// </summary>
 public class ApiDocInfoManager(
     DataAccessContext<ApiDocInfo> dataContext,
-    ProjectContext project,
+    IProjectContext project,
     ILogger<ApiDocInfoManager> logger
     ) : ManagerBase<ApiDocInfo>(dataContext, logger)
 {
-    private readonly ProjectContext _project = project;
+    private readonly IProjectContext _project = project;
 
     /// <summary>
     /// 创建待添加实体
@@ -26,17 +25,18 @@ public class ApiDocInfoManager(
         return await Task.FromResult(entity);
     }
 
-    public override async Task<ApiDocInfo> UpdateAsync(ApiDocInfo entity, ApiDocInfoUpdateDto dto)
+    public async Task<bool> UpdateAsync(ApiDocInfo entity, ApiDocInfoUpdateDto dto)
     {
-        return await base.UpdateAsync(entity, dto);
+        return await base.UpdateAsync(entity);
     }
 
-    public override async Task<PageList<ApiDocInfoItemDto>> FilterAsync(ApiDocInfoFilterDto filter)
+    public async Task<PageList<ApiDocInfoItemDto>> FilterAsync(ApiDocInfoFilterDto filter)
     {
         Queryable = Queryable
             .WhereNotNull(filter.ProjectId, q => q.ProjectId == filter.ProjectId)
             .WhereNotNull(filter.Name, q => q.Name == filter.Name);
-        return await Query.FilterAsync<ApiDocInfoItemDto>(Queryable, filter.PageIndex, filter.PageSize, filter.OrderBy);
+
+        return await FilterAsync(filter);
     }
 
 
@@ -189,7 +189,7 @@ public class ApiDocInfoManager(
     public async Task<bool> IsConflictAsync(string unique)
     {
         // TODO:自定义唯一性验证参数和逻辑
-        return await Command.Db.AnyAsync(q => q.Id == new Guid(unique));
+        return await Command.AnyAsync(q => q.Id == new Guid(unique));
     }
 
     /// <summary>
@@ -199,7 +199,7 @@ public class ApiDocInfoManager(
     /// <returns></returns>
     public async Task<ApiDocInfo?> GetOwnedAsync(Guid id)
     {
-        var query = Command.Db.Where(q => q.Id == id);
+        var query = Command.Where(q => q.Id == id);
         // 获取用户所属的对象
         // query = query.Where(q => q.User.Id == _userContext.UserId);
         return await query.FirstOrDefaultAsync();
@@ -210,17 +210,17 @@ public class ApiDocInfoManager(
     /// </summary>
     /// <param name="dto"></param>
     /// <returns></returns>
-    public NgComponentInfo CreateUIComponent(CreateUIComponentDto dto)
-    {
-        return dto.ComponentType switch
-        {
-            ComponentType.Form => NgPageGenerate.GenFormComponent(dto.ModelInfo, dto.ServiceName),
-            ComponentType.Table => NgPageGenerate.GenTableComponent(dto.ModelInfo, dto.ServiceName),
-            ComponentType.Detail => NgPageGenerate.GenDetailComponent(dto.ModelInfo, dto.ServiceName),
+    //public NgComponentInfo CreateUIComponent(CreateUIComponentDto dto)
+    //{
+    //    return dto.ComponentType switch
+    //    {
+    //        ComponentType.Form => NgPageGenerate.GenFormComponent(dto.ModelInfo, dto.ServiceName),
+    //        ComponentType.Table => NgPageGenerate.GenTableComponent(dto.ModelInfo, dto.ServiceName),
+    //        ComponentType.Detail => NgPageGenerate.GenDetailComponent(dto.ModelInfo, dto.ServiceName),
 
-            _ => default!,
-        };
-    }
+    //        _ => default!,
+    //    };
+    //}
 
     /// <summary>
     /// 生成前端请求服务
@@ -237,23 +237,7 @@ public class ApiDocInfoManager(
         await SaveChangesAsync();
 
         swaggerPath ??= Path.Combine(_project.ApiPath!, "swagger.json");
-        await CommandRunner.GenerateRequestAsync(swaggerPath, webPath, type);
-    }
+        //await CommandRunner.GenerateRequestAsync(swaggerPath, webPath, type);
 
-    /// <summary>
-    /// 生成csharp 客户端请求服务
-    /// </summary>
-    /// <param name="doc"></param>
-    /// <param name="webPath"></param>
-    /// <param name="type"></param>
-    /// <param name="swaggerPath"></param>
-    /// <returns></returns>
-    public async Task GenerateClientRequestAsync(ApiDocInfo doc, string webPath, LanguageType type, string? swaggerPath = null)
-    {
-        // 保存路径
-        doc.LocalPath = webPath;
-        await SaveChangesAsync();
-        swaggerPath ??= Path.Combine(_project.ApiPath!, "swagger.json");
-        await CommandRunner.GenerateCSharpApiClientAsync(swaggerPath, webPath, type);
     }
 }

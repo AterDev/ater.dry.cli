@@ -3,10 +3,6 @@ export interface BatchGenerateDto {
   projectId: string;
   entityPaths: string[];
   /**
-   * 服务
-   */
-  serviceName?: string | null;
-  /**
    * 命令类型
    */
   commandType?: CommandType | null;

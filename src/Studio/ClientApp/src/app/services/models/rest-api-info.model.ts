@@ -1,6 +1,6 @@
 import { OperationType } from '../enum/models/operation-type.model';
 import { PropertyInfo } from '../models/property-info.model';
-import { EntityInfo } from '../models/entity-info.model';
+import { ModelInfo } from '../models/model-info.model';
 /**
  * 接口信息
  */
@@ -21,12 +21,12 @@ export interface RestApiInfo {
    */
   queryParameters?: PropertyInfo[] | null;
   /**
-   * 实体
+   * 模型信息
    */
-  requestInfo?: EntityInfo | null;
+  requestInfo?: ModelInfo | null;
   /**
-   * 实体
+   * 模型信息
    */
-  responseInfo?: EntityInfo | null;
+  responseInfo?: ModelInfo | null;
 
 }

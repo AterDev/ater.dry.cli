@@ -47,6 +47,25 @@ export class EnumTextPipe implements PipeTransform {
           }
         }
         break;
+      case 'GenSourceType':
+        {
+          switch (value) {
+            case 0: result = 'Entity Class'; break;
+            case 1: result = 'OpenAPI'; break;
+            default: result = '默认'; break;
+          }
+        }
+        break;
+      case 'GenStepType':
+        {
+          switch (value) {
+            case 0: result = 'generate file'; break;
+            case 1: result = 'run command'; break;
+            case 2: result = 'run script'; break;
+            default: result = '默认'; break;
+          }
+        }
+        break;
       case 'StringConvertType':
         {
           switch (value) {

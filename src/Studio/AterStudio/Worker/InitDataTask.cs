@@ -17,6 +17,8 @@ public class InitDataTask
         ILogger<InitDataTask> logger = loggerFactory.CreateLogger<InitDataTask>();
         try
         {
+            var connectionString = context.Database.GetConnectionString();
+            logger.LogInformation("ℹ️ Using db file: {connectionString}", connectionString);
             await context.Database.MigrateAsync();
         }
         catch (Exception e)

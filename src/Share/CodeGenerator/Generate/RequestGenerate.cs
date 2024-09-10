@@ -194,7 +194,9 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
                 codeBlocks += ToEnumSwitchString(item.Key, item.Value);
             }
         }
-        tplContent = tplContent.Replace(TplConst.ENUM_BLOCKS, codeBlocks);
+
+        // TODO:替换模板
+        tplContent = tplContent.Replace("", codeBlocks);
         return tplContent;
     }
 

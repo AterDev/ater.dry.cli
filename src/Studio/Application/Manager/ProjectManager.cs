@@ -1,13 +1,11 @@
-﻿using CodeGenerator.Helper;
-
-namespace Application.Manager;
+﻿namespace Application.Manager;
 
 public class ProjectManager(DataAccessContext<Project> dataContext,
-    ProjectContext projectContext,
+    IProjectContext projectContext,
     ILogger<ProjectManager> logger
     ) : ManagerBase<Project>(dataContext, logger)
 {
-    private readonly ProjectContext _projectContext = projectContext;
+    private readonly IProjectContext _projectContext = projectContext;
     public string GetToolVersion()
     {
         return AssemblyHelper.GetCurrentToolVersion();
@@ -104,26 +102,5 @@ public class ProjectManager(DataAccessContext<Project> dataContext,
         var project = await GetCurrentAsync(id);
         project!.Config = dto;
         return await UpdateAsync(project);
-    }
-
-
-    /// <summary>
-    /// 添加微服务
-    /// </summary>
-    /// <param name="name"></param>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    public bool AddServiceProject(string name)
-    {
-        try
-        {
-            ProjectCommand.CreateService(_projectContext.SolutionPath, name);
-            return true;
-        }
-        catch (Exception)
-        {
-            Console.WriteLine("创建服务失败");
-            return false;
-        }
     }
 }

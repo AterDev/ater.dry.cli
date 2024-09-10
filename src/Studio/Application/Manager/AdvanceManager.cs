@@ -1,14 +1,12 @@
-﻿using System.Text;
-using CodeGenerator.Helper;
-
+﻿
 namespace Application.Manager;
 
 public class AdvanceManager
 {
     private readonly CommandDbContext _dbContext;
-    private readonly ProjectContext _projectContext;
+    private readonly IProjectContext _projectContext;
 
-    public AdvanceManager(CommandDbContext dbContext, ProjectContext projectContext)
+    public AdvanceManager(CommandDbContext dbContext, IProjectContext projectContext)
     {
         _dbContext = dbContext;
         _projectContext = projectContext;

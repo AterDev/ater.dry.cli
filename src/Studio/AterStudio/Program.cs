@@ -1,9 +1,11 @@
 using System.Text;
+using AterStudio;
 using AterStudio.Worker;
-using Http.API;
 
 Console.OutputEncoding = Encoding.UTF8;
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
+builder.AddDefaultComponents();
 builder.AddDefaultWebServices();
 
 WebApplication app = builder.Build();

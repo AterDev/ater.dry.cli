@@ -1,21 +1,18 @@
-﻿using System.Net;
-using System.Text;
+﻿using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
-using System.Threading.RateLimiting;
-using Application;
 using Ater.Web.Abstraction;
 using Ater.Web.Core.Converters;
 using AterStudio;
-using Http.API;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Share;
+using Share.Services;
 
-namespace Http.API;
+namespace AterStudio;
 
 public static class ServiceCollectionExtension
 {
@@ -30,6 +27,10 @@ public static class ServiceCollectionExtension
         builder.Services.AddHttpContextAccessor();
 
         builder.Services.AddScoped<IProjectContext, ProjectContext>();
+
+        builder.Services.AddScoped(typeof(CodeAnalysisService));
+        builder.Services.AddScoped(typeof(CodeGenService));
+
         builder.Services.AddSingleton(typeof(AIService));
         builder.Services.AddManager();
 
@@ -52,7 +53,6 @@ public static class ServiceCollectionExtension
 
     public static WebApplication UseDefaultWebServices(this WebApplication app)
     {
-        app.UseWebAppContext();
         // 异常统一处理
         app.UseExceptionHandler(ExceptionHandler.Handler());
         if (app.Environment.IsProduction())
@@ -68,13 +68,8 @@ public static class ServiceCollectionExtension
             app.UseSwagger();
 #endif
         }
-
-        app.UseRateLimiter();
         app.UseStaticFiles();
         app.UseRouting();
-        app.UseRequestLocalization();
-        app.UseAuthentication();
-        app.UseAuthorization();
         app.MapControllers();
         app.MapFallbackToFile("index.html");
 
@@ -92,64 +87,6 @@ public static class ServiceCollectionExtension
 #if DEBUG
         services.AddOpenApi();
 #endif
-
-        //services.AddJwtAuthentication(configuration);
-        //services.AddAuthorize();
-        //services.AddCors();
-        return services;
-    }
-
-    /// <summary>
-    /// 添加速率限制
-    /// </summary>
-    /// <param name="services"></param>
-    /// <returns></returns>
-    public static IServiceCollection AddRateLimiter(this IServiceCollection services)
-    {
-        services.AddRateLimiter(options =>
-        {
-            options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
-            // 验证码  每10秒5次
-            options.AddPolicy("captcha", context =>
-            {
-                var remoteIpAddress = context.Connection.RemoteIpAddress;
-                if (!IPAddress.IsLoopback(remoteIpAddress!))
-                {
-                    return RateLimitPartition.GetFixedWindowLimiter(remoteIpAddress!.ToString(), _ =>
-                    new FixedWindowRateLimiterOptions
-                    {
-                        PermitLimit = 5,
-                        Window = TimeSpan.FromSeconds(10),
-                        QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
-                        QueueLimit = 3
-                    });
-                }
-                else
-                {
-                    return RateLimitPartition.GetNoLimiter(remoteIpAddress!.ToString());
-                }
-            });
-
-            // 全局限制 每10秒100次
-            options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, IPAddress>(context =>
-            {
-                IPAddress? remoteIpAddress = context.Connection.RemoteIpAddress;
-
-                if (!IPAddress.IsLoopback(remoteIpAddress!))
-                {
-                    return RateLimitPartition.GetFixedWindowLimiter(remoteIpAddress!, _ =>
-                    new FixedWindowRateLimiterOptions
-                    {
-                        PermitLimit = 100,
-                        Window = TimeSpan.FromSeconds(10),
-                        QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
-                        QueueLimit = 3
-                    });
-                }
-
-                return RateLimitPartition.GetNoLimiter(IPAddress.Loopback);
-            });
-        });
         return services;
     }
 
@@ -221,10 +158,10 @@ public static class ServiceCollectionExtension
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(c =>
         {
-            c.SwaggerDoc("admin", new OpenApiInfo
+            c.SwaggerDoc("client", new OpenApiInfo
             {
-                Title = "MyProjectName",
-                Description = "Admin API 文档. 更新时间:" + DateTime.Now.ToString("yyyy-MM-dd H:mm:ss"),
+                Title = "AterStudio API doc",
+                Description = "Studio API 文档. 更新时间:" + DateTime.Now.ToString("yyyy-MM-dd H:mm:ss"),
                 Version = "v1"
             });
             var xmlFiles = Directory.GetFiles(AppContext.BaseDirectory, "*.xml", SearchOption.TopDirectoryOnly);

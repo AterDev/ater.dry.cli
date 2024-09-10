@@ -54,8 +54,9 @@ public class EntityInfoController(
         {
             return NotFound("不存在的文件");
         }
-        string? res = await manager.CreateDtoAsync(entityFilePath, name, summary);
-        return res == null ? BadRequest("创建失败") : res;
+        // TODO:创建DTO
+        //string? res = await manager.CreateDtoAsync(entityFilePath, name, summary);
+        return BadRequest("创建失败");
     }
 
     /// <summary>
@@ -90,9 +91,9 @@ public class EntityInfoController(
     /// <param name="dto"></param>
     /// <returns></returns>
     [HttpPut("dto")]
-    public bool UpdateDtoContent(UpdateDtoDto dto)
+    public async Task<bool> UpdateDtoContentAsync(UpdateDtoDto dto)
     {
-        return manager.UpdateDtoContentAsync(dto.FileName, dto.Content);
+        return await manager.UpdateDtoContentAsync(dto.FileName, dto.Content);
     }
 
     [HttpPost("generate")]
@@ -102,7 +103,7 @@ public class EntityInfoController(
         {
             return NotFound("项目不存在");
         }
-        await manager.GenerateAsync(_project.Project, dto);
+        await manager.GenerateAsync(dto);
         return true;
     }
 
@@ -134,7 +135,7 @@ public class EntityInfoController(
         {
             return NotFound("项目不存在");
         }
-        await manager.GenerateSyncAsync(_project.Project);
+        // TODO: 同步ng页面
         return true;
     }
 
@@ -149,10 +150,8 @@ public class EntityInfoController(
         {
             return NotFound("项目不存在");
         }
+        // TODO: 生成NG组件模块
 
-        await manager.GenerateNgModuleAsync(dto.EntityName, dto.RootPath, dto.IsMobile);
         return true;
     }
-
-
 }

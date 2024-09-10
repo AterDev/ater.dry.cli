@@ -1,6 +1,4 @@
-﻿using Application;
-using Ater.Web.Abstraction;
-using Entity;
+﻿using Ater.Web.Abstraction;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AterStudio.Controllers;
@@ -83,8 +81,9 @@ public class ProjectController(
     [HttpPost("service")]
     public ActionResult<bool> AddService(string name)
     {
-        bool res = _manager.AddServiceProject(name);
-        return res;
+        // TODO: AddServiceProject
+        //bool res = _manager.AddServiceProject(name);
+        return false;
     }
 
     /// <summary>
@@ -133,16 +132,5 @@ public class ProjectController(
     public async Task<ActionResult<bool>> DeleteAsync([FromRoute] Guid id)
     {
         return await _manager.DeleteAsync([id], false);
-    }
-
-    /// <summary>
-    /// 获取实体表结构
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    [HttpGet("database/{id}")]
-    public string GetDatabaseContentAsync([FromRoute] Guid id)
-    {
-        return _advance.GetDatabaseStructureAsync();
     }
 }

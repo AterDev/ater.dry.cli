@@ -14,22 +14,8 @@ public class ContextBase : DbContext
     public DbSet<GenStep> GenSteps { get; set; }
     public DbSet<ConfigData> Configs { get; set; }
 
-
     public ContextBase(DbContextOptions options) : base(options)
     {
-    }
-    public ContextBase()
-    {
-    }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        if (!optionsBuilder.IsConfigured)
-        {
-            string path = Path.Combine(AssemblyHelper.GetStudioPath(), DbName);
-            optionsBuilder.UseSqlite($"DataSource={path}");
-        }
-        base.OnConfiguring(optionsBuilder);
     }
 
     protected override void OnModelCreating(ModelBuilder builder)

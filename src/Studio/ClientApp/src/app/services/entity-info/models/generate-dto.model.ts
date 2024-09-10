@@ -3,10 +3,6 @@ export interface GenerateDto {
   projectId: string;
   entityPath: string;
   /**
-   * 服务
-   */
-  serviceName?: string | null;
-  /**
    * 命令类型
    */
   commandType?: CommandType | null;

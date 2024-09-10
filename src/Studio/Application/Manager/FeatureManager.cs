@@ -1,16 +1,12 @@
 ﻿using System.Text.Json.Nodes;
 
-using CodeGenerator.Helper;
-
-using Share.Infrastructure.Helper;
-
 namespace Application.Manager;
 /// <summary>
 /// 功能集成
 /// </summary>
-public class FeatureManager(ProjectContext projectContext, ProjectManager projectManager)
+public class FeatureManager(IProjectContext projectContext, ProjectManager projectManager)
 {
-    private readonly ProjectContext _projectContext = projectContext;
+    private readonly IProjectContext _projectContext = projectContext;
     private readonly ProjectManager _projectManager = projectManager;
 
     public string ErrorMsg { get; set; } = string.Empty;
@@ -85,25 +81,26 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
         if (!dto.IsLight)
         {
             List<string> allModules = ModuleInfo.GetModules().Select(m => m.Value).ToList();
-            ModuleCommand moduleCommand = new(path, allModules);
-            List<string> notChoseModules = allModules.Except(dto.Modules).ToList();
-            foreach (string? item in notChoseModules)
-            {
-                moduleCommand.CleanModule(item);
-            }
-            foreach (string item in dto.Modules)
-            {
-                await moduleCommand.CreateModuleAsync(item);
-            }
+            // TODO:模块处理
+            //ModuleCommand moduleCommand = new(path, allModules);
+            //List<string> notChoseModules = allModules.Except(dto.Modules).ToList();
+            //foreach (string? item in notChoseModules)
+            //{
+            //    moduleCommand.CleanModule(item);
+            //}
+            //foreach (string item in dto.Modules)
+            //{
+            //    await moduleCommand.CreateModuleAsync(item);
+            //}
         }
 
-        // 保存项目信息
-        string? addRes = await _projectManager.AddAsync(dto.Name, path);
-        if (addRes != null)
-        {
-            ErrorMsg = addRes;
-            return false;
-        }
+        // TODO:保存项目信息
+        //string? addRes = await _projectManager.AddAsync(dto.Name, path);
+        //if (addRes != null)
+        //{
+        //    ErrorMsg = addRes;
+        //    return false;
+        //}
 
         // restore & build solution
         Console.WriteLine("⛏️ restore & build project!");
@@ -218,17 +215,18 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
     public List<SubProjectInfo> GetModulesInfo()
     {
         List<SubProjectInfo> res = [];
-        List<string>? paths = ModuleCommand.GetModulesPaths(_projectContext.SolutionPath!);
-        paths?.ForEach(path =>
-        {
-            SubProjectInfo moduleInfo = new()
-            {
-                Name = Path.GetFileNameWithoutExtension(path),
-                Path = path,
-                ProjectType = ProjectType.Module
-            };
-            res.Add(moduleInfo);
-        });
+        // TODO: 获取模块信息
+        //List<string>? paths = ModuleCommand.GetModulesPaths(_projectContext.SolutionPath!);
+        //paths?.ForEach(path =>
+        //{
+        //    SubProjectInfo moduleInfo = new()
+        //    {
+        //        Name = Path.GetFileNameWithoutExtension(path),
+        //        Path = path,
+        //        ProjectType = ProjectType.Module
+        //    };
+        //    res.Add(moduleInfo);
+        //});
         return res;
     }
 
@@ -245,8 +243,9 @@ public class FeatureManager(ProjectContext projectContext, ProjectManager projec
                 name += "Mod";
             }
             List<string> allModules = ModuleInfo.GetModules().Select(m => m.Value).ToList();
-            await new ModuleCommand(_projectContext.SolutionPath!, allModules)
-                .CreateModuleAsync(name);
+            // TODO: 生成模块
+            //await new ModuleCommand(_projectContext.SolutionPath!, allModules)
+            //    .CreateModuleAsync(name);
         }
         catch (Exception e)
         {

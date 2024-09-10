@@ -1,7 +1,7 @@
 ﻿namespace CodeGenerator.Generate;
 
 /// <summary>
-/// 表单生成
+/// TODO:表单生成
 /// </summary>
 public class NgFormGenerate : GenerateBase
 {
@@ -30,7 +30,7 @@ public class NgFormGenerate : GenerateBase
         }
         string tplDir = isMobile ? "mobileAdd" : "add";
         string tplContent = GetTplContent($"angular.{tplDir}.add.component.html.tpl");
-        tplContent = tplContent.Replace(TplConst.FORM_CONTROLS, formControls.ToString());
+        tplContent = tplContent.Replace("", formControls.ToString());
         return tplContent;
     }
 
@@ -55,7 +55,7 @@ public class NgFormGenerate : GenerateBase
         }
 
         string tplContent = GetTplContent("angular.component.form.component.html.tpl");
-        tplContent = tplContent.Replace(TplConst.FORM_CONTROLS, formControls.ToString());
+        tplContent = tplContent.Replace("", formControls.ToString());
         return tplContent;
     }
 
@@ -80,7 +80,7 @@ public class NgFormGenerate : GenerateBase
         }
         string tplDir = isMobile ? "mobileEdit" : "edit";
         string tplContent = GetTplContent($"angular.{tplDir}.edit.component.html.tpl");
-        tplContent = tplContent.Replace(TplConst.FORM_CONTROLS, formControls.ToString());
+        tplContent = tplContent.Replace("", formControls.ToString());
         return tplContent;
     }
 }

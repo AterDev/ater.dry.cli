@@ -151,7 +151,6 @@ public class CodeGenService(ILogger<CodeGenService> logger)
         return [globalFile, controllerFile];
     }
 
-
     /// <summary>
     /// 生成文件
     /// </summary>

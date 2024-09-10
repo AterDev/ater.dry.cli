@@ -66,10 +66,11 @@ public class ApiDocInfoController(
     /// <param name="apiDocInfo"></param>
     /// <returns></returns>
     [HttpPost]
-    public async Task<ActionResult<ApiDocInfo>> AddAsync(ApiDocInfoAddDto apiDocInfo)
+    public async Task<ActionResult<Guid?>> AddAsync(ApiDocInfoAddDto apiDocInfo)
     {
-        Entity.ApiDocInfo entity = await manager.CreateNewEntityAsync(apiDocInfo);
-        return await manager.AddAsync(entity);
+        var entity = await manager.CreateNewEntityAsync(apiDocInfo);
+        var res = await manager.AddAsync(entity);
+        return res ? entity.Id : Problem("");
     }
 
     /// <summary>
@@ -79,10 +80,10 @@ public class ApiDocInfoController(
     /// <param name="dto"></param>
     /// <returns></returns>
     [HttpPut("{id}")]
-    public async Task<ActionResult<ApiDocInfo>> UpdateAsync([FromRoute] Guid id, ApiDocInfoUpdateDto dto)
+    public async Task<ActionResult<bool>> UpdateAsync([FromRoute] Guid id, ApiDocInfoUpdateDto dto)
     {
         Entity.ApiDocInfo? entity = await manager.GetCurrentAsync(id);
-        return entity == null ? (ActionResult<ApiDocInfo>)NotFound("未找到该对象") : (ActionResult<ApiDocInfo>)await manager.UpdateAsync(entity, dto);
+        return entity == null ? NotFound("未找到该对象") : await manager.UpdateAsync(entity, dto);
     }
 
     /// <summary>
@@ -91,10 +92,12 @@ public class ApiDocInfoController(
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpDelete("{id}")]
-    public async Task<ActionResult<ApiDocInfo?>> Delete([FromRoute] Guid id)
+    public async Task<ActionResult<bool?>> DeleteAsync([FromRoute] Guid id)
     {
-        Entity.ApiDocInfo? entity = await manager.FindAsync(id);
-        return entity == null ? (ActionResult<ApiDocInfo?>)NotFound("未找到该对象") : (ActionResult<ApiDocInfo?>?)await manager.DeleteAsync(entity);
+        var entity = await manager.FindAsync(id);
+        return entity == null
+            ? NotFound("未找到该对象")
+            : await manager.DeleteAsync([id], false);
     }
 
     /// <summary>
@@ -105,7 +108,8 @@ public class ApiDocInfoController(
     [HttpPost("component")]
     public NgComponentInfo CreateUIComponent(CreateUIComponentDto dto)
     {
-        return manager.CreateUIComponent(dto);
+        // TODO return manager.CreateUIComponent(dto);
+        return default;
     }
 
     /// <summary>
@@ -134,28 +138,4 @@ public class ApiDocInfoController(
         return true;
     }
 
-    /// <summary>
-    /// 生成客户端请求
-    /// </summary>
-    /// <param name="id"></param>
-    /// <param name="webPath"></param>
-    /// <param name="type"></param>
-    /// <param name="swaggerPath"></param>
-    /// <returns></returns>
-    [HttpGet("generateClientRequest/{id}")]
-    public async Task<ActionResult<bool>> GenerateClientRequest([FromRoute] Guid id, string webPath, LanguageType type, string? swaggerPath = null)
-    {
-        if (_project.Project == null)
-        {
-            return NotFound("项目不存在");
-        }
-        Entity.ApiDocInfo? entity = await manager.GetCurrentAsync(id);
-        if (entity == null)
-        {
-            return NotFound("未找到文档配置");
-        }
-
-        await manager.GenerateClientRequestAsync(entity, webPath, type, swaggerPath);
-        return true;
-    }
 }

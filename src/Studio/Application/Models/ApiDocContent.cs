@@ -14,7 +14,7 @@ public class ApiDocContent
     /// <summary>
     /// 所有请求及返回类型信息
     /// </summary>
-    public List<EntityInfo> ModelInfos { get; set; } = [];
+    public List<ModelInfo> ModelInfos { get; set; } = [];
     /// <summary>
     /// tag信息
     /// </summary>

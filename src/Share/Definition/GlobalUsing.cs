@@ -1,7 +1,9 @@
 ﻿global using System.Collections.Generic;
+global using System.ComponentModel.DataAnnotations;
 global using System.IO;
 global using System.Linq.Expressions;
 global using System.Text;
+global using Ater.Web.Core.Models;
 global using Ater.Web.Core.Utils;
 global using CodeGenerator.Helper;
 global using Entity;
