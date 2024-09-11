@@ -54,9 +54,6 @@ public class ProjectManager(DataAccessContext<Project> dataContext,
         return await base.AddAsync(entity) ? entity.Id : null;
     }
 
-
-
-
     public async Task<Project?> GetDetailAsync(Guid id)
     {
         return await FindAsync(id);
@@ -95,7 +92,6 @@ public class ProjectManager(DataAccessContext<Project> dataContext,
             return ex.Message;
         }
     }
-
 
     /// <summary>
     /// 更新配置内容
