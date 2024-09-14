@@ -16,11 +16,12 @@ public class EntityInfoController(
     private readonly EntityInfoManager manager = manager;
 
     [HttpGet("{id}")]
-    public ActionResult<List<EntityFile>> List([FromRoute] Guid id, string? serviceName)
+    public ActionResult<List<EntityFile>> List([FromRoute] Guid id)
     {
+
         return _project.Project == null
             ? NotFound("不存在的项目")
-            : manager.GetEntityFiles(serviceName);
+            : manager.GetEntityFiles(_project.EntityPath!);
     }
 
     /// <summary>s

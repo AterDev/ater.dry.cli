@@ -104,7 +104,7 @@ public class ProjectController(
     [HttpPost("open")]
     public ActionResult<string> OpenSolution(string path)
     {
-        return path.EndsWith(".sln") ? (ActionResult<string>)_manager.OpenSolution(path) : (ActionResult<string>)Problem("不支持的解决方案文件");
+        return path.EndsWith(".sln") ? _manager.OpenSolution(path) : Problem("不支持的解决方案文件");
     }
 
     /// <summary>
