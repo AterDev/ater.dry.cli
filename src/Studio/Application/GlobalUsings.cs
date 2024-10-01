@@ -17,3 +17,5 @@ global using Microsoft.OpenApi.Readers;
 global using Share;
 global using Share.EntityFramework;
 global using Share.EntityFramework.DBProvider;
+global using Share.Models;
+global using Share.Services;

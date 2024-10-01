@@ -9,7 +9,7 @@
         <PackageReference Include="Ater.DeepSeek.Core" Version="1.0.1" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\..\Share\Definition\Definition.csproj" />
+        <ProjectReference Include="..\..\Definition\Share\Share.csproj" />
         <!--<ProjectReference Include="..\..\Command\Command.Share\Command.Share.csproj" />-->
     </ItemGroup>
 </Project>
