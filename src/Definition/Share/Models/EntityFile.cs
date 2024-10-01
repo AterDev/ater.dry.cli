@@ -20,27 +20,38 @@ public class EntityFile
     public bool HasAPI { get; set; }
 
     /// <summary>
-    /// 获取manager路径
+    /// Dto models path
     /// </summary>
+    /// <param name="project"></param>
     /// <returns></returns>
-    public string GetManagerPath(string basePath)
-    {
-        return ModuleName.IsEmpty()
-            ? Path.Combine(basePath, Const.ManagersDir)
-            : Path.Combine(basePath, PathConst.ModulesPath, ModuleName, Const.ManagersDir);
-    }
-
-    public string GetDtoPath(string basePath)
+    public string GetDtoPath(IProjectContext project)
     {
         var name = Path.GetFileNameWithoutExtension(Name);
         return ModuleName.IsEmpty()
-            ? Path.Combine(basePath, Const.ModelsDir, $"{name}Dtos")
-            : Path.Combine(basePath, PathConst.ModulesPath, ModuleName, Const.ModelsDir, $"{name}Dtos");
+            ? Path.Combine(project.SharePath ?? PathConst.SharePath, Const.ModelsDir, $"{name}Dtos")
+            : Path.Combine(project.ModulesPath ?? PathConst.ModulesPath, ModuleName, Const.ModelsDir, $"{name}Dtos");
     }
-    public string GetControllerPath(string basePath)
+    /// <summary>
+    /// 获取manager路径
+    /// </summary>
+    /// <param name="project"></param
+    /// <returns></returns>
+    public string GetManagerPath(IProjectContext project)
     {
         return ModuleName.IsEmpty()
-            ? Path.Combine(basePath, Const.ControllersDir)
-            : Path.Combine(basePath, PathConst.ModulesPath, ModuleName, Const.ControllersDir);
+            ? Path.Combine(project.ApplicationPath ?? PathConst.ApplicationPath, Const.ManagersDir)
+            : Path.Combine(project.ModulesPath ?? PathConst.ModulesPath, ModuleName, Const.ManagersDir);
+    }
+
+    /// <summary>
+    /// controller Path
+    /// </summary>
+    /// <param name="project"></param>
+    /// <returns></returns>
+    public string GetControllerPath(IProjectContext project)
+    {
+        return ModuleName.IsEmpty()
+            ? Path.Combine(project.ApiPath ?? PathConst.APIPath, Const.ControllersDir)
+            : Path.Combine(project.ModulesPath ?? PathConst.ModulesPath, ModuleName, Const.ControllersDir);
     }
 }

@@ -19,7 +19,6 @@
         <PackageReference Include="PluralizeService.Core" Version="1.2.21147.2" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="9.0.0-rc.1.24451.1" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0-rc.1.24451.1" />
-        <!--<PackageReference Include="System.Formats.Asn1" Version="8.0.1" />-->
     </ItemGroup>
 
     <ItemGroup>

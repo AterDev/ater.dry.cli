@@ -65,15 +65,15 @@ public class Const
 }
 
 /// <summary>
-/// 路径
+///在默认路径
 /// </summary>
 public class PathConst
 {
-    public static string APIPath = Path.Combine(Const.SrcDir, Const.APIName);
-    public static string ApplicationPath = Path.Combine(Const.SrcDir, Const.ApplicationName);
-    public static string SharePath = Path.Combine(Const.SrcDir, Const.DefinitionDir, Const.ShareName);
-    public static string EntityPath = Path.Combine(Const.SrcDir, Const.DefinitionDir, Const.EntityName);
-    public static string EntityFrameworkPath = Path.Combine(Const.SrcDir, Const.DefinitionDir, Const.EntityFrameworkName);
-    public static string ModulesPath = Path.Combine(Const.SrcDir, Const.ModulesDir);
-    public static string MicroservicePath = Path.Combine(Const.SrcDir, Const.MicroserviceDir);
+    public readonly static string APIPath = Path.Combine(Const.SrcDir, Const.APIName);
+    public readonly static string ApplicationPath = Path.Combine(Const.SrcDir, Const.ApplicationName);
+    public readonly static string SharePath = Path.Combine(Const.SrcDir, Const.DefinitionDir, Const.ShareName);
+    public readonly static string EntityPath = Path.Combine(Const.SrcDir, Const.DefinitionDir, Const.EntityName);
+    public readonly static string EntityFrameworkPath = Path.Combine(Const.SrcDir, Const.DefinitionDir, Const.EntityFrameworkName);
+    public readonly static string ModulesPath = Path.Combine(Const.SrcDir, Const.ModulesDir);
+    public readonly static string MicroservicePath = Path.Combine(Const.SrcDir, Const.MicroserviceDir);
 }

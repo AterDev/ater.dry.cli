@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics;
 using CodeGenerator.Models;
 using Microsoft.CodeAnalysis;
-using Share.Models;
-using Share.Services;
 
 namespace Application.Manager;
 
@@ -67,16 +65,19 @@ public partial class EntityInfoManager(
         bool hasAPI = false;
         var entityName = Path.GetFileNameWithoutExtension(entity.Name);
 
-        string dtoPath = Path.Combine(entity.GetDtoPath(_projectContext.SharePath!), $"{entityName}AddDto.cs");
-        string managerPath = Path.Combine(entity.GetManagerPath(_projectContext.ApplicationPath!), $"{entityName}Manager.cs");
-        string apiPath = Path.Combine(entity.GetControllerPath(_projectContext.ApiPath!));
+        string dtoPath = Path.Combine(entity.GetDtoPath(_projectContext), $"{entityName}AddDto.cs");
+        string managerPath = Path.Combine(entity.GetManagerPath(_projectContext), $"{entityName}Manager.cs");
+        string apiPath = Path.Combine(entity.GetControllerPath(_projectContext));
 
         string servicePath = Path.Combine(_projectContext.SolutionPath!, "src");
 
         if (Directory.Exists(apiPath))
         {
-            string[] apiFiles = Directory.GetFiles(apiPath, $"{entityName}Controller.cs", SearchOption.AllDirectories);
-            if (apiFiles.Count() > 0) { hasAPI = true; }
+            if (File.Exists(Path.Combine(apiPath, $"{entityName}Controller.cs")) ||
+                File.Exists(Path.Combine(apiPath, "AdminControllers", $"{entityName}Controller.cs")))
+            {
+                hasAPI = true;
+            }
         }
 
         if (File.Exists(dtoPath)) { hasDto = true; }
@@ -129,7 +130,7 @@ public partial class EntityInfoManager(
     private string? GetDtoPath(string entityFilePath)
     {
         var entityFile = _codeAnalysis.GetEntityFile(entityFilePath);
-        return entityFile?.GetDtoPath(_projectContext.SolutionPath!);
+        return entityFile?.GetDtoPath(_projectContext);
     }
 
     /// <summary>
@@ -214,7 +215,7 @@ public partial class EntityInfoManager(
         if (isManager)
         {
 
-            filePath = entityFile.GetManagerPath(_projectContext.SolutionPath!);
+            filePath = entityFile.GetManagerPath(_projectContext);
             filePath = Path.Combine(filePath, $"{entityName}Manager.cs");
         }
         else
