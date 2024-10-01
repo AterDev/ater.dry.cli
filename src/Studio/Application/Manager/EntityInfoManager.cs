@@ -1,9 +1,6 @@
 ﻿using System.Diagnostics;
-using System.Text;
-using CodeGenerator.Helper;
 using CodeGenerator.Models;
 using Microsoft.CodeAnalysis;
-using Share;
 using Share.Models;
 using Share.Services;
 
@@ -35,7 +32,7 @@ public partial class EntityInfoManager(
 
             if (filePaths.Count != 0)
             {
-                entityFiles = CodeAnalysisService.GetEntityFiles(filePaths);
+                entityFiles = _codeAnalysis.GetEntityFiles(filePaths);
                 foreach (var item in entityFiles)
                 {
                     // 查询生成的dto\manager\api状态
@@ -43,7 +40,6 @@ public partial class EntityInfoManager(
                     item.HasDto = hasDto;
                     item.HasManager = hasManager;
                     item.HasAPI = hasAPI;
-                    entityFiles.Add(item);
                 }
                 // 排序
                 entityFiles = [.. entityFiles.OrderByDescending(e => e.ModuleName).ThenBy(e => e.Name)];
@@ -69,16 +65,17 @@ public partial class EntityInfoManager(
         bool hasDto = false;
         bool hasManager = false;
         bool hasAPI = false;
+        var entityName = Path.GetFileNameWithoutExtension(entity.Name);
 
-        string dtoPath = Path.Combine(entity.GetDtoPath(_projectContext.SolutionPath!), $"{entity.Name}AddDto.cs");
-        string managerPath = Path.Combine(entity.GetManagerPath(_projectContext.SolutionPath!), $"{entity.Name}Manager.cs");
-        string apiPath = Path.Combine(entity.GetControllerPath(_projectContext.SolutionPath!), "Controllers");
+        string dtoPath = Path.Combine(entity.GetDtoPath(_projectContext.SharePath!), $"{entityName}AddDto.cs");
+        string managerPath = Path.Combine(entity.GetManagerPath(_projectContext.ApplicationPath!), $"{entityName}Manager.cs");
+        string apiPath = Path.Combine(entity.GetControllerPath(_projectContext.ApiPath!));
 
         string servicePath = Path.Combine(_projectContext.SolutionPath!, "src");
 
         if (Directory.Exists(apiPath))
         {
-            string[] apiFiles = Directory.GetFiles(apiPath, $"{entity.Name}Controller.cs", SearchOption.AllDirectories);
+            string[] apiFiles = Directory.GetFiles(apiPath, $"{entityName}Controller.cs", SearchOption.AllDirectories);
             if (apiFiles.Count() > 0) { hasAPI = true; }
         }
 
@@ -131,7 +128,7 @@ public partial class EntityInfoManager(
 
     private string? GetDtoPath(string entityFilePath)
     {
-        var entityFile = CodeAnalysisService.GetEntityFile(entityFilePath);
+        var entityFile = _codeAnalysis.GetEntityFile(entityFilePath);
         return entityFile?.GetDtoPath(_projectContext.SolutionPath!);
     }
 

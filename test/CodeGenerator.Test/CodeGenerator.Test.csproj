@@ -28,7 +28,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\Share\Definition\Share.csproj" />
+      <ProjectReference Include="..\..\src\Share\Definition\Definition.csproj" />
     </ItemGroup>
 
 </Project>

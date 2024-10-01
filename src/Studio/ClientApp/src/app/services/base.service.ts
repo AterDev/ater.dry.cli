@@ -1,8 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from 'src/environments/environment';
-// import { OidcSecurityService } from 'angular-auth-oidc-client';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +11,6 @@ export class BaseService {
   constructor(
     protected http: HttpClient,
     @Inject('BASE_URL') baseUrl: string
-    // private oidcSecurityService: OidcSecurityService
   ) {
     this.isMobile = this.isMoblie();
     if (baseUrl.endsWith('/')) {
@@ -53,7 +50,7 @@ export class BaseService {
   getHeaders(): HttpHeaders {
     return new HttpHeaders({
       Accept: 'application/json',
-      Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
+      projectId: localStorage.getItem('projectId') ?? '',
     });
   }
   isMoblie(): boolean {

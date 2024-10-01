@@ -15,13 +15,13 @@ public class CodeAnalysisService(IProjectContext projectContext)
     /// </summary>
     /// <param name="filePaths"></param>
     /// <returns></returns>
-    public static List<EntityFile> GetEntityFiles(List<string> filePaths)
+    public List<EntityFile> GetEntityFiles(List<string> filePaths)
     {
         var entityFiles = new ConcurrentBag<EntityFile>();
         Parallel.ForEach(filePaths, path =>
         {
             string content = File.ReadAllText(path);
-            var compilation = new CompilationHelper(path);
+            var compilation = new CompilationHelper(_projectContext.EntityPath!);
             compilation.LoadContent(content);
             if (compilation.IsEntityClass())
             {
@@ -69,7 +69,7 @@ public class CodeAnalysisService(IProjectContext projectContext)
         return [.. entityInfos];
     }
 
-    public static EntityFile? GetEntityFile(string filePath)
+    public EntityFile? GetEntityFile(string filePath)
     {
         return GetEntityFiles([filePath]).FirstOrDefault();
     }
@@ -86,6 +86,7 @@ public class CodeAnalysisService(IProjectContext projectContext)
                     || f.EndsWith(".AssemblyAttributes.cs")
                     || f.EndsWith(".AssemblyInfo.cs")
                     || f.EndsWith("GlobalUsings.cs")
+                    || f.EndsWith("EntityBase.cs")
                     || f.EndsWith("Modules.cs"))
                     ).ToList();
     }

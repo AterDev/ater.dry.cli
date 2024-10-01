@@ -13,13 +13,15 @@ public class EntityInfoController(
     ILogger<EntityInfoController> logger
     ) : BaseController<EntityInfoManager>(manager, project, logger)
 {
+    private readonly EntityInfoManager manager = manager;
 
     [HttpGet("{id}")]
-    public ActionResult<List<EntityFile>> List([FromRoute] Guid id, string? serviceName)
+    public ActionResult<List<EntityFile>> List([FromRoute] Guid id)
     {
+
         return _project.Project == null
             ? NotFound("不存在的项目")
-            : _manager.GetEntityFiles(serviceName);
+            : manager.GetEntityFiles(_project.EntityPath!);
     }
 
     /// <summary>s
@@ -30,7 +32,7 @@ public class EntityInfoController(
     [HttpGet("dtos")]
     public ActionResult<List<EntityFile>> GetDtos(string entityFilePath)
     {
-        return !System.IO.File.Exists(entityFilePath) ? NotFound("不存在的文件") : _manager.GetDtos(entityFilePath);
+        return !System.IO.File.Exists(entityFilePath) ? NotFound("不存在的文件") : manager.GetDtos(entityFilePath);
     }
 
     /// <summary>
@@ -59,7 +61,7 @@ public class EntityInfoController(
     [HttpDelete]
     public string CleanSolution()
     {
-        bool res = _manager.CleanSolution(out string? errorMsg);
+        bool res = manager.CleanSolution(out string? errorMsg);
         return res ? "清理成功" : errorMsg;
 
     }
@@ -74,7 +76,7 @@ public class EntityInfoController(
     [HttpGet("fileContent")]
     public EntityFile? GetFileContent(string entityName, bool isManager, string? moduleName = null)
     {
-        return _manager.GetFileContent(entityName, isManager, moduleName);
+        return manager.GetFileContent(entityName, isManager, moduleName);
     }
 
 
@@ -86,7 +88,7 @@ public class EntityInfoController(
     [HttpPut("dto")]
     public async Task<bool> UpdateDtoContentAsync(UpdateDtoDto dto)
     {
-        return await _manager.UpdateDtoContentAsync(dto.FileName, dto.Content);
+        return await manager.UpdateDtoContentAsync(dto.FileName, dto.Content);
     }
 
     [HttpPost("generate")]
@@ -96,7 +98,7 @@ public class EntityInfoController(
         {
             return NotFound("项目不存在");
         }
-        await _manager.GenerateAsync(dto);
+        await manager.GenerateAsync(dto);
         return true;
     }
 
@@ -112,7 +114,7 @@ public class EntityInfoController(
         {
             return NotFound("项目不存在");
         }
-        await _manager.BatchGenerateAsync(dto);
+        await manager.BatchGenerateAsync(dto);
         return true;
     }
 

@@ -15,10 +15,9 @@ export class EntityInfoBaseService extends BaseService {
   /**
    * list
    * @param id string
-   * @param serviceName string
    */
-  list(id: string, serviceName: string | null): Observable<EntityFile[]> {
-    const _url = `/api/admin/EntityInfo/${id}?serviceName=${serviceName ?? ''}`;
+  list(id: string): Observable<EntityFile[]> {
+    const _url = `/api/admin/EntityInfo/${id}`;
     return this.request<EntityFile[]>('get', _url);
   }
 

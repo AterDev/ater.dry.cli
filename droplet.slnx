@@ -9,8 +9,9 @@
 
   <Folder Name="/src/Share/">
     <Project Path="src\Share\CodeGenerator\CodeGenerator.csproj" />
-    <Project Path="src\Share\Entity\Entity.csproj"/>
-    <Project Path="src\Share\Definition\Share.csproj" />
+    <Project Path="src\Share\Entity\Entity.csproj" />
+
+    <Project Path="src\Share\Definition\Definition.csproj" />
   </Folder>
 
   <Folder Name="/src/Command/">
