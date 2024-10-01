@@ -43,7 +43,7 @@ public class Const
 
 
     public const string Version = "9.0.0";
-    public const string NetVersion = "net8.0";
+    public const string NetVersion = "net9.0";
     public const string PackageId = "ater.dry";
 
     // files 
