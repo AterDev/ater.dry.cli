@@ -117,7 +117,7 @@
           (click)="openPreviewDialog(element,true)">
           <mat-icon [class]="element.hasManager?'text-primary':''">code_blocks</mat-icon>
         </button>
-        <button mat-icon-button [disabled]="!element.hasAPI" matTooltip="已生成API">
+        <button mat-icon-button [disabled]="!element.hasAPI" matTooltip="已生成API" class="cursor-none">
           <mat-icon [class]="element.hasAPI?'text-primary':''">api</mat-icon>
         </button>
       </td>

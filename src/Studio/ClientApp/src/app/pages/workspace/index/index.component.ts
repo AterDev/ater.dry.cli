@@ -23,6 +23,8 @@ import { ProjectStateService } from 'src/app/share/project-state.service';
 import { EntityInfoService } from 'src/app/services/entity-info/entity-info.service';
 import { ProjectService } from 'src/app/services/project/project.service';
 import { ProjectConfig } from 'src/app/services/project/models/project-config.model';
+import { ProgressDialogComponent } from 'src/app/components/progress-dialog/progress-dialog.component';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-index',
@@ -180,7 +182,12 @@ export class IndexComponent implements OnInit {
   }
 
   clean(): void {
-    this.isSync = true;
+    this.dialogRef = this.dialog.open(ProgressDialogComponent, {
+      data: {
+        title: '清理中',
+        content: '正在清理解决方案，请稍后...'
+      }
+    })
     this.service.cleanSolution()
       .subscribe({
         next: (res) => {
@@ -194,7 +201,7 @@ export class IndexComponent implements OnInit {
           this.isSync = false;
         },
         complete: () => {
-          this.isSync = false;
+          this.dialogRef.close();
         }
       });
   }

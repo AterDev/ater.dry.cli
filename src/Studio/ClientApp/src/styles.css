@@ -37,6 +37,10 @@ img {
   cursor: pointer;
 }
 
+.cursor-none {
+  cursor: auto !important;
+}
+
 .strong {
   font-weight: bold;
 }
