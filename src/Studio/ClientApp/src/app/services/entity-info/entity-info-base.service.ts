@@ -13,8 +13,8 @@ import { EntityFile } from './models/entity-file.model';
 @Injectable({ providedIn: 'root' })
 export class EntityInfoBaseService extends BaseService {
   /**
-   * list
-   * @param id string
+   * 实体列表
+   * @param id 
    */
   list(id: string): Observable<EntityFile[]> {
     const _url = `/api/admin/EntityInfo/${id}`;

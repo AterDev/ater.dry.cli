@@ -86,43 +86,36 @@ public partial class EntityInfoManager(
     }
 
     /// <summary>
-    /// 获取实体对应的dto
+    /// 获取实体对应的 dto
     /// </summary>
     /// <param name="entityFilePath"></param>
     /// <returns></returns>
     public List<EntityFile> GetDtos(string entityFilePath)
     {
         List<EntityFile> dtoFiles = [];
-        try
+        var dtoPath = GetDtoPath(entityFilePath);
+        if (dtoPath == null) { return dtoFiles; }
+        // get files in directory
+        List<string> filePaths = [.. Directory.GetFiles(dtoPath, "*.cs", SearchOption.AllDirectories)];
+
+        if (filePaths.Count != 0)
         {
-            string dtoPath = GetDtoPath(entityFilePath);
+            filePaths = filePaths.Where(f => !f.EndsWith(".g.cs"))
+                .ToList();
 
-            // get files in directory
-            List<string> filePaths = [.. Directory.GetFiles(dtoPath, "*.cs", SearchOption.AllDirectories)];
-
-            if (filePaths.Count != 0)
+            foreach (string? path in filePaths)
             {
-                filePaths = filePaths.Where(f => !f.EndsWith(".g.cs"))
-                    .ToList();
-
-                foreach (string? path in filePaths)
+                FileInfo file = new(path);
+                EntityFile item = new()
                 {
-                    FileInfo file = new(path);
-                    EntityFile item = new()
-                    {
-                        Name = file.Name,
-                        BaseDirPath = dtoPath,
-                        FullName = file.FullName.Replace(dtoPath, ""),
-                        Content = File.ReadAllText(path)
-                    };
+                    Name = file.Name,
+                    BaseDirPath = dtoPath,
+                    FullName = file.FullName,
+                    Content = File.ReadAllText(path)
+                };
 
-                    dtoFiles.Add(item);
-                }
+                dtoFiles.Add(item);
             }
-        }
-        catch (Exception)
-        {
-            return dtoFiles;
         }
         return dtoFiles;
     }

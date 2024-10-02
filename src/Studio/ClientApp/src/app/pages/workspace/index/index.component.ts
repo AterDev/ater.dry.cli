@@ -559,7 +559,7 @@ export class IndexComponent implements OnInit {
   }
 
   goToDto(entity: EntityFile): void {
-    this.projectState.currentEntity = entity;
+    this.projectState.currentEntity.set(entity);
     this.router.navigate(['../dto', entity.name], { relativeTo: this.route });
   }
 }

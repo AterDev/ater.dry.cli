@@ -16,6 +16,7 @@ export class DtoComponent implements OnInit {
   name: string | null = null;
   path: string | null = null;
   dtos: EntityFile[] = [];
+  currentEntity: EntityFile | null = null;;
   isLoading = true;
   projectId: string;
   editorOptions = {
@@ -33,12 +34,12 @@ export class DtoComponent implements OnInit {
     private location: Location
   ) {
     this.name = this.route.snapshot.paramMap.get('name');
-
     if (projectState.project) {
       this.projectId = projectState.project?.id;
     } else {
       this.projectId = '';
     }
+    this.currentEntity = this.projectState.currentEntity();
   }
 
   ngOnInit(): void {
@@ -49,8 +50,8 @@ export class DtoComponent implements OnInit {
 
   }
   getDtos(): void {
-    if (this.projectId && this.name && this.projectState.currentEntity) {
-      const path = this.projectState.currentEntity.baseDirPath + this.projectState.currentEntity.baseDirPath;
+    if (this.projectId && this.name && this.currentEntity) {
+      const path = this.currentEntity.fullName;
       this.service.getDtos(path)
         .subscribe({
           next: (res) => {
@@ -81,7 +82,7 @@ export class DtoComponent implements OnInit {
 
   save(): void {
     const currentDto = this.dtos.filter((val) => val.name == this.currentTabName)[0];
-    const path = currentDto.baseDirPath + currentDto.baseDirPath;
+    const path = currentDto.fullName;
     if (path) {
       this.service.updateDtoContent({
         fileName: path,

@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "AterStudio API doc",
-    "description": "Studio API 文档. 更新时间:2024-10-02 3:30:16",
+    "description": "Studio API 文档. 更新时间:2024-10-02 12:54:04",
     "version": "v1"
   },
   "paths": {
@@ -438,11 +438,13 @@
         "tags": [
           "EntityInfo"
         ],
+        "summary": "实体列表",
         "operationId": "EntityInfo_List",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "",
             "required": true,
             "schema": {
               "type": "string",

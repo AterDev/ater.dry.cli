@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal, Signal } from '@angular/core';
 import { EntityFile } from '../services/entity-info/models/entity-file.model';
 import { Project } from '../services/project/models/project.model';
 
@@ -9,7 +9,7 @@ import { Project } from '../services/project/models/project.model';
 export class ProjectStateService {
   project: Project | null = null;
   version: string | null = null;
-  currentEntity: EntityFile | null = null;
+  currentEntity =  signal<EntityFile|null>(null);
   constructor() {
     this.getProject();
     this.getVersion();
