@@ -112,6 +112,11 @@ public class EntityParseHelper
         PropertyInfos = GetPropertyInfos();
     }
 
+    /// <summary>
+    /// 解析实体
+    /// </summary>
+    /// <param name="filePath"></param>
+    /// <returns></returns>
     public async Task<EntityInfo?> ParseEntityAsync(string? filePath = null)
     {
         filePath ??= FilePath;
@@ -135,13 +140,13 @@ public class EntityParseHelper
                 Name = Name!,
                 FilePath = filePath,
                 Md5Hash = HashCrypto.Md5Hash(content),
-                ProjectId = Const.PROJECT_ID,
                 AssemblyName = AssemblyName,
                 NamespaceName = NamespaceName ?? "",
                 Comment = Comment,
                 Summary = GetCommentFromXmlDoc(),
                 PropertyInfos = GetPropertyInfos(),
-                KeyType = KeyType
+                KeyType = KeyType,
+                ModuleName = GetModuleName()
             };
 
         }
@@ -178,6 +183,24 @@ public class EntityParseHelper
             comment = "/// " + comment;
         }
         return comment;
+    }
+
+    /// <summary>
+    /// get module name
+    /// </summary>
+    /// <returns></returns>
+    public string? GetModuleName()
+    {
+        var moduleAttribution = CompilationHelper.GetClassAttribution("Module");
+        if (moduleAttribution != null && moduleAttribution.Count != 0)
+        {
+            var argument = moduleAttribution.Last().ArgumentList?.Arguments.FirstOrDefault();
+            if (argument != null)
+            {
+                return CompilationHelper.GetArgumentValue(argument);
+            }
+        }
+        return null;
     }
 
     /// <summary>

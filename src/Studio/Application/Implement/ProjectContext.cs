@@ -45,4 +45,64 @@ public class ProjectContext : IProjectContext
             }
         }
     }
+
+
+    /// <summary>
+    /// get share(dto) path
+    /// </summary>
+    /// <param name="entityName"></param>
+    /// <param name="moduleName"></param>
+    /// <returns></returns>
+    public string GetDtoPath(string entityName, string? moduleName = null)
+    {
+        var name = Path.GetFileNameWithoutExtension(entityName);
+        return moduleName.IsEmpty()
+            ? Path.Combine(SharePath ?? PathConst.SharePath, Const.ModelsDir, $"{name}Dtos")
+            : Path.Combine(ModulesPath ?? PathConst.ModulesPath, moduleName, Const.ModelsDir, $"{name}Dtos");
+    }
+
+
+    public string GetSharePath(string? moduleName = null)
+    {
+        return moduleName.IsEmpty()
+            ? Path.Combine(SharePath ?? PathConst.SharePath)
+            : Path.Combine(ModulesPath ?? PathConst.ModulesPath, moduleName);
+    }
+
+
+    /// <summary>
+    /// 获取manager路径
+    /// </summary>
+    /// <returns></returns>
+    public string GetManagerPath(string? moduleName = null)
+    {
+        return moduleName.IsEmpty()
+            ? Path.Combine(ApplicationPath ?? PathConst.ApplicationPath, Const.ManagersDir)
+            : Path.Combine(ModulesPath ?? PathConst.ModulesPath, moduleName, Const.ManagersDir);
+    }
+
+    public string GetApplicationPath(string? moduleName = null)
+    {
+        return moduleName.IsEmpty()
+            ? Path.Combine(ApplicationPath ?? PathConst.ApplicationPath)
+            : Path.Combine(ModulesPath ?? PathConst.ModulesPath, moduleName);
+    }
+
+    /// <summary>
+    /// controller Path
+    /// </summary>
+    /// <returns></returns>
+    public string GetControllerPath(string? moduleName = null)
+    {
+        return moduleName.IsEmpty()
+            ? Path.Combine(ApiPath ?? PathConst.APIPath, Const.ControllersDir)
+            : Path.Combine(ModulesPath ?? PathConst.ModulesPath, moduleName, Const.ControllersDir);
+    }
+
+    public string GetApiPath(string? moduleName = null)
+    {
+        return moduleName.IsEmpty()
+            ? Path.Combine(ApiPath ?? PathConst.APIPath)
+            : Path.Combine(ModulesPath ?? PathConst.ModulesPath, moduleName);
+    }
 }

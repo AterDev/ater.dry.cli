@@ -34,7 +34,7 @@ public class EntityFile
     /// <summary>
     /// 获取manager路径
     /// </summary>
-    /// <param name="project"></param
+    /// <param name="project"></param>
     /// <returns></returns>
     public string GetManagerPath(IProjectContext project)
     {

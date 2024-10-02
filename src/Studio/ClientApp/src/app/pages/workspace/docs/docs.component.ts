@@ -102,7 +102,8 @@ export class DocsComponent implements OnInit {
     public snb: MatSnackBar
   ) {
     if (projectState.project) {
-      this.projectId = projectState.project?.id;
+      this.projectId = projectState.project.id;
+      this.config = projectState.project.config!;
     } else {
       this.projectId = '';
       this.router.navigateByUrl('/');
@@ -130,7 +131,7 @@ export class DocsComponent implements OnInit {
     });
 
     // 生成请求表单
-    let defaultPath = this.config?.solutionPath! + '\\src\\app';
+    let defaultPath = this.config?.solutionPath! + '\\src\\ClientApp\\src\\app';
 
     this.requestForm = new FormGroup({
       swagger: new FormControl<string | null>('./swagger.json', []),

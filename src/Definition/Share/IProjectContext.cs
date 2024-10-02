@@ -13,4 +13,11 @@ public interface IProjectContext
     string? ApiPath { get; set; }
     string? EntityFrameworkPath { get; set; }
     string? ModulesPath { get; set; }
+
+    string GetApiPath(string? moduleName = null);
+    string GetApplicationPath(string? moduleName = null);
+    string GetControllerPath(string? moduleName = null);
+    string GetDtoPath(string entityName, string? moduleName = null);
+    string GetManagerPath(string? moduleName = null);
+    string GetSharePath(string? moduleName = null);
 }

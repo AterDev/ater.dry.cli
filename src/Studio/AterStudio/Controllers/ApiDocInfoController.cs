@@ -82,7 +82,7 @@ public class ApiDocInfoController(
     [HttpPut("{id}")]
     public async Task<ActionResult<bool>> UpdateAsync([FromRoute] Guid id, ApiDocInfoUpdateDto dto)
     {
-        Entity.ApiDocInfo? entity = await _manager.GetCurrentAsync(id);
+        var entity = await _manager.GetCurrentAsync(id);
         return entity == null ? NotFound("未找到该对象") : await _manager.UpdateAsync(entity, dto);
     }
 
@@ -128,7 +128,7 @@ public class ApiDocInfoController(
             return NotFound("项目不存在");
         }
 
-        Entity.ApiDocInfo? entity = await _manager.GetCurrentAsync(id);
+        var entity = await _manager.GetCurrentAsync(id);
         if (entity == null)
         {
             return NotFound("未找到文档配置");

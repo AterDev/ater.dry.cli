@@ -454,7 +454,7 @@ export class IndexComponent implements OnInit {
         this.isSync = true;
         const dto: GenerateDto = {
           projectId: this.projectId!,
-          entityPath: this.baseEntityPath + this.currentEntity.baseDirPath,
+          entityPath:  this.currentEntity.fullName,
           commandType: this.currentType,
           force: this.force
         };

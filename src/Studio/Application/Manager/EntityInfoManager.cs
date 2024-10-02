@@ -263,29 +263,28 @@ public partial class EntityInfoManager(
     /// <returns></returns>
     public async Task GenerateAsync(GenerateDto dto)
     {
-        string dtoPath = _projectContext.SharePath!;
-        string applicationPath = _projectContext.ApplicationPath!;
-        string apiPath = _projectContext.ApiPath!;
-
         var helper = new EntityParseHelper(dto.EntityPath);
         var entityInfo = await helper.ParseEntityAsync();
+        _ = entityInfo ?? throw new Exception("实体解析失败，请检查实体文件是否正确！");
 
-        if (entityInfo == null)
-        {
-            throw new Exception("实体解析失败，请检查实体文件是否正确！");
-        }
+        string sharePath = _projectContext.GetSharePath(entityInfo.ModuleName);
+        string applicationPath = _projectContext.GetApplicationPath(entityInfo.ModuleName)!;
+        string apiPath = _projectContext.GetApiPath(entityInfo.ModuleName);
+
+        entityInfo.ProjectId = _projectContext.ProjectId;
+        entityInfo.Project = _projectContext.Project!;
 
         var files = new List<GenFileInfo>();
         switch (dto.CommandType)
         {
             case CommandType.Dto:
-                files = _codeGenService.GenerateDto(entityInfo, dtoPath, dto.Force);
+                files = _codeGenService.GenerateDto(entityInfo, sharePath, dto.Force);
                 break;
             case CommandType.Manager:
-                files = _codeGenService.GenerateManager(entityInfo, applicationPath, dtoPath, dto.Force);
+                files = _codeGenService.GenerateManager(entityInfo, applicationPath, sharePath, dto.Force);
                 break;
             case CommandType.API:
-                files = _codeGenService.GenerateController(entityInfo, apiPath, dtoPath, dto.Force);
+                files = _codeGenService.GenerateController(entityInfo, apiPath, sharePath, dto.Force);
                 break;
             default:
                 break;
