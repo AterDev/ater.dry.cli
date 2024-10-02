@@ -111,13 +111,14 @@ export class DocsComponent implements OnInit {
 
   ngOnInit(): void {
     this.getDocs();
+    this.initForm();
   }
 
   initForm(): void {
     // 添加表单
     this.addForm = new FormGroup({
       name: new FormControl<string | null>(null, [Validators.required, Validators.maxLength(20)]),
-      description: new FormControl<string | null>(null, [Validators.maxLength(100)]),
+      description: new FormControl<string | null>('OpenAPI', [Validators.maxLength(100)]),
       path: new FormControl<string | null>('http://localhost:5002/swagger/name/swagger.json', [Validators.required, Validators.maxLength(200)]),
     });
 
@@ -205,6 +206,7 @@ export class DocsComponent implements OnInit {
         .subscribe(res => {
           if (res) {
             this.snb.open('添加成功');
+            this.isLoading = true;
             this.getDocs();
             this.addForm.reset();
             this.addForm.get('path')?.setValue('http://localhost:5002/swagger/name/swagger.json');
@@ -248,12 +250,14 @@ export class DocsComponent implements OnInit {
     if (this.editForm.valid) {
       const data = this.editForm.value as ApiDocInfo;
       data.projectId = this.projectId;
-      if (this.currentDoc?.id) {
-        this.service.update(this.currentDoc?.id, data)
+      if (this.currentDoc != null && this.currentDoc.id) {
+        this.service.update(this.currentDoc.id, data)
           .subscribe(res => {
             if (res) {
               this.snb.open('更新成功');
-              this.getDocs();
+              this.currentDoc!.name = data.name;
+              this.currentDoc!.description = data.description;
+              this.currentDoc!.path = data.path;
               this.editForm.reset();
               this.dialogRef.close();
             }
@@ -261,7 +265,6 @@ export class DocsComponent implements OnInit {
       } else {
         this.snb.open('未选择接口文档');
       }
-
     }
   }
 

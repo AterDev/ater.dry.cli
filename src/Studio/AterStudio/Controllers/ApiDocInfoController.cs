@@ -1,6 +1,4 @@
 ﻿using System.Text;
-
-using Ater.Web.Abstraction;
 using CodeGenerator.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,13 +11,11 @@ namespace AterStudio.Controllers;
 /// </summary>
 [AllowAnonymous]
 public class ApiDocInfoController(
-    ApiDocInfoManager manager,
-    ProjectContext project,
+    ApiDocInfoManager _manager,
+    IProjectContext project,
     ILogger<ApiDocInfoController> logger
-    ) : RestControllerBase()
+    ) : BaseController<ApiDocInfoManager>(_manager, project, logger)
 {
-    private readonly ProjectContext _project = project;
-    private readonly ILogger<ApiDocInfoController> logger = logger;
 
     /// <summary>
     /// 获取项目文档
@@ -28,8 +24,12 @@ public class ApiDocInfoController(
     [HttpGet]
     public async Task<ActionResult<List<ApiDocInfoItemDto>>> ListAsync()
     {
-        ApiDocInfoFilterDto filter = new() { PageSize = 999, ProjectId = _project.ProjectId };
-        Ater.Web.Core.Models.PageList<ApiDocInfoItemDto> pager = await manager.FilterAsync(filter);
+        var filter = new ApiDocInfoFilterDto()
+        {
+            PageSize = 999,
+            ProjectId = _project.ProjectId
+        };
+        var pager = await _manager.FilterAsync(filter);
         return pager.Data;
     }
 
@@ -42,8 +42,8 @@ public class ApiDocInfoController(
     [HttpGet("{id}")]
     public async Task<ActionResult<ApiDocContent?>> GetApiDocContentAsync([FromRoute] Guid id, bool isFresh = true)
     {
-        ApiDocContent? res = await manager.GetContentAsync(id, isFresh);
-        return res == null ? (ActionResult<ApiDocContent?>)Problem(manager.ErrorMsg) : (ActionResult<ApiDocContent?>)res;
+        ApiDocContent? res = await _manager.GetContentAsync(id, isFresh);
+        return res == null ? (ActionResult<ApiDocContent?>)Problem(_manager.ErrorMsg) : (ActionResult<ApiDocContent?>)res;
     }
 
     /// <summary>
@@ -55,7 +55,7 @@ public class ApiDocInfoController(
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FileContentResult))]
     public async Task<ActionResult> ExportAsync([FromRoute] Guid id)
     {
-        string content = await manager.ExportDocAsync(id);
+        string content = await _manager.ExportDocAsync(id);
         return File(Encoding.UTF8.GetBytes(content), "application/octet-stream", "api-doc.md");
     }
 
@@ -68,8 +68,8 @@ public class ApiDocInfoController(
     [HttpPost]
     public async Task<ActionResult<Guid?>> AddAsync(ApiDocInfoAddDto apiDocInfo)
     {
-        var entity = await manager.CreateNewEntityAsync(apiDocInfo);
-        var res = await manager.AddAsync(entity);
+        var entity = await _manager.CreateNewEntityAsync(apiDocInfo);
+        var res = await _manager.AddAsync(entity);
         return res ? entity.Id : Problem("");
     }
 
@@ -82,8 +82,8 @@ public class ApiDocInfoController(
     [HttpPut("{id}")]
     public async Task<ActionResult<bool>> UpdateAsync([FromRoute] Guid id, ApiDocInfoUpdateDto dto)
     {
-        Entity.ApiDocInfo? entity = await manager.GetCurrentAsync(id);
-        return entity == null ? NotFound("未找到该对象") : await manager.UpdateAsync(entity, dto);
+        Entity.ApiDocInfo? entity = await _manager.GetCurrentAsync(id);
+        return entity == null ? NotFound("未找到该对象") : await _manager.UpdateAsync(entity, dto);
     }
 
     /// <summary>
@@ -94,10 +94,10 @@ public class ApiDocInfoController(
     [HttpDelete("{id}")]
     public async Task<ActionResult<bool?>> DeleteAsync([FromRoute] Guid id)
     {
-        var entity = await manager.FindAsync(id);
+        var entity = await _manager.FindAsync(id);
         return entity == null
             ? NotFound("未找到该对象")
-            : await manager.DeleteAsync([id], false);
+            : await _manager.DeleteAsync([id], false);
     }
 
     /// <summary>
@@ -128,13 +128,13 @@ public class ApiDocInfoController(
             return NotFound("项目不存在");
         }
 
-        Entity.ApiDocInfo? entity = await manager.GetCurrentAsync(id);
+        Entity.ApiDocInfo? entity = await _manager.GetCurrentAsync(id);
         if (entity == null)
         {
             return NotFound("未找到文档配置");
         }
 
-        await manager.GenerateRequestAsync(entity, webPath, type, swaggerPath);
+        await _manager.GenerateRequestAsync(entity, webPath, type, swaggerPath);
         return true;
     }
 

@@ -152,7 +152,7 @@ public partial class ManagerBase<TEntity> : ManagerBase
     }
 
     /// <summary>
-    /// 分页筛选，需要重写该方法
+    /// 分页筛选
     /// </summary>
     /// <param name="filter"></param>
     /// <returns></returns>
@@ -187,11 +187,7 @@ public partial class ManagerBase<TEntity> : ManagerBase
     public async Task<bool> AddAsync(TEntity entity)
     {
         await Command.AddAsync(entity);
-        if (AutoSave)
-        {
-            return await SaveChangesAsync() > 0;
-        }
-        return true;
+        return !AutoSave || await SaveChangesAsync() > 0;
     }
 
     /// <summary>
@@ -202,12 +198,7 @@ public partial class ManagerBase<TEntity> : ManagerBase
     public async Task<bool> UpdateAsync(TEntity entity)
     {
         Command.Update(entity);
-        if (AutoSave)
-        {
-            return await SaveChangesAsync() > 0;
-        }
-
-        return true;
+        return !AutoSave || await SaveChangesAsync() > 0;
     }
 
 

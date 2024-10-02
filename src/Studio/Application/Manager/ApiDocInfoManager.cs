@@ -27,6 +27,7 @@ public class ApiDocInfoManager(
 
     public async Task<bool> UpdateAsync(ApiDocInfo entity, ApiDocInfoUpdateDto dto)
     {
+        entity = entity.Merge(dto);
         return await base.UpdateAsync(entity);
     }
 
@@ -36,7 +37,7 @@ public class ApiDocInfoManager(
             .WhereNotNull(filter.ProjectId, q => q.ProjectId == filter.ProjectId)
             .WhereNotNull(filter.Name, q => q.Name == filter.Name);
 
-        return await FilterAsync(filter);
+        return await ToPageAsync<ApiDocInfoFilterDto, ApiDocInfoItemDto>(filter);
     }
 
 
