@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using CodeGenerator;
 using CodeGenerator.Models;
 using Microsoft.CodeAnalysis;
 
@@ -281,11 +282,23 @@ public partial class EntityInfoManager(
                 files = _codeGenService.GenerateDto(entityInfo, sharePath, dto.Force);
                 break;
             case CommandType.Manager:
-                files = _codeGenService.GenerateManager(entityInfo, applicationPath, sharePath, dto.Force);
+            {
+                files = _codeGenService.GenerateDto(entityInfo, sharePath, dto.Force);
+                var tplContent = TplContent.GetManagerTpl();
+                var managerFiles = _codeGenService.GenerateManager(entityInfo, applicationPath, tplContent, dto.Force);
+                files.AddRange(managerFiles);
                 break;
+            }
             case CommandType.API:
-                files = _codeGenService.GenerateController(entityInfo, apiPath, sharePath, dto.Force);
+            {
+                files = _codeGenService.GenerateDto(entityInfo, sharePath, dto.Force);
+                var tplContent = TplContent.GetManagerTpl();
+                var managerFiles = _codeGenService.GenerateManager(entityInfo, applicationPath, tplContent, dto.Force);
+                files.AddRange(managerFiles);
+                var controllerFiles = _codeGenService.GenerateController(entityInfo, apiPath, sharePath, dto.Force);
+                files.AddRange(controllerFiles);
                 break;
+            }
             default:
                 break;
         }

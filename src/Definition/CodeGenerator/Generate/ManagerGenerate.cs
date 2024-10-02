@@ -19,7 +19,7 @@ public class ManagerGenerate(EntityInfo entityInfo)
         [
             $"global using {EntityInfo.AssemblyName};",
             $"global using {EntityInfo.NamespaceName};",
-            $"global using {ApplicationNamespace}.{Const.Manager};",
+            $"global using {ApplicationNamespace}.{Const.ManagersDir};",
             ""
         ];
     }
@@ -36,7 +36,7 @@ public class ManagerGenerate(EntityInfo entityInfo)
             Namespace = nsp,
             EntityName = EntityInfo.Name,
             ShareNamespace = ShareNamespace,
-            EntityInfo = EntityInfo,
+            Comment = EntityInfo.Comment,
             FilterCode = GetFilterMethodContent()
         };
 

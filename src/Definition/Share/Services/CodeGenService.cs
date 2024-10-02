@@ -7,9 +7,10 @@ namespace Share.Services;
 /// <summary>
 /// 代码生成服务
 /// </summary>
-public class CodeGenService(ILogger<CodeGenService> logger)
+public class CodeGenService(ILogger<CodeGenService> logger, IProjectContext projectContext)
 {
     private readonly ILogger<CodeGenService> _logger = logger;
+    private readonly IProjectContext _projectContext = projectContext;
 
     /// <summary>
     /// 生成Dto
@@ -94,12 +95,12 @@ public class CodeGenService(ILogger<CodeGenService> logger)
         var managerFile = new GenFileInfo($"{entityInfo.Name}{Const.Manager}.cs", content)
         {
             IsCover = isCover,
-            Path = Path.Combine(outputPath, Const.Manager, $"{entityInfo.Name}{Const.Manager}.cs"),
+            Path = Path.Combine(outputPath, Const.ManagersDir, $"{entityInfo.Name}{Const.Manager}.cs"),
             ModuleName = entityInfo.ModuleName
         };
 
-        var managerService = GetManagerService(entityInfo);
-        return [globalFile, managerFile, managerService];
+        var managerDIFile = GetManagerService(entityInfo);
+        return [globalFile, managerFile, managerDIFile];
     }
 
     /// <summary>
@@ -110,13 +111,13 @@ public class CodeGenService(ILogger<CodeGenService> logger)
     {
         string content = ManagerGenerate.GetManagerServiceContent(entityInfo);
         string name = entityInfo.ModuleName.IsEmpty()
-            ? Const.ServiceExtensionsFile
-            : Const.ManagerServiceExtensionsFile;
+            ? Const.ManagerServiceExtensionsFile
+            : Const.ServiceExtensionsFile;
 
         return new GenFileInfo(name, content)
         {
             IsCover = true,
-            Path = Path.Combine(entityInfo.GetManagerPath(), name),
+            Path = Path.Combine(_projectContext.GetApplicationPath(entityInfo.ModuleName), name),
             ModuleName = entityInfo.ModuleName
         };
     }
