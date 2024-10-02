@@ -161,7 +161,7 @@
     <button mat-button mat-dialog-close>取消</button>
     <div class="d-flex align-items-center">
       <button mat-button (click)="generate()" color="primary" [disabled]="isSync">生成</button>
-      <mat-spinner *ngIf="isSync" style="width: 26px;height:26px"></mat-spinner>
+      <mat-spinner *ngIf="isSync" [diameter]="26"></mat-spinner>
     </div>
   </mat-dialog-actions>
 </ng-template>
@@ -237,7 +237,7 @@
     <button mat-button mat-dialog-close>取消</button>
     <div class="d-flex align-items-center">
       <button mat-button (click)="batch(CommandType.API)" color="primary" [disabled]="isSync">生成</button>
-      <mat-spinner *ngIf="isSync" style="width: 26px;height:26px"></mat-spinner>
+      <mat-spinner *ngIf="isSync" [diameter]="26"></mat-spinner>
     </div>
   </mat-dialog-actions>
 </ng-template>
