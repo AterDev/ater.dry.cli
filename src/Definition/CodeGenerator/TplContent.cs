@@ -36,7 +36,7 @@ public class TplContent
                 /// <param name="entity"></param>
                 /// <param name="dto"></param>
                 /// <returns></returns>
-                public async Task<@(Model.EntityName)> UpdateAsync(@(Model.EntityName) entity, @(Model.EntityName)UpdateDto dto)
+                public async Task<bool> UpdateAsync(@(Model.EntityName) entity, @(Model.EntityName)UpdateDto dto)
                 {
                     entity.Merge(dto);
                     // TODO:完善更新逻辑
@@ -229,7 +229,7 @@ public class TplContent
                 /// <returns></returns>
                 [HttpDelete("{id}")]
                 [NonAction]
-                public async Task<ActionResult<@(Model.EntityName)?>> DeleteAsync([FromRoute] Guid id)
+                public async Task<ActionResult<bool>> DeleteAsync([FromRoute] Guid id)
                 {
                     // 注意删除权限
                     var entity = await _manager.GetOwnedAsync(id);
