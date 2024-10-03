@@ -8,4 +8,5 @@ public class ControllerViewModel
     public string? Namespace { get; set; }
     public string? EntityName { get; set; }
     public string? ShareNamespace { get; set; }
+    public string? Comment { get; set; }
 }

@@ -43,7 +43,8 @@ public class RestApiGenerate(EntityInfo entityInfo)
         {
             Namespace = EntityInfo.GetAPINamespace(),
             EntityName = EntityInfo.Name,
-            ShareNamespace = ShareNamespace,
+            Comment = EntityInfo.Comment,
+            ShareNamespace = ShareNamespace
         };
         return genContext.GenCode(tplContent, model);
     }

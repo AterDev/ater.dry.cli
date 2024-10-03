@@ -495,10 +495,12 @@ export class IndexComponent implements OnInit {
     if (selected.length > 0) {
       let data: BatchGenerateDto = {
         projectId: this.projectId!,
-        entityPaths: selected.map(s => this.baseEntityPath + s.baseDirPath),
+        entityPaths: selected.map(s => s.fullName),
         commandType: type,
         force: this.force
       };
+      console.log(data);
+      
       // 参数
       if (this.selectedWebProjectIds.length > 0
         && (type == CommandType.Protobuf

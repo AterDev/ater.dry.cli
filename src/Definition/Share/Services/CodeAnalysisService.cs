@@ -56,15 +56,18 @@ public class CodeAnalysisService(IProjectContext projectContext)
     /// </summary>
     /// <param name="entityFiles"></param>
     /// <returns></returns>
-    public static List<EntityInfo> GetEntityInfos(List<string> entityFiles)
+    public List<EntityInfo> GetEntityInfos(List<string> entityFiles)
     {
         var entityInfos = new ConcurrentBag<EntityInfo>();
         Parallel.ForEach(entityFiles, entityFile =>
         {
             var parse = new EntityParseHelper(entityFile);
             var entityInfo = parse.ParseEntityAsync().Result;
-
-            entityInfos.Add(entityInfo);
+            if (entityInfo != null)
+            {
+                entityInfo.Project = _projectContext.Project!;
+                entityInfos.Add(entityInfo);
+            }
         });
         return [.. entityInfos];
     }

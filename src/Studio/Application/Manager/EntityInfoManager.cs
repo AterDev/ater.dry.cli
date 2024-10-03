@@ -295,7 +295,9 @@ public partial class EntityInfoManager(
                 var tplContent = TplContent.GetManagerTpl();
                 var managerFiles = _codeGenService.GenerateManager(entityInfo, applicationPath, tplContent, dto.Force);
                 files.AddRange(managerFiles);
-                var controllerFiles = _codeGenService.GenerateController(entityInfo, apiPath, sharePath, dto.Force);
+
+                tplContent = TplContent.GetControllerTpl();
+                var controllerFiles = _codeGenService.GenerateController(entityInfo, apiPath, tplContent, dto.Force);
                 files.AddRange(controllerFiles);
                 break;
             }
@@ -312,19 +314,25 @@ public partial class EntityInfoManager(
     /// <returns></returns>
     public async Task BatchGenerateAsync(BatchGenerateDto dto)
     {
-        string dtoPath = _projectContext.SharePath!;
+        var entityInfos = _codeAnalysis.GetEntityInfos(dto.EntityPaths) ?? [];
+        if (entityInfos.Count < 1)
+        {
+            return;
+        }
+
+        var entityInfo = entityInfos.FirstOrDefault();
+        string sharePath = _projectContext.GetSharePath(entityInfo!.ModuleName);
         string applicationPath = _projectContext.ApplicationPath!;
         string apiPath = _projectContext.ApiPath!;
         string entityPath = _projectContext.EntityPath!;
 
         var files = new List<GenFileInfo>();
-        var entityInfos = CodeAnalysisService.GetEntityInfos(dto.EntityPaths) ?? [];
         switch (dto.CommandType)
         {
             case CommandType.Dto:
                 foreach (var item in entityInfos)
                 {
-                    files.AddRange(_codeGenService.GenerateDto(item, dtoPath, dto.Force));
+                    files.AddRange(_codeGenService.GenerateDto(item, sharePath, dto.Force));
                 }
                 break;
             case CommandType.Manager:

@@ -99,9 +99,9 @@
           <button mat-menu-item (click)="openGenerateDialog(CommandType.Dto,element)" matTooltip="生成dto"
             matTooltipPosition="right">生成Dto</button>
           <button mat-menu-item (click)="openGenerateDialog(CommandType.Manager,element)"
-            matTooltip="生成dto/dataStore/manager" matTooltipPosition="right">生成Manager</button>
-          <button mat-menu-item (click)="openSelectProjectDialog(CommandType.API,element)"
-            matTooltip="生成dto/dataStore/manager/webapi" matTooltipPosition="right">生成APIControler</button>
+            matTooltip="生成dto/manager" matTooltipPosition="right">生成Manager</button>
+          <button mat-menu-item (click)="openGenerateDialog(CommandType.API,element)"
+            matTooltip="生成dto/manager/webapi" matTooltipPosition="right">生成APIControler</button>
 
           <button mat-menu-item (click)="openNgPagesDialog(element)" matTooltip="生成angular curd组件模块"
             matTooltipPosition="right">生成NG组件模块</button>
@@ -152,7 +152,7 @@
 
 <ng-template #generateDialog>
   <h2 mat-dialog-title>
-    生成{{currentType==CommandType.Dto?'DTO':'Manager'}}
+    生成{{currentType==CommandType.Dto?'DTO':currentType==CommandType.Manager?'Manager':'APIControler'}}
   </h2>
   <mat-dialog-content class="py-2">
     <mat-slide-toggle [(ngModel)]="this.force" class="mt-2">覆盖现有代码</mat-slide-toggle>
@@ -219,26 +219,6 @@
   <mat-dialog-actions class="justify-content-end">
     <button mat-button mat-dialog-close>取消</button>
     <button mat-button color="primary" (click)="addService()">创建</button>
-  </mat-dialog-actions>
-</ng-template>
-
-<ng-template #apiDialog>
-  <h2 mat-dialog-title>生成REST API</h2>
-  <mat-dialog-content>
-    <!-- <p>请选择项目，模块实体则忽略</p>
-    <mat-selection-list (selectionChange)="selectProject($event)">
-      <mat-list-option *ngFor="let project of webProjects" [value]="project.path">
-        {{project.name}}
-      </mat-list-option>
-    </mat-selection-list> -->
-    <mat-slide-toggle [(ngModel)]="this.force" class="mt-2">覆盖现有代码</mat-slide-toggle>
-  </mat-dialog-content>
-  <mat-dialog-actions class="justify-content-end">
-    <button mat-button mat-dialog-close>取消</button>
-    <div class="d-flex align-items-center">
-      <button mat-button (click)="batch(CommandType.API)" color="primary" [disabled]="isSync">生成</button>
-      <mat-spinner *ngIf="isSync" [diameter]="26"></mat-spinner>
-    </div>
   </mat-dialog-actions>
 </ng-template>
 

@@ -107,8 +107,8 @@ public class TplContent
     public static string GetManagerServiceExtensionTpl(bool isModule = false)
     {
         return isModule ?
-            """
-            using @(Model.Namespace).Manager;
+            $$"""
+            using @(Model.Namespace).{{Const.ManagersDir}};
 
             namespace @(Model.Namespace);
             /// <summary>
@@ -140,10 +140,8 @@ public class TplContent
                 }
             }
             """ :
-
             """
-             namespace @(Model.Namespace);
-
+            namespace @(Model.Namespace);
             public static partial class ManagerServiceCollectionExtensions
             {
                 public static void AddManager(this IServiceCollection services)
@@ -163,7 +161,7 @@ public class TplContent
             using @(Model.ShareNamespace).Models.@(Model.EntityName)Dtos;
             namespace @(Model.Namespace).Controllers;
 
-            #@Comment#
+            @Model.Comment
             public class @(Model.EntityName)Controller(
                 IUserContext user,
                 ILogger<@(Model.EntityName)Controller> logger,
@@ -235,7 +233,7 @@ public class TplContent
                     var entity = await _manager.GetOwnedAsync(id);
                     if (entity == null) { return NotFound(); };
                     // return Forbid();
-                    return await _manager.DeleteAsync([id], true);
+                    return await _manager.DeleteAsync(entity, true);
                 }
             }
             """;

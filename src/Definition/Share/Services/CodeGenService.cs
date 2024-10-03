@@ -143,10 +143,10 @@ public class CodeGenService(ILogger<CodeGenService> logger, IProjectContext proj
             ModuleName = entityInfo.ModuleName
         };
         var content = apiGen.GetRestApiContent(tplContent);
-        var controllerFile = new GenFileInfo($"{entityInfo.Name}{Const.Manager}.cs", content)
+        var controllerFile = new GenFileInfo($"{entityInfo.Name}{Const.Controller}.cs", content)
         {
             IsCover = isCover,
-            Path = Path.Combine(outputPath, Const.ManagersDir, $"{entityInfo.Name}{Const.Manager}.cs"),
+            Path = Path.Combine(outputPath, Const.ControllersDir, $"{entityInfo.Name}{Const.Controller}.cs"),
             ModuleName = entityInfo.ModuleName
         };
         return [globalFile, controllerFile];
