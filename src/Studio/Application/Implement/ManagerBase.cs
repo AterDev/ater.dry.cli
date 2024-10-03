@@ -274,6 +274,24 @@ public partial class ManagerBase<TEntity> : ManagerBase
     }
 
     /// <summary>
+    /// 删除实体
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <param name="softDelete"></param>
+    /// <returns></returns>
+    public async Task<bool> DeleteAsync(TEntity entity, bool softDelete = true)
+    {
+        if (softDelete)
+        {
+            entity.IsDeleted = true;
+        }
+        else
+        {
+            Command.Remove(entity);
+        }
+        return await SaveChangesAsync() > 0;
+    }
+    /// <summary>
     /// 加载导航数据
     /// </summary>
     /// <typeparam name="TProperty"></typeparam>
