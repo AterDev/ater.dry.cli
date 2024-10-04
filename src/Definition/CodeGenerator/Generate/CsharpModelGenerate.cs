@@ -143,7 +143,7 @@ public class CsharpModelGenerate : GenerateBase
 
         GenFileInfo file = new(fileName, modelContent)
         {
-            Path = path ?? "",
+            FullName = path ?? "",
             Content = modelContent,
             ModelName = schemaKey
         };

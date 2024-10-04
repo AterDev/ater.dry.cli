@@ -43,7 +43,7 @@ public class ApiDocInfoController(
     public async Task<ActionResult<ApiDocContent?>> GetApiDocContentAsync([FromRoute] Guid id, bool isFresh = true)
     {
         ApiDocContent? res = await _manager.GetContentAsync(id, isFresh);
-        return res == null ? (ActionResult<ApiDocContent?>)Problem(_manager.ErrorMsg) : (ActionResult<ApiDocContent?>)res;
+        return res == null ? Problem(_manager.ErrorMsg) : res;
     }
 
     /// <summary>

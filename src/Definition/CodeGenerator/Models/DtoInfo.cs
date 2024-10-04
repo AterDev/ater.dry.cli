@@ -7,7 +7,7 @@ public class DtoInfo
 {
     public string? Name { get; set; }
     public string? BaseType { get; set; }
-    public List<Entity.PropertyInfo> Properties { get; set; } = [];
+    public List<PropertyInfo> Properties { get; set; } = [];
     public string? Tag { get; set; }
     public string? EntityNamespace { get; set; }
     public string? Comment { get; set; }

@@ -47,7 +47,7 @@ public class ManagerGenerate(EntityInfo entityInfo)
     {
         string content = "";
         string entityName = EntityInfo?.Name ?? "";
-        List<Entity.PropertyInfo>? props = EntityInfo?.GetFilterProperties();
+        List<PropertyInfo>? props = EntityInfo?.GetFilterProperties();
         if (props != null && props.Count != 0)
         {
             content += """
@@ -55,7 +55,7 @@ public class ManagerGenerate(EntityInfo entityInfo)
 
             """;
         }
-        Entity.PropertyInfo? last = props?.LastOrDefault();
+        var last = props?.LastOrDefault();
         props?.ForEach(p =>
         {
             bool isLast = p == last;

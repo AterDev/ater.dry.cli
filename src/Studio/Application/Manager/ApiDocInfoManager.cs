@@ -8,10 +8,12 @@ namespace Application.Manager;
 public class ApiDocInfoManager(
     DataAccessContext<ApiDocInfo> dataContext,
     IProjectContext project,
-    ILogger<ApiDocInfoManager> logger
+    ILogger<ApiDocInfoManager> logger,
+    CodeGenService codeGenService
     ) : ManagerBase<ApiDocInfo>(dataContext, logger)
 {
     private readonly IProjectContext _project = project;
+    private readonly CodeGenService _codeGenService = codeGenService;
 
     /// <summary>
     /// 创建待添加实体
@@ -88,7 +90,7 @@ public class ApiDocInfoManager(
                .Replace("«", "")
                .Replace("»", "");
 
-        Microsoft.OpenApi.Models.OpenApiDocument apiDocument = new OpenApiStringReader().Read(openApiContent, out _);
+        var apiDocument = new OpenApiStringReader().Read(openApiContent, out _);
         var helper = new OpenApiHelper(apiDocument);
         return new ApiDocContent
         {
@@ -238,7 +240,7 @@ public class ApiDocInfoManager(
         await SaveChangesAsync();
 
         swaggerPath ??= Path.Combine(_project.ApiPath!, "swagger.json");
-        //await CommandRunner.GenerateRequestAsync(swaggerPath, webPath, type);
-
+        var files = await _codeGenService.GenerateWebRequestAsync(swaggerPath, webPath, type);
+        _codeGenService.GenerateFiles(files);
     }
 }

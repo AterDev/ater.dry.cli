@@ -21,7 +21,7 @@ public class GenFileInfo(string name, string content)
     /// <summary>
     /// file path
     /// </summary>
-    public string Path { get; set; } = string.Empty;
+    public string FullName { get; set; } = string.Empty;
     /// <summary>
     /// 模块名称
     /// </summary>

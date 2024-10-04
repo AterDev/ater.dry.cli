@@ -38,7 +38,7 @@ public class EntityParseHelper
     /// <summary>
     /// 属性
     /// </summary>
-    public List<Entity.PropertyInfo>? PropertyInfos { get; set; }
+    public List<PropertyInfo>? PropertyInfos { get; set; }
     public CSharpCompilation Compilation { get; set; }
     public SemanticModel? SemanticModel { get; set; }
     protected SyntaxTree? SyntaxTree { get; set; }

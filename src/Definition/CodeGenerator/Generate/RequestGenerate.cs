@@ -136,7 +136,7 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
 
                     GenFileInfo file = new(baseFileName, content)
                     {
-                        Path = path
+                        FullName = path
                     };
                     files.Add(file);
 
@@ -145,7 +145,7 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
                     file = new(fileName, content)
                     {
                         IsCover = false,
-                        Path = path
+                        FullName = path
                     };
                     files.Add(file);
                     break;
@@ -155,7 +155,7 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
                     string fileName = currentTag.Name?.ToHyphen() + ".service.ts";
                     GenFileInfo file = new(fileName, content)
                     {
-                        Path = path,
+                        FullName = path,
                     };
                     files.Add(file);
                     break;
@@ -185,7 +185,7 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
 
     public static string GetEnumPipeContent(IDictionary<string, OpenApiSchema> schemas)
     {
-        string tplContent = GetTplContent("angular.enum.pipe.ts");
+        string tplContent = TplContent.GetEnumPipeTpl();
         string codeBlocks = "";
         foreach (KeyValuePair<string, OpenApiSchema> item in schemas)
         {
@@ -194,10 +194,12 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
                 codeBlocks += ToEnumSwitchString(item.Key, item.Value);
             }
         }
-
-        // TODO:替换模板
-        tplContent = tplContent.Replace("", codeBlocks);
-        return tplContent;
+        var genContext = new GenContext();
+        var model = new CommonViewModel
+        {
+            Content = codeBlocks
+        };
+        return genContext.GenCode(tplContent, model);
     }
 
     public static string ToEnumSwitchString(string enumType, OpenApiSchema schema)
@@ -216,29 +218,34 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
             if (!data.Any()) { return string.Empty; }
         }
 
-        StringBuilder sb = new();
 
-        sb.AppendLine($"case '{enumType}':");
-        sb.AppendLine("{");
-        sb.AppendLine($"switch (value) {{");
-
+        var caseStrings = "";
         if (enumData.Value is OpenApiArray array)
         {
+            StringBuilder sb = new();
+            var whiteSpace = new string(' ', 12);
             for (int i = 0; i < array.Count; i++)
             {
                 OpenApiObject item = (OpenApiObject)array[i];
-
-                string caseString = string.Format("case {0}: result = '{1}'; break;", ((OpenApiInteger)item["value"]).Value, ((OpenApiString)item["description"]).Value);
-
+                var value = ((OpenApiInteger)item["value"]).Value;
+                var description = ((OpenApiString)item["description"]).Value;
+                string caseString = string.Format("{0}case {1}: result = '{2}'; break;",
+                    whiteSpace, value, description);
                 sb.AppendLine(caseString);
             }
-            sb.AppendLine("default: result = '默认'; break;");
+            sb.Append($"{whiteSpace}default: result = '默认'; break;");
+            caseStrings = sb.ToString();
         }
+        return $$"""
+                  case '{{enumType}}':
+                    {
+                      switch (value) {
+            {{caseStrings}}
+                      }
+                    }
+                    break;
 
-        sb.AppendLine("}");
-        sb.AppendLine("}");
-        sb.AppendLine("break;");
-        return sb.ToString();
+            """;
     }
 
     /// <summary>
@@ -366,7 +373,7 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
             List<string> refTypes = GetRefTyeps(functions);
             refTypes.ForEach(t =>
             {
-                string? dirName = TsModelFiles?.Where(f => f.ModelName == t).Select(f => f.Path).FirstOrDefault();
+                string? dirName = TsModelFiles?.Where(f => f.ModelName == t).Select(f => f.FullName).FirstOrDefault();
                 importModels += $"import {{ {t} }} from '../models/{dirName?.ToHyphen()}/{t.ToHyphen()}.model';{Environment.NewLine}";
             });
         }
@@ -437,7 +444,7 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
                 else
                 {
                     string? dirName = TsModelFiles?.Where(f => f.ModelName == t)
-                        .Select(f => f.Path).FirstOrDefault();
+                        .Select(f => f.FullName).FirstOrDefault();
 
                     if (dirName != serviceFile.Name.ToHyphen())
                     {

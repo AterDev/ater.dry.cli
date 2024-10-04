@@ -21,7 +21,7 @@ public class AdvanceController(AdvanceManager entityAdvance, AIService aiService
     [HttpGet("config")]
     public ActionResult<ConfigData> GetConfig(string key)
     {
-        Entity.ConfigData? data = _entityAdvance.GetConfig(key);
+        ConfigData? data = _entityAdvance.GetConfig(key);
         return data != null ? data : Ok();
     }
 
