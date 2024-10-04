@@ -13,6 +13,15 @@ public class CommandRunner(CodeGenService codeGen, CodeAnalysisService codeAnaly
     private readonly CodeAnalysisService _codeAnalysis = codeAnalysis;
     private readonly ILogger<CommandRunner> _logger = logger;
 
+    public void UpdateStudio()
+    {
+
+    }
+
+    public async Task RunStudioAsync()
+    {
+    }
+
     /// <summary>
     /// angular 代码生成
     /// </summary>
@@ -74,7 +83,6 @@ public class CommandRunner(CodeGenService codeGen, CodeAnalysisService codeAnaly
         var files = _codeGen.GenerateDto(entityInfo, outputPath, force);
         _codeGen.GenerateFiles(files);
     }
-
 
     private static async Task<EntityInfo> GetEntityInfoAsync(string entityPath)
     {

@@ -10,16 +10,16 @@ internal class Program
 {
     private static async Task<int> Main(string[] args)
     {
-        if (args.Length == 0)
-        {
-            return 0;
-        }
+        if (args.Length == 0) return 0;
         Console.OutputEncoding = Encoding.UTF8;
         ShowLogo();
+
         var serviceCollection = new ServiceCollection();
         ConfigureServices(serviceCollection);
 
-        RootCommand root = new CommandBuilder().Build();
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+        var commandBuilder = serviceProvider.GetRequiredService<CommandBuilder>();
+        var root = commandBuilder.Build();
         return await root.InvokeAsync(args);
     }
 
@@ -31,6 +31,8 @@ internal class Program
 
         services.AddSingleton<CodeAnalysisService>();
         services.AddSingleton<CodeGenService>();
+        services.AddSingleton<CommandRunner>();
+        services.AddSingleton<CommandBuilder>();
         services.AddSingleton<StudioCommand>();
     }
 
