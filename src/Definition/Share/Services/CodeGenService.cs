@@ -10,11 +10,9 @@ namespace Share.Services;
 /// <summary>
 /// 代码生成服务
 /// </summary>
-public class CodeGenService(ILogger<CodeGenService> logger, IProjectContext projectContext)
+public class CodeGenService(ILogger<CodeGenService> logger)
 {
     private readonly ILogger<CodeGenService> _logger = logger;
-    private readonly IProjectContext _projectContext = projectContext;
-
     /// <summary>
     /// 生成Dto
     /// </summary>
@@ -24,6 +22,7 @@ public class CodeGenService(ILogger<CodeGenService> logger, IProjectContext proj
     /// <returns></returns>
     public List<GenFileInfo> GenerateDto(EntityInfo entityInfo, string outputPath, bool isCover = false)
     {
+        _logger.LogInformation("🚀 Generating Dtos...");
         // 生成Dto
         var dtoGen = new DtoCodeGenerate(entityInfo);
         var dirName = entityInfo.Name + "Dtos";
@@ -102,7 +101,7 @@ public class CodeGenService(ILogger<CodeGenService> logger, IProjectContext proj
             ModuleName = entityInfo.ModuleName
         };
 
-        var managerDIFile = GetManagerService(entityInfo);
+        var managerDIFile = GetManagerService(entityInfo, outputPath);
         return [globalFile, managerFile, managerDIFile];
     }
 
@@ -110,7 +109,7 @@ public class CodeGenService(ILogger<CodeGenService> logger, IProjectContext proj
     /// Manager服务注入内容
     /// </summary>
     /// <returns></returns>
-    public GenFileInfo GetManagerService(EntityInfo entityInfo)
+    public GenFileInfo GetManagerService(EntityInfo entityInfo, string outputPath)
     {
         string content = ManagerGenerate.GetManagerServiceContent(entityInfo);
         string name = entityInfo.ModuleName.IsEmpty()
@@ -120,7 +119,7 @@ public class CodeGenService(ILogger<CodeGenService> logger, IProjectContext proj
         return new GenFileInfo(name, content)
         {
             IsCover = true,
-            FullName = Path.Combine(_projectContext.GetApplicationPath(entityInfo.ModuleName), name),
+            FullName = Path.Combine(outputPath, name),
             ModuleName = entityInfo.ModuleName
         };
     }

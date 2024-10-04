@@ -1,17 +1,21 @@
 ﻿using System.Diagnostics;
 using System.IO.Compression;
+using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
-
 using CodeGenerator.Helper;
-
 using Entity;
+using Microsoft.Extensions.Logging;
+using Share.EntityFramework.DBProvider;
+using Share.Infrastructure.Helper;
 
 namespace Command.Share.Commands;
-public class StudioCommand
+public class StudioCommand(ILogger<StudioCommand> logger)
 {
-    public static void RunStudio()
+    private readonly ILogger<StudioCommand> _logger = logger;
+
+    public async Task RunStudioAsync()
     {
-        Console.WriteLine("🙌 Welcome Ater studio!");
+        _logger.LogInformation("🙌 Welcome Ater studio!");
         string studioPath = AssemblyHelper.GetStudioPath();
 
         int sleepTime = 1500;
@@ -19,19 +23,18 @@ public class StudioCommand
         string version = AssemblyHelper.GetCurrentToolVersion();
         if (File.Exists(Path.Combine(studioPath, $"{version}.txt")))
         {
-            Console.WriteLine("😊 Already latest version!");
+            _logger.LogInformation("😊 Already latest version!");
         }
         else
         {
-            // 更新程序
             UpdateStudio();
         }
 
-        Console.WriteLine("🚀 start studio...");
+        _logger.LogInformation("🚀 start studio...");
         // 运行
         string shell = "dotnet";
-        var port = ProcessHelper.GetAvailablePort();
-        Console.WriteLine("可用端口:" + port);
+        var port = GetAvailablePort();
+        _logger.LogInformation("可用端口:" + port);
 
         string url = $"http://localhost:{port}";
         Process process = new()
@@ -39,7 +42,7 @@ public class StudioCommand
             StartInfo = new ProcessStartInfo
             {
                 FileName = shell,
-                Arguments = $"./{Config.StudioFileName} --urls \"{url}\"",
+                Arguments = $"./{Const.StudioFileName} --urls \"{url}\"",
                 UseShellExecute = false,
                 CreateNoWindow = false,
                 //RedirectStandardOutput = true,
@@ -50,7 +53,8 @@ public class StudioCommand
             },
         };
         process.Start();
-        Thread.Sleep(sleepTime);
+        await Task.Delay(sleepTime).ConfigureAwait(false);
+
         // 启动浏览器
         try
         {
@@ -77,7 +81,7 @@ public class StudioCommand
             }
             else
             {
-                Console.WriteLine("start browser failed:" + ex.Message);
+                _logger.LogInformation("start browser failed:" + ex.Message);
             }
         }
         process.WaitForExit();
@@ -86,9 +90,9 @@ public class StudioCommand
     /// <summary>
     /// 升级studio
     /// </summary>
-    public static void UpdateStudio()
+    public void UpdateStudio()
     {
-        Console.WriteLine($"☑️ check&update studio...");
+        _logger.LogInformation($"☑️ check&update studio...");
 
         string[] copyFiles = new string[]
         {
@@ -140,7 +144,7 @@ public class StudioCommand
 
         if (!File.Exists(zipPath))
         {
-            Console.WriteLine($"not found studio.zip in:{toolRootPath}");
+            _logger.LogInformation($"not found studio.zip in:{toolRootPath}");
             return;
         }
         string studioPath = AssemblyHelper.GetStudioPath();
@@ -202,20 +206,47 @@ public class StudioCommand
         File.Create(Path.Combine(studioPath, $"{version}.txt")).Close();
 
         UpdateTemplate();
-        Console.WriteLine("✅ update complete!");
+        _logger.LogInformation("✅ update complete!");
     }
 
+
+    /// <summary>
+    /// 获取可用端口
+    /// </summary>
+    /// <returns></returns>
+    /// <summary>
+    /// 获取可用端口
+    /// </summary>
+    /// <returns></returns>
+    public static int GetAvailablePort(int alternative = 9160)
+    {
+        var defaultPort = 19160;
+        var properties = IPGlobalProperties.GetIPGlobalProperties();
+
+        var endPointsTcp = properties.GetActiveTcpListeners();
+        foreach (var endPoint in endPointsTcp)
+        {
+            if (endPoint.Port == defaultPort) return alternative;
+        }
+
+        var endPointsUdp = properties.GetActiveUdpListeners();
+        foreach (var endPoint in endPointsUdp)
+        {
+            if (endPoint.Port == defaultPort) return alternative;
+        }
+        return defaultPort;
+    }
     /// <summary>
     /// 下载或更新模板
     /// </summary>
-    public static void UpdateTemplate()
+    public void UpdateTemplate()
     {
         // 安装模板
         if (!ProcessHelper.RunCommand("dotnet", "new list atapi", out string _))
         {
             if (!ProcessHelper.RunCommand("dotnet", "new install ater.web.templates", out _))
             {
-                Console.WriteLine("⚠️ ater.web.templates install failed!");
+                _logger.LogInformation("⚠️ ater.web.templates install failed!");
             }
         }
         else

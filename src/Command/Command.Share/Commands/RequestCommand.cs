@@ -1,3 +1,4 @@
+using CodeGenerator.Models;
 using Microsoft.OpenApi.Models;
 namespace Command.Share.Commands;
 
@@ -91,7 +92,7 @@ public class RequestCommand : CommandBase
         foreach (GenFileInfo model in models)
         {
 
-            string dir = Path.Combine(OutputPath, "services", DocName, model.Path, "models");
+            string dir = Path.Combine(OutputPath, "services", DocName, model.FullName, "models");
             await GenerateFileAsync(dir, model.Name, model.Content, true);
         }
 
@@ -99,8 +100,8 @@ public class RequestCommand : CommandBase
         List<GenFileInfo> services = ngGen.GetServices(ApiDocument!.Tags);
         foreach (GenFileInfo service in services)
         {
-            string dir = Path.Combine(OutputPath, "services", DocName, service.Path);
-            await GenerateFileAsync(dir, service.Name, service.Content, !service.CanModify);
+            string dir = Path.Combine(OutputPath, "services", DocName, service.FullName);
+            await GenerateFileAsync(dir, service.Name, service.Content, !service.IsCover);
         }
     }
 }

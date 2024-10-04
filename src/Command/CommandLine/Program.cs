@@ -1,5 +1,8 @@
 ﻿using System.CommandLine;
 using System.Text;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Share.Services;
 
 namespace CommandLine;
 
@@ -7,15 +10,28 @@ internal class Program
 {
     private static async Task<int> Main(string[] args)
     {
-        Console.OutputEncoding = Encoding.UTF8;
-        ShowLogo();
         if (args.Length == 0)
         {
             return 0;
         }
+        Console.OutputEncoding = Encoding.UTF8;
+        ShowLogo();
+        var serviceCollection = new ServiceCollection();
+        ConfigureServices(serviceCollection);
 
         RootCommand root = new CommandBuilder().Build();
         return await root.InvokeAsync(args);
+    }
+
+
+    private static void ConfigureServices(IServiceCollection services)
+    {
+        services.AddLogging(config => { config.AddConsole(); })
+            .Configure<LoggerFilterOptions>(options => options.MinLevel = LogLevel.Information);
+
+        services.AddSingleton<CodeAnalysisService>();
+        services.AddSingleton<CodeGenService>();
+        services.AddSingleton<StudioCommand>();
     }
 
     private static void ShowLogo()
@@ -31,7 +47,6 @@ internal class Program
                        —→ for freedom 🗽 ←—
 
             """;
-
         Console.WriteLine(logo);
     }
 }

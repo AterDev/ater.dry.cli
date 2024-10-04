@@ -1,4 +1,5 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using CodeGenerator.Models;
+using Microsoft.OpenApi.Models;
 namespace Command.Share.Commands;
 /// <summary>
 /// 客户端请求生成
@@ -82,7 +83,7 @@ public class ApiClientCommand : CommandBase
             string dir = Path.Combine(OutputPath, "Services");
             await GenerateFileAsync(dir, service.Name, service.Content, true);
         }
-        List<object> serviceNames = services.Select(s => s.Name.TrimEnd(".cs".ToCharArray())).ToList();
+        var serviceNames = services.Select(s => s.Name.TrimEnd(".cs".ToCharArray())).ToList();
         string extensionContent = CSHttpClientGenerate.GetExtensionContent(nspName, serviceNames);
         await GenerateFileAsync(OutputPath, "Extension.cs", extensionContent, true);
 

@@ -3,6 +3,9 @@ public class Const
 {
     public static Guid PROJECT_ID;
 
+    public const string ConfigFileName = ".dry-config.json";
+    public const string StudioFileName = "AterStudio.dll";
+
     // assembly name
     public const string ApplicationName = "Application";
     public const string ShareName = "Share";
@@ -57,7 +60,6 @@ public class Const
     public const string CoreLibName = "Ater.Web.Core";
     public const string AbstractionLibName = "Ater.Web.Abstraction";
     public const string ExtensionLibName = "Ater.Web.Extension";
-    public const string ConfigFileName = ".dry-config.json";
 
     public const string GlobalUsingsFile = "GlobalUsings.cs";
     public const string ServiceExtensionsFile = "ServiceCollectionExtensions.cs";

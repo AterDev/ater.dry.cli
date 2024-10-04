@@ -1,49 +1,41 @@
+using CodeGenerator;
+using CodeGenerator.Helper;
+using CodeGenerator.Models;
+using Entity;
+using Microsoft.Extensions.Logging;
+using Share.Services;
+
 namespace Command.Share;
 
-public static class CommandRunner
+public class CommandRunner(CodeGenService codeGen, CodeAnalysisService codeAnalysis, ILogger<CommandRunner> logger)
 {
-    public static async Task GenerateDocAsync(string url = "", string output = "")
-    {
-        try
-        {
-            Console.WriteLine("🚀 Generating markdown doc");
-            DocCommand cmd = new(url, output);
-            await cmd.RunAsync();
-        }
-        catch (WebException webExp)
-        {
-            Console.WriteLine(webExp.Message);
-            Console.WriteLine("Check the url!");
-        }
-        catch (Exception exp)
-        {
-            Console.WriteLine(exp.Message);
-            Console.WriteLine(exp.StackTrace);
-        }
-    }
+    private readonly CodeGenService _codeGen = codeGen;
+    private readonly CodeAnalysisService _codeAnalysis = codeAnalysis;
+    private readonly ILogger<CommandRunner> _logger = logger;
+
     /// <summary>
     /// angular 代码生成
     /// </summary>
     /// <param name="url">swagger json地址</param>
     /// <param name="output">ng前端根目录</param>
     /// <returns></returns>
-    public static async Task GenerateNgAsync(string url = "", string output = "")
+    public async Task GenerateNgAsync(string url = "", string output = "")
     {
         try
         {
-            Console.WriteLine("🚀 Generating ts models and ng services...");
+            _logger.LogInformation("🚀 Generating ts models and ng services...");
             RequestCommand cmd = new(url, output, RequestLibType.NgHttp);
             await cmd.RunAsync();
         }
         catch (WebException webExp)
         {
-            Console.WriteLine(webExp.Message);
-            Console.WriteLine("Ensure you had input correct url!");
+            _logger.LogInformation(webExp.Message);
+            _logger.LogInformation("Ensure you had input correct url!");
         }
         catch (Exception exp)
         {
-            Console.WriteLine(exp.Message);
-            Console.WriteLine(exp.StackTrace);
+            _logger.LogInformation(exp.Message);
+            _logger.LogInformation(exp.StackTrace);
         }
     }
     /// <summary>
@@ -52,23 +44,23 @@ public static class CommandRunner
     /// <param name="url"></param>
     /// <param name="output"></param>
     /// <returns></returns>
-    public static async Task GenerateRequestAsync(string url = "", string output = "", RequestLibType type = RequestLibType.NgHttp)
+    public async Task GenerateRequestAsync(string url = "", string output = "", RequestLibType type = RequestLibType.NgHttp)
     {
         try
         {
-            Console.WriteLine($"🚀 Generating ts models and {type} request services...");
+            _logger.LogInformation($"🚀 Generating ts models and {type} request services...");
             RequestCommand cmd = new(url, output, type);
             await cmd.RunAsync();
         }
         catch (WebException webExp)
         {
-            Console.WriteLine(webExp.Message);
-            Console.WriteLine("Ensure you had input correct url!");
+            _logger.LogInformation(webExp.Message);
+            _logger.LogInformation("Ensure you had input correct url!");
         }
         catch (Exception exp)
         {
-            Console.WriteLine(exp.Message);
-            Console.WriteLine(exp.StackTrace);
+            _logger.LogInformation(exp.Message);
+            _logger.LogInformation(exp.StackTrace);
         }
     }
 
@@ -76,166 +68,91 @@ public static class CommandRunner
     /// dto生成或更新
     /// </summary>
     /// <param name="entityPath"></param>
-    public static async Task GenerateDtoAsync(string entityPath, string output, bool force)
+    public async Task GenerateDtoAsync(string entityPath, string outputPath, bool force)
     {
-        Console.WriteLine("🚀 Generating Dtos...");
-        DtoCommand cmd = new(entityPath, output);
-        await cmd.RunAsync(force);
+        var entityInfo = await GetEntityInfoAsync(entityPath);
+        var files = _codeGen.GenerateDto(entityInfo, outputPath, force);
+        _codeGen.GenerateFiles(files);
+    }
 
-        if (!string.IsNullOrWhiteSpace(Config.ServiceName))
-        {
-            await UpdateServiceGlobalUsingAsync(Config.ServiceName);
-        }
+
+    private static async Task<EntityInfo> GetEntityInfoAsync(string entityPath)
+    {
+        var helper = new EntityParseHelper(entityPath);
+        var entityInfo = await helper.ParseEntityAsync();
+        _ = entityInfo ?? throw new Exception("实体解析失败，请检查实体文件是否正确！");
+        return entityInfo;
     }
 
     /// <summary>
     /// manager代码生成
     /// </summary>
-    /// <param name="path">entity path</param>
-    /// <param name="dtoPath"></param>
+    /// <param name="entityPath">entity path</param>
+    /// <param name="sharePath"></param>
     /// <param name="applicationPath"></param>
     /// <returns></returns>
-    public static async Task GenerateManagerAsync(string path, string dtoPath = "",
+    public async Task GenerateManagerAsync(string entityPath, string sharePath = "",
             string applicationPath = "", bool force = false)
     {
-        Console.WriteLine("🚀 Generate dtos");
-        DtoCommand dtoCmd = new(path, dtoPath);
-        await dtoCmd.RunAsync(force);
-        Console.WriteLine("🚀 Generate manager");
-        ManagerCommand storeCmd = new(path, dtoPath, applicationPath);
-        await storeCmd.RunAsync(force);
-        string entityFrameworkPath = Path.Combine(Config.SolutionPath, Config.EntityFrameworkPath);
-        if (!string.IsNullOrWhiteSpace(Config.ServiceName))
-        {
-            entityFrameworkPath = Path.Combine(Config.SolutionPath, Config.GetServiceConfig(Config.ServiceName).DbContextPath);
+        var entityInfo = await GetEntityInfoAsync(entityPath);
+        var files = new List<GenFileInfo>();
 
-            await UpdateServiceGlobalUsingAsync(Config.ServiceName);
-        }
-        storeCmd.AddToDbContext(entityFrameworkPath);
+        files.AddRange(_codeGen.GenerateDto(entityInfo, sharePath, force));
+        var tplContent = TplContent.GetManagerTpl();
+        files.AddRange(_codeGen.GenerateManager(entityInfo, applicationPath, tplContent, force));
+        _codeGen.GenerateFiles(files);
     }
 
     /// <summary>
     /// api项目代码生成
     /// </summary>
-    /// <param name="path">实体文件路径</param>
+    /// <param name="entityPath">实体文件路径</param>
     /// <param name="applicationPath">service目录</param>
     /// <param name="apiPath">网站目录</param>
     /// <param name="suffix">控制器后缀名</param>
-    public static async Task GenerateApiAsync(string path, string dtoPath = "",
-            string applicationPath = "", string apiPath = "", string suffix = "", bool force = false)
+    public async Task GenerateApiAsync(string entityPath, string sharePath = "",
+            string applicationPath = "", string apiPath = "", bool force = false)
     {
         try
         {
-            Console.WriteLine("🚀 Generate dtos");
-            DtoCommand dtoCmd = new(path, dtoPath);
-            await dtoCmd.RunAsync(force);
-            Console.WriteLine("🚀 Generate manager");
-            ManagerCommand storeCmd = new(path, dtoPath, applicationPath);
-            await storeCmd.RunAsync(force);
-            string entityFrameworkPath = Path.Combine(Config.SolutionPath, Config.EntityFrameworkPath);
-            if (!string.IsNullOrWhiteSpace(Config.ServiceName))
-            {
-                entityFrameworkPath = Path.Combine(Config.SolutionPath, Config.GetServiceConfig(Config.ServiceName).DbContextPath);
-                await UpdateServiceGlobalUsingAsync(Config.ServiceName);
-            }
-            storeCmd.AddToDbContext(entityFrameworkPath);
+            var entityInfo = await GetEntityInfoAsync(entityPath);
+            var files = new List<GenFileInfo>();
 
-            Console.WriteLine("🚀 Generate rest api");
-            ApiCommand apiCmd = new(path, dtoPath, applicationPath, apiPath, suffix);
-            await apiCmd.RunAsync(force);
+            files.AddRange(_codeGen.GenerateDto(entityInfo, sharePath, force));
+            var tplContent = TplContent.GetManagerTpl();
+            files.AddRange(_codeGen.GenerateManager(entityInfo, applicationPath, tplContent, force));
+
+            tplContent = TplContent.GetControllerTpl();
+            var controllerFiles = _codeGen.GenerateController(entityInfo, apiPath, tplContent, force);
+            files.AddRange(controllerFiles);
+            _codeGen.GenerateFiles(files);
         }
         catch (Exception ex)
         {
-            Console.WriteLine("异常:" + ex.Message + Environment.NewLine + ex.StackTrace);
+            _logger.LogInformation("异常:" + ex.Message + Environment.NewLine + ex.StackTrace);
         }
-    }
-
-    /// <summary>
-    /// 更新引用
-    /// </summary>
-    /// <param name="serviceName"></param>
-    public static async Task UpdateServiceGlobalUsingAsync(string serviceName, string? moduleName = null)
-    {
-        string[] nsp = [
-            "global using System.ComponentModel.DataAnnotations;",
-            $"global using {serviceName}.Definition.Entity;"
-            ];
-
-        string servicePath = Path.Combine(Config.SolutionPath, "src", "Microservice", serviceName);
-        string filePath = Path.Combine(servicePath, "GlobalUsings.cs");
-        if (!string.IsNullOrWhiteSpace(moduleName))
-        {
-            filePath = Path.Combine(servicePath, "Modules", moduleName, "GlobalUsings.cs");
-        }
-
-        // 如果不存在则生成，如果存在，则添加
-        if (File.Exists(filePath))
-        {
-            string content = File.ReadAllText(filePath);
-            List<string> newUsings = nsp.Where(g => !content.Contains(g))
-                .ToList();
-            if (newUsings.Count != 0)
-            {
-                newUsings.Insert(0, Environment.NewLine);
-                File.AppendAllLines(filePath, newUsings);
-            }
-        }
-        else
-        {
-            await File.WriteAllTextAsync(filePath, string.Join(Environment.NewLine, nsp), Encoding.UTF8);
-        }
-    }
-
-    /// <summary>
-    /// 根据已生成的dto生成相应的前端表单页面
-    /// </summary>
-    /// <param name="dtoPath">service根目录</param>
-    /// <param name="entityPah">实体路径</param>
-    /// <param name="output">前端根目录</param>
-    public static async Task GenerateNgPagesAsync(string entityPah, string dtoPath, string output = "", bool isMobile = false)
-    {
-        Console.WriteLine("🚀 Generate view");
-        ViewCommand viewCmd = new(entityPah, dtoPath, output, isMobile);
-        await viewCmd.RunAsync();
-    }
-
-    public static async Task SyncToAngularAsync(string swaggerPath, string entityPath, string dtoPath, string httpPath)
-    {
-        AutoSyncNgCommand cmd = new(swaggerPath, entityPath, dtoPath, httpPath);
-        await cmd.RunAsync();
-    }
-
-    /// <summary>
-    /// 生成protobuf
-    /// </summary>
-    /// <param name="entityPath"></param>
-    /// <param name="projectPath"></param>
-    /// <returns></returns>
-    public static async Task<string?> GenerateProtobufAsync(string entityPath, string projectPath)
-    {
-        ProtoCommand cmd = new(entityPath, projectPath);
-        await cmd.RunAsync();
-        return cmd.ErrorMessage;
     }
 
     /// <summary>
     /// 清除生成代码
     /// </summary>
     /// <param name="EntityName">实体类名称</param>
-    public static async Task ClearCodesAsync(string entityPath, string sharePath, string applicationPath, string apiPath, string EntityName)
+    public async Task ClearCodesAsync(string entityPath, string sharePath, string applicationPath, string apiPath, string EntityName)
     {
         if (EntityName.ToLower().Equals("systemuser"))
         {
-            Console.WriteLine("⚠️ SystemUser can't be deleted, skip it!");
+            _logger.LogInformation("⚠️ SystemUser can't be deleted, skip it!");
             return;
         }
-        await Console.Out.WriteLineAsync($"start cleaning {EntityName}");
+
+        var entityInfo = await GetEntityInfoAsync(entityPath);
+        _logger.LogInformation($"start cleaning {EntityName}");
         // 清理dto
         string dtoPath = Path.Combine(sharePath, "Models", EntityName + "Dtos");
         if (Directory.Exists(dtoPath))
         {
             Directory.Delete(dtoPath, true);
-            await Console.Out.WriteLineAsync("✔️ clear dtos");
+            _logger.LogInformation("✔️ clear dtos");
         }
 
         // 清理data store
@@ -243,13 +160,13 @@ public static class CommandRunner
         if (File.Exists(storePath))
         {
             File.Delete(storePath);
-            await Console.Out.WriteLineAsync("✔️ clear commandstore");
+            _logger.LogInformation("✔️ clear commandstore");
         }
         storePath = Path.Combine(applicationPath, "QueryStore", EntityName + "QueryStore.cs");
         if (File.Exists(storePath))
         {
             File.Delete(storePath);
-            await Console.Out.WriteLineAsync("✔️ clear querystore");
+            _logger.LogInformation("✔️ clear querystore");
         }
 
 
@@ -258,17 +175,18 @@ public static class CommandRunner
         if (File.Exists(managerPath))
         {
             File.Delete(managerPath);
-            await Console.Out.WriteLineAsync("✔️ clear manager");
+            _logger.LogInformation("✔️ clear manager");
         }
 
         try
         {
             // 更新 依赖注入
             string entityFilePath = Directory.GetFiles(entityPath, EntityName + ".cs", SearchOption.AllDirectories).First();
-            ManagerCommand managerCmd = new(entityFilePath, sharePath, applicationPath);
-            await managerCmd.GenerateDIExtensionsAsync();
 
-            await Console.Out.WriteLineAsync("✔️ update manager service extention");
+            var managerDIFile = _codeGen.GetManagerService(entityInfo, applicationPath);
+            _codeGen.GenerateFiles([managerDIFile]);
+
+            _logger.LogInformation("✔️ update manager service extention");
 
             // 清除web api 
             string apiControllerPath = Path.Combine(apiPath, "Controllers");
@@ -277,20 +195,9 @@ public static class CommandRunner
             files.ForEach(f =>
             {
                 File.Delete(f);
-                Console.WriteLine($"✔️ clear api {f}");
+                _logger.LogInformation($"✔️ clear api {f}");
             });
 
-            string microPath = Path.Combine(apiPath, "..", "Microservice", "Controllers");
-            if (Directory.Exists(microPath))
-            {
-                files = [.. Directory.GetFiles(microPath, $"{EntityName}Controller.cs", SearchOption.AllDirectories)
-];
-                files.ForEach(f =>
-                {
-                    File.Delete(f);
-                    Console.WriteLine($"✔️ clear api {f}");
-                });
-            }
             // 清除test
             string testPath = Path.Combine(apiPath, "..", "..", "test", "Application.Test");
             if (Directory.Exists(testPath))
@@ -299,13 +206,13 @@ public static class CommandRunner
                 if (File.Exists(testFile))
                 {
                     File.Delete(testFile);
-                    Console.WriteLine($"✔️ clear test {testFile}");
+                    _logger.LogInformation($"✔️ clear test {testFile}");
                 }
             }
         }
         catch (Exception ex)
         {
-            await Console.Out.WriteLineAsync(ex.Message + ex.InnerException + ex.StackTrace);
+            _logger.LogInformation(ex.Message + ex.InnerException + ex.StackTrace);
         }
     }
 
