@@ -28,6 +28,8 @@ public class AssemblyHelper
         }
     }
 
+
+
     /// <summary>
     /// 在项目中寻找文件
     /// </summary>

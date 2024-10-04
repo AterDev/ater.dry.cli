@@ -11,7 +11,6 @@ public class RestApiGenerate(EntityInfo entityInfo)
     /// </summary>
     public string? ShareNamespace { get; set; } = entityInfo.GetShareNamespace();
     public string? ApplicationNamespace { get; set; } = entityInfo.GetManagerNamespace();
-    public string? ApiNamespace { get; set; } = entityInfo.GetControllerPath();
     public EntityInfo EntityInfo { get; init; } = entityInfo;
 
     public List<string> GetGlobalUsings()

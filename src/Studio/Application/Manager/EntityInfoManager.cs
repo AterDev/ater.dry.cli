@@ -31,7 +31,7 @@ public partial class EntityInfoManager(
 
             if (filePaths.Count != 0)
             {
-                entityFiles = _codeAnalysis.GetEntityFiles(filePaths);
+                entityFiles = _codeAnalysis.GetEntityFiles(_projectContext.EntityPath!, filePaths);
                 foreach (var item in entityFiles)
                 {
                     // 查询生成的dto\manager\api状态
@@ -46,7 +46,7 @@ public partial class EntityInfoManager(
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex);
+            _logger.LogInformation(ex.Message);
             return entityFiles;
         }
         return entityFiles;
@@ -123,7 +123,7 @@ public partial class EntityInfoManager(
 
     private string? GetDtoPath(string entityFilePath)
     {
-        var entityFile = _codeAnalysis.GetEntityFile(entityFilePath);
+        var entityFile = _codeAnalysis.GetEntityFile(_projectContext.EntityPath!, entityFilePath);
         return entityFile?.GetDtoPath(_projectContext);
     }
 

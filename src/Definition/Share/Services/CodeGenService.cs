@@ -111,7 +111,7 @@ public class CodeGenService(ILogger<CodeGenService> logger)
     /// <returns></returns>
     public GenFileInfo GetManagerService(EntityInfo entityInfo, string outputPath)
     {
-        string content = ManagerGenerate.GetManagerServiceContent(entityInfo);
+        string content = ManagerGenerate.GetManagerServiceContent(outputPath, entityInfo.ModuleName);
         string name = entityInfo.ModuleName.IsEmpty()
             ? Const.ManagerServiceExtensionsFile
             : Const.ServiceExtensionsFile;

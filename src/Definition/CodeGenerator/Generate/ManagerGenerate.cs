@@ -85,12 +85,12 @@ public class ManagerGenerate(EntityInfo entityInfo)
     /// <summary>
     /// Manager服务注入内容
     /// </summary>
-    /// <param name="entityInfo"></param>
+    /// <param name="managerPath"></param>
+    /// <param name="moduleName"></param>
     /// <returns></returns>
-    public static string GetManagerServiceContent(EntityInfo entityInfo)
+    public static string GetManagerServiceContent(string managerPath, string? moduleName = null)
     {
-        var managerPath = entityInfo.GetManagerPath();
-        var nspName = entityInfo.GetManagerNamespace();
+        var nspName = moduleName ?? Const.ApplicationName;
 
         if (!Directory.Exists(managerPath))
         {
@@ -111,7 +111,7 @@ public class ManagerGenerate(EntityInfo entityInfo)
             Namespace = nspName,
             ManagerServices = managerServiceContent
         };
-        var tplContent = TplContent.GetManagerServiceExtensionTpl(entityInfo.ModuleName.NotEmpty());
+        var tplContent = TplContent.GetManagerServiceExtensionTpl(moduleName != null);
         return genContext.GenCode(tplContent, managerModel);
     }
 }

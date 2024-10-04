@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-namespace CodeGenerator.Test.Hepler;
+﻿namespace CodeGenerator.Test.Hepler;
 
 public static class PathHelper
 {

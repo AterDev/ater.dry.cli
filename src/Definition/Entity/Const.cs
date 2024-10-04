@@ -73,6 +73,7 @@ public class PathConst
 {
     public readonly static string APIPath = Path.Combine(Const.SrcDir, Const.APIName);
     public readonly static string ApplicationPath = Path.Combine(Const.SrcDir, Const.ApplicationName);
+    public readonly static string DefinitionPath = Path.Combine(Const.SrcDir, Const.DefinitionDir);
     public readonly static string SharePath = Path.Combine(Const.SrcDir, Const.DefinitionDir, Const.ShareName);
     public readonly static string EntityPath = Path.Combine(Const.SrcDir, Const.DefinitionDir, Const.EntityName);
     public readonly static string EntityFrameworkPath = Path.Combine(Const.SrcDir, Const.DefinitionDir, Const.EntityFrameworkName);

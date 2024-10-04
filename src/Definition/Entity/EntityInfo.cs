@@ -73,30 +73,6 @@ public class EntityInfo : EntityBase
     /// </summary>
     public List<PropertyInfo> PropertyInfos { get; set; } = [];
 
-    /// <summary>
-    /// 获取manager路径
-    /// </summary>
-    /// <returns></returns>
-    public string GetManagerPath()
-    {
-        return ModuleName.IsEmpty()
-            ? Path.Combine(Project.Path, PathConst.ApplicationPath, Const.ManagersDir)
-            : Path.Combine(Project.Path, PathConst.ModulesPath, ModuleName, Const.ManagersDir);
-    }
-
-    public string GetDtoPath()
-    {
-        return ModuleName.IsEmpty()
-            ? Path.Combine(Project.Path, PathConst.SharePath, Const.ModelsDir, $"{Name}Dtos")
-            : Path.Combine(Project.Path, PathConst.ModulesPath, ModuleName, Const.ModelsDir, $"{Name}Dtos");
-    }
-    public string GetControllerPath()
-    {
-        return ModuleName.IsEmpty()
-            ? Path.Combine(Project.Path, PathConst.APIPath, Const.ControllersDir)
-            : Path.Combine(Project.Path, PathConst.ModulesPath, ModuleName, Const.ControllersDir);
-    }
-
     public string GetDtoNamespace()
     {
         return GetShareNamespace();

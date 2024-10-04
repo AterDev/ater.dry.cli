@@ -1,27 +1,29 @@
 ﻿using System.Collections.Concurrent;
 using Microsoft.CodeAnalysis;
+using Microsoft.Extensions.Logging;
 using Share.Models;
 
 namespace Share.Services;
 /// <summary>
 /// 代码解析服务
 /// </summary>
-public class CodeAnalysisService(IProjectContext projectContext)
+public class CodeAnalysisService(ILogger<CodeAnalysisService> logger)
 {
-    private readonly IProjectContext _projectContext = projectContext;
+    private readonly ILogger<CodeAnalysisService> _logger = logger;
 
     /// <summary>
     /// get entity file info
     /// </summary>
+    /// <param name="entityPath"></param>
     /// <param name="filePaths"></param>
     /// <returns></returns>
-    public List<EntityFile> GetEntityFiles(List<string> filePaths)
+    public List<EntityFile> GetEntityFiles(string entityPath, List<string> filePaths)
     {
         var entityFiles = new ConcurrentBag<EntityFile>();
         Parallel.ForEach(filePaths, path =>
         {
             string content = File.ReadAllText(path);
-            var compilation = new CompilationHelper(_projectContext.EntityPath!);
+            var compilation = new CompilationHelper(entityPath);
             compilation.LoadContent(content);
             if (compilation.IsEntityClass())
             {
@@ -65,16 +67,15 @@ public class CodeAnalysisService(IProjectContext projectContext)
             var entityInfo = parse.ParseEntityAsync().Result;
             if (entityInfo != null)
             {
-                entityInfo.Project = _projectContext.Project!;
                 entityInfos.Add(entityInfo);
             }
         });
         return [.. entityInfos];
     }
 
-    public EntityFile? GetEntityFile(string filePath)
+    public EntityFile? GetEntityFile(string entityPath, string filePath)
     {
-        return GetEntityFiles([filePath]).FirstOrDefault();
+        return GetEntityFiles(entityPath, [filePath]).FirstOrDefault();
     }
 
     /// <summary>
