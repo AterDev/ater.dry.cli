@@ -7,8 +7,13 @@
 
     <ItemGroup>
         <PackageReference Include="Ater.DeepSeek.Core" Version="1.0.1" />
+        <PackageReference Include="Ater.Web.Abstraction" Version="0.2.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="9.0.0-rc.1.24451.1" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0-rc.1.24451.1" />
+        
     </ItemGroup>
     <ItemGroup>
+        <ProjectReference Include="..\..\Definition\EntityFramework\EntityFramework.csproj" />
         <ProjectReference Include="..\..\Definition\Share\Share.csproj" />
         <!--<ProjectReference Include="..\..\Command\Command.Share\Command.Share.csproj" />-->
     </ItemGroup>

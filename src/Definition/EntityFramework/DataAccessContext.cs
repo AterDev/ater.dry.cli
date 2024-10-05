@@ -1,6 +1,6 @@
-﻿using Ater.Web.Abstraction.EntityFramework;
+﻿
 
-namespace Share.EntityFramework;
+namespace EntityFramework;
 /// <summary>
 /// 数据访问层抽象
 /// </summary>

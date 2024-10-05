@@ -27,10 +27,11 @@ public static class ServiceCollectionExtension
 
         builder.Services.AddScoped<IProjectContext, ProjectContext>();
 
-        builder.Services.AddScoped(typeof(CodeAnalysisService));
-        builder.Services.AddScoped(typeof(CodeGenService));
+        builder.Services.AddScoped<CodeAnalysisService>();
+        builder.Services.AddScoped<CodeGenService>();
+        builder.Services.AddScoped<SolutionManager>();
+        builder.Services.AddSingleton<AIService>();
 
-        builder.Services.AddSingleton(typeof(AIService));
         builder.Services.AddManager();
 
         builder.Services.AddControllers()

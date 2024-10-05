@@ -1,14 +1,21 @@
 ﻿using System.Text.Json.Nodes;
+using Application.Services;
 
 namespace Application.Manager;
 /// <summary>
 /// 功能集成
 /// </summary>
-public class SolutionManager(IProjectContext projectContext, ProjectManager projectManager, ILogger<SolutionManager> logger)
+public class SolutionManager(
+    IProjectContext projectContext,
+    ProjectManager projectManager,
+    ILogger<SolutionManager> logger,
+    SolutionService solution
+    )
 {
     private readonly IProjectContext _projectContext = projectContext;
     private readonly ProjectManager _projectManager = projectManager;
     private readonly ILogger<SolutionManager> _logger = logger;
+    private readonly SolutionService _solution = solution;
 
     public string ErrorMsg { get; set; } = string.Empty;
 
@@ -221,7 +228,6 @@ public class SolutionManager(IProjectContext projectContext, ProjectManager proj
         _logger.LogInformation(_projectContext.ModulesPath);
         _logger.LogInformation(string.Join(",", projectFiles));
 
-
         projectFiles.ForEach(path =>
         {
             SubProjectInfo moduleInfo = new()
@@ -239,24 +245,17 @@ public class SolutionManager(IProjectContext projectContext, ProjectManager proj
     /// 创建模块
     /// </summary>
     /// <param name="name"></param>
-    public async Task<bool> CreateModuleAsync(string name)
+    public async Task<bool> CreateModuleAsync(string moduleName)
     {
         try
         {
-            if (!name.EndsWith("Mod"))
-            {
-                name += "Mod";
-            }
-            List<string> allModules = ModuleInfo.GetModules().Select(m => m.Value).ToList();
-            // TODO: 生成模块
-            //await new ModuleCommand(_projectContext.SolutionPath!, allModules)
-            //    .CreateModuleAsync(name);
+            await _solution.CreateModuleAsync(moduleName);
+            return true;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            ErrorMsg = e.Message;
+            ErrorMsg = ex.Message;
             return false;
         }
-        return true;
     }
 }

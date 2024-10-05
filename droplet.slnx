@@ -8,17 +8,27 @@
   </Folder>
 
   <Folder Name="/src/Definition/">
+
     <Project Path="src\Definition\CodeGenerator\CodeGenerator.csproj" />
+
+    <Project Path="src\Definition\EntityFramework\EntityFramework.csproj" Type="C#" />
+
     <Project Path="src\Definition\Entity\Entity.csproj" />
 
     <Project Path="src\Definition\Share\Share.csproj" />
+
   </Folder>
 
   <Folder Name="/src/Command/">
+
     <Project Path="src\Command\Command.Share\Command.Share.csproj" />
+
     <Project Path="src\Command\CommandLine\CommandLine.csproj" />
+
     <Project Path="src\Command\GeneratorForNode\GeneratorForNode.csproj" />
+
     <Project Path="src\Command\NodeBridge\NodeBridge.csproj" />
+
   </Folder>
   <Folder Name="/src/Studio/">
     <Project Path="src\Studio\Application\Application.csproj" />
@@ -26,8 +36,11 @@
   </Folder>
 
   <Folder Name="/test/">
+
     <Project Path="test\CodeGenerator.Test\CodeGenerator.Test.csproj" />
+
     <Project Path="test\CommandLine.Test\CommandLine.Test.csproj" />
+
   </Folder>
   <Properties Name="Visual Studio">
     <Property Name="OpenWith" Value="Visual Studio Version 17" />

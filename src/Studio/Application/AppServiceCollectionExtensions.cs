@@ -30,7 +30,7 @@ public static partial class AppServiceCollectionExtensions
         {
             Directory.CreateDirectory(dir);
         }
-        var path = Path.Combine(dir, ContextBase.DbName);
+        var path = Path.Combine(dir, Const.DbName);
         builder.Services.AddDbContext<CommandDbContext>(options =>
         {
             options.UseSqlite($"DataSource={path}", _ =>

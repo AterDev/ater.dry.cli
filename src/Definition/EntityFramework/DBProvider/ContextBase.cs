@@ -1,12 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore.Query;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Share.EntityFramework.DBProvider;
+namespace EntityFramework.DBProvider;
 
 public class ContextBase : DbContext
 {
-    public const string DbName = "ater.dry.db";
-
     public DbSet<Project> Projects { get; set; }
     public DbSet<EntityInfo> EntityInfos { get; set; }
     public DbSet<ApiDocInfo> ApiDocInfos { get; set; }

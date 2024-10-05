@@ -4,7 +4,7 @@
 /// </summary>
 public class TplContent
 {
-    public static string GetManagerTpl()
+    public static string ManagerTpl()
     {
         return """
             using @(Model.ShareNamespace).Models.@(Model.EntityName)Dtos;
@@ -104,7 +104,7 @@ public class TplContent
     /// </summary>
     /// <param name="isModule"></param>
     /// <returns></returns>
-    public static string GetManagerServiceExtensionTpl(bool isModule = false)
+    public static string ManagerServiceExtensionTpl(bool isModule = false)
     {
         return isModule ?
             $$"""
@@ -153,7 +153,7 @@ public class TplContent
             """;
 
     }
-    public static string GetControllerTpl()
+    public static string ControllerTpl()
     {
         return """
             using @(Model.ShareNamespace).Models.@(Model.EntityName)Dtos;
@@ -237,7 +237,7 @@ public class TplContent
             """;
     }
 
-    public static string GetEnumPipeTpl()
+    public static string EnumPipeTpl()
     {
         return """
             // 该文件自动生成，会被覆盖更新
@@ -265,6 +265,102 @@ public class TplContent
             })
             export class EnumTextPipeModule { }
 
+            """;
+    }
+
+    /// <summary>
+    /// 模块的全局引用
+    /// </summary>
+    /// <param name="moduleName"></param>
+    /// <param name="isLight"></param>
+    /// <returns></returns>
+    public static string ModuleGlobalUsings(string moduleName, bool isLight = false)
+    {
+        string definition = "";
+        if (isLight)
+        {
+            definition = "Definition.";
+        }
+        return $$"""
+            global using System.ComponentModel.DataAnnotations;
+            global using System.Diagnostics;
+            global using System.Linq.Expressions;
+            global using Application.Const;
+            global using Application;
+            global using Application.Implement;
+            global using ${Module}.Manager;
+            global using Ater.Web.Abstraction;
+            global using Ater.Web.Core.Models;
+            global using Ater.Web.Core.Utils;
+            global using Ater.Web.Extension;
+            global using {{definition}}Entity;
+            global using {{definition}}Entity.{{moduleName}};
+            global using {{definition}}EntityFramework;
+            global using {{definition}}EntityFramework.DBProvider;
+            global using Microsoft.AspNetCore.Authorization;
+            global using Microsoft.Extensions.DependencyInjection;
+            global using Microsoft.AspNetCore.Mvc;
+            global using Microsoft.EntityFrameworkCore;
+            global using Microsoft.Extensions.Logging;
+            
+            """;
+    }
+
+    /// <summary>
+    /// 默认csproj内容
+    /// </summary>
+    /// <param name="version"></param>
+    /// <returns></returns>
+    public static string DefaultModuleCSProject(string version = Const.Version)
+    {
+        return $"""
+            <Project Sdk="Microsoft.NET.Sdk">
+                <PropertyGroup>
+                <TargetFramework>{version}</TargetFramework>
+                    <ImplicitUsings>enable</ImplicitUsings>
+                    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+                    <Nullable>enable</Nullable>
+                    <NoWarn>1701;1702;1591</NoWarn>
+                </PropertyGroup>
+                <ItemGroup>
+                    <ProjectReference Include="..\..\Application\Application.csproj" />
+                    <ProjectReference Include="..\..\Infrastructure\Ater.Web.Extension\Ater.Web.Extension.csproj" />
+                </ItemGroup>
+            </Project>
+            """;
+    }
+
+    public static string ModuleServiceCollection(string moduleName)
+    {
+        return $$"""
+            namespace {{moduleName}};
+            /// <summary>
+            /// 服务注入扩展
+            /// </summary>
+            public static class ServiceCollectionExtensions
+            {
+                /// <summary>
+                /// 添加模块服务
+                /// </summary>
+                /// <param name="services"></param>
+                /// <returns></returns>
+                public static IServiceCollection Add{{moduleName}}Services(this IServiceCollection services)
+                {
+                    services.Add{{moduleName}}Managers();
+                    // TODO:注入其他服务
+                    return services;
+                }
+
+                /// <summary>
+                /// 注入Manager服务
+                /// </summary>
+                /// <param name="services"></param>
+                public static IServiceCollection Add{{moduleName}}Managers(this IServiceCollection services)
+                {
+                    // TODO: 注入Manager服务
+                    return services;
+                }
+            }
             """;
     }
 }

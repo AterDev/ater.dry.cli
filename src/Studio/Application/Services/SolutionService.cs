@@ -1,4 +1,5 @@
-﻿using PluralizeService.Core;
+﻿using CodeGenerator;
+using PluralizeService.Core;
 using Share.Infrastructure.Helper;
 
 namespace Application.Services;
@@ -32,7 +33,7 @@ public class SolutionService(IProjectContext projectContext, ILogger<SolutionSer
         await Console.Out.WriteLineAsync($"🚀 create module:{moduleName} ➡️ {projectPath}");
 
         // global usings
-        string usingsContent = GetGlobalUsings(moduleName);
+        string usingsContent = TplContent.ModuleGlobalUsings(moduleName);
         usingsContent = usingsContent.Replace("${Module}", moduleName);
         await AssemblyHelper.GenerateFileAsync(projectPath, Const.GlobalUsingsFile, usingsContent, true);
 
@@ -43,7 +44,7 @@ public class SolutionService(IProjectContext projectContext, ILogger<SolutionSer
         {
             targetVersion = AssemblyHelper.GetTargetFramework(csprojFiles) ?? Const.Version;
         }
-        string csprojContent = GetCsProjectContent(targetVersion);
+        string csprojContent = TplContent.DefaultModuleCSProject(targetVersion);
         await AssemblyHelper.GenerateFileAsync(projectPath, $"{moduleName}{Const.CSharpProjectExtension}", csprojContent);
 
         // create dirs
@@ -52,20 +53,12 @@ public class SolutionService(IProjectContext projectContext, ILogger<SolutionSer
         Directory.CreateDirectory(Path.Combine(projectPath, Const.ControllersDir));
         // 模块文件
         await AssemblyHelper.GenerateFileAsync(projectPath, "InitModule.cs", GetInitModuleContent(moduleName));
-        await AssemblyHelper.GenerateFileAsync(projectPath, Const.ServiceExtensionsFile, GetServiceCollectionContent(moduleName));
+        await AssemblyHelper.GenerateFileAsync(projectPath, Const.ServiceExtensionsFile, TplContent.ModuleServiceCollection(moduleName));
 
-        try
-        {
-            await AddDefaultModuleAsync(moduleName);
-            await AddModuleConstFieldAsync(moduleName);
-            // update solution file
-            UpdateSolutionFile(Path.Combine(projectPath, $"{moduleName}{Const.CSharpProjectExtension}"));
-
-        }
-        catch (Exception ex)
-        {
-            _logger.LogInformation(ex.Message + ex.StackTrace + ex.InnerException);
-        }
+        await AddDefaultModuleAsync(moduleName);
+        await AddModuleConstFieldAsync(moduleName);
+        // update solution file
+        UpdateSolutionFile(Path.Combine(projectPath, $"{moduleName}{Const.CSharpProjectExtension}"));
     }
 
     /// <summary>
@@ -129,63 +122,6 @@ public class SolutionService(IProjectContext projectContext, ILogger<SolutionSer
         return files.Count != 0 ? files : default;
     }
 
-    private string GetGlobalUsings(string moduleName)
-    {
-        string definition = "";
-        if (_projectContext.Project!.Config.IsLight)
-        {
-            definition = "Definition.";
-        }
-
-        return $$"""
-            global using System.ComponentModel.DataAnnotations;
-            global using System.Diagnostics;
-            global using System.Linq.Expressions;
-            global using Application.Const;
-            global using Application;
-            global using Application.Implement;
-            global using ${Module}.Manager;
-            global using Ater.Web.Abstraction;
-            global using Ater.Web.Core.Models;
-            global using Ater.Web.Core.Utils;
-            global using Ater.Web.Extension;
-            global using {{definition}}Entity;
-            global using {{definition}}Entity.{{moduleName}};
-            global using {{definition}}EntityFramework;
-            global using {{definition}}EntityFramework.DBProvider;
-            global using Microsoft.AspNetCore.Authorization;
-            global using Microsoft.Extensions.DependencyInjection;
-            global using Microsoft.AspNetCore.Mvc;
-            global using Microsoft.EntityFrameworkCore;
-            global using Microsoft.Extensions.Logging;
-            
-            """;
-    }
-
-    /// <summary>
-    /// 默认csproj内容
-    /// </summary>
-    /// <param name="version"></param>
-    /// <returns></returns>
-    private static string GetCsProjectContent(string version = Const.Version)
-    {
-        return $"""
-            <Project Sdk="Microsoft.NET.Sdk">
-            	<PropertyGroup>
-            		<TargetFramework>{version}</TargetFramework>
-            		<ImplicitUsings>enable</ImplicitUsings>
-                    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-            		<Nullable>enable</Nullable>
-                    <NoWarn>1701;1702;1591</NoWarn>
-            	</PropertyGroup>
-            	<ItemGroup>
-            	    <ProjectReference Include="..\..\Application\Application.csproj" />
-                    <ProjectReference Include="..\..\Infrastructure\Ater.Web.Extension\Ater.Web.Extension.csproj" />
-            	</ItemGroup>
-            </Project>
-            """;
-    }
-
     private static string GetInitModuleContent(string moduleName)
     {
         return $$"""
@@ -213,40 +149,6 @@ public class SolutionService(IProjectContext projectContext, ILogger<SolutionSer
                     {
                         logger.LogError("初始化{{moduleName}}失败！{message}", ex.Message);
                     }
-                }
-            }
-            """;
-    }
-
-    private static string GetServiceCollectionContent(string moduleName)
-    {
-        return $$"""
-            namespace {{moduleName}};
-            /// <summary>
-            /// 服务注入扩展
-            /// </summary>
-            public static class ServiceCollectionExtensions
-            {
-                /// <summary>
-                /// 添加模块服务
-                /// </summary>
-                /// <param name="services"></param>
-                /// <returns></returns>
-                public static IServiceCollection Add{{moduleName}}Services(this IServiceCollection services)
-                {
-                    services.Add{{moduleName}}Managers();
-                    // TODO:注入其他服务
-                    return services;
-                }
-
-                /// <summary>
-                /// 注入Manager服务
-                /// </summary>
-                /// <param name="services"></param>
-                public static IServiceCollection Add{{moduleName}}Managers(this IServiceCollection services)
-                {
-                    // TODO: 注入Manager服务
-                    return services;
                 }
             }
             """;
@@ -337,7 +239,7 @@ public class SolutionService(IProjectContext projectContext, ILogger<SolutionSer
 
         dbContextContent = compilation.SyntaxRoot!.ToFullString();
         File.WriteAllText(dbContextFile, dbContextContent);
-        // update globalusings.cs
+        // update globalUsings.cs
         string globalUsingsFile = Path.Combine(databasePath, "GlobalUsings.cs");
         string globalUsingsContent = File.ReadAllText(globalUsingsFile);
 
@@ -365,15 +267,10 @@ public class SolutionService(IProjectContext projectContext, ILogger<SolutionSer
     /// <param name="recursive"></param>
     private void CopyModuleFiles(string sourceDir, string destinationDir)
     {
-        // 获取源目录信息
         DirectoryInfo dir = new(sourceDir);
-        // 检查源目录是否存在
         if (!dir.Exists) { return; }
 
-        // 缓存目录，以便开始复制
         DirectoryInfo[] dirs = dir.GetDirectories();
-
-        // 创建目标目录
         Directory.CreateDirectory(destinationDir);
 
         // 获取源目录中的文件并复制到目标目录
@@ -381,7 +278,6 @@ public class SolutionService(IProjectContext projectContext, ILogger<SolutionSer
         {
             string targetFilePath = Path.Combine(destinationDir, file.Name);
             file.CopyTo(targetFilePath, true);
-
             _logger.LogInformation($"  ℹ️ copy {file.Name} ➡️ {targetFilePath}");
         }
 

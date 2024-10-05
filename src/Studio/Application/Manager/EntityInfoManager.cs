@@ -284,7 +284,7 @@ public partial class EntityInfoManager(
             case CommandType.Manager:
             {
                 files = _codeGenService.GenerateDto(entityInfo, sharePath, dto.Force);
-                var tplContent = TplContent.GetManagerTpl();
+                var tplContent = TplContent.ManagerTpl();
                 var managerFiles = _codeGenService.GenerateManager(entityInfo, applicationPath, tplContent, dto.Force);
                 files.AddRange(managerFiles);
                 break;
@@ -292,11 +292,11 @@ public partial class EntityInfoManager(
             case CommandType.API:
             {
                 files = _codeGenService.GenerateDto(entityInfo, sharePath, dto.Force);
-                var tplContent = TplContent.GetManagerTpl();
+                var tplContent = TplContent.ManagerTpl();
                 var managerFiles = _codeGenService.GenerateManager(entityInfo, applicationPath, tplContent, dto.Force);
                 files.AddRange(managerFiles);
 
-                tplContent = TplContent.GetControllerTpl();
+                tplContent = TplContent.ControllerTpl();
                 var controllerFiles = _codeGenService.GenerateController(entityInfo, apiPath, tplContent, dto.Force);
                 files.AddRange(controllerFiles);
                 break;

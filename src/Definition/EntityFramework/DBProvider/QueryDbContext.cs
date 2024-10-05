@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace Share.EntityFramework.DBProvider;
+namespace EntityFramework.DBProvider;
 /// <summary>
 /// 只读数据库上下文
 /// </summary>

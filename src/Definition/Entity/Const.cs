@@ -3,6 +3,7 @@ public class Const
 {
     public static Guid PROJECT_ID;
 
+    public const string DbName = "ater.dry.db";
     public const string ConfigFileName = ".dry-config.json";
     public const string StudioFileName = "AterStudio.dll";
 

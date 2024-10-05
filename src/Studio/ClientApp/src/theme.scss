@@ -38,15 +38,15 @@ html {
       @include mat.chips-color($light-theme, $color-variant: primary);
       @include mat.button-color($light-theme, $color-variant: primary);
     }
-
     .text-accent {
       @include mat.icon-color($light-theme, $color-variant: tertiary);
-    }
+      @include mat.button-color($light-theme, $color-variant: tertiary);
 
+    }
     .text-danger {
       @include mat.icon-color($light-theme, $color-variant: error);
+      @include mat.button-color($light-theme, $color-variant: error);
     }
-
     .active {
       background-color: mat.get-theme-color($light-theme, primary, 60) !important;
     }

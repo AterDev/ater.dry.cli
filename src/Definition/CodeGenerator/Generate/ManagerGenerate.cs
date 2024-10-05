@@ -111,7 +111,7 @@ public class ManagerGenerate(EntityInfo entityInfo)
             Namespace = nspName,
             ManagerServices = managerServiceContent
         };
-        var tplContent = TplContent.GetManagerServiceExtensionTpl(moduleName != null);
+        var tplContent = TplContent.ManagerServiceExtensionTpl(moduleName != null);
         return genContext.GenCode(tplContent, managerModel);
     }
 }

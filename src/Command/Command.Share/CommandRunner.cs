@@ -125,7 +125,7 @@ public class CommandRunner(CodeGenService codeGen, CodeAnalysisService codeAnaly
         var files = new List<GenFileInfo>();
 
         files.AddRange(_codeGen.GenerateDto(entityInfo, sharePath, force));
-        var tplContent = TplContent.GetManagerTpl();
+        var tplContent = TplContent.ManagerTpl();
         files.AddRange(_codeGen.GenerateManager(entityInfo, applicationPath, tplContent, force));
         _codeGen.GenerateFiles(files);
     }
@@ -146,10 +146,10 @@ public class CommandRunner(CodeGenService codeGen, CodeAnalysisService codeAnaly
             var files = new List<GenFileInfo>();
 
             files.AddRange(_codeGen.GenerateDto(entityInfo, sharePath, force));
-            var tplContent = TplContent.GetManagerTpl();
+            var tplContent = TplContent.ManagerTpl();
             files.AddRange(_codeGen.GenerateManager(entityInfo, applicationPath, tplContent, force));
 
-            tplContent = TplContent.GetControllerTpl();
+            tplContent = TplContent.ControllerTpl();
             var controllerFiles = _codeGen.GenerateController(entityInfo, apiPath, tplContent, force);
             files.AddRange(controllerFiles);
             _codeGen.GenerateFiles(files);

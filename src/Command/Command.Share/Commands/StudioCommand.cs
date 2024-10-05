@@ -5,7 +5,6 @@ using System.Runtime.InteropServices;
 using CodeGenerator.Helper;
 using Entity;
 using Microsoft.Extensions.Logging;
-using Share.EntityFramework.DBProvider;
 using Share.Infrastructure.Helper;
 
 namespace Command.Share.Commands;
@@ -157,8 +156,8 @@ public class StudioCommand(ILogger<StudioCommand> logger)
             return;
         }
         string studioPath = AssemblyHelper.GetStudioPath();
-        string dbFile = Path.Combine(studioPath, ContextBase.DbName);
-        string tempDbFile = Path.Combine(Path.GetTempPath(), ContextBase.DbName);
+        string dbFile = Path.Combine(studioPath, Const.DbName);
+        string tempDbFile = Path.Combine(Path.GetTempPath(), Const.DbName);
 
         // 删除旧文件
         if (Directory.Exists(studioPath))

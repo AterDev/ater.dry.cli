@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-using Share.EntityFramework.DBProvider;
-
 namespace AterStudio.Worker;
 public class InitDataTask
 {
