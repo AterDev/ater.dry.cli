@@ -35,7 +35,6 @@ public class CodeGenService(ILogger<CodeGenService> logger)
             FullName = Path.Combine(outputPath, Const.GlobalUsingsFile),
             ModuleName = entityInfo.ModuleName
         };
-
         return
         [
             globalFile,

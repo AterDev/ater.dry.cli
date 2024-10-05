@@ -1,5 +1,5 @@
 ﻿using CodeGenerator;
-using PluralizeService.Core;
+using Humanizer;
 using Share.Infrastructure.Helper;
 
 namespace Application.Services;
@@ -227,7 +227,7 @@ public class SolutionService(IProjectContext projectContext, ILogger<SolutionSer
         entityFiles.ForEach(file =>
         {
             string entityName = Path.GetFileNameWithoutExtension(file.Name);
-            var plural = PluralizationProvider.Pluralize(entityName);
+            var plural = entityName.Pluralize();
             string propertyString = $@"public DbSet<{entityName}> {plural} {{ get; set; }}";
 
             if (!compilation.PropertyExist(plural))

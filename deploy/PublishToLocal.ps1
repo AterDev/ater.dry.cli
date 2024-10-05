@@ -62,51 +62,33 @@ try {
         $pathsToRemove = @(
             ".\publish\BuildHost-net472",
             ".\publish\BuildHost-netcore",
-            ".\publish\runtimes",
-            ".\publish\Ater.Web.Abstraction.dll",
             ".\publish\Ater.Web.Core.dll",
             ".\publish\CodeGenerator.dll",
-            ".\publish\CodeGenerator.pdb",
             ".\publish\Entity.dll",
-            ".\publish\Entity.pdb",
             ".\publish\Humanizer.dll",
             ".\publish\Mapster.Core.dll",
             ".\publish\Mapster.dll",
+            ".\publish\Microsoft.AspNetCore.Razor.Language.dll",
             ".\publish\Microsoft.Build.dll",
             ".\publish\Microsoft.Build.Framework.dll",
             ".\publish\Microsoft.Build.Locator.dll",
             ".\publish\Microsoft.Build.Tasks.Core.dll",
             ".\publish\Microsoft.Build.Utilities.Core.dll",
-            ".\publish\Microsoft.CodeAnalysis.CSharp.dll",
             ".\publish\Microsoft.CodeAnalysis.CSharp.Workspaces.dll",
-            ".\publish\Microsoft.CodeAnalysis.dll",
+            ".\publish\Microsoft.CodeAnalysis.CSharp.dll",
             ".\publish\Microsoft.CodeAnalysis.ExternalAccess.RazorCompiler.dll",
-            ".\publish\Microsoft.CodeAnalysis.Workspaces.dll",
             ".\publish\Microsoft.CodeAnalysis.Workspaces.MSBuild.dll",
-            ".\publish\Microsoft.Data.Sqlite.dll",
+            ".\publish\Microsoft.CodeAnalysis.Workspaces.dll",
+            ".\publish\Microsoft.CodeAnalysis.dll",
             ".\publish\Microsoft.EntityFrameworkCore.Abstractions.dll",
-            ".\publish\Microsoft.EntityFrameworkCore.dll",
-            ".\publish\Microsoft.EntityFrameworkCore.Relational.dll",
-            ".\publish\Microsoft.EntityFrameworkCore.Sqlite.dll",
-            ".\publish\Microsoft.Extensions.DependencyModel.dll",
-            ".\publish\Microsoft.IdentityModel.Abstractions.dll",
-            ".\publish\Microsoft.IdentityModel.JsonWebTokens.dll",
-            ".\publish\Microsoft.IdentityModel.Logging.dll",
-            ".\publish\Microsoft.IdentityModel.Tokens.dll",
             ".\publish\Microsoft.NET.StringTools.dll",
-            ".\publish\Microsoft.OpenApi.dll",
             ".\publish\Microsoft.OpenApi.Readers.dll",
+            ".\publish\Microsoft.OpenApi.dll",
             ".\publish\Microsoft.VisualStudio.Setup.Configuration.Interop.dll",
             ".\publish\Newtonsoft.Json.dll",
-            ".\publish\PluralizeService.Core.dll",
             ".\publish\RazorEngineCore.dll",
             ".\publish\Share.dll",
-            ".\publish\Share.pdb",
-            ".\publish\Share.xml",
             ".\publish\SharpYaml.dll",
-            ".\publish\SQLitePCLRaw.batteries_v2.dll",
-            ".\publish\SQLitePCLRaw.core.dll",
-            ".\publish\SQLitePCLRaw.provider.e_sqlite3.dll",
             ".\publish\System.CodeDom.dll",
             ".\publish\System.Composition.AttributedModel.dll",
             ".\publish\System.Composition.Convention.dll",
@@ -114,7 +96,6 @@ try {
             ".\publish\System.Composition.Runtime.dll",
             ".\publish\System.Composition.TypedParts.dll",
             ".\publish\System.Configuration.ConfigurationManager.dll",
-            ".\publish\System.IdentityModel.Tokens.Jwt.dll",
             ".\publish\System.Reflection.MetadataLoadContext.dll",
             ".\publish\System.Resources.Extensions.dll",
             ".\publish\System.Security.Cryptography.ProtectedData.dll",
@@ -127,6 +108,13 @@ try {
         foreach ($path in $pathsToRemove) {
             if (Test-Path $path) {
                 Remove-Item $path -Recurse -Force
+            }
+        }
+        # remove some sqlite runtimes
+        $runtimes = Get-ChildItem -Path "./publish/runtimes" -Directory
+        foreach ($runtime in $runtimes) {
+            if ($supportRuntimes -notcontains $runtime.Name) {
+                Remove-Item -Path $runtime.FullName -Recurse -Force
             }
         }
         # remove pdb and xml files
@@ -155,13 +143,6 @@ try {
     Rename-Item -Path "./nupkg/$newPackName" -NewName "$zipPackName"
     Expand-Archive -Path "./nupkg/$zipPackName" -DestinationPath "./nupkg/$Version"
 
-    # 移除 tools\net8.0\any\runtimes 中不需要的文件
-    $runtimes = Get-ChildItem -Path "./nupkg/$Version/tools/$dotnetVersion/any/runtimes" -Directory
-    foreach ($runtime in $runtimes) {
-        if ($supportRuntimes -notcontains $runtime.Name) {
-            Remove-Item -Path $runtime.FullName -Recurse -Force
-        }
-    }
     ## 移除pdb xml文件
     $files = Get-ChildItem -Path "./nupkg/$Version/tools/$dotnetVersion/any" -Recurse -Include *.pdb
     foreach ($file in $files) {
