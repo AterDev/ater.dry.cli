@@ -17,7 +17,6 @@ public class StudioCommand(ILogger<StudioCommand> logger)
     {
         _logger.LogInformation("🙌 Welcome Ater studio!");
         string studioPath = AssemblyHelper.GetStudioPath();
-
         int sleepTime = 1500;
         // 检查并更新
         string version = AssemblyHelper.GetCurrentToolVersion();
@@ -29,14 +28,13 @@ public class StudioCommand(ILogger<StudioCommand> logger)
         {
             UpdateStudio();
         }
-
         _logger.LogInformation("🚀 start studio...");
         // 运行
         string shell = "dotnet";
         var port = GetAvailablePort();
-        _logger.LogInformation("可用端口:" + port);
-
+        _logger.LogInformation("可用端口:{port}", port);
         string url = $"http://localhost:{port}";
+
         Process process = new()
         {
             StartInfo = new ProcessStartInfo
@@ -45,48 +43,51 @@ public class StudioCommand(ILogger<StudioCommand> logger)
                 Arguments = $"./{Const.StudioFileName} --urls \"{url}\"",
                 UseShellExecute = false,
                 CreateNoWindow = false,
-                //RedirectStandardOutput = true,
+                RedirectStandardOutput = true,
                 WorkingDirectory = studioPath,
-                //RedirectStandardError = true,
-                //StandardErrorEncoding = Encoding.UTF8,
-                //StandardOutputEncoding = Encoding.UTF8,
+                RedirectStandardError = true,
             },
         };
         process.Start();
-        await Task.Delay(sleepTime).ConfigureAwait(false);
-
-        // 启动浏览器
-        try
+        var errorMsg = await process.StandardError.ReadToEndAsync();
+        if (errorMsg.IsEmpty())
         {
-            Process pr = Process.Start(url);
-            pr.Close();
-        }
-        catch (Exception ex)
-        {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            await Task.Delay(sleepTime).ConfigureAwait(false);
+            try
             {
-                url = url.Replace("&", "^&");
-                Process.Start(new ProcessStartInfo("cmd", $"/c start {url}")
+                Process pr = Process.Start(url);
+                pr.Close();
+            }
+            catch (Exception ex)
+            {
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    CreateNoWindow = true
-                });
+                    url = url.Replace("&", "^&");
+                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}")
+                    {
+                        CreateNoWindow = true
+                    });
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    Process.Start("xdg-open", url);
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    Process.Start("open", url);
+                }
+                else
+                {
+                    _logger.LogInformation("start browser failed: {message}", ex.Message);
+                }
             }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                Process.Start("xdg-open", url);
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                Process.Start("open", url);
-            }
-            else
-            {
-                _logger.LogInformation("start browser failed:" + ex.Message);
-            }
+        }
+        else
+        {
+            _logger.LogError("❌ Start failed: {errorMsg}", errorMsg);
         }
         process.WaitForExit();
     }
-
     /// <summary>
     /// 升级studio
     /// </summary>
@@ -94,8 +95,8 @@ public class StudioCommand(ILogger<StudioCommand> logger)
     {
         _logger.LogInformation($"☑️ check&update studio...");
 
-        string[] copyFiles = new string[]
-        {
+        string[] copyFiles =
+        [
             "Microsoft.CodeAnalysis.CSharp",
             "Microsoft.CodeAnalysis.Workspaces",
             "Microsoft.CodeAnalysis",
@@ -135,7 +136,7 @@ public class StudioCommand(ILogger<StudioCommand> logger)
             "Microsoft.IdentityModel.Abstractions",
             "Microsoft.Bcl.AsyncInterfaces",
             "SQLitePCLRaw.batteries_v2"
-        };
+        ];
 
         string version = AssemblyHelper.GetCurrentToolVersion();
         string toolRootPath = AssemblyHelper.GetToolPath();
@@ -209,11 +210,6 @@ public class StudioCommand(ILogger<StudioCommand> logger)
         _logger.LogInformation("✅ update complete!");
     }
 
-
-    /// <summary>
-    /// 获取可用端口
-    /// </summary>
-    /// <returns></returns>
     /// <summary>
     /// 获取可用端口
     /// </summary>

@@ -9,7 +9,6 @@ public class SwaggerFilter
 {
 }
 
-#if DEBUG
 public class EnumSchemaFilter : ISchemaFilter
 {
     public void Apply(OpenApiSchema model, SchemaFilterContext context)
@@ -46,6 +45,3 @@ public class EnumSchemaFilter : ISchemaFilter
         }
     }
 }
-
-#endif
-

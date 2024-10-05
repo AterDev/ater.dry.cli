@@ -6,11 +6,17 @@ param (
 )
 $location = Get-Location
 $OutputEncoding = [System.Console]::OutputEncoding = [System.Console]::InputEncoding = [System.Text.Encoding]::UTF8
+
+$commandLinePath = Join-Path $location "../src/Command/CommandLine";
+$studioPath = Join-Path $location "../src/Studio/AterStudio";
+$dotnetVersion = "net9.0"
+
 try {
     Set-Location $location
+    $commandLineProjectPath = Join-Path $commandLinePath "CommandLine.csproj";
     # get package name and version
-    $VersionNode = Select-Xml -Path ../src/CommandLine/CommandLine.csproj -XPath '/Project//PropertyGroup/Version'
-    $PackageNode = Select-Xml -Path ../src/CommandLine/CommandLine.csproj -XPath '/Project//PropertyGroup/PackageId'
+    $VersionNode = Select-Xml -Path $commandLineProjectPath -XPath '/Project//PropertyGroup/Version'
+    $PackageNode = Select-Xml -Path $commandLineProjectPath -XPath '/Project//PropertyGroup/PackageId'
     $Version = $VersionNode.Node.InnerText
     $PackageId = $PackageNode.Node.InnerText
 
@@ -26,7 +32,8 @@ try {
 
     # sync studio version
     Set-Location $location
-    $xml = [xml](Get-Content ../src/AterStudio/AterStudio.csproj)
+    $studioProjectPath = Join-Path $studioPath "AterStudio.csproj";
+    $xml = [xml](Get-Content $studioProjectPath)
     $propertyGroup = $xml.Project.PropertyGroup[0]
     Write-Host "Current Version:"$Version
     if ($null -eq $propertyGroup.Version) {
@@ -38,15 +45,14 @@ try {
     else {
         $propertyGroup.Version = "$Version"
     }
-    $path = Join-Path  $location "../src/AterStudio/AterStudio.csproj"
-    $xml.Save($path)
+    $xml.Save($studioProjectPath)
 
     # pack modules  use PackModules.ps1
     & "./PackTemplate.ps1"
 
     # build web project
     if ($withStudio -eq $true) {
-        Set-Location ../src/AterStudio
+        Set-Location  $studioPath
         if (Test-Path -Path ".\publish") {
             Remove-Item .\publish -R -Force
         }
@@ -113,14 +119,15 @@ try {
         foreach ($file in $files) {
             Remove-Item $file.FullName -Force
         }
-        if (Test-Path -Path "../CommandLine/studio.zip") {
-            Remove-Item "../CommandLine/studio.zip" -Force
+        $zipPath = Join-Path $commandLinePath "stdio.zip";
+        if (Test-Path -Path $zipPath) {
+            Remove-Item $zipPath -Force
         }
-        Compress-Archive -Path .\publish\*  -DestinationPath "../CommandLine/studio.zip" -CompressionLevel Optimal -Force
+        Compress-Archive -Path .\publish\*  -DestinationPath $zipPath -CompressionLevel Optimal -Force
     }
 
     Set-Location $location
-    Set-Location ../src/CommandLine
+    Set-Location  $commandLinePath
     Write-Host 'Packing new version...'
 
     # pack
@@ -135,14 +142,14 @@ try {
     Expand-Archive -Path "./nupkg/$zipPackName" -DestinationPath "./nupkg/$Version"
 
     # 移除 tools\net8.0\any\runtimes 中不需要的文件
-    $runtimes = Get-ChildItem -Path "./nupkg/$Version/tools/net8.0/any/runtimes" -Directory
+    $runtimes = Get-ChildItem -Path "./nupkg/$Version/tools/$dotnetVersion/any/runtimes" -Directory
     foreach ($runtime in $runtimes) {
         if ($supportRuntimes -notcontains $runtime.Name) {
             Remove-Item -Path $runtime.FullName -Recurse -Force
         }
     }
     ## 移除pdb xml文件
-    $files = Get-ChildItem -Path "./nupkg/$Version/tools/net8.0/any" -Recurse -Include *.pdb
+    $files = Get-ChildItem -Path "./nupkg/$Version/tools/$dotnetVersion/any" -Recurse -Include *.pdb
     foreach ($file in $files) {
         Remove-Item $file.FullName -Force
     }

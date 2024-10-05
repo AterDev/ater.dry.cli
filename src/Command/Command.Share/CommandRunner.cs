@@ -6,20 +6,39 @@ using Microsoft.Extensions.Logging;
 using Share.Services;
 
 namespace Command.Share;
-
+/// <summary>
+/// 所有命令运行的类
+/// </summary>
+/// <param name="codeGen"></param>
+/// <param name="codeAnalysis"></param>
+/// <param name="logger"></param>
 public class CommandRunner(CodeGenService codeGen, CodeAnalysisService codeAnalysis, ILogger<CommandRunner> logger)
 {
     private readonly CodeGenService _codeGen = codeGen;
     private readonly CodeAnalysisService _codeAnalysis = codeAnalysis;
     private readonly ILogger<CommandRunner> _logger = logger;
 
-    public void UpdateStudio()
+    /// <summary>
+    /// 运行studio
+    /// </summary>
+    /// <returns></returns>
+    public static async Task RunStudioAsync()
     {
-
+        using var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
+        ILogger<StudioCommand> studioLogger = loggerFactory.CreateLogger<StudioCommand>();
+        var studioCommand = new StudioCommand(studioLogger);
+        await studioCommand.RunStudioAsync();
     }
 
-    public async Task RunStudioAsync()
+    /// <summary>
+    /// 升级studio
+    /// </summary>
+    public static void UpdateStudio()
     {
+        using var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
+        ILogger<StudioCommand> studioLogger = loggerFactory.CreateLogger<StudioCommand>();
+        var studioCommand = new StudioCommand(studioLogger);
+        studioCommand.UpdateStudio();
     }
 
     /// <summary>

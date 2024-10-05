@@ -23,7 +23,6 @@ internal class Program
         return await root.InvokeAsync(args);
     }
 
-
     private static void ConfigureServices(IServiceCollection services)
     {
         services.AddLogging(config => { config.AddConsole(); })
