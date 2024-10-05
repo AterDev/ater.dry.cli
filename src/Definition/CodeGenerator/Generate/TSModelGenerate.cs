@@ -133,7 +133,6 @@ public class TSModelGenerate : GenerateBase
         if (schema.Enum.Count > 0)
         {
             tsContent = ToEnumString(schema, schemaKey);
-            // TODO: Config.EnumModels.Add(schemaKey);
             path = "enum";
         }
         else
@@ -263,7 +262,7 @@ public class TSModelGenerate : GenerateBase
  */
 ";
         }
-        // TODO:先判断x-enumData
+        // 先判断x-enumData
         KeyValuePair<string, IOpenApiExtension> enumData = schema.Extensions
             .Where(e => e.Key == "x-enumData")
             .FirstOrDefault();

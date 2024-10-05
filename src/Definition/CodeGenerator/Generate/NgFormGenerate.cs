@@ -1,14 +1,13 @@
 ﻿namespace CodeGenerator.Generate;
 
 /// <summary>
-/// TODO:表单生成
+/// 表单生成
 /// </summary>
 public class NgFormGenerate : GenerateBase
 {
     public NgFormGenerate()
     {
     }
-
     public static string GenerateAddForm(List<PropertyInfo>? propertyInfos, bool isMobile = false)
     {
         StringBuilder formControls = new();

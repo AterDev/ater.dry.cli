@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "AterStudio API doc",
-    "description": "Studio API 文档. 更新时间:2024-10-05 13:37:57",
+    "description": "Studio API 文档. 更新时间:2024-10-05 17:47:25",
     "version": "v1"
   },
   "paths": {

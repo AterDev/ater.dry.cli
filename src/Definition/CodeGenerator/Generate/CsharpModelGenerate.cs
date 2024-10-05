@@ -10,7 +10,6 @@ public class CsharpModelGenerate : GenerateBase
 {
     public static List<string> EnumModels { get; set; } = [];
     public Dictionary<string, string?> ModelDictionary { get; set; } = [];
-
     public CsharpModelGenerate(OpenApiDocument openApi)
     {
         foreach (KeyValuePair<string, OpenApiPathItem> path in openApi.Paths)
@@ -248,7 +247,7 @@ public class CsharpModelGenerate : GenerateBase
                 /// </summary>
                 """ + Environment.NewLine;
         }
-        // TODO:先判断x-enumData
+        // 先判断x-enumData
         KeyValuePair<string, IOpenApiExtension> enumData = schema.Extensions
             .Where(e => e.Key == "x-enumData")
             .FirstOrDefault();

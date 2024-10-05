@@ -19,6 +19,11 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
 
     public List<GenFileInfo>? TsModelFiles { get; set; }
 
+    /// <summary>
+    /// 枚举类型
+    /// </summary>
+    public List<string> EnumModels { get; set; } = [];
+
     public static string GetBaseService(RequestLibType libType)
     {
         try
@@ -177,7 +182,12 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
         List<GenFileInfo> files = [];
         foreach (KeyValuePair<string, OpenApiSchema> item in Schemas)
         {
-            files.Add(tsGen.GenerateInterfaceFile(item.Key, item.Value));
+            var file = tsGen.GenerateInterfaceFile(item.Key, item.Value);
+            files.Add(file);
+            if (file.FullName == "enum")
+            {
+                EnumModels.Add(file.ModelName!);
+            }
         }
         TsModelFiles = files;
         return files;
@@ -435,9 +445,7 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
 
             refTypes.ForEach(t =>
             {
-                // TODO:
-                // if (Config.EnumModels.Contains(t))
-                if (true)
+                if (EnumModels.Contains(t))
                 {
                     importModels += $"import {{ {t} }} from '../enum/models/{t.ToHyphen()}.model';{Environment.NewLine}";
                 }
