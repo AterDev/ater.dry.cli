@@ -7,10 +7,8 @@ namespace AterStudio.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-public class FeatureController(FeatureManager feature, ProjectContext projectContext) : ControllerBase
+public class FeatureController(SolutionManager manager, IProjectContext projectContext, ILogger<FeatureController> logger) : BaseController<SolutionManager>(manager, projectContext, logger)
 {
-    private readonly FeatureManager _feature = feature;
-    private readonly ProjectContext _projectContext = projectContext;
 
     /// <summary>
     /// 创建新解决方案
@@ -19,8 +17,8 @@ public class FeatureController(FeatureManager feature, ProjectContext projectCon
     [HttpPost("newSolution")]
     public async Task<ActionResult<bool>> CreateNewSolution(CreateSolutionDto dto)
     {
-        bool res = await _feature.CreateNewSolutionAsync(dto);
-        return res ? true : Problem(_feature.ErrorMsg);
+        bool res = await _manager.CreateNewSolutionAsync(dto);
+        return res ? true : Problem(_manager.ErrorMsg);
     }
 
     /// <summary>
@@ -30,7 +28,7 @@ public class FeatureController(FeatureManager feature, ProjectContext projectCon
     [HttpGet("modules")]
     public List<SubProjectInfo> GetModulesInfo()
     {
-        return _feature.GetModulesInfo();
+        return _manager.GetModulesInfo();
     }
 
     /// <summary>
@@ -40,7 +38,7 @@ public class FeatureController(FeatureManager feature, ProjectContext projectCon
     [HttpGet("defaultModules")]
     public List<ModuleInfo> GetDefaultModules()
     {
-        return _feature.GetDefaultModules();
+        return _manager.GetDefaultModules();
     }
 
     /// <summary>
@@ -51,7 +49,7 @@ public class FeatureController(FeatureManager feature, ProjectContext projectCon
     [HttpPost("createModule")]
     public async Task<ActionResult<bool>> CreateModule(string name)
     {
-        bool res = await _feature.CreateModuleAsync(name);
-        return res ? true : Problem(_feature.ErrorMsg);
+        bool res = await _manager.CreateModuleAsync(name);
+        return res ? true : Problem(_manager.ErrorMsg);
     }
 }

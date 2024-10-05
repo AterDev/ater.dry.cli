@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "AterStudio API doc",
-    "description": "Studio API 文档. 更新时间:2024-10-05 17:47:25",
+    "description": "Studio API 文档. 更新时间:2024-10-05 19:24:33",
     "version": "v1"
   },
   "paths": {
@@ -840,17 +840,7 @@
           "200": {
             "description": "OK",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
               "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "text/json": {
                 "schema": {
                   "type": "boolean"
                 }
@@ -871,23 +861,7 @@
           "200": {
             "description": "OK",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SubProjectInfo"
-                  }
-                }
-              },
               "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SubProjectInfo"
-                  }
-                }
-              },
-              "text/json": {
                 "schema": {
                   "type": "array",
                   "items": {
@@ -911,23 +885,7 @@
           "200": {
             "description": "OK",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ModuleInfo"
-                  }
-                }
-              },
               "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ModuleInfo"
-                  }
-                }
-              },
-              "text/json": {
                 "schema": {
                   "type": "array",
                   "items": {
@@ -961,17 +919,7 @@
           "200": {
             "description": "OK",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
               "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "text/json": {
                 "schema": {
                   "type": "boolean"
                 }
@@ -2847,10 +2795,6 @@
       "description": "高级功能"
     },
     {
-      "name": "Feature",
-      "description": "功能模块"
-    },
-    {
       "name": "Tools",
       "description": "Tools"
     },
@@ -2861,6 +2805,10 @@
     {
       "name": "EntityInfo",
       "description": "实体"
+    },
+    {
+      "name": "Feature",
+      "description": "功能模块"
     },
     {
       "name": "Project",

@@ -4,10 +4,11 @@ namespace Application.Manager;
 /// <summary>
 /// 功能集成
 /// </summary>
-public class FeatureManager(IProjectContext projectContext, ProjectManager projectManager)
+public class SolutionManager(IProjectContext projectContext, ProjectManager projectManager, ILogger<SolutionManager> logger)
 {
     private readonly IProjectContext _projectContext = projectContext;
     private readonly ProjectManager _projectManager = projectManager;
+    private readonly ILogger<SolutionManager> _logger = logger;
 
     public string ErrorMsg { get; set; } = string.Empty;
 
@@ -215,18 +216,22 @@ public class FeatureManager(IProjectContext projectContext, ProjectManager proje
     public List<SubProjectInfo> GetModulesInfo()
     {
         List<SubProjectInfo> res = [];
-        // TODO: 获取模块信息
-        //List<string>? paths = ModuleCommand.GetModulesPaths(_projectContext.SolutionPath!);
-        //paths?.ForEach(path =>
-        //{
-        //    SubProjectInfo moduleInfo = new()
-        //    {
-        //        Name = Path.GetFileNameWithoutExtension(path),
-        //        Path = path,
-        //        ProjectType = ProjectType.Module
-        //    };
-        //    res.Add(moduleInfo);
-        //});
+        var projectFiles = Directory.GetFiles(_projectContext.ModulesPath!, $"*{Const.CSharpProjectExtension}", SearchOption.AllDirectories).ToList() ?? [];
+
+        _logger.LogInformation(_projectContext.ModulesPath);
+        _logger.LogInformation(string.Join(",", projectFiles));
+
+
+        projectFiles.ForEach(path =>
+        {
+            SubProjectInfo moduleInfo = new()
+            {
+                Name = Path.GetFileNameWithoutExtension(path),
+                Path = path,
+                ProjectType = ProjectType.Module
+            };
+            res.Add(moduleInfo);
+        });
         return res;
     }
 
