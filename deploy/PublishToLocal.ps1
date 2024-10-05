@@ -57,61 +57,76 @@ try {
             Remove-Item .\publish -R -Force
         }
         
-        dotnet publish -c release -o ./publish
+        dotnet publish -c release -o ./publish -p:GenerateDocumentationFile=false -p:DebugType=None
         # 移除部分 dll文件，减少体积
         $pathsToRemove = @(
+            ".\publish\BuildHost-net472",
+            ".\publish\BuildHost-netcore",
+            ".\publish\runtimes",
+            ".\publish\Ater.Web.Abstraction.dll",
+            ".\publish\Ater.Web.Core.dll",
+            ".\publish\CodeGenerator.dll",
+            ".\publish\CodeGenerator.pdb",
+            ".\publish\Entity.dll",
+            ".\publish\Entity.pdb",
+            ".\publish\Humanizer.dll",
+            ".\publish\Mapster.Core.dll",
+            ".\publish\Mapster.dll",
+            ".\publish\Microsoft.Build.dll",
+            ".\publish\Microsoft.Build.Framework.dll",
+            ".\publish\Microsoft.Build.Locator.dll",
+            ".\publish\Microsoft.Build.Tasks.Core.dll",
+            ".\publish\Microsoft.Build.Utilities.Core.dll",
             ".\publish\Microsoft.CodeAnalysis.CSharp.dll",
-            ".\publish\Microsoft.CodeAnalysis.Workspaces.dll",
+            ".\publish\Microsoft.CodeAnalysis.CSharp.Workspaces.dll",
             ".\publish\Microsoft.CodeAnalysis.dll",
+            ".\publish\Microsoft.CodeAnalysis.ExternalAccess.RazorCompiler.dll",
+            ".\publish\Microsoft.CodeAnalysis.Workspaces.dll",
+            ".\publish\Microsoft.CodeAnalysis.Workspaces.MSBuild.dll",
+            ".\publish\Microsoft.Data.Sqlite.dll",
+            ".\publish\Microsoft.EntityFrameworkCore.Abstractions.dll",
             ".\publish\Microsoft.EntityFrameworkCore.dll",
             ".\publish\Microsoft.EntityFrameworkCore.Relational.dll",
-            ".\publish\Microsoft.CodeAnalysis.CSharp.Workspaces.dll",
-            ".\publish\Humanizer.dll",
-            ".\publish\Microsoft.IdentityModel.Tokens.dll",
             ".\publish\Microsoft.EntityFrameworkCore.Sqlite.dll",
-            ".\publish\Microsoft.OpenApi.dll",
-            ".\publish\CodeGenerator.dll",
-            ".\publish\SharpYaml.dll",
-            ".\publish\Microsoft.Data.Sqlite.dll",
-            ".\publish\Mapster.dll",
-            ".\publish\Microsoft.OpenApi.Readers.dll",
-            ".\publish\Definition.dll",
-            ".\publish\Microsoft.IdentityModel.JsonWebTokens.dll",
-            ".\publish\Command.Share.dll",
-            ".\publish\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll"
-            ".\publish\System.IdentityModel.Tokens.Jwt.dll",
             ".\publish\Microsoft.Extensions.DependencyModel.dll",
-            ".\publish\Microsoft.CodeAnalysis.Workspaces.MSBuild.dll"
-            ".\publish\NuGet.Versioning.dll",
-            ".\publish\System.Composition.TypedParts.dll",
-            ".\publish\PluralizeService.Core.dll",
-            ".\publish\System.Composition.Hosting.dll",
-            ".\publish\System.Composition.Convention.dll",
-            ".\publish\SQLitePCLRaw.core.dll",
-            ".\publish\Ater.Web.Abstraction.dll",
-            ".\publish\Microsoft.Build.Locator.dll",
-            ".\publish\Microsoft.IdentityModel.Logging.dll",
-            ".\publish\Ater.Web.Core.dll",
-            ".\publish\SQLitePCLRaw.provider.e_sqlite3.dll",
-            ".\publish\Mapster.Core.dll",
-            ".\publish\System.Composition.Runtime.dll",
-            ".\publish\System.Composition.AttributedModel.dll",
             ".\publish\Microsoft.IdentityModel.Abstractions.dll",
-            ".\publish\Microsoft.Bcl.AsyncInterfaces.dll",
+            ".\publish\Microsoft.IdentityModel.JsonWebTokens.dll",
+            ".\publish\Microsoft.IdentityModel.Logging.dll",
+            ".\publish\Microsoft.IdentityModel.Tokens.dll",
+            ".\publish\Microsoft.NET.StringTools.dll",
+            ".\publish\Microsoft.OpenApi.dll",
+            ".\publish\Microsoft.OpenApi.Readers.dll",
+            ".\publish\Microsoft.VisualStudio.Setup.Configuration.Interop.dll",
+            ".\publish\Newtonsoft.Json.dll",
+            ".\publish\PluralizeService.Core.dll",
+            ".\publish\RazorEngineCore.dll",
+            ".\publish\Share.dll",
+            ".\publish\Share.pdb",
+            ".\publish\Share.xml",
+            ".\publish\SharpYaml.dll",
             ".\publish\SQLitePCLRaw.batteries_v2.dll",
+            ".\publish\SQLitePCLRaw.core.dll",
+            ".\publish\SQLitePCLRaw.provider.e_sqlite3.dll",
+            ".\publish\System.CodeDom.dll",
+            ".\publish\System.Composition.AttributedModel.dll",
+            ".\publish\System.Composition.Convention.dll",
+            ".\publish\System.Composition.Hosting.dll",
+            ".\publish\System.Composition.Runtime.dll",
+            ".\publish\System.Composition.TypedParts.dll",
+            ".\publish\System.Configuration.ConfigurationManager.dll",
+            ".\publish\System.IdentityModel.Tokens.Jwt.dll",
+            ".\publish\System.Reflection.MetadataLoadContext.dll",
+            ".\publish\System.Resources.Extensions.dll",
+            ".\publish\System.Security.Cryptography.ProtectedData.dll",
+            ".\publish\System.Security.Permissions.dll",
+            ".\publish\System.Windows.Extensions.dll",
 
             ".\publish\AterStudio.exe",
             ".\publish\swagger.json"
         );
-
-        if (Test-Path -Path ".\publish\runtimes") {
-            # 移除runtime目录
-            Remove-Item .\publish\runtimes -Recurse -Force
-        }
-
         foreach ($path in $pathsToRemove) {
             if (Test-Path $path) {
-                Remove-Item $path -Force
+                Remove-Item $path -Recurse -Force
             }
         }
         # remove pdb and xml files
@@ -119,7 +134,7 @@ try {
         foreach ($file in $files) {
             Remove-Item $file.FullName -Force
         }
-        $zipPath = Join-Path $commandLinePath "stdio.zip";
+        $zipPath = Join-Path $commandLinePath "studio.zip";
         if (Test-Path -Path $zipPath) {
             Remove-Item $zipPath -Force
         }
@@ -132,8 +147,7 @@ try {
 
     # pack
     dotnet build -c release
-    dotnet pack --no-build -c release
-
+    dotnet pack -c release -o ./nupkg
     $newPackName = $PackageId + "." + $Version + ".nupkg"
 
     # 将nupkg修改成zip，并解压

@@ -35,6 +35,8 @@ public class StudioCommand(ILogger<StudioCommand> logger)
         _logger.LogInformation("可用端口:{port}", port);
         string url = $"http://localhost:{port}";
 
+        var args = Path.Combine(studioPath, Const.StudioFileName) + $" --urls \"{url}\"";
+
         Process process = new()
         {
             StartInfo = new ProcessStartInfo
@@ -43,20 +45,17 @@ public class StudioCommand(ILogger<StudioCommand> logger)
                 Arguments = $"./{Const.StudioFileName} --urls \"{url}\"",
                 UseShellExecute = false,
                 CreateNoWindow = false,
-                RedirectStandardOutput = true,
+                //RedirectStandardOutput = true,
                 WorkingDirectory = studioPath,
-                RedirectStandardError = true,
             },
         };
-        process.Start();
-        var errorMsg = await process.StandardError.ReadToEndAsync();
-        if (errorMsg.IsEmpty())
+
+        if (process.Start())
         {
-            await Task.Delay(sleepTime).ConfigureAwait(false);
+            await Task.Delay(sleepTime);
             try
             {
-                Process pr = Process.Start(url);
-                pr.Close();
+                Process.Start(url).Close();
             }
             catch (Exception ex)
             {
@@ -81,12 +80,8 @@ public class StudioCommand(ILogger<StudioCommand> logger)
                     _logger.LogInformation("start browser failed: {message}", ex.Message);
                 }
             }
+            await process.WaitForExitAsync();
         }
-        else
-        {
-            _logger.LogError("❌ Start failed: {errorMsg}", errorMsg);
-        }
-        process.WaitForExit();
     }
     /// <summary>
     /// 升级studio
@@ -94,48 +89,61 @@ public class StudioCommand(ILogger<StudioCommand> logger)
     public void UpdateStudio()
     {
         _logger.LogInformation($"☑️ check&update studio...");
-
         string[] copyFiles =
         [
+            "Ater.Web.Abstraction",
+            "Ater.Web.Core",
+            "CodeGenerator",
+            "Entity",
+            "Humanizer",
+            "Mapster.Core",
+            "Mapster",
+            "Microsoft.Build",
+            "Microsoft.Build.Framework",
+            "Microsoft.Build.Locator",
+            "Microsoft.Build.Tasks.Core",
+            "Microsoft.Build.Utilities.Core",
             "Microsoft.CodeAnalysis.CSharp",
-            "Microsoft.CodeAnalysis.Workspaces",
+            "Microsoft.CodeAnalysis.CSharp.Workspaces",
             "Microsoft.CodeAnalysis",
+            "Microsoft.CodeAnalysis.ExternalAccess.RazorCompiler",
+            "Microsoft.CodeAnalysis.Workspaces",
+            "Microsoft.CodeAnalysis.Workspaces.MSBuild",
+            "Microsoft.Data.Sqlite",
+            "Microsoft.EntityFrameworkCore.Abstractions",
             "Microsoft.EntityFrameworkCore",
             "Microsoft.EntityFrameworkCore.Relational",
-            "Microsoft.CodeAnalysis.CSharp.Workspaces",
-            "Humanizer",
-            "Microsoft.IdentityModel.Tokens",
             "Microsoft.EntityFrameworkCore.Sqlite",
-            "Microsoft.OpenApi",
-            "CodeGenerator",
-            "SharpYaml",
-            "Microsoft.Data.Sqlite",
-            "Mapster",
-            "Microsoft.OpenApi.Readers",
-            "Definition",
-            "Microsoft.IdentityModel.JsonWebTokens",
-            "Command.Share",
-            "Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost",
-            "System.IdentityModel.Tokens.Jwt",
             "Microsoft.Extensions.DependencyModel",
-            "Microsoft.CodeAnalysis.Workspaces.MSBuild",
-            "NuGet.Versioning",
-            "System.Composition.TypedParts",
-            "PluralizeService.Core",
-            "System.Composition.Hosting",
-            "System.Composition.Convention",
-            "SQLitePCLRaw.core",
-            "Ater.Web.Abstraction",
-            "Microsoft.Build.Locator",
-            "Microsoft.IdentityModel.Logging",
-            "Ater.Web.Core",
-            "SQLitePCLRaw.provider.e_sqlite3",
-            "Mapster.Core",
-            "System.Composition.Runtime",
-            "System.Composition.AttributedModel",
             "Microsoft.IdentityModel.Abstractions",
-            "Microsoft.Bcl.AsyncInterfaces",
-            "SQLitePCLRaw.batteries_v2"
+            "Microsoft.IdentityModel.JsonWebTokens",
+            "Microsoft.IdentityModel.Logging",
+            "Microsoft.IdentityModel.Tokens",
+            "Microsoft.NET.StringTools",
+            "Microsoft.OpenApi",
+            "Microsoft.OpenApi.Readers",
+            "Microsoft.VisualStudio.Setup.Configuration.Interop",
+            "Newtonsoft.Json",
+            "PluralizeService.Core",
+            "RazorEngineCore",
+            "Share",
+            "SharpYaml",
+            "SQLitePCLRaw.batteries_v2",
+            "SQLitePCLRaw.core",
+            "SQLitePCLRaw.provider.e_sqlite3",
+            "System.CodeDom",
+            "System.Composition.AttributedModel",
+            "System.Composition.Convention",
+            "System.Composition.Hosting",
+            "System.Composition.Runtime",
+            "System.Composition.TypedParts",
+            "System.Configuration.ConfigurationManager",
+            "System.IdentityModel.Tokens.Jwt",
+            "System.Reflection.MetadataLoadContext",
+            "System.Resources.Extensions",
+            "System.Security.Cryptography.ProtectedData",
+            "System.Security.Permissions",
+            "System.Windows.Extensions"
         ];
 
         string version = AssemblyHelper.GetCurrentToolVersion();
@@ -159,6 +167,7 @@ public class StudioCommand(ILogger<StudioCommand> logger)
             {
                 File.Copy(dbFile, tempDbFile, true);
             }
+            _logger.LogInformation("delete {path}", studioPath);
             Directory.Delete(studioPath, true);
         }
 
@@ -168,6 +177,7 @@ public class StudioCommand(ILogger<StudioCommand> logger)
             ZipFile.ExtractToDirectory(templatePath, studioPath, true);
         }
         ZipFile.ExtractToDirectory(zipPath, studioPath, true);
+        _logger.LogInformation("extract {zip} to {path}", zipPath, studioPath);
 
         if (File.Exists(tempDbFile))
         {
@@ -175,12 +185,17 @@ public class StudioCommand(ILogger<StudioCommand> logger)
         }
 
         // copy其他文件
+        _logger.LogInformation("start copy {0} files to {studioPath}", copyFiles.Count(), studioPath);
         copyFiles.ToList().ForEach(file =>
         {
             string sourceFile = Path.Combine(toolRootPath, file + ".dll");
             if (File.Exists(sourceFile))
             {
                 File.Copy(sourceFile, Path.Combine(studioPath, file + ".dll"), true);
+            }
+            else
+            {
+                _logger.LogWarning("{source} file not exist!", sourceFile);
             }
         });
 

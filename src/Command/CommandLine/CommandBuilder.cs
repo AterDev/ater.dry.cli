@@ -67,9 +67,9 @@ public class CommandBuilder
     /// </summary>
     public void AddRequest()
     {
-        System.CommandLine.Command reqCommand = new("request", "generate request service and interface using openApi json");
+        System.CommandLine.Command reqCommand = new("request", "generate request service and interface from OpenAPI json");
         reqCommand.AddAlias("request");
-        Argument<string> url = new("OpenApi Url", "openApi json file url");
+        Argument<string> url = new("Url or Path", "openApi json file url");
         Option<string> outputOption = new(["--output", "-o"])
         {
             IsRequired = true,
@@ -158,9 +158,9 @@ public class CommandBuilder
 
     public void AddNgService()
     {
-        System.CommandLine.Command ngCommand = new("angular", "generate angular service and interface using openApi json");
+        System.CommandLine.Command ngCommand = new("angular", "generate angular request service and interface from OpenAPI json");
         ngCommand.AddAlias("ng");
-        Argument<string> url = new("OpenApi Json", "openApi json file url or local path");
+        Argument<string> url = new("Url or Path", "openApi json file url or local path");
         Option<string> outputOption = new(["--output", "-o"])
         {
             IsRequired = true,

@@ -13,11 +13,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Remove="Templates\TplContent.cs" />
+        <Compile Remove="Templates\TplContent.cs" />
     </ItemGroup>
 
     <ItemGroup>
-      <EmbeddedResource Include="TplContent.cs" />
+        <EmbeddedResource Include="TplContent.cs" />
     </ItemGroup>
 
     <ItemGroup>
