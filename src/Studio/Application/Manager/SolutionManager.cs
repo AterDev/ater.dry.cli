@@ -225,9 +225,6 @@ public class SolutionManager(
         List<SubProjectInfo> res = [];
         var projectFiles = Directory.GetFiles(_projectContext.ModulesPath!, $"*{Const.CSharpProjectExtension}", SearchOption.AllDirectories).ToList() ?? [];
 
-        _logger.LogInformation(_projectContext.ModulesPath);
-        _logger.LogInformation(string.Join(",", projectFiles));
-
         projectFiles.ForEach(path =>
         {
             SubProjectInfo moduleInfo = new()
