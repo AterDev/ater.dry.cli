@@ -5,10 +5,10 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SubProjectInfo } from 'src/app/services/feature/models/sub-project-info.model';
 import { Project } from 'src/app/services/project/models/project.model';
 import { ProjectStateService } from 'src/app/share/project-state.service';
-import { FeatureService } from 'src/app/services/feature/feature.service';
+import { SolutionService } from 'src/app/services/solution/solution.service';
+import { SubProjectInfo } from 'src/app/services/solution/models/sub-project-info.model';
 
 @Component({
   selector: 'app-feature',
@@ -31,7 +31,7 @@ export class FeatureComponent {
   project: Project | null = null;
   pageSizeOption = [12, 20, 50];
   constructor(
-    private service: FeatureService,
+    private service: SolutionService,
     private projectSrv: ProjectStateService,
     private snb: MatSnackBar,
     private dialog: MatDialog,

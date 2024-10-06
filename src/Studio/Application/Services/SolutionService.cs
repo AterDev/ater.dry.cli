@@ -42,7 +42,7 @@ public class SolutionService(IProjectContext projectContext, ILogger<SolutionSer
         var csprojFiles = Directory.GetFiles(_projectContext.ApiPath!, $"*{Const.CSharpProjectExtension}", SearchOption.TopDirectoryOnly).FirstOrDefault();
         if (csprojFiles != null)
         {
-            targetVersion = AssemblyHelper.GetTargetFramework(csprojFiles) ?? Const.Version;
+            targetVersion = AssemblyHelper.GetTargetFramework(csprojFiles) ?? Const.NetVersion;
         }
         string csprojContent = TplContent.DefaultModuleCSProject(targetVersion);
         await AssemblyHelper.GenerateFileAsync(projectPath, $"{moduleName}{Const.CSharpProjectExtension}", csprojContent);

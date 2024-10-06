@@ -247,6 +247,7 @@ public class SolutionManager(
     /// <param name="name"></param>
     public async Task<bool> CreateModuleAsync(string moduleName)
     {
+        moduleName = moduleName.EndsWith("Mod") ? moduleName : moduleName + "Mod";
         try
         {
             await _solution.CreateModuleAsync(moduleName);

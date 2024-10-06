@@ -5,9 +5,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CacheType } from 'src/app/services/enum/models/cache-type.model';
 import { DBType } from 'src/app/services/enum/models/dbtype.model';
 import { ProjectType } from 'src/app/services/enum/models/project-type.model';
-import { CreateSolutionDto } from 'src/app/services/feature/models/create-solution-dto.model';
-import { ModuleInfo } from 'src/app/services/feature/models/module-info.model';
-import { FeatureService } from 'src/app/services/feature/feature.service';
+import { CreateSolutionDto } from 'src/app/services/solution/models/create-solution-dto.model';
+import { ModuleInfo } from 'src/app/services/solution/models/module-info.model';
+import { SolutionService } from 'src/app/services/solution/solution.service';
+
 
 @Component({
   selector: 'app-create',
@@ -25,7 +26,7 @@ export class CreateComponent {
   defaultModules: ModuleInfo[] = [];
 
   constructor(
-    private service: FeatureService,
+    private service: SolutionService,
     private snb: MatSnackBar,
     private router: Router
   ) {

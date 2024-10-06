@@ -311,7 +311,7 @@ public class TplContent
     /// </summary>
     /// <param name="version"></param>
     /// <returns></returns>
-    public static string DefaultModuleCSProject(string version = Const.Version)
+    public static string DefaultModuleCSProject(string version = Const.NetVersion)
     {
         return $"""
             <Project Sdk="Microsoft.NET.Sdk">

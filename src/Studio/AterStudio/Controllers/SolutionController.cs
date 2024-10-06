@@ -7,7 +7,7 @@ namespace AterStudio.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-public class FeatureController(SolutionManager manager, IProjectContext projectContext, ILogger<FeatureController> logger) : BaseController<SolutionManager>(manager, projectContext, logger)
+public class SolutionController(SolutionManager manager, IProjectContext projectContext, ILogger<SolutionController> logger) : BaseController<SolutionManager>(manager, projectContext, logger)
 {
 
     /// <summary>

@@ -15,9 +15,7 @@ import { EntityFile } from 'src/app/services/entity-info/models/entity-file.mode
 import { GenerateDto } from 'src/app/services/entity-info/models/generate-dto.model';
 import { NgModuleDto } from 'src/app/services/entity-info/models/ng-module-dto.model';
 import { CommandType } from 'src/app/services/enum/models/command-type.model';
-import { ProjectType } from 'src/app/services/enum/models/project-type.model';
 import { RequestLibType } from 'src/app/services/enum/models/request-lib-type.model';
-import { SubProjectInfo } from 'src/app/services/feature/models/sub-project-info.model';
 import { Project } from 'src/app/services/project/models/project.model';
 import { ProjectStateService } from 'src/app/share/project-state.service';
 import { EntityInfoService } from 'src/app/services/entity-info/entity-info.service';
@@ -25,6 +23,7 @@ import { ProjectService } from 'src/app/services/project/project.service';
 import { ProjectConfig } from 'src/app/services/project/models/project-config.model';
 import { ProgressDialogComponent } from 'src/app/components/progress-dialog/progress-dialog.component';
 import { Title } from '@angular/platform-browser';
+import { SubProjectInfo } from 'src/app/services/solution/models/sub-project-info.model';
 
 @Component({
   selector: 'app-index',

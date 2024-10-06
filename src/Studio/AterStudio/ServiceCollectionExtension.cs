@@ -2,6 +2,7 @@
 using System.Text.Encodings.Web;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
+using Application.Services;
 using Ater.Web.Abstraction;
 using Ater.Web.Core.Converters;
 using AterStudio;
@@ -29,7 +30,7 @@ public static class ServiceCollectionExtension
 
         builder.Services.AddScoped<CodeAnalysisService>();
         builder.Services.AddScoped<CodeGenService>();
-        builder.Services.AddScoped<SolutionManager>();
+        builder.Services.AddScoped<SolutionService>();
         builder.Services.AddSingleton<AIService>();
 
         builder.Services.AddManager();
