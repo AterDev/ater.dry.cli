@@ -7,7 +7,7 @@
     <PackageOutputPath>./nupkg</PackageOutputPath>
     <AssemblyVersion>8.0.0</AssemblyVersion>
     <PackageId>ater.dry</PackageId>
-    <Version>8.2.5</Version>
+    <Version>8.2.6</Version>
     <Description> DRY代码生成助手</Description>
     <Authors>NilTor</Authors>
     <Company>Atersoft</Company>
@@ -17,13 +17,7 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/AterDev/cli.git</RepositoryUrl>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>
-            - 处理安装时提示权限问题
-            - 兼容OpenAPI的Server路径
-            - 前端生成路径修改，可支持多版本或分组。(不兼容之前8.2之前路径)
-            - 页面改进
-            - 其他内容完善
-        </PackageReleaseNotes>
+    <PackageReleaseNotes>修复Axios请求服务引用路径错误问题</PackageReleaseNotes>
     <PackageIcon>logo.jpg</PackageIcon>
     <ImplicitUsings>enable</ImplicitUsings>
     <AssemblyName>$(MSBuildProjectName)</AssemblyName>
