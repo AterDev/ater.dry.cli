@@ -366,7 +366,7 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
             refTypes.ForEach(t =>
             {
                 string? dirName = TsModelFiles?.Where(f => f.ModelName == t).Select(f => f.Path).FirstOrDefault();
-                importModels += $"import {{ {t} }} from '../models/{dirName?.ToHyphen()}/{t.ToHyphen()}.model';{Environment.NewLine}";
+                importModels += $"import {{ {t} }} from '../models/{t.ToHyphen()}.model';{Environment.NewLine}";
             });
         }
         tplContent = tplContent.Replace("//[@Import]", importModels)
