@@ -1,12 +1,7 @@
-﻿import axios from 'axios'
-import axiosCancel from '@/_packages/request/cancel'
-import axiosRetry from '@/_packages/request/retry'
-import loadingService from '@/_packages/request/loading'
-import { useSingleMsg } from '@/hooks/utils'
-import router from '@/router'
-import { storage } from '@/utils'
-import mockUrls from '@/_config/mock.json'
-import useAppStore from '@/store/app'
+﻿import axios, { CancelTokenSource } from 'axios'
+// import axiosCancel from '@/_packages/request/cancel'
+// import axiosRetry from '@/_packages/request/retry'
+// import { useSingleMsg } from '@/hooks/utils'
 
 import type {
   AxiosInstance,
@@ -81,11 +76,10 @@ export class BaseService {
   constructor() {
     this.http = axios.create(options.base)
     this.http.interceptors.request.use(
-       (config) => {
-        if(config.loading !== false && config.__retryCount === undefined) {
+      (config) => {
+        if (config.loading !== false && config.__retryCount === undefined) {
           options.loadingService?.loadingStart()
         }
-        axiosCancel.addPending(config)
         options.interceptors?.request?.(config)
         return config
       },
@@ -94,9 +88,8 @@ export class BaseService {
       }
     )
     this.http.interceptors.response.use(
-       (response) => {
+      (response) => {
         response.config.loading !== false && options.loadingService?.loadingClose()
-        axiosCancel.removePending(response.config)
         options.interceptors?.response?.(response)
         return response.data
       },
@@ -107,10 +100,9 @@ export class BaseService {
           return Promise.reject(new Error(`${(cancelError as any).config.url} => 请求被取消`))
         }
         if (error.response) {
-          axiosCancel.removePending(error.config)
           options.interceptors?.responseError?.(error.response)
-          if(error.config.retry) {
-            return axiosRetry.run(this.http, error).catch(this.handleReject)
+          if (error.config.retry) {
+
           }
           return this.handleReject(error)
         }
@@ -125,21 +117,24 @@ export class BaseService {
   async handleReject(error: any) {
     error.config.loading !== false && options.loadingService?.loadingClose()
     const response: AxiosResponse = error.response
-    if(response.config.responseType === 'blob') {
+    if (response.config.responseType === 'blob') {
       const data = await this.blobToJson(response.data)
       response.data = data
     }
     //进行全局错误提示
     if (response.data.detail) {
       //如果后端返回了具体错误内容
-      error.config?.errorMsg !== false &&
-        useSingleMsg('error', response.data.detail)
+      if(error.config?.errorMsg !== false){
+
+      }
+        
       return Promise.reject(error)
     }
     if (response.status && httpStatus[response.status]) {
       // 存在错误状态码
-      error.config?.errorMsg !== false &&
-        useSingleMsg('error', httpStatus[response.status])
+      if(error.config?.errorMsg !== false ){
+        
+      }
       return Promise.reject(error)
     }
     //如果没有具体错误内容，找后端
@@ -179,28 +174,19 @@ export class BaseService {
 
 export type ExtOptions = AxiosRequestConfig
 
-const {VITE_APP_SERVER_URL, MODE, VITE_APP_MOCK_URL} = import.meta.env
+const { VITE_APP_SERVER_URL, MODE, VITE_APP_MOCK_URL } = import.meta.env
 const options: Options = {
   base: {
     baseURL: VITE_APP_SERVER_URL
   },
   interceptors: {
     request: (config) => {
-      const token = storage.get('userInfo')?.token
-      token && ((config.headers as any).Authorization = `Bearer #@token#`)
-      if(MODE === 'development' && (mockUrls as string[]).includes(config.url!)) {
-        config.baseURL = VITE_APP_MOCK_URL
-      }
+      // TODO:添加token
+
     },
     responseError(errorResponse) {
       if (errorResponse.status === 401) {
-        const appStore = useAppStore()
-        appStore.removeUserInfo()
-        router.replace({
-          name: 'login'
-        })
       }
     }
   },
-  loadingService
 }
