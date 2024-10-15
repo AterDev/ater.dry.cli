@@ -365,8 +365,24 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
             List<string> refTypes = GetRefTyeps(functions);
             refTypes.ForEach(t =>
             {
-                string? dirName = TsModelFiles?.Where(f => f.ModelName == t).Select(f => f.Path).FirstOrDefault();
-                importModels += $"import {{ {t} }} from '../models/{t.ToHyphen()}.model';{Environment.NewLine}";
+                if (Config.EnumModels.Contains(t))
+                {
+                    importModels += $"import {{ {t} }} from '../enum/models/{t.ToHyphen()}.model';{Environment.NewLine}";
+                }
+                else
+                {
+                    string? dirName = TsModelFiles?.Where(f => f.ModelName == t)
+                        .Select(f => f.Path).FirstOrDefault();
+
+                    if (dirName != serviceFile.Name.ToHyphen())
+                    {
+                        importModels += $"import {{ {t} }} from '../{dirName}/models/{t.ToHyphen()}.model';{Environment.NewLine}";
+                    }
+                    else
+                    {
+                        importModels += $"import {{ {t} }} from './models/{t.ToHyphen()}.model';{Environment.NewLine}";
+                    }
+                }
             });
         }
         tplContent = tplContent.Replace("//[@Import]", importModels)
