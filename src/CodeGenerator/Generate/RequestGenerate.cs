@@ -183,6 +183,11 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
         return files;
     }
 
+    /// <summary>
+    /// angular enum pipe
+    /// </summary>
+    /// <param name="schemas"></param>
+    /// <returns></returns>
     public static string GetEnumPipeContent(IDictionary<string, OpenApiSchema> schemas)
     {
         string tplContent = GetTplContent("angular.enum.pipe.ts");
@@ -196,6 +201,35 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
         }
         tplContent = tplContent.Replace(TplConst.ENUM_BLOCKS, codeBlocks);
         return tplContent;
+    }
+
+    /// <summary>
+    /// enum function
+    /// </summary>
+    /// <returns></returns>
+    public static string GetEnumFunctionContent(IDictionary<string, OpenApiSchema> schemas)
+    {
+        var res = "";
+        string codeBlocks = "";
+        foreach (KeyValuePair<string, OpenApiSchema> item in schemas)
+        {
+            if (item.Value.Enum.Count > 0)
+            {
+                codeBlocks += ToEnumSwitchString(item.Key, item.Value);
+            }
+        }
+        res = $$"""
+            export default function enumToString(value: number, type: string): string {
+              let result = "";
+              switch (type) {
+            {{codeBlocks}}
+              default:
+                break;
+              }
+              return result;
+            }
+            """;
+        return res;
     }
 
     public static string ToEnumSwitchString(string enumType, OpenApiSchema schema)
