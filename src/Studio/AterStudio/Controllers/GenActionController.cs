@@ -1,5 +1,5 @@
 ﻿using Share.Models.GenActionDtos;
-namespace Http.API.Controllers;
+namespace AterStudio.Controllers;
 
 /// <summary>
 /// The project's generate action
@@ -59,7 +59,7 @@ public class GenActionController(
     public async Task<ActionResult<GenActionDetailDto?>> GetDetailAsync([FromRoute] Guid id)
     {
         var res = await _manager.GetDetailAsync(id);
-        return (res == null) ? NotFound() : res;
+        return res == null ? NotFound() : res;
     }
 
     /// <summary>
@@ -68,7 +68,6 @@ public class GenActionController(
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpDelete("{id}")]
-    [NonAction]
     public async Task<ActionResult<bool>> DeleteAsync([FromRoute] Guid id)
     {
         // 注意删除权限

@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "AterStudio API doc",
-    "description": "Studio API 文档. 更新时间:2024-10-18 19:14:52",
+    "description": "Studio API 文档. 更新时间:2024-10-18 22:17:27",
     "version": "v1"
   },
   "paths": {
@@ -970,6 +970,37 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/GenActionDetailDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "GenAction"
+        ],
+        "summary": "删除 🛑",
+        "operationId": "GenAction_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
                 }
               }
             }
@@ -3232,8 +3263,12 @@
   },
   "tags": [
     {
-      "name": "GenAction",
-      "description": "The project's generate action"
+      "name": "Advance",
+      "description": "高级功能"
+    },
+    {
+      "name": "Tools",
+      "description": "Tools"
     },
     {
       "name": "ApiDocInfo",
@@ -3244,20 +3279,16 @@
       "description": "实体"
     },
     {
+      "name": "GenAction",
+      "description": "The project's generate action"
+    },
+    {
       "name": "Project",
       "description": "项目"
     },
     {
       "name": "Solution",
       "description": "功能模块"
-    },
-    {
-      "name": "Advance",
-      "description": "高级功能"
-    },
-    {
-      "name": "Tools",
-      "description": "Tools"
     }
   ]
 }

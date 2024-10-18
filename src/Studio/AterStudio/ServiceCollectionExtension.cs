@@ -1,11 +1,10 @@
-﻿using System.Text;
-using System.Text.Encodings.Web;
+﻿using System.Text.Encodings.Web;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
 using Application.Services;
-using Ater.Web.Abstraction;
 using Ater.Web.Core.Converters;
 using AterStudio;
+using AterStudio.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.IdentityModel.Tokens;
@@ -72,6 +71,9 @@ public static class ServiceCollectionExtension
         }
         app.UseStaticFiles();
         app.UseRouting();
+        app.UseDebugAuthorization();
+        app.UseAuthentication();
+        app.UseAuthorization();
         app.MapControllers();
         app.MapFallbackToFile("index.html");
 
@@ -89,6 +91,7 @@ public static class ServiceCollectionExtension
 #if DEBUG
         services.AddOpenApi();
 #endif
+        services.AddAuthorize();
         return services;
     }
 
@@ -130,21 +133,13 @@ public static class ServiceCollectionExtension
         })
         .AddJwtBearer(cfg =>
         {
-            cfg.SaveToken = true;
-            var sign = configuration.GetSection("Authentication")["Jwt:Sign"];
-            if (string.IsNullOrEmpty(sign))
-            {
-                throw new Exception("未找到有效的Jwt配置");
-            }
             cfg.TokenValidationParameters = new TokenValidationParameters()
             {
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(sign)),
-                ValidIssuer = configuration.GetSection("Authentication")["Jwt:ValidIssuer"],
-                ValidAudience = configuration.GetSection("Authentication")["Jwt:ValidAudiences"],
-                ValidateIssuer = true,
-                ValidateLifetime = true,
-                RequireExpirationTime = true,
-                ValidateIssuerSigningKey = true
+                //IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(sign)),
+                ValidateIssuer = false,
+                ValidateLifetime = false,
+                RequireExpirationTime = false,
+                ValidateIssuerSigningKey = false
             };
         });
         return services;
@@ -207,7 +202,7 @@ public static class ServiceCollectionExtension
     public static IServiceCollection AddAuthorize(this IServiceCollection services)
     {
         services.AddAuthorizationBuilder()
-            .AddPolicy(AterConst.AdminUser, policy => policy.RequireRole(""));
+            .AddPolicy(AterConst.AdminUser, policy => policy.RequireRole("AdminUser"));
         return services;
     }
 }
