@@ -40,7 +40,7 @@ public class DtoInfo
         string baseType = string.IsNullOrEmpty(BaseType) ? "" : " : " + BaseType;
         string tpl = $$"""
             using {{EntityNamespace}};
-            namespace {{nsp}}.{{Const.ModelsDir}}.{{entityName}}Dtos;
+            namespace {{nsp}}.{{ConstVal.ModelsDir}}.{{entityName}}Dtos;
             {{Comment}}
             /// <see cref="{{EntityFullName}}"/>
             public class {{Name}}{{baseType}}

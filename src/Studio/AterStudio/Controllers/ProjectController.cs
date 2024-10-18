@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Application.Managers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AterStudio.Controllers;
 
@@ -59,12 +60,12 @@ public class ProjectController(
             return Problem("未找到该目录");
         }
 
-        var projectFilePath = Directory.GetFiles(path, $"*{Const.SolutionExtension}", SearchOption.TopDirectoryOnly).FirstOrDefault();
+        var projectFilePath = Directory.GetFiles(path, $"*{ConstVal.SolutionExtension}", SearchOption.TopDirectoryOnly).FirstOrDefault();
 
-        projectFilePath ??= Directory.GetFiles(path, $"*{Const.SolutionXMLExtension}", SearchOption.TopDirectoryOnly).FirstOrDefault();
+        projectFilePath ??= Directory.GetFiles(path, $"*{ConstVal.SolutionXMLExtension}", SearchOption.TopDirectoryOnly).FirstOrDefault();
 
-        projectFilePath ??= Directory.GetFiles(path, $"*{Const.CSharpProjectExtension}", SearchOption.TopDirectoryOnly).FirstOrDefault();
-        projectFilePath ??= Directory.GetFiles(path, Const.NodeProjectFile, SearchOption.TopDirectoryOnly).FirstOrDefault();
+        projectFilePath ??= Directory.GetFiles(path, $"*{ConstVal.CSharpProjectExtension}", SearchOption.TopDirectoryOnly).FirstOrDefault();
+        projectFilePath ??= Directory.GetFiles(path, ConstVal.NodeProjectFile, SearchOption.TopDirectoryOnly).FirstOrDefault();
 
         if (projectFilePath == null)
         {

@@ -22,12 +22,13 @@ public class RestApiGenerate(EntityInfo entityInfo)
             "global using Microsoft.AspNetCore.Authorization;",
             "global using System.Text.Json.Serialization;",
             "global using Microsoft.EntityFrameworkCore;",
-            $"global using {Const.CoreLibName}.Models;",
-            $"global using {Const.CoreLibName}.Utils;",
-            $"global using {Const.AbstractionLibName};",
-            $"global using {Const.ExtensionLibName}.Services;",
+            $"global using {ConstVal.CoreLibName}.Models;",
+            $"global using {ConstVal.CoreLibName}.Utils;",
+            $"global using {ConstVal.AbstractionLibName};",
+            $"global using {ConstVal.ExtensionLibName}.Services;",
             $"global using {EntityInfo.NamespaceName};",
-            $"global using {ApplicationNamespace}.{Const.ManagersDir};",
+            $"global using {ApplicationNamespace}.Const;",
+            $"global using {ApplicationNamespace}.{ConstVal.ManagersDir};",
             $"global using {ApplicationNamespace}.Implement;",
         ];
     }

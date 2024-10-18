@@ -35,30 +35,30 @@ public class SolutionService(IProjectContext projectContext, ILogger<SolutionSer
         // global usings
         string usingsContent = TplContent.ModuleGlobalUsings(moduleName);
         usingsContent = usingsContent.Replace("${Module}", moduleName);
-        await AssemblyHelper.GenerateFileAsync(projectPath, Const.GlobalUsingsFile, usingsContent, true);
+        await AssemblyHelper.GenerateFileAsync(projectPath, ConstVal.GlobalUsingsFile, usingsContent, true);
 
         // project file
-        string targetVersion = Const.Version;
-        var csprojFiles = Directory.GetFiles(_projectContext.ApiPath!, $"*{Const.CSharpProjectExtension}", SearchOption.TopDirectoryOnly).FirstOrDefault();
+        string targetVersion = ConstVal.Version;
+        var csprojFiles = Directory.GetFiles(_projectContext.ApiPath!, $"*{ConstVal.CSharpProjectExtension}", SearchOption.TopDirectoryOnly).FirstOrDefault();
         if (csprojFiles != null)
         {
-            targetVersion = AssemblyHelper.GetTargetFramework(csprojFiles) ?? Const.NetVersion;
+            targetVersion = AssemblyHelper.GetTargetFramework(csprojFiles) ?? ConstVal.NetVersion;
         }
         string csprojContent = TplContent.DefaultModuleCSProject(targetVersion);
-        await AssemblyHelper.GenerateFileAsync(projectPath, $"{moduleName}{Const.CSharpProjectExtension}", csprojContent);
+        await AssemblyHelper.GenerateFileAsync(projectPath, $"{moduleName}{ConstVal.CSharpProjectExtension}", csprojContent);
 
         // create dirs
-        Directory.CreateDirectory(Path.Combine(projectPath, Const.ModelsDir));
-        Directory.CreateDirectory(Path.Combine(projectPath, Const.ManagersDir));
-        Directory.CreateDirectory(Path.Combine(projectPath, Const.ControllersDir));
+        Directory.CreateDirectory(Path.Combine(projectPath, ConstVal.ModelsDir));
+        Directory.CreateDirectory(Path.Combine(projectPath, ConstVal.ManagersDir));
+        Directory.CreateDirectory(Path.Combine(projectPath, ConstVal.ControllersDir));
         // 模块文件
         await AssemblyHelper.GenerateFileAsync(projectPath, "InitModule.cs", GetInitModuleContent(moduleName));
-        await AssemblyHelper.GenerateFileAsync(projectPath, Const.ServiceExtensionsFile, TplContent.ModuleServiceCollection(moduleName));
+        await AssemblyHelper.GenerateFileAsync(projectPath, ConstVal.ServiceExtensionsFile, TplContent.ModuleServiceCollection(moduleName));
 
         await AddDefaultModuleAsync(moduleName);
         await AddModuleConstFieldAsync(moduleName);
         // update solution file
-        UpdateSolutionFile(Path.Combine(projectPath, $"{moduleName}{Const.CSharpProjectExtension}"));
+        UpdateSolutionFile(Path.Combine(projectPath, $"{moduleName}{ConstVal.CSharpProjectExtension}"));
     }
 
     /// <summary>
@@ -100,7 +100,7 @@ public class SolutionService(IProjectContext projectContext, ILogger<SolutionSer
             Directory.Delete(entityPath, true);
             // 从解决方案移除项目
             var modulePath = Path.Combine(_projectContext.ModulesPath!, moduleName + "Mod");
-            var moduleProjectFilePath = Path.Combine(modulePath, $"{moduleName}Mod{Const.CSharpProjectExtension}");
+            var moduleProjectFilePath = Path.Combine(modulePath, $"{moduleName}Mod{ConstVal.CSharpProjectExtension}");
             ProcessHelper.RunCommand("dotnet", $"sln {SolutionPath} remove {moduleProjectFilePath}", out string error);
             Directory.Delete(modulePath, true);
         }
@@ -118,7 +118,7 @@ public class SolutionService(IProjectContext projectContext, ILogger<SolutionSer
         {
             return default;
         }
-        List<string> files = [.. Directory.GetFiles(modulesPath, $"*{Const.CSharpProjectExtension}", SearchOption.AllDirectories)];
+        List<string> files = [.. Directory.GetFiles(modulesPath, $"*{ConstVal.CSharpProjectExtension}", SearchOption.AllDirectories)];
         return files.Count != 0 ? files : default;
     }
 
@@ -173,7 +173,7 @@ public class SolutionService(IProjectContext projectContext, ILogger<SolutionSer
                 _logger.LogInformation("✅ add project ➡️ solution!");
             }
         }
-        var csprojFiles = Directory.GetFiles(_projectContext.ApiPath!, $"*{Const.CSharpProjectExtension}", SearchOption.TopDirectoryOnly).FirstOrDefault();
+        var csprojFiles = Directory.GetFiles(_projectContext.ApiPath!, $"*{ConstVal.CSharpProjectExtension}", SearchOption.TopDirectoryOnly).FirstOrDefault();
         if (File.Exists(csprojFiles))
         {
             // 添加到主服务

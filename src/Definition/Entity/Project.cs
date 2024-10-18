@@ -48,10 +48,10 @@ public class Project : EntityBase
 /// </summary>
 public class ProjectConfig
 {
-    public string IdType { get; set; } = Const.Guid;
-    public string CreatedTimeName { get; set; } = Const.CreatedTime;
-    public string UpdatedTimeName { get; set; } = Const.UpdatedTime;
-    public string Version { get; set; } = Const.Version;
+    public string IdType { get; set; } = ConstVal.Guid;
+    public string CreatedTimeName { get; set; } = ConstVal.CreatedTime;
+    public string UpdatedTimeName { get; set; } = ConstVal.UpdatedTime;
+    public string Version { get; set; } = ConstVal.Version;
     public string SharePath { get; set; } = PathConst.SharePath;
     public string EntityPath { get; set; } = PathConst.EntityPath;
     public string EntityFrameworkPath { get; set; } = PathConst.EntityFrameworkPath;

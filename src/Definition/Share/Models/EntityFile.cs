@@ -28,8 +28,8 @@ public class EntityFile
     {
         var name = Path.GetFileNameWithoutExtension(Name);
         return ModuleName.IsEmpty()
-            ? Path.Combine(project.SharePath ?? PathConst.SharePath, Const.ModelsDir, $"{name}Dtos")
-            : Path.Combine(project.ModulesPath ?? PathConst.ModulesPath, ModuleName, Const.ModelsDir, $"{name}Dtos");
+            ? Path.Combine(project.SharePath ?? PathConst.SharePath, ConstVal.ModelsDir, $"{name}Dtos")
+            : Path.Combine(project.ModulesPath ?? PathConst.ModulesPath, ModuleName, ConstVal.ModelsDir, $"{name}Dtos");
     }
     /// <summary>
     /// 获取manager路径
@@ -39,8 +39,8 @@ public class EntityFile
     public string GetManagerPath(IProjectContext project)
     {
         return ModuleName.IsEmpty()
-            ? Path.Combine(project.ApplicationPath ?? PathConst.ApplicationPath, Const.ManagersDir)
-            : Path.Combine(project.ModulesPath ?? PathConst.ModulesPath, ModuleName, Const.ManagersDir);
+            ? Path.Combine(project.ApplicationPath ?? PathConst.ApplicationPath, ConstVal.ManagersDir)
+            : Path.Combine(project.ModulesPath ?? PathConst.ModulesPath, ModuleName, ConstVal.ManagersDir);
     }
 
     /// <summary>
@@ -51,7 +51,7 @@ public class EntityFile
     public string GetControllerPath(IProjectContext project)
     {
         return ModuleName.IsEmpty()
-            ? Path.Combine(project.ApiPath ?? PathConst.APIPath, Const.ControllersDir)
-            : Path.Combine(project.ModulesPath ?? PathConst.ModulesPath, ModuleName, Const.ControllersDir);
+            ? Path.Combine(project.ApiPath ?? PathConst.APIPath, ConstVal.ControllersDir)
+            : Path.Combine(project.ModulesPath ?? PathConst.ModulesPath, ModuleName, ConstVal.ControllersDir);
     }
 }

@@ -18,7 +18,7 @@ public class AssemblyHelper
     {
         try
         {
-            FileInfo? file = dir.GetFiles($"*{Const.CSharpProjectExtension}")?.FirstOrDefault();
+            FileInfo? file = dir.GetFiles($"*{ConstVal.CSharpProjectExtension}")?.FirstOrDefault();
             return root == null ? file : file == null && dir != root ? FindProjectFile(dir.Parent!, root) : file;
         }
         catch (DirectoryNotFoundException)
@@ -180,7 +180,7 @@ public class AssemblyHelper
     /// <returns></returns>
     public static async Task<string?> GetSolutionVersionAsync(string solutionPath)
     {
-        string configFilePath = Path.Combine(solutionPath, Const.ConfigFileName);
+        string configFilePath = Path.Combine(solutionPath, ConstVal.ConfigFileName);
         if (File.Exists(configFilePath))
         {
             string configJson = await File.ReadAllTextAsync(configFilePath);
@@ -196,7 +196,7 @@ public class AssemblyHelper
     /// <returns></returns>
     public static List<XmlCommentMember>? GetXmlMembers(DirectoryInfo dir)
     {
-        FileInfo? projectFile = dir.GetFiles($"*{Const.CSharpProjectExtension}")?.FirstOrDefault();
+        FileInfo? projectFile = dir.GetFiles($"*{ConstVal.CSharpProjectExtension}")?.FirstOrDefault();
         if (projectFile != null)
         {
             string assemblyName = GetAssemblyName(projectFile);
@@ -224,7 +224,7 @@ public class AssemblyHelper
     public static string GetStudioPath()
     {
         string appPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        return Path.Combine(appPath, Const.StudioDir, Const.Version);
+        return Path.Combine(appPath, ConstVal.StudioDir, ConstVal.Version);
     }
 
     /// <summary>
@@ -299,12 +299,12 @@ public class AssemblyHelper
         return Path.Combine(
             userPath,
             ".dotnet/tools/.store",
-            Const.PackageId,
+            ConstVal.PackageId,
             version,
-            Const.PackageId,
+            ConstVal.PackageId,
             version,
             "tools",
-            Const.NetVersion,
+            ConstVal.NetVersion,
             "any");
     }
 
@@ -317,12 +317,12 @@ public class AssemblyHelper
     {
         string fileName = Path.GetFileName(filePath);
         string fileExt = Path.GetExtension(filePath);
-        if (fileName == Const.NodeProjectFile) return SolutionType.Node;
+        if (fileName == ConstVal.NodeProjectFile) return SolutionType.Node;
         switch (fileExt)
         {
-            case Const.SolutionExtension:
-            case Const.CSharpProjectExtension:
-            case Const.SolutionXMLExtension:
+            case ConstVal.SolutionExtension:
+            case ConstVal.CSharpProjectExtension:
+            case ConstVal.SolutionXMLExtension:
                 return SolutionType.DotNet;
             default:
                 break;

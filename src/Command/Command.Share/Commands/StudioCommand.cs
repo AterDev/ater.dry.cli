@@ -34,14 +34,14 @@ public class StudioCommand(ILogger<StudioCommand> logger)
         _logger.LogInformation("可用端口:{port}", port);
         string url = $"http://localhost:{port}";
 
-        var args = Path.Combine(studioPath, Const.StudioFileName) + $" --urls \"{url}\"";
+        var args = Path.Combine(studioPath, ConstVal.StudioFileName) + $" --urls \"{url}\"";
 
         Process process = new()
         {
             StartInfo = new ProcessStartInfo
             {
                 FileName = shell,
-                Arguments = $"./{Const.StudioFileName} --urls \"{url}\"",
+                Arguments = $"./{ConstVal.StudioFileName} --urls \"{url}\"",
                 UseShellExecute = false,
                 CreateNoWindow = false,
                 //RedirectStandardOutput = true,
@@ -133,8 +133,8 @@ public class StudioCommand(ILogger<StudioCommand> logger)
 
         string version = AssemblyHelper.GetCurrentToolVersion();
         string toolRootPath = AssemblyHelper.GetToolPath();
-        string zipPath = Path.Combine(toolRootPath, Const.StudioZip);
-        string templatePath = Path.Combine(toolRootPath, Const.TemplateZip);
+        string zipPath = Path.Combine(toolRootPath, ConstVal.StudioZip);
+        string templatePath = Path.Combine(toolRootPath, ConstVal.TemplateZip);
 
         if (!File.Exists(zipPath))
         {
@@ -142,8 +142,8 @@ public class StudioCommand(ILogger<StudioCommand> logger)
             return;
         }
         string studioPath = AssemblyHelper.GetStudioPath();
-        string dbFile = Path.Combine(studioPath, Const.DbName);
-        string tempDbFile = Path.Combine(Path.GetTempPath(), Const.DbName);
+        string dbFile = Path.Combine(studioPath, ConstVal.DbName);
+        string tempDbFile = Path.Combine(Path.GetTempPath(), ConstVal.DbName);
 
         // 删除旧文件
         if (Directory.Exists(studioPath))

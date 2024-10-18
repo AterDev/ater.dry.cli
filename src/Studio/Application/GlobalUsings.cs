@@ -2,7 +2,7 @@ global using System.Linq.Expressions;
 global using System.Text;
 global using System.Text.Json;
 global using Application.Implement;
-global using Application.Manager;
+global using Application.Managers;
 global using Application.Models;
 global using Ater.Web.Core.Models;
 global using Ater.Web.Core.Utils;

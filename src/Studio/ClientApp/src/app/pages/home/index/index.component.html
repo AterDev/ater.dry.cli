@@ -1,8 +1,7 @@
 <!-- project -->
 <div class="p-2">
   <div class="d-flex flex-row align-items-center">
-    <button *ngIf=" type!='desktop'" mat-flat-button (click)="addProjectDialog()" matTooltip="添加本地已有项目"
-      color="primary">
+    <button *ngIf=" type!='desktop'" mat-flat-button (click)="addProjectDialog()" matTooltip="添加本地已有项目" color="primary">
       添加本地项目
     </button>
     <a *ngIf="type!='desktop'" class="ms-2" mat-mini-fab matTooltip="创建新解决方案" routerLink="/create" color="accent">
@@ -17,6 +16,11 @@
   </div>
 
   <div class="d-flex gap-1 flex-wrap mt-2" *ngIf="!isLoading">
+    @if(projects.length==0){
+    <span>暂无任何项目，请添加已存在的本地项目或点击</span>
+    <span class="strong">+</span> 创建新解决方案！
+    }
+
     <mat-card *ngFor="let item of projects" class="col" style="min-width: 300px;" appearance="outlined">
       <mat-card-header>
         <mat-card-title class="d-flex align-items-center " style="height: 48px;">

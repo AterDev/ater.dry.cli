@@ -42,7 +42,7 @@
             <span *ngIf="opened">模块管理</span>
           </a>
         </mat-nav-list>
-<!-- 
+        <!-- 
         <mat-nav-list>
           <a mat-list-item [matTooltip]="opened?'': '实体表结构'" matTooltipPosition="right" routerLink="/workspace/database"
             routerLinkActive="active">
@@ -64,17 +64,27 @@
       <mat-expansion-panel hideToggle [expanded]="expanded">
         <mat-expansion-panel-header>
           <mat-panel-title>
-            <div class="nav-title" [matTooltip]="opened?'': '实用工具'" matTooltipPosition="right">
-              <mat-icon>home_repair_service</mat-icon>
-              <span *ngIf="opened">实用工具</span>
+            <div class="nav-title" [matTooltip]="opened?'': '自定义代码生成'" matTooltipPosition="right">
+              <mat-icon>code_blocks</mat-icon>
+              <span *ngIf="opened">代码生成</span>
             </div>
           </mat-panel-title>
         </mat-expansion-panel-header>
         <mat-nav-list>
-          <a mat-list-item [matTooltip]="opened?'': 'JsonToClass'" matTooltipPosition="right"
-            routerLink="/workspace/jsonToType" routerLinkActive="active">
-            <mat-icon color="link">integration_instructions</mat-icon>
-            <span *ngIf="opened">JsonToType</span>
+          <a mat-list-item [matTooltip]="opened?'': '生成操作管理'" matTooltipPosition="right" routerLink="/workspace/task"
+            routerLinkActive="active">
+            <mat-icon color="link">fact_check</mat-icon>
+            <span *ngIf="opened">生成操作</span>
+          </a>
+          <a mat-list-item [matTooltip]="opened?'': '生成步骤管理'" matTooltipPosition="right" routerLink="/workspace/step"
+            routerLinkActive="active">
+            <mat-icon color="link">format_list_numbered</mat-icon>
+            <span *ngIf="opened">生成步骤</span>
+          </a>
+          <a mat-list-item [matTooltip]="opened?'': '模板管理'" matTooltipPosition="right" routerLink="/workspace/template"
+            routerLinkActive="active">
+            <mat-icon color="link">content_paste</mat-icon>
+            <span *ngIf="opened">模板管理</span>
           </a>
         </mat-nav-list>
       </mat-expansion-panel>

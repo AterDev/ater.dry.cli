@@ -19,7 +19,7 @@ public class ManagerGenerate(EntityInfo entityInfo)
         [
             $"global using {EntityInfo.AssemblyName};",
             $"global using {EntityInfo.NamespaceName};",
-            $"global using {ApplicationNamespace}.{Const.ManagersDir};",
+            $"global using {ApplicationNamespace}.{ConstVal.ManagersDir};",
             ""
         ];
     }
@@ -77,7 +77,7 @@ public class ManagerGenerate(EntityInfo entityInfo)
         });
         content += $$"""
                     
-                    return await ToPageAsync<{{entityName + Const.FilterDto}},{{entityName + Const.ItemDto}}>(filter);
+                    return await ToPageAsync<{{entityName + ConstVal.FilterDto}},{{entityName + ConstVal.ItemDto}}>(filter);
             """;
         return content;
     }
@@ -90,7 +90,7 @@ public class ManagerGenerate(EntityInfo entityInfo)
     /// <returns></returns>
     public static string GetManagerServiceContent(string managerPath, string? moduleName = null)
     {
-        var nspName = moduleName ?? Const.ApplicationName;
+        var nspName = moduleName ?? ConstVal.ApplicationName;
 
         if (!Directory.Exists(managerPath))
         {

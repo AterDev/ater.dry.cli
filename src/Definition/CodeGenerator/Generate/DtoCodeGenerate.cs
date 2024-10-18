@@ -7,7 +7,7 @@ namespace CodeGenerator.Generate;
 public class DtoCodeGenerate
 {
     public EntityInfo EntityInfo { get; init; }
-    public string KeyType { get; set; } = Const.Guid;
+    public string KeyType { get; set; } = ConstVal.Guid;
     /// <summary>
     /// dto 输出的 程序集名称
     /// </summary>
@@ -58,12 +58,12 @@ public class DtoCodeGenerate
         DtoInfo dto = new()
         {
             EntityFullName = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
-            Name = EntityInfo.Name + Const.DetailDto,
+            Name = EntityInfo.Name + ConstVal.DetailDto,
             EntityNamespace = EntityInfo.NamespaceName,
             Comment = FormatComment(EntityInfo.Comment, "详情"),
             Tag = EntityInfo.Name,
             Properties = EntityInfo.PropertyInfos?
-                .Where(p => p.Name is not Const.IsDeleted)
+                .Where(p => p.Name is not ConstVal.IsDeleted)
                 .Where(p => !p.IsJsonIgnore)
                 .Where(p => !EntityInfo.IgnoreTypes.Contains(p.Type))
                 .Where(p => !(p.IsList && p.IsNavigation))
@@ -82,12 +82,12 @@ public class DtoCodeGenerate
         DtoInfo dto = new()
         {
             EntityFullName = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
-            Name = EntityInfo.Name + Const.ItemDto,
+            Name = EntityInfo.Name + ConstVal.ItemDto,
             EntityNamespace = EntityInfo.NamespaceName,
             Comment = FormatComment(EntityInfo.Comment, "列表元素"),
             Tag = EntityInfo.Name,
             Properties = EntityInfo.PropertyInfos?
-                .Where(p => p.Name is not Const.IsDeleted and not Const.UpdatedTime)
+                .Where(p => p.Name is not ConstVal.IsDeleted and not ConstVal.UpdatedTime)
                 .Where(p => !p.IsJsonIgnore)
                 .ToList() ?? []
         };
@@ -120,11 +120,11 @@ public class DtoCodeGenerate
         DtoInfo dto = new()
         {
             EntityFullName = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
-            Name = EntityInfo.Name + Const.FilterDto,
+            Name = EntityInfo.Name + ConstVal.FilterDto,
             EntityNamespace = EntityInfo.NamespaceName,
             Comment = FormatComment(EntityInfo.Comment, "筛选条件"),
             Tag = EntityInfo.Name,
-            BaseType = Const.FilterBase,
+            BaseType = ConstVal.FilterBase,
             Properties = EntityInfo.GetFilterProperties()
                 .Select(p => p.Adapt<PropertyInfo>())
                 .ToList() ?? []
@@ -167,17 +167,17 @@ public class DtoCodeGenerate
         DtoInfo dto = new()
         {
             EntityFullName = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
-            Name = EntityInfo.Name + Const.AddDto,
+            Name = EntityInfo.Name + ConstVal.AddDto,
             EntityNamespace = EntityInfo.NamespaceName,
             Comment = FormatComment(EntityInfo.Comment, "添加时DTO"),
             Tag = EntityInfo.Name,
             Properties = EntityInfo.PropertyInfos?.Where(p => !p.IsNavigation
                 && p.HasSet
                 && !EntityInfo.IgnoreTypes.Contains(p.Type)
-                && p.Name != Const.Id
-                && p.Name != Const.CreatedTime
-                && p.Name != Const.UpdatedTime
-                && p.Name != Const.IsDeleted)
+                && p.Name != ConstVal.Id
+                && p.Name != ConstVal.CreatedTime
+                && p.Name != ConstVal.UpdatedTime
+                && p.Name != ConstVal.IsDeleted)
             .ToList() ?? []
         };
 
@@ -217,7 +217,7 @@ public class DtoCodeGenerate
         DtoInfo dto = new()
         {
             EntityFullName = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",
-            Name = EntityInfo.Name + Const.UpdateDto,
+            Name = EntityInfo.Name + ConstVal.UpdateDto,
             EntityNamespace = EntityInfo.NamespaceName,
             Comment = FormatComment(EntityInfo.Comment, "更新时DTO"),
             Tag = EntityInfo.Name,
@@ -225,10 +225,10 @@ public class DtoCodeGenerate
             Properties = EntityInfo.PropertyInfos?.Where(p => !p.IsNavigation
                     && p.HasSet
                     && !EntityInfo.IgnoreTypes.Contains(p.Type)
-                    && p.Name != Const.Id
-                    && p.Name != Const.CreatedTime
-                    && p.Name != Const.UpdatedTime
-                    && p.Name != Const.IsDeleted)
+                    && p.Name != ConstVal.Id
+                    && p.Name != ConstVal.CreatedTime
+                    && p.Name != ConstVal.UpdatedTime
+                    && p.Name != ConstVal.IsDeleted)
             .Select(p => p.Adapt<PropertyInfo>())
             .ToList() ?? []
         };
@@ -254,8 +254,8 @@ public class DtoCodeGenerate
         "global using System;",
         "global using System.Text.Json;",
         "global using System.ComponentModel.DataAnnotations;",
-        $"global using {Namespace}.{Const.ModelsDir};",
-        $"global using {Const.CoreLibName}.{Const.ModelsDir};",
+        $"global using {Namespace}.{ConstVal.ModelsDir};",
+        $"global using {ConstVal.CoreLibName}.{ConstVal.ModelsDir};",
         $"global using {EntityInfo.NamespaceName};"
         ];
     }

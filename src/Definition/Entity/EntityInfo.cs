@@ -9,10 +9,10 @@ public class EntityInfo : EntityBase
 {
     public static string[] IgnoreTypes = ["JsonDocument?", "byte[]"];
     public static string[] IgnoreProperties = [
-        Const.Id,
-        Const.CreatedTime,
-        Const.UpdatedTime,
-        Const.IsDeleted,
+        ConstVal.Id,
+        ConstVal.CreatedTime,
+        ConstVal.UpdatedTime,
+        ConstVal.IsDeleted,
         "PageSize", "PageIndex"
         ];
 
@@ -81,21 +81,21 @@ public class EntityInfo : EntityBase
     public string GetShareNamespace()
     {
         return ModuleName.IsEmpty()
-            ? Const.ShareName
+            ? ConstVal.ShareName
             : ModuleName;
     }
 
     public string GetManagerNamespace()
     {
         return ModuleName.IsEmpty()
-            ? Const.ApplicationName
+            ? ConstVal.ApplicationName
             : ModuleName;
     }
 
     public string GetAPINamespace()
     {
         return ModuleName.IsEmpty()
-            ? Const.APIName
+            ? ConstVal.APIName
             : ModuleName;
     }
 

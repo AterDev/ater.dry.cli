@@ -111,12 +111,15 @@ try {
             }
         }
         # remove some sqlite runtimes
-        $runtimes = Get-ChildItem -Path "./publish/runtimes" -Directory
-        foreach ($runtime in $runtimes) {
-            if ($supportRuntimes -notcontains $runtime.Name) {
-                Remove-Item -Path $runtime.FullName -Recurse -Force
+        if (Test-Path -Path "./publish/runtimes") {
+            $runtimes = Get-ChildItem -Path "./publish/runtimes" -Directory
+            foreach ($runtime in $runtimes) {
+                if ($supportRuntimes -notcontains $runtime.Name) {
+                    Remove-Item -Path $runtime.FullName -Recurse -Force
+                }
             }
         }
+        
         # remove pdb and xml files
         $files = Get-ChildItem -Path .\publish -Recurse -Include *.pdb, *.xml
         foreach ($file in $files) {

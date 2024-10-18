@@ -9,7 +9,7 @@ public class TplContent
         return """
             using @(Model.ShareNamespace).Models.@(Model.EntityName)Dtos;
 
-            namespace @(Model.Namespace).Manager;
+            namespace @(Model.Namespace).Managers;
             @Model.Comment
             public class @(Model.EntityName)Manager(
                 DataAccessContext<@(Model.EntityName)> dataContext, 
@@ -108,7 +108,7 @@ public class TplContent
     {
         return isModule ?
             $$"""
-            using @(Model.Namespace).{{Const.ManagersDir}};
+            using @(Model.Namespace).{{ConstVal.ManagersDir}};
 
             namespace @(Model.Namespace);
             /// <summary>
@@ -174,7 +174,7 @@ public class TplContent
                 [HttpPost("filter")]
                 public async Task<ActionResult<PageList<@(Model.EntityName)ItemDto>>> FilterAsync(@(Model.EntityName)FilterDto filter)
                 {
-                    return await _manager.FilterAsync(filter);
+                    return await _manager.ToPageAsync(filter);
                 }
 
                 /// <summary>
@@ -187,7 +187,7 @@ public class TplContent
                 {
                     // 冲突验证
                     // if(await _manager.IsUniqueAsync(dto.xxx)) { return Conflict(ErrorMsg.ConflictResource); }
-                    var id = await _manager.AddAsync(dto);
+                    var id = await _manager.CreateNewEntityAsync(dto);
                     return id == null ? Problem(ErrorMsg.AddFailed) : id;
                 }
 
@@ -212,7 +212,7 @@ public class TplContent
                 /// <param name="id"></param>
                 /// <returns></returns>
                 [HttpGet("{id}")]
-                public async Task<ActionResult<@(Model.EntityName)?>> GetDetailAsync([FromRoute] Guid id)
+                public async Task<ActionResult<@(Model.EntityName)DetailDto?>> GetDetailAsync([FromRoute] Guid id)
                 {
                     var res = await _manager.GetDetailAsync(id);
                     return (res == null) ? NotFound() : res;
@@ -311,7 +311,7 @@ public class TplContent
     /// </summary>
     /// <param name="version"></param>
     /// <returns></returns>
-    public static string DefaultModuleCSProject(string version = Const.NetVersion)
+    public static string DefaultModuleCSProject(string version = ConstVal.NetVersion)
     {
         return $"""
             <Project Sdk="Microsoft.NET.Sdk">

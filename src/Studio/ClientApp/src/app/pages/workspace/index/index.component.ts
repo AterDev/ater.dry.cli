@@ -453,7 +453,7 @@ export class IndexComponent implements OnInit {
         this.isSync = true;
         const dto: GenerateDto = {
           projectId: this.projectId!,
-          entityPath:  this.currentEntity.fullName,
+          entityPath: this.currentEntity.fullName,
           commandType: this.currentType,
           force: this.force
         };
@@ -499,7 +499,7 @@ export class IndexComponent implements OnInit {
         force: this.force
       };
       console.log(data);
-      
+
       // 参数
       if (this.selectedWebProjectIds.length > 0
         && (type == CommandType.Protobuf
