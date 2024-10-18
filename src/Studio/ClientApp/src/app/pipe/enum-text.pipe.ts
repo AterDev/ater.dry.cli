@@ -18,6 +18,28 @@ export class EnumTextPipe implements PipeTransform {
           }
         }
         break;
+      case 'CommandType':
+        {
+          switch (value) {
+            case 0: result = 'dto'; break;
+            case 1: result = 'manager'; break;
+            case 2: result = 'api'; break;
+            case 3: result = 'protobuf'; break;
+            case 4: result = 'clear'; break;
+            default: result = '默认'; break;
+          }
+        }
+        break;
+      case 'ComponentType':
+        {
+          switch (value) {
+            case 0: result = '提交表单'; break;
+            case 1: result = '展示表格'; break;
+            case 2: result = '详情字段'; break;
+            default: result = '默认'; break;
+          }
+        }
+        break;
       case 'ControllerType':
         {
           switch (value) {
@@ -62,6 +84,15 @@ export class EnumTextPipe implements PipeTransform {
             case 0: result = 'generate file'; break;
             case 1: result = 'run command'; break;
             case 2: result = 'run script'; break;
+            default: result = '默认'; break;
+          }
+        }
+        break;
+      case 'RequestLibType':
+        {
+          switch (value) {
+            case 0: result = 'angular http'; break;
+            case 1: result = 'axios'; break;
             default: result = '默认'; break;
           }
         }

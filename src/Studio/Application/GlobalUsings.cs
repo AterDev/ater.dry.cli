@@ -19,3 +19,4 @@ global using Microsoft.OpenApi.Readers;
 global using Share;
 global using Share.Models;
 global using Share.Services;
+global using System.ComponentModel;

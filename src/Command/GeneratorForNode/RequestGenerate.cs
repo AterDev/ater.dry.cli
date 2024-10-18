@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Interfaces;
@@ -766,6 +767,8 @@ export class {{serviceFile.Name}}Service extends {{serviceFile.Name}}BaseService
 }
 public enum RequestLibType
 {
+    [Description("angular http")]
     NgHttp,
+    [Description("axios")]
     Axios
 }

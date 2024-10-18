@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "AterStudio API doc",
-    "description": "Studio API 文档. 更新时间:2024-10-18 17:33:34",
+    "description": "Studio API 文档. 更新时间:2024-10-18 18:56:51",
     "version": "v1"
   },
   "paths": {
@@ -1770,7 +1770,33 @@
           "Protobuf",
           "Clear"
         ],
-        "x-enumData": [ ]
+        "x-enumData": [
+          {
+            "name": "Dto",
+            "value": 0,
+            "description": "dto"
+          },
+          {
+            "name": "Manager",
+            "value": 1,
+            "description": "manager"
+          },
+          {
+            "name": "API",
+            "value": 2,
+            "description": "api"
+          },
+          {
+            "name": "Protobuf",
+            "value": 3,
+            "description": "protobuf"
+          },
+          {
+            "name": "Clear",
+            "value": 4,
+            "description": "clear"
+          }
+        ]
       },
       "ComponentType": {
         "enum": [
@@ -1785,7 +1811,23 @@
           "Table",
           "Detail"
         ],
-        "x-enumData": [ ]
+        "x-enumData": [
+          {
+            "name": "Form",
+            "value": 0,
+            "description": "提交表单"
+          },
+          {
+            "name": "Table",
+            "value": 1,
+            "description": "展示表格"
+          },
+          {
+            "name": "Detail",
+            "value": 2,
+            "description": "详情字段"
+          }
+        ]
       },
       "ConfigData": {
         "required": [
@@ -2937,7 +2979,18 @@
           "NgHttp",
           "Axios"
         ],
-        "x-enumData": [ ]
+        "x-enumData": [
+          {
+            "name": "NgHttp",
+            "value": 0,
+            "description": "angular http"
+          },
+          {
+            "name": "Axios",
+            "value": 1,
+            "description": "axios"
+          }
+        ]
       },
       "RestApiGroup": {
         "required": [

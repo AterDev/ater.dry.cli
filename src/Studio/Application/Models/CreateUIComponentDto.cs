@@ -1,4 +1,5 @@
-﻿using Share.Models;
+﻿using System.ComponentModel;
+using Share.Models;
 
 namespace Application.Models;
 /// <summary>
@@ -32,13 +33,16 @@ public enum ComponentType
     /// <summary>
     /// 提交表单
     /// </summary>
+    [Description("提交表单")]
     Form,
     /// <summary>
     /// 展示表格
     /// </summary>
+    [Description("展示表格")]
     Table,
     /// <summary>
     /// 详情字段
     /// </summary>
+    [Description("详情字段")]
     Detail
 }
