@@ -5,6 +5,8 @@ namespace Entity;
 /// <summary>
 /// The project's generate action
 /// </summary>
+[Index(nameof(Name))]
+[Index(nameof(Description))]
 public class GenAction : EntityBase
 {
     /// <summary>
@@ -19,7 +21,7 @@ public class GenAction : EntityBase
     /// <summary>
     /// source type
     /// </summary>
-    public GenSourceType SourceType { get; set; }
+    public GenSourceType? SourceType { get; set; }
 
     /// <summary>
     /// action step

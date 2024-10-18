@@ -1,5 +1,4 @@
-﻿using Entity;
-namespace Share.Models.GenActionDtos;
+﻿namespace Share.Models.GenActionDtos;
 /// <summary>
 /// The project's generate action筛选条件
 /// </summary>
@@ -10,11 +9,11 @@ public class GenActionFilterDto : FilterBase
     /// action name
     /// </summary>
     [MaxLength(40)]
-public string? Name { get; set; }
+    public string? Name { get; set; }
     /// <summary>
     /// source type
     /// </summary>
-public GenSourceType? SourceType { get; set; }
-public Guid? ProjectId { get; set; }
-    
+    public GenSourceType? SourceType { get; set; }
+    public Guid? ProjectId { get; set; }
+
 }

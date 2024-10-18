@@ -22,7 +22,6 @@ import { EntityInfoService } from 'src/app/services/entity-info/entity-info.serv
 import { ProjectService } from 'src/app/services/project/project.service';
 import { ProjectConfig } from 'src/app/services/project/models/project-config.model';
 import { ProgressDialogComponent } from 'src/app/components/progress-dialog/progress-dialog.component';
-import { Title } from '@angular/platform-browser';
 import { SubProjectInfo } from 'src/app/services/solution/models/sub-project-info.model';
 
 @Component({

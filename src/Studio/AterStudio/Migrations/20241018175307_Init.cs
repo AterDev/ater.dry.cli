@@ -113,7 +113,7 @@ namespace AterStudio.Migrations
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false),
                     Description = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
-                    SourceType = table.Column<int>(type: "INTEGER", nullable: false),
+                    SourceType = table.Column<int>(type: "INTEGER", nullable: true),
                     ProjectId = table.Column<Guid>(type: "TEXT", nullable: false),
                     CreatedTime = table.Column<string>(type: "TEXT", nullable: false),
                     UpdatedTime = table.Column<string>(type: "TEXT", nullable: false),
@@ -241,6 +241,16 @@ namespace AterStudio.Migrations
                 name: "IX_GenActionGenStep_GenStepsId",
                 table: "GenActionGenStep",
                 column: "GenStepsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GenActions_Description",
+                table: "GenActions",
+                column: "Description");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GenActions_Name",
+                table: "GenActions",
+                column: "Name");
 
             migrationBuilder.CreateIndex(
                 name: "IX_GenActions_ProjectId",

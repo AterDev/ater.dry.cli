@@ -7,9 +7,12 @@ namespace Application.Managers;
 public class GenActionManager(
     DataAccessContext<GenAction> dataContext,
     ILogger<GenActionManager> logger,
+    IProjectContext projectContext,
     IUserContext userContext) : ManagerBase<GenAction>(dataContext, logger)
 {
     private readonly IUserContext _userContext = userContext;
+    private readonly IProjectContext _projectContext = projectContext;
+
 
     /// <summary>
     /// 添加实体
@@ -19,7 +22,7 @@ public class GenActionManager(
     public async Task<Guid?> CreateNewEntityAsync(GenActionAddDto dto)
     {
         var entity = dto.MapTo<GenActionAddDto, GenAction>();
-        // TODO:完善添加逻辑
+        entity.ProjectId = _projectContext.ProjectId;
         return await AddAsync(entity) ? entity.Id : null;
     }
 

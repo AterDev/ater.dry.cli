@@ -9,6 +9,5 @@ export interface GenActionAddDto {
   name: string;
   description?: string | null;
   sourceType?: GenSourceType | null;
-  projectId: string;
 
 }

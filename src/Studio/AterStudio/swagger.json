@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "AterStudio API doc",
-    "description": "Studio API 文档. 更新时间:2024-10-18 22:17:27",
+    "description": "Studio API 文档. 更新时间:2024-10-19 1:54:40",
     "version": "v1"
   },
   "paths": {
@@ -2288,8 +2288,7 @@
       },
       "GenActionAddDto": {
         "required": [
-          "name",
-          "projectId"
+          "name"
         ],
         "type": "object",
         "properties": {
@@ -2305,10 +2304,6 @@
           },
           "sourceType": {
             "$ref": "#/components/schemas/GenSourceType"
-          },
-          "projectId": {
-            "type": "string",
-            "format": "uuid"
           }
         },
         "additionalProperties": false,
@@ -2397,6 +2392,11 @@
             "type": "string",
             "description": "action name"
           },
+          "description": {
+            "maxLength": 200,
+            "type": "string",
+            "nullable": true
+          },
           "sourceType": {
             "$ref": "#/components/schemas/GenSourceType"
           },
@@ -2448,19 +2448,6 @@
           },
           "sourceType": {
             "$ref": "#/components/schemas/GenSourceType"
-          },
-          "projectId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "genStepIds": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "nullable": true
           }
         },
         "additionalProperties": false,

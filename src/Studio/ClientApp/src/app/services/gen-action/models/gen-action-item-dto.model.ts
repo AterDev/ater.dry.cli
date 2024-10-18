@@ -7,6 +7,7 @@ export interface GenActionItemDto {
    * action name
    */
   name: string;
+  description?: string | null;
   sourceType?: GenSourceType | null;
   id: string;
   createdTime: Date;

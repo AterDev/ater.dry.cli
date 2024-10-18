@@ -118,11 +118,11 @@ public class PropertyInfo : EntityBase
         {
             defaultValue = $" = {defaultValue};";
         }
-        string content = @$"public {requiredKeyword}{Type}{nullableMark} {Name} {{ get; set; }}{defaultValue}";
+        string content = @$"    public {requiredKeyword}{Type}{nullableMark} {Name} {{ get; set; }}{defaultValue}";
         if (!isInput && Name.ToLower().Contains("password"))
         {
             attributeText = attributeText?.Replace("    ", "    // ");
-            content = @$"// public {Type}{nullableMark} {Name} {{ get; set; }}{defaultValue}";
+            content = @$"    // public {Type}{nullableMark} {Name} {{ get; set; }}{defaultValue}";
         }
         return $@"{CommentXml}{attributeText}{content}{SuffixContent}
 ";

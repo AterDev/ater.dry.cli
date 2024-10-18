@@ -9,7 +9,5 @@ export interface GenActionUpdateDto {
   name?: string | null;
   description?: string | null;
   sourceType?: GenSourceType | null;
-  projectId?: string | null;
-  genStepIds?: string[] | null;
 
 }

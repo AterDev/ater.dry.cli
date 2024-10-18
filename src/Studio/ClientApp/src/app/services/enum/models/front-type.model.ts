@@ -1,7 +1,6 @@
 export enum FrontType {
-  /** Angular */
+  None = 0,
   Angular = 1,
-  /** Blazor */
   Blazor = 2,
 
 }

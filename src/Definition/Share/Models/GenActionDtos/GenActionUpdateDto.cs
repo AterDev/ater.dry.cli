@@ -1,5 +1,4 @@
-﻿using Entity;
-namespace Share.Models.GenActionDtos;
+﻿namespace Share.Models.GenActionDtos;
 /// <summary>
 /// The project's generate action更新时DTO
 /// </summary>
@@ -10,14 +9,11 @@ public class GenActionUpdateDto
     /// action name
     /// </summary>
     [MaxLength(40)]
-public string? Name { get; set; }
+    public string? Name { get; set; }
     [MaxLength(200)]
-public string? Description { get; set; }
+    public string? Description { get; set; }
     /// <summary>
     /// source type
     /// </summary>
-public GenSourceType? SourceType { get; set; }
-public Guid? ProjectId { get; set; }
-public List<Guid>? GenStepIds { get; set; }
-    
+    public GenSourceType? SourceType { get; set; }
 }
