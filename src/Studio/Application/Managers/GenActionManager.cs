@@ -42,7 +42,7 @@ public class GenActionManager(
     public async Task<PageList<GenActionItemDto>> ToPageAsync(GenActionFilterDto filter)
     {
         Queryable = Queryable
-            .WhereNotNull(filter.Name, q => q.Name == filter.Name)
+            .WhereNotNull(filter.Name, q => q.Name.ToLower().Contains(filter.Name!.Trim().ToLower()))
             .WhereNotNull(filter.SourceType, q => q.SourceType == filter.SourceType)
             .WhereNotNull(filter.ProjectId, q => q.ProjectId == filter.ProjectId);
 

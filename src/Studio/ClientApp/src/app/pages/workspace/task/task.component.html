@@ -32,19 +32,25 @@
     暂无数据！
     </h4>
     }@else{
-    <table class="default" mat-table [dataSource]="dataSource" style="width: 100%;" #table="matTable">
-      <!-- //[@ColumnsDef] -->
+    <table class="default" mat-table [dataSource]="dataSource" #table="matTable">
+      <!-- name and description -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>任务名称</th>
+        <td mat-cell *matCellDef="let element">{{element.name}}</td>
+      </ng-container>
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef>任务描述</th>
+        <td mat-cell *matCellDef="let element">{{element.description}}</td>
+      </ng-container>
+
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef>操作</th>
         <td mat-cell *matCellDef="let element;table:table">
-          <button mat-icon-button color="link" [routerLink]="['../detail',element.id]" matTooltip="查看">
-            <mat-icon>preview</mat-icon>
+          <button mat-icon-button (click)="openAddDialog(element,true)" matTooltip="编辑">
+            <mat-icon class="text-primary">edit</mat-icon>
           </button>
-          <button mat-icon-button color="primary" (click)="openAddDialog(element,true)" matTooltip="编辑">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button mat-icon-button color="warn" matTooltip="删除" (click)="deleteConfirm(element)">
-            <mat-icon>delete_forever</mat-icon>
+          <button mat-icon-button matTooltip="删除" (click)="deleteConfirm(element)">
+            <mat-icon class="text-danger">delete_forever</mat-icon>
           </button>
         </td>
       </ng-container>
@@ -52,7 +58,8 @@
       <tr mat-row *matRowDef="let row; columns: columns;"></tr>
     </table>
     <mat-divider></mat-divider>
-    <div class="d-flex justify-content-between paginator">
+    @if(total>filter.pageSize){
+    <div class="d-flex justify-content-between paginator mt-1">
       <mat-form-field subscriptSizing="dynamic">
         <mat-label>跳转到</mat-label>
         <input matInput type="number" [value]="filter.pageIndex" #pageJump (keyup.enter)="jumpTo(pageJump.value)">
@@ -62,10 +69,13 @@
       </mat-paginator>
     </div>
     }
+
+    }
 </div>
 
 <ng-template #addDialog>
-  <h2 mat-dialog-title>新增任务</h2>
+  <h2 mat-dialog-title>
+    {{isEditable?'编辑':'新增'}}任务</h2>
   <mat-dialog-content class="p-3">
     <form [formGroup]="addForm">
       <mat-form-field style="width: 100%;">
@@ -80,6 +90,6 @@
   </mat-dialog-content>
   <mat-dialog-actions class="justify-content-end">
     <button mat-stroked-button [mat-dialog-close]="false">取消</button>
-    <button mat-flat-button color="primary" (click)="add()">确认</button>
+    <button mat-flat-button color="primary" (click)="save()">保存</button>
   </mat-dialog-actions>
 </ng-template>

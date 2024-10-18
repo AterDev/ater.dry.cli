@@ -74,6 +74,6 @@ public class GenActionController(
         var entity = await _manager.GetOwnedAsync(id);
         if (entity == null) { return NotFound(); };
         // return Forbid();
-        return await _manager.DeleteAsync(entity, true);
+        return await _manager.DeleteAsync(entity, false);
     }
 }

@@ -12,6 +12,7 @@ import { GenActionFilterDto } from 'src/app/services/gen-action/models/gen-actio
 import { GenActionItemDtoPageList } from 'src/app/services/gen-action/models/gen-action-item-dto-page-list.model';
 import { GenActionItemDto } from 'src/app/services/gen-action/models/gen-action-item-dto.model';
 import { GenActionAddDto } from 'src/app/services/gen-action/models/gen-action-add-dto.model';
+import { GenActionUpdateDto } from 'src/app/services/gen-action/models/gen-action-update-dto.model';
 
 @Component({
   selector: 'app-index',
@@ -24,13 +25,14 @@ export class TaskComponent implements OnInit {
   isProcessing = false;
   total = 0;
   data: GenActionItemDto[] = [];
-  columns: string[] = ['name', 'description', '', 'actions'];
+  columns: string[] = ['name', 'description', 'actions'];
   dataSource!: MatTableDataSource<GenActionItemDto>;
   dialogRef!: MatDialogRef<{}, any>;
   @ViewChild('addDialog', { static: true }) addTmpl!: TemplateRef<{}>;
   isEditable = false;
   addForm!: FormGroup;
   addDto: GenActionAddDto | null = null;
+  currentItem = {} as GenActionItemDto;
   filter: GenActionFilterDto;
   pageSizeOption = [12, 20, 50];
   constructor(
@@ -120,7 +122,8 @@ export class TaskComponent implements OnInit {
   openAddDialog(item: GenActionItemDto | null = null, isEditable = false): void {
     this.initForm();
     this.isEditable = isEditable;
-    if (this.isEditable) {
+    if (this.isEditable && item) {
+      this.currentItem = item;
       this.name?.setValue(item?.name);
       this.description?.setValue(item?.description);
     }
@@ -135,29 +138,49 @@ export class TaskComponent implements OnInit {
       });
   }
 
-  add(): void {
+  save(): void {
     if (this.addForm.invalid) {
       this.snb.open('请检查输入项');
       return;
     }
-    this.isProcessing = true;
-    this.addDto = this.addForm.value as  GenActionAddDto;
-    this.service.add(this.addDto)
-      .subscribe({
-        next: (res) => {
-          if (res) {
-            this.snb.open('添加成功');
-            this.dialogRef.close(true);
-          } else {
-            this.snb.open('添加失败');
+    if (this.isEditable) {
+      const data = this.addForm.value as GenActionUpdateDto;
+      this.service.update(this.currentItem.id, data)
+        .subscribe({
+          next: (res) => {
+            if (res) {
+              this.snb.open('更新成功');
+              this.dialogRef.close(true);
+            } else {
+              this.snb.open('更新失败');
+            }
+          },
+          error: (error) => {
+            this.snb.open(error.detail);
+          },
+          complete: () => {
           }
-        },
-        error: (error) => {
-          this.snb.open(error.detail);
-        },
-        complete: () => {
-        }
-      });
+        });
+    } else {
+      this.addDto = this.addForm.value as GenActionAddDto;
+      this.service.add(this.addDto)
+        .subscribe({
+          next: (res) => {
+            if (res) {
+              this.snb.open('添加成功');
+              this.dialogRef.close(true);
+            } else {
+              this.snb.open('添加失败');
+            }
+          },
+          error: (error) => {
+            this.snb.open(error.detail);
+          },
+          complete: () => {
+          }
+        });
+    }
+
   }
 
   deleteConfirm(item: GenActionItemDto): void {

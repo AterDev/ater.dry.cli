@@ -69,7 +69,7 @@
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef>实体文件</th>
       <td mat-cell *matCellDef="let element" (contextmenu)="displayContextMenu($event,element);false">
-        <span *ngIf="element.moduleName" matTooltip="模块标识">({{element.moduleName}})</span>
+        <span *ngIf="element.moduleName" matTooltip="模块标识">({{element.moduleName }})</span>
         <button mat-button color="primary" (click)="openPreviewDialog(element,false)">
           {{element.name}}
         </button>

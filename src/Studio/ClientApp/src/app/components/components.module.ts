@@ -18,7 +18,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { MatStepperModule } from '@angular/material/stepper';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -43,6 +43,8 @@ import { ChatBotComponent } from './chatbot/chatbot.component';
 import { MarkdownModule } from 'ngx-markdown';
 import { FormsModule } from '@angular/forms';
 import { QuickNavComponent } from './quick-nav/quick-nav.component';
+import { CustomPaginatorIntl } from './CustomPaginatorIntl';
+import { TypedCellDefDirective } from './typed-cell-def.directive';
 
 const MaterialModules = [
   MatToolbarModule,
@@ -90,7 +92,7 @@ const components = [
 ];
 
 @NgModule({
-  declarations: [...components],
+  declarations: [...components, TypedCellDefDirective],
   imports: [
     CommonModule,
     RouterModule,
@@ -99,9 +101,13 @@ const components = [
     MarkdownModule.forRoot(),
     QuickNavComponent
   ],
+  providers: [
+    { provide: MatPaginatorIntl, useClass: CustomPaginatorIntl },
+  ],
   exports: [
     CommonModule,
     RouterModule,
+    TypedCellDefDirective,
     ...MaterialModules,
     ...components
   ]
