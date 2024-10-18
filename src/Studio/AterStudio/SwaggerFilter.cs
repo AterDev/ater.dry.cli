@@ -25,6 +25,8 @@ public class EnumSchemaFilter : ISchemaFilter
                     name.Add(new OpenApiString(f.Name));
                     System.Reflection.CustomAttributeData? desAttr = f.CustomAttributes.Where(a => a.AttributeType.Name == "DescriptionAttribute").FirstOrDefault();
 
+                    desAttr ??= f.CustomAttributes.Where(a => a.AttributeType.Name == "DisplayAttribute").FirstOrDefault();
+
                     if (desAttr != null)
                     {
                         System.Reflection.CustomAttributeTypedArgument des = desAttr.ConstructorArguments.FirstOrDefault();

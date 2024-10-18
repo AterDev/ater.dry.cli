@@ -282,6 +282,7 @@ public class TSModelGenerate : GenerateBase
                 propertyString += $"""  
                       /** {enumDesc} */
                       {enumName} = {enumValue},
+
                     """;
             }
         }

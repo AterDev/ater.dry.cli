@@ -88,6 +88,21 @@ export class EnumTextPipe implements PipeTransform {
           }
         }
         break;
+      case 'OperationType':
+        {
+          switch (value) {
+            case 0: result = 'get'; break;
+            case 1: result = 'put'; break;
+            case 2: result = 'post'; break;
+            case 3: result = 'delete'; break;
+            case 4: result = 'options'; break;
+            case 5: result = 'head'; break;
+            case 6: result = 'patch'; break;
+            case 7: result = 'trace'; break;
+            default: result = '默认'; break;
+          }
+        }
+        break;
       case 'RequestLibType':
         {
           switch (value) {

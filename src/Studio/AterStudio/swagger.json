@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "AterStudio API doc",
-    "description": "Studio API 文档. 更新时间:2024-10-18 18:56:51",
+    "description": "Studio API 文档. 更新时间:2024-10-18 19:14:52",
     "version": "v1"
   },
   "paths": {
@@ -2704,7 +2704,48 @@
           "Patch",
           "Trace"
         ],
-        "x-enumData": [ ]
+        "x-enumData": [
+          {
+            "name": "Get",
+            "value": 0,
+            "description": "get"
+          },
+          {
+            "name": "Put",
+            "value": 1,
+            "description": "put"
+          },
+          {
+            "name": "Post",
+            "value": 2,
+            "description": "post"
+          },
+          {
+            "name": "Delete",
+            "value": 3,
+            "description": "delete"
+          },
+          {
+            "name": "Options",
+            "value": 4,
+            "description": "options"
+          },
+          {
+            "name": "Head",
+            "value": 5,
+            "description": "head"
+          },
+          {
+            "name": "Patch",
+            "value": 6,
+            "description": "patch"
+          },
+          {
+            "name": "Trace",
+            "value": 7,
+            "description": "trace"
+          }
+        ]
       },
       "Project": {
         "required": [

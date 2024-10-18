@@ -135,7 +135,7 @@ export class IndexComponent implements OnInit {
     this.current = project;
     this.projectState.setProject(project);
     this.isProcessing = true;
-    this.config = project.config!;    
+    this.config = project.config!;
     this.buildSettingForm();
     this.dialogRef = this.dialog.open(this.settingTmpRef, {
       minWidth: 450,
@@ -183,7 +183,7 @@ export class IndexComponent implements OnInit {
       this.isProcessing = true;
       const data = this.settingForm.value as ProjectConfig;
       console.log(data);
-      
+
       this.service.updateConfig(this.current.id, data)
         .subscribe({
           next: (res) => {
