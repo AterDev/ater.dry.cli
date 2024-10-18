@@ -27,13 +27,14 @@ public static class ServiceCollectionExtension
         builder.Services.AddHttpContextAccessor();
 
         builder.Services.AddScoped<IProjectContext, ProjectContext>();
+        builder.Services.AddScoped<IUserContext, UserContext>();
 
         builder.Services.AddScoped<CodeAnalysisService>();
         builder.Services.AddScoped<CodeGenService>();
         builder.Services.AddScoped<SolutionService>();
         builder.Services.AddSingleton<AIService>();
 
-        builder.Services.AddManager();
+        builder.Services.AddManagers();
 
         builder.Services.AddControllers()
             .ConfigureApiBehaviorOptions(o =>

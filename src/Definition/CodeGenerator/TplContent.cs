@@ -144,7 +144,7 @@ public class TplContent
             namespace @(Model.Namespace);
             public static partial class ManagerServiceCollectionExtensions
             {
-                public static IServiceCollection AddManager(this IServiceCollection services)
+                public static IServiceCollection AddManagers(this IServiceCollection services)
                 {
                     services.AddScoped(typeof(DataAccessContext<>));
             @Model.ManagerServices

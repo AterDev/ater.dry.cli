@@ -1,3 +1,4 @@
+using CodeGenerator.Models;
 using Share.Infrastructure.Helper;
 using Share.Models.ApiDocInfoDtos;
 
@@ -213,17 +214,24 @@ public class ApiDocInfoManager(
     /// </summary>
     /// <param name="dto"></param>
     /// <returns></returns>
-    //public NgComponentInfo CreateUIComponent(CreateUIComponentDto dto)
-    //{
-    //    return dto.ComponentType switch
-    //    {
-    //        ComponentType.Form => NgPageGenerate.GenFormComponent(dto.ModelInfo, dto.ServiceName),
-    //        ComponentType.Table => NgPageGenerate.GenTableComponent(dto.ModelInfo, dto.ServiceName),
-    //        ComponentType.Detail => NgPageGenerate.GenDetailComponent(dto.ModelInfo, dto.ServiceName),
+    public NgComponentInfo CreateUIComponent(CreateUIComponentDto dto)
+    {
+        return default;
+        //return dto.ComponentType switch
+        //{
+        //    ComponentType.Form => GenFormComponent(dto.ModelInfo, dto.ServiceName),
+        //    ComponentType.Table => GenTableComponent(dto.ModelInfo, dto.ServiceName),
+        //    ComponentType.Detail => GenDetailComponent(dto.ModelInfo, dto.ServiceName),
 
-    //        _ => default!,
-    //    };
-    //}
+        //    _ => default!,
+        //};
+    }
+
+    public NgComponentInfo GenFormComponent(ModelInfo modelInfo, string serviceName)
+    {
+        return default;
+    }
+
 
     /// <summary>
     /// 生成前端请求服务

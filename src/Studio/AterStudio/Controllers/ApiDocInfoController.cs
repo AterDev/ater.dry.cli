@@ -109,7 +109,7 @@ public class ApiDocInfoController(
     [HttpPost("component")]
     public NgComponentInfo CreateUIComponent(CreateUIComponentDto dto)
     {
-        // TODO return manager.CreateUIComponent(dto);
+        return _manager.CreateUIComponent(dto);
         return default;
     }
 
