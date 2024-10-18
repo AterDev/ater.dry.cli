@@ -195,7 +195,7 @@ public class TSModelGenerate : GenerateBase
                 {
                     string? dirName = GetDirName(name);
                     dirName = dirName.NotNull() ? dirName!.ToHyphen() + "/" : "";
-                    importString += @$"import {{ {extend} }} from '{relatePath}{dirName}models/{extend.ToHyphen()}.model';"
+                    importString += @$"import {{ {extend} }} from '{relatePath}models/{extend.ToHyphen()}.model';"
                         + Environment.NewLine;
                 }
             }
@@ -263,7 +263,7 @@ public class TSModelGenerate : GenerateBase
  */
 ";
         }
-        // TODO:先判断x-enumData
+
         KeyValuePair<string, IOpenApiExtension> enumData = schema.Extensions
             .Where(e => e.Key == "x-enumData")
             .FirstOrDefault();
@@ -272,11 +272,26 @@ public class TSModelGenerate : GenerateBase
             .Where(e => e.Key == "x-enumNames")
             .FirstOrDefault();
 
-        if (enumNames.Value is OpenApiArray values)
+        if (enumData.Value is OpenApiArray enums)
+        {
+            for (int i = 0; i < enums.Count; i++)
+            {
+                OpenApiObject obj = (OpenApiObject)enums[i];
+                string enumName = ((OpenApiString)obj["name"]).Value;
+                string enumValue = ((OpenApiInteger)obj["value"]).Value.ToString();
+                string enumDesc = ((OpenApiString)obj["description"]).Value;
+                propertyString += $"""  
+                      /** {enumDesc} */
+                      {enumName} = {enumValue},
+                    """;
+            }
+        }
+        else if (enumNames.Value is OpenApiArray values)
         {
             for (int i = 0; i < values?.Count; i++)
             {
-                propertyString += "  " + ((OpenApiString)values[i]).Value + " = " + i + ",\n";
+                var enumValue = ((OpenApiInteger)schema.Enum[i]).Value;
+                propertyString += $"  {((OpenApiString)values[i]).Value} = {enumValue},\n";
             }
         }
         else
@@ -290,7 +305,7 @@ public class TSModelGenerate : GenerateBase
                         continue;
                     }
 
-                    propertyString += "  " + ((OpenApiString)schema.Enum[i]).Value + " = " + i + ",\n";
+                    propertyString += $"  {((OpenApiString)schema.Enum[i]).Value} = {i},\n";
                 }
             }
         }

@@ -8,6 +8,6 @@
 
   <ItemGroup>
     <PackageReference Include="Ater.Web.Core" Version="0.2.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="9.0.0-rc.1.24451.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="9.0.0-rc.2.24474.1" />
   </ItemGroup>
 </Project>

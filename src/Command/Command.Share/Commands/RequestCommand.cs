@@ -78,6 +78,13 @@ public class RequestCommand : CommandBase
             dir = Path.Combine(OutputPath, "pipe", DocName);
             await GenerateFileAsync(dir, "enum-text.pipe.ts", pipeContent, true);
         }
+        else if (LibType == RequestLibType.Axios)
+        {
+            var schemas = ApiDocument!.Components.Schemas;
+            string pipeContent = RequestGenerate.GetEnumFunctionContent(schemas);
+            dir = Path.Combine(OutputPath, "utils", DocName);
+            await GenerateFileAsync(dir, "enumToString.ts", pipeContent, true);
+        }
     }
 
     public async Task GenerateRequestServicesAsync()

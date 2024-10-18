@@ -212,6 +212,35 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
         return genContext.GenCode(tplContent, model);
     }
 
+    /// <summary>
+    /// enum function
+    /// </summary>
+    /// <returns></returns>
+    public static string GetEnumFunctionContent(IDictionary<string, OpenApiSchema> schemas)
+    {
+        var res = "";
+        string codeBlocks = "";
+        foreach (KeyValuePair<string, OpenApiSchema> item in schemas)
+        {
+            if (item.Value.Enum.Count > 0)
+            {
+                codeBlocks += ToEnumSwitchString(item.Key, item.Value);
+            }
+        }
+        res = $$"""
+            export default function enumToString(value: number, type: string): string {
+              let result = "";
+              switch (type) {
+            {{codeBlocks}}
+              default:
+                break;
+              }
+              return result;
+            }
+            """;
+        return res;
+    }
+
     public static string ToEnumSwitchString(string enumType, OpenApiSchema schema)
     {
         KeyValuePair<string, IOpenApiExtension> enumData = schema.Extensions
