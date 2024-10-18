@@ -276,7 +276,7 @@ public class TSModelGenerate : GenerateBase
             .Where(e => e.Key == "x-enumNames")
             .FirstOrDefault();
 
-        if (enumData.Value is OpenApiArray enums)
+        if (enumData.Value is OpenApiArray enums  && enums.Count > 0)
         {
             for (int i = 0; i < enums.Count; i++)
             {
