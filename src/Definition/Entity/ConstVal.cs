@@ -1,5 +1,5 @@
 ﻿namespace Entity;
-public class ConstVal
+public static class ConstVal
 {
     public static Guid PROJECT_ID;
 
@@ -67,9 +67,9 @@ public class ConstVal
 }
 
 /// <summary>
-///在默认路径
+/// 默认路径
 /// </summary>
-public class PathConst
+public static class PathConst
 {
     public readonly static string APIPath = Path.Combine(ConstVal.SrcDir, ConstVal.APIName);
     public readonly static string ApplicationPath = Path.Combine(ConstVal.SrcDir, ConstVal.ApplicationName);

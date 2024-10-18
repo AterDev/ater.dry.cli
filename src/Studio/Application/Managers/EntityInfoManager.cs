@@ -148,10 +148,14 @@ public partial class EntityInfoManager(
 
         foreach (string path in dirPaths.Where(p => p.NotEmpty()))
         {
-            string rootPath = Path.Combine(_projectContext.SolutionPath!, path);
+            string rootPath = Path.Combine(_projectContext.SolutionPath!, path!);
+            if (!Directory.Exists(rootPath))
+            {
+                continue;
+            }
             dirs = dirs.Union(Directory.GetDirectories(rootPath, "bin", SearchOption.TopDirectoryOnly))
-                .Union(Directory.GetDirectories(rootPath, "obj", SearchOption.TopDirectoryOnly))
-                .ToArray();
+            .Union(Directory.GetDirectories(rootPath, "obj", SearchOption.TopDirectoryOnly))
+            .ToArray();
         }
         try
         {

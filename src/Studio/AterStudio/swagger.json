@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "AterStudio API doc",
-    "description": "Studio API 文档. 更新时间:2024-10-18 14:35:51",
+    "description": "Studio API 文档. 更新时间:2024-10-18 17:13:26",
     "version": "v1"
   },
   "paths": {
@@ -803,6 +803,173 @@
               "application/json": {
                 "schema": {
                   "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/GenAction/filter": {
+      "post": {
+        "tags": [
+          "GenAction"
+        ],
+        "summary": "分页数据 🛑",
+        "operationId": "GenAction_Filter",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenActionFilterDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenActionFilterDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenActionFilterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenActionItemDtoPageList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/GenAction": {
+      "post": {
+        "tags": [
+          "GenAction"
+        ],
+        "summary": "新增 🛑",
+        "operationId": "GenAction_Add",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenActionAddDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenActionAddDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenActionAddDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/GenAction/{id}": {
+      "patch": {
+        "tags": [
+          "GenAction"
+        ],
+        "summary": "更新数据 🛑",
+        "operationId": "GenAction_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenActionUpdateDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenActionUpdateDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenActionUpdateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "GenAction"
+        ],
+        "summary": "获取详情 🛑",
+        "operationId": "GenAction_GetDetail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenActionDetailDto"
                 }
               }
             }
@@ -2046,6 +2213,186 @@
         },
         "additionalProperties": false
       },
+      "GenActionAddDto": {
+        "required": [
+          "name",
+          "projectId"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 40,
+            "type": "string",
+            "description": "action name"
+          },
+          "description": {
+            "maxLength": 200,
+            "type": "string",
+            "nullable": true
+          },
+          "sourceType": {
+            "$ref": "#/components/schemas/GenSourceType"
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false,
+        "description": "The project's generate action添加时DTO"
+      },
+      "GenActionDetailDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 40,
+            "type": "string",
+            "description": "action name"
+          },
+          "description": {
+            "maxLength": 200,
+            "type": "string",
+            "nullable": true
+          },
+          "sourceType": {
+            "$ref": "#/components/schemas/GenSourceType"
+          },
+          "project": {
+            "$ref": "#/components/schemas/Project"
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "The project's generate action详情"
+      },
+      "GenActionFilterDto": {
+        "type": "object",
+        "properties": {
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "orderBy": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "boolean"
+            },
+            "nullable": true
+          },
+          "name": {
+            "maxLength": 40,
+            "type": "string",
+            "description": "action name",
+            "nullable": true
+          },
+          "sourceType": {
+            "$ref": "#/components/schemas/GenSourceType"
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "The project's generate action筛选条件"
+      },
+      "GenActionItemDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 40,
+            "type": "string",
+            "description": "action name"
+          },
+          "sourceType": {
+            "$ref": "#/components/schemas/GenSourceType"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "The project's generate action列表元素"
+      },
+      "GenActionItemDtoPageList": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GenActionItemDto"
+            }
+          },
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GenActionUpdateDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 40,
+            "type": "string",
+            "description": "action name",
+            "nullable": true
+          },
+          "description": {
+            "maxLength": 200,
+            "type": "string",
+            "nullable": true
+          },
+          "sourceType": {
+            "$ref": "#/components/schemas/GenSourceType"
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "genStepIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "The project's generate action更新时DTO"
+      },
       "GenSourceType": {
         "enum": [
           0,
@@ -2791,12 +3138,8 @@
   },
   "tags": [
     {
-      "name": "Advance",
-      "description": "高级功能"
-    },
-    {
-      "name": "Tools",
-      "description": "Tools"
+      "name": "GenAction",
+      "description": "The project's generate action"
     },
     {
       "name": "ApiDocInfo",
@@ -2813,6 +3156,14 @@
     {
       "name": "Solution",
       "description": "功能模块"
+    },
+    {
+      "name": "Advance",
+      "description": "高级功能"
+    },
+    {
+      "name": "Tools",
+      "description": "Tools"
     }
   ]
 }

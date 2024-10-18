@@ -13,6 +13,8 @@ import { DatabaseComponent } from './database/database.component';
 import { EntityComponent } from './entity/entity.component';
 import { FeatureComponent } from './feature/feature.component';
 import { ToKeyValuePipeModule } from 'src/app/share/pipe/to-key-value.pipe';
+import { TaskComponent } from './task/task.component';
+import { StepComponent } from './step/step.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +26,8 @@ import { ToKeyValuePipeModule } from 'src/app/share/pipe/to-key-value.pipe';
     DatabaseComponent,
     EntityComponent,
     FeatureComponent,
+    TaskComponent,
+    StepComponent,
   ],
   imports: [
     ComponentsModule,

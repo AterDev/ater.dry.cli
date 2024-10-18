@@ -97,11 +97,12 @@ public class ManagerGenerate(EntityInfo entityInfo)
             return string.Empty;
         }
         string managerServiceContent = "";
-        var files = Directory.GetFiles(managerPath, "*Manager.cs", SearchOption.TopDirectoryOnly);
+        var files = Directory.GetFiles(managerPath, $"*{ConstVal.Manager}.cs", SearchOption.TopDirectoryOnly);
+
         files?.ToList().ForEach(file =>
         {
             object name = Path.GetFileNameWithoutExtension(file);
-            string row = $"        services.AddScoped(typeof({name}));";
+            string row = $"        services.AddScoped<{name}>();";
             managerServiceContent += row + Environment.NewLine;
         });
 

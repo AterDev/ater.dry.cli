@@ -10,6 +10,8 @@ import { DatabaseComponent } from './database/database.component';
 import { EntityComponent } from './entity/entity.component';
 import { FeatureComponent } from './feature/feature.component';
 import { Json2TypeComponent } from '../tools/json2-type/json2-type.component';
+import { TaskComponent } from './task/task.component';
+import { StepComponent } from './step/step.component';
 
 const routes: Routes = [
   {
@@ -23,6 +25,8 @@ const routes: Routes = [
       { path: 'database', component: DatabaseComponent },
       { path: 'setting', component: SettingComponent },
       { path: 'dto/:name', component: DtoComponent },
+      { path: 'task', component: TaskComponent },
+      { path: 'step', component: StepComponent },
       { path: 'feature', component: FeatureComponent },
       { path: 'jsonToType', component: Json2TypeComponent }
     ]

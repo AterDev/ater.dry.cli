@@ -1,9 +1,17 @@
 ﻿namespace Application;
 public static partial class ManagerServiceCollectionExtensions
 {
-    public static void AddManager(this IServiceCollection services)
+    public static IServiceCollection AddManager(this IServiceCollection services)
     {
         services.AddScoped(typeof(DataAccessContext<>));
-
+        services.AddScoped<AdvanceManager>();
+        services.AddScoped<ApiDocInfoManager>();
+        services.AddScoped<EntityInfoManager>();
+        services.AddScoped<GenActionManager>();
+        services.AddScoped<GenStepManager>();
+        services.AddScoped<ProjectManager>();
+        services.AddScoped<SolutionManager>();
+        services.AddScoped<ToolsManager>();
+        return services;
     }
 }
