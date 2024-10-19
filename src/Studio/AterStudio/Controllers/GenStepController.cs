@@ -1,28 +1,33 @@
 ﻿using Share.Models.GenStepDtos;
-namespace Http.API.Controllers;
+namespace AterStudio.Controllers;
 
 /// <summary>
 /// task step
 /// </summary>
 public class GenStepController(
     IUserContext user,
+    IProjectContext projectContext,
     ILogger<GenStepController> logger,
     GenStepManager manager
     ) : RestControllerBase<GenStepManager>(manager, user, logger)
 {
+
+    private readonly IProjectContext _projectContext = projectContext;
+
     /// <summary>
-    /// 分页数据 🛑
+    /// 分页数据 
     /// </summary>
     /// <param name="filter"></param>
     /// <returns></returns>
     [HttpPost("filter")]
     public async Task<ActionResult<PageList<GenStepItemDto>>> FilterAsync(GenStepFilterDto filter)
     {
+        filter.ProjectId = _projectContext.ProjectId;
         return await _manager.ToPageAsync(filter);
     }
 
     /// <summary>
-    /// 新增 🛑
+    /// 新增
     /// </summary>
     /// <param name="dto"></param>
     /// <returns></returns>
@@ -36,7 +41,7 @@ public class GenStepController(
     }
 
     /// <summary>
-    /// 更新数据 🛑
+    /// 更新数据
     /// </summary>
     /// <param name="id"></param>
     /// <param name="dto"></param>
@@ -51,7 +56,7 @@ public class GenStepController(
     }
 
     /// <summary>
-    /// 获取详情 🛑
+    /// 获取详情
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
@@ -59,22 +64,21 @@ public class GenStepController(
     public async Task<ActionResult<GenStepDetailDto?>> GetDetailAsync([FromRoute] Guid id)
     {
         var res = await _manager.GetDetailAsync(id);
-        return (res == null) ? NotFound() : res;
+        return res == null ? NotFound() : res;
     }
 
     /// <summary>
-    /// 删除 🛑
+    /// 删除
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpDelete("{id}")]
-    [NonAction]
     public async Task<ActionResult<bool>> DeleteAsync([FromRoute] Guid id)
     {
         // 注意删除权限
         var entity = await _manager.GetOwnedAsync(id);
         if (entity == null) { return NotFound(); };
         // return Forbid();
-        return await _manager.DeleteAsync(entity, true);
+        return await _manager.DeleteAsync(entity, false);
     }
 }

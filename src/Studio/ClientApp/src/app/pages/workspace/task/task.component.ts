@@ -221,10 +221,4 @@ export class TaskComponent implements OnInit {
       });
   }
 
-  /**
-   * 编辑
-   */
-  edit(id: string): void {
-    this.router.navigate(['../edit/' + id], { relativeTo: this.route });
-  }
 }

@@ -1,5 +1,6 @@
+import { Variable } from '../../models/variable.model';
 import { GenSourceType } from '../../enum/models/gen-source-type.model';
-import { GenStep } from '../../models/gen-step.model';
+import { GenStep } from '../../gen-action/models/gen-step.model';
 import { Project } from '../../project/models/project.model';
 export interface GenAction {
   id: string;
@@ -8,6 +9,9 @@ export interface GenAction {
   isDeleted: boolean;
   name: string;
   description?: string | null;
+  entityPath?: string | null;
+  openApiPath?: string | null;
+  variables?: Variable[];
   sourceType?: GenSourceType | null;
   genSteps?: GenStep[];
   project?: Project | null;

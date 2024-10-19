@@ -1,5 +1,4 @@
-﻿using Entity;
-namespace Share.Models.GenStepDtos;
+﻿namespace Share.Models.GenStepDtos;
 /// <summary>
 /// task step添加时DTO
 /// </summary>
@@ -7,23 +6,25 @@ namespace Share.Models.GenStepDtos;
 public class GenStepAddDto
 {
     /// <summary>
-    /// template content
+    /// 模板或命令内容
     /// </summary>
-    [MaxLength(10_000)]
-public string? TemplateContent { get; set; }
+    [MaxLength(100_000)]
+    public string? Content { get; set; }
+
     /// <summary>
-    /// file outPath or script Path
+    /// 模板或脚本路径
     /// </summary>
-public string? Path { get; set; }
+    [MaxLength(400)]
+    public string? Path { get; set; }
     /// <summary>
-    /// command content
+    /// 输出路径
     /// </summary>
-    [MaxLength(1000)]
-public string? Command { get; set; }
+    [MaxLength(400)]
+    public string? OutputPath { get; set; }
+
     /// <summary>
     /// step type
     /// </summary>
-public GenStepType GenStepType { get; set; }
-public required Guid ProjectId { get; set; } = default!;
-    
+    public GenStepType GenStepType { get; set; }
+    public required Guid ProjectId { get; set; } = default!;
 }

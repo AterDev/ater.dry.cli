@@ -3,7 +3,7 @@ import { ProjectConfig } from '../../project/models/project-config.model';
 import { EntityInfo } from '../../models/entity-info.model';
 import { ApiDocInfo } from '../../api-doc-info/models/api-doc-info.model';
 import { GenAction } from '../../gen-action/models/gen-action.model';
-import { GenStep } from '../../models/gen-step.model';
+import { GenStep } from '../../gen-action/models/gen-step.model';
 export interface Project {
   id: string;
   createdTime: Date;

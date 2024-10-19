@@ -5,7 +5,7 @@ namespace Application.Managers;
 /// task step
 /// </summary>
 public class GenStepManager(
-    DataAccessContext<GenStep> dataContext, 
+    DataAccessContext<GenStep> dataContext,
     ILogger<GenStepManager> logger,
     IUserContext userContext) : ManagerBase<GenStep>(dataContext, logger)
 {
@@ -41,8 +41,8 @@ public class GenStepManager(
         Queryable = Queryable
             .WhereNotNull(filter.GenStepType, q => q.GenStepType == filter.GenStepType)
             .WhereNotNull(filter.ProjectId, q => q.ProjectId == filter.ProjectId);
-        
-        return await ToPageAsync<GenStepFilterDto,GenStepItemDto>(filter);
+
+        return await ToPageAsync<GenStepFilterDto, GenStepItemDto>(filter);
     }
 
     /// <summary>

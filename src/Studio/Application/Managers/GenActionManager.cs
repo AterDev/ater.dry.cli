@@ -50,6 +50,19 @@ public class GenActionManager(
     }
 
     /// <summary>
+    /// 获取步骤
+    /// </summary>
+    /// <param name="actionId"></param>
+    /// <returns></returns>
+    public async Task<List<GenStep>> GetStepsAsync(Guid actionId)
+    {
+        var data = await Query.Where(q => q.Id == actionId)
+             .SelectMany(q => q.GenSteps)
+             .ToListAsync();
+        return data;
+    }
+
+    /// <summary>
     /// 获取实体详情
     /// </summary>
     /// <param name="id"></param>

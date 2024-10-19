@@ -1,5 +1,4 @@
-﻿using Entity;
-namespace Share.Models.GenActionDtos;
+﻿namespace Share.Models.GenActionDtos;
 /// <summary>
 /// The project's generate action添加时DTO
 /// </summary>
@@ -26,6 +25,4 @@ public class GenActionAddDto
     /// source type
     /// </summary>
     public GenSourceType? SourceType { get; set; }
-    public required Guid ProjectId { get; set; } = default!;
-    
 }

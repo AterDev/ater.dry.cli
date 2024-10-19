@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "AterStudio API doc",
-    "description": "Studio API 文档. 更新时间:2024-10-19 1:54:40",
+    "description": "Studio API 文档. 更新时间:2024-10-19 22:42:37",
     "version": "v1"
   },
   "paths": {
@@ -662,8 +662,10 @@
         "tags": [
           "EntityInfo"
         ],
+        "summary": "代码生成",
         "operationId": "EntityInfo_Generate",
         "requestBody": {
+          "description": "",
           "content": {
             "application/json": {
               "schema": {
@@ -815,7 +817,7 @@
         "tags": [
           "GenAction"
         ],
-        "summary": "分页数据 🛑",
+        "summary": "分页数据",
         "operationId": "GenAction_Filter",
         "requestBody": {
           "description": "",
@@ -851,12 +853,48 @@
         }
       }
     },
+    "/api/admin/GenAction/steps/{id}": {
+      "get": {
+        "tags": [
+          "GenAction"
+        ],
+        "summary": "获取操作步骤",
+        "operationId": "GenAction_GetSteps",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GenStep"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/admin/GenAction": {
       "post": {
         "tags": [
           "GenAction"
         ],
-        "summary": "新增 🛑",
+        "summary": "新增",
         "operationId": "GenAction_Add",
         "requestBody": {
           "description": "",
@@ -898,7 +936,7 @@
         "tags": [
           "GenAction"
         ],
-        "summary": "更新数据 🛑",
+        "summary": "更新数据",
         "operationId": "GenAction_Update",
         "parameters": [
           {
@@ -949,7 +987,7 @@
         "tags": [
           "GenAction"
         ],
-        "summary": "获取详情 🛑",
+        "summary": "获取详情",
         "operationId": "GenAction_GetDetail",
         "parameters": [
           {
@@ -980,8 +1018,206 @@
         "tags": [
           "GenAction"
         ],
-        "summary": "删除 🛑",
+        "summary": "删除",
         "operationId": "GenAction_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/GenStep/filter": {
+      "post": {
+        "tags": [
+          "GenStep"
+        ],
+        "summary": "分页数据",
+        "operationId": "GenStep_Filter",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenStepFilterDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenStepFilterDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenStepFilterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenStepItemDtoPageList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/GenStep": {
+      "post": {
+        "tags": [
+          "GenStep"
+        ],
+        "summary": "新增 🛑",
+        "operationId": "GenStep_Add",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenStepAddDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenStepAddDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenStepAddDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/GenStep/{id}": {
+      "patch": {
+        "tags": [
+          "GenStep"
+        ],
+        "summary": "更新数据 🛑",
+        "operationId": "GenStep_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenStepUpdateDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenStepUpdateDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenStepUpdateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "GenStep"
+        ],
+        "summary": "获取详情 🛑",
+        "operationId": "GenStep_GetDetail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenStepDetailDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "GenStep"
+        ],
+        "summary": "删除 🛑",
+        "operationId": "GenStep_Delete",
         "parameters": [
           {
             "name": "id",
@@ -2267,6 +2503,20 @@
             "type": "string",
             "nullable": true
           },
+          "entityPath": {
+            "type": "string",
+            "nullable": true
+          },
+          "openApiPath": {
+            "type": "string",
+            "nullable": true
+          },
+          "variables": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Variable"
+            }
+          },
           "sourceType": {
             "$ref": "#/components/schemas/GenSourceType"
           },
@@ -2302,6 +2552,22 @@
             "type": "string",
             "nullable": true
           },
+          "entityPath": {
+            "type": "string",
+            "description": "实体路径",
+            "nullable": true
+          },
+          "openApiPath": {
+            "type": "string",
+            "description": "open api path",
+            "nullable": true
+          },
+          "variables": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Variable"
+            }
+          },
           "sourceType": {
             "$ref": "#/components/schemas/GenSourceType"
           }
@@ -2321,6 +2587,22 @@
             "maxLength": 200,
             "type": "string",
             "nullable": true
+          },
+          "entityPath": {
+            "type": "string",
+            "description": "实体路径",
+            "nullable": true
+          },
+          "openApiPath": {
+            "type": "string",
+            "description": "open api path",
+            "nullable": true
+          },
+          "variables": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Variable"
+            }
           },
           "sourceType": {
             "$ref": "#/components/schemas/GenSourceType"
@@ -2446,6 +2728,23 @@
             "type": "string",
             "nullable": true
           },
+          "entityPath": {
+            "type": "string",
+            "description": "实体路径",
+            "nullable": true
+          },
+          "openApiPath": {
+            "type": "string",
+            "description": "open api path",
+            "nullable": true
+          },
+          "variables": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Variable"
+            },
+            "nullable": true
+          },
           "sourceType": {
             "$ref": "#/components/schemas/GenSourceType"
           }
@@ -2478,6 +2777,9 @@
         ]
       },
       "GenStep": {
+        "required": [
+          "outputContent"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -2495,17 +2797,22 @@
           "isDeleted": {
             "type": "boolean"
           },
-          "templateContent": {
-            "maxLength": 10000,
+          "content": {
+            "maxLength": 100000,
             "type": "string",
             "nullable": true
+          },
+          "outputContent": {
+            "maxLength": 100000,
+            "type": "string"
           },
           "path": {
+            "maxLength": 400,
             "type": "string",
             "nullable": true
           },
-          "command": {
-            "maxLength": 1000,
+          "outputPath": {
+            "maxLength": 400,
             "type": "string",
             "nullable": true
           },
@@ -2524,6 +2831,197 @@
           "projectId": {
             "type": "string",
             "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GenStepAddDto": {
+        "required": [
+          "projectId"
+        ],
+        "type": "object",
+        "properties": {
+          "content": {
+            "maxLength": 100000,
+            "type": "string",
+            "description": "模板或命令内容",
+            "nullable": true
+          },
+          "path": {
+            "maxLength": 400,
+            "type": "string",
+            "description": "模板或脚本路径",
+            "nullable": true
+          },
+          "outputPath": {
+            "maxLength": 400,
+            "type": "string",
+            "description": "输出路径",
+            "nullable": true
+          },
+          "genStepType": {
+            "$ref": "#/components/schemas/GenStepType"
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false,
+        "description": "task step添加时DTO"
+      },
+      "GenStepDetailDto": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "maxLength": 100000,
+            "type": "string",
+            "description": "模板或命令内容",
+            "nullable": true
+          },
+          "outputContent": {
+            "maxLength": 100000,
+            "type": "string",
+            "description": "生成内容"
+          },
+          "path": {
+            "maxLength": 400,
+            "type": "string",
+            "description": "模板或脚本路径",
+            "nullable": true
+          },
+          "outputPath": {
+            "maxLength": 400,
+            "type": "string",
+            "description": "输出路径",
+            "nullable": true
+          },
+          "command": {
+            "maxLength": 2000,
+            "type": "string",
+            "description": "command content",
+            "nullable": true
+          },
+          "genStepType": {
+            "$ref": "#/components/schemas/GenStepType"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "task step详情"
+      },
+      "GenStepFilterDto": {
+        "type": "object",
+        "properties": {
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "orderBy": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "boolean"
+            },
+            "nullable": true
+          },
+          "genStepType": {
+            "$ref": "#/components/schemas/GenStepType"
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "genActionId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "task step筛选条件"
+      },
+      "GenStepItemDto": {
+        "required": [
+          "outputContent"
+        ],
+        "type": "object",
+        "properties": {
+          "content": {
+            "maxLength": 100000,
+            "type": "string",
+            "description": "模板或命令内容",
+            "nullable": true
+          },
+          "outputContent": {
+            "maxLength": 100000,
+            "type": "string",
+            "description": "生成内容"
+          },
+          "path": {
+            "maxLength": 400,
+            "type": "string",
+            "description": "模板或脚本路径",
+            "nullable": true
+          },
+          "outputPath": {
+            "maxLength": 400,
+            "type": "string",
+            "description": "输出路径",
+            "nullable": true
+          },
+          "command": {
+            "maxLength": 2000,
+            "type": "string",
+            "description": "command content",
+            "nullable": true
+          },
+          "genStepType": {
+            "$ref": "#/components/schemas/GenStepType"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "task step列表元素"
+      },
+      "GenStepItemDtoPageList": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GenStepItemDto"
+            }
+          },
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -2558,6 +3056,40 @@
             "description": "run script"
           }
         ]
+      },
+      "GenStepUpdateDto": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "maxLength": 100000,
+            "type": "string",
+            "description": "模板或命令内容",
+            "nullable": true
+          },
+          "path": {
+            "maxLength": 400,
+            "type": "string",
+            "description": "模板或脚本路径",
+            "nullable": true
+          },
+          "outputPath": {
+            "maxLength": 400,
+            "type": "string",
+            "description": "输出路径",
+            "nullable": true
+          },
+          "command": {
+            "maxLength": 2000,
+            "type": "string",
+            "description": "command content",
+            "nullable": true
+          },
+          "genStepType": {
+            "$ref": "#/components/schemas/GenStepType"
+          }
+        },
+        "additionalProperties": false,
+        "description": "task step更新时DTO"
       },
       "GenerateDto": {
         "required": [
@@ -3121,15 +3653,33 @@
       "SolutionType": {
         "enum": [
           0,
-          1
+          1,
+          2
         ],
         "type": "integer",
         "format": "int32",
         "x-enumNames": [
           "DotNet",
-          "Node"
+          "Node",
+          "Empty"
         ],
-        "x-enumData": [ ]
+        "x-enumData": [
+          {
+            "name": "DotNet",
+            "value": 0,
+            "description": "DotNet"
+          },
+          {
+            "name": "Node",
+            "value": 1,
+            "description": "Node"
+          },
+          {
+            "name": "Empty",
+            "value": 2,
+            "description": "Empty"
+          }
+        ]
       },
       "StringConvertType": {
         "enum": [
@@ -3245,6 +3795,24 @@
           "Encrypt"
         ],
         "x-enumData": [ ]
+      },
+      "Variable": {
+        "required": [
+          "key",
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "maxLength": 100,
+            "type": "string"
+          },
+          "value": {
+            "maxLength": 1000,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
       }
     }
   },
@@ -3268,6 +3836,10 @@
     {
       "name": "GenAction",
       "description": "The project's generate action"
+    },
+    {
+      "name": "GenStep",
+      "description": "task step"
     },
     {
       "name": "Project",

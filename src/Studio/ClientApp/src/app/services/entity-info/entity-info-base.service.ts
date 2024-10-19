@@ -71,7 +71,7 @@ export class EntityInfoBaseService extends BaseService {
   }
 
   /**
-   * generate
+   * 代码生成
    * @param data GenerateDto
    */
   generate(data: GenerateDto): Observable<boolean> {

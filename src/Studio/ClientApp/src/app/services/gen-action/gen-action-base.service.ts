@@ -5,6 +5,7 @@ import { GenActionFilterDto } from './models/gen-action-filter-dto.model';
 import { GenActionAddDto } from './models/gen-action-add-dto.model';
 import { GenActionUpdateDto } from './models/gen-action-update-dto.model';
 import { GenActionItemDtoPageList } from './models/gen-action-item-dto-page-list.model';
+import { GenStep } from './models/gen-step.model';
 import { GenActionDetailDto } from './models/gen-action-detail-dto.model';
 
 /**
@@ -13,7 +14,7 @@ import { GenActionDetailDto } from './models/gen-action-detail-dto.model';
 @Injectable({ providedIn: 'root' })
 export class GenActionBaseService extends BaseService {
   /**
-   * 分页数据 🛑
+   * 分页数据
    * @param data GenActionFilterDto
    */
   filter(data: GenActionFilterDto): Observable<GenActionItemDtoPageList> {
@@ -22,7 +23,16 @@ export class GenActionBaseService extends BaseService {
   }
 
   /**
-   * 新增 🛑
+   * 获取操作步骤
+   * @param id 
+   */
+  getSteps(id: string): Observable<GenStep[]> {
+    const _url = `/api/admin/GenAction/steps/${id}`;
+    return this.request<GenStep[]>('get', _url);
+  }
+
+  /**
+   * 新增
    * @param data GenActionAddDto
    */
   add(data: GenActionAddDto): Observable<string> {
@@ -31,7 +41,7 @@ export class GenActionBaseService extends BaseService {
   }
 
   /**
-   * 更新数据 🛑
+   * 更新数据
    * @param id 
    * @param data GenActionUpdateDto
    */
@@ -41,7 +51,7 @@ export class GenActionBaseService extends BaseService {
   }
 
   /**
-   * 获取详情 🛑
+   * 获取详情
    * @param id 
    */
   getDetail(id: string): Observable<GenActionDetailDto> {
@@ -50,7 +60,7 @@ export class GenActionBaseService extends BaseService {
   }
 
   /**
-   * 删除 🛑
+   * 删除
    * @param id 
    */
   delete(id: string): Observable<boolean> {

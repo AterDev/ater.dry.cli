@@ -1,5 +1,4 @@
-﻿using Entity;
-namespace Share.Models.GenStepDtos;
+﻿namespace Share.Models.GenStepDtos;
 /// <summary>
 /// task step详情
 /// </summary>
@@ -7,27 +6,31 @@ namespace Share.Models.GenStepDtos;
 public class GenStepDetailDto
 {
     /// <summary>
-    /// template content
+    /// 模板或命令内容
     /// </summary>
-    [MaxLength(10_000)]
-public string? TemplateContent { get; set; }
+    [MaxLength(100_000)]
+    public string? Content { get; set; }
     /// <summary>
-    /// file outPath or script Path
+    /// 生成内容
     /// </summary>
-public string? Path { get; set; }
+    [MaxLength(100_000)]
+    public string OutputContent { get; set; } = default!;
     /// <summary>
-    /// command content
+    /// 模板或脚本路径
     /// </summary>
-    [MaxLength(1000)]
-public string? Command { get; set; }
+    [MaxLength(400)]
+    public string? Path { get; set; }
+    /// <summary>
+    /// 输出路径
+    /// </summary>
+    [MaxLength(400)]
+    public string? OutputPath { get; set; }
     /// <summary>
     /// step type
     /// </summary>
-public GenStepType GenStepType { get; set; }
-public Project Project { get; set; } = default!;
-public Guid ProjectId { get; set; } = default!;
-public Guid Id { get; set; } = Guid.NewGuid();
-public DateTimeOffset CreatedTime { get; set; }
-public DateTimeOffset UpdatedTime { get; set; }
-    
+    public GenStepType GenStepType { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
+    public DateTimeOffset CreatedTime { get; set; }
+    public DateTimeOffset UpdatedTime { get; set; }
+
 }

@@ -30,13 +30,6 @@ public class GenStep : EntityBase
     [MaxLength(400)]
     public string? OutputPath { get; set; }
 
-
-    /// <summary>
-    /// command content
-    /// </summary>
-    [MaxLength(2000)]
-    public string? Command { get; set; }
-
     /// <summary>
     /// step type
     /// </summary>

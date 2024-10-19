@@ -22,6 +22,17 @@ public class GenActionController(
     }
 
     /// <summary>
+    /// 获取操作步骤
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpGet("steps/{id}")]
+    public async Task<ActionResult<List<GenStep>>> GetStepsAsync(Guid id)
+    {
+        return await _manager.GetStepsAsync(id);
+    }
+
+    /// <summary>
     /// 新增
     /// </summary>
     /// <param name="dto"></param>

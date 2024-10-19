@@ -112,6 +112,16 @@ export class EnumTextPipe implements PipeTransform {
           }
         }
         break;
+      case 'SolutionType':
+        {
+          switch (value) {
+            case 0: result = 'DotNet'; break;
+            case 1: result = 'Node'; break;
+            case 2: result = 'Empty'; break;
+            default: result = '默认'; break;
+          }
+        }
+        break;
       case 'StringConvertType':
         {
           switch (value) {
