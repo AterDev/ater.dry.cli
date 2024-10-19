@@ -335,8 +335,18 @@ public partial class EntityInfoManager(
         }
         else
         {
-            existEntity.Merge(entityInfo);
-            await UpdateAsync(existEntity);
+            existEntity.Md5Hash = entityInfo.Md5Hash;
+            existEntity.ModuleName = entityInfo.ModuleName;
+            existEntity.Name = entityInfo.Name;
+            existEntity.NamespaceName = entityInfo.NamespaceName;
+
+            entityInfo.PropertyInfos.ForEach(p =>
+            {
+                p.EntityInfoId = existEntity.Id;
+            });
+            UpdateRelation(existEntity, e => e.PropertyInfos, entityInfo.PropertyInfos);
+
+            await SaveChangesAsync();
         }
 
         string sharePath = _projectContext.GetSharePath(entityInfo.ModuleName);

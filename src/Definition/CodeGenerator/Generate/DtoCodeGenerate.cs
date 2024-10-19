@@ -213,7 +213,6 @@ public class DtoCodeGenerate
                 IsNullable = s.IsNullable,
             })
             .ToList();
-
         DtoInfo dto = new()
         {
             EntityFullName = $"{EntityInfo.NamespaceName}.{EntityInfo.Name}",

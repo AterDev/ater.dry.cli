@@ -1,8 +1,9 @@
-using System.Text;
 using AterStudio;
 using AterStudio.Worker;
+using Mapster;
 
-Console.OutputEncoding = Encoding.UTF8;
+TypeAdapterConfig.GlobalSettings.Default.PreserveReference(true);
+
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.AddDefaultComponents();
