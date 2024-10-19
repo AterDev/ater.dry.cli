@@ -33,6 +33,11 @@ public class ContextBase : DbContext
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
+        builder.Entity<GenAction>(e =>
+        {
+            e.OwnsMany(a => a.Variables).ToJson();
+        });
+
         OnSQLiteModelCreating(builder);
         OnModelExtendCreating(builder);
         base.OnModelCreating(builder);

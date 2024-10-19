@@ -19,6 +19,18 @@ public class GenAction : EntityBase
     public string? Description { get; set; }
 
     /// <summary>
+    /// 实体路径
+    /// </summary>
+    public string? EntityPath { get; set; }
+
+    /// <summary>
+    /// open api path
+    /// </summary>
+    public string? OpenApiPath { get; set; }
+
+    public List<Variable> Variables { get; set; } = [];
+
+    /// <summary>
     /// source type
     /// </summary>
     public GenSourceType? SourceType { get; set; }
@@ -47,4 +59,12 @@ public enum GenSourceType
     /// </summary>
     [Description("OpenAPI")]
     OpenAPI
+}
+
+public class Variable
+{
+    [MaxLength(100)]
+    public required string Key { get; set; }
+    [MaxLength(1000)]
+    public required string Value { get; set; }
 }
