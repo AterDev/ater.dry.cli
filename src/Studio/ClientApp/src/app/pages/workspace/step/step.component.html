@@ -78,17 +78,45 @@
     {{isEditable?'编辑':'新增'}}步骤
   </h2>
   <mat-dialog-content class="p-3">
-    <form [formGroup]="addForm">
+    <form [formGroup]="addForm" class="d-flex flex-column">
       <mat-form-field>
-        <mat-select placeholder="类型" [formControl]="genStepType">
+        <mat-label>选择类型</mat-label>
+        <mat-select placeholder="生成步骤类型" [formControl]="genStepType">
           @for (item of GenStepType| toKeyValue; track $index) {
             <mat-option [value]="item.value">
-              {{item.key}}
+              {{item.value | enumText:'GenStepType' }}
             </mat-option>
           }
         </mat-select>
       </mat-form-field>
-
+      @switch (genStepType.value) {
+        @case (GenStepType.File) {
+          <mat-form-field>
+            <mat-label>文件路径</mat-label>
+            <input matInput [formControl]="path" placeholder="/xxx.xx">
+            <mat-hint>支持绝对路径与相对项目路径</mat-hint>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>文件内容</mat-label>
+            <textarea matInput rows="10" [formControl]="content" placeholder="请输入文件内容"></textarea>
+            <mat-hint>路径和内容必填一项，路径优先</mat-hint>
+          </mat-form-field>
+        }
+        @case (GenStepType.Command) {
+          <mat-form-field>
+            <mat-label>命令内容</mat-label>
+            <textarea matInput rows="3" [formControl]="content" placeholder="多行命令"></textarea>
+          </mat-form-field>
+        }
+        @case (GenStepType.Script) {
+          <mat-form-field>
+            <mat-label>脚本路径</mat-label>
+            <input matInput [formControl]="path" placeholder="/xxx.ps1">
+            <mat-hint>支持绝对路径与相对项目路径</mat-hint>
+          </mat-form-field>
+        }
+        @default {}
+      }
       <!-- <mat-form-field style="width: 100%;">
         <mat-label>任务名称</mat-label>
         <input matInput [formControl]="name" placeholder="请输入任务名称">

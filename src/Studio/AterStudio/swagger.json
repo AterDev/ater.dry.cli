@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "AterStudio API doc",
-    "description": "Studio API 文档. 更新时间:2024-10-19 22:42:37",
+    "description": "Studio API 文档. 更新时间:2024-10-20 0:27:32",
     "version": "v1"
   },
   "paths": {
@@ -1092,7 +1092,7 @@
         "tags": [
           "GenStep"
         ],
-        "summary": "新增 🛑",
+        "summary": "新增",
         "operationId": "GenStep_Add",
         "requestBody": {
           "description": "",
@@ -1134,7 +1134,7 @@
         "tags": [
           "GenStep"
         ],
-        "summary": "更新数据 🛑",
+        "summary": "更新数据",
         "operationId": "GenStep_Update",
         "parameters": [
           {
@@ -1185,7 +1185,7 @@
         "tags": [
           "GenStep"
         ],
-        "summary": "获取详情 🛑",
+        "summary": "获取详情",
         "operationId": "GenStep_GetDetail",
         "parameters": [
           {
@@ -1216,7 +1216,7 @@
         "tags": [
           "GenStep"
         ],
-        "summary": "删除 🛑",
+        "summary": "删除",
         "operationId": "GenStep_Delete",
         "parameters": [
           {
@@ -2896,12 +2896,6 @@
             "description": "输出路径",
             "nullable": true
           },
-          "command": {
-            "maxLength": 2000,
-            "type": "string",
-            "description": "command content",
-            "nullable": true
-          },
           "genStepType": {
             "$ref": "#/components/schemas/GenStepType"
           },
@@ -3043,17 +3037,17 @@
           {
             "name": "File",
             "value": 0,
-            "description": "generate file"
+            "description": "模板生成"
           },
           {
             "name": "Command",
             "value": 1,
-            "description": "run command"
+            "description": "运行命令"
           },
           {
             "name": "Script",
             "value": 2,
-            "description": "run script"
+            "description": "运行脚本"
           }
         ]
       },
@@ -3076,12 +3070,6 @@
             "maxLength": 400,
             "type": "string",
             "description": "输出路径",
-            "nullable": true
-          },
-          "command": {
-            "maxLength": 2000,
-            "type": "string",
-            "description": "command content",
             "nullable": true
           },
           "genStepType": {

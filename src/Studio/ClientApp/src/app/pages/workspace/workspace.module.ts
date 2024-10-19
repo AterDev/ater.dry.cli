@@ -15,6 +15,7 @@ import { FeatureComponent } from './feature/feature.component';
 import { ToKeyValuePipeModule } from 'src/app/share/pipe/to-key-value.pipe';
 import { TaskComponent } from './task/task.component';
 import { StepComponent } from './step/step.component';
+import { EnumTextPipeModule } from 'src/app/pipe/enum-text.pipe';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { StepComponent } from './step/step.component';
     WorkspaceRoutingModule,
     MonacoEditorModule,
     ToKeyValuePipeModule,
+    EnumTextPipeModule,
     MarkdownModule.forRoot()
   ]
 })

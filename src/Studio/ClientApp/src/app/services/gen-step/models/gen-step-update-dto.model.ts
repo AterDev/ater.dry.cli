@@ -15,10 +15,6 @@ export interface GenStepUpdateDto {
    * 输出路径
    */
   outputPath?: string | null;
-  /**
-   * command content
-   */
-  command?: string | null;
   genStepType?: GenStepType | null;
 
 }

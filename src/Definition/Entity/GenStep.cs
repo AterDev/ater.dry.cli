@@ -48,18 +48,18 @@ public class GenStep : EntityBase
 public enum GenStepType
 {
     /// <summary>
-    /// generate file
+    /// 模板生成
     /// </summary>
-    [Description("generate file")]
+    [Description("模板生成")]
     File,
     /// <summary>
-    /// run command
+    /// 运行命令
     /// </summary>
-    [Description("run command")]
+    [Description("执行命令")]
     Command,
     /// <summary>
-    /// run script
+    /// 运行脚本
     /// </summary>
-    [Description("run script")]
+    [Description("执行脚本")]
     Script
 }

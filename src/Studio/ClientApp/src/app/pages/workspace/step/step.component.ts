@@ -117,8 +117,10 @@ export class StepComponent {
 
   initForm(): void {
     this.addForm = new FormGroup({
-      name: new FormControl(null, [Validators.required, Validators.maxLength(40)]),
-      description: new FormControl(null, [Validators.maxLength(200)])
+      content: new FormControl(null, [Validators.maxLength(100_000)]),
+      path: new FormControl(null, [Validators.maxLength(400)]),
+      outputPath: new FormControl(null, [Validators.maxLength(400)]),
+      genStepType: new FormControl(GenStepType.File, [Validators.required])
     });
 
   }
@@ -127,7 +129,10 @@ export class StepComponent {
     this.isEditable = isEditable;
     if (this.isEditable && item) {
       this.currentItem = item;
-      // TODO:
+      this.content.setValue(item.content);
+      this.path.setValue(item.path);
+      this.outputPath.setValue(item.outputPath);
+      this.genStepType.setValue(item.genStepType);
     }
     this.dialogRef = this.dialog.open(this.addTmpl, {
       minWidth: '400px',

@@ -81,9 +81,9 @@ export class EnumTextPipe implements PipeTransform {
       case 'GenStepType':
         {
           switch (value) {
-            case 0: result = 'generate file'; break;
-            case 1: result = 'run command'; break;
-            case 2: result = 'run script'; break;
+            case 0: result = '模板生成'; break;
+            case 1: result = '运行命令'; break;
+            case 2: result = '运行脚本'; break;
             default: result = '默认'; break;
           }
         }

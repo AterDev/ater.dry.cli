@@ -22,7 +22,7 @@ export class GenStepBaseService extends BaseService {
   }
 
   /**
-   * 新增 🛑
+   * 新增
    * @param data GenStepAddDto
    */
   add(data: GenStepAddDto): Observable<string> {
@@ -31,7 +31,7 @@ export class GenStepBaseService extends BaseService {
   }
 
   /**
-   * 更新数据 🛑
+   * 更新数据
    * @param id 
    * @param data GenStepUpdateDto
    */
@@ -41,7 +41,7 @@ export class GenStepBaseService extends BaseService {
   }
 
   /**
-   * 获取详情 🛑
+   * 获取详情
    * @param id 
    */
   getDetail(id: string): Observable<GenStepDetailDto> {
@@ -50,7 +50,7 @@ export class GenStepBaseService extends BaseService {
   }
 
   /**
-   * 删除 🛑
+   * 删除
    * @param id 
    */
   delete(id: string): Observable<boolean> {

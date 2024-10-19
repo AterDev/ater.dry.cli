@@ -19,10 +19,6 @@ export interface GenStepDetailDto {
    * 输出路径
    */
   outputPath?: string | null;
-  /**
-   * command content
-   */
-  command?: string | null;
   genStepType?: GenStepType | null;
   id: string;
   createdTime: Date;
