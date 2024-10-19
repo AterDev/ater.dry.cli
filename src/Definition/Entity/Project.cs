@@ -88,6 +88,10 @@ public enum ControllerType
 }
 public enum SolutionType
 {
+    [Description("DotNet")]
     DotNet,
-    Node
+    [Description("Node")]
+    Node,
+    [Description("Empty")]
+    Empty
 }

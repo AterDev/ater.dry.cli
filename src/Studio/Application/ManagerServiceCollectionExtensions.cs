@@ -12,6 +12,7 @@ public static partial class ManagerServiceCollectionExtensions
         services.AddScoped<ProjectManager>();
         services.AddScoped<SolutionManager>();
         services.AddScoped<ToolsManager>();
+
         return services;
     }
 }

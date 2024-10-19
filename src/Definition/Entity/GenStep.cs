@@ -7,15 +7,16 @@ namespace Entity;
 public class GenStep : EntityBase
 {
     /// <summary>
-    /// template content
+    /// 模板或命令内容
     /// </summary>
-    [MaxLength(10_000)]
-    public string? TemplateContent { get; set; }
+    [MaxLength(100_000)]
+    public string? Content { get; set; }
 
     /// <summary>
-    /// file outPath or script Path
+    /// 模板或脚本路径
     /// </summary>
     public string? Path { get; set; }
+
 
     /// <summary>
     /// command content

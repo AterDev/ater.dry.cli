@@ -38,7 +38,7 @@ public class EntityParseHelper
     /// <summary>
     /// 属性
     /// </summary>
-    public List<PropertyInfo>? PropertyInfos { get; set; }
+    public List<PropertyInfo> PropertiesInfo { get; set; } = [];
     public CSharpCompilation Compilation { get; set; }
     public SemanticModel? SemanticModel { get; set; }
     protected SyntaxTree? SyntaxTree { get; set; }
@@ -59,10 +59,7 @@ public class EntityParseHelper
     public EntityParseHelper(string filePath)
     {
         FilePath = filePath;
-        if (!File.Exists(filePath))
-        {
-            throw new FileNotFoundException(filePath);
-        }
+
         FileInfo fileInfo = new(filePath);
         FileInfo? projectFile = AssemblyHelper.FindProjectFile(fileInfo.Directory!, fileInfo.Directory!.Root)
             ?? throw new ArgumentException("can't find project file");
@@ -109,7 +106,7 @@ public class EntityParseHelper
         Name = classDeclarationSyntax?.Identifier.ToString();
         Comment = GetClassComment(classDeclarationSyntax);
         CommentContent = GetCommentFromXmlDoc();
-        PropertyInfos = GetPropertyInfos();
+        PropertiesInfo = GetPropertiesInfo();
     }
 
     /// <summary>
@@ -144,7 +141,7 @@ public class EntityParseHelper
                 NamespaceName = NamespaceName ?? "",
                 Comment = Comment,
                 Summary = GetCommentFromXmlDoc(),
-                PropertyInfos = GetPropertyInfos(),
+                PropertyInfos = GetPropertiesInfo(),
                 KeyType = KeyType,
                 ModuleName = GetModuleName()
             };
@@ -219,7 +216,7 @@ public class EntityParseHelper
     /// 获取该类的所有属性
     /// </summary>
     /// <returns></returns>
-    public List<PropertyInfo> GetPropertyInfos(string? parentClassName = null)
+    public List<PropertyInfo> GetPropertiesInfo(string? parentClassName = null)
     {
         List<PropertyInfo> properties = [];
         CompilationUnitSyntax root = SyntaxTree!.GetCompilationUnitRoot();
@@ -231,7 +228,7 @@ public class EntityParseHelper
             .OfType<PropertyDeclarationSyntax>() ?? [];
 
         // 如果指定父类名称
-        parentClassName ??= GetParentClassName();
+        parentClassName ??= CompilationHelper.GetParentClassName();
 
         List<PropertyInfo>? parentProperties = [];
         if (parentClassName != null)
@@ -242,7 +239,7 @@ public class EntityParseHelper
             if (filePath != null)
             {
                 EntityParseHelper entity = new(filePath);
-                parentProperties = entity.GetPropertyInfos();
+                parentProperties = entity.GetPropertiesInfo();
             }
             else
             {
@@ -631,8 +628,6 @@ public class EntityParseHelper
         {
         }
     }
-
-
 
     /// <summary>
     /// 获取最初始基类

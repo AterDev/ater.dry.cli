@@ -1,33 +1,33 @@
-﻿using Share.Models.GenActionDtos;
-namespace AterStudio.Controllers;
+﻿using Share.Models.GenStepDtos;
+namespace Http.API.Controllers;
 
 /// <summary>
-/// The project's generate action
+/// task step
 /// </summary>
-public class GenActionController(
+public class GenStepController(
     IUserContext user,
-    ILogger<GenActionController> logger,
-    GenActionManager manager
-    ) : RestControllerBase<GenActionManager>(manager, user, logger)
+    ILogger<GenStepController> logger,
+    GenStepManager manager
+    ) : RestControllerBase<GenStepManager>(manager, user, logger)
 {
     /// <summary>
-    /// 分页数据
+    /// 分页数据 🛑
     /// </summary>
     /// <param name="filter"></param>
     /// <returns></returns>
     [HttpPost("filter")]
-    public async Task<ActionResult<PageList<GenActionItemDto>>> FilterAsync(GenActionFilterDto filter)
+    public async Task<ActionResult<PageList<GenStepItemDto>>> FilterAsync(GenStepFilterDto filter)
     {
         return await _manager.ToPageAsync(filter);
     }
 
     /// <summary>
-    /// 新增
+    /// 新增 🛑
     /// </summary>
     /// <param name="dto"></param>
     /// <returns></returns>
     [HttpPost]
-    public async Task<ActionResult<Guid?>> AddAsync(GenActionAddDto dto)
+    public async Task<ActionResult<Guid?>> AddAsync(GenStepAddDto dto)
     {
         // 冲突验证
         // if(await _manager.IsUniqueAsync(dto.xxx)) { return Conflict(ErrorMsg.ConflictResource); }
@@ -36,13 +36,13 @@ public class GenActionController(
     }
 
     /// <summary>
-    /// 更新数据
+    /// 更新数据 🛑
     /// </summary>
     /// <param name="id"></param>
     /// <param name="dto"></param>
     /// <returns></returns>
     [HttpPatch("{id}")]
-    public async Task<ActionResult<bool>> UpdateAsync([FromRoute] Guid id, GenActionUpdateDto dto)
+    public async Task<ActionResult<bool>> UpdateAsync([FromRoute] Guid id, GenStepUpdateDto dto)
     {
         var entity = await _manager.GetOwnedAsync(id);
         if (entity == null) { return NotFound(ErrorMsg.NotFoundResource); }
@@ -51,29 +51,30 @@ public class GenActionController(
     }
 
     /// <summary>
-    /// 获取详情
+    /// 获取详情 🛑
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpGet("{id}")]
-    public async Task<ActionResult<GenActionDetailDto?>> GetDetailAsync([FromRoute] Guid id)
+    public async Task<ActionResult<GenStepDetailDto?>> GetDetailAsync([FromRoute] Guid id)
     {
         var res = await _manager.GetDetailAsync(id);
-        return res == null ? NotFound() : res;
+        return (res == null) ? NotFound() : res;
     }
 
     /// <summary>
-    /// 删除
+    /// 删除 🛑
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpDelete("{id}")]
+    [NonAction]
     public async Task<ActionResult<bool>> DeleteAsync([FromRoute] Guid id)
     {
         // 注意删除权限
         var entity = await _manager.GetOwnedAsync(id);
         if (entity == null) { return NotFound(); };
         // return Forbid();
-        return await _manager.DeleteAsync(entity, false);
+        return await _manager.DeleteAsync(entity, true);
     }
 }

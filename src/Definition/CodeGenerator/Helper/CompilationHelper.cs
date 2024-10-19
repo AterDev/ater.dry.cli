@@ -364,11 +364,28 @@ public class CompilationHelper
             {
                 return;
             }
-
             var lastPropertyDeclaration = SyntaxRoot!.DescendantNodes().OfType<PropertyDeclarationSyntax>().LastOrDefault();
             if (lastPropertyDeclaration != null)
             {
                 SyntaxRoot = SyntaxRoot.InsertNodesAfter(lastPropertyDeclaration, [propertyNode]);
+                ClassNode = SyntaxRoot.DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
+            }
+        }
+    }
+
+    /// <summary>
+    /// 从类中移除属性
+    /// </summary>
+    /// <param name="propertyContent"></param>
+    public void RemoveClassProperty(string propertyContent)
+    {
+        if (SyntaxTree != null && SyntaxRoot != null)
+        {
+            var propertyNode = SyntaxRoot.DescendantNodes().OfType<PropertyDeclarationSyntax>()
+                .FirstOrDefault(p => p.ToString().Contains(propertyContent));
+            if (propertyNode != null)
+            {
+                SyntaxRoot = SyntaxRoot.RemoveNode(propertyNode, SyntaxRemoveOptions.KeepNoTrivia);
                 ClassNode = SyntaxRoot.DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
             }
         }
@@ -425,6 +442,7 @@ public class CompilationHelper
     public string? GetParentClassName()
     {
         return ClassNode?.BaseList?.Types.FirstOrDefault()?.ToString();
+        //return ClassSymbol?.BaseType?.Name;
     }
 
     /// <summary>

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Logging;
-using Share.Models;
 
 namespace Share.Services;
 /// <summary>
@@ -51,6 +50,36 @@ public class CodeAnalysisService(ILogger<CodeAnalysisService> logger)
             }
         });
         return [.. entityFiles];
+    }
+
+    /// <summary>
+    /// 对比两个模型的属性差异
+    /// </summary>
+    /// <param name="originContent"></param>
+    /// <param name="comparedPath"></param>
+    /// <returns></returns>
+    public DiffProperties GetDiffProperties(string comparedPath, string originContent)
+    {
+        var entityHelper = new EntityParseHelper(comparedPath);
+        entityHelper.Parse();
+        var comparedProperties = entityHelper.PropertiesInfo;
+
+        entityHelper.LoadEntityContent(originContent);
+        entityHelper.Parse();
+
+        var originProperties = entityHelper.PropertiesInfo;
+
+        var addedProperties = comparedProperties.Where(p => !originProperties.Any(o => o.Name == p.Name))
+            .ToList();
+        var deletedProperties = originProperties.Where(p => !comparedProperties.Any(o => o.Name == p.Name))
+            .ToList();
+
+        var diffProperty = new DiffProperties
+        {
+            Added = addedProperties,
+            Deleted = deletedProperties
+        };
+        return diffProperty;
     }
 
     /// <summary>

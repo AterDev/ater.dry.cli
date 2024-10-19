@@ -283,11 +283,13 @@ public partial class EntityInfoManager(
         switch (dto.CommandType)
         {
             case CommandType.Dto:
-                files = _codeGenService.GenerateDto(entityInfo, sharePath, dto.Force);
+                files = _codeGenService.GenerateDtos(entityInfo, sharePath, dto.Force);
+                files = await MergeDtoModelsAsync(entityInfo, files);
                 break;
             case CommandType.Manager:
             {
-                files = _codeGenService.GenerateDto(entityInfo, sharePath, dto.Force);
+                files = _codeGenService.GenerateDtos(entityInfo, sharePath, dto.Force);
+                files = await MergeDtoModelsAsync(entityInfo, files);
                 var tplContent = TplContent.ManagerTpl();
                 var managerFiles = _codeGenService.GenerateManager(entityInfo, applicationPath, tplContent, dto.Force);
                 files.AddRange(managerFiles);
@@ -295,7 +297,8 @@ public partial class EntityInfoManager(
             }
             case CommandType.API:
             {
-                files = _codeGenService.GenerateDto(entityInfo, sharePath, dto.Force);
+                files = _codeGenService.GenerateDtos(entityInfo, sharePath, dto.Force);
+                files = await MergeDtoModelsAsync(entityInfo, files);
                 var tplContent = TplContent.ManagerTpl();
                 var managerFiles = _codeGenService.GenerateManager(entityInfo, applicationPath, tplContent, dto.Force);
                 files.AddRange(managerFiles);
@@ -309,6 +312,60 @@ public partial class EntityInfoManager(
                 break;
         }
         _codeGenService.GenerateFiles(files);
+    }
+
+    /// <summary>
+    /// 合并生成的Dto
+    /// </summary>
+    /// <param name="entityInfo">新实体</param>
+    /// <param name="genFilesInfo">新生成文件</param>
+    /// <returns>处理后的FileInfo</returns>
+    public async Task<List<GenFileInfo>> MergeDtoModelsAsync(EntityInfo entityInfo, List<GenFileInfo> genFilesInfo)
+    {
+        var sw = new Stopwatch();
+        var res = new List<GenFileInfo>();
+        var existEntity = await Command.Where(q => q.FilePath == entityInfo.FilePath)
+            .Include(e => e.PropertyInfos)
+            .SingleOrDefaultAsync();
+
+        if (existEntity == null)
+        {
+            await AddAsync(entityInfo);
+            return genFilesInfo;
+        }
+        string sharePath = _projectContext.GetSharePath(entityInfo.ModuleName);
+        // 对比当前实体生成的Dto与现有代码中的Dto的差异
+        var originGenFiles = _codeGenService.GenerateDtos(existEntity, sharePath, true);
+        originGenFiles = originGenFiles.Where(f => f.Name.EndsWith("Dto")).ToList();
+
+
+        var compilationHelper = new CompilationHelper(sharePath);
+        foreach (var genFile in originGenFiles)
+        {
+            var diffProperties = _codeAnalysis.GetDiffProperties(genFile.FullName, genFile.Content);
+            diffProperties.ModelName = genFile.Name;
+
+            // 将差异属性更新到genFilesInfo
+            var genFileInfo = genFilesInfo.FirstOrDefault(f => f.Name == genFile.Name);
+            if (genFileInfo != null)
+            {
+                compilationHelper.LoadContent(genFile.Content);
+
+                foreach (var prop in diffProperties.Added)
+                {
+                    compilationHelper.AddClassProperty(prop.ToCsharpLine());
+                }
+                foreach (var prop in diffProperties.Deleted)
+                {
+                    compilationHelper.RemoveClassProperty(prop.ToCsharpLine());
+                }
+                genFileInfo.Content = compilationHelper.SyntaxRoot?.ToFullString() ?? "";
+                res.Add(genFileInfo);
+            }
+        }
+        sw.Stop();
+        _logger.LogInformation($"GetDiffProperties elapsed:{sw.ElapsedMilliseconds}ms");
+        return res;
     }
 
     /// <summary>
@@ -336,7 +393,7 @@ public partial class EntityInfoManager(
             case CommandType.Dto:
                 foreach (var item in entityInfos)
                 {
-                    files.AddRange(_codeGenService.GenerateDto(item, sharePath, dto.Force));
+                    files.AddRange(_codeGenService.GenerateDtos(item, sharePath, dto.Force));
                 }
                 break;
             case CommandType.Manager:

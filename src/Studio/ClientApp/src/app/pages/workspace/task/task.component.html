@@ -28,10 +28,11 @@
 
 <div *ngIf="!isLoading" class="px-2">
   <!-- 无数据时显示 -->
-  @if(data && data.length<=0){ <h4>
-    暂无数据！
+  @if(data && data.length<=0){
+    <h4>
+      暂无数据！
     </h4>
-    }@else{
+  }@else{
     <table class="default" mat-table [dataSource]="dataSource" #table="matTable">
       <!-- name and description -->
       <ng-container matColumnDef="name">
@@ -59,23 +60,23 @@
     </table>
     <mat-divider></mat-divider>
     @if(total>filter.pageSize){
-    <div class="d-flex justify-content-between paginator mt-1">
-      <mat-form-field subscriptSizing="dynamic">
-        <mat-label>跳转到</mat-label>
-        <input matInput type="number" [value]="filter.pageIndex" #pageJump (keyup.enter)="jumpTo(pageJump.value)">
-      </mat-form-field>
-      <mat-paginator [pageSizeOptions]="pageSizeOption" [pageIndex]="filter.pageIndex!-1" [pageSize]="filter.pageSize"
-        [length]="total" (page)="getList($event)" showFirstLastButtons>
-      </mat-paginator>
-    </div>
+      <div class="d-flex justify-content-between paginator mt-1">
+        <mat-form-field subscriptSizing="dynamic">
+          <mat-label>跳转到</mat-label>
+          <input matInput type="number" [value]="filter.pageIndex" #pageJump (keyup.enter)="jumpTo(pageJump.value)">
+        </mat-form-field>
+        <mat-paginator [pageSizeOptions]="pageSizeOption" [pageIndex]="filter.pageIndex!-1" [pageSize]="filter.pageSize"
+          [length]="total" (page)="getList($event)" showFirstLastButtons>
+        </mat-paginator>
+      </div>
     }
-
-    }
+  }
 </div>
 
 <ng-template #addDialog>
   <h2 mat-dialog-title>
-    {{isEditable?'编辑':'新增'}}任务</h2>
+    {{isEditable?'编辑':'新增'}}任务
+  </h2>
   <mat-dialog-content class="p-3">
     <form [formGroup]="addForm">
       <mat-form-field style="width: 100%;">

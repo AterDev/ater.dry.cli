@@ -13,6 +13,7 @@ namespace Share.Services;
 public class CodeGenService(ILogger<CodeGenService> logger)
 {
     private readonly ILogger<CodeGenService> _logger = logger;
+
     /// <summary>
     /// 生成Dto
     /// </summary>
@@ -20,7 +21,7 @@ public class CodeGenService(ILogger<CodeGenService> logger)
     /// <param name="outputPath">输出项目目录</param>
     /// <param name="isCover">是否覆盖</param>
     /// <returns></returns>
-    public List<GenFileInfo> GenerateDto(EntityInfo entityInfo, string outputPath, bool isCover = false)
+    public List<GenFileInfo> GenerateDtos(EntityInfo entityInfo, string outputPath, bool isCover = false)
     {
         _logger.LogInformation("🚀 Generating Dtos...");
         // 生成Dto

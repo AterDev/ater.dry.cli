@@ -99,7 +99,7 @@ public class CommandRunner(CodeGenService codeGen, CodeAnalysisService codeAnaly
     public async Task GenerateDtoAsync(string entityPath, string outputPath, bool force)
     {
         var entityInfo = await GetEntityInfoAsync(entityPath);
-        var files = _codeGen.GenerateDto(entityInfo, outputPath, force);
+        var files = _codeGen.GenerateDtos(entityInfo, outputPath, force);
         _codeGen.GenerateFiles(files);
     }
 
@@ -124,7 +124,7 @@ public class CommandRunner(CodeGenService codeGen, CodeAnalysisService codeAnaly
         var entityInfo = await GetEntityInfoAsync(entityPath);
         var files = new List<GenFileInfo>();
 
-        files.AddRange(_codeGen.GenerateDto(entityInfo, sharePath, force));
+        files.AddRange(_codeGen.GenerateDtos(entityInfo, sharePath, force));
         var tplContent = TplContent.ManagerTpl();
         files.AddRange(_codeGen.GenerateManager(entityInfo, applicationPath, tplContent, force));
         _codeGen.GenerateFiles(files);
@@ -145,7 +145,7 @@ public class CommandRunner(CodeGenService codeGen, CodeAnalysisService codeAnaly
             var entityInfo = await GetEntityInfoAsync(entityPath);
             var files = new List<GenFileInfo>();
 
-            files.AddRange(_codeGen.GenerateDto(entityInfo, sharePath, force));
+            files.AddRange(_codeGen.GenerateDtos(entityInfo, sharePath, force));
             var tplContent = TplContent.ManagerTpl();
             files.AddRange(_codeGen.GenerateManager(entityInfo, applicationPath, tplContent, force));
 
