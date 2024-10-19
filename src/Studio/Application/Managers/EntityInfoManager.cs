@@ -333,11 +333,16 @@ public partial class EntityInfoManager(
             await AddAsync(entityInfo);
             return genFilesInfo;
         }
+        else
+        {
+            existEntity.Merge(entityInfo);
+            await UpdateAsync(existEntity);
+        }
+
         string sharePath = _projectContext.GetSharePath(entityInfo.ModuleName);
         // 对比当前实体生成的Dto与现有代码中的Dto的差异
         var originGenFiles = _codeGenService.GenerateDtos(existEntity, sharePath, true);
         originGenFiles = originGenFiles.Where(f => f.Name.EndsWith("Dto")).ToList();
-
 
         var compilationHelper = new CompilationHelper(sharePath);
         foreach (var genFile in originGenFiles)

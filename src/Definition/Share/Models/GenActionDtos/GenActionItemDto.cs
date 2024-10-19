@@ -10,14 +10,13 @@ public class GenActionItemDto
     /// </summary>
     [MaxLength(40)]
     public string Name { get; set; } = default!;
-
-    [MaxLength(200)]
-    public string? Description { get; set; }
-
     /// <summary>
     /// source type
     /// </summary>
-    public GenSourceType SourceType { get; set; }
+    public GenSourceType? SourceType { get; set; }
+
+    [MaxLength(200)]
+    public string? Description { get; set; }
     public Guid Id { get; set; } = Guid.NewGuid();
     public DateTimeOffset CreatedTime { get; set; }
 

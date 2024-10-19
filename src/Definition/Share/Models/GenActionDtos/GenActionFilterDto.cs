@@ -1,4 +1,5 @@
-﻿namespace Share.Models.GenActionDtos;
+﻿using Entity;
+namespace Share.Models.GenActionDtos;
 /// <summary>
 /// The project's generate action筛选条件
 /// </summary>
@@ -15,5 +16,5 @@ public class GenActionFilterDto : FilterBase
     /// </summary>
     public GenSourceType? SourceType { get; set; }
     public Guid? ProjectId { get; set; }
-
+    
 }

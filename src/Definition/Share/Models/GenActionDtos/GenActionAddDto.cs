@@ -1,4 +1,5 @@
-﻿namespace Share.Models.GenActionDtos;
+﻿using Entity;
+namespace Share.Models.GenActionDtos;
 /// <summary>
 /// The project's generate action添加时DTO
 /// </summary>
@@ -13,7 +14,18 @@ public class GenActionAddDto
     [MaxLength(200)]
     public string? Description { get; set; }
     /// <summary>
+    /// 实体路径
+    /// </summary>
+    public string? EntityPath { get; set; }
+    /// <summary>
+    /// open api path
+    /// </summary>
+    public string? OpenApiPath { get; set; }
+    public List<Variable> Variables { get; set; } = [];
+    /// <summary>
     /// source type
     /// </summary>
     public GenSourceType? SourceType { get; set; }
+    public required Guid ProjectId { get; set; } = default!;
+    
 }

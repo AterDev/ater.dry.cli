@@ -187,12 +187,18 @@ namespace AterStudio.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("EntityPath")
+                        .HasColumnType("TEXT");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OpenApiPath")
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("ProjectId")
@@ -223,7 +229,11 @@ namespace AterStudio.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Command")
-                        .HasMaxLength(1000)
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Content")
+                        .HasMaxLength(100000)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("CreatedTime")
@@ -236,14 +246,20 @@ namespace AterStudio.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("OutputContent")
+                        .IsRequired()
+                        .HasMaxLength(100000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OutputPath")
+                        .HasMaxLength(400)
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Path")
+                        .HasMaxLength(400)
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("ProjectId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("TemplateContent")
-                        .HasMaxLength(10000)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UpdatedTime")
@@ -457,7 +473,38 @@ namespace AterStudio.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.OwnsMany("Entity.Variable", "Variables", b1 =>
+                        {
+                            b1.Property<Guid>("GenActionId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<int>("__synthesizedOrdinal")
+                                .ValueGeneratedOnAddOrUpdate()
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<string>("Key")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(1000)
+                                .HasColumnType("TEXT");
+
+                            b1.HasKey("GenActionId", "__synthesizedOrdinal");
+
+                            b1.ToTable("GenActions");
+
+                            b1.ToJson("Variables");
+
+                            b1.WithOwner()
+                                .HasForeignKey("GenActionId");
+                        });
+
                     b.Navigation("Project");
+
+                    b.Navigation("Variables");
                 });
 
             modelBuilder.Entity("Entity.GenStep", b =>

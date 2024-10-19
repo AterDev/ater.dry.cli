@@ -1,7 +1,4 @@
-﻿using Application.Managers;
-using Microsoft.AspNetCore.Mvc;
-
-using Share.Models.EntityInfoDtos;
+﻿using Share.Models.EntityInfoDtos;
 
 namespace AterStudio.Controllers;
 
@@ -96,6 +93,11 @@ public class EntityInfoController(
         return await _manager.UpdateDtoContentAsync(dto.FileName, dto.Content);
     }
 
+    /// <summary>
+    /// 代码生成
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
     [HttpPost("generate")]
     public async Task<ActionResult<bool>> GenerateAsync(GenerateDto dto)
     {

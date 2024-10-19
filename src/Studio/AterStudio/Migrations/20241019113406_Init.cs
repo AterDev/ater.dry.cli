@@ -113,11 +113,14 @@ namespace AterStudio.Migrations
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false),
                     Description = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
+                    EntityPath = table.Column<string>(type: "TEXT", nullable: true),
+                    OpenApiPath = table.Column<string>(type: "TEXT", nullable: true),
                     SourceType = table.Column<int>(type: "INTEGER", nullable: true),
                     ProjectId = table.Column<Guid>(type: "TEXT", nullable: false),
                     CreatedTime = table.Column<string>(type: "TEXT", nullable: false),
                     UpdatedTime = table.Column<string>(type: "TEXT", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Variables = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -135,9 +138,11 @@ namespace AterStudio.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    TemplateContent = table.Column<string>(type: "TEXT", maxLength: 10000, nullable: true),
-                    Path = table.Column<string>(type: "TEXT", nullable: true),
-                    Command = table.Column<string>(type: "TEXT", maxLength: 1000, nullable: true),
+                    Content = table.Column<string>(type: "TEXT", maxLength: 100000, nullable: true),
+                    OutputContent = table.Column<string>(type: "TEXT", maxLength: 100000, nullable: false),
+                    Path = table.Column<string>(type: "TEXT", maxLength: 400, nullable: true),
+                    OutputPath = table.Column<string>(type: "TEXT", maxLength: 400, nullable: true),
+                    Command = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
                     GenStepType = table.Column<int>(type: "INTEGER", nullable: false),
                     ProjectId = table.Column<Guid>(type: "TEXT", nullable: false),
                     CreatedTime = table.Column<string>(type: "TEXT", nullable: false),

@@ -13,15 +13,28 @@ public class GenStep : EntityBase
     public string? Content { get; set; }
 
     /// <summary>
+    /// 生成内容
+    /// </summary>
+    [MaxLength(100_000)]
+    public required string OutputContent { get; set; }
+
+    /// <summary>
     /// 模板或脚本路径
     /// </summary>
+    [MaxLength(400)]
     public string? Path { get; set; }
+
+    /// <summary>
+    /// 输出路径
+    /// </summary>
+    [MaxLength(400)]
+    public string? OutputPath { get; set; }
 
 
     /// <summary>
     /// command content
     /// </summary>
-    [MaxLength(1000)]
+    [MaxLength(2000)]
     public string? Command { get; set; }
 
     /// <summary>

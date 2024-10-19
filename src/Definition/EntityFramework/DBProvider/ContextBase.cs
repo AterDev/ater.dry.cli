@@ -15,6 +15,7 @@ public class ContextBase : DbContext
 
     public ContextBase(DbContextOptions options) : base(options)
     {
+
     }
 
     protected override void OnModelCreating(ModelBuilder builder)

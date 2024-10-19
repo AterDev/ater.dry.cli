@@ -14,7 +14,7 @@ app.UseDefaultWebServices();
 using (app)
 {
     IServiceScope scope = app.Services.CreateScope();
-    await InitDataTask.InitDataAsync(scope.ServiceProvider);
+    InitDataTask.InitData(scope.ServiceProvider);
     app.Run();
 }
 

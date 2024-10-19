@@ -38,7 +38,6 @@ public static partial class AppServiceCollectionExtensions
                 _.MigrationsAssembly("AterStudio");
             });
         });
-
         builder.Services.AddDbContext<QueryDbContext>(options =>
         {
             options.UseSqlite($"DataSource={path}", _ =>
