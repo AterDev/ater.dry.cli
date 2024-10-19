@@ -7,9 +7,11 @@ namespace Application.Managers;
 public class GenStepManager(
     DataAccessContext<GenStep> dataContext,
     ILogger<GenStepManager> logger,
+    IProjectContext projectContext,
     IUserContext userContext) : ManagerBase<GenStep>(dataContext, logger)
 {
     private readonly IUserContext _userContext = userContext;
+    private readonly IProjectContext _projectContext = projectContext;
 
     /// <summary>
     /// 添加实体
@@ -19,6 +21,7 @@ public class GenStepManager(
     public async Task<Guid?> CreateNewEntityAsync(GenStepAddDto dto)
     {
         var entity = dto.MapTo<GenStepAddDto, GenStep>();
+        entity.ProjectId = _projectContext.ProjectId;
         // TODO:完善添加逻辑
         return await base.AddAsync(entity) ? entity.Id : null;
     }

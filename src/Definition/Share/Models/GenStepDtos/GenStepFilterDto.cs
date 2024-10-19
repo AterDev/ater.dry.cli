@@ -5,13 +5,12 @@
 /// <see cref="Entity.GenStep"/>
 public class GenStepFilterDto : FilterBase
 {
+    public string? Name { get; set; }
+
     /// <summary>
     /// step type
     /// </summary>
     public GenStepType? GenStepType { get; set; }
-
     public Guid? ProjectId { get; set; }
-
-    public Guid? GenActionId { get; set; }
 
 }

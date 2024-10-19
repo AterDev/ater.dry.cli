@@ -223,6 +223,10 @@ public class SolutionManager(
     public List<SubProjectInfo> GetModulesInfo()
     {
         List<SubProjectInfo> res = [];
+        if (!Directory.Exists(_projectContext.ModulesPath!))
+        {
+            return [];
+        }
         var projectFiles = Directory.GetFiles(_projectContext.ModulesPath!, $"*{ConstVal.CSharpProjectExtension}", SearchOption.AllDirectories).ToList() ?? [];
 
         projectFiles.ForEach(path =>

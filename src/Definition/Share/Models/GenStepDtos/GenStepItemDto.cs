@@ -6,17 +6,10 @@
 public class GenStepItemDto
 {
     /// <summary>
-    /// 模板或命令内容
+    /// 步骤名称
     /// </summary>
-    [MaxLength(100_000)]
-    public string? Content { get; set; }
-
-    /// <summary>
-    /// 生成内容
-    /// </summary>
-    [MaxLength(100_000)]
-    public required string OutputContent { get; set; }
-
+    [MaxLength(100)]
+    public string Name { get; set; } = default!;
     /// <summary>
     /// 模板或脚本路径
     /// </summary>
@@ -28,16 +21,11 @@ public class GenStepItemDto
     /// </summary>
     [MaxLength(400)]
     public string? OutputPath { get; set; }
-
-    /// <summary>
-    /// command content
-    /// </summary>
-    [MaxLength(2000)]
-    public string? Command { get; set; }
     /// <summary>
     /// step type
     /// </summary>
     public GenStepType GenStepType { get; set; }
     public Guid Id { get; set; }
     public DateTimeOffset CreatedTime { get; set; }
+
 }

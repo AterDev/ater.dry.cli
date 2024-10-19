@@ -7,6 +7,12 @@ namespace Entity;
 public class GenStep : EntityBase
 {
     /// <summary>
+    /// 步骤名称
+    /// </summary>
+    [MaxLength(100)]
+    public required string Name { get; set; }
+
+    /// <summary>
     /// 模板或命令内容
     /// </summary>
     [MaxLength(100_000)]
@@ -16,7 +22,7 @@ public class GenStep : EntityBase
     /// 生成内容
     /// </summary>
     [MaxLength(100_000)]
-    public required string OutputContent { get; set; }
+    public string? OutputContent { get; set; }
 
     /// <summary>
     /// 模板或脚本路径

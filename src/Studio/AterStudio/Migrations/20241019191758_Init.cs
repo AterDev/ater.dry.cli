@@ -139,10 +139,9 @@ namespace AterStudio.Migrations
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Content = table.Column<string>(type: "TEXT", maxLength: 100000, nullable: true),
-                    OutputContent = table.Column<string>(type: "TEXT", maxLength: 100000, nullable: false),
+                    OutputContent = table.Column<string>(type: "TEXT", maxLength: 100000, nullable: true),
                     Path = table.Column<string>(type: "TEXT", maxLength: 400, nullable: true),
                     OutputPath = table.Column<string>(type: "TEXT", maxLength: 400, nullable: true),
-                    Command = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
                     GenStepType = table.Column<int>(type: "INTEGER", nullable: false),
                     ProjectId = table.Column<Guid>(type: "TEXT", nullable: false),
                     CreatedTime = table.Column<string>(type: "TEXT", nullable: false),

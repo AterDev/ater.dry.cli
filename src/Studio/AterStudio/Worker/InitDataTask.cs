@@ -8,7 +8,7 @@ public class InitDataTask
     /// </summary>
     /// <param name="provider"></param>
     /// <returns></returns>
-    public static void InitData(IServiceProvider provider)
+    public static async Task InitDataAsync(IServiceProvider provider)
     {
         CommandDbContext context = provider.GetRequiredService<CommandDbContext>();
         ILoggerFactory loggerFactory = provider.GetRequiredService<ILoggerFactory>();
@@ -17,11 +17,13 @@ public class InitDataTask
         {
             var connectionString = context.Database.GetConnectionString();
             logger.LogInformation("ℹ️ Using db file: {connectionString}", connectionString);
-            context.Database.Migrate();
+            await context.Database.MigrateAsync();
         }
         catch (Exception e)
         {
             logger.LogError("Init db failed:{message}", e.Message);
+            await context.Database.EnsureDeletedAsync();
+            await context.Database.MigrateAsync();
         }
     }
 }

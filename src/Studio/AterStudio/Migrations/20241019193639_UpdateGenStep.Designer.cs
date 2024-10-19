@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AterStudio.Migrations
 {
     [DbContext(typeof(CommandDbContext))]
-    [Migration("20241019113406_Init")]
-    partial class Init
+    [Migration("20241019193639_UpdateGenStep")]
+    partial class UpdateGenStep
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -231,10 +231,6 @@ namespace AterStudio.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Command")
-                        .HasMaxLength(2000)
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Content")
                         .HasMaxLength(100000)
                         .HasColumnType("TEXT");
@@ -249,8 +245,12 @@ namespace AterStudio.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("OutputContent")
+                    b.Property<string>("Name")
                         .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OutputContent")
                         .HasMaxLength(100000)
                         .HasColumnType("TEXT");
 

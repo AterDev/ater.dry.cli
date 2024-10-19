@@ -6,8 +6,9 @@ export interface GenStep {
   createdTime: Date;
   updatedTime: Date;
   isDeleted: boolean;
+  name: string;
   content?: string | null;
-  outputContent: string;
+  outputContent?: string | null;
   path?: string | null;
   outputPath?: string | null;
   genStepType?: GenStepType | null;

@@ -5,7 +5,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, Observable } from 'rxjs';
+import { firstValueFrom, forkJoin, Observable } from 'rxjs';
 import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confirm-dialog.component';
 import { GenStepType } from 'src/app/services/enum/models/gen-step-type.model';
 import { GenStepService } from 'src/app/services/gen-step/gen-step.service';
@@ -27,7 +27,7 @@ export class StepComponent {
   isProcessing = false;
   total = 0;
   data: GenStepItemDto[] = [];
-  columns: string[] = ['name', 'description', 'actions'];
+  columns: string[] = ['name', 'genStepType', 'path', 'actions'];
   dataSource!: MatTableDataSource<GenStepItemDto>;
   dialogRef!: MatDialogRef<{}, any>;
   @ViewChild('addDialog', { static: true }) addTmpl!: TemplateRef<{}>;
@@ -50,6 +50,7 @@ export class StepComponent {
     };
   }
 
+  get name(): FormControl { return this.addForm.get('name') as FormControl; }
   get content(): FormControl { return this.addForm.get('content') as FormControl; }
   get path(): FormControl { return this.addForm.get('path') as FormControl; }
   get outputPath(): FormControl { return this.addForm.get('outputPath') as FormControl; }
@@ -117,6 +118,7 @@ export class StepComponent {
 
   initForm(): void {
     this.addForm = new FormGroup({
+      name: new FormControl(null, [Validators.maxLength(100), Validators.required]),
       content: new FormControl(null, [Validators.maxLength(100_000)]),
       path: new FormControl(null, [Validators.maxLength(400)]),
       outputPath: new FormControl(null, [Validators.maxLength(400)]),
@@ -124,18 +126,22 @@ export class StepComponent {
     });
 
   }
-  openAddDialog(item: GenStepItemDto | null = null, isEditable = false): void {
+  async openAddDialog(id: string | null = null, isEditable = false): Promise<void> {
     this.initForm();
     this.isEditable = isEditable;
-    if (this.isEditable && item) {
-      this.currentItem = item;
-      this.content.setValue(item.content);
-      this.path.setValue(item.path);
-      this.outputPath.setValue(item.outputPath);
-      this.genStepType.setValue(item.genStepType);
+    if (this.isEditable && id) {
+      const item = await firstValueFrom(this.service.getDetail(id));
+      if (item) {
+        this.currentItem = item;
+        this.name.setValue(item.name);
+        this.path.setValue(item.path);
+        this.content.setValue(item.content);
+        this.outputPath.setValue(item.outputPath);
+        this.genStepType.setValue(item.genStepType);
+      }
     }
     this.dialogRef = this.dialog.open(this.addTmpl, {
-      minWidth: '400px',
+      minWidth: '650px',
       maxHeight: '98vh'
     })
     this.dialogRef.afterClosed()
@@ -149,6 +155,28 @@ export class StepComponent {
     if (this.addForm.invalid) {
       this.snb.open('请检查输入项');
       return;
+    }
+    switch (this.genStepType.value) {
+      case GenStepType.File:
+        if (!this.path.value && !this.content.value) {
+          this.snb.open('请填写路径或内容');
+          return;
+        }
+        break;
+      case GenStepType.Command:
+        if (!this.content.value) {
+          this.snb.open('请填写内容');
+          return;
+        }
+        break;
+      case GenStepType.Script:
+        if (!this.path.value) {
+          this.snb.open('请填写路径');
+          return;
+        }
+        break;
+      default:
+        break;
     }
     if (this.isEditable) {
       const data = this.addForm.value as GenStepUpdateDto;

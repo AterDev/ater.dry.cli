@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "AterStudio API doc",
-    "description": "Studio API 文档. 更新时间:2024-10-20 0:27:32",
+    "description": "Studio API 文档. 更新时间:2024-10-20 3:43:45",
     "version": "v1"
   },
   "paths": {
@@ -2778,7 +2778,7 @@
       },
       "GenStep": {
         "required": [
-          "outputContent"
+          "name"
         ],
         "type": "object",
         "properties": {
@@ -2797,6 +2797,10 @@
           "isDeleted": {
             "type": "boolean"
           },
+          "name": {
+            "maxLength": 100,
+            "type": "string"
+          },
           "content": {
             "maxLength": 100000,
             "type": "string",
@@ -2804,7 +2808,8 @@
           },
           "outputContent": {
             "maxLength": 100000,
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "path": {
             "maxLength": 400,
@@ -2837,14 +2842,26 @@
       },
       "GenStepAddDto": {
         "required": [
+          "name",
           "projectId"
         ],
         "type": "object",
         "properties": {
+          "name": {
+            "maxLength": 100,
+            "type": "string",
+            "description": "步骤名称"
+          },
           "content": {
             "maxLength": 100000,
             "type": "string",
             "description": "模板或命令内容",
+            "nullable": true
+          },
+          "outputContent": {
+            "maxLength": 100000,
+            "type": "string",
+            "description": "生成内容",
             "nullable": true
           },
           "path": {
@@ -2873,6 +2890,11 @@
       "GenStepDetailDto": {
         "type": "object",
         "properties": {
+          "name": {
+            "maxLength": 100,
+            "type": "string",
+            "description": "步骤名称"
+          },
           "content": {
             "maxLength": 100000,
             "type": "string",
@@ -2882,7 +2904,8 @@
           "outputContent": {
             "maxLength": 100000,
             "type": "string",
-            "description": "生成内容"
+            "description": "生成内容",
+            "nullable": true
           },
           "path": {
             "maxLength": 400,
@@ -2898,6 +2921,13 @@
           },
           "genStepType": {
             "$ref": "#/components/schemas/GenStepType"
+          },
+          "project": {
+            "$ref": "#/components/schemas/Project"
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
           },
           "id": {
             "type": "string",
@@ -2933,15 +2963,14 @@
             },
             "nullable": true
           },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
           "genStepType": {
             "$ref": "#/components/schemas/GenStepType"
           },
           "projectId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "genActionId": {
             "type": "string",
             "format": "uuid",
             "nullable": true
@@ -2951,21 +2980,12 @@
         "description": "task step筛选条件"
       },
       "GenStepItemDto": {
-        "required": [
-          "outputContent"
-        ],
         "type": "object",
         "properties": {
-          "content": {
-            "maxLength": 100000,
+          "name": {
+            "maxLength": 100,
             "type": "string",
-            "description": "模板或命令内容",
-            "nullable": true
-          },
-          "outputContent": {
-            "maxLength": 100000,
-            "type": "string",
-            "description": "生成内容"
+            "description": "步骤名称"
           },
           "path": {
             "maxLength": 400,
@@ -2977,12 +2997,6 @@
             "maxLength": 400,
             "type": "string",
             "description": "输出路径",
-            "nullable": true
-          },
-          "command": {
-            "maxLength": 2000,
-            "type": "string",
-            "description": "command content",
             "nullable": true
           },
           "genStepType": {
@@ -3042,22 +3056,34 @@
           {
             "name": "Command",
             "value": 1,
-            "description": "运行命令"
+            "description": "执行命令"
           },
           {
             "name": "Script",
             "value": 2,
-            "description": "运行脚本"
+            "description": "执行脚本"
           }
         ]
       },
       "GenStepUpdateDto": {
         "type": "object",
         "properties": {
+          "name": {
+            "maxLength": 100,
+            "type": "string",
+            "description": "步骤名称",
+            "nullable": true
+          },
           "content": {
             "maxLength": 100000,
             "type": "string",
             "description": "模板或命令内容",
+            "nullable": true
+          },
+          "outputContent": {
+            "maxLength": 100000,
+            "type": "string",
+            "description": "生成内容",
             "nullable": true
           },
           "path": {
@@ -3074,6 +3100,19 @@
           },
           "genStepType": {
             "$ref": "#/components/schemas/GenStepType"
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "genActionIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false,
