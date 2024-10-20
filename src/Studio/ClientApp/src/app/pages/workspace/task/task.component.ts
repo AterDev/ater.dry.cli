@@ -28,7 +28,7 @@ export class TaskComponent implements OnInit {
   isProcessing = false;
   total = 0;
   data: GenActionItemDto[] = [];
-  columns: string[] = ['name', 'description', 'actions'];
+  columns: string[] = ['name', 'description','status', 'actions'];
   dataSource!: MatTableDataSource<GenActionItemDto>;
   dialogRef!: MatDialogRef<{}, any>;
   @ViewChild('addDialog', { static: true }) addTmpl!: TemplateRef<{}>;
@@ -305,6 +305,7 @@ export class TaskComponent implements OnInit {
         },
         complete: () => {
           this.isProcessing = false;
+          this.getList();
         }
       });
   }

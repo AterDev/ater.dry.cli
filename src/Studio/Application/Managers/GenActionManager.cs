@@ -178,7 +178,6 @@ public class GenActionManager(
                                 var outputPath = step.OutputPathFormat(variables);
                                 outputPath = Path.Combine(_projectContext.SolutionPath!, outputPath);
                                 File.WriteAllText(outputPath, step.OutputContent);
-                                return true;
                             }
                             break;
                         case GenStepType.Command:
@@ -195,7 +194,9 @@ public class GenActionManager(
             catch (Exception ex)
             {
                 action.ActionStatus = ActionStatus.Failed;
+                // TODO: 记录执行情况
                 _logger.LogError(ex, "Execute action failed");
+                await SaveChangesAsync();
                 return false;
             }
         }
