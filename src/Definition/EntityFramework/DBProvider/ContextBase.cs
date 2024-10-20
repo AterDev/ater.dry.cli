@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EntityFramework.DBProvider;
 
-public class ContextBase : DbContext
+public class ContextBase(DbContextOptions options) : DbContext(options)
 {
     public DbSet<Project> Projects { get; set; }
     public DbSet<EntityInfo> EntityInfos { get; set; }
@@ -12,11 +12,7 @@ public class ContextBase : DbContext
     public DbSet<GenAction> GenActions { get; set; }
     public DbSet<GenStep> GenSteps { get; set; }
     public DbSet<ConfigData> Configs { get; set; }
-
-    public ContextBase(DbContextOptions options) : base(options)
-    {
-
-    }
+    public DbSet<GenActionGenStep> GenActionGenSteps { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -37,6 +33,10 @@ public class ContextBase : DbContext
         builder.Entity<GenAction>(e =>
         {
             e.OwnsMany(a => a.Variables).ToJson();
+
+            e.HasMany(e => e.GenSteps)
+                .WithMany(e => e.GenActions)
+                .UsingEntity<GenActionGenStep>();
         });
 
         OnSQLiteModelCreating(builder);

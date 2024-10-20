@@ -13,6 +13,9 @@ import { GenActionItemDtoPageList } from 'src/app/services/gen-action/models/gen
 import { GenActionItemDto } from 'src/app/services/gen-action/models/gen-action-item-dto.model';
 import { GenActionAddDto } from 'src/app/services/gen-action/models/gen-action-add-dto.model';
 import { GenActionUpdateDto } from 'src/app/services/gen-action/models/gen-action-update-dto.model';
+import { GenStepItemDto } from 'src/app/services/gen-step/models/gen-step-item-dto.model';
+import { GenStepService } from 'src/app/services/gen-step/gen-step.service';
+import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-index',
@@ -29,14 +32,22 @@ export class TaskComponent implements OnInit {
   dataSource!: MatTableDataSource<GenActionItemDto>;
   dialogRef!: MatDialogRef<{}, any>;
   @ViewChild('addDialog', { static: true }) addTmpl!: TemplateRef<{}>;
+  @ViewChild('addStepDialog', { static: true }) addStepTmpl!: TemplateRef<{}>;
   isEditable = false;
   addForm!: FormGroup;
   addDto: GenActionAddDto | null = null;
   currentItem = {} as GenActionItemDto;
   filter: GenActionFilterDto;
   pageSizeOption = [12, 20, 50];
+
+  // 选择steps
+  allSteps: GenStepItemDto[] = [];
+  remainSteps: GenStepItemDto[] = [];
+  selectedSteps: GenStepItemDto[] = [];
+
   constructor(
     private service: GenActionService,
+    private stepService: GenStepService,
     private snb: MatSnackBar,
     private dialog: MatDialog,
     private route: ActivatedRoute,
@@ -152,8 +163,74 @@ export class TaskComponent implements OnInit {
       });
   }
 
-  openAddStep(item: GenActionItemDto): void {
+  drop(event: CdkDragDrop<GenStepItemDto[]>) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex,
+      );
+    }
+  }
 
+  openAddStep(item: GenActionItemDto): void {
+    this.currentItem = item;
+    forkJoin([this.getAllSteps(), this.getActionSteps()])
+      .subscribe({
+        next: ([allSteps, actionSteps]) => {
+          if (allSteps.data) {
+            this.allSteps = allSteps.data;
+            this.selectedSteps = actionSteps;
+            this.remainSteps = this.allSteps.filter(_ => !this.selectedSteps.some(s => s.id === _.id));
+
+            // 弹窗
+            this.dialogRef = this.dialog.open(this.addStepTmpl, {
+              minWidth: '400px',
+              maxHeight: '98vh'
+            })
+            // this.dialogRef.afterClosed();
+          }
+        },
+        error: (error) => {
+          this.snb.open(error.detail);
+        },
+        complete: () => {
+
+        }
+      });
+  }
+  saveSteps(): void {
+    this.service.addSteps(this.currentItem.id, this.selectedSteps.map(_ => _.id))
+      .subscribe({
+        next: (res) => {
+          if (res) {
+            this.snb.open('添加成功');
+            this.dialogRef.close(true);
+          } else {
+            this.snb.open('添加失败');
+          }
+        },
+        error: (error) => {
+          this.snb.open(error.detail);
+        },
+        complete: () => {
+
+        }
+      });
+  }
+
+  getAllSteps() {
+    return this.stepService.filter({
+      pageIndex: 1,
+      pageSize: 999
+    });
+  }
+
+  getActionSteps() {
+    return this.service.getSteps(this.currentItem.id);
   }
 
   addVariable(): void {

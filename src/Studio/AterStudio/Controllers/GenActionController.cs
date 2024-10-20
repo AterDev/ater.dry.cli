@@ -1,4 +1,5 @@
 ﻿using Share.Models.GenActionDtos;
+using Share.Models.GenStepDtos;
 namespace AterStudio.Controllers;
 
 /// <summary>
@@ -27,10 +28,23 @@ public class GenActionController(
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpGet("steps/{id}")]
-    public async Task<ActionResult<List<GenStep>>> GetStepsAsync(Guid id)
+    public async Task<ActionResult<List<GenStepItemDto>>> GetStepsAsync(Guid id)
     {
         return await _manager.GetStepsAsync(id);
     }
+
+    /// <summary>
+    /// 添加操作步骤
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="stepIds"></param>
+    /// <returns></returns>
+    [HttpPost("steps/{id}")]
+    public async Task<ActionResult<bool>> AddStepsAsync(Guid id, List<Guid> stepIds)
+    {
+        return await _manager.AddStepsAsync(id, stepIds);
+    }
+
 
     /// <summary>
     /// 新增

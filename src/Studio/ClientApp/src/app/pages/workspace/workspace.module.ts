@@ -16,6 +16,7 @@ import { ToKeyValuePipeModule } from 'src/app/share/pipe/to-key-value.pipe';
 import { TaskComponent } from './task/task.component';
 import { StepComponent } from './step/step.component';
 import { EnumTextPipeModule } from 'src/app/pipe/enum-text.pipe';
+import { DragDropModule } from "@angular/cdk/drag-drop";
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { EnumTextPipeModule } from 'src/app/pipe/enum-text.pipe';
     MonacoEditorModule,
     ToKeyValuePipeModule,
     EnumTextPipeModule,
-    MarkdownModule.forRoot()
+    MarkdownModule.forRoot(),
+    DragDropModule,
   ]
 })
 export class WorkspaceModule { }

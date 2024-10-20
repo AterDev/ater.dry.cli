@@ -1,4 +1,5 @@
 ﻿using Share.Models.GenActionDtos;
+using Share.Models.GenStepDtos;
 
 namespace Application.Managers;
 /// <summary>
@@ -56,10 +57,11 @@ public class GenActionManager(
     /// </summary>
     /// <param name="actionId"></param>
     /// <returns></returns>
-    public async Task<List<GenStep>> GetStepsAsync(Guid actionId)
+    public async Task<List<GenStepItemDto>> GetStepsAsync(Guid actionId)
     {
         var data = await Query.Where(q => q.Id == actionId)
              .SelectMany(q => q.GenSteps)
+             .ProjectTo<GenStepItemDto>()
              .ToListAsync();
         return data;
     }
@@ -75,15 +77,15 @@ public class GenActionManager(
     }
 
     /// <summary>
-    /// TODO:唯一性判断
+    /// 唯一性判断
     /// </summary>
-    /// <param name="unique">唯一标识</param>
+    /// <param name="name">唯一标识</param>
     /// <param name="id">排除当前</param>
     /// <returns></returns>
-    public async Task<bool> IsUniqueAsync(string unique, Guid? id = null)
+    public async Task<bool> IsUniqueAsync(string name, Guid? id = null)
     {
         // 自定义唯一性验证参数和逻辑
-        return await Command.Where(q => q.Id.ToString() == unique)
+        return await Command.Where(q => q.Name == name)
             .WhereNotNull(id, q => q.Id != id)
             .AnyAsync();
     }
@@ -110,6 +112,38 @@ public class GenActionManager(
         // TODO:自定义数据权限验证
         // query = query.Where(q => q.User.Id == _userContext.UserId);
         return await query.FirstOrDefaultAsync();
+    }
+
+    /// <summary>
+    /// 添加步骤
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="stepIds"></param>
+    /// <returns></returns>
+    public async Task<bool> AddStepsAsync(Guid id, List<Guid> stepIds)
+    {
+        await Database.BeginTransactionAsync();
+        try
+        {
+            await CommandContext.GenActionGenSteps.Where(q => q.GenActionsId == id)
+                .ExecuteDeleteAsync();
+
+            var actionSteps = stepIds.Select(q => new GenActionGenStep
+            {
+                GenActionsId = id,
+                GenStepsId = q
+            });
+            await CommandContext.GenActionGenSteps.AddRangeAsync(actionSteps);
+            await SaveChangesAsync();
+            await Database.CommitTransactionAsync();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            await Database.RollbackTransactionAsync();
+            _logger.LogError(ex, "Add steps failed");
+            return false;
+        }
     }
 
     /// <summary>

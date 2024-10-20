@@ -5,7 +5,7 @@ import { GenActionFilterDto } from './models/gen-action-filter-dto.model';
 import { GenActionAddDto } from './models/gen-action-add-dto.model';
 import { GenActionUpdateDto } from './models/gen-action-update-dto.model';
 import { GenActionItemDtoPageList } from './models/gen-action-item-dto-page-list.model';
-import { GenStep } from './models/gen-step.model';
+import { GenStepItemDto } from './models/gen-step-item-dto.model';
 import { GenActionDetailDto } from './models/gen-action-detail-dto.model';
 
 /**
@@ -26,9 +26,19 @@ export class GenActionBaseService extends BaseService {
    * 获取操作步骤
    * @param id 
    */
-  getSteps(id: string): Observable<GenStep[]> {
+  getSteps(id: string): Observable<GenStepItemDto[]> {
     const _url = `/api/admin/GenAction/steps/${id}`;
-    return this.request<GenStep[]>('get', _url);
+    return this.request<GenStepItemDto[]>('get', _url);
+  }
+
+  /**
+   * 添加操作步骤
+   * @param id 
+   * @param data string[]
+   */
+  addSteps(id: string, data: string[]): Observable<boolean> {
+    const _url = `/api/admin/GenAction/steps/${id}`;
+    return this.request<boolean>('post', _url, data);
   }
 
   /**

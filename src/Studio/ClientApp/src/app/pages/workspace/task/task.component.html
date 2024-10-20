@@ -128,3 +128,33 @@
     <button mat-flat-button color="primary" (click)="save()">保存</button>
   </mat-dialog-actions>
 </ng-template>
+
+<ng-template #addStepDialog>
+  <h2 mat-dialog-title>
+    选择步骤
+  </h2>
+  <mat-dialog-content class="d-flex gap-2">
+    <div class="drag-container">
+      <h3>可选步骤</h3>
+      <div cdkDropList #todoList="cdkDropList" [cdkDropListData]="remainSteps" [cdkDropListConnectedTo]="[doneList]"
+        class="drag-list" (cdkDropListDropped)="drop($event)">
+        @for (item of remainSteps; track item) {
+          <div class="drag-box" cdkDrag>{{item.name}}</div>
+        }
+      </div>
+    </div>
+    <div class="drag-container">
+      <h3>已选步骤</h3>
+      <div cdkDropList #doneList="cdkDropList" [cdkDropListData]="selectedSteps" [cdkDropListConnectedTo]="[todoList]"
+        class="drag-list" (cdkDropListDropped)="drop($event)">
+        @for (item of selectedSteps; track item) {
+          <div class="drag-box" cdkDrag>{{item.name}}</div>
+        }
+      </div>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions class="justify-content-end">
+    <button mat-stroked-button [mat-dialog-close]="false">取消</button>
+    <button mat-flat-button color="primary" (click)="saveSteps()">保存</button>
+  </mat-dialog-actions>
+</ng-template>
