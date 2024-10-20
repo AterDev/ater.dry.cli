@@ -106,7 +106,12 @@
         <textarea matInput [formControl]="description" placeholder="请输入任务描述"></textarea>
       </mat-form-field>
       <div class="d-flex justify-content-between align-items-center px-1">
-        <h3>操作变量</h3>
+        <div class="d-flex align-items-center">
+          <span style="font-size: 16px;">
+            添加变量
+          </span>
+          <mat-icon class="text-primary" matTooltip='模板中@Model["XXX"]将被替换成[变量XXX对应的值]'>help</mat-icon>
+        </div>
         <button mat-icon-button matTooltip="添加变量" color="primary" (click)="addVariable()">
           <mat-icon>
             add
