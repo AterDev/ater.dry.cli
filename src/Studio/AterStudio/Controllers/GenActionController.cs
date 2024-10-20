@@ -62,6 +62,21 @@ public class GenActionController(
     }
 
     /// <summary>
+    /// 执行操作
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpPost("execute/{id}")]
+    public async Task<ActionResult<bool>> ExecuteAsync(Guid id)
+    {
+        var exist = await _manager.ExistAsync(id);
+        if (!exist) { return NotFound(ErrorMsg.NotFoundResource); }
+        // return Forbid();
+        return await _manager.ExecuteActionAsync(id);
+    }
+
+
+    /// <summary>
     /// 获取详情
     /// </summary>
     /// <param name="id"></param>

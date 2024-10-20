@@ -1,8 +1,9 @@
 import { Variable } from '../../models/variable.model';
 import { GenSourceType } from '../../enum/models/gen-source-type.model';
 import { Project } from '../../project/models/project.model';
+import { ActionStatus } from '../../enum/models/action-status.model';
 /**
- * The project's generate action详情
+ * 生成操作详情
  */
 export interface GenActionDetailDto {
   /**
@@ -22,6 +23,7 @@ export interface GenActionDetailDto {
   sourceType?: GenSourceType | null;
   project?: Project | null;
   projectId: string;
+  actionStatus?: ActionStatus | null;
   id: string;
   createdTime: Date;
   updatedTime: Date;

@@ -9,6 +9,17 @@ export class EnumTextPipe implements PipeTransform {
   transform(value: unknown, type: string): string {
     let result = '';
     switch (type) {
+      case 'ActionStatus':
+        {
+          switch (value) {
+            case 0: result = '未执行'; break;
+            case 1: result = '执行中'; break;
+            case 2: result = '成功'; break;
+            case 3: result = '失败'; break;
+            default: result = '默认'; break;
+          }
+        }
+        break;
       case 'CacheType':
         {
           switch (value) {

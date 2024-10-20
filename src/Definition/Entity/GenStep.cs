@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using Ater.Web.Core.Utils;
 
 namespace Entity;
 /// <summary>
@@ -46,6 +47,25 @@ public class GenStep : EntityBase
     [ForeignKey(nameof(ProjectId))]
     public Project Project { get; set; } = null!;
     public Guid ProjectId { get; set; } = default!;
+
+    /// <summary>
+    /// 格式化路径
+    /// </summary>
+    /// <param name="variables"></param>
+    /// <returns></returns>
+    public string OutputPathFormat(List<Variable> variables)
+    {
+        string format = string.Empty;
+        if (OutputPath.NotEmpty())
+        {
+            // 循环将vriables中的key 匹配的@{key}替换 成value
+            foreach (var variable in variables)
+            {
+                format = OutputPath.Replace($"@{{{variable.Key}}}", variable.Value);
+            }
+        }
+        return format;
+    }
 }
 
 /// <summary>

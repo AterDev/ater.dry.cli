@@ -2,6 +2,7 @@ import { Variable } from '../../models/variable.model';
 import { GenSourceType } from '../../enum/models/gen-source-type.model';
 import { GenStep } from '../../gen-action/models/gen-step.model';
 import { Project } from '../../project/models/project.model';
+import { ActionStatus } from '../../enum/models/action-status.model';
 export interface GenAction {
   id: string;
   createdTime: Date;
@@ -16,5 +17,6 @@ export interface GenAction {
   genSteps?: GenStep[];
   project?: Project | null;
   projectId: string;
+  actionStatus?: ActionStatus | null;
 
 }

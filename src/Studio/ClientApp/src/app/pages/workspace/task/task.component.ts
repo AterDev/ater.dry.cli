@@ -152,6 +152,10 @@ export class TaskComponent implements OnInit {
       });
   }
 
+  openAddStep(item: GenActionItemDto): void {
+
+  }
+
   addVariable(): void {
     this.variables.push(new FormGroup({
       key: new FormControl(null, [Validators.required, Validators.maxLength(100)]),
@@ -210,22 +214,22 @@ export class TaskComponent implements OnInit {
 
   execute(item: GenActionItemDto): void {
     this.isProcessing = true;
-    // this.service.execute(item.id)
-    //   .subscribe({
-    //     next: (res) => {
-    //       if (res) {
-    //         this.snb.open('执行成功');
-    //       } else {
-    //         this.snb.open('执行失败');
-    //       }
-    //     },
-    //     error: (error) => {
-    //       this.snb.open(error.detail);
-    //     },
-    //     complete: () => {
-    //       this.isProcessing = false;
-    //     }
-    //   });
+    this.service.execute(item.id)
+      .subscribe({
+        next: (res) => {
+          if (res) {
+            this.snb.open('执行成功');
+          } else {
+            this.snb.open('执行失败');
+          }
+        },
+        error: (error) => {
+          this.snb.open(error.detail);
+        },
+        complete: () => {
+          this.isProcessing = false;
+        }
+      });
   }
 
   deleteConfirm(item: GenActionItemDto): void {

@@ -169,6 +169,13 @@ public class CodeGenService(ILogger<CodeGenService> logger)
         return [globalFile, controllerFile];
     }
 
+    /// <summary>
+    /// 生成Web请求
+    /// </summary>
+    /// <param name="url"></param>
+    /// <param name="outputPath"></param>
+    /// <param name="type"></param>
+    /// <returns></returns>
     public async Task<List<GenFileInfo>> GenerateWebRequestAsync(string url = "", string outputPath = "", RequestLibType type = RequestLibType.NgHttp)
     {
         _logger.LogInformation("🚀 Generating ts models and {type} request services...", type);
@@ -248,6 +255,18 @@ public class CodeGenService(ILogger<CodeGenService> logger)
             s.IsCover = true;
         });
         return files;
+    }
+
+    /// <summary>
+    /// 生成模板内容
+    /// </summary>
+    /// <param name="tplContent"></param>
+    /// <param name="variables"></param>
+    /// <returns></returns>
+    public string GenTemplateFile(string tplContent, List<Variable> variables)
+    {
+        var genContext = new RazorGenContext();
+        return genContext.GenTemplate(tplContent, variables);
     }
 
     /// <summary>

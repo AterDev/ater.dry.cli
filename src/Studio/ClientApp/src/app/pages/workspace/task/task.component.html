@@ -37,7 +37,14 @@
       <!-- name and description -->
       <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef>任务名称</th>
-        <td mat-cell *matCellDef="let element">{{element.name}}</td>
+        <td mat-cell *matCellDef="let element">
+          <div class="d-flex align-items-center gap-1">
+            <span>{{element.name}}</span>
+            <button mat-icon-button (click)="openAddDialog(element,true)" matTooltip="编辑操作">
+              <mat-icon class="text-primary">edit</mat-icon>
+            </button>
+          </div>
+        </td>
       </ng-container>
       <ng-container matColumnDef="description">
         <th mat-header-cell *matHeaderCellDef>任务描述</th>
@@ -46,13 +53,13 @@
 
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef>操作</th>
-        <td mat-cell *matCellDef="let element;table:table">
+        <td mat-cell *matCellDef="let element;table:table" class="gap-1">
           <!-- 执行 -->
           <button mat-icon-button (click)="execute(element)" matTooltip="执行操作">
             <mat-icon class="text-primary">play_arrow</mat-icon>
           </button>
-          <button mat-icon-button (click)="openAddDialog(element,true)" matTooltip="编辑">
-            <mat-icon class="text-primary">edit</mat-icon>
+          <button mat-icon-button (click)="openAddStep(element)" matTooltip="编辑步骤">
+            <mat-icon class="text-primary">format_list_numbered</mat-icon>
           </button>
           <button mat-icon-button matTooltip="删除" (click)="deleteConfirm(element)">
             <mat-icon class="text-danger">delete_forever</mat-icon>

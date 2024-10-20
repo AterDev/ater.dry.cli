@@ -1,7 +1,7 @@
 ﻿using Entity;
 namespace Share.Models.GenActionDtos;
 /// <summary>
-/// The project's generate action筛选条件
+/// 生成操作筛选条件
 /// </summary>
 /// <see cref="Entity.GenAction"/>
 public class GenActionFilterDto : FilterBase
@@ -16,5 +16,9 @@ public class GenActionFilterDto : FilterBase
     /// </summary>
     public GenSourceType? SourceType { get; set; }
     public Guid? ProjectId { get; set; }
+    /// <summary>
+    /// 操作状态
+    /// </summary>
+    public ActionStatus? ActionStatus { get; set; }
     
 }

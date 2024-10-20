@@ -1,6 +1,6 @@
 ﻿namespace Share.Models.GenActionDtos;
 /// <summary>
-/// The project's generate action添加时DTO
+/// 生成操作添加时DTO
 /// </summary>
 /// <see cref="Entity.GenAction"/>
 public class GenActionAddDto
@@ -25,4 +25,9 @@ public class GenActionAddDto
     /// source type
     /// </summary>
     public GenSourceType? SourceType { get; set; }
+    /// <summary>
+    /// 操作状态
+    /// </summary>
+    public ActionStatus ActionStatus { get; set; } = ActionStatus.NotStarted;
+
 }

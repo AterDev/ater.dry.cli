@@ -1,7 +1,8 @@
 import { Variable } from '../../models/variable.model';
 import { GenSourceType } from '../../enum/models/gen-source-type.model';
+import { ActionStatus } from '../../enum/models/action-status.model';
 /**
- * The project's generate action添加时DTO
+ * 生成操作添加时DTO
  */
 export interface GenActionAddDto {
   /**
@@ -19,5 +20,6 @@ export interface GenActionAddDto {
   openApiPath?: string | null;
   variables?: Variable[];
   sourceType?: GenSourceType | null;
+  actionStatus?: ActionStatus | null;
 
 }

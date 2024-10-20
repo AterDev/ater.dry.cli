@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "AterStudio API doc",
-    "description": "Studio API 文档. 更新时间:2024-10-20 17:34:36",
+    "description": "Studio API 文档. 更新时间:2024-10-20 18:55:49",
     "version": "v1"
   },
   "paths": {
@@ -1046,6 +1046,39 @@
         }
       }
     },
+    "/api/admin/GenAction/execute/{id}": {
+      "post": {
+        "tags": [
+          "GenAction"
+        ],
+        "summary": "执行操作",
+        "operationId": "GenAction_Execute",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/admin/GenStep/filter": {
       "post": {
         "tags": [
@@ -1766,6 +1799,44 @@
   },
   "components": {
     "schemas": {
+      "ActionStatus": {
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "integer",
+        "format": "int32",
+        "x-enumNames": [
+          "NotStarted",
+          "InProgress",
+          "Success",
+          "Failed"
+        ],
+        "x-enumData": [
+          {
+            "name": "NotStarted",
+            "value": 0,
+            "description": "未执行"
+          },
+          {
+            "name": "InProgress",
+            "value": 1,
+            "description": "执行中"
+          },
+          {
+            "name": "Success",
+            "value": 2,
+            "description": "成功"
+          },
+          {
+            "name": "Failed",
+            "value": 3,
+            "description": "失败"
+          }
+        ]
+      },
       "ApiDocContent": {
         "type": "object",
         "properties": {
@@ -2532,6 +2603,9 @@
           "projectId": {
             "type": "string",
             "format": "uuid"
+          },
+          "actionStatus": {
+            "$ref": "#/components/schemas/ActionStatus"
           }
         },
         "additionalProperties": false
@@ -2570,10 +2644,13 @@
           },
           "sourceType": {
             "$ref": "#/components/schemas/GenSourceType"
+          },
+          "actionStatus": {
+            "$ref": "#/components/schemas/ActionStatus"
           }
         },
         "additionalProperties": false,
-        "description": "The project's generate action添加时DTO"
+        "description": "生成操作添加时DTO"
       },
       "GenActionDetailDto": {
         "type": "object",
@@ -2614,6 +2691,9 @@
             "type": "string",
             "format": "uuid"
           },
+          "actionStatus": {
+            "$ref": "#/components/schemas/ActionStatus"
+          },
           "id": {
             "type": "string",
             "format": "uuid"
@@ -2628,7 +2708,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "The project's generate action详情"
+        "description": "生成操作详情"
       },
       "GenActionFilterDto": {
         "type": "object",
@@ -2661,10 +2741,13 @@
             "type": "string",
             "format": "uuid",
             "nullable": true
+          },
+          "actionStatus": {
+            "$ref": "#/components/schemas/ActionStatus"
           }
         },
         "additionalProperties": false,
-        "description": "The project's generate action筛选条件"
+        "description": "生成操作筛选条件"
       },
       "GenActionItemDto": {
         "type": "object",
@@ -2682,6 +2765,9 @@
           "sourceType": {
             "$ref": "#/components/schemas/GenSourceType"
           },
+          "actionStatus": {
+            "$ref": "#/components/schemas/ActionStatus"
+          },
           "id": {
             "type": "string",
             "format": "uuid"
@@ -2698,7 +2784,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "The project's generate action列表元素"
+        "description": "生成操作列表元素"
       },
       "GenActionItemDtoPageList": {
         "type": "object",
@@ -2753,10 +2839,13 @@
           },
           "sourceType": {
             "$ref": "#/components/schemas/GenSourceType"
+          },
+          "actionStatus": {
+            "$ref": "#/components/schemas/ActionStatus"
           }
         },
         "additionalProperties": false,
-        "description": "The project's generate action更新时DTO"
+        "description": "生成操作更新时DTO"
       },
       "GenSourceType": {
         "enum": [

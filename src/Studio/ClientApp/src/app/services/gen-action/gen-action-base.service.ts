@@ -68,4 +68,13 @@ export class GenActionBaseService extends BaseService {
     return this.request<boolean>('delete', _url);
   }
 
+  /**
+   * 执行操作
+   * @param id 
+   */
+  execute(id: string): Observable<boolean> {
+    const _url = `/api/admin/GenAction/execute/${id}`;
+    return this.request<boolean>('post', _url);
+  }
+
 }

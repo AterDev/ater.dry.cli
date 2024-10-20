@@ -30,7 +30,7 @@ public class ManagerGenerate(EntityInfo entityInfo)
     /// <returns></returns>
     public string GetManagerContent(string tplContent, string nsp)
     {
-        var genContext = new GenContext();
+        var genContext = new RazorGenContext();
         var model = new ManagerViewModel
         {
             Namespace = nsp,
@@ -106,7 +106,7 @@ public class ManagerGenerate(EntityInfo entityInfo)
             managerServiceContent += row + Environment.NewLine;
         });
 
-        var genContext = new GenContext();
+        var genContext = new RazorGenContext();
         var managerModel = new ManagerServiceViewModel
         {
             Namespace = nspName,

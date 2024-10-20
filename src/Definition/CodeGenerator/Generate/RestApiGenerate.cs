@@ -38,7 +38,7 @@ public class RestApiGenerate(EntityInfo entityInfo)
     /// </summary>
     public string GetRestApiContent(string tplContent)
     {
-        var genContext = new GenContext();
+        var genContext = new RazorGenContext();
         var model = new ControllerViewModel
         {
             Namespace = EntityInfo.GetAPINamespace(),

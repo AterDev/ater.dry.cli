@@ -66,7 +66,6 @@ public class CodeAnalysisService(ILogger<CodeAnalysisService> logger)
 
         entityHelper.LoadEntityContent(originContent);
         entityHelper.Parse();
-
         var originProperties = entityHelper.PropertiesInfo;
 
         var addedProperties = comparedProperties.Where(p => !originProperties.Any(o => o.Name == p.Name))

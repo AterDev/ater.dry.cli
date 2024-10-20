@@ -206,7 +206,7 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
                 codeBlocks += ToEnumSwitchString(item.Key, item.Value);
             }
         }
-        var genContext = new GenContext();
+        var genContext = new RazorGenContext();
         var model = new CommonViewModel
         {
             Content = codeBlocks

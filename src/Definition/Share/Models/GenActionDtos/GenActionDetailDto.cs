@@ -1,7 +1,7 @@
 ﻿using Entity;
 namespace Share.Models.GenActionDtos;
 /// <summary>
-/// The project's generate action详情
+/// 生成操作详情
 /// </summary>
 /// <see cref="Entity.GenAction"/>
 public class GenActionDetailDto
@@ -28,6 +28,10 @@ public class GenActionDetailDto
     public GenSourceType? SourceType { get; set; }
     public Project Project { get; set; } = default!;
     public Guid ProjectId { get; set; } = default!;
+    /// <summary>
+    /// 操作状态
+    /// </summary>
+    public ActionStatus ActionStatus { get; set; } = ActionStatus.NotStarted;
     public Guid Id { get; set; } = Guid.NewGuid();
     public DateTimeOffset CreatedTime { get; set; }
     public DateTimeOffset UpdatedTime { get; set; }

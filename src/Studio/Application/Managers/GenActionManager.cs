@@ -6,12 +6,15 @@ namespace Application.Managers;
 /// </summary>
 public class GenActionManager(
     DataAccessContext<GenAction> dataContext,
+    CodeGenService codeGenService,
     ILogger<GenActionManager> logger,
     IProjectContext projectContext,
     IUserContext userContext) : ManagerBase<GenAction>(dataContext, logger)
 {
     private readonly IUserContext _userContext = userContext;
     private readonly IProjectContext _projectContext = projectContext;
+    private readonly CodeGenService _codeGen = codeGenService;
+
 
     /// <summary>
     /// 添加实体
@@ -109,9 +112,61 @@ public class GenActionManager(
         return await query.FirstOrDefaultAsync();
     }
 
-    public void ExecuteAction(Guid id)
+    /// <summary>
+    /// 执行任务
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public async Task<bool> ExecuteActionAsync(Guid id)
     {
-        var action =
+        var action = await Command.Where(a => a.Id == id)
+            .Include(a => a.GenSteps)
+            .FirstAsync();
+        action.ActionStatus = ActionStatus.InProgress;
+        var variables = action.Variables;
+        if (action.GenSteps.Count > 0)
+        {
+            try
+            {
+                foreach (var step in action.GenSteps)
+                {
+                    switch (step.GenStepType)
+                    {
+                        case GenStepType.File:
+                            if (step.Path.NotEmpty() && File.Exists(step.Path))
+                            {
+                                step.Content = File.ReadAllText(step.Path);
+                            }
+                            step.OutputContent = _codeGen.GenTemplateFile(step.Content ?? "", variables);
+                            if (step.OutputPath.NotEmpty())
+                            {
+                                // 处理outputPath中的变化
+                                var outputPath = step.OutputPathFormat(variables);
+                                outputPath = Path.Combine(_projectContext.SolutionPath!, outputPath);
+                                File.WriteAllText(outputPath, step.OutputContent);
+                                return true;
+                            }
+                            break;
+                        case GenStepType.Command:
+                            break;
+                        case GenStepType.Script:
 
+                            break;
+                        default:
+                            break;
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                action.ActionStatus = ActionStatus.Failed;
+                _logger.LogError(ex, "Execute action failed");
+                return false;
+            }
+        }
+
+        action.ActionStatus = ActionStatus.Success;
+        return await SaveChangesAsync() > 0;
     }
 }
