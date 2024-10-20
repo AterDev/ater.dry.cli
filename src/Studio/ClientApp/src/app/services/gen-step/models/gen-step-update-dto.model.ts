@@ -24,7 +24,5 @@ export interface GenStepUpdateDto {
    */
   outputPath?: string | null;
   genStepType?: GenStepType | null;
-  projectId?: string | null;
-  genActionIds?: string[] | null;
 
 }

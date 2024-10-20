@@ -47,6 +47,10 @@
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef>操作</th>
         <td mat-cell *matCellDef="let element;table:table">
+          <!-- 执行 -->
+          <button mat-icon-button (click)="execute(element)" matTooltip="执行操作">
+            <mat-icon class="text-primary">play_arrow</mat-icon>
+          </button>
           <button mat-icon-button (click)="openAddDialog(element,true)" matTooltip="编辑">
             <mat-icon class="text-primary">edit</mat-icon>
           </button>
@@ -75,20 +79,20 @@
 
 <ng-template #addDialog>
   <h2 mat-dialog-title>
-    {{isEditable?'编辑':'新增'}}任务
+    {{isEditable?'编辑':'新增'}}操作
   </h2>
   <mat-dialog-content class="p-3">
     <form [formGroup]="addForm" class="d-flex flex-column">
       <mat-form-field>
-        <mat-label>任务名称</mat-label>
+        <mat-label>操作名称</mat-label>
         <input matInput [formControl]="name" placeholder="请输入任务名称">
       </mat-form-field>
       <mat-form-field>
-        <mat-label>任务描述</mat-label>
+        <mat-label>操作描述</mat-label>
         <textarea matInput [formControl]="description" placeholder="请输入任务描述"></textarea>
       </mat-form-field>
       <div class="d-flex justify-content-between align-items-center px-1">
-        <h3>任务变量</h3>
+        <h3>操作变量</h3>
         <button mat-icon-button matTooltip="添加变量" color="primary" (click)="addVariable()">
           <mat-icon>
             add

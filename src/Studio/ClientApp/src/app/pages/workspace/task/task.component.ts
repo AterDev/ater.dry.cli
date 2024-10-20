@@ -208,6 +208,26 @@ export class TaskComponent implements OnInit {
 
   }
 
+  execute(item: GenActionItemDto): void {
+    this.isProcessing = true;
+    // this.service.execute(item.id)
+    //   .subscribe({
+    //     next: (res) => {
+    //       if (res) {
+    //         this.snb.open('执行成功');
+    //       } else {
+    //         this.snb.open('执行失败');
+    //       }
+    //     },
+    //     error: (error) => {
+    //       this.snb.open(error.detail);
+    //     },
+    //     complete: () => {
+    //       this.isProcessing = false;
+    //     }
+    //   });
+  }
+
   deleteConfirm(item: GenActionItemDto): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       hasBackdrop: true,

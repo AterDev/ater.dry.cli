@@ -1,5 +1,4 @@
-﻿using Entity;
-namespace Share.Models.GenStepDtos;
+﻿namespace Share.Models.GenStepDtos;
 /// <summary>
 /// task step添加时DTO
 /// </summary>
@@ -35,6 +34,4 @@ public class GenStepAddDto
     /// step type
     /// </summary>
     public GenStepType GenStepType { get; set; }
-    public required Guid ProjectId { get; set; } = default!;
-    
 }

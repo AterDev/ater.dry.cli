@@ -36,17 +36,36 @@
     <table class="default" mat-table [dataSource]="dataSource" #table="matTable">
       <!-- name and description -->
       <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef>步骤</th>
-        <td mat-cell *matCellDef="let element;table:table">{{element.name}}</td>
-      </ng-container>
+        <th mat-header-cell *matHeaderCellDef>步骤名称</th>
+        <td mat-cell *matCellDef="let element;table:table">
+          <div class="d-flex align-items-center">
+            <span class="d-inline-flex" [matTooltip]="element.genStepType | enumText:'GenStepType'">
+              @switch (element.genStepType) {
+                @case (GenStepType.File) {
+                  <mat-icon class="text-primary">content_copy</mat-icon>
+                }
+                @case (GenStepType.Command) {
+                  <mat-icon class="text-primary">teriminal</mat-icon>
+                }
+                @case (GenStepType.Script) {
+                  <mat-icon class="text-primary">code_blocks</mat-icon>
+                }
+              }
+            </span>
 
-      <ng-container matColumnDef="genStepType">
-        <th mat-header-cell *matHeaderCellDef>类型</th>
-        <td mat-cell *matCellDef="let element;table:table">{{element.genStepType | enumText:'GenStepType'}}</td>
+            <span>
+              {{element.name}}
+            </span>
+          </div>
+        </td>
       </ng-container>
       <ng-container matColumnDef="path">
-        <th mat-header-cell *matHeaderCellDef>路径</th>
-        <td mat-cell *matCellDef="let element">{{element.path}}</td>
+        <th mat-header-cell *matHeaderCellDef>模板/脚本路径</th>
+        <td mat-cell *matCellDef="let element;table:table">{{element.path}}</td>
+      </ng-container>
+      <ng-container matColumnDef="outputPath">
+        <th mat-header-cell *matHeaderCellDef>输出路径</th>
+        <td mat-cell *matCellDef="let element;table:table">{{element.outputPath}}</td>
       </ng-container>
 
       <ng-container matColumnDef="actions">
@@ -101,31 +120,36 @@
       @switch (genStepType.value) {
         @case (GenStepType.File) {
           <mat-form-field>
-            <mat-label>文件路径</mat-label>
-            <input matInput [formControl]="path" placeholder="/xxx.xx" placeholder="填写路径或内容">
-            <mat-hint>支持绝对路径与相对项目路径</mat-hint>
+            <mat-label>输出路径</mat-label>
+            <input matInput [formControl]="outputPath" placeholder="./name.ext" placeholder="相对项目路径">
+            <mat-hint>支持变量{{'@{var}'}}</mat-hint>
           </mat-form-field>
-          <mat-form-field class="mt-1">
+          <mat-form-field class="mt-2">
+            <mat-label>模板文件路径</mat-label>
+            <input matInput [formControl]="path" placeholder="./name.ext" placeholder="相对项目路径">
+            <mat-hint>支持绝对路径</mat-hint>
+          </mat-form-field>
+          <mat-form-field class="mt-2">
             <mat-label>模板内容</mat-label>
             <textarea matInput rows="10" [formControl]="content" placeholder="使用Razor语法模板"></textarea>
             <mat-hint>路径和内容必填一项，路径优先</mat-hint>
           </mat-form-field>
-        }
-        @case (GenStepType.Command) {
-          <mat-form-field>
-            <mat-label>命令内容</mat-label>
-            <textarea matInput rows="3" [formControl]="content" placeholder="多行命令" required></textarea>
-          </mat-form-field>
-        }
-        @case (GenStepType.Script) {
-          <mat-form-field>
-            <mat-label>脚本路径</mat-label>
-            <input matInput [formControl]="path" placeholder="/xxx.ps1" required>
-            <mat-hint>支持绝对路径与相对项目路径</mat-hint>
-          </mat-form-field>
-        }
-        @default {}
-      }
+          }
+          @case (GenStepType.Command) {
+            <mat-form-field>
+              <mat-label>命令内容</mat-label>
+              <textarea matInput rows="3" [formControl]="content" placeholder="多行命令" required></textarea>
+            </mat-form-field>
+          }
+          @case (GenStepType.Script) {
+            <mat-form-field>
+              <mat-label>脚本路径</mat-label>
+              <input matInput [formControl]="path" placeholder="/xxx.ps1" required>
+              <mat-hint>支持绝对路径与相对项目路径</mat-hint>
+            </mat-form-field>
+          }
+          @default {}
+          }
     </form>
   </mat-dialog-content>
   <mat-dialog-actions class="justify-content-end pt-1">

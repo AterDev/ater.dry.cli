@@ -13,7 +13,6 @@ public class GenActionManager(
     private readonly IUserContext _userContext = userContext;
     private readonly IProjectContext _projectContext = projectContext;
 
-
     /// <summary>
     /// 添加实体
     /// </summary>
@@ -108,5 +107,11 @@ public class GenActionManager(
         // TODO:自定义数据权限验证
         // query = query.Where(q => q.User.Id == _userContext.UserId);
         return await query.FirstOrDefaultAsync();
+    }
+
+    public void ExecuteAction(Guid id)
+    {
+        var action =
+
     }
 }

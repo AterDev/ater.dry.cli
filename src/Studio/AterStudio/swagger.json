@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "AterStudio API doc",
-    "description": "Studio API 文档. 更新时间:2024-10-20 16:33:30",
+    "description": "Studio API 文档. 更新时间:2024-10-20 17:34:36",
     "version": "v1"
   },
   "paths": {
@@ -2848,8 +2848,7 @@
       },
       "GenStepAddDto": {
         "required": [
-          "name",
-          "projectId"
+          "name"
         ],
         "type": "object",
         "properties": {
@@ -2884,10 +2883,6 @@
           },
           "genStepType": {
             "$ref": "#/components/schemas/GenStepType"
-          },
-          "projectId": {
-            "type": "string",
-            "format": "uuid"
           }
         },
         "additionalProperties": false,
@@ -2969,6 +2964,10 @@
             },
             "nullable": true
           },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
           "genStepType": {
             "$ref": "#/components/schemas/GenStepType"
           },
@@ -2988,6 +2987,18 @@
             "maxLength": 100,
             "type": "string",
             "description": "步骤名称"
+          },
+          "outputPath": {
+            "maxLength": 400,
+            "type": "string",
+            "description": "输出路径",
+            "nullable": true
+          },
+          "path": {
+            "maxLength": 400,
+            "type": "string",
+            "description": "路径",
+            "nullable": true
           },
           "genStepType": {
             "$ref": "#/components/schemas/GenStepType"
@@ -3090,19 +3101,6 @@
           },
           "genStepType": {
             "$ref": "#/components/schemas/GenStepType"
-          },
-          "projectId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "genActionIds": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "nullable": true
           }
         },
         "additionalProperties": false,

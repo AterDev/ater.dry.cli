@@ -27,7 +27,7 @@ export class StepComponent {
   isProcessing = false;
   total = 0;
   data: GenStepItemDto[] = [];
-  columns: string[] = ['name', 'genStepType', 'path', 'actions'];
+  columns: string[] = ['name', 'path', 'outputPath', 'actions'];
   dataSource!: MatTableDataSource<GenStepItemDto>;
   dialogRef!: MatDialogRef<{}, any>;
   @ViewChild('addDialog', { static: true }) addTmpl!: TemplateRef<{}>;

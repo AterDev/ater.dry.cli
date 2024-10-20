@@ -6,6 +6,7 @@ export interface GenStepFilterDto {
   pageIndex: number;
   pageSize: number;
   orderBy?: any | null;
+  name?: string | null;
   genStepType?: GenStepType | null;
   projectId?: string | null;
 

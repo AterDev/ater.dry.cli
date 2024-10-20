@@ -43,7 +43,36 @@ public class GenAction : EntityBase
     [ForeignKey(nameof(ProjectId))]
     public Project Project { get; set; } = null!;
     public Guid ProjectId { get; set; } = default!;
+    /// <summary>
+    /// 操作状态
+    /// </summary>
+    public ActionStatus ActionStatus { get; set; } = ActionStatus.NotStarted;
 }
+
+public enum ActionStatus
+{
+    /// <summary>
+    /// 未开始
+    /// </summary>
+    [Description("未执行")]
+    NotStarted,
+    /// <summary>
+    /// 进行中
+    /// </summary>
+    [Description("执行中")]
+    InProgress,
+    /// <summary>
+    /// 已完成
+    /// </summary>
+    [Description("成功")]
+    Success,
+    /// <summary>
+    /// 已失败
+    /// </summary>
+    [Description("失败")]
+    Failed
+}
+
 /// <summary>
 /// Source Type
 /// </summary>
