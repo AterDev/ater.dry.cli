@@ -37,7 +37,7 @@ public class GenStepDetailDto
     public GenStepType GenStepType { get; set; }
     public Project Project { get; set; } = default!;
     public Guid ProjectId { get; set; } = default!;
-    public Guid Id { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
     public DateTimeOffset CreatedTime { get; set; }
     public DateTimeOffset UpdatedTime { get; set; }
     

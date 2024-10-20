@@ -78,15 +78,38 @@
     {{isEditable?'编辑':'新增'}}任务
   </h2>
   <mat-dialog-content class="p-3">
-    <form [formGroup]="addForm">
-      <mat-form-field style="width: 100%;">
+    <form [formGroup]="addForm" class="d-flex flex-column">
+      <mat-form-field>
         <mat-label>任务名称</mat-label>
         <input matInput [formControl]="name" placeholder="请输入任务名称">
       </mat-form-field>
-      <mat-form-field style="width: 100%;">
+      <mat-form-field>
         <mat-label>任务描述</mat-label>
         <textarea matInput [formControl]="description" placeholder="请输入任务描述"></textarea>
       </mat-form-field>
+      <div class="d-flex justify-content-between align-items-center px-1">
+        <h3>任务变量</h3>
+        <button mat-icon-button matTooltip="添加变量" color="primary" (click)="addVariable()">
+          <mat-icon>
+            add
+          </mat-icon>
+        </button>
+      </div>
+      <div formArrayName="variables" class="mt-2 d-flex flex-column gap-2">
+        @for (item of variables.controls; track $index) {
+          <div [formGroupName]="$index" class="d-flex gap-1 align-items-center">
+            <mat-form-field subscriptSizing="dynamic">
+              <mat-label>变量名</mat-label>
+              <input matInput formControlName="key" placeholder="输入变量名称">
+            </mat-form-field>
+            <mat-form-field subscriptSizing="dynamic">
+              <mat-label>变量值</mat-label>
+              <input matInput formControlName="value" placeholder="变量值">
+            </mat-form-field>
+            <button mat-button (click)="removeVariable($index)">删除</button>
+          </div>
+        }
+      </div>
     </form>
   </mat-dialog-content>
   <mat-dialog-actions class="justify-content-end">

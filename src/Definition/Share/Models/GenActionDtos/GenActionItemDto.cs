@@ -20,4 +20,5 @@ public class GenActionItemDto
     public Guid Id { get; set; } = Guid.NewGuid();
     public DateTimeOffset CreatedTime { get; set; }
 
+    public List<Variable> Variables { get; set; } = [];
 }

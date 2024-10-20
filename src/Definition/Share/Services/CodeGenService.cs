@@ -270,7 +270,7 @@ public class CodeGenService(ILogger<CodeGenService> logger)
                     Directory.CreateDirectory(dir!);
                 }
                 File.WriteAllText(file.FullName, file.Content, Encoding.UTF8);
-                _logger.LogInformation($"🆕 生成文件：{file.FullName}");
+                _logger.LogInformation("🆕📄 :{path}", file.FullName);
             }
         }
     }

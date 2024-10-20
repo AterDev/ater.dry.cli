@@ -3,7 +3,7 @@
 namespace Entity;
 
 /// <summary>
-/// The project's generate action
+/// 生成操作
 /// </summary>
 [Index(nameof(Name))]
 [Index(nameof(Description))]

@@ -5,7 +5,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable, forkJoin } from 'rxjs';
 import { GenActionService } from 'src/app/services/gen-action/gen-action.service';
 import { GenActionFilterDto } from 'src/app/services/gen-action/models/gen-action-filter-dto.model';
@@ -51,6 +51,7 @@ export class TaskComponent implements OnInit {
 
   get name(): FormControl { return this.addForm.get('name') as FormControl; }
   get description(): FormControl { return this.addForm.get('description') as FormControl; }
+  get variables(): FormArray { return this.addForm.get('variables') as FormArray; }
 
   ngOnInit(): void {
     forkJoin([this.getListAsync()])
@@ -115,10 +116,11 @@ export class TaskComponent implements OnInit {
   initForm(): void {
     this.addForm = new FormGroup({
       name: new FormControl(null, [Validators.required, Validators.maxLength(40)]),
-      description: new FormControl(null, [Validators.maxLength(200)])
+      description: new FormControl(null, [Validators.maxLength(200)]),
+      variables: new FormArray([])
     });
-
   }
+
   openAddDialog(item: GenActionItemDto | null = null, isEditable = false): void {
     this.initForm();
     this.isEditable = isEditable;
@@ -126,6 +128,18 @@ export class TaskComponent implements OnInit {
       this.currentItem = item;
       this.name?.setValue(item?.name);
       this.description?.setValue(item?.description);
+
+      if (item.variables) {
+        const groups = item.variables.map(item => new FormGroup({
+          key: new FormControl(item.key, [Validators.required, Validators.maxLength(100)]),
+          value: new FormControl(item.value, [Validators.required, Validators.maxLength(1000)]),
+        }));
+
+        groups.forEach(group => {
+          this.variables.push(group);
+        });
+      }
+
     }
     this.dialogRef = this.dialog.open(this.addTmpl, {
       minWidth: '400px',
@@ -136,6 +150,17 @@ export class TaskComponent implements OnInit {
         if (res)
           this.getList();
       });
+  }
+
+  addVariable(): void {
+    this.variables.push(new FormGroup({
+      key: new FormControl(null, [Validators.required, Validators.maxLength(100)]),
+      value: new FormControl(null, [Validators.required, Validators.maxLength(1000)])
+    }));
+  }
+
+  removeVariable(index: number): void {
+    this.variables.removeAt(index);
   }
 
   save(): void {

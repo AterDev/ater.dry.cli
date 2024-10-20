@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "AterStudio API doc",
-    "description": "Studio API 文档. 更新时间:2024-10-20 3:43:45",
+    "description": "Studio API 文档. 更新时间:2024-10-20 16:33:30",
     "version": "v1"
   },
   "paths": {
@@ -2689,6 +2689,12 @@
           "createdTime": {
             "type": "string",
             "format": "date-time"
+          },
+          "variables": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Variable"
+            }
           }
         },
         "additionalProperties": false,
@@ -2963,10 +2969,6 @@
             },
             "nullable": true
           },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
           "genStepType": {
             "$ref": "#/components/schemas/GenStepType"
           },
@@ -2986,18 +2988,6 @@
             "maxLength": 100,
             "type": "string",
             "description": "步骤名称"
-          },
-          "path": {
-            "maxLength": 400,
-            "type": "string",
-            "description": "模板或脚本路径",
-            "nullable": true
-          },
-          "outputPath": {
-            "maxLength": 400,
-            "type": "string",
-            "description": "输出路径",
-            "nullable": true
           },
           "genStepType": {
             "$ref": "#/components/schemas/GenStepType"

@@ -323,6 +323,7 @@ public partial class EntityInfoManager(
     public async Task<List<GenFileInfo>> MergeDtoModelsAsync(EntityInfo entityInfo, List<GenFileInfo> genFilesInfo)
     {
         var sw = new Stopwatch();
+        sw.Start();
         var res = new List<GenFileInfo>();
         var existEntity = await Command.Where(q => q.FilePath == entityInfo.FilePath)
             .Include(e => e.PropertyInfos)
@@ -331,9 +332,10 @@ public partial class EntityInfoManager(
         if (existEntity == null)
         {
             await AddAsync(entityInfo);
+            _logger.LogInformation("➕ Add new entity:{Name}", entityInfo.Name);
             return genFilesInfo;
         }
-        else
+        else if (existEntity.Md5Hash != entityInfo.Md5Hash)
         {
             existEntity.Md5Hash = entityInfo.Md5Hash;
             existEntity.ModuleName = entityInfo.ModuleName;
@@ -345,19 +347,35 @@ public partial class EntityInfoManager(
                 p.EntityInfoId = existEntity.Id;
             });
             UpdateRelation(existEntity, e => e.PropertyInfos, entityInfo.PropertyInfos);
-
             await SaveChangesAsync();
+            _logger.LogInformation("🆙 Update entity:{Name}", entityInfo.Name);
+        }
+        else
+        {
+            _logger.LogInformation("ℹ️ Entity {entity} not changed!", entityInfo.Name);
+            return genFilesInfo;
         }
 
         string sharePath = _projectContext.GetSharePath(entityInfo.ModuleName);
         // 对比当前实体生成的Dto与现有代码中的Dto的差异
         var originGenFiles = _codeGenService.GenerateDtos(existEntity, sharePath, true);
-        originGenFiles = originGenFiles.Where(f => f.Name.EndsWith("Dto")).ToList();
+        originGenFiles = originGenFiles.Where(f => f.Name.EndsWith("Dto.cs")).ToList();
 
         var compilationHelper = new CompilationHelper(sharePath);
         foreach (var genFile in originGenFiles)
         {
             var diffProperties = _codeAnalysis.GetDiffProperties(genFile.FullName, genFile.Content);
+            // log add and deleted
+            _logger.LogDebug(genFile.Content);
+
+            var addedFileMsg = "";
+            diffProperties.Added.ForEach(p => addedFileMsg += $"{p.Type} {p.Name}" + Environment.NewLine);
+            _logger.LogInformation("⌚ [{dto}] Added: {msg}", genFile.Name, addedFileMsg);
+
+            var deletedFileMsg = "";
+            diffProperties.Deleted.ForEach(p => deletedFileMsg += $"{p.Type} {p.Name}" + Environment.NewLine);
+            _logger.LogInformation("⌚ [{dto}] Deleted: {msg}", genFile.Name, deletedFileMsg);
+
             diffProperties.ModelName = genFile.Name;
 
             // 将差异属性更新到genFilesInfo
