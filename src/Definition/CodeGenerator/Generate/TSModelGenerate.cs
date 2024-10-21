@@ -194,7 +194,7 @@ public class TSModelGenerate : GenerateBase
                 {
                     string? dirName = GetDirName(name);
                     dirName = dirName.NotEmpty() ? dirName!.ToHyphen() + "/" : "";
-                    importString += @$"import {{ {extend} }} from '{relatePath}{dirName}models/{extend.ToHyphen()}.model';"
+                    importString += @$"import {{ {extend} }} from '{relatePath}models/{extend.ToHyphen()}.model';"
                         + Environment.NewLine;
                 }
             }
