@@ -414,8 +414,7 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
             List<string> refTypes = GetRefTyeps(functions);
             refTypes.ForEach(t =>
             {
-                string? dirName = TsModelFiles?.Where(f => f.ModelName == t).Select(f => f.FullName).FirstOrDefault();
-                importModels += $"import {{ {t} }} from '../models/{dirName?.ToHyphen()}/{t.ToHyphen()}.model';{Environment.NewLine}";
+                importModels = InsertImportModel(serviceFile, t, importModels);
             });
         }
         tplContent = tplContent.Replace("//[@Import]", importModels)
@@ -476,25 +475,7 @@ public class RequestGenerate(OpenApiDocument openApi) : GenerateBase
 
             refTypes.ForEach(t =>
             {
-                if (EnumModels.Contains(t))
-                {
-                    importModels += $"import {{ {t} }} from '../enum/models/{t.ToHyphen()}.model';{Environment.NewLine}";
-                }
-                else
-                {
-                    string? dirName = TsModelFiles?.Where(f => f.ModelName == t)
-                        .Select(f => f.FullName).FirstOrDefault();
-
-                    if (dirName != serviceFile.Name.ToHyphen())
-                    {
-                        importModels += $"import {{ {t} }} from '../{dirName}/models/{t.ToHyphen()}.model';{Environment.NewLine}";
-                    }
-                    else
-                    {
-                        importModels += $"import {{ {t} }} from './models/{t.ToHyphen()}.model';{Environment.NewLine}";
-                    }
-                }
-
+                importModels = InsertImportModel(serviceFile, t, importModels);
             });
         }
         string result = $@"import {{ Injectable }} from '@angular/core';
@@ -747,6 +728,36 @@ export class {{serviceFile.Name}}Service extends {{serviceFile.Name}}BaseService
 ";
         return functionString;
     }
+    /// <summary>
+    /// 模板的引用
+    /// </summary>
+    /// <param name="serviceFile"></param>
+    /// <param name="t"></param>
+    /// <param name="importModels"></param>
+    /// <returns></returns>
+    private string InsertImportModel(RequestServiceFile serviceFile, string t, string importModels)
+    {
+        if (EnumModels.Contains(t))
+        {
+            importModels += $"import {{ {t} }} from '../enum/models/{t.ToHyphen()}.model';{Environment.NewLine}";
+        }
+        else
+        {
+            string? dirName = TsModelFiles?.Where(f => f.ModelName == t)
+                .Select(f => f.FullName).FirstOrDefault();
+
+            if (dirName != serviceFile.Name.ToHyphen())
+            {
+                importModels += $"import {{ {t} }} from '../{dirName}/models/{t.ToHyphen()}.model';{Environment.NewLine}";
+            }
+            else
+            {
+                importModels += $"import {{ {t} }} from './models/{t.ToHyphen()}.model';{Environment.NewLine}";
+            }
+        }
+        return importModels;
+    }
+
     /// <summary>
     /// 获取要导入的依赖
     /// </summary>
