@@ -73,7 +73,7 @@ app.Configure(config =>
 #endif
     var version = AssemblyHelper.GetCurrentToolVersion();
     config.SetApplicationName(ConstVal.CommandName);
-    config.SetApplicationVersion(version);
+    config.UseAssemblyInformationalVersion();
     config.SetApplicationCulture(systemCulture);
 
     config

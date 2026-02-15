@@ -65,28 +65,12 @@ app.MapGet("/Culture/SetCulture", (string culture, string? redirectUri, HttpCont
     return Results.LocalRedirect(redirectUri);
 });
 
-app.Lifetime.ApplicationStarted.Register(() =>
-{
-    var server = app.Services.GetRequiredService<IServer>();
-    var addressesFeature = server.Features.Get<IServerAddressesFeature>();
-    foreach (var address in addressesFeature?.Addresses ?? [])
-    {
-        if (address.StartsWith("http://"))
-        {
-            OutputHelper.Success($"🌐 Studio: {address}");
-        }
-    }
-});
-
 // 添加应用程序关闭时的清理处理
 app.Lifetime.ApplicationStopping.Register(() =>
 {
     try
     {
         OutputHelper.Info("🛑 Application stopping, cleaning up resources...");
-        // 正常垃圾回收以释放程序集引用
-        GC.Collect();
-        GC.WaitForPendingFinalizers();
         var dir = AssemblyHelper.GetStudioPath();
         var path = Path.Combine(dir, ConstVal.DbName);
         MiniDbContext.ReleaseSharedCache(path);
