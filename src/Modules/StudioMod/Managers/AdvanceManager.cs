@@ -1,5 +1,5 @@
 using CodeGenerator.Models;
-using DataContext.DBProvider;
+using DataContext.AppDbContext;
 
 namespace StudioMod.Managers;
 

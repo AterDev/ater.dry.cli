@@ -1,5 +1,5 @@
 using CodeGenerator.Helper;
-using Entity;
+using DataContext.AppDbContext;
 using Mapster;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -39,7 +39,7 @@ public static partial class FrameworkExtensions
             Directory.CreateDirectory(dir);
         }
         var path = Path.Combine(dir, ConstVal.DbName);
-
+        OutputHelper.Info("using db file:" + path);
         MiniDbConfiguration.AddDbContext<DefaultDbContext>(config =>
         {
             config.UseMiniDb(path);

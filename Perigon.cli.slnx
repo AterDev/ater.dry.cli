@@ -15,6 +15,7 @@
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/Core/Core.csproj" Id="1e7bec10-4ecd-4d6e-b653-40de55162da2" />
+    <Project Path="src\Command\CommandLine\CommandLine.csproj" />
   </Folder>
 
   <Folder Name="/src/Definition/">
@@ -22,10 +23,6 @@
     <Project Path="src\Definition\CodeGenerator\CodeGenerator.csproj" />
     <Project Path="src\Definition\Entity\Entity.csproj" />
     <Project Path="src\Definition\Share\Share.csproj" />
-  </Folder>
-
-  <Folder Name="/src/Command/">
-    <Project Path="src\Command\CommandLine\CommandLine.csproj" />
   </Folder>
   <Folder Name="/src/Modules/">
     <Project Path="src\Modules\StudioMod\StudioMod.csproj" />

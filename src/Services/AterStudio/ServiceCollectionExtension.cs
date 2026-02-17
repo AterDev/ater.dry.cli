@@ -20,8 +20,6 @@ public static class ServiceCollectionExtension
     public static WebApplication UseMiddlewareServices(this WebApplication app)
     {
         app.UseRequestLocalization();
-        app.UseRouting();
-        app.UseStaticFiles();
         app.UseAntiforgery();
         app.MapStaticAssets();
 
@@ -81,12 +79,12 @@ public static class ServiceCollectionExtension
     /// <returns></returns>
     public static IServiceCollection AddBlazorServices(this WebApplicationBuilder builder)
     {
-        builder
-            .Services.AddRazorComponents(options =>
-            {
-                options.DetailedErrors = true;
-            })
-            .AddInteractiveServerComponents();
+        builder.Services.AddRazorComponents(options =>
+        {
+            options.DetailedErrors = true;
+        })
+        .AddInteractiveServerComponents();
+
         builder.Services.AddFluentUIComponents();
         return builder.Services;
     }

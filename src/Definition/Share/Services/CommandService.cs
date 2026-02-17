@@ -1,4 +1,5 @@
 using CodeGenerator.Helper;
+using DataContext.AppDbContext;
 using Share.Models.CommandDtos;
 using Spectre.Console;
 using System.Diagnostics;

@@ -2,8 +2,6 @@ using AterStudio;
 using AterStudio.Components.Pages;
 using CodeGenerator.Helper;
 using Entity;
-using Microsoft.AspNetCore.Hosting.Server;
-using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Localization;
 using Perigon.MiniDb;
 using Share.Helper;
@@ -25,7 +23,6 @@ builder.Services.AddManagers();
 
 // services
 builder.Services.AddSingleton<IProjectContext, ProjectContext>();
-
 builder.Services.AddScoped<CodeAnalysisService>();
 builder.Services.AddScoped<CodeGenService>();
 builder.Services.AddScoped<CommandService>();
@@ -81,7 +78,6 @@ app.Lifetime.ApplicationStopping.Register(() =>
         OutputHelper.Warning($"⚠️ Warning during cleanup: {ex.Message}");
     }
 });
-
 
 await app.RunAsync();
 

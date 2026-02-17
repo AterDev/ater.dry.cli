@@ -1,4 +1,4 @@
-﻿namespace DataContext.DBProvider;
+﻿namespace DataContext.AppDbContext;
 
 public class DefaultDbContext() : MiniDbContext()
 {

@@ -25,8 +25,8 @@ public class PageBase : ComponentBase
     [Inject]
     protected NavigationManager NavigationManager { get; set; } = default!;
 
-    [Inject]
-    protected StorageService StorageService { get; set; } = default!;
+    //[Inject]
+    //protected StorageService StorageService { get; set; } = default!;
 
     [Inject]
     protected IJSRuntime JS { get; set; } = default!;
