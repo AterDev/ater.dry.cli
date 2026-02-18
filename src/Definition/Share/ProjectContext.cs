@@ -1,11 +1,12 @@
 using DataContext.AppDbContext;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Share;
 
 /// <summary>
 /// 项目上下文
 /// </summary>
-public class ProjectContext(DefaultDbContext context) : IProjectContext
+public class ProjectContext(IServiceProvider serviceProvider) : IProjectContext
 {
     public int? SolutionId { get; set; }
     public string? ProjectName { get; set; }
@@ -20,7 +21,11 @@ public class ProjectContext(DefaultDbContext context) : IProjectContext
 
     public SolutionConfig? SolutionConfig { get; set; }
 
-    private readonly DefaultDbContext _context = context;
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
+    private DefaultDbContext? _context;
+
+    private DefaultDbContext DbContext =>
+        _context ??= _serviceProvider.GetRequiredService<DefaultDbContext>();
 
     /// <summary>
     /// 根据ID设置项目
@@ -31,7 +36,7 @@ public class ProjectContext(DefaultDbContext context) : IProjectContext
     {
         SolutionId = id;
         var intId = id.GetHashCode();
-        var solution = _context.Solutions.FirstOrDefault(s => s.Id == intId);
+        var solution = DbContext.Solutions.FirstOrDefault(s => s.Id == intId);
         if (solution != null)
         {
             ProjectName = solution.Name;
@@ -56,7 +61,7 @@ public class ProjectContext(DefaultDbContext context) : IProjectContext
         }
 
         SolutionPath = solutionPath;
-        var solution = _context
+        var solution = DbContext
             .Solutions.FirstOrDefault(p => p.Path.Equals(solutionPath));
 
         SolutionId = solution?.Id;

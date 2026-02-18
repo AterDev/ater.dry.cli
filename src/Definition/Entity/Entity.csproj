@@ -6,8 +6,9 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\Core\Core.csproj" />
+		<ProjectReference Include="..\..\..\..\Perigon.minidb\src\Perigon.MiniDb\Perigon.MiniDb.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Perigon.MiniDb" />
+        <!--<PackageReference Include="Perigon.MiniDb" />-->
     </ItemGroup>
 </Project>

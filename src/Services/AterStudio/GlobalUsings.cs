@@ -1,5 +1,6 @@
 global using AterStudio.Components.Shared;
 global using AterStudio.Components.Shared.Models;
+global using AterStudio.Services;
 global using AterStudio.Extension;
 global using Core.Utils;
 global using Entity.StudioMod;

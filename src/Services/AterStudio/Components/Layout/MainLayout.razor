@@ -6,8 +6,10 @@
 @using AterStudio.Components.Shared
 @using AterStudio.Services
 
-<FluentLayout>
-    <FluentHeader Class="header" Height="56" Style="background:var(--neutral-layer-2)">
+<ErrorBoundary Context="layoutEx" @ref="_errorBoundary">
+    <ChildContent>
+        <FluentLayout>
+            <FluentHeader Class="header" Height="56" Style="background:var(--neutral-layer-2)">
         <ChildContent>
             <FluentStack Orientation="Orientation.Horizontal"
                          HorizontalGap="2"
@@ -113,28 +115,31 @@
 
             </FluentStack>
         </ChildContent>
-    </FluentHeader>
-    <FluentStack Class="main" Orientation="Orientation.Horizontal" Width="100%">
-        <FluentBodyContent Class="main-content">
-            <div class="main-body-content">
-                <FluentMessageBarProvider Section="MESSAGES_TOP" />
-                <ErrorBoundary Context="ex" @ref="_errorBoundary">
-                    <ChildContent>
+            </FluentHeader>
+            <FluentStack Class="main" Orientation="Orientation.Horizontal" Width="100%">
+                <FluentBodyContent Class="main-content">
+                    <div class="main-body-content">
+                        <FluentMessageBarProvider Section="MESSAGES_TOP" />
                         @Body
-                    </ChildContent>
-                    <ErrorContent>
-                        <Error Message="@ex.Message" Details="@ex.StackTrace"></Error>
-                    </ErrorContent>
-                </ErrorBoundary>
-            </div>
-        </FluentBodyContent>
-    </FluentStack>
-</FluentLayout>
+                    </div>
+                </FluentBodyContent>
+            </FluentStack>
+        </FluentLayout>
 
-<FluentToastProvider />
-<FluentDialogProvider />
-<FluentTooltipProvider />
-<FluentMenuProvider />
+        <FluentToastProvider />
+        <FluentDialogProvider />
+        <FluentTooltipProvider />
+        <FluentMenuProvider />
+
+        <FluentDesignTheme @bind-Mode="@Mode"
+                           StorageName="theme"
+                           OfficeColor="OfficeColor.OneNote"
+                           OnLuminanceChanged="ThemeChanged" />
+    </ChildContent>
+    <ErrorContent>
+        <Error Message="@layoutEx.Message" Details="@layoutEx.StackTrace"></Error>
+    </ErrorContent>
+</ErrorBoundary>
 
 <div id="blazor-error-ui" data-nosnippet>
     An unhandled error has occurred.
@@ -142,7 +147,3 @@
     <span class="dismiss">🗙</span>
 </div>
 
-<FluentDesignTheme @bind-Mode="@Mode"
-                   StorageName="theme"
-                   OfficeColor="OfficeColor.OneNote"
-                   OnLuminanceChanged="ThemeChanged" />

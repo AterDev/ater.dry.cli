@@ -31,7 +31,7 @@ public partial class Home
 
     protected override async Task OnInitializedAsync()
     {
-        //await GetProjectListAsync();
+        await GetProjectListAsync();
     }
 
     private void OpenSolution(Solution solution)
@@ -42,7 +42,7 @@ public partial class Home
 
     private async Task GetProjectListAsync()
     {
-        //solutions = await SolutionManager.ListAsync();
+        solutions = await SolutionManager.ListAsync();
     }
 
     private async Task OpenConfigDialogAsync(Solution project)
@@ -68,12 +68,13 @@ public partial class Home
             primaryText: Lang(Localizer.Yes),
             secondaryText: Lang(Localizer.No),
             title: Lang(Localizer.Delete, Localizer.Project)
+
         );
 
         var result = await dialog.Result;
         if (result.Cancelled)
             return;
-        //await SolutionManager.DeleteAsync([project.Id], false);
+        await SolutionManager.DeleteAsync([project.Id], false);
         await GetProjectListAsync();
     }
 

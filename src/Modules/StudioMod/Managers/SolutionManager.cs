@@ -31,21 +31,12 @@ public class SolutionManager(
     /// 获取项目列表
     /// </summary>
     /// <returns></returns>
-    public async Task<List<Solution>> ListAsync()
+    public Task<List<Solution>> ListAsync()
     {
-        var projects = _dbSet.ToList();
-        for (int i = projects.Count - 1; i >= 0; i--)
-        {
-            var p = projects[i];
-            // 移除不存在的项目
-            if (!Directory.Exists(p.Path))
-            {
-                _dbSet.Remove(p);
-                projects.RemoveAt(i);
-            }
-        }
-        await _dbContext.SaveChangesAsync();
-        return projects;
+        // IMPORTANT: keep home-page listing fast and non-blocking.
+        // Do not perform synchronous file system probing here (Directory.Exists on
+        // offline network/disconnected drives can block and freeze interactive render).
+        return Task.FromResult(_dbSet.ToList());
     }
 
     public static string GetToolVersion()

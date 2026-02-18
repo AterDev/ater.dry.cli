@@ -88,4 +88,5 @@ public static class ServiceCollectionExtension
         builder.Services.AddFluentUIComponents();
         return builder.Services;
     }
+
 }
