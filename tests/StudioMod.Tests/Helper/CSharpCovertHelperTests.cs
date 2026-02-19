@@ -1,8 +1,8 @@
 using Xunit;
-using Core.Utils;
 using System;
+using Share.Utils;
 
-namespace StudioMod.Tests.Helper;
+namespace CoreMod.Tests.Helper;
 
 public class CSharpCovertHelperTests
 {

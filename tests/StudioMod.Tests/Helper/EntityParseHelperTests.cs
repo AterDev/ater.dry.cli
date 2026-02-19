@@ -1,10 +1,10 @@
 using CodeGenerator.Helper;
-using Entity;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Share;
 using Xunit;
 
-namespace StudioMod.Tests.Helper;
+namespace CoreMod.Tests.Helper;
 
 public class EntityParseHelperTests : IDisposable
 {

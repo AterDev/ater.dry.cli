@@ -2,7 +2,7 @@ using CommandLine.Commands;
 using System.Text.Json;
 using Xunit;
 
-namespace StudioMod.Tests.Commands;
+namespace CoreMod.Tests.Commands;
 
 public class McpConfigCommandTests
 {

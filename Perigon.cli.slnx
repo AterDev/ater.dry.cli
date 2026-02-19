@@ -14,24 +14,20 @@
     <File Path="README_en.md" />
   </Folder>
   <Folder Name="/src/">
-    <Project Path="src/Core/Core.csproj" Id="1e7bec10-4ecd-4d6e-b653-40de55162da2" />
-    <Project Path="src\Command\CommandLine\CommandLine.csproj" />
-  </Folder>
+    <Project Path="src\CodeGenerator\CodeGenerator.csproj" />
+    <Project Path="src\Share\Share.csproj" />
 
-  <Folder Name="/src/Definition/">
-    <Project Path="src/Definition/DataContext/DataContext.csproj" />
-    <Project Path="src\Definition\CodeGenerator\CodeGenerator.csproj" />
-    <Project Path="src\Definition\Entity\Entity.csproj" />
-    <Project Path="src\Definition\Share\Share.csproj" />
+    <Project Path="..\Perigon.minidb\src\Perigon.MiniDb\Perigon.MiniDb.csproj"/>
+  </Folder>
+  <Folder Name="/src/Apps/">
+    <Project Path="src\Apps\CommandLine\CommandLine.csproj" />
+    <Project Path="src\Apps\Dashboard\Dashboard.csproj" />
   </Folder>
   <Folder Name="/src/Modules/">
-    <Project Path="src\Modules\StudioMod\StudioMod.csproj" />
-  </Folder>
-  <Folder Name="/src/Services/">
-    <Project Path="src\Services\AterStudio\AterStudio.csproj" />
+    <Project Path="src/Modules/CoreMod/CoreMod.csproj" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="tests/StudioMod.Tests/StudioMod.Tests.csproj" />
+    <Project Path="tests/StudioMod.Tests/CoreMod.Tests.csproj" />
   </Folder>
 
 </Solution>

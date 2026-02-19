@@ -4,7 +4,7 @@ using System;
 using System.IO;
 using System.Linq;
 
-namespace StudioMod.Tests.Helper;
+namespace CoreMod.Tests.Helper;
 
 public class CompilationHelperTests : IDisposable
 {

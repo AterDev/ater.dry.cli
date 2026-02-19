@@ -1,7 +1,7 @@
 $location = Get-Location
 
-$commandLineDir = Join-Path $location "..\src\Command\CommandLine"
-$studioDir = Join-Path $location "..\src\Services\AterStudio"
+$commandLineDir = Join-Path $location "..\src\Apps\CommandLine"
+$studioDir = Join-Path $location "..\src\Apps\Dashboard"
 $shareDllsFile = Join-Path $commandLineDir "ShareDlls.txt"
 
 # 清静publish 
@@ -10,12 +10,11 @@ Remove-Item -Path (Join-Path $studioDir "publish") -Recurse -Force -ErrorAction 
 
 ## 构建项目
 dotnet publish  (Join-Path $commandLineDir "CommandLine.csproj") -c Release -o (Join-Path $commandLineDir "publish")
-dotnet publish  (Join-Path $studioDir "AterStudio.csproj") -c Release -o (Join-Path $studioDir "publish")
+dotnet publish  (Join-Path $studioDir "Dashboard.csproj") -c Release -o (Join-Path $studioDir "publish")
 
 ## 检查共享的 DLL 文件
-$path1 = "../src/Command/CommandLine/publish"
-$path2 = "../src/Services/AterStudio/publish"
-
+$path1 = "../src/Apps/CommandLine/publish"
+$path2 = "../src/Apps/Dashboard/publish"
 $files1 = Get-ChildItem -Path $path1  -Filter *.dll | Select-Object -ExpandProperty Name
 $files2 = Get-ChildItem -Path $path2  -Filter *.dll | Select-Object -ExpandProperty Name
 

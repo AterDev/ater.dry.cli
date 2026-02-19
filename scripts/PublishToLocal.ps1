@@ -8,8 +8,8 @@ $location = Get-Location
 $OutputEncoding = [System.Console]::OutputEncoding = [System.Console]::InputEncoding = [System.Text.Encoding]::UTF8
 
 $dotnetVersion = "net10.0"
-$commandLinePath = Join-Path $location "../src/Command/CommandLine";
-$studioPath = Join-Path $location "../src/Services/AterStudio";
+$commandLinePath = Join-Path $location "../src/Apps/CommandLine";
+$studioPath = Join-Path $location "../src/Apps/Dashboard";
 $shareDllsFile = Join-Path $commandLinePath "ShareDlls.txt"
 
 
@@ -24,7 +24,7 @@ try {
 
     # sync studio version
     Set-Location $location
-    $studioProjectPath = Join-Path $studioPath "AterStudio.csproj";
+    $studioProjectPath = Join-Path $studioPath "Dashboard.csproj";
     $xml = [xml](Get-Content $studioProjectPath)
     $propertyGroup = $xml.Project.PropertyGroup[0]
     Write-Host "Current Version:"$Version
@@ -63,7 +63,7 @@ try {
             ".\publish\BuildHost-net472",
             ".\publish\BuildHost-netcore",
             ".\publish\runtimes",
-            ".\publish\AterStudio.exe"
+            ".\publish\Dashboard.exe"
         );
         foreach ($path in $pathsToRemove) {
             if (Test-Path $path) {

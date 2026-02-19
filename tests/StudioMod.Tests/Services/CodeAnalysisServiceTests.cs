@@ -1,7 +1,8 @@
+using CoreMod.Services;
 using Share.Services;
 using Xunit;
 
-namespace StudioMod.Tests.Services;
+namespace CoreMod.Tests.Services;
 
 public class CodeAnalysisServiceTests : IDisposable
 {

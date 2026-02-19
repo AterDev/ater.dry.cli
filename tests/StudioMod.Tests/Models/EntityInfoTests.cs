@@ -1,11 +1,10 @@
 using Xunit;
-using CodeGenerator.Models;
-using Entity.StudioMod;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Share.Models;
 
-namespace StudioMod.Tests.Models;
+namespace CoreMod.Tests.Models;
 
 public class EntityInfoTests
 {

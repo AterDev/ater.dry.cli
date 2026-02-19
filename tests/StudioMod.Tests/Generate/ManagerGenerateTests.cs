@@ -1,10 +1,9 @@
 using Xunit;
 using CodeGenerator.Generate;
-using CodeGenerator.Models;
-using Entity.StudioMod;
 using System.Collections.Generic;
+using Share.Models;
 
-namespace StudioMod.Tests.Generate;
+namespace CoreMod.Tests.Generate;
 
 public class ManagerGenerateTests
 {

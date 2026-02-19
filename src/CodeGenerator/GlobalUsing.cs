@@ -1,0 +1,16 @@
+global using CodeGenerator.Helper;
+global using CodeGenerator.Models;
+global using Microsoft.CodeAnalysis;
+global using Microsoft.CodeAnalysis.CSharp;
+global using Microsoft.CodeAnalysis.CSharp.Syntax;
+global using Microsoft.OpenApi;
+global using Share;
+global using Share.Entity;
+global using Share.Models;
+global using Share.Utils;
+global using System;
+global using System.Collections.Generic;
+global using System.Linq;
+global using System.Reflection;
+global using System.Text;
+global using PropertyInfo = Share.Models.PropertyInfo;

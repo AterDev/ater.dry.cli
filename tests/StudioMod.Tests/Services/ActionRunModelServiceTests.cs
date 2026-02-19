@@ -1,11 +1,13 @@
 using CodeGenerator.Models;
-using Entity.StudioMod;
+using CoreMod.Services;
 using Moq;
 using Share;
+using Share.Entity;
+using Share.Models;
 using Share.Services;
 using Xunit;
 
-namespace StudioMod.Tests.Services;
+namespace CoreMod.Tests.Services;
 
 public class ActionRunModelServiceTests
 {

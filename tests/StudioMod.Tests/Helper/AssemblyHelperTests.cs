@@ -1,10 +1,10 @@
 using Xunit;
-using CodeGenerator.Helper;
 using System;
 using System.IO;
 using System.Xml.Linq;
+using Share.Helper;
 
-namespace StudioMod.Tests.Helper;
+namespace CoreMod.Tests.Helper;
 
 public class AssemblyHelperTests : IDisposable
 {

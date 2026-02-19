@@ -2,7 +2,7 @@ using Xunit;
 using CodeGenerator.Helper;
 using System;
 
-namespace StudioMod.Tests.Helper;
+namespace CoreMod.Tests.Helper;
 
 public class CSharpAnalysisHelperTests
 {

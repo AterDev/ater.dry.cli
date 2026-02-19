@@ -1,12 +1,13 @@
+using CoreMod.Managers;
+using CoreMod.Services;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Share;
 using Share.Services;
-using StudioMod.Managers;
 using Xunit;
 
-namespace StudioMod.Tests.Managers;
+namespace CoreMod.Tests.Managers;
 
 public class EntityInfoManagerTests : IDisposable
 {

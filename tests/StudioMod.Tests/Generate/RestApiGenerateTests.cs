@@ -1,13 +1,13 @@
 using Xunit;
 using CodeGenerator.Generate;
-using CodeGenerator.Models;
-using Entity.StudioMod;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Share.Entity;
+using Share.Models;
 
-namespace StudioMod.Tests.Generate;
+namespace CoreMod.Tests.Generate;
 
 public class RestApiGenerateTests
 {

@@ -1,9 +1,10 @@
 using Xunit;
 using CodeGenerator.Models;
+using Share.Models;
 using System;
 using System.Collections.Generic;
 
-namespace StudioMod.Tests.Models;
+namespace CoreMod.Tests.Models;
 
 public class PropertyInfoTests
 {
