@@ -1,10 +1,8 @@
-using Share.Entity;
-
 namespace CoreMod.Managers;
 
 public class McpToolManager(
     DefaultDbContext dbContext,
-    IProjectContext projectContext,
+    SolutionContext projectContext,
     ILogger<McpToolManager> logger
 ) : ManagerBase<DefaultDbContext, McpTool>(dbContext, logger)
 {

@@ -1,15 +1,12 @@
-using CodeGenerator;
-using CodeGenerator.Models;
 using CoreMod.Services;
 using Microsoft.CodeAnalysis;
-using Share.Utils;
 
 namespace CoreMod.Managers;
 
 public partial class EntityInfoManager(
     ILogger<EntityInfoManager> logger,
     CodeGenService codeGenService,
-    IProjectContext projectContext
+    SolutionContext projectContext
 ) : ManagerBase(logger)
 {
     public string ModuleName { get; set; } = string.Empty;

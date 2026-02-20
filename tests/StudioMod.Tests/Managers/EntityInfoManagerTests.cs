@@ -12,14 +12,14 @@ namespace CoreMod.Tests.Managers;
 public class EntityInfoManagerTests : IDisposable
 {
     private readonly Mock<ILogger<EntityInfoManager>> _mockLogger;
-    private readonly Mock<IProjectContext> _mockProjectContext;
+    private readonly Mock<SolutionContext> _mockProjectContext;
     private readonly EntityInfoManager _manager;
     private readonly string _testPath;
 
     public EntityInfoManagerTests()
     {
         _mockLogger = new Mock<ILogger<EntityInfoManager>>();
-        _mockProjectContext = new Mock<IProjectContext>();
+        _mockProjectContext = new Mock<SolutionContext>();
 
         var mockCodeGenLogger = new Mock<ILogger<CodeGenService>>();
         var mockCache = new Mock<IMemoryCache>();

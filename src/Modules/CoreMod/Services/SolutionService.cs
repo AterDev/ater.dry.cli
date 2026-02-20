@@ -1,6 +1,4 @@
-using CodeGenerator;
 using Humanizer;
-using Share.Utils;
 using System.Diagnostics;
 
 namespace CoreMod.Services;
@@ -9,12 +7,12 @@ namespace CoreMod.Services;
 /// 解决方案相关功能
 /// </summary>
 public class SolutionService(
-    IProjectContext projectContext,
+    SolutionContext projectContext,
     ILogger<SolutionService> logger,
     DefaultDbContext context
 )
 {
-    private readonly IProjectContext _projectContext = projectContext;
+    private readonly SolutionContext _projectContext = projectContext;
     private readonly ILogger<SolutionService> _logger = logger;
 
     /// <summary>

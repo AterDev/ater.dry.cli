@@ -1,7 +1,5 @@
 CodeGenerator.dll
-Core.dll
-DataContext.dll
-Entity.dll
+CoreMod.dll
 Humanizer.dll
 Mapster.Core.dll
 Mapster.dll
@@ -25,7 +23,6 @@ RazorEngineCore.dll
 Share.dll
 Spectre.Console.Cli.dll
 Spectre.Console.dll
-StudioMod.dll
 System.Composition.AttributedModel.dll
 System.Composition.Convention.dll
 System.Composition.Hosting.dll

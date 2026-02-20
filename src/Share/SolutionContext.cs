@@ -1,13 +1,11 @@
 using Microsoft.Extensions.DependencyInjection;
-using Share.Entity;
-using Share.Utils;
 
 namespace Share;
 
 /// <summary>
 /// 项目上下文
 /// </summary>
-public class ProjectContext(IServiceProvider serviceProvider) : IProjectContext
+public class SolutionContext(IServiceProvider serviceProvider)
 {
     public int? SolutionId { get; set; }
     public string? ProjectName { get; set; }
@@ -54,7 +52,7 @@ public class ProjectContext(IServiceProvider serviceProvider) : IProjectContext
         return Task.CompletedTask;
     }
 
-    public Task SetProjectAsync(string solutionPath)
+    public Task SetSolutionAsync(string solutionPath)
     {
         if (solutionPath.IndexOf("/") > 0)
         {

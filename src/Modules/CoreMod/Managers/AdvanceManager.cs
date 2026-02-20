@@ -1,11 +1,9 @@
-using Share.Entity;
-
 namespace CoreMod.Managers;
 
-public class AdvanceManager(DefaultDbContext dbContext, IProjectContext projectContext)
+public class AdvanceManager(DefaultDbContext dbContext, SolutionContext projectContext)
 {
     private readonly DefaultDbContext _dbContext = dbContext;
-    private readonly IProjectContext _projectContext = projectContext;
+    private readonly SolutionContext _projectContext = projectContext;
 
     /// <summary>
     /// 设置配置

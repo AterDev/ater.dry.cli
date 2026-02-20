@@ -32,7 +32,7 @@ public class PageBase : ComponentBase
     protected IJSRuntime JS { get; set; } = default!;
 
     [Inject]
-    protected IProjectContext ProjectContext { get; set; } = default!;
+    protected SolutionContext ProjectContext { get; set; } = default!;
 
     #endregion
 

@@ -40,7 +40,6 @@ public class HashCrypto
     /// 生成PAT
     /// </summary>
     /// <param name="value"></param>
-    /// <param name="salt"></param>
     /// <returns></returns>
     public static string GeneratePAT(string value)
     {

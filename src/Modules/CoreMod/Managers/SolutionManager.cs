@@ -1,7 +1,5 @@
 using CoreMod.Services;
-using Share.Entity;
 using Share.Models.CommandDtos;
-using Share.Utils;
 
 namespace CoreMod.Managers;
 
@@ -10,13 +8,13 @@ namespace CoreMod.Managers;
 /// </summary>
 public class SolutionManager(
     DefaultDbContext dbContext,
-    IProjectContext projectContext,
+    SolutionContext projectContext,
     ILogger<SolutionManager> logger,
     CommandService commandService,
     SolutionService solution
 ) : ManagerBase<DefaultDbContext, Solution>(dbContext, logger)
 {
-    private readonly IProjectContext _projectContext = projectContext;
+    private readonly SolutionContext _projectContext = projectContext;
     private readonly CommandService _commandService = commandService;
     private readonly SolutionService _solution = solution;
 

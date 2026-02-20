@@ -8,10 +8,10 @@ namespace CoreMod.Managers;
 public class GenStepManager(
     DefaultDbContext dbContext,
     ILogger<GenStepManager> logger,
-    IProjectContext projectContext
+    SolutionContext projectContext
 ) : ManagerBase<DefaultDbContext, GenStep>(dbContext, logger)
 {
-    private readonly IProjectContext _projectContext = projectContext;
+    private readonly SolutionContext _projectContext = projectContext;
 
     public sealed record UpsertFromTemplatesResult(int Added, int Updated, int Skipped);
 

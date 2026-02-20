@@ -6,7 +6,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Share;
 using Share.Helper;
-using Share.Services;
 using System.Globalization;
 using System.Text;
 
@@ -42,13 +41,11 @@ if (!isMcpRawCommand)
 var builder = Host.CreateApplicationBuilder(args);
 builder.Logging.AddConsole();
 
-builder.Services.AddLocalization();
-builder.AddDbContext();
-builder.Services.AddMemoryCache();
+builder.AddFrameworkServices();
 
+builder.Services.AddLocalization();
 builder.Services.AddScoped<Localizer>();
-builder.Services.AddScoped<IProjectContext, ProjectContext>();
-builder.Services.AddScoped<CacheService>();
+builder.Services.AddScoped<SolutionContext>();
 builder.Services.AddScoped<SolutionService>();
 builder.Services.AddScoped<CodeAnalysisService>();
 builder.Services.AddScoped<CodeGenService>();

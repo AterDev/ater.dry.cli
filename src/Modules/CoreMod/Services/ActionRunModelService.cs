@@ -1,11 +1,9 @@
-using CodeGenerator;
-
 namespace CoreMod.Services;
 
 /// <summary>
 /// Build and enrich <see cref="ActionRunModel"/> without database operations.
 /// </summary>
-public class ActionRunModelService(IProjectContext projectContext)
+public class ActionRunModelService(SolutionContext projectContext)
 {
     private static readonly string[] DtoMatchFiles =
     [

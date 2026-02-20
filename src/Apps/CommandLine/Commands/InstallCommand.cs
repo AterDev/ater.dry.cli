@@ -1,7 +1,6 @@
 using CoreMod.Services;
 using Share;
 using Share.Helper;
-using Share.Services;
 using System.ComponentModel;
 
 namespace CommandLine.Commands;
@@ -11,7 +10,7 @@ namespace CommandLine.Commands;
 /// </summary>
 public class InstallCommand(
     ModuleInstallService moduleInstallService,
-    IProjectContext projectContext
+    SolutionContext projectContext
 ) : AsyncCommand<InstallCommand.Settings>
 {
     public class Settings : CommandSettings
@@ -32,7 +31,7 @@ public class InstallCommand(
     )
     {
         var currentDirectory = Environment.CurrentDirectory;
-        await projectContext.SetProjectAsync(currentDirectory);
+        await projectContext.SetSolutionAsync(currentDirectory);
         // Ensure we have a valid project context
         if (string.IsNullOrEmpty(projectContext.SolutionPath))
         {

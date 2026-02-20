@@ -9,7 +9,6 @@ public static class DateTimeExtensions
     /// dateOnly(local)转DateTimeOffset(utc)
     /// </summary>
     /// <param name="dateOnly"></param>
-    /// <param name="zone"></param>
     /// <returns></returns>
     public static DateTimeOffset ToDateTimeOffset(this DateOnly dateOnly)
     {

@@ -1,5 +1,4 @@
 using Dashboard.Components;
-using Dashboard.Services;
 using Microsoft.AspNetCore.Localization;
 
 namespace Dashboard;

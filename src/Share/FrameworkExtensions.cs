@@ -35,7 +35,6 @@ public static partial class FrameworkExtensions
             Directory.CreateDirectory(dir);
         }
         var path = Path.Combine(dir, ConstVal.DbName);
-        OutputHelper.Info("using db file:" + path);
         MiniDbConfiguration.AddDbContext<DefaultDbContext>(config =>
         {
             config.UseMiniDb(path);

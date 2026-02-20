@@ -9,12 +9,12 @@ namespace CoreMod.Services;
 /// </summary>
 public class CodeGenService(
     ILogger<CodeGenService> logger,
-    IProjectContext projectContext,
+    SolutionContext projectContext,
     CacheService cache
 )
 {
     private readonly ILogger<CodeGenService> _logger = logger;
-    private readonly IProjectContext _projectContext = projectContext;
+    private readonly SolutionContext _projectContext = projectContext;
     private readonly CacheService _cache = cache;
     private readonly DtoType[] DtoTypes =
     [

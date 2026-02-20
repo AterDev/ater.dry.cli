@@ -1,8 +1,8 @@
-using System.IO.Compression;
 using Humanizer;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.IO.Compression;
 
 namespace CoreMod.Services;
 
@@ -10,13 +10,13 @@ namespace CoreMod.Services;
 /// Module installation service
 /// </summary>
 public class ModuleInstallService(
-    IProjectContext projectContext,
+    SolutionContext projectContext,
     Localizer localizer,
     ILogger<ModuleInstallService> logger,
     SolutionService solutionService
 )
 {
-    private readonly IProjectContext _projectContext = projectContext;
+    private readonly SolutionContext _projectContext = projectContext;
     private readonly Localizer _localizer = localizer;
     private readonly ILogger<ModuleInstallService> _logger = logger;
     private readonly SolutionService _solutionService = solutionService;

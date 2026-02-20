@@ -25,7 +25,6 @@ public static class Extensions
         /// convert to TDestination
         /// </summary>
         /// <typeparam name="TDestination"></typeparam>
-        /// <param name="source"></param>
         /// <returns></returns>
         public TDestination MapTo<TDestination>()
             where TDestination : class
@@ -40,8 +39,7 @@ public static class Extensions
         /// 构造查询Dto
         /// 重要: dto中属性名称和类型必须与实体一致
         /// </summary>
-        /// <typeparam name="TResult"></typeparam>`
-        /// <param name="source"></param>
+        /// <typeparam name="TResult"></typeparam>
         /// <returns></returns>
         /// <exception cref="NullReferenceException"></exception>
         public IQueryable<TResult> Select<TResult>()
@@ -76,7 +74,6 @@ public static class Extensions
         /// 不为空(字符串)时执行的条件
         /// </summary>
         /// <typeparam name="TSource"></typeparam>
-        /// <param name="source"></param>
         /// <param name="field">要判断的字段</param>
         /// <param name="expression">不为空时执行的条件</param>
         /// <returns></returns>
@@ -245,8 +242,6 @@ public static class Extensions
         /// <summary>
         /// 范围查询:long
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="source"></param>
         /// <param name="propertyExpression"></param>
         /// <param name="minVal"></param>
         /// <param name="maxVal"></param>
@@ -293,8 +288,6 @@ public static class Extensions
         /// <summary>
         /// 范围查询:DateTimeOffset
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="source"></param>
         /// <param name="propertyExpression"></param>
         /// <param name="minVal"></param>
         /// <param name="maxVal"></param>

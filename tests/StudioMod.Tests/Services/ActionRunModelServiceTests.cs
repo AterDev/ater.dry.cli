@@ -1,10 +1,8 @@
-using CodeGenerator.Models;
 using CoreMod.Services;
 using Moq;
 using Share;
 using Share.Entity;
 using Share.Models;
-using Share.Services;
 using Xunit;
 
 namespace CoreMod.Tests.Services;
@@ -15,7 +13,7 @@ public class ActionRunModelServiceTests
     public void Create_ShouldMergeAndDistinctVariablesByKey()
     {
         // Arrange
-        var projectContext = new Mock<IProjectContext>();
+        var projectContext = new Mock<SolutionContext>();
         var service = new ActionRunModelService(projectContext.Object);
 
         var source = new List<Variable>
@@ -44,7 +42,7 @@ public class ActionRunModelServiceTests
     public void ApplyModelInfo_ShouldSetModelPropertiesAndStandardVariables()
     {
         // Arrange
-        var projectContext = new Mock<IProjectContext>();
+        var projectContext = new Mock<SolutionContext>();
         var service = new ActionRunModelService(projectContext.Object);
         var model = service.Create(
             [new Variable { Key = "ModelName", Value = "OldName" }, new Variable { Key = "X", Value = "1" }],

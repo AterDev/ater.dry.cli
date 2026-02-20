@@ -1,5 +1,4 @@
 using Share.Models.CommandDtos;
-using Share.Utils;
 using Spectre.Console;
 using System.Diagnostics;
 using System.IO.Compression;
@@ -18,7 +17,7 @@ namespace CoreMod.Services;
 /// <param name="codeGenService"></param>
 public class CommandService(
     DefaultDbContext context,
-    IProjectContext projectContext,
+    SolutionContext projectContext,
     SolutionService solutionService,
     CodeGenService codeGenService
 )

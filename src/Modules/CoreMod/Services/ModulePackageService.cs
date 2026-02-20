@@ -8,12 +8,12 @@ namespace CoreMod.Services;
 /// Module packaging service
 /// </summary>
 public class ModulePackageService(
-    IProjectContext projectContext,
+    SolutionContext projectContext,
     Localizer localizer,
     ILogger<ModulePackageService> logger
 )
 {
-    private readonly IProjectContext _projectContext = projectContext;
+    private readonly SolutionContext _projectContext = projectContext;
     private readonly Localizer _localizer = localizer;
     private readonly ILogger<ModulePackageService> _logger = logger;
 

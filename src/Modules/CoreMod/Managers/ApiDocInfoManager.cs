@@ -1,4 +1,3 @@
-using CodeGenerator.Models;
 using CoreMod.Models;
 using CoreMod.Models.ApiDocInfoDtos;
 using CoreMod.Services;
@@ -14,7 +13,7 @@ namespace CoreMod.Managers;
 /// </remarks>
 public class ApiDocInfoManager(
     DefaultDbContext dbContext,
-    IProjectContext project,
+    SolutionContext project,
     ILogger<ApiDocInfoManager> logger,
     CodeGenService codeGenService,
     Localizer localizer

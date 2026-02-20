@@ -1,7 +1,6 @@
 using CoreMod.Services;
 using Share;
 using Share.Helper;
-using Share.Services;
 using System.ComponentModel;
 
 namespace CommandLine.Commands;
@@ -11,7 +10,7 @@ namespace CommandLine.Commands;
 /// </summary>
 public class PackCommand(
     ModulePackageService modulePackageService,
-    IProjectContext projectContext
+    SolutionContext projectContext
 ) : AsyncCommand<PackCommand.Settings>
 {
     public class Settings : CommandSettings
@@ -32,7 +31,7 @@ public class PackCommand(
     )
     {
         var currentDirectory = Environment.CurrentDirectory;
-        await projectContext.SetProjectAsync(currentDirectory);
+        await projectContext.SetSolutionAsync(currentDirectory);
         // Ensure we have a valid project context
         if (string.IsNullOrEmpty(projectContext.SolutionPath))
         {

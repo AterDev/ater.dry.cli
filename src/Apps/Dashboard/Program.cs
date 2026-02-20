@@ -1,9 +1,7 @@
-using CoreMod.Managers;
 using CoreMod.Services;
-using Dashboard;
 using Dashboard.Components.Pages;
 using Microsoft.AspNetCore.Localization;
-using Share.Services;
+using Share.Helper;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
@@ -14,7 +12,6 @@ builder.Logging.AddSimpleConsole(options =>
 
 builder.AddFrameworkServices();
 builder.AddMiddlewareServices();
-
 builder.AddBlazorServices();
 
 builder.Services.AddScoped<SolutionManager>();
@@ -26,7 +23,7 @@ builder.Services.AddScoped<McpToolManager>();
 builder.Services.AddScoped<ToolsManager>();
 
 // services
-builder.Services.AddScoped<IProjectContext, ProjectContext>();
+builder.Services.AddScoped<SolutionContext, SolutionContext>();
 builder.Services.AddScoped<CodeAnalysisService>();
 builder.Services.AddScoped<CodeGenService>();
 builder.Services.AddScoped<CommandService>();
@@ -36,8 +33,13 @@ builder.Services.AddSingleton<StorageService>();
 
 
 WebApplication app = builder.Build();
-
 app.UseMiddlewareServices();
+
+
+var dir = AssemblyHelper.GetStudioPath();
+var path = Path.Combine(dir, ConstVal.DbName);
+OutputHelper.Info("using db file:" + path);
+
 
 // 使用 Minimal API 处理语言切换
 app.MapGet("/Culture/SetCulture", (string culture, string? redirectUri, HttpContext context) =>

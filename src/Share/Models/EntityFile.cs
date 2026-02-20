@@ -1,5 +1,3 @@
-using Share.Utils;
-
 namespace Share.Models;
 
 public class EntityFile
@@ -28,7 +26,7 @@ public class EntityFile
     /// </summary>
     /// <param name="project"></param>
     /// <returns></returns>
-    public string GetDtoPath(IProjectContext project)
+    public string GetDtoPath(SolutionContext project)
     {
         var name = Path.GetFileNameWithoutExtension(Name);
         return ModuleName.IsEmpty()
@@ -50,7 +48,7 @@ public class EntityFile
     /// </summary>
     /// <param name="project"></param>
     /// <returns></returns>
-    public string GetManagerPath(IProjectContext project)
+    public string GetManagerPath(SolutionContext project)
     {
         return ModuleName.IsEmpty()
             ? Path.Combine(project.CommonModPath ?? PathConst.CommonModPath, ConstVal.ManagersDir)
@@ -66,7 +64,7 @@ public class EntityFile
     /// </summary>
     /// <param name="project"></param>
     /// <returns></returns>
-    public string GetControllerPath(IProjectContext project)
+    public string GetControllerPath(SolutionContext project)
     {
         return ModuleName.IsEmpty()
             ? Path.Combine(project.ApiPath ?? PathConst.APIPath, ConstVal.ControllersDir)

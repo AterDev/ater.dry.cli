@@ -1,11 +1,7 @@
-using CodeGenerator;
 using CoreMod.Managers;
 using CoreMod.Models.GenActionDtos;
 using CoreMod.Services;
 using ModelContextProtocol.Server;
-using Share.Utils;
-using System.ComponentModel;
-using System.Text;
 
 namespace CoreMod.McpTools;
 
@@ -19,11 +15,19 @@ public class CodeTools(
     SolutionService solutionService,
     GenActionManager genAction,
     DefaultDbContext dbContext,
-    IProjectContext projectContext,
+    SolutionContext projectContext,
     CommandService commandService,
     ActionRunModelService actionRunModelService
 )
 {
+
+    [McpServerTool, Description("test perigon mcp tool")]
+    public Task TestPerigon(McpServer server)
+    {
+        return SetProjectContextAsync(server);
+    }
+
+
     [McpServerTool, Description("create entity model class")]
     public string? NewEntity([Description("the prompt from user input")] string prompt)
     {
@@ -351,6 +355,6 @@ public class CodeTools(
         }
 
         logger.LogInformation("SetProjectContextAsync: {solutionPath}", solutionPath);
-        await projectContext.SetProjectAsync(solutionPath);
+        await projectContext.SetSolutionAsync(solutionPath);
     }
 }
