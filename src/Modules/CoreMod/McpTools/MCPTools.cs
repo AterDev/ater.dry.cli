@@ -9,8 +9,8 @@ namespace CoreMod.McpTools;
 /// 代码生成MCP工具
 /// </summary>
 [McpServerToolType]
-public class CodeTools(
-    ILogger<CodeTools> logger,
+public class MCPTools(
+    ILogger<MCPTools> logger,
     EntityInfoManager manager,
     SolutionService solutionService,
     GenActionManager genAction,
@@ -20,13 +20,6 @@ public class CodeTools(
     ActionRunModelService actionRunModelService
 )
 {
-
-    [McpServerTool, Description("test perigon mcp tool")]
-    public Task TestPerigon(McpServer server)
-    {
-        return SetProjectContextAsync(server);
-    }
-
 
     [McpServerTool, Description("create entity model class")]
     public string? NewEntity([Description("the prompt from user input")] string prompt)
@@ -257,7 +250,8 @@ public class CodeTools(
         [Description("request client type: NgHttp, Axios, or CSharp")] string clientType,
         [Description("the output directory path")] string? outputPath = null,
         [Description("only generate models, not client code")] bool onlyModels = false,
-        [Description("the api document id")] int? apiDocId = null
+        [Description("url or local swagger json path")] string? path = null,
+        [Description("the openapi endpoint name")] string? apiEndpointName = null
     )
     {
         try
@@ -270,7 +264,12 @@ public class CodeTools(
             }
             var currentProjectId = projectContext.SolutionId;
 
-            if (apiDocId == null)
+            if (string.IsNullOrWhiteSpace(apiEndpointName) && string.IsNullOrWhiteSpace(path))
+            {
+                return "❌ Please provide either an API document name or a URL/local path to the OpenAPI specification.";
+            }
+
+            if (apiEndpointName == null)
             {
                 var apiDocs = dbContext.ApiDocInfos
                     .Where(x => x.ProjectId == currentProjectId)
@@ -292,12 +291,18 @@ public class CodeTools(
                 return $"Please let User select an API document by providing its ID:\n{docJson}\n\nCall this method again with the apiDocId parameter.";
             }
 
-            var apiDoc = dbContext.ApiDocInfos
-                .FirstOrDefault(x => x.Id == apiDocId && x.ProjectId == currentProjectId);
-
-            if (apiDoc == null)
+            // apiEndpointName is provided, find the corresponding API document
+            if (apiEndpointName.NotEmpty() && path.IsEmpty())
             {
-                return $"API document with ID {apiDocId} not found in current project.";
+                var apiDoc = dbContext.ApiDocInfos
+                .FirstOrDefault(x => x.Name.Contains(apiEndpointName, StringComparison.OrdinalIgnoreCase)
+                && x.ProjectId == currentProjectId);
+                if (apiDoc == null)
+                {
+                    return $"API document with ID {apiEndpointName} not found in current project.";
+                }
+                path = apiDoc.Path;
+                outputPath ??= apiDoc.LocalPath;
             }
 
             if (!Enum.TryParse<RequestClientType>(clientType, true, out var requestClientType))
@@ -306,19 +311,18 @@ public class CodeTools(
                 return $"Invalid client type. Valid types are: {validTypes}";
             }
 
-            if (outputPath.IsEmpty() && apiDoc.LocalPath.IsEmpty())
+            if (outputPath.IsEmpty())
             {
                 return "❌ Please provide an output path or set a local path in the API document.";
             }
 
             await commandService.GenerateRequestClientAsync(
-                apiDoc.Path,
-                apiDoc.LocalPath ?? outputPath ?? "",
+                path!,
+                outputPath,
                 requestClientType,
                 onlyModels
             );
-
-            return $"Successfully generated {clientType} request client from '{apiDoc.Name}' to '{outputPath}'";
+            return $"Successfully generated {clientType} request client to '{outputPath}'";
         }
         catch (Exception ex)
         {

@@ -66,7 +66,7 @@ public class McpStartCommand : AsyncCommand
         builder.Services
             .AddMcpServer()
             .WithStdioServerTransport()
-            .WithToolsFromAssembly(typeof(CodeTools).Assembly);
+            .WithToolsFromAssembly(typeof(MCPTools).Assembly);
 
         using var host = builder.Build();
         var logger = host.Services.GetRequiredService<ILogger<McpStartCommand>>();
@@ -79,7 +79,7 @@ public class McpStartCommand : AsyncCommand
             logger.LogInformation(
                 "MCP server started over stdio. PID={Pid}, ToolsAssembly={AssemblyName}",
                 Environment.ProcessId,
-                typeof(CodeTools).Assembly.GetName().Name
+                typeof(MCPTools).Assembly.GetName().Name
             )
         );
 
