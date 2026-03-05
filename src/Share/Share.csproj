@@ -25,11 +25,7 @@
 		<PackageReference Include="Mapster" />
 		<PackageReference Include="Humanizer.Core" />
 		<PackageReference Include="Microsoft.OpenApi" />
-		<!--<PackageReference Include="Perigon.MiniDb" />-->
+		<PackageReference Include="Perigon.MiniDb" />
 		<PackageReference Include="Spectre.Console.Cli" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\..\..\Perigon.minidb\src\Perigon.MiniDb\Perigon.MiniDb.csproj" />
 	</ItemGroup>
 </Project>

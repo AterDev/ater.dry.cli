@@ -16,8 +16,6 @@
   <Folder Name="/src/">
     <Project Path="src\CodeGenerator\CodeGenerator.csproj" />
     <Project Path="src\Share\Share.csproj" />
-
-    <Project Path="..\Perigon.minidb\src\Perigon.MiniDb\Perigon.MiniDb.csproj"/>
   </Folder>
   <Folder Name="/src/Apps/">
     <Project Path="src\Apps\CommandLine\CommandLine.csproj" />
