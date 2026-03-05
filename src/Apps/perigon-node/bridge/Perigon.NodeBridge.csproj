@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PublishAot>true</PublishAot>
+    <PublishNodeModule>true</PublishNodeModule>
+    <PublishDir>bin\</PublishDir>
+    <PackNpmPackage>false</PackNpmPackage>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.JavaScript.NodeApi" />
+    <PackageReference Include="Microsoft.JavaScript.NodeApi.Generator" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Modules\CoreMod\CoreMod.csproj" />
+    <ProjectReference Include="..\..\..\Share\Share.csproj" />
+  </ItemGroup>
+</Project>

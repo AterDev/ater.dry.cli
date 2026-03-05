@@ -29,6 +29,8 @@
     <PackageVersion Include="RazorEngineCore" Version="2026.1.1" />
     <!-- Model / protocol libs -->
     <PackageVersion Include="ModelContextProtocol.AspNetCore" Version="0.8.0-preview.1" />
+    <PackageVersion Include="Microsoft.JavaScript.NodeApi" Version="0.9.19" />
+    <PackageVersion Include="Microsoft.JavaScript.NodeApi.Generator" Version="0.9.19" />
     <!-- Testing -->
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />

@@ -1,0 +1,16 @@
+{
+  "name": "perigon",
+  "version": "0.1.0",
+  "description": "Perigon CLI powered by node-api-dotnet",
+  "private": true,
+  "type": "commonjs",
+  "bin": {
+    "perigon": "bin/perigon.js"
+  },
+  "scripts": {
+    "build:bridge": "dotnet publish ./bridge/Perigon.NodeBridge.csproj -c Release -r win-x64"
+  },
+  "dependencies": {
+    "commander": "^14.0.0"
+  }
+}
