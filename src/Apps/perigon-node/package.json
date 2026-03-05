@@ -1,16 +1,23 @@
 {
-  "name": "perigon",
-  "version": "0.1.0",
-  "description": "Perigon CLI powered by node-api-dotnet",
-  "private": true,
+  "name": "ater.dry",
+  "version": "0.2.1",
+  "description": "DryGen OpenAPI client generator (axios/angular) implemented in Node.js",
+  "private": false,
   "type": "commonjs",
   "bin": {
-    "perigon": "bin/perigon.js"
+    "drygen": "bin/drygen.js"
   },
+  "files": [
+    "bin",
+    "src",
+    "README.md"
+  ],
   "scripts": {
-    "build:bridge": "dotnet publish ./bridge/Perigon.NodeBridge.csproj -c Release -r win-x64"
+    "start": "node ./bin/drygen.js",
+    "smoke": "node -e \"const { getSupportedRequestTypes } = require('./src'); console.log(getSupportedRequestTypes().join(','));\""
   },
   "dependencies": {
+    "@apidevtools/swagger-parser": "^12.1.0",
     "commander": "^14.0.0"
   }
 }

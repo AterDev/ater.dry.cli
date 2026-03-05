@@ -1,15 +1,29 @@
-# Perigon Node CLI
+# DryGen Node CLI
 
-基于 `node-api-dotnet` Native AOT 场景的 Node 命令行工具，提供 `request` 命令，参数与现有 C# `RequestCommand` 保持一致。
+纯 Node.js 实现的 OpenAPI 客户端代码生成工具。
+
+目标：复用现有输出规范（目录/命名/基础模板），但不再依赖 `node-api-dotnet` 或 .NET runtime。
 
 ## 命令
 
-- `perigon request <path|url> <outputPath> [-t|--type angular|axios|csharp] [-m|--only-model]`
+- `drygen request <pathOrUrl> <outputPath> [-t|--type angular|axios] [-m|--only-model]`
+
+示例：
+
+- `drygen request ./openapi.json ./src -t angular`
+- `drygen request https://example.com/swagger/v1/swagger.json ./src -t axios`
+- `drygen request ./openapi.json ./src -t angular --only-model`
+
+## 生成内容
+
+- `services/<clientName>/base.service.ts`
+- `services/<clientName>/models/**/*.model.ts`
+- Angular: `services/<clientName>/services/*.service.ts` + `services/<clientName>/<clientName>-client.ts`
+- Axios: `services/<clientName>/services/*.service.ts`
+- Angular 额外生成：`pipe/<clientName>/enum-text.pipe.ts`
 
 ## 说明
 
-- 运行时加载的是 Native AOT 产物 `.node` 模块，目标机器不需要安装 .NET runtime。
-- 若本地不存在 `.node` 产物，CLI 会自动执行 `dotnet publish` 生成（该步骤需要 .NET SDK，仅用于构建阶段）。
-- 默认 `--type angular`。
-- `--only-model` 为布尔开关，指定后仅生成模型文件。
-- 可通过环境变量 `PERIGON_BRIDGE_MODULE` 指定桥接 `.node` 模块路径。
+- 默认 `--type angular`
+- `--only-model` 仅生成模型文件
+- 仅支持 `angular` 与 `axios`
