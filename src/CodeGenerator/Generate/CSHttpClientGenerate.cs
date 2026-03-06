@@ -194,11 +194,11 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : ClientRequestBase(o
     {
         List<RequestServiceFunction>? functions = serviceFile.Functions;
         string functionstr = "";
-        List<string> refTypes = functions?.Select(f => f.ResponseRefType)
-            .Concat(functions.Select(f => f.RequestRefType))
+        List<string> refTypes = functions?
+            .SelectMany(f => GetReferencedTypes(f))
             .Where(r => !string.IsNullOrWhiteSpace(r))
             .Distinct()
-            .Select(r => OpenApiHelper.GetNamespaceFirstPart(r!))
+            .Select(r => OpenApiHelper.GetNamespaceFirstPart(r))
             .Distinct()
             .ToList() ?? [];
 
@@ -223,6 +223,30 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : ClientRequestBase(o
             }
             """;
         return result;
+
+        static IEnumerable<string> GetReferencedTypes(RequestServiceFunction function)
+        {
+            foreach (var reference in function.ResponseReferencedTypes)
+            {
+                yield return reference;
+            }
+
+            foreach (var reference in function.RequestReferencedTypes)
+            {
+                yield return reference;
+            }
+
+            if (function.Params != null)
+            {
+                foreach (var param in function.Params)
+                {
+                    foreach (var reference in param.ReferencedTypes)
+                    {
+                        yield return reference;
+                    }
+                }
+            }
+        }
     }
 
     public static string ToRequestFunction(RequestServiceFunction function)

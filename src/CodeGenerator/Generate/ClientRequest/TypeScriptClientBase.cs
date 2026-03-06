@@ -56,16 +56,26 @@ public abstract class TypeScriptClientBase(OpenApiDocument openApi) : ClientRequ
         {
             AddIfMatch(f.RequestRefType);
             AddIfMatch(f.ResponseRefType);
+            AddMany(f.RequestReferencedTypes);
+            AddMany(f.ResponseReferencedTypes);
 
             if (f.Params is not null)
             {
                 foreach (var p in f.Params)
                 {
                     AddIfMatch(p.RefType);
+                    AddMany(p.ReferencedTypes);
                 }
             }
 
-            // 如果响应为泛型，提取其泛型参数的 FullName
+            // 如果请求/响应为泛型，提取其泛型参数的 FullName
+            if (!string.IsNullOrWhiteSpace(f.RequestRefType) && f.RequestRefType.Contains('`'))
+            {
+                foreach (var argFullName in ExtractGenericArgumentFullNames(f.RequestRefType))
+                {
+                    AddIfMatch(argFullName);
+                }
+            }
             if (!string.IsNullOrWhiteSpace(f.ResponseRefType) && f.ResponseRefType.Contains('`'))
             {
                 foreach (var argFullName in ExtractGenericArgumentFullNames(f.ResponseRefType))
@@ -89,6 +99,15 @@ public abstract class TypeScriptClientBase(OpenApiDocument openApi) : ClientRequ
             // 兼容转义的反引号 \u0060 情况
             fullName = fullName.Replace("\u0060", "`");
             if (metaMap.ContainsKey(fullName)) wanted.Add(fullName);
+        }
+
+        void AddMany(IEnumerable<string>? fullNames)
+        {
+            if (fullNames == null) return;
+            foreach (var fullName in fullNames)
+            {
+                AddIfMatch(fullName);
+            }
         }
 
         IEnumerable<string> ExtractGenericArgumentFullNames(string genericFullName)

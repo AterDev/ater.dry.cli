@@ -56,6 +56,8 @@ builder.Services.AddScoped<ModuleInstallService>();
 builder.Services.AddScoped<NewCommand>();
 builder.Services.AddScoped<StudioCommand>();
 builder.Services.AddScoped<RequestCommand>();
+builder.Services.AddScoped<AddModuleCommand>();
+builder.Services.AddScoped<AddServiceCommand>();
 builder.Services.AddScoped<PackCommand>();
 builder.Services.AddScoped<InstallCommand>();
 builder.Services.AddScoped<McpConfigCommand>();
@@ -83,6 +85,27 @@ app.Configure(config =>
         .WithDescription(localizer.Get(Localizer.NewDes))
         .WithExample(["new", "name"]);
 
+    ConfiguratorExtensions
+        .AddBranch(
+            config,
+            SubCommand.Add,
+            add =>
+            {
+                add.SetDescription(localizer.Get(Localizer.AddDes));
+                add
+                    .AddCommand<AddModuleCommand>(SubCommand.Module)
+                    .WithDescription(localizer.Get(Localizer.AddModuleDes))
+                    .WithAlias("m")
+                    .WithExample(["add", "module", "FileManagerMod"]);
+                add
+                    .AddCommand<AddServiceCommand>(SubCommand.Service)
+                    .WithDescription(localizer.Get(Localizer.AddServiceDes))
+                    .WithAlias("s")
+                    .WithExample(["add", "service", "AdminService"]);
+            }
+        )
+        .WithAlias("a");
+
     ConfiguratorExtensions.AddBranch(
         config,
         SubCommand.Studio,
@@ -92,7 +115,7 @@ app.Configure(config =>
             studio.SetDefaultCommand<StudioCommand>();
             studio
                 .AddCommand<StudioUpdateCommand>(SubCommand.Update)
-                .WithDescription(Localizer.UpdateStudioDes);
+                .WithDescription(localizer.Get(Localizer.UpdateStudioDes));
         }
     );
 

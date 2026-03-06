@@ -26,24 +26,59 @@ public abstract class LanguageFormatterBase : ILanguageFormatter
     protected static bool IsDictionaryType(string type) => type.StartsWith("Dictionary<");
     protected static string? ExtractGenericArgument(string type)
     {
-        var lt = type.IndexOf('<');
-        var gt = type.LastIndexOf('>');
-        if (lt > 0 && gt > lt)
-        {
-            var inner = type.Substring(lt + 1, gt - lt - 1);
-            return inner.Split(',')[0].Trim();
-        }
+        var args = ExtractGenericArguments(type);
+        if (args.Count > 0) return args[0];
         if (type.EndsWith("[]")) return type[..^2];
         return null;
     }
     protected static string? ExtractDictionaryValueType(string type)
     {
-        if (!IsDictionaryType(type)) return null;
-        var inner = type["Dictionary<".Length..];
-        inner = inner.TrimEnd('>');
-        var parts = inner.Split(',');
-        if (parts.Length == 2) return parts[1].Trim();
-        return null;
+        var args = ExtractGenericArguments(type);
+        return args.Count >= 2 ? args[1] : null;
+    }
+
+    protected static IReadOnlyList<string> ExtractGenericArguments(string type)
+    {
+        if (string.IsNullOrWhiteSpace(type)) return [];
+
+        var lt = type.IndexOf('<');
+        var gt = type.LastIndexOf('>');
+        if (lt <= 0 || gt <= lt)
+        {
+            return [];
+        }
+
+        var inner = type.Substring(lt + 1, gt - lt - 1);
+        List<string> parts = [];
+        int depth = 0;
+        int start = 0;
+
+        for (int i = 0; i < inner.Length; i++)
+        {
+            switch (inner[i])
+            {
+                case '<':
+                    depth++;
+                    break;
+                case '>':
+                    depth--;
+                    break;
+                case ',':
+                    if (depth == 0)
+                    {
+                        parts.Add(inner[start..i].Trim());
+                        start = i + 1;
+                    }
+                    break;
+            }
+        }
+
+        if (start < inner.Length)
+        {
+            parts.Add(inner[start..].Trim());
+        }
+
+        return parts;
     }
     #endregion
 }

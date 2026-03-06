@@ -105,6 +105,9 @@ public class OutputHelper
 
 public class SubCommand
 {
+    public const string Add = "add";
+    public const string Module = "module";
+    public const string Service = "service";
     public const string New = "new";
     public const string Studio = "studio";
     public const string Update = "update";

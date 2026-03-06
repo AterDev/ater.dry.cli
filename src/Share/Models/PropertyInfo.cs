@@ -38,6 +38,7 @@ public record PropertyInfo
     /// </summary>
     [MaxLength(100)]
     public string? NavigationName { get; set; }
+    public List<string> ReferencedTypes { get; set; } = [];
     public bool IsComplexType { get; set; }
 
     /// <summary>

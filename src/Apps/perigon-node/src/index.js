@@ -350,6 +350,7 @@ function parseSchemaMeta(schemaKey, schema, doc) {
       isNullable: nullable,
       isRequired: required.has(propName) && !nullable,
       navigationName: navName || '',
+      referencedTypes: collectSchemaRefNames(propSchema),
     });
   }
 
@@ -412,6 +413,7 @@ function parseOperations(doc) {
         name: p.name,
         type: getLanguageType(p.schema, doc),
         refType: getRootRef(p.schema),
+        referencedTypes: collectSchemaRefNames(p.schema),
         description: p.description,
         isRequired: Boolean(p.required),
         inPath: String(p.in || '').toLowerCase() === 'path',
@@ -427,8 +429,10 @@ function parseOperations(doc) {
         method: method.toUpperCase(),
         responseType: getLanguageType(respSchema, doc),
         responseRefType: getRootRef(respSchema),
+        responseReferencedTypes: collectSchemaRefNames(respSchema),
         requestType: getLanguageType(reqSchema, doc),
         requestRefType: getRootRef(reqSchema),
+        requestReferencedTypes: collectSchemaRefNames(reqSchema),
         params,
         path: routePath,
         tag,
@@ -474,12 +478,17 @@ function generateModel(meta) {
       continue;
     }
 
-    if (!p.navigationName) continue;
-    if (p.navigationName === meta.fullName) continue;
-    const ref = formatSchemaKey(p.navigationName);
-    const ns = toHyphen(getNamespaceFirstPart(getNamespace(p.navigationName)));
-    const importPath = ns ? `../${ns}/${toHyphen(ref)}.model` : `../${toHyphen(ref)}.model`;
-    imports.set(ref, `import { ${ref} } from '${importPath}';`);
+    const references = Array.isArray(p.referencedTypes) && p.referencedTypes.length > 0
+      ? p.referencedTypes
+      : (p.navigationName ? [p.navigationName] : []);
+
+    for (const reference of references) {
+      if (!reference || reference === meta.fullName) continue;
+      const ref = formatSchemaKey(reference);
+      const ns = toHyphen(getNamespaceFirstPart(getNamespace(reference)));
+      const importPath = ns ? `../${ns}/${toHyphen(ref)}.model` : `../${toHyphen(ref)}.model`;
+      imports.set(ref, `import { ${ref} } from '${importPath}';`);
+    }
   }
 
   for (const line of imports.values()) importLines.push(line);
@@ -591,11 +600,16 @@ function getServiceModelImports(functions, schemaMetas) {
   for (const fn of functions) {
     if (fn.requestRefType) refs.add(fn.requestRefType);
     if (fn.responseRefType) refs.add(fn.responseRefType);
+    for (const ref of fn.requestReferencedTypes || []) refs.add(ref);
+    for (const ref of fn.responseReferencedTypes || []) refs.add(ref);
 
     for (const arg of extractGenericArgumentTypeNames(fn.requestRefType)) refs.add(arg);
     for (const arg of extractGenericArgumentTypeNames(fn.responseRefType)) refs.add(arg);
 
-    for (const p of fn.params || []) if (p.refType) refs.add(p.refType);
+    for (const p of fn.params || []) {
+      if (p.refType) refs.add(p.refType);
+      for (const ref of p.referencedTypes || []) refs.add(ref);
+    }
   }
 
   const lines = [];
@@ -794,11 +808,45 @@ function resolveSchema(schema, doc) {
 }
 
 function getRootRef(schema) {
-  if (!schema) return null;
-  if (schema.$ref) return getRefName(schema.$ref);
-  if (schema.items?.$ref) return getRefName(schema.items.$ref);
-  if (Array.isArray(schema.oneOf) && schema.oneOf[0]?.$ref) return getRefName(schema.oneOf[0].$ref);
-  return null;
+  return collectSchemaRefNames(schema)[0] || null;
+}
+
+function collectSchemaRefNames(schema, visited = new Set()) {
+  const refs = [];
+  visit(schema);
+  return refs;
+
+  function visit(current) {
+    if (!current || typeof current !== 'object' || visited.has(current)) {
+      return;
+    }
+
+    visited.add(current);
+
+    if (current.$ref) {
+      refs.push(getRefName(current.$ref));
+      return;
+    }
+
+    if (current.items) visit(current.items);
+    if (current.additionalProperties && typeof current.additionalProperties === 'object') {
+      visit(current.additionalProperties);
+    }
+
+    if (current.properties && typeof current.properties === 'object') {
+      for (const property of Object.values(current.properties)) {
+        visit(property);
+      }
+    }
+
+    for (const groupName of ['allOf', 'oneOf', 'anyOf']) {
+      if (Array.isArray(current[groupName])) {
+        for (const item of current[groupName]) {
+          visit(item);
+        }
+      }
+    }
+  }
 }
 
 function isEnumSchema(schema) {

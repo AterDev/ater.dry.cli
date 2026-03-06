@@ -22,11 +22,13 @@ public class RequestServiceFunction
     /// 返回中的引用类型
     /// </summary>
     public string? ResponseRefType { get; set; }
+    public List<string> ResponseReferencedTypes { get; set; } = [];
     public string RequestType { get; set; } = string.Empty;
     /// <summary>
     /// 请求中的引用类型
     /// </summary>
     public string? RequestRefType { get; set; }
+    public List<string> RequestReferencedTypes { get; set; } = [];
     /// <summary>
     /// 参数及类型
     /// </summary>
@@ -53,6 +55,7 @@ public class FunctionParams
     /// 参数的根引用类型（如果是引用 schema），用于后续导入时精准判断。
     /// </summary>
     public string? RefType { get; set; }
+    public List<string> ReferencedTypes { get; set; } = [];
     public string? Description { get; set; }
     public bool IsRequired { get; set; } = true;
     /// <summary>

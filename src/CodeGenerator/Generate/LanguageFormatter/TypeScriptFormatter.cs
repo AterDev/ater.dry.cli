@@ -140,10 +140,20 @@ public class TypeScriptFormatter : LanguageFormatterBase
                 isNullable,
                 property.CommentSummary
             ));
-            var reference = property.NavigationName ?? string.Empty;
-            if (!replacedByGeneric && !string.IsNullOrWhiteSpace(reference) && reference != meta.FullName)
+            var references = property.ReferencedTypes?.Count > 0
+                ? property.ReferencedTypes
+                : string.IsNullOrWhiteSpace(property.NavigationName)
+                    ? []
+                    : [property.NavigationName];
+            if (!replacedByGeneric)
             {
-                importRefs.Add((reference, property.IsEnum));
+                foreach (var reference in references)
+                {
+                    if (!string.IsNullOrWhiteSpace(reference) && reference != meta.FullName)
+                    {
+                        importRefs.Add((reference, property.IsEnum));
+                    }
+                }
             }
         }
 

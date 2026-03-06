@@ -141,6 +141,9 @@
   <data name="CreateSolutionSuccess" xml:space="preserve">
     <value>Create solution success!</value>
   </data>
+  <data name="NotInSolutionDirectory" xml:space="preserve">
+    <value>The current directory is not inside a .NET solution.</value>
+  </data>
   <data name="CustomerModuleDes" xml:space="preserve">
     <value>Customer Information Management</value>
   </data>
@@ -575,6 +578,27 @@
   </data>
   <data name="PackDes" xml:space="preserve">
     <value>Package module as zip file</value>
+  </data>
+  <data name="AddDes" xml:space="preserve">
+    <value>Add resources to the current solution</value>
+  </data>
+  <data name="AddModuleDes" xml:space="preserve">
+    <value>Create a new module in the current solution</value>
+  </data>
+  <data name="AddServiceDes" xml:space="preserve">
+    <value>Create a new service in the current solution</value>
+  </data>
+  <data name="AddModuleSuccess" xml:space="preserve">
+    <value>Module created: {0}</value>
+  </data>
+  <data name="ModuleAlreadyExists" xml:space="preserve">
+    <value>Module already exists: {0}</value>
+  </data>
+  <data name="AddServiceSuccess" xml:space="preserve">
+    <value>Service created: {0}</value>
+  </data>
+  <data name="AddServiceFailed" xml:space="preserve">
+    <value>Failed to create service {0}: {1}</value>
   </data>
   <data name="InstallDes" xml:space="preserve">
     <value>Install module package to project</value>

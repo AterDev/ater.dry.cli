@@ -163,9 +163,10 @@ public class OpenApiHelper
                 var schemaType = prop.Value.Type;
                 bool isEnum = prop.Value.Enum?.Count > 0 || prop.Value.Extensions?.ContainsKey("x-enumData") == true;
                 bool isList = schemaType == JsonSchemaType.Array;
+                var referencedTypes = GetAllRefs(prop.Value).ToList();
 
-                var isNavigation = false;
-                var navigationName = string.Empty;
+                var isNavigation = referencedTypes.Count > 0;
+                var navigationName = referencedTypes.FirstOrDefault() ?? string.Empty;
 
                 bool isRequired = requiredList.Contains(name);
                 bool isNullable = false;
@@ -173,16 +174,6 @@ public class OpenApiHelper
                 {
                     isRequired = false;
                     isNullable = true;
-                }
-                if (prop.Value is OpenApiSchemaReference reference)
-                {
-                    isNavigation = true;
-                    navigationName = reference.Reference.Id ?? type;
-                }
-                if (prop.Value.Items is not null and OpenApiSchemaReference itemsRef)
-                {
-                    isNavigation = true;
-                    navigationName = itemsRef.Reference.Id ?? MapToCSharpType(prop.Value.Items);
                 }
 
                 properties.Add(new PropertyInfo
@@ -195,6 +186,7 @@ public class OpenApiHelper
                     IsList = isList,
                     IsNavigation = isNavigation,
                     NavigationName = navigationName,
+                    ReferencedTypes = referencedTypes,
                     IsRequired = isRequired,
                 });
             }
@@ -295,15 +287,77 @@ public class OpenApiHelper
         }
     }
 
+    public static IReadOnlyCollection<string> GetAllRefs(IOpenApiSchema? schema)
+    {
+        HashSet<string> refs = [];
+        HashSet<IOpenApiSchema> visited = new(ReferenceEqualityComparer.Instance);
+
+        Visit(schema);
+        return refs;
+
+        void Visit(IOpenApiSchema? current)
+        {
+            if (current == null || !visited.Add(current))
+            {
+                return;
+            }
+
+            if (current is OpenApiSchemaReference reference && reference.Reference.Id is not null)
+            {
+                refs.Add(reference.Reference.Id);
+                return;
+            }
+
+            if (current.Items is not null)
+            {
+                Visit(current.Items);
+            }
+
+            if (current.AdditionalProperties is not null)
+            {
+                Visit(current.AdditionalProperties);
+            }
+
+            if (current.Properties?.Count > 0)
+            {
+                foreach (var property in current.Properties.Values)
+                {
+                    Visit(property);
+                }
+            }
+
+            if (current.AllOf?.Count > 0)
+            {
+                foreach (var item in current.AllOf)
+                {
+                    Visit(item);
+                }
+            }
+
+            if (current.OneOf?.Count > 0)
+            {
+                foreach (var item in current.OneOf)
+                {
+                    Visit(item);
+                }
+            }
+
+            if (current.AnyOf?.Count > 0)
+            {
+                foreach (var item in current.AnyOf)
+                {
+                    Visit(item);
+                }
+            }
+        }
+    }
+
     /// <summary>
     /// 提取 schema 的根引用类型(用于请求/响应模型快速关联).
     /// 优先次序: 自身引用 -> 数组元素引用 -> oneOf 首引用
     /// </summary>
     public static string? GetRootRef(IOpenApiSchema? schema)
     {
-        if (schema == null) return null;
-        if (schema is OpenApiSchemaReference r && r.Reference.Id is not null) return r.Reference.Id;
-        if (schema.Items is OpenApiSchemaReference ar && ar.Reference.Id is not null) return ar.Reference.Id;
-        return schema.OneOf?.FirstOrDefault() is OpenApiSchemaReference one && one.Reference.Id is not null ? one.Reference.Id : null;
+        return GetAllRefs(schema).FirstOrDefault();
     }
 }

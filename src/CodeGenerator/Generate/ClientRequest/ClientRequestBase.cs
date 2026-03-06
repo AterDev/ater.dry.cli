@@ -122,7 +122,9 @@ public abstract class ClientRequestBase(OpenApiDocument openApi)
                     respSchema = selectedResponse?.Content?.FirstOrDefault().Value?.Schema;
                 }
                 function.RequestRefType = OpenApiHelper.GetRootRef(reqSchema);
+                function.RequestReferencedTypes = OpenApiHelper.GetAllRefs(reqSchema).ToList();
                 function.ResponseRefType = OpenApiHelper.GetRootRef(respSchema);
+                function.ResponseReferencedTypes = OpenApiHelper.GetAllRefs(respSchema).ToList();
                 function.RequestType = GetLanguageType(reqSchema);
                 function.ResponseType = GetLanguageType(respSchema);
                 function.Params = operation.Value?.Parameters?.Select(p =>
@@ -135,6 +137,7 @@ public abstract class ClientRequestBase(OpenApiDocument openApi)
                     {
                         Description = p.Description,
                         RefType = refType,
+                        ReferencedTypes = OpenApiHelper.GetAllRefs(p.Schema).ToList(),
                         Name = p.Name,
                         InPath = inpath ?? false,
                         IsRequired = p.Required,

@@ -315,7 +315,7 @@ public class SolutionService(
             var globalUsingsPath = Path.Combine(serviceDir, ConstVal.GlobalUsingsFile);
 
             var launchSettingsContent = TplContent.ServiceLaunchSettingsTpl(serviceName);
-            var launchSettingsPath = Path.Combine(serviceDir, "Propeties", "launchSettings.json");
+            var launchSettingsPath = Path.Combine(serviceDir, "Properties", "launchSettings.json");
 
             try
             {

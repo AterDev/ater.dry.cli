@@ -150,6 +150,9 @@
   <data name="CreateSolutionSuccess" xml:space="preserve">
     <value>创建解决方案成功！</value>
   </data>
+  <data name="NotInSolutionDirectory" xml:space="preserve">
+    <value>当前目录不在 .NET 解决方案中。</value>
+  </data>
   <data name="CustomerModuleDes" xml:space="preserve">
     <value>客户信息管理</value>
   </data>
@@ -575,6 +578,27 @@
   </data>
   <data name="PackDes" xml:space="preserve">
     <value>打包模块为zip文件</value>
+  </data>
+  <data name="AddDes" xml:space="preserve">
+    <value>向当前解决方案添加资源</value>
+  </data>
+  <data name="AddModuleDes" xml:space="preserve">
+    <value>在当前解决方案中创建新模块</value>
+  </data>
+  <data name="AddServiceDes" xml:space="preserve">
+    <value>在当前解决方案中创建新服务</value>
+  </data>
+  <data name="AddModuleSuccess" xml:space="preserve">
+    <value>模块已创建: {0}</value>
+  </data>
+  <data name="ModuleAlreadyExists" xml:space="preserve">
+    <value>模块已存在: {0}</value>
+  </data>
+  <data name="AddServiceSuccess" xml:space="preserve">
+    <value>服务已创建: {0}</value>
+  </data>
+  <data name="AddServiceFailed" xml:space="preserve">
+    <value>创建服务 {0} 失败: {1}</value>
   </data>
   <data name="InstallDes" xml:space="preserve">
     <value>安装模块包到项目</value>
