@@ -1,6 +1,6 @@
 {
   "name": "ater.dry",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "DryGen OpenAPI client generator (axios/angular) implemented in Node.js",
   "private": false,
   "type": "commonjs",
