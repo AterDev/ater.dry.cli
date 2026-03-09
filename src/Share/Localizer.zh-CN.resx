@@ -603,6 +603,9 @@
   <data name="InstallDes" xml:space="preserve">
     <value>安装模块包到项目</value>
   </data>
+  <data name="InstallArgumentsRequired" xml:space="preserve">
+    <value>请提供包路径/包名和服务名，或使用 --list 查看官方模块。</value>
+  </data>
   <data name="ModuleNotFound" xml:space="preserve">
     <value>未找到模块: {0}</value>
   </data>
@@ -632,6 +635,36 @@
   </data>
   <data name="InvalidPackageStructure" xml:space="preserve">
     <value>无效的包结构</value>
+  </data>
+  <data name="GitHubConnectionFailed" xml:space="preserve">
+    <value>无法连接到 GitHub，请检查网络后重试。</value>
+  </data>
+  <data name="OfficialModulesFetchFailed" xml:space="preserve">
+    <value>获取官方模块列表失败。</value>
+  </data>
+  <data name="OfficialModuleNotFound" xml:space="preserve">
+    <value>未找到官方模块: {0}</value>
+  </data>
+  <data name="OfficialModuleDownloadFailed" xml:space="preserve">
+    <value>下载官方模块包失败: {0}</value>
+  </data>
+  <data name="OfficialModuleDownloading" xml:space="preserve">
+    <value>正在下载官方模块包: {0}</value>
+  </data>
+  <data name="OfficialModuleDownloaded" xml:space="preserve">
+    <value>已下载官方模块包: {0}</value>
+  </data>
+  <data name="OfficialModuleListTitle" xml:space="preserve">
+    <value>官方模块列表</value>
+  </data>
+  <data name="OfficialModuleListEmpty" xml:space="preserve">
+    <value>当前没有可用的官方模块。</value>
+  </data>
+  <data name="Author" xml:space="preserve">
+    <value>作者</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>版本</value>
   </data>
   <data name="McpDes" xml:space="preserve">
     <value>Model Context Protocol 工具</value>

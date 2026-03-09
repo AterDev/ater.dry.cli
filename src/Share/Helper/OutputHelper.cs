@@ -115,6 +115,7 @@ public class SubCommand
     public const string Request = "request";
     public const string Pack = "pack";
     public const string Install = "install";
+    public const string List = "list";
     public const string Mcp = "mcp";
     public const string Config = "config";
     public const string Start = "start";

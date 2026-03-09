@@ -64,6 +64,7 @@ perigon 命令工具可以帮助开发者根据实体模型(.cs文件)生成常�
 ```pwsh
 dotnet tool install --global Perigon.CLI
 ```
+
 可到[nuget](https://www.nuget.org/packages/Perigon.CLI)中查询最新版本！
 
 
@@ -81,7 +82,7 @@ perigon studio
 
 > [!NOTE]
 > studio同时提供`MCP Server`，其地址为:`http://localhost:19160/mcp`.
-> 
+>
 > 默认端口为19160，若被占用，会使用9160.
 
 ### 使用命令行

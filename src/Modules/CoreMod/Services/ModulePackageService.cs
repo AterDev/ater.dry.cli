@@ -109,25 +109,41 @@ public class ModulePackageService(
             ConstVal.ModuleExtensionFile
         );
 
+        OutputHelper.Debug($"Parsing module metadata: {moduleName}");
+        OutputHelper.Debug($"ModuleExtensions path: {moduleExtensionsPath}");
+
         var content = await File.ReadAllTextAsync(moduleExtensionsPath);
         var tree = CSharpSyntaxTree.ParseText(content);
         var root = await tree.GetRootAsync();
 
-        // Find DisplayName attribute
-        var displayNameAttr = root
+        var moduleExtensionType = root
             .DescendantNodes()
-            .OfType<AttributeSyntax>()
-            .FirstOrDefault(a =>
-            {
-                var attributeName = a.Name.ToString();
-                return attributeName == "DisplayName"
-                    || attributeName == "DisplayNameAttribute";
-            });
+            .OfType<TypeDeclarationSyntax>()
+            .FirstOrDefault(type =>
+                string.Equals(type.Identifier.Text, "ModuleExtensions", StringComparison.Ordinal)
+            );
+
+        if (moduleExtensionType == null)
+        {
+            OutputHelper.Debug($"ModuleExtensions type not found in {moduleExtensionsPath}");
+            return null;
+        }
+
+        OutputHelper.Debug($"Found ModuleExtensions type for module {moduleName}");
+
+        // Find DisplayName attribute
+        var displayNameAttr = moduleExtensionType
+            .AttributeLists
+            .SelectMany(list => list.Attributes)
+            .FirstOrDefault(a => IsAttributeNamed(a, "DisplayName"));
 
         if (displayNameAttr == null)
         {
+            OutputHelper.Debug($"DisplayName attribute not found on ModuleExtensions for module {moduleName}");
             return null;
         }
+
+        OutputHelper.Debug($"DisplayName attribute found: {displayNameAttr}");
 
         // Parse DisplayName value
         string? author = null;
@@ -149,16 +165,22 @@ public class ModulePackageService(
             }
         }
 
+        OutputHelper.Debug($"Parsed DisplayName metadata: author={author ?? "<null>"}, displayName={displayName ?? "<null>"}");
+
         // Find Description attribute
-        var descriptionAttr = root
-            .DescendantNodes()
-            .OfType<AttributeSyntax>()
-            .FirstOrDefault(a =>
-            {
-                var attributeName = a.Name.ToString();
-                return attributeName == "Description"
-                    || attributeName == "DescriptionAttribute";
-            });
+        var descriptionAttr = moduleExtensionType
+            .AttributeLists
+            .SelectMany(list => list.Attributes)
+            .FirstOrDefault(a => IsAttributeNamed(a, "Description"));
+
+        if (descriptionAttr != null)
+        {
+            OutputHelper.Debug($"Description attribute found: {descriptionAttr}");
+        }
+        else
+        {
+            OutputHelper.Debug($"Description attribute not found on ModuleExtensions for module {moduleName}");
+        }
 
         string? description = null;
         if (
@@ -177,6 +199,12 @@ public class ModulePackageService(
             .OfType<MethodDeclarationSyntax>()
             .Any(method => method.Identifier.Text == expectedMethodName);
 
+        OutputHelper.Debug($"Use self services method '{expectedMethodName}' found: {hasMethod}");
+
+        OutputHelper.Debug(
+            $"Module metadata result => ModuleName={moduleName}, Author={author ?? "<null>"}, DisplayName={displayName ?? "<null>"}, Description={description ?? "<null>"}, UseSelfServices={hasMethod}"
+        );
+
 
         return new PackageMetadata
         {
@@ -186,6 +214,31 @@ public class ModulePackageService(
             Description = description,
             UseSelfServices = hasMethod
         };
+    }
+
+    private static bool IsAttributeNamed(AttributeSyntax attribute, string expectedName)
+    {
+        var actualName = attribute.Name switch
+        {
+            IdentifierNameSyntax identifier => identifier.Identifier.Text,
+            QualifiedNameSyntax qualified => qualified.Right.Identifier.Text,
+            AliasQualifiedNameSyntax aliasQualified => aliasQualified.Name.Identifier.Text,
+            GenericNameSyntax generic => generic.Identifier.Text,
+            _ => attribute.Name.ToString().Split('.').Last().Split(':').Last()
+        };
+
+        return string.Equals(
+            NormalizeAttributeName(actualName),
+            NormalizeAttributeName(expectedName),
+            StringComparison.OrdinalIgnoreCase
+        );
+    }
+
+    private static string NormalizeAttributeName(string attributeName)
+    {
+        return attributeName.EndsWith("Attribute", StringComparison.OrdinalIgnoreCase)
+            ? attributeName[..^"Attribute".Length]
+            : attributeName;
     }
 
     /// <summary>

@@ -51,6 +51,7 @@ builder.Services.AddScoped<CodeAnalysisService>();
 builder.Services.AddScoped<CodeGenService>();
 builder.Services.AddScoped<CommandService>();
 builder.Services.AddScoped<ModulePackageService>();
+builder.Services.AddScoped<OfficialModuleService>();
 builder.Services.AddScoped<ModuleInstallService>();
 
 builder.Services.AddScoped<NewCommand>();

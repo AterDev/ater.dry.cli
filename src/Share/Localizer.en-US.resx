@@ -603,6 +603,9 @@
   <data name="InstallDes" xml:space="preserve">
     <value>Install module package to project</value>
   </data>
+  <data name="InstallArgumentsRequired" xml:space="preserve">
+    <value>Please provide package path/name and service name, or use --list.</value>
+  </data>
   <data name="ModuleNotFound" xml:space="preserve">
     <value>Module not found: {0}</value>
   </data>
@@ -632,6 +635,36 @@
   </data>
   <data name="InvalidPackageStructure" xml:space="preserve">
     <value>Invalid package structure</value>
+  </data>
+  <data name="GitHubConnectionFailed" xml:space="preserve">
+    <value>Unable to connect to GitHub. Please check your network and try again.</value>
+  </data>
+  <data name="OfficialModulesFetchFailed" xml:space="preserve">
+    <value>Failed to fetch the official module list.</value>
+  </data>
+  <data name="OfficialModuleNotFound" xml:space="preserve">
+    <value>Official module not found: {0}</value>
+  </data>
+  <data name="OfficialModuleDownloadFailed" xml:space="preserve">
+    <value>Failed to download official module package: {0}</value>
+  </data>
+  <data name="OfficialModuleDownloading" xml:space="preserve">
+    <value>Downloading official module package: {0}</value>
+  </data>
+  <data name="OfficialModuleDownloaded" xml:space="preserve">
+    <value>Official module package downloaded: {0}</value>
+  </data>
+  <data name="OfficialModuleListTitle" xml:space="preserve">
+    <value>Official Modules</value>
+  </data>
+  <data name="OfficialModuleListEmpty" xml:space="preserve">
+    <value>No official modules are currently available.</value>
+  </data>
+  <data name="Author" xml:space="preserve">
+    <value>Author</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>Version</value>
   </data>
   <data name="McpDes" xml:space="preserve">
     <value>Model Context Protocol tools</value>

@@ -13,13 +13,15 @@ public class ModuleInstallService(
     SolutionContext projectContext,
     Localizer localizer,
     ILogger<ModuleInstallService> logger,
-    SolutionService solutionService
+    SolutionService solutionService,
+    OfficialModuleService officialModuleService
 )
 {
     private readonly SolutionContext _projectContext = projectContext;
     private readonly Localizer _localizer = localizer;
     private readonly ILogger<ModuleInstallService> _logger = logger;
     private readonly SolutionService _solutionService = solutionService;
+    private readonly OfficialModuleService _officialModuleService = officialModuleService;
 
     /// <summary>
     /// Install a module package
@@ -27,17 +29,17 @@ public class ModuleInstallService(
     /// <param name="packagePath">Path to the package zip file</param>
     /// <param name="serviceName">Service name to install controllers</param>
     /// <returns>True if installation succeeded</returns>
-    public async Task<bool> InstallModuleAsync(string packagePath, string serviceName)
+    public async Task<bool> InstallModuleAsync(
+        string packagePath,
+        string serviceName,
+        CancellationToken cancellationToken = default
+    )
     {
+        string? tempPackageDir = null;
+        var resolvedPackagePath = packagePath;
+
         try
         {
-            // Validate package exists
-            if (!File.Exists(packagePath))
-            {
-                OutputHelper.Error(_localizer.Get(Localizer.PackageFileNotFound, packagePath));
-                return false;
-            }
-
             // Validate service exists
             var servicePath = Path.Combine(_projectContext.ServicesPath!, serviceName);
             if (!Directory.Exists(servicePath))
@@ -46,8 +48,35 @@ public class ModuleInstallService(
                 return false;
             }
 
+            if (OfficialModuleService.IsOfficialPackageName(packagePath))
+            {
+                tempPackageDir = Path.Combine(
+                    Path.GetTempPath(),
+                    ConstVal.CommandName,
+                    "official-modules",
+                    Guid.NewGuid().ToString("N")
+                );
+
+                OutputHelper.Info(_localizer.Get(Localizer.OfficialModuleDownloading, packagePath));
+                resolvedPackagePath = await _officialModuleService.DownloadOfficialModulePackageAsync(
+                    packagePath,
+                    tempPackageDir,
+                    cancellationToken
+                );
+                OutputHelper.Success(
+                    _localizer.Get(Localizer.OfficialModuleDownloaded, resolvedPackagePath)
+                );
+            }
+
+            // Validate package exists
+            if (!File.Exists(resolvedPackagePath))
+            {
+                OutputHelper.Error(_localizer.Get(Localizer.PackageFileNotFound, resolvedPackagePath));
+                return false;
+            }
+
             // Extract and validate package
-            var metadata = await ExtractPackageAsync(packagePath, serviceName);
+            var metadata = await ExtractPackageAsync(resolvedPackagePath, serviceName);
             if (metadata == null)
             {
                 OutputHelper.Error("metadata is null");
@@ -65,6 +94,13 @@ public class ModuleInstallService(
             _logger.LogError(ex, "Error installing module from {PackagePath}", packagePath);
             OutputHelper.Error($"Error: {ex.Message}");
             return false;
+        }
+        finally
+        {
+            if (!string.IsNullOrWhiteSpace(tempPackageDir) && Directory.Exists(tempPackageDir))
+            {
+                Directory.Delete(tempPackageDir, true);
+            }
         }
     }
 

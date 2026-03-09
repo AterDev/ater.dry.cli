@@ -10,18 +10,24 @@ namespace CommandLine.Commands;
 /// </summary>
 public class InstallCommand(
     ModuleInstallService moduleInstallService,
-    SolutionContext projectContext
+    OfficialModuleService officialModuleService,
+    SolutionContext projectContext,
+    Localizer localizer
 ) : AsyncCommand<InstallCommand.Settings>
 {
     public class Settings : CommandSettings
     {
-        [CommandArgument(0, "<PackagePath>")]
-        [Description("Path to the module package zip file")]
-        public required string PackagePath { get; set; }
+        [CommandArgument(0, "[PackagePath]")]
+        [Description("Path to the module package zip file, or official package name like Perigon.SystemMod")]
+        public string? PackagePath { get; set; }
 
-        [CommandArgument(1, "<ServiceName>")]
+        [CommandArgument(1, "[ServiceName]")]
         [Description("Service name in Services directory")]
-        public required string ServiceName { get; set; }
+        public string? ServiceName { get; set; }
+
+        [CommandOption("-l|--list")]
+        [Description("List official modules")]
+        public bool List { get; set; }
     }
 
     public override async Task<int> ExecuteAsync(
@@ -30,20 +36,69 @@ public class InstallCommand(
         CancellationToken cancellationToken
     )
     {
-        var currentDirectory = Environment.CurrentDirectory;
-        await projectContext.SetSolutionAsync(currentDirectory);
-        // Ensure we have a valid project context
-        if (string.IsNullOrEmpty(projectContext.SolutionPath))
+        if (
+            settings.List
+            || string.Equals(settings.PackagePath, "list", StringComparison.OrdinalIgnoreCase)
+        )
         {
-            OutputHelper.Error("Error: Not in a valid solution directory");
+            return await ShowOfficialModulesAsync(cancellationToken);
+        }
+
+        if (string.IsNullOrWhiteSpace(settings.PackagePath) || string.IsNullOrWhiteSpace(settings.ServiceName))
+        {
+            OutputHelper.Error(localizer.Get(Localizer.InstallArgumentsRequired));
+            return 1;
+        }
+
+        if (!await CommandSolutionHelper.TrySetSolutionAsync(projectContext, localizer))
+        {
             return 1;
         }
 
         var success = await moduleInstallService.InstallModuleAsync(
             settings.PackagePath,
-            settings.ServiceName
+            settings.ServiceName,
+            cancellationToken
         );
 
         return success ? 0 : 1;
+    }
+
+    private async Task<int> ShowOfficialModulesAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            var modules = await officialModuleService.GetOfficialModulesAsync(cancellationToken);
+            if (modules.Count == 0)
+            {
+                OutputHelper.Warning(localizer.Get(Localizer.OfficialModuleListEmpty));
+                return 0;
+            }
+
+            var table = new Table().Border(TableBorder.Rounded);
+            table.Title = new TableTitle(localizer.Get(Localizer.OfficialModuleListTitle));
+            table.AddColumn(localizer.Get(Localizer.Name));
+            table.AddColumn(localizer.Get(Localizer.Version));
+            table.AddColumn(localizer.Get(Localizer.Author));
+            table.AddColumn(localizer.Get(Localizer.Description));
+
+            foreach (var module in modules)
+            {
+                table.AddRow(
+                    Markup.Escape($"Perigon.{module.ModuleName}"),
+                    Markup.Escape(module.Version),
+                    Markup.Escape(module.Author ?? "-"),
+                    Markup.Escape(module.Description ?? "-")
+                );
+            }
+
+            AnsiConsole.Write(table);
+            return 0;
+        }
+        catch (Exception ex)
+        {
+            OutputHelper.Error(ex.Message);
+            return 1;
+        }
     }
 }
