@@ -6,7 +6,7 @@ public static class Extension
 {
     public static IServiceCollection Add#@Namespace#(this IServiceCollection services, Action<HttpClient> option)
     {
-        services.AddSingleton<InterceptHttpHandler>();
+        services.AddTransient<InterceptHttpHandler>();
         services.AddHttpClient("#@Namespace#", option)
             .AddHttpMessageHandler<InterceptHttpHandler>()
             .SetHandlerLifetime(TimeSpan.FromMinutes(5));
@@ -18,7 +18,7 @@ public static class Extension
     public static IServiceCollection Add#@Namespace#<T>(this IServiceCollection services, Action<HttpClient> option) where T : DelegatingHandler
     {
         services.AddTransient<T>();
-        services.AddHttpClient("ClientAPI", option)
+        services.AddHttpClient("#@Namespace#", option)
             .AddHttpMessageHandler<T>();
             
 #@AddServices#

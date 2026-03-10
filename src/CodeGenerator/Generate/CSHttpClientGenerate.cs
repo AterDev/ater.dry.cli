@@ -95,7 +95,7 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : ClientRequestBase(o
         string serviceContent = "";
         services.ForEach(service =>
         {
-            serviceContent += $"        services.AddSingleton<{service}>();" + Environment.NewLine;
+            serviceContent += $"        services.AddTransient<{service}>();" + Environment.NewLine;
         });
         tplContent = tplContent.Replace("#@AddServices#", serviceContent);
         return tplContent;
