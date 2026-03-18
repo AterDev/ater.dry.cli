@@ -1,0 +1,85 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "DemoService",
+    "version": "v1"
+  },
+  "tags": [
+    {
+      "name": "User",
+      "description": "User operations"
+    }
+  ],
+  "paths": {
+    "/users/{api-version}": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "User_Get",
+        "summary": "Get user by api version",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-tenant-id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Demo.Models.SampleDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Demo.Models.SampleDto": {
+        "type": "object",
+        "required": [
+          "@id",
+          "#text",
+          "api-version",
+          "normalName"
+        ],
+        "properties": {
+          "@id": {
+            "type": "string",
+            "description": "xml id"
+          },
+          "#text": {
+            "type": "string",
+            "description": "xml text"
+          },
+          "api-version": {
+            "type": "string",
+            "description": "version"
+          },
+          "normalName": {
+            "type": "string",
+            "description": "normal"
+          }
+        }
+      }
+    }
+  }
+}

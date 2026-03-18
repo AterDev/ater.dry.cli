@@ -23,4 +23,8 @@
 		<ProjectReference Include="..\..\src\Apps\CommandLine\CommandLine.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<None Include="Generate\Fixtures\*.json" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
+
 </Project>

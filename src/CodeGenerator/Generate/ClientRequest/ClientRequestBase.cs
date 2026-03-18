@@ -121,6 +121,7 @@ public abstract class ClientRequestBase(OpenApiDocument openApi)
                     }
                     respSchema = selectedResponse?.Content?.FirstOrDefault().Value?.Schema;
                 }
+                var usedParamNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                 function.RequestRefType = OpenApiHelper.GetRootRef(reqSchema);
                 function.RequestReferencedTypes = OpenApiHelper.GetAllRefs(reqSchema).ToList();
                 function.ResponseRefType = OpenApiHelper.GetRootRef(respSchema);
@@ -138,7 +139,8 @@ public abstract class ClientRequestBase(OpenApiDocument openApi)
                         Description = p.Description,
                         RefType = refType,
                         ReferencedTypes = OpenApiHelper.GetAllRefs(p.Schema).ToList(),
-                        Name = p.Name,
+                        Name = RequestClientHelper.NormalizeParameterName(p.Name, usedParamNames),
+                        OriginalName = p.Name,
                         InPath = inpath ?? false,
                         IsRequired = p.Required,
                         Type = type,

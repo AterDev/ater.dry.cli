@@ -204,9 +204,39 @@ public class TypeScriptFormatter : LanguageFormatterBase
             isList,
             isNullable
         );
-        string propName = name + (isNullable ? "?: " : ": ");
+        string propKey = IsValidTsIdentifier(name) ? name : $"'{EscapeTsString(name)}'";
+        string propName = propKey + (isNullable ? "?: " : ": ");
         string comments = $"/** {(!string.IsNullOrWhiteSpace(comment) ? comment : name)} */";
         return $"{comments}\n{propName}{tsType};\n";
+    }
+
+    private static bool IsValidTsIdentifier(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return false;
+        }
+
+        if (!(char.IsLetter(value[0]) || value[0] == '_' || value[0] == '$'))
+        {
+            return false;
+        }
+
+        for (int i = 1; i < value.Length; i++)
+        {
+            var ch = value[i];
+            if (!(char.IsLetterOrDigit(ch) || ch == '_' || ch == '$'))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static string EscapeTsString(string value)
+    {
+        return value.Replace("\\", "\\\\").Replace("'", "\\'");
     }
 
     #region helpers

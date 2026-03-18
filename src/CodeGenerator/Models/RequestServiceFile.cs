@@ -49,7 +49,14 @@ public class RequestServiceFunction
 /// </summary>
 public class FunctionParams
 {
+    /// <summary>
+    /// 代码生成时使用的安全参数名。
+    /// </summary>
     public string? Name { get; set; }
+    /// <summary>
+    /// OpenAPI 文档中的原始参数名。
+    /// </summary>
+    public string? OriginalName { get; set; }
     public string? Type { get; set; }
     /// <summary>
     /// 参数的根引用类型（如果是引用 schema），用于后续导入时精准判断。

@@ -8,6 +8,18 @@ namespace CodeGenerator.Generate.ClientRequest;
 /// </summary>
 public static class RequestClientHelper
 {
+    private static readonly HashSet<string> CSharpKeywords =
+    [
+        "abstract", "as", "base", "bool", "break", "byte", "case", "catch", "char", "checked",
+        "class", "const", "continue", "decimal", "default", "delegate", "do", "double", "else", "enum",
+        "event", "explicit", "extern", "false", "finally", "fixed", "float", "for", "foreach", "goto",
+        "if", "implicit", "in", "int", "interface", "internal", "is", "lock", "long", "namespace",
+        "new", "null", "object", "operator", "out", "override", "params", "private", "protected", "public",
+        "readonly", "record", "ref", "return", "sbyte", "sealed", "short", "sizeof", "stackalloc", "static",
+        "string", "struct", "switch", "this", "throw", "true", "try", "typeof", "uint", "ulong", "unchecked",
+        "unsafe", "ushort", "using", "virtual", "void", "volatile", "while"
+    ];
+
     /// <summary>
     /// 获取基础服务模板内容
     /// </summary>
@@ -71,5 +83,81 @@ public static class RequestClientHelper
         codeWriter.AppendLine("break;");
 
         return codeWriter.ToString();
+    }
+
+    /// <summary>
+    /// 将 OpenAPI 参数名转换为代码中可安全使用的小驼峰变量名。
+    /// </summary>
+    public static string NormalizeParameterName(string? rawName, ISet<string>? usedNames = null)
+    {
+        var baseName = ToCamelCaseInternal(rawName ?? string.Empty);
+        if (string.IsNullOrWhiteSpace(baseName))
+        {
+            baseName = "value";
+        }
+
+        if (!char.IsLetter(baseName[0]) && baseName[0] != '_')
+        {
+            baseName = $"arg{ToUpperFirstInternal(baseName)}";
+        }
+
+        if (CSharpKeywords.Contains(baseName))
+        {
+            baseName += "Value";
+        }
+
+        if (usedNames == null)
+        {
+            return baseName;
+        }
+
+        var candidate = baseName;
+        var index = 2;
+        while (!usedNames.Add(candidate))
+        {
+            candidate = $"{baseName}{index}";
+            index++;
+        }
+
+        return candidate;
+    }
+
+    private static string ToCamelCaseInternal(string value)
+    {
+        var pascal = ToPascalCaseInternal(value);
+        if (string.IsNullOrWhiteSpace(pascal))
+        {
+            return string.Empty;
+        }
+        return char.ToLowerInvariant(pascal[0]) + pascal[1..];
+    }
+
+    private static string ToPascalCaseInternal(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return string.Empty;
+        }
+
+        var parts = value
+            .Select(ch => char.IsLetterOrDigit(ch) ? ch : ' ')
+            .ToArray();
+
+        return string.Join(
+            string.Empty,
+            new string(parts)
+                .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                .Select(ToUpperFirstInternal)
+        );
+    }
+
+    private static string ToUpperFirstInternal(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return string.Empty;
+        }
+
+        return char.ToUpperInvariant(value[0]) + value[1..];
     }
 }

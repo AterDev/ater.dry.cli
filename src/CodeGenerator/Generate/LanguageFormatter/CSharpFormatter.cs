@@ -1,5 +1,6 @@
 using Share.Helper;
 using Share.Models;
+using Share.Utils;
 
 namespace CodeGenerator.Generate.LanguageFormatter;
 
@@ -71,6 +72,7 @@ public class CSharpFormatter : LanguageFormatterBase
     {
         var importRefs = new HashSet<string>();
         var cw         = new CodeWriter(4);
+        var needJsonPropertyName = false;
 
         var genericMap = new Dictionary<string, string>();
         if (meta.IsGeneric && meta.GenericParams.Count > 0)
@@ -144,10 +146,78 @@ public class CSharpFormatter : LanguageFormatterBase
                   .AppendLine("/// </summary>");
             }
 
-            cw.AppendLine($"public {propType} {property.Name.ToPascalCase()} {{ get; set; }}{defaultValue}");
+            var rawPropertyName = property.Name;
+            var safePropertyName = NormalizeCSharpPropertyName(rawPropertyName);
+            if (ShouldEmitJsonPropertyName(rawPropertyName, safePropertyName))
+            {
+                needJsonPropertyName = true;
+                cw.AppendLine($"[JsonPropertyName(\"{EscapeString(rawPropertyName)}\")]");
+            }
+
+            cw.AppendLine($"public {propType} {safePropertyName} {{ get; set; }}{defaultValue}");
         }
 
         cw.CloseBlock();
-        return cw.ToString();
+        var content = cw.ToString();
+        if (needJsonPropertyName)
+        {
+            content = $"using System.Text.Json.Serialization;{Environment.NewLine}{Environment.NewLine}{content}";
+        }
+        return content;
+    }
+
+    private static string NormalizeCSharpPropertyName(string? rawName)
+    {
+        var name = (rawName ?? string.Empty).ToPascalCase();
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            name = "Value";
+        }
+
+        if (!char.IsLetter(name[0]) && name[0] != '_')
+        {
+            name = $"Value{name}";
+        }
+
+        return name;
+    }
+
+    private static bool ShouldEmitJsonPropertyName(string? rawName, string normalizedName)
+    {
+        if (string.IsNullOrWhiteSpace(rawName))
+        {
+            return false;
+        }
+
+        return !IsValidCSharpIdentifier(rawName);
+    }
+
+    private static bool IsValidCSharpIdentifier(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return false;
+        }
+
+        if (!(char.IsLetter(value[0]) || value[0] == '_'))
+        {
+            return false;
+        }
+
+        for (int i = 1; i < value.Length; i++)
+        {
+            var ch = value[i];
+            if (!(char.IsLetterOrDigit(ch) || ch == '_'))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static string EscapeString(string text)
+    {
+        return text.Replace("\\", "\\\\").Replace("\"", "\\\"");
     }
 }

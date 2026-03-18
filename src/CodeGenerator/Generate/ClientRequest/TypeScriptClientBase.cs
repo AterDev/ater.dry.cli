@@ -152,14 +152,18 @@ public abstract class TypeScriptClientBase(OpenApiDocument openApi) : ClientRequ
                 @params
                     .OrderByDescending(p => p.IsRequired)
                     .Select(p =>
-                        p.IsRequired ? p.Name + ": " + OpenApiHelper.FormatSchemaKey(p.Type)
-                        : p.Name + ": " + OpenApiHelper.FormatSchemaKey(p.Type) + " | null"
+                    {
+                        var paramName = p.Name ?? p.OriginalName ?? "value";
+                        return p.IsRequired ? paramName + ": " + OpenApiHelper.FormatSchemaKey(p.Type)
+                            : paramName + ": " + OpenApiHelper.FormatSchemaKey(p.Type) + " | null";
+                    }
                     )
                     .ToArray()
             );
             @params.ForEach(p =>
             {
-                paramsComments += $" * @param {p.Name} {p.Description ?? OpenApiHelper.FormatSchemaKey(p.Type)}\n";
+                var paramName = p.Name ?? p.OriginalName ?? "value";
+                paramsComments += $" * @param {paramName} {p.Description ?? OpenApiHelper.FormatSchemaKey(p.Type)}\n";
             });
         }
         if (!string.IsNullOrEmpty(requestType))
@@ -193,21 +197,28 @@ public abstract class TypeScriptClientBase(OpenApiDocument openApi) : ClientRequ
         string comments =
             $"/**\n * {function.Description ?? name}\n{paramsComments} */";
 
-        List<string?>? paths = @params?.Where(p => p.InPath).Select(p => p.Name)?.ToList();
-        paths?.ForEach(p =>
+        var pathParams = @params?.Where(p => p.InPath).ToList();
+        pathParams?.ForEach(p =>
         {
-            string origin = $"{{{p}}}";
+            var originName = p.OriginalName ?? p.Name ?? string.Empty;
+            var paramName = p.Name ?? originName;
+            string origin = $"{{{originName}}}";
             path = path.Replace(origin, "$" + origin);
+            path = path.Replace("${" + originName + "}", "${" + paramName + "}");
         });
-        List<string?>? reqParams = @params
+        List<FunctionParams>? reqParams = @params
             ?.Where(p => !p.InPath && p.Type != "FormData")
-            .Select(p => p.Name)
-            ?.ToList();
+            .ToList();
         if (reqParams != null)
         {
             string queryParams = string.Join(
                 "&",
-                reqParams.Select(p => $"{p}=${{{p} ?? ''}}").ToArray()
+                reqParams.Select(p =>
+                {
+                    var originName = p.OriginalName ?? p.Name ?? string.Empty;
+                    var paramName = p.Name ?? originName;
+                    return $"{originName}=${{{paramName} ?? ''}}";
+                }).ToArray()
             );
             if (!string.IsNullOrEmpty(queryParams))
             {
@@ -217,7 +228,7 @@ public abstract class TypeScriptClientBase(OpenApiDocument openApi) : ClientRequ
         FunctionParams? file = @params?.Where(p => p.Type!.Equals("FormData")).FirstOrDefault();
         if (file != null)
         {
-            dataString = ", " + file.Name;
+            dataString = ", " + (file.Name ?? file.OriginalName ?? "data");
         }
 
         if (addExtOptions)

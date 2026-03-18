@@ -277,11 +277,12 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : ClientRequestBase(o
                     paramsString += ", ";
                 }
                 var typeName = ReplaceGenericPlaceholders(OpenApiHelper.FormatSchemaKey(p.Type), function);
+                var paramName = p.Name ?? p.OriginalName ?? "value";
                 paramsString += p.IsRequired
-                    ? typeName + " " + p.Name
-                    : typeName + "? " + p.Name;
+                    ? typeName + " " + paramName
+                    : typeName + "? " + paramName;
                 paramsComments +=
-                    $"    /// <param name=\"{p.Name}\">{p.Description ?? typeName} </param>\n";
+                    $"    /// <param name=\"{paramName}\">{p.Description ?? typeName} </param>\n";
             }
         }
         if (!string.IsNullOrEmpty(function.RequestType))
@@ -320,11 +321,16 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : ClientRequestBase(o
             """;
 
         // 构造请求url
-        List<string?>? paths = function.Params?.Where(p => p.InPath).Select(p => p.Name)?.ToList();
+        List<FunctionParams>? paths = function.Params?.Where(p => p.InPath).ToList();
+        paths?.ForEach(p =>
+        {
+            var originName = p.OriginalName ?? p.Name ?? string.Empty;
+            var paramName = p.Name ?? originName;
+            function.Path = function.Path.Replace($"{{{originName}}}", $"{{{paramName}}}");
+        });
         // 需要拼接的参数,特殊处理文件上传
-        List<string?>? reqParams = function
+        List<FunctionParams>? reqParams = function
             .Params?.Where(p => !p.InPath && p.Type != "IForm")
-            .Select(p => p.Name)
             ?.ToList();
 
         if (reqParams != null)
@@ -335,7 +341,9 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : ClientRequestBase(o
                 reqParams
                     .Select(p =>
                     {
-                        return $"{p}={{{p}}}";
+                        var originName = p.OriginalName ?? p.Name ?? string.Empty;
+                        var paramName = p.Name ?? originName;
+                        return $"{originName}={{{paramName}}}";
                     })
                     .ToArray()
             );
@@ -349,7 +357,7 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : ClientRequestBase(o
             .FirstOrDefault();
         if (file != null)
         {
-            dataString = $", {file.Name}";
+            dataString = $", {file.Name ?? file.OriginalName ?? "data"}";
         }
 
         string returnType = function.ResponseType == "IFile"

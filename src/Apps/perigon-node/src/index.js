@@ -409,8 +409,10 @@ function parseOperations(doc) {
       const respSchema = selected?.content ? Object.values(selected.content)[0]?.schema : undefined;
 
       const allParams = [...pathParams, ...(Array.isArray(operation.parameters) ? operation.parameters : [])];
+      const usedParamNames = new Set();
       const params = allParams.map((p) => ({
-        name: p.name,
+        name: normalizeParameterName(p.name, usedParamNames),
+        originalName: p.name,
         type: getLanguageType(p.schema, doc),
         refType: getRootRef(p.schema),
         referencedTypes: collectSchemaRefNames(p.schema),
@@ -505,8 +507,9 @@ function generateModel(meta) {
     : '';
   lines.push(`export interface ${formatSchemaKey(meta.name)}${genericSuffix} {`);
   for (const p of meta.propertyInfos) {
+    const propKey = isValidTsIdentifier(p.name) ? p.name : `'${escapeSingle(p.name)}'`;
     lines.push(`  /** ${p.commentSummary || p.name} */`);
-    lines.push(`  ${p.name}${p.isNullable ? '?' : ''}: ${p.type || 'any'};`);
+    lines.push(`  ${propKey}${p.isNullable ? '?' : ''}: ${p.type || 'any'};`);
   }
   lines.push('}');
   return `${lines.join('\n')}\n`;
@@ -634,10 +637,11 @@ function buildFunctionCommon(fn, addExtOptions) {
 
   const paramDecls = ordered.map((p) => {
     const type = normalizeParamType(p.type || 'any', p.isRequired);
-    return `${p.name}: ${type}`;
+    const paramName = p.name || p.originalName || 'value';
+    return `${paramName}: ${type}`;
   });
 
-  const paramComments = ordered.map((p) => ({ name: p.name, text: p.description || p.type || 'any' }));
+  const paramComments = ordered.map((p) => ({ name: p.name || p.originalName || 'value', text: p.description || p.type || 'any' }));
 
   let dataString = '';
   let paramsString = paramDecls.join(', ');
@@ -654,21 +658,27 @@ function buildFunctionCommon(fn, addExtOptions) {
   }
 
   let routePath = fn.path || '';
-  const pathParams = ordered.filter((p) => p.inPath).map((p) => p.name);
+  const pathParams = ordered.filter((p) => p.inPath);
   for (const p of pathParams) {
-    routePath = routePath.replace(`{${p}}`, ` ${p} `);
+    const originalName = p.originalName || p.name || '';
+    const paramName = p.name || originalName;
+    routePath = routePath.replace(`{${originalName}}`, ` ${paramName} `);
   }
 
-  const queryParams = ordered.filter((p) => !p.inPath && p.type !== 'FormData').map((p) => p.name);
+  const queryParams = ordered.filter((p) => !p.inPath && p.type !== 'FormData');
   if (queryParams.length > 0) {
-    routePath += `?${queryParams.map((p) => `${p}= ${p} ?? '' `).join('&')}`;
+    routePath += `?${queryParams.map((p) => {
+      const originalName = p.originalName || p.name || '';
+      const paramName = p.name || originalName;
+      return `${originalName}= ${paramName} ?? '' `;
+    }).join('&')}`;
   }
 
   routePath = routePath.replace(/\u0000([^\u0000]+)\u0000/g, '${$1}');
 
   const fileParam = ordered.find((p) => p.type === 'FormData');
   if (fileParam) {
-    dataString = `, ${fileParam.name}`;
+    dataString = `, ${fileParam.name || fileParam.originalName || 'data'}`;
   }
 
   if (addExtOptions) {
@@ -989,6 +999,44 @@ function toCamelCase(value) {
   if (!p) return '';
   return p.charAt(0).toLowerCase() + p.slice(1);
 }
+
+function isValidTsIdentifier(value) {
+  if (!value) return false;
+  if (!/^[A-Za-z_$]/.test(value)) return false;
+  return /^[A-Za-z0-9_$]+$/.test(value);
+}
+
+function normalizeParameterName(value, usedNames = new Set()) {
+  let name = toCamelCase(value);
+  if (!name) {
+    name = 'value';
+  }
+
+  if (!/^[A-Za-z_$]/.test(name)) {
+    name = `arg${name.charAt(0).toUpperCase()}${name.slice(1)}`;
+  }
+
+  if (JS_RESERVED_WORDS.has(name)) {
+    name = `${name}Value`;
+  }
+
+  let candidate = name;
+  let index = 2;
+  while (usedNames.has(candidate)) {
+    candidate = `${name}${index}`;
+    index += 1;
+  }
+  usedNames.add(candidate);
+  return candidate;
+}
+
+const JS_RESERVED_WORDS = new Set([
+  'await', 'break', 'case', 'catch', 'class', 'const', 'continue', 'debugger', 'default', 'delete',
+  'do', 'else', 'enum', 'export', 'extends', 'false', 'finally', 'for', 'function', 'if', 'import',
+  'in', 'instanceof', 'new', 'null', 'return', 'super', 'switch', 'this', 'throw', 'true', 'try',
+  'typeof', 'var', 'void', 'while', 'with', 'yield', 'let', 'static', 'implements', 'interface',
+  'package', 'private', 'protected', 'public'
+]);
 
 function stripArraySuffix(typeName) {
   const value = String(typeName || '');
