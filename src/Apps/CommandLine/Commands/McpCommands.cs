@@ -6,35 +6,102 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Share;
 using Share.Helper;
+using System.IO;
 using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Threading;
 
 namespace CommandLine.Commands;
 
-public class McpConfigCommand : AsyncCommand
+public class McpInitCommand : AsyncCommand
 {
+    private static readonly JsonSerializerOptions McpJsonSerializerOptions = new()
+    {
+        WriteIndented = true
+    };
+
     public override Task<int> ExecuteAsync(CommandContext context, CancellationToken cancellationToken)
     {
-        var config = new Dictionary<string, object>
-        {
-            [ConstVal.CommandName] = new
-            {
-                command = ConstVal.CommandName,
-                args = new[] { SubCommand.Mcp, SubCommand.Start }
-            }
-        };
+        string currentDirectory = Directory.GetCurrentDirectory();
+        string configFilePath = Path.Combine(currentDirectory, ".vscode", "mcp.json");
 
-        Console.WriteLine(
-            JsonSerializer.Serialize(
-                config,
-                new JsonSerializerOptions
-                {
-                    WriteIndented = true
-                }
-            )
+        try
+        {
+            string configDirectory = Path.GetDirectoryName(configFilePath) ?? currentDirectory;
+            Directory.CreateDirectory(configDirectory);
+
+            JsonObject root = LoadConfigRoot(configFilePath);
+            JsonObject serverContainer = GetOrCreateServerContainer(root);
+            serverContainer[ConstVal.CommandName] = CreateServerConfig();
+
+            File.WriteAllText(configFilePath, root.ToJsonString(McpJsonSerializerOptions));
+            OutputHelper.Success($"MCP server config has been written to {configFilePath}");
+            return Task.FromResult(0);
+        }
+        catch (JsonException ex)
+        {
+            OutputHelper.Error($"Failed to parse {configFilePath}: {ex.Message}");
+            return Task.FromResult(-1);
+        }
+        catch (InvalidOperationException ex)
+        {
+            OutputHelper.Error(ex.Message);
+            return Task.FromResult(-1);
+        }
+        catch (IOException ex)
+        {
+            OutputHelper.Error($"Failed to update {configFilePath}: {ex.Message}");
+            return Task.FromResult(-1);
+        }
+    }
+
+    internal static JsonObject LoadConfigRoot(string configFilePath)
+    {
+        if (!File.Exists(configFilePath))
+        {
+            return [];
+        }
+
+        string content = File.ReadAllText(configFilePath);
+        if (string.IsNullOrWhiteSpace(content))
+        {
+            return [];
+        }
+
+        JsonNode? node = JsonNode.Parse(
+            content,
+            documentOptions: new JsonDocumentOptions
+            {
+                CommentHandling = JsonCommentHandling.Skip,
+                AllowTrailingCommas = true,
+            }
         );
 
-        return Task.FromResult(0);
+        return node as JsonObject
+            ?? throw new InvalidOperationException("The root node of .vscode/mcp.json must be a JSON object.");
     }
+
+    internal static JsonObject GetOrCreateServerContainer(JsonObject root)
+    {
+        foreach ((_, JsonNode? value) in root)
+        {
+            if (value is JsonObject childObject)
+            {
+                return childObject;
+            }
+        }
+
+        JsonObject serverContainer = [];
+        root["servers"] = serverContainer;
+        return serverContainer;
+    }
+
+    internal static JsonObject CreateServerConfig() =>
+        new()
+        {
+            ["command"] = ConstVal.CommandName,
+            ["args"] = new JsonArray(SubCommand.Mcp, SubCommand.Start),
+        };
 }
 
 public class McpStartCommand : AsyncCommand

@@ -669,6 +669,9 @@
   <data name="McpDes" xml:space="preserve">
     <value>Model Context Protocol 工具</value>
   </data>
+  <data name="McpInitDes" xml:space="preserve">
+    <value>初始化并写入 MCP stdio 配置到 .vscode/mcp.json</value>
+  </data>
   <data name="McpConfigDes" xml:space="preserve">
     <value>输出 MCP stdio 配置 JSON</value>
   </data>

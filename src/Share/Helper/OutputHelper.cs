@@ -118,5 +118,6 @@ public class SubCommand
     public const string List = "list";
     public const string Mcp = "mcp";
     public const string Config = "config";
+    public const string Init = "init";
     public const string Start = "start";
 }

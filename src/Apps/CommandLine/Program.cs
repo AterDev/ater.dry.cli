@@ -23,7 +23,7 @@ CultureInfo.CurrentUICulture = systemCulture;
 var isMcpRawCommand = args.Length >= 2
     && args[0].Equals(SubCommand.Mcp, StringComparison.OrdinalIgnoreCase)
     && (
-        args[1].Equals(SubCommand.Config, StringComparison.OrdinalIgnoreCase)
+        args[1].Equals(SubCommand.Init, StringComparison.OrdinalIgnoreCase)
         || args[1].Equals(SubCommand.Start, StringComparison.OrdinalIgnoreCase)
     );
 
@@ -61,7 +61,7 @@ builder.Services.AddScoped<AddModuleCommand>();
 builder.Services.AddScoped<AddServiceCommand>();
 builder.Services.AddScoped<PackCommand>();
 builder.Services.AddScoped<InstallCommand>();
-builder.Services.AddScoped<McpConfigCommand>();
+builder.Services.AddScoped<McpInitCommand>();
 builder.Services.AddScoped<McpStartCommand>();
 
 var host = builder.Build();
@@ -145,8 +145,8 @@ app.Configure(config =>
         {
             mcp.SetDescription(localizer.Get(Localizer.McpDes));
             mcp
-                .AddCommand<McpConfigCommand>(SubCommand.Config)
-                .WithDescription(localizer.Get(Localizer.McpConfigDes));
+                .AddCommand<McpInitCommand>(SubCommand.Init)
+                .WithDescription(localizer.Get(Localizer.McpInitDes));
             mcp
                 .AddCommand<McpStartCommand>(SubCommand.Start)
                 .WithDescription(localizer.Get(Localizer.McpStartDes));
