@@ -241,13 +241,13 @@ public class CodeGenService(
             return null;
         }
 
-        string clientName = GetClientName(apiDocument);
-        string dir = Path.Combine(outputPath, "services", clientName);
+        string serviceName = GetServiceName(apiDocument);
+        string dir = Path.Combine(outputPath, "services", serviceName);
         // base service
         if (!onlyModels)
         {
             string content = RequestClientHelper.GetBaseService(type);
-            content = content.Replace("BASE_URL", clientName.ToUpper() + "_BASE_URL");
+            content = content.Replace("BASE_URL", serviceName.ToUpper() + "_BASE_URL");
 
             if (!Directory.Exists(dir))
             {
@@ -267,7 +267,7 @@ public class CodeGenService(
             var schemas = apiDocument.Components?.Schemas;
             if (schemas != null)
             {
-                dir = Path.Combine(outputPath, "pipe", clientName);
+                dir = Path.Combine(outputPath, "pipe", serviceName);
                 Directory.CreateDirectory(dir);
                 var enumTextPath = Path.Combine(dir, "enum-text.pipe.ts");
                 bool isNgModule = false;
@@ -303,7 +303,7 @@ public class CodeGenService(
             }
         }
         // delete old files
-        var oldPath = Path.Combine(outputPath, "services", clientName);
+        var oldPath = Path.Combine(outputPath, "services", serviceName);
         try
         {
             if (Directory.Exists(oldPath))
@@ -330,7 +330,7 @@ public class CodeGenService(
             dir = Path.Combine(
                 outputPath,
                 "services",
-                clientName,
+                serviceName,
                 m.DirName
             );
             m.FullName = Path.Combine(dir, m.Name);
@@ -340,13 +340,13 @@ public class CodeGenService(
         // 获取请求服务并生成文件
         if (!onlyModels && apiDocument.Tags != null)
         {
-            var services = client.GenerateServices(apiDocument.Tags, clientName);
+            var services = client.GenerateServices(apiDocument.Tags, serviceName);
             services.ForEach(s =>
             {
                 dir = Path.Combine(
                     outputPath,
                     "services",
-                    clientName,
+                    serviceName,
                     s.DirName
                 );
                 s.FullName = Path.Combine(dir, s.Name);
@@ -373,7 +373,7 @@ public class CodeGenService(
         var (apiDocument, _) = await OpenApiDocument.LoadAsync(docUrl);
         if (apiDocument == null) { return files; }
 
-        var clientName = GetClientName(apiDocument);
+        var clientName = GetServiceName(apiDocument);
         var projectName = clientName.ToPascalCase() + "Client";
         outputPath = Path.Combine(outputPath, projectName);
 
@@ -525,7 +525,7 @@ public class CodeGenService(
             _cache.Remove(key);
         }
     }
-    private static string GetClientName(OpenApiDocument apiDocument)
+    private static string GetServiceName(OpenApiDocument apiDocument, string? path = null)
     {
         var clientName = string.Empty;
         var title = apiDocument.Info.Title;
