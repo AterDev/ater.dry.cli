@@ -1,20 +1,52 @@
 # GitHub Copilot Instructions
 
-本仓库是一个使用.NET 开发的命令行工具，其中包含Blazor Server和MCP服务。请在生成代码时遵循以下指导：
+本仓库是 Perigon.CLI：一个 .NET 10 命令行开发辅助工具，同时提供 Blazor Server Studio Web UI、MCP Server、模块打包/安装、OpenAPI 客户端生成，以及基于 Roslyn/Razor 的代码生成能力。生成或修改代码时，请优先遵循本文件以及 `.github/instructions` 和 `.agents/skills` 中的项目上下文。
 
 ## General Guidelines
-- 准确性和确定性是最重要的，否则宁愿不回答。
-- 没有明确要求的情况下，不要私自构建项目来验证代码是否正确，而是通过IDE提供的各种错误提示和警告来判断代码的正确性。
-- 本项目的本地化包括中英文；在Razor中使用由源生成器生成的`Localizer.<Key>`常量；
 
-## 技术栈和语言偏好
-- 主要语言是:C#
-- AterStudio项目是 ASP.NET Core和Blazor Server项目
-- 前端使用Fluentui-blazor组件库
+- 准确性和确定性最重要；没有足够依据时先查代码或说明，不要猜测。
+- 没有明确要求时，不要私自构建整个项目；优先通过 IDE 诊断、静态检查和必要的局部测试判断正确性。
+- 保持改动聚焦，不要顺手重构无关代码或改动用户已有变更。
+- 用户可见文本需要考虑中英文本地化。Razor 中使用源生成器生成的 `Localizer.<Key>` 常量，例如 `@Localizer.Get(Localizer.CodeGen)`。
+- 新增或修改本地化文本时，同时维护 `src/Share/Localizer.zh-CN.resx` 与 `src/Share/Localizer.en-US.resx`。
 
-## 重要的文件和目录
-- `src/Apps/CommandLine`: 是命令行程序。
-- `src/Definition/CodeGenerator`: 使用roslyn解析和实现代码生成逻辑
-- `src/Definition/Entity`: 实体模型项目
-- `src/Apps/Dashboard`: 是 Studio命令的 Web的服务项目，基于ASP.NET Core和Blazor Server。
-- `src/Modules/CoreMod`: 是业务实现的主要模块，CoreStudio直接引用该项目。
+## 技术栈
+
+- 主要语言：C#，目标框架 `net10.0`，启用 nullable 与 implicit usings。
+- 包版本管理：`Directory.Packages.props` 中央包管理。
+- CLI：`Spectre.Console.Cli`、`Spectre.Console`、`Microsoft.Extensions.Hosting`、DI、`OutputHelper`。
+- Studio Web UI：ASP.NET Core、Blazor Server interactive components、`Microsoft.FluentUI.AspNetCore.Components`。
+- MCP：`ModelContextProtocol.AspNetCore`。
+- 代码生成：Roslyn (`Microsoft.CodeAnalysis.*`)、`Microsoft.OpenApi`、`RazorEngineCore`、模板与生成模型。
+- 数据/映射/工具：Perigon.MiniDb、Mapster、Humanizer、共享 Helper/Context。
+- 测试：xUnit v3、Moq、`Microsoft.NET.Test.Sdk`。
+
+## 项目结构与分层
+
+- `src/Apps/CommandLine`: `perigon` dotnet tool 入口。命令只负责参数、上下文、输出和退出码，业务逻辑委托给 CoreMod。
+- `src/Apps/Dashboard`: Studio Web 服务和 Blazor UI。使用 Fluent UI，业务逻辑通过 managers/services 调用。
+- `src/Modules/CoreMod`: 主业务模块。`Services` 负责编排流程，`Managers` 负责 MiniDb 持久化和查询更新。
+- `src/CodeGenerator`: Roslyn/OpenAPI/Razor 代码生成、模板和分析 Helper。
+- `src/Share`: 共享实体、模型、常量、Helper、`DefaultDbContext`、`SolutionContext`、本地化资源和框架扩展。
+- `tests/StudioMod.Tests`: 命令、服务、Manager、Helper、生成逻辑的行为测试。
+
+依赖方向应保持为 App -> CoreMod -> CodeGenerator/Share；`Share` 不应依赖 App 层。
+
+## 代码风格约定
+
+- 使用文件范围 namespace，匹配周围代码的 primary constructor 风格。
+- 优先使用已有 Helper、`ConstVal`、`SolutionContext`、`Localizer` 和 Mapster 映射模式。
+- CLI 命令继承 `AsyncCommand<TSettings>` 或 `AsyncCommand`；Settings 继承 `CommandSettings` 并使用 `CommandArgument`、`CommandOption`、`Description`。
+- 新命令要在 `src/Apps/CommandLine/Program.cs` 注册，并使用本地化描述、别名和示例。
+- 用户输出使用 `OutputHelper` 或 `AnsiConsole`；Spectre 表格中的动态文本用 `Markup.Escape`。
+- Dashboard 使用 Fluent UI Blazor 组件和图标；不要把业务流程写进 Razor 组件。
+- HTTP、文件、外部 API 和长耗时异步流程应传递 `CancellationToken`。
+- 测试 HTTP 行为时使用 stub `HttpMessageHandler`，不要访问真实网络。
+
+## AI Coding Customization
+
+- `.github/instructions/perigon-architecture.instructions.md` 包含更细的架构、分层和文件匹配规则。
+- `.github/instructions/ai-coding-customization.instructions.md` 包含创建 instructions、skills、agents 的格式约定。
+- `.agents/skills/perigon-repo-context` 是通用项目上下文技能，适合实现、评审或解释本仓库功能时加载。
+- `.agents/skills/ai-coding-customization` 是通用 AI coding customization 技能，适合更新 Copilot instructions、AGENTS.md、`.instructions.md`、`.agent.md`、`SKILL.md` 时加载。
+- `.github/agents/perigon-architecture-reviewer.agent.md` 是只读架构评审 agent，可用于检查分层、边界、本地化和测试风险。

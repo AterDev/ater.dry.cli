@@ -112,6 +112,9 @@ public class SubCommand
     public const string Studio = "studio";
     public const string Update = "update";
     public const string Generate = "generate";
+    public const string Dto = "dto";
+    public const string Manager = "manager";
+    public const string Controller = "controller";
     public const string Request = "request";
     public const string Pack = "pack";
     public const string Install = "install";

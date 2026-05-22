@@ -6,7 +6,7 @@
 		<ToolCommandName>perigon</ToolCommandName>
 		<PackageOutputPath>./nupkg</PackageOutputPath>
 		<PackageId>Perigon.CLI</PackageId>
-		<Version>10.1.3</Version>
+		<Version>10.2.0</Version>
 		<Description>
 			Your Copilot for Web Developer - Code generation and AI assistant tool.
 		</Description>
@@ -18,8 +18,9 @@
 		<RepositoryType>git</RepositoryType>
 		<RepositoryUrl>https://github.com/AterDev/Perigon.CLI</RepositoryUrl>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-		<PackageReleaseNotes>1. module pack and install command.
-2. some bug fix.</PackageReleaseNotes>
+		<PackageReleaseNotes>1. add module command for install/pack.
+			2. add generate subcommand dto/manager/controller.
+		</PackageReleaseNotes>
 		<PackageIcon>logo.png</PackageIcon>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<AssemblyName>$(MSBuildProjectName)</AssemblyName>

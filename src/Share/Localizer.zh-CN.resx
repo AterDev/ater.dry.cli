@@ -456,6 +456,9 @@
   <data name="List" xml:space="preserve">
     <value>列表</value>
   </data>
+  <data name="ListOfficialModules" xml:space="preserve">
+    <value>列出官方模块包</value>
+  </data>
   <data name="Variable" xml:space="preserve">
     <value>变量</value>
   </data>

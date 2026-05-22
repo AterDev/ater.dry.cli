@@ -1,5 +1,6 @@
 using CommandLine;
 using CommandLine.Commands;
+using CoreMod.Managers;
 using CoreMod.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -53,14 +54,19 @@ builder.Services.AddScoped<CommandService>();
 builder.Services.AddScoped<ModulePackageService>();
 builder.Services.AddScoped<OfficialModuleService>();
 builder.Services.AddScoped<ModuleInstallService>();
+builder.Services.AddScoped<EntityInfoManager>();
 
 builder.Services.AddScoped<NewCommand>();
 builder.Services.AddScoped<StudioCommand>();
 builder.Services.AddScoped<RequestCommand>();
+builder.Services.AddScoped<GenerateDtoCommand>();
+builder.Services.AddScoped<GenerateManagerCommand>();
+builder.Services.AddScoped<GenerateControllerCommand>();
 builder.Services.AddScoped<AddModuleCommand>();
 builder.Services.AddScoped<AddServiceCommand>();
 builder.Services.AddScoped<PackCommand>();
 builder.Services.AddScoped<InstallCommand>();
+builder.Services.AddScoped<ModuleListCommand>();
 builder.Services.AddScoped<McpInitCommand>();
 builder.Services.AddScoped<McpStartCommand>();
 
@@ -124,11 +130,32 @@ app.Configure(config =>
         .AddBranch(
             config,
             SubCommand.Generate,
-            config =>
+            generate =>
             {
-                config.SetDescription(localizer.Get(Localizer.GenerateDes));
+                generate.SetDescription(localizer.Get(Localizer.GenerateDes));
 
-                config
+                generate
+                    .AddCommand<GenerateDtoCommand>(SubCommand.Dto)
+                    .WithDescription(localizer.Get(Localizer.GenerateDtos))
+                    .WithExample(["generate", "dto", "./src/Share/Entity/User.cs"]);
+
+                generate
+                    .AddCommand<GenerateManagerCommand>(SubCommand.Manager)
+                    .WithDescription(localizer.Get(Localizer.GenerateManagers))
+                    .WithExample(["generate", "manager", "./src/Share/Entity/User.cs"]);
+
+                generate
+                    .AddCommand<GenerateControllerCommand>(SubCommand.Controller)
+                    .WithDescription(localizer.Get(Localizer.GenerateController))
+                    .WithAlias("api")
+                    .WithExample([
+                        "generate",
+                        "controller",
+                        "./src/Share/Entity/User.cs",
+                        "AdminService"
+                    ]);
+
+                generate
                     .AddCommand<RequestCommand>(SubCommand.Request)
                     .WithDescription(localizer.Get(Localizer.RequestDes))
                     .WithExample(
@@ -137,6 +164,36 @@ app.Configure(config =>
             }
         )
         .WithAlias("g");
+
+    ConfiguratorExtensions
+        .AddBranch(
+            config,
+            SubCommand.Module,
+            module =>
+            {
+                module.SetDescription(localizer.Get(Localizer.Modules));
+                module
+                    .AddCommand<ModuleListCommand>(SubCommand.List)
+                    .WithDescription(localizer.Get(Localizer.ListOfficialModules))
+                    .WithExample(["module", "list"]);
+
+                module
+                    .AddCommand<InstallCommand>(SubCommand.Install)
+                    .WithDescription(localizer.Get(Localizer.InstallDes))
+                    .WithExample([
+                        "module",
+                        "install",
+                        "./package_modules/FileManagerMod.zip",
+                        "AdminService"
+                    ]);
+
+                module
+                    .AddCommand<PackCommand>(SubCommand.Pack)
+                    .WithDescription(localizer.Get(Localizer.PackDes))
+                    .WithExample(["module", "pack", "FileManagerMod", "AdminService"]);
+            }
+        )
+        .WithAlias("m");
 
     ConfiguratorExtensions.AddBranch(
         config,
@@ -152,16 +209,6 @@ app.Configure(config =>
                 .WithDescription(localizer.Get(Localizer.McpStartDes));
         }
     );
-
-    config
-        .AddCommand<PackCommand>(SubCommand.Pack)
-        .WithDescription(localizer.Get(Localizer.PackDes))
-        .WithExample(["pack", "FileManagerMod", "AdminService"]);
-
-    config
-        .AddCommand<InstallCommand>(SubCommand.Install)
-        .WithDescription(localizer.Get(Localizer.InstallDes))
-        .WithExample(["install", "./package_modules/FileManagerMod.zip", "AdminService"]);
 
     config.SetExceptionHandler(
         (ex, resolver) =>
