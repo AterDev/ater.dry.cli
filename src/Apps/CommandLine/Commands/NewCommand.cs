@@ -24,13 +24,15 @@ public class NewCommand(Localizer localizer, CommandService commandService)
     )
     {
         AnsiConsole.WriteLine();
-        // 1. 选择项目类型
-        //var solutionType = AnsiConsole.Prompt(
-        //    new SelectionPrompt<string>()
-        //        .Title(localizer.Get(Localizer.SelectSolutionType))
-        //        .AddChoices([Localizer.SolutionTypeStandard])
-        //);
-        var solutionType = localizer.Get(Localizer.SolutionTypeStandard);
+        // 1. 选择项目模板类型
+        var solutionType = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title(localizer.Get(Localizer.SelectSolutionType))
+                .AddChoices([
+                    localizer.Get(Localizer.SolutionTypeStandard),
+                    localizer.Get(Localizer.SolutionTypeMini)
+                ])
+        );
         // 2. 选择数据库类型
         var dbType = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
@@ -127,7 +129,7 @@ public class NewCommand(Localizer localizer, CommandService commandService)
             {
                 Name = settings.Name,
                 Path = targetDirectory,
-                IsLight = solutionType == Localizer.SolutionTypeMini,
+                IsLight = solutionType == localizer.Get(Localizer.SolutionTypeMini),
                 DBType =
                     dbType == localizer.Get(Localizer.DatabasePostgreSql) ? DBType.PostgreSQL : DBType.SQLServer,
                 CacheType =

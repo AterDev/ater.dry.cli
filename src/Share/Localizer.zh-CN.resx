@@ -205,7 +205,7 @@
     <value>👇 选择包含的模块</value>
   </data>
   <data name="SelectSolutionType" xml:space="preserve">
-    <value>👇 选择解决方案模板类型，Light使用minimalApi，仅适用小型接口程序，推荐Standard（默认值）.</value>
+    <value>👇 选择项目模板类型</value>
   </data>
   <data name="Solution" xml:space="preserve">
     <value>解决方案</value>
@@ -286,10 +286,10 @@
     <value>文件夹不存在，请检查！</value>
   </data>
   <data name="SolutionTypeStandard" xml:space="preserve">
-    <value>WebApi</value>
+    <value>Standard - 完整MVC API + EF Core + Aspire</value>
   </data>
   <data name="SolutionTypeMini" xml:space="preserve">
-    <value>轻量解决方案</value>
+    <value>Light(AOT) - MinimalAPI + Perigon.Postgres + Aspire</value>
   </data>
   <data name="DatabasePostgreSql" xml:space="preserve">
     <value>PostgreSql</value>

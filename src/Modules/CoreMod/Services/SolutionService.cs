@@ -60,6 +60,36 @@ public class SolutionService(
     }
 
     /// <summary>
+    /// 判断当前解决方案是否启用 AOT
+    /// </summary>
+    public bool IsAOT()
+    {
+        string? solutionPath = _projectContext.SolutionPath;
+        if (solutionPath.NotEmpty())
+        {
+            string configPath = Path.Combine(solutionPath, "src", ".config", "perigon.config.toml");
+            if (File.Exists(configPath))
+            {
+                foreach (string line in File.ReadLines(configPath))
+                {
+                    string trimmedLine = line.Trim();
+                    if (trimmedLine.StartsWith("isAot", StringComparison.OrdinalIgnoreCase))
+                    {
+                        string[] parts = trimmedLine.Split('=', 2);
+                        if (parts.Length == 2)
+                        {
+                            string value = parts[1].Trim();
+                            return value.Equals("true", StringComparison.OrdinalIgnoreCase);
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
     /// 创建模块
     /// </summary>
     public async Task CreateModuleAsync(string moduleName)

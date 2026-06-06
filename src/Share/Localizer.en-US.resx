@@ -196,7 +196,7 @@
     <value>👇👉 Select modules</value>
   </data>
   <data name="SelectSolutionType" xml:space="preserve">
-    <value>👇 Select Solution Type, Mini is use MinimalApi for mini application, Standard is recommend(default).</value>
+    <value>👇 Select project template type</value>
   </data>
   <data name="Solution" xml:space="preserve">
     <value>Solution</value>
@@ -277,10 +277,10 @@
     <value>directory not found,please check！</value>
   </data>
   <data name="SolutionTypeStandard" xml:space="preserve">
-    <value>WebApi</value>
+    <value>Standard - Full MVC API + EF Core + Aspire</value>
   </data>
   <data name="SolutionTypeMini" xml:space="preserve">
-    <value>Light Solution</value>
+    <value>Light(AOT) - MinimalAPI + Perigon.Postgres + Aspire</value>
   </data>
   <data name="DatabasePostgreSql" xml:space="preserve">
     <value>PostgreSql</value>

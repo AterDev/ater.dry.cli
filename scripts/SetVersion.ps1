@@ -8,14 +8,14 @@ $location = Get-Location
 $OutputEncoding = [System.Console]::OutputEncoding = [System.Console]::InputEncoding = [System.Text.Encoding]::UTF8
 try {
     # CommandLine
-    $csprojPath = Join-Path $location "../src/Command/CommandLine/CommandLine.csproj"
+    $csprojPath = Join-Path $location "../src/Apps/CommandLine/CommandLine.csproj"
     $csproj = [xml](Get-Content $csprojPath)
     $node = $csproj.SelectSingleNode("//Version")
     $node.InnerText = $version
     $csproj.Save($csprojPath);
 
     # AterStudio
-    $csprojPath = Join-Path $location "../src/Services/AterStudio/AterStudio.csproj"
+    $csprojPath = Join-Path $location "../src/Apps/Dashboard/Dashboard.csproj"
     $csproj = [xml](Get-Content $csprojPath)
     $node = $csproj.SelectSingleNode("//Version")
     $node.InnerText = $version

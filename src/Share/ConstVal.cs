@@ -13,7 +13,7 @@ public static class ConstVal
     public const string TemplatePackageId = "Perigon.templates";
     public const string TemplateVersion = "1.0.0";
 
-    public const string Mini = "mini";
+    public const string Mini = "perigon-miniapi";
     public const string WebApi = "perigon-webapi";
 
     public static JsonSerializerOptions DefaultJsonSerializerOptions = new()

@@ -71,6 +71,16 @@
     </FluentStack>
     <FluentDivider Class="w-100"></FluentDivider>
 
+    <FluentLabel Typo="Typography.Subject">@Lang(Localizer.SelectSolutionType)</FluentLabel>
+
+    <FluentSelect TOption="TemplateTypeOption"
+                  Items="TemplateTypeOptions"
+                  Width="240px"
+                  OptionText="@(item => item.Text)"
+                  OptionValue="@(item => item.Value)"
+                  SelectedOption="SelectedTemplateOption"
+                  SelectedOptionChanged="OnTemplateTypeChanged" />
+
     @*     <FluentLabel Typo="Typography.H3">
       🎁 @Lang(Localizer.Modules)
     </FluentLabel>
@@ -129,6 +139,15 @@
   List<ModuleInfo> Modules = ModuleInfo.GetModules();
   IEnumerable<ModuleInfo> SelectedModules = [];
   bool IsProcessing { get; set; } = false;
+  TemplateTypeOption SelectedTemplateOption { get; set; } = null!;
+
+  private sealed record TemplateTypeOption(string Value, string Text);
+
+  private IReadOnlyList<TemplateTypeOption> TemplateTypeOptions =>
+  [
+    new("standard", Lang(Localizer.SolutionTypeStandard)),
+    new("light", Lang(Localizer.SolutionTypeMini))
+  ];
 
   [Inject]
   private CommandService CommandService { get; set; } = null!;
@@ -143,7 +162,21 @@
       Path = string.Empty,
       CacheType = CacheType.Memory,
       DBType = DBType.PostgreSQL,
+      IsLight = false,
     };
+    SelectedTemplateOption = TemplateTypeOptions[0];
+  }
+
+  private Task OnTemplateTypeChanged(TemplateTypeOption? option)
+  {
+    if (option is null)
+    {
+      return Task.CompletedTask;
+    }
+
+    SelectedTemplateOption = option;
+    AddDto.IsLight = option.Value == "light";
+    return Task.CompletedTask;
   }
 
   private bool IsValid()
