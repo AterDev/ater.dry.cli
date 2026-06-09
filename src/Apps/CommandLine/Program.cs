@@ -21,20 +21,21 @@ CultureInfo.DefaultThreadCurrentCulture = systemCulture;
 CultureInfo.DefaultThreadCurrentUICulture = systemCulture;
 CultureInfo.CurrentCulture = systemCulture;
 CultureInfo.CurrentUICulture = systemCulture;
-var isMcpRawCommand = args.Length >= 2
-    && args[0].Equals(SubCommand.Mcp, StringComparison.OrdinalIgnoreCase)
+var isAgentRawCommand = args.Length >= 3
+    && args[0].Equals(SubCommand.Agent, StringComparison.OrdinalIgnoreCase)
+    && args[1].Equals(SubCommand.Mcp, StringComparison.OrdinalIgnoreCase)
     && (
-        args[1].Equals(SubCommand.Init, StringComparison.OrdinalIgnoreCase)
-        || args[1].Equals(SubCommand.Start, StringComparison.OrdinalIgnoreCase)
+        args[2].Equals(SubCommand.Init, StringComparison.OrdinalIgnoreCase)
+        || args[2].Equals(SubCommand.Start, StringComparison.OrdinalIgnoreCase)
     );
 
-if (isMcpRawCommand)
+if (isAgentRawCommand)
 {
     // Make all early startup outputs protocol-safe for stdio clients.
     Environment.SetEnvironmentVariable("PERIGON_MCP_STDIO", "1");
 }
 
-if (!isMcpRawCommand)
+if (!isAgentRawCommand)
 {
     OutputHelper.ShowLogo();
 }
@@ -67,8 +68,8 @@ builder.Services.AddScoped<AddServiceCommand>();
 builder.Services.AddScoped<PackCommand>();
 builder.Services.AddScoped<InstallCommand>();
 builder.Services.AddScoped<ModuleListCommand>();
-builder.Services.AddScoped<McpInitCommand>();
-builder.Services.AddScoped<McpStartCommand>();
+builder.Services.AddScoped<AgentInitCommand>();
+builder.Services.AddScoped<AgentStartCommand>();
 
 var host = builder.Build();
 
@@ -197,15 +198,15 @@ app.Configure(config =>
 
     ConfiguratorExtensions.AddBranch(
         config,
-        SubCommand.Mcp,
-        mcp =>
+        SubCommand.Agent,
+        agent =>
         {
-            mcp.SetDescription(localizer.Get(Localizer.McpDes));
-            mcp
-                .AddCommand<McpInitCommand>(SubCommand.Init)
+            agent.SetDescription(localizer.Get(Localizer.McpDes));
+            agent
+                .AddCommand<AgentInitCommand>(SubCommand.Mcp)
                 .WithDescription(localizer.Get(Localizer.McpInitDes));
-            mcp
-                .AddCommand<McpStartCommand>(SubCommand.Start)
+            agent
+                .AddCommand<AgentStartCommand>(SubCommand.Start)
                 .WithDescription(localizer.Get(Localizer.McpStartDes));
         }
     );

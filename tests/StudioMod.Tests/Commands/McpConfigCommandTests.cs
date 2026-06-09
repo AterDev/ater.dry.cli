@@ -5,7 +5,7 @@ using Xunit;
 
 namespace CoreMod.Tests.Commands;
 
-public class McpInitCommandTests
+public class AgentInitCommandTests
 {
     [Fact]
     public async Task ExecuteAsync_ShouldCreateMcpJson_WhenFileDoesNotExist()
@@ -16,7 +16,7 @@ public class McpInitCommandTests
         try
         {
             Directory.SetCurrentDirectory(tempDirectory);
-            var command = new McpInitCommand();
+            var command = new AgentInitCommand();
 
             var code = await command.ExecuteAsync(null!, CancellationToken.None);
             string configFilePath = Path.Combine(tempDirectory, ".vscode", "mcp.json");
@@ -32,7 +32,7 @@ public class McpInitCommandTests
             Assert.Equal("perigon", perigonServer.GetProperty("command").GetString());
 
             var args = perigonServer.GetProperty("args").EnumerateArray().Select(v => v.GetString()).ToList();
-            Assert.Equal(["mcp", "start"], args);
+            Assert.Equal(["agent", "mcp", "start"], args);
         }
         finally
         {
@@ -66,7 +66,7 @@ public class McpInitCommandTests
         try
         {
             Directory.SetCurrentDirectory(tempDirectory);
-            var command = new McpInitCommand();
+            var command = new AgentInitCommand();
 
             var code = await command.ExecuteAsync(null!, CancellationToken.None);
 

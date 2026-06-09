@@ -7,13 +7,14 @@ using Microsoft.Extensions.Logging;
 using Share;
 using Share.Helper;
 using System.IO;
+using System.IO.Compression;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading;
 
 namespace CommandLine.Commands;
 
-public class McpInitCommand : AsyncCommand
+public class AgentInitCommand : AsyncCommand
 {
     private static readonly JsonSerializerOptions McpJsonSerializerOptions = new()
     {
@@ -23,24 +24,45 @@ public class McpInitCommand : AsyncCommand
     public override Task<int> ExecuteAsync(CommandContext context, CancellationToken cancellationToken)
     {
         string currentDirectory = Directory.GetCurrentDirectory();
-        string configFilePath = Path.Combine(currentDirectory, ".vscode", "mcp.json");
+
+        IReadOnlyList<string> selectedActions;
+        if (Console.IsInputRedirected || Console.IsOutputRedirected)
+        {
+            selectedActions = ["MCP"];
+        }
+        else
+        {
+            selectedActions = AnsiConsole.Prompt(
+                new MultiSelectionPrompt<string>()
+                    .Title("Select agent setup actions")
+                    .AddChoices(["MCP", "Skills"])
+                    .NotRequired()
+            );
+        }
+
+        if (selectedActions.Count == 0)
+        {
+            OutputHelper.Success("No agent setup actions were selected.");
+            return Task.FromResult(0);
+        }
 
         try
         {
-            string configDirectory = Path.GetDirectoryName(configFilePath) ?? currentDirectory;
-            Directory.CreateDirectory(configDirectory);
+            if (selectedActions.Contains("MCP", StringComparer.OrdinalIgnoreCase))
+            {
+                ApplyMcpConfig(currentDirectory);
+            }
 
-            JsonObject root = LoadConfigRoot(configFilePath);
-            JsonObject serverContainer = GetOrCreateServerContainer(root);
-            serverContainer[ConstVal.CommandName] = CreateServerConfig();
+            if (selectedActions.Contains("Skills", StringComparer.OrdinalIgnoreCase))
+            {
+                ApplySkills(currentDirectory);
+            }
 
-            File.WriteAllText(configFilePath, root.ToJsonString(McpJsonSerializerOptions));
-            OutputHelper.Success($"MCP server config has been written to {configFilePath}");
             return Task.FromResult(0);
         }
         catch (JsonException ex)
         {
-            OutputHelper.Error($"Failed to parse {configFilePath}: {ex.Message}");
+            OutputHelper.Error($"Failed to parse .vscode/mcp.json: {ex.Message}");
             return Task.FromResult(-1);
         }
         catch (InvalidOperationException ex)
@@ -50,9 +72,59 @@ public class McpInitCommand : AsyncCommand
         }
         catch (IOException ex)
         {
-            OutputHelper.Error($"Failed to update {configFilePath}: {ex.Message}");
+            OutputHelper.Error($"Failed to update agent setup: {ex.Message}");
             return Task.FromResult(-1);
         }
+    }
+
+    private static void ApplyMcpConfig(string currentDirectory)
+    {
+        string configFilePath = Path.Combine(currentDirectory, ".vscode", "mcp.json");
+        string configDirectory = Path.GetDirectoryName(configFilePath) ?? currentDirectory;
+        Directory.CreateDirectory(configDirectory);
+
+        JsonObject root = LoadConfigRoot(configFilePath);
+        JsonObject serverContainer = GetOrCreateServerContainer(root);
+        serverContainer[ConstVal.CommandName] = CreateServerConfig();
+
+        File.WriteAllText(configFilePath, root.ToJsonString(McpJsonSerializerOptions));
+        OutputHelper.Success($"MCP server config has been written to {configFilePath}");
+    }
+
+    private static void ApplySkills(string currentDirectory)
+    {
+        string? agentZipPath = FindAgentZipPath(currentDirectory);
+        if (string.IsNullOrWhiteSpace(agentZipPath))
+        {
+            OutputHelper.Success("未找到 agent.zip");
+            return;
+        }
+
+        ZipFile.ExtractToDirectory(agentZipPath, currentDirectory, overwriteFiles: true);
+        OutputHelper.Success($"Extracted agent skills from {agentZipPath} to {currentDirectory}");
+    }
+
+    private static string? FindAgentZipPath(string currentDirectory)
+    {
+        HashSet<string> candidates = [];
+
+        foreach (string path in new[]
+        {
+            Path.Combine(currentDirectory, "agent.zip"),
+            Path.Combine(currentDirectory, "src", "Apps", "CommandLine", "agent.zip"),
+            Path.Combine(AppContext.BaseDirectory, "agent.zip")
+        })
+        {
+            candidates.Add(Path.GetFullPath(path));
+        }
+
+        for (DirectoryInfo? directory = new(currentDirectory); directory is not null; directory = directory.Parent)
+        {
+            candidates.Add(Path.GetFullPath(Path.Combine(directory.FullName, "agent.zip")));
+            candidates.Add(Path.GetFullPath(Path.Combine(directory.FullName, "src", "Apps", "CommandLine", "agent.zip")));
+        }
+
+        return candidates.FirstOrDefault(File.Exists);
     }
 
     internal static JsonObject LoadConfigRoot(string configFilePath)
@@ -100,11 +172,11 @@ public class McpInitCommand : AsyncCommand
         new()
         {
             ["command"] = ConstVal.CommandName,
-            ["args"] = new JsonArray(SubCommand.Mcp, SubCommand.Start),
+            ["args"] = new JsonArray(SubCommand.Agent, SubCommand.Mcp, SubCommand.Start),
         };
 }
 
-public class McpStartCommand : AsyncCommand
+public class AgentStartCommand : AsyncCommand
 {
     public override async Task<int> ExecuteAsync(CommandContext context, CancellationToken cancellationToken)
     {
@@ -136,7 +208,7 @@ public class McpStartCommand : AsyncCommand
             .WithToolsFromAssembly(typeof(MCPTools).Assembly);
 
         using var host = builder.Build();
-        var logger = host.Services.GetRequiredService<ILogger<McpStartCommand>>();
+        var logger = host.Services.GetRequiredService<ILogger<AgentStartCommand>>();
         var lifetime = host.Services.GetRequiredService<IHostApplicationLifetime>();
 
         using var ctRegistration = cancellationToken.Register(() =>

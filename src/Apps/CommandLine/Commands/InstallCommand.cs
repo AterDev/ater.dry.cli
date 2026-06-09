@@ -24,10 +24,6 @@ public class InstallCommand(
         [CommandArgument(1, "[ServiceName]")]
         [Description("Service name in Services directory")]
         public string? ServiceName { get; set; }
-
-        [CommandOption("-l|--list")]
-        [Description("List official modules")]
-        public bool List { get; set; }
     }
 
     public override async Task<int> ExecuteAsync(
@@ -36,14 +32,6 @@ public class InstallCommand(
         CancellationToken cancellationToken
     )
     {
-        if (
-            settings.List
-            || string.Equals(settings.PackagePath, "list", StringComparison.OrdinalIgnoreCase)
-        )
-        {
-            return await ShowOfficialModulesAsync(cancellationToken);
-        }
-
         if (string.IsNullOrWhiteSpace(settings.PackagePath) || string.IsNullOrWhiteSpace(settings.ServiceName))
         {
             OutputHelper.Error(localizer.Get(Localizer.InstallArgumentsRequired));

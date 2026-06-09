@@ -4,17 +4,19 @@ param (
     [System.Boolean]
     $withStudio = $false
 )
-$location = Get-Location
+$repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $OutputEncoding = [System.Console]::OutputEncoding = [System.Console]::InputEncoding = [System.Text.Encoding]::UTF8
 
 $dotnetVersion = "net10.0"
-$commandLinePath = Join-Path $location "../src/Apps/CommandLine";
-$studioPath = Join-Path $location "../src/Apps/Dashboard";
+$commandLinePath = Join-Path $repoRoot "src/Apps/CommandLine";
+$studioPath = Join-Path $repoRoot "src/Apps/Dashboard";
 $shareDllsFile = Join-Path $commandLinePath "ShareDlls.txt"
-
+$agentRepoRoot = (Resolve-Path -LiteralPath (Join-Path (Split-Path -Parent $repoRoot) "Perigon.template\ApiStandard") -ErrorAction SilentlyContinue).Path
+$agentZipPath = Join-Path $commandLinePath "agent.zip"
+$agentStagingPath = Join-Path $commandLinePath ".agent-temp"
 
 try {
-    Set-Location $location
+    Set-Location $repoRoot
     $commandLineProjectPath = Join-Path $commandLinePath "CommandLine.csproj";
     # get package name and version
     $VersionNode = Select-Xml -Path $commandLineProjectPath -XPath '/Project//PropertyGroup/Version'
@@ -23,7 +25,7 @@ try {
     $PackageId = $PackageNode.Node.InnerText
 
     # sync studio version
-    Set-Location $location
+    Set-Location $repoRoot
     $studioProjectPath = Join-Path $studioPath "Dashboard.csproj";
     $xml = [xml](Get-Content $studioProjectPath)
     $propertyGroup = $xml.Project.PropertyGroup[0]
@@ -86,7 +88,38 @@ try {
         Remove-Item .\publish -R -Force
     }
 
-    Set-Location $location
+    if ($agentRepoRoot) {
+        if (Test-Path -Path $agentZipPath) {
+            Remove-Item -Path $agentZipPath -Force
+        }
+
+        if (Test-Path -Path $agentStagingPath) {
+            Remove-Item -Path $agentStagingPath -Recurse -Force
+        }
+
+        New-Item -ItemType Directory -Path $agentStagingPath -Force | Out-Null
+
+        $agentEntries = @(
+            ".agents\skill\perigon",
+            ".github\agents",
+            ".github\instructions",
+            ".github\prompts"
+        )
+
+        foreach ($entry in $agentEntries) {
+            $sourcePath = Join-Path $agentRepoRoot $entry
+            if (Test-Path -Path $sourcePath) {
+                $targetPath = Join-Path $agentStagingPath $entry
+                New-Item -ItemType Directory -Path (Split-Path -Parent $targetPath) -Force | Out-Null
+                Copy-Item -Path $sourcePath -Destination $targetPath -Recurse -Force
+            }
+        }
+
+        Compress-Archive -Path (Join-Path $agentStagingPath "*") -DestinationPath $agentZipPath -CompressionLevel Optimal -Force
+        Remove-Item -Path $agentStagingPath -Recurse -Force
+    }
+
+    Set-Location $repoRoot
     Set-Location  $commandLinePath
     Write-Host 'Packing new version...'
 
@@ -127,9 +160,9 @@ try {
     Write-Host 'install new version:'$PackageId $Version
     dotnet tool install -g --add-source ./nupkg $PackageId --version $Version
 
-    Set-Location $location
+    Set-Location $repoRoot
 }
 catch {
-    Set-Location $location
+    Set-Location $repoRoot
     Write-Host $_.Exception.Message
 }

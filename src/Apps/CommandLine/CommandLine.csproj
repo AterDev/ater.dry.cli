@@ -42,6 +42,9 @@
     <None Include="studio.zip" Condition="Exists('studio.zip')">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="agent.zip" Condition="Exists('agent.zip')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="ShareDlls.txt" Condition="Exists('ShareDlls.txt')">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
