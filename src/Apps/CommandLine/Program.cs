@@ -21,12 +21,11 @@ CultureInfo.DefaultThreadCurrentCulture = systemCulture;
 CultureInfo.DefaultThreadCurrentUICulture = systemCulture;
 CultureInfo.CurrentCulture = systemCulture;
 CultureInfo.CurrentUICulture = systemCulture;
-var isAgentRawCommand = args.Length >= 3
+var isAgentRawCommand = args.Length >= 2
     && args[0].Equals(SubCommand.Agent, StringComparison.OrdinalIgnoreCase)
-    && args[1].Equals(SubCommand.Mcp, StringComparison.OrdinalIgnoreCase)
     && (
-        args[2].Equals(SubCommand.Init, StringComparison.OrdinalIgnoreCase)
-        || args[2].Equals(SubCommand.Start, StringComparison.OrdinalIgnoreCase)
+        args[1].Equals(SubCommand.Init, StringComparison.OrdinalIgnoreCase)
+        || args[1].Equals(SubCommand.Mcp, StringComparison.OrdinalIgnoreCase)
     );
 
 if (isAgentRawCommand)
@@ -69,7 +68,7 @@ builder.Services.AddScoped<PackCommand>();
 builder.Services.AddScoped<InstallCommand>();
 builder.Services.AddScoped<ModuleListCommand>();
 builder.Services.AddScoped<AgentInitCommand>();
-builder.Services.AddScoped<AgentStartCommand>();
+builder.Services.AddScoped<AgentMcpCommand>();
 
 var host = builder.Build();
 
@@ -203,11 +202,11 @@ app.Configure(config =>
         {
             agent.SetDescription(localizer.Get(Localizer.McpDes));
             agent
-                .AddCommand<AgentInitCommand>(SubCommand.Mcp)
+                .AddCommand<AgentInitCommand>(SubCommand.Init)
                 .WithDescription(localizer.Get(Localizer.McpInitDes));
             agent
-                .AddCommand<AgentStartCommand>(SubCommand.Start)
-                .WithDescription(localizer.Get(Localizer.McpStartDes));
+                .AddCommand<AgentMcpCommand>(SubCommand.Mcp)
+                .WithDescription(localizer.Get(Localizer.AgentMcpDes));
         }
     );
 

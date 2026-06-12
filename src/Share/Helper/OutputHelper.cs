@@ -123,5 +123,4 @@ public class SubCommand
     public const string Agent = "agent";
     public const string Config = "config";
     public const string Init = "init";
-    public const string Start = "start";
 }

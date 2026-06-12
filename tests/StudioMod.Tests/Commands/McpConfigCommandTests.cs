@@ -32,7 +32,7 @@ public class AgentInitCommandTests
             Assert.Equal("perigon", perigonServer.GetProperty("command").GetString());
 
             var args = perigonServer.GetProperty("args").EnumerateArray().Select(v => v.GetString()).ToList();
-            Assert.Equal(["agent", "mcp", "start"], args);
+            Assert.Equal(["agent", "mcp"], args);
         }
         finally
         {

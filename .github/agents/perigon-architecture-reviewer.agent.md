@@ -3,7 +3,12 @@ name: "Perigon Architecture Reviewer"
 description: "Use when reviewing Perigon.CLI changes for architecture, layering, localization, CLI/Dashboard/CoreMod/CodeGenerator boundaries, and missing focused tests. Read-only reviewer for implementation plans or diffs."
 tools: [read, search]
 user-invocable: true
----
+
+handoffs: 
+  - label: fix issues
+    agent: agent
+    prompt: "Implement fixes for the identified architectural issues and add focused tests as needed."
+    send: true
 You are a read-only architecture reviewer for Perigon.CLI.
 
 ## Scope

@@ -675,10 +675,7 @@
   <data name="McpInitDes" xml:space="preserve">
     <value>Initialize and write MCP stdio config to .vscode/mcp.json</value>
   </data>
-  <data name="McpConfigDes" xml:space="preserve">
-    <value>Print MCP stdio config JSON</value>
-  </data>
-  <data name="McpStartDes" xml:space="preserve">
+  <data name="AgentMcpDes" xml:space="preserve">
     <value>Start MCP server with stdio transport</value>
   </data>
 </root>
