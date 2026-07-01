@@ -60,11 +60,11 @@ public class TplContent
                 /// <returns></returns>
                 public async Task<bool?> DeleteAsync(List<Guid> ids, bool softDelete = true)
                 {
-                    if (!ids.Any())
+                    if (ids.Count == 0)
                     {
                         return false;
                     }
-                    if (ids.Count() == 1)
+                    if (ids.Count == 1)
                     {
                         Guid id = ids.First();
                         if (await HasPermissionAsync(id))
@@ -76,7 +76,7 @@ public class TplContent
                     else
                     {
                         var ownedIds = await GetOwnedIdsAsync(ids);
-                        if (ownedIds.Any())
+                        if (ownedIds.Count != 0)
                         {
                             return await DeleteOrUpdateAsync(ownedIds, !softDelete) > 0;
                         }
