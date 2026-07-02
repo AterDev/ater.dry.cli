@@ -32,49 +32,35 @@ public class OfficialModuleServiceTests
         var service = CreateService(
             new StubHttpMessageHandler(request =>
             {
-                if (request.RequestUri?.Host == "api.github.com")
+                if (request.RequestUri?.AbsoluteUri == "https://raw.githubusercontent.com/AterDev/Perigon.Modules/main/modules.json")
                 {
-                    if (request.RequestUri.AbsoluteUri == "https://api.github.com/")
-                    {
-                        return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
-                    }
+                    var metadataJson = """
+                        [
+                          {
+                            "ModuleName": "SystemMod",
+                            "Author": "Perigon",
+                            "DisplayName": "SystemMod",
+                            "Description": "System module",
+                            "PackageType": 0,
+                            "Version": "1.0.0"
+                          },
+                          {
+                            "ModuleName": "CMSMod",
+                            "Author": "Perigon",
+                            "DisplayName": "CMSMod",
+                            "Description": "CMS module",
+                            "PackageType": 0,
+                            "Version": "1.0.1"
+                          }
+                        ]
+                        """;
 
-                    if (request.RequestUri.AbsoluteUri.Contains("/git/trees/main?recursive=1"))
-                    {
-                        var treeJson = """
-                            {
-                              "tree": [
-                                {
-                                                                    "path": "modules.json",
-                                  "url": "https://api.github.com/repos/AterDev/Perigon.Modules/git/blobs/modules-json-sha"
-                                }
-                              ]
-                            }
-                            """;
-
-                        return Task.FromResult(
-                            new HttpResponseMessage(HttpStatusCode.OK)
-                            {
-                                Content = new StringContent(treeJson, Encoding.UTF8, "application/json")
-                            }
-                        );
-                    }
-
-                    if (request.RequestUri.AbsoluteUri.Contains("/git/blobs/modules-json-sha"))
-                    {
-                        var blobJson = """
-                            {
-                              "content": "WwogIHsKICAgICJNb2R1bGVOYW1lIjogIlN5c3RlbU1vZCIsCiAgICAiQXV0aG9yIjogIlBlcmlnb24iLAogICAgIkRpc3BsYXlOYW1lIjogIlN5c3RlbU1vZCIsCiAgICAiRGVzY3JpcHRpb24iOiAiU3lzdGVtIG1vZHVsZSIsCiAgICAiUGFja2FnZVR5cGUiOiAwLAogICAgIlZlcnNpb24iOiAiMS4wLjAiCiAgfSwKICB7CiAgICAiTW9kdWxlTmFtZSI6ICJDTVNNb2QiLAogICAgIkF1dGhvciI6ICJQZXJpZ29uIiwKICAgICJEaXNwbGF5TmFtZSI6ICJDTVNNb2QiLAogICAgIkRlc2NyaXB0aW9uIjogIkNNUyBtb2R1bGUiLAogICAgIlBhY2thZ2VUeXBlIjogMCwKICAgICJWZXJzaW9uIjogIjEuMC4xIgogIH0KXQ=="
-                            }
-                            """;
-
-                        return Task.FromResult(
-                            new HttpResponseMessage(HttpStatusCode.OK)
-                            {
-                                Content = new StringContent(blobJson, Encoding.UTF8, "application/json")
-                            }
-                        );
-                    }
+                    return Task.FromResult(
+                        new HttpResponseMessage(HttpStatusCode.OK)
+                        {
+                            Content = new StringContent(metadataJson, Encoding.UTF8, "application/json")
+                        }
+                    );
                 }
 
                 throw new InvalidOperationException($"Unexpected request: {request.RequestUri}");
@@ -90,6 +76,50 @@ public class OfficialModuleServiceTests
     }
 
     [Fact]
+    public async Task GetOfficialModulesAsync_ShouldUseOneMinuteCache()
+    {
+        var cancellationToken = TestContext.Current.CancellationToken;
+        var requestCount = 0;
+        var service = CreateService(
+            new StubHttpMessageHandler(request =>
+            {
+                if (request.RequestUri?.AbsoluteUri == "https://raw.githubusercontent.com/AterDev/Perigon.Modules/main/modules.json")
+                {
+                    requestCount++;
+                    var metadataJson = """
+                        [
+                          {
+                            "ModuleName": "SystemMod",
+                            "Author": "Perigon",
+                            "DisplayName": "SystemMod",
+                            "Description": "System module",
+                            "PackageType": 0,
+                            "Version": "1.0.0"
+                          }
+                        ]
+                        """;
+
+                    return Task.FromResult(
+                        new HttpResponseMessage(HttpStatusCode.OK)
+                        {
+                            Content = new StringContent(metadataJson, Encoding.UTF8, "application/json")
+                        }
+                    );
+                }
+
+                throw new InvalidOperationException($"Unexpected request: {request.RequestUri}");
+            })
+        );
+
+        var first = await service.GetOfficialModulesAsync(cancellationToken);
+        var second = await service.GetOfficialModulesAsync(cancellationToken);
+
+        Assert.Single(first);
+        Assert.Single(second);
+        Assert.Equal(1, requestCount);
+    }
+
+    [Fact]
     public async Task DownloadOfficialModulePackageAsync_ShouldPersistZipFile()
     {
         var cancellationToken = TestContext.Current.CancellationToken;
@@ -97,49 +127,27 @@ public class OfficialModuleServiceTests
         var service = CreateService(
             new StubHttpMessageHandler(request =>
             {
-                if (request.RequestUri?.Host == "api.github.com")
+                if (request.RequestUri?.AbsoluteUri == "https://raw.githubusercontent.com/AterDev/Perigon.Modules/main/modules.json")
                 {
-                    if (request.RequestUri.AbsoluteUri == "https://api.github.com/")
-                    {
-                        return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
-                    }
+                    var metadataJson = """
+                        [
+                          {
+                            "ModuleName": "SystemMod",
+                            "Author": "Perigon",
+                            "DisplayName": "SystemMod",
+                            "Description": "System module",
+                            "PackageType": 0,
+                            "Version": "1.0.0"
+                          }
+                        ]
+                        """;
 
-                    if (request.RequestUri.AbsoluteUri.Contains("/git/trees/main?recursive=1"))
-                    {
-                        var treeJson = """
-                            {
-                              "tree": [
-                                {
-                                                                    "path": "modules.json",
-                                  "url": "https://api.github.com/repos/AterDev/Perigon.Modules/git/blobs/modules-json-sha"
-                                }
-                              ]
-                            }
-                            """;
-
-                        return Task.FromResult(
-                            new HttpResponseMessage(HttpStatusCode.OK)
-                            {
-                                Content = new StringContent(treeJson, Encoding.UTF8, "application/json")
-                            }
-                        );
-                    }
-
-                    if (request.RequestUri.AbsoluteUri.Contains("/git/blobs/modules-json-sha"))
-                    {
-                        var blobJson = """
-                            {
-                              "content": "WwogIHsKICAgICJNb2R1bGVOYW1lIjogIlN5c3RlbU1vZCIsCiAgICAiQXV0aG9yIjogIlBlcmlnb24iLAogICAgIkRpc3BsYXlOYW1lIjogIlN5c3RlbU1vZCIsCiAgICAiRGVzY3JpcHRpb24iOiAiU3lzdGVtIG1vZHVsZSIsCiAgICAiUGFja2FnZVR5cGUiOiAwLAogICAgIlZlcnNpb24iOiAiMS4wLjAiCiAgfQpd"
-                            }
-                            """;
-
-                        return Task.FromResult(
-                            new HttpResponseMessage(HttpStatusCode.OK)
-                            {
-                                Content = new StringContent(blobJson, Encoding.UTF8, "application/json")
-                            }
-                        );
-                    }
+                    return Task.FromResult(
+                        new HttpResponseMessage(HttpStatusCode.OK)
+                        {
+                            Content = new StringContent(metadataJson, Encoding.UTF8, "application/json")
+                        }
+                    );
                 }
 
                 if (request.RequestUri?.AbsoluteUri.Contains("package_modules/SystemMod.zip") == true)

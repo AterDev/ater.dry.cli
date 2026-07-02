@@ -678,4 +678,16 @@
   <data name="AgentMcpDes" xml:space="preserve">
     <value>通过 stdio 传输启动 MCP 服务</value>
   </data>
+  <data name="FeatureModules" xml:space="preserve">
+    <value>功能模块</value>
+  </data>
+  <data name="SelectOfficialModules" xml:space="preserve">
+    <value>👇 选择需要安装的官方功能模块</value>
+  </data>
+  <data name="Integration" xml:space="preserve">
+    <value>集成</value>
+  </data>
+  <data name="LoadingOfficialModules" xml:space="preserve">
+    <value>正在加载官方功能模块...</value>
+  </data>
 </root>

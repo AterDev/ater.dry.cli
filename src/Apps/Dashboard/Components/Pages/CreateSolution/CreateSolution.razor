@@ -1,12 +1,14 @@
 @page "/create"
 @using CoreMod.Services
+@using Share.Models
 @using Share.Models.CommandDtos
 @using Share.Services
 @inherits PageBase
 
 <PageTitle>@Lang(Localizer.Create, Localizer.Solution)</PageTitle>
 
-<div style="width:800px" class="vh-default">
+<div class="create-solution-page vh-default">
+  <div class="create-solution-content">
   <FluentStack Orientation="Orientation.Vertical"
                VerticalGap="12"
                Class="p-2">
@@ -44,6 +46,21 @@
       }
     </FluentLabel>
 
+    <FluentLabel>
+      @Lang(Localizer.SolutionType)
+    </FluentLabel>
+    <FluentRadioGroup TOption="string"
+                      Orientation="Orientation.Vertical"
+                      Required="true"
+                      @bind-Value="SelectedTemplateType">
+      @foreach (TemplateTypeOption option in TemplateTypeOptions)
+      {
+        <FluentRadio TOption="string"
+                     Value="@option.Value"
+                     Label="@option.Text" />
+      }
+    </FluentRadioGroup>
+
     <FluentDivider Class="w-100" />
     <FluentLabel Typo="Typography.H3">
       📚 @Lang(Localizer.Component, Localizer.Configuration)
@@ -71,48 +88,50 @@
     </FluentStack>
     <FluentDivider Class="w-100"></FluentDivider>
 
-    <FluentLabel Typo="Typography.Subject">@Lang(Localizer.SelectSolutionType)</FluentLabel>
-
-    <FluentSelect TOption="TemplateTypeOption"
-                  Items="TemplateTypeOptions"
-                  Width="240px"
-                  OptionText="@(item => item.Text)"
-                  OptionValue="@(item => item.Value)"
-                  SelectedOption="SelectedTemplateOption"
-                  SelectedOptionChanged="OnTemplateTypeChanged" />
-
-    @*     <FluentLabel Typo="Typography.H3">
-      🎁 @Lang(Localizer.Modules)
+    <FluentLabel Typo="Typography.H3">
+      🎁 @Lang(Localizer.FeatureModules)
     </FluentLabel>
 
-    <FluentStack Orientation="Orientation.Vertical"
-                 VerticalGap="2">
-      <FluentSelect TOption="ModuleInfo"
-                    Label="@Lang(Localizer.Select,Localizer.Modules)"
-                    Items="@Modules.AsEnumerable()"
-                    Multiple="true"
-                    OptionValue="@(p => p.Value.ToString())"
-                    @bind-SelectedOptions="@SelectedModules">
-        <OptionTemplate>
-          <FluentStack Orientation="Orientation.Horizontal"
-                       Class="w-100"
-                       HorizontalAlignment="HorizontalAlignment.SpaceBetween">
-            <FluentLabel Typo="Typography.H6" Color="Color.Accent">
-              @context.Name
-            </FluentLabel>
-            <FluentLabel Typo="Typography.Body">
-              (@Lang(context.Description))
-            </FluentLabel>
-          </FluentStack>
+    @if (IsLoadingOfficialModules)
+    {
+      <FluentStack Orientation="Orientation.Horizontal"
+                   VerticalAlignment="VerticalAlignment.Center"
+                   HorizontalGap="8">
+        <FluentProgressRing />
+        <FluentLabel>@Lang(Localizer.LoadingOfficialModules)</FluentLabel>
+      </FluentStack>
+    }
+    else if (!string.IsNullOrWhiteSpace(OfficialModuleLoadError))
+    {
+      <FluentMessageBar Intent="MessageIntent.Warning">
+        @OfficialModuleLoadError
+      </FluentMessageBar>
+    }
+    else if (OfficialModuleOptions.Count == 0)
+    {
+      <FluentLabel>@Lang(Localizer.OfficialModuleListEmpty)</FluentLabel>
+    }
+    else
+    {
+      <div class="official-module-list">
+        @foreach (var module in OfficialModuleOptions)
+        {
+          <div class="official-module-row">
+            <FluentCheckbox @bind-Value="module.IsSelected" />
+            <div class="official-module-info">
+              <FluentLabel Typo="Typography.Body" Class="official-module-summary">
+                @GetOfficialModuleSummary(module.Metadata)
+              </FluentLabel>
+            </div>
+          </div>
+        }
+      </div>
+    }
 
-        </OptionTemplate>
-      </FluentSelect>
-    </FluentStack>
     <FluentDivider Class="w-100"></FluentDivider>
-    *@
 
     <FluentLabel Typo="Typography.H3">
-      🅰️ @Lang(Localizer.Else)
+      🅰️ @Lang(Localizer.FrontEnd, Localizer.Integration)
     </FluentLabel>
 
     <FluentLabel Typo="Typography.Subject">@Lang(Localizer.SelectFrontType)</FluentLabel>
@@ -132,25 +151,51 @@
       </FluentStack>
     </FluentStack>
   </FluentStack>
+  </div>
 </div>
 
 @code {
   CreateSolutionDto AddDto { get; set; } = null!;
-  List<ModuleInfo> Modules = ModuleInfo.GetModules();
-  IEnumerable<ModuleInfo> SelectedModules = [];
+  List<OfficialModuleOption> OfficialModuleOptions { get; set; } = [];
   bool IsProcessing { get; set; } = false;
-  TemplateTypeOption SelectedTemplateOption { get; set; } = null!;
+  bool IsLoadingOfficialModules { get; set; }
+  string? OfficialModuleLoadError { get; set; }
+  private string _selectedTemplateType = "standard";
+  string SelectedTemplateType
+  {
+    get => _selectedTemplateType;
+    set
+    {
+      if (string.IsNullOrWhiteSpace(value))
+      {
+        return;
+      }
 
-  private sealed record TemplateTypeOption(string Value, string Text);
+      _selectedTemplateType = value;
+      AddDto.IsLight = value == "light";
+    }
+  }
+  List<TemplateTypeOption> TemplateTypeOptions { get; set; } = [];
 
-  private IReadOnlyList<TemplateTypeOption> TemplateTypeOptions =>
-  [
-    new("standard", Lang(Localizer.SolutionTypeStandard)),
-    new("light", Lang(Localizer.SolutionTypeMini))
-  ];
+  private sealed class TemplateTypeOption
+  {
+    public required string Value { get; init; }
+
+    public required string Text { get; init; }
+  }
+
+  private sealed class OfficialModuleOption
+  {
+    public required PackageMetadata Metadata { get; set; }
+
+    public bool IsSelected { get; set; }
+  }
 
   [Inject]
   private CommandService CommandService { get; set; } = null!;
+
+  [Inject]
+  private OfficialModuleService OfficialModuleService { get; set; } = null!;
 
   private IDialogReference? _dialog;
 
@@ -164,19 +209,13 @@
       DBType = DBType.PostgreSQL,
       IsLight = false,
     };
-    SelectedTemplateOption = TemplateTypeOptions[0];
-  }
-
-  private Task OnTemplateTypeChanged(TemplateTypeOption? option)
-  {
-    if (option is null)
-    {
-      return Task.CompletedTask;
-    }
-
-    SelectedTemplateOption = option;
-    AddDto.IsLight = option.Value == "light";
-    return Task.CompletedTask;
+    TemplateTypeOptions =
+    [
+      new() { Value = "standard", Text = Lang(Localizer.SolutionTypeStandard) },
+      new() { Value = "light", Text = Lang(Localizer.SolutionTypeMini) }
+    ];
+    SelectedTemplateType = "standard";
+    _ = LoadOfficialModulesAsync();
   }
 
   private bool IsValid()
@@ -194,7 +233,11 @@
       return;
     }
 
-    AddDto.Modules = SelectedModules.Select(p => p.Value).ToList();
+    AddDto.OfficialModules = OfficialModuleOptions
+      .Where(p => p.IsSelected)
+      .Select(p => $"Perigon.{p.Metadata.ModuleName}")
+      .ToList();
+
     DialogParameters<SplashScreenContent> parameters = new()
     {
       Content = new()
@@ -223,4 +266,74 @@
       NavigationManager.NavigateTo("/");
     }
   }
+
+  private async Task LoadOfficialModulesAsync()
+  {
+    IsLoadingOfficialModules = true;
+    OfficialModuleLoadError = null;
+
+    try
+    {
+      var modules = await OfficialModuleService.GetOfficialModulesAsync();
+      OfficialModuleOptions = modules
+        .Select(module => new OfficialModuleOption { Metadata = module })
+        .ToList();
+    }
+    catch (Exception ex)
+    {
+      OfficialModuleLoadError = ex.Message;
+    }
+    finally
+    {
+      IsLoadingOfficialModules = false;
+      await InvokeAsync(StateHasChanged);
+    }
+  }
+
+  private static string GetOfficialModuleSummary(PackageMetadata module)
+  {
+    var displayName = string.IsNullOrWhiteSpace(module.DisplayName)
+      ? $"Perigon.{module.ModuleName}"
+      : module.DisplayName;
+    var description = string.IsNullOrWhiteSpace(module.Description)
+      ? "-"
+      : module.Description;
+
+    return $"{displayName}({module.Version}) - {description}";
+  }
 }
+
+<style>
+  .create-solution-page {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .create-solution-content {
+    width: min(100%, 860px);
+    max-width: 860px;
+  }
+
+  .official-module-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .official-module-row {
+    display: grid;
+    grid-template-columns: 32px minmax(0, 1fr);
+    gap: 4px;
+    align-items: start;
+    padding: 10px 0;
+  }
+
+  .official-module-info {
+    min-width: 0;
+  }
+
+  .official-module-summary {
+    overflow-wrap: anywhere;
+  }
+</style>

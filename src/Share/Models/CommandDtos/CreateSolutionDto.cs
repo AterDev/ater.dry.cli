@@ -82,6 +82,11 @@ public class CreateSolutionDto
     /// 选择的模块
     /// </summary>
     public List<string> Modules { get; set; } = [];
+
+    /// <summary>
+    /// 选择的官方模块包
+    /// </summary>
+    public List<string> OfficialModules { get; set; } = [];
 }
 
 public enum DBType

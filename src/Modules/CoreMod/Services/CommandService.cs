@@ -19,7 +19,8 @@ public class CommandService(
     DefaultDbContext context,
     SolutionContext projectContext,
     SolutionService solutionService,
-    CodeGenService codeGenService
+    CodeGenService codeGenService,
+    ModuleInstallService moduleInstallService
 )
 {
     public string? ErrorMsg { get; set; }
@@ -166,6 +167,31 @@ public class CommandService(
         if (!ProcessHelper.RunCommand("dotnet", "tool restore", out string restoreMsg))
         {
             OutputHelper.Error(restoreMsg);
+        }
+
+        if (dto.OfficialModules.Count > 0)
+        {
+            var targetService = solutionService.GetServices().FirstOrDefault();
+            if (targetService == null)
+            {
+                ErrorMsg = "Install official modules failed: service project not found.";
+                OutputHelper.Error(ErrorMsg);
+                return false;
+            }
+
+            foreach (var packageName in dto.OfficialModules.Distinct(StringComparer.OrdinalIgnoreCase))
+            {
+                OutputHelper.Important($"Install official module:{packageName}");
+                var installed = await moduleInstallService.InstallModuleAsync(
+                    packageName,
+                    targetService.Name
+                );
+                if (!installed)
+                {
+                    ErrorMsg = $"Install official module {packageName} failed.";
+                    return false;
+                }
+            }
         }
 
         OutputHelper.Success($"Create solution {dto.Name} completed!");

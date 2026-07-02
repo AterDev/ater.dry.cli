@@ -678,4 +678,16 @@
   <data name="AgentMcpDes" xml:space="preserve">
     <value>Start MCP server with stdio transport</value>
   </data>
+  <data name="FeatureModules" xml:space="preserve">
+    <value>Feature Modules</value>
+  </data>
+  <data name="SelectOfficialModules" xml:space="preserve">
+    <value>👇 Select official feature modules to install</value>
+  </data>
+  <data name="Integration" xml:space="preserve">
+    <value>Integration</value>
+  </data>
+  <data name="LoadingOfficialModules" xml:space="preserve">
+    <value>Loading official feature modules...</value>
+  </data>
 </root>

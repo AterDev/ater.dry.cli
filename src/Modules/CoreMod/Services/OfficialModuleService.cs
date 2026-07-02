@@ -1,5 +1,4 @@
 using System.Net.Http.Headers;
-using System.Text.Json.Serialization;
 
 namespace CoreMod.Services;
 
@@ -10,23 +9,20 @@ public class OfficialModuleService
 {
     private const string OfficialPackagePrefix = "Perigon.";
     private const string GitHubApiUrl = "https://api.github.com";
-    private const string GitHubRepositoryTreeUrl =
-        "https://api.github.com/repos/AterDev/Perigon.Modules/git/trees/main?recursive=1";
-    private const string OfficialModulesMetadataPath = "modules.json";
+    private static readonly TimeSpan OfficialModulesCacheDuration = TimeSpan.FromMinutes(1);
+    private const string OfficialModulesMetadataUrl =
+        "https://raw.githubusercontent.com/AterDev/Perigon.Modules/main/modules.json";
     private const string OfficialModulesPackageUrlFormat =
         "https://raw.githubusercontent.com/AterDev/Perigon.Modules/main/package_modules/{0}.zip";
 
     private static readonly HttpClient SharedHttpClient = CreateDefaultHttpClient();
-    private static readonly JsonSerializerOptions GitHubJsonSerializerOptions = new(
-        ConstVal.DefaultJsonSerializerOptions
-    )
-    {
-        PropertyNameCaseInsensitive = true
-    };
 
     private readonly HttpClient _httpClient;
     private readonly Localizer _localizer;
     private readonly ILogger<OfficialModuleService> _logger;
+    private readonly SemaphoreSlim _modulesCacheLock = new(1, 1);
+    private IReadOnlyList<PackageMetadata>? _cachedOfficialModules;
+    private DateTimeOffset _cachedOfficialModulesExpiresAt;
 
     public OfficialModuleService(Localizer localizer, ILogger<OfficialModuleService> logger)
         : this(SharedHttpClient, localizer, logger) { }
@@ -83,23 +79,47 @@ public class OfficialModuleService
         CancellationToken cancellationToken = default
     )
     {
-        await EnsureGitHubConnectionAsync(cancellationToken);
+        if (_cachedOfficialModules is not null
+            && _cachedOfficialModulesExpiresAt > DateTimeOffset.UtcNow)
+        {
+            return _cachedOfficialModules;
+        }
 
         try
         {
-            var metadataJson = await GetRepositoryTextContentAsync(
-                OfficialModulesMetadataPath,
-                cancellationToken
-            );
-            var modules = JsonSerializer.Deserialize<List<PackageMetadata>>(
-                metadataJson,
-                ConstVal.DefaultJsonSerializerOptions
-            );
+            await _modulesCacheLock.WaitAsync(cancellationToken);
+            try
+            {
+                if (_cachedOfficialModules is not null
+                    && _cachedOfficialModulesExpiresAt > DateTimeOffset.UtcNow)
+                {
+                    return _cachedOfficialModules;
+                }
 
-            return modules?
-                .OrderBy(m => m.ModuleName, StringComparer.OrdinalIgnoreCase)
-                .ToList()
-                ?? [];
+                using var request = new HttpRequestMessage(HttpMethod.Get, OfficialModulesMetadataUrl);
+                using var response = await _httpClient.SendAsync(request, cancellationToken);
+                response.EnsureSuccessStatusCode();
+
+                await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+                var modules = await JsonSerializer.DeserializeAsync<List<PackageMetadata>>(
+                    stream,
+                    ConstVal.DefaultJsonSerializerOptions,
+                    cancellationToken
+                );
+
+                _cachedOfficialModules = modules?
+                    .OrderBy(m => m.ModuleName, StringComparer.OrdinalIgnoreCase)
+                    .ToList()
+                    ?? [];
+                _cachedOfficialModulesExpiresAt =
+                    DateTimeOffset.UtcNow.Add(OfficialModulesCacheDuration);
+
+                return _cachedOfficialModules;
+            }
+            finally
+            {
+                _modulesCacheLock.Release();
+            }
         }
         catch (Exception ex)
         {
@@ -160,69 +180,6 @@ public class OfficialModuleService
         }
     }
 
-    private async Task EnsureGitHubConnectionAsync(CancellationToken cancellationToken)
-    {
-        if (!await CanConnectToGitHubAsync(cancellationToken))
-        {
-            throw new InvalidOperationException(_localizer.Get(Localizer.GitHubConnectionFailed));
-        }
-    }
-
-    private async Task<string> GetRepositoryTextContentAsync(
-        string repositoryPath,
-        CancellationToken cancellationToken
-    )
-    {
-        var item = await GetRepositoryTreeItemAsync(repositoryPath, cancellationToken);
-        if (string.IsNullOrWhiteSpace(item.Url))
-        {
-            throw new InvalidOperationException(_localizer.Get(Localizer.OfficialModulesFetchFailed));
-        }
-
-        using var request = new HttpRequestMessage(HttpMethod.Get, item.Url);
-        using var response = await _httpClient.SendAsync(request, cancellationToken);
-        response.EnsureSuccessStatusCode();
-
-        await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
-        var blob = await JsonSerializer.DeserializeAsync<GitBlobResponse>(
-            stream,
-            GitHubJsonSerializerOptions,
-            cancellationToken
-        );
-
-        if (string.IsNullOrWhiteSpace(blob?.Content))
-        {
-            throw new InvalidOperationException(_localizer.Get(Localizer.OfficialModulesFetchFailed));
-        }
-
-        var base64Content = blob.Content.Replace("\n", string.Empty).Replace("\r", string.Empty);
-        return Encoding.UTF8.GetString(Convert.FromBase64String(base64Content));
-    }
-
-    private async Task<GitTreeItem> GetRepositoryTreeItemAsync(
-        string repositoryPath,
-        CancellationToken cancellationToken
-    )
-    {
-        using var request = new HttpRequestMessage(HttpMethod.Get, GitHubRepositoryTreeUrl);
-        using var response = await _httpClient.SendAsync(request, cancellationToken);
-        response.EnsureSuccessStatusCode();
-
-        await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
-        var tree = await JsonSerializer.DeserializeAsync<GitTreeResponse>(
-            stream,
-            GitHubJsonSerializerOptions,
-            cancellationToken
-        );
-
-        var item = tree?.Tree.FirstOrDefault(x =>
-            string.Equals(x.Path, repositoryPath, StringComparison.OrdinalIgnoreCase)
-        );
-
-        return item
-            ?? throw new InvalidOperationException(_localizer.Get(Localizer.OfficialModulesFetchFailed));
-    }
-
     private static HttpClient CreateDefaultHttpClient()
     {
         var client = new HttpClient();
@@ -236,26 +193,5 @@ public class OfficialModuleService
             new MediaTypeWithQualityHeaderValue("application/octet-stream")
         );
         return client;
-    }
-
-    private sealed class GitTreeResponse
-    {
-        [JsonPropertyName("tree")]
-        public List<GitTreeItem> Tree { get; set; } = [];
-    }
-
-    private sealed class GitTreeItem
-    {
-        [JsonPropertyName("path")]
-        public string? Path { get; set; }
-
-        [JsonPropertyName("url")]
-        public string? Url { get; set; }
-    }
-
-    private sealed class GitBlobResponse
-    {
-        [JsonPropertyName("content")]
-        public string? Content { get; set; }
     }
 }

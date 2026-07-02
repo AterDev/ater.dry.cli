@@ -28,6 +28,8 @@ builder.Services.AddScoped<CodeAnalysisService>();
 builder.Services.AddScoped<CodeGenService>();
 builder.Services.AddScoped<CommandService>();
 builder.Services.AddScoped<SolutionService>();
+builder.Services.AddScoped<OfficialModuleService>();
+builder.Services.AddScoped<ModuleInstallService>();
 builder.Services.AddScoped<ActionRunModelService>();
 builder.Services.AddSingleton<StorageService>();
 
