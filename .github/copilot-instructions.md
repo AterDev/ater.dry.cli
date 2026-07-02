@@ -1,6 +1,6 @@
 # GitHub Copilot Instructions
 
-本仓库是 Perigon.CLI：一个 .NET 10 命令行开发辅助工具，同时提供 Blazor Server Studio Web UI、MCP Server、模块打包/安装、OpenAPI 客户端生成，以及基于 Roslyn/Razor 的代码生成能力。生成或修改代码时，请优先遵循本文件以及 `.github/instructions` 和 `.agents/skills` 中的项目上下文。
+本仓库是 Perigon.CLI：一个 .NET 10 命令行开发辅助工具，同时提供 Blazor Server Studio Web UI、MCP Server、模块打包/安装、OpenAPI 客户端生成，以及基于 Roslyn/Razor 的代码生成能力。生成或修改代码时，请优先遵循本文件，并参考 `.agents/agents/engineer.agent.md` 与 `.agents/skills` 中的工程规范和技术栈技能。
 
 ## General Guidelines
 
@@ -45,8 +45,10 @@
 
 ## AI Coding Customization
 
-- `.github/instructions/perigon-architecture.instructions.md` 包含更细的架构、分层和文件匹配规则。
-- `.github/instructions/ai-coding-customization.instructions.md` 包含创建 instructions、skills、agents 的格式约定。
-- `.agents/skills/perigon-repo-context` 是通用项目上下文技能，适合实现、评审或解释本仓库功能时加载。
-- `.agents/skills/ai-coding-customization` 是通用 AI coding customization 技能，适合更新 Copilot instructions、AGENTS.md、`.instructions.md`、`.agent.md`、`SKILL.md` 时加载。
-- `.github/agents/perigon-architecture-reviewer.agent.md` 是只读架构评审 agent，可用于检查分层、边界、本地化和测试风险。
+- `.agents/agents/engineer.agent.md` 是主要实现 agent，用来定义项目结构、分层边界、工程约定、本地化要求、验证策略，并指导使用不同 skill。
+- `.agents/skills/cli` 用于 .NET CLI、Spectre.Console、命令注册、参数、输出、退出码和 stdio 安全路径。
+- `.agents/skills/blazor` 用于 Blazor Server、Fluent UI Blazor、Razor 组件、Dashboard 服务、文化切换和 UI 本地化。
+- `.agents/skills/dotnet` 用于 .NET 服务、Manager、DI、MiniDb、Mapster、MCP、模块工作流和 CLI/Blazor 共享业务逻辑。
+- `.agents/skills/codegen` 用于 Roslyn、OpenAPI、Razor 模板、DTO/Manager/Controller 生成和请求客户端生成。
+- `.agents/skills/test` 用于 xUnit v3、Moq、测试隔离、HTTP stub、临时目录、MiniDb 隔离和验证策略。
+- `.github/agents/reviewer.agent.md` 是只读架构评审 agent，可用于检查分层、边界、本地化和测试风险。
