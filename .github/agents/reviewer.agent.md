@@ -1,5 +1,5 @@
 ---
-name: "Perigon Architecture Reviewer"
+name: "Reviewer"
 description: "Use when reviewing Perigon.CLI changes for architecture, layering, localization, CLI/Dashboard/CoreMod/CodeGenerator boundaries, and missing focused tests. Read-only reviewer for implementation plans or diffs."
 tools: [read, search]
 user-invocable: true
