@@ -17,18 +17,27 @@ public class OutputHelper
         string logo = """
 
             ██████┐ ███████┐██████┐ ██┐ ██████┐  ██████┐ ███┐   ██┐
-            ██┌──██┐██┌────┐██┌──██┐██│██┌────┘ ██┌───██┐████┐  ██│
+            ██┌──██┐██┌────┘██┌──██┐██│██┌────┘ ██┌───██┐████┐  ██│
             ██████┌┘█████┐  ██████┌┘██│██│  ███┐██│   ██│██┌██┐ ██│
             ██┌───┘ ██┌──┘  ██┌──██┐██│██│   ██│██│   ██│██│└██┐██│
             ██│     ███████┐██│  ██│██│└██████┌┘└██████┌┘██│ └████│
             └─┘     └──────┘└─┘  └─┘└─┘ └─────┘  └─────┘ └─┘  └───┘
             """;
-        string sign1 = "                 —→ for freedom 🗽 ←—";
+        string version = AssemblyHelper.GetCurrentToolVersion();
+        string sign1 = $" for freedom 🗽   Version:{version}";
         string docsLine = "[[docs]]:   [link]https://dusi.dev/docs/Perigon.html[/]";
         string gitHubLine = "[[GitHub]]: [link]https://github.com/AterDev/Perigon.CLI[/]";
 
-        AnsiConsole.MarkupLine($"[bold green]{logo}[/]");
-        AnsiConsole.MarkupLine($"[yellow]{sign1}[/]");
+        AnsiConsole.Write(
+            new Panel(
+                new Rows(
+                    new Markup($"[bold purple]{Markup.Escape(logo.Trim())}[/]"),
+                    new Markup($"[yellow]{Markup.Escape(sign1)}[/]")
+                )
+            )
+            .Border(BoxBorder.Rounded)
+            .BorderColor(Color.Grey)
+        );
         AnsiConsole.MarkupLine($"[blue]{docsLine}[/]");
         AnsiConsole.MarkupLine($"[blue]{gitHubLine}[/]");
         AnsiConsole.MarkupLine("");

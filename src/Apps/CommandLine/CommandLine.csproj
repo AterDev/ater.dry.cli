@@ -6,9 +6,9 @@
     <ToolCommandName>perigon</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>
     <PackageId>Perigon.CLI</PackageId>
-    <Version>10.1.5</Version>
+    <Version>10.1.6</Version>
     <Description>
-			Your Copilot for Web Developer - Code generation and AI assistant tool.
+			The AI workflow for .NET Web developers, help you generate code and build your project quickly.
 		</Description>
     <Authors>NilTor</Authors>
     <Company>Atersoft</Company>
@@ -18,7 +18,7 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/AterDev/Perigon.CLI</RepositoryUrl>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>1. add miniAPI template for AOT.
+    <PackageReleaseNotes>1. add modules when create solution.
 		</PackageReleaseNotes>
     <PackageIcon>logo.png</PackageIcon>
     <ImplicitUsings>enable</ImplicitUsings>

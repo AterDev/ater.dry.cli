@@ -1,7 +1,7 @@
 ---
-name: "engineer"
-description: "Use as the primary implementation agent for this .NET repository. It defines project structure, engineering conventions, ownership boundaries, localization, testing policy, and when to use the cli, blazor, dotnet, codegen, and test skills."
-tools: [read, search, edit, shell]
+name: "cli"
+description: "Use as the primary implementation agent for this .NET repository. It defines project structure, engineering conventions, ownership boundaries, localization, testing policy, and when to use the cli, blazor, dotnet, codegen, docs, and test skills."
+tools: [read, search, edit, execute, agent]
 user-invocable: true
 ---
 
@@ -39,6 +39,7 @@ You are the implementation engineer for this .NET repository.
 - Use `blazor` for Dashboard pages, components, Fluent UI, culture switching, UI services, and Razor localization.
 - Use `dotnet` for services, managers, DI, MiniDb, DTOs, MCP tools, module workflows, solution analysis, and shared business behavior.
 - Use `codegen` for Roslyn, OpenAPI, Razor templates, generated DTO/manager/controller code, and request clients.
+- Use `docs` for documentation updates under `Perigon.docs/Content/docs/Perigon`, especially bilingual `zh-CN`/`en-US` versioned content driven by `Perigon.CLI`, `Perigon.template`, and `Perigon.Modules` changes.
 - Use `test` when adding tests or choosing validation.
 
 ## Validation Policy

@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../Perigon.docs"
+		},
+		{
+			"path": "../Perigon.Modules"
+		},
+		{
+			"path": "../Perigon.template"
+		},
+		{
+			"path": "../Perigon.PostgreSQL"
+		}
+	],
+	"settings": {}
+}

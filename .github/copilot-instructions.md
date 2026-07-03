@@ -50,5 +50,6 @@
 - `.agents/skills/blazor` 用于 Blazor Server、Fluent UI Blazor、Razor 组件、Dashboard 服务、文化切换和 UI 本地化。
 - `.agents/skills/dotnet` 用于 .NET 服务、Manager、DI、MiniDb、Mapster、MCP、模块工作流和 CLI/Blazor 共享业务逻辑。
 - `.agents/skills/codegen` 用于 Roslyn、OpenAPI、Razor 模板、DTO/Manager/Controller 生成和请求客户端生成。
+- `.agents/skills/docs` 用于 Perigon 文档维护，特别是 `Perigon.docs/Content/docs/Perigon` 下按版本组织的中英文文档，以及基于 `Perigon.CLI`、`Perigon.template`、`Perigon.Modules` 变更同步更新文档。
 - `.agents/skills/test` 用于 xUnit v3、Moq、测试隔离、HTTP stub、临时目录、MiniDb 隔离和验证策略。
 - `.github/agents/reviewer.agent.md` 是只读架构评审 agent，可用于检查分层、边界、本地化和测试风险。
