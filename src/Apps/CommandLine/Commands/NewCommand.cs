@@ -38,14 +38,24 @@ public class NewCommand(
                     localizer.Get(Localizer.SolutionTypeMini)
                 ])
         );
+        var isLight = solutionType == localizer.Get(Localizer.SolutionTypeMini);
+
         // 2. 选择数据库类型
-        var dbType = AnsiConsole.Prompt(
-            new SelectionPrompt<string>()
-                .Title(localizer.Get(Localizer.SelectDatabaseProvider))
-                .AddChoices(
+        var dbTypePrompt = new SelectionPrompt<string>()
+            .Title(localizer.Get(Localizer.SelectDatabaseProvider));
+
+        if (isLight)
+        {
+            dbTypePrompt.AddChoice(localizer.Get(Localizer.DatabasePostgreSql));
+        }
+        else
+        {
+            dbTypePrompt.AddChoices(
                 localizer.Get(Localizer.DatabasePostgreSql),
-                localizer.Get(Localizer.DatabaseSqlServer))
-        );
+                localizer.Get(Localizer.DatabaseSqlServer));
+        }
+
+        var dbType = AnsiConsole.Prompt(dbTypePrompt);
 
         // 4. 选择缓存类型
         var cacheType = AnsiConsole.Prompt(
@@ -63,17 +73,21 @@ public class NewCommand(
         // 7. 其他配置 (暂不支持)
 
         // 8. 官方模块选择(多选)
-        var officialModules = await GetOfficialModulesAsync(cancellationToken);
-        List<PackageMetadata> selectedOfficialModules = officialModules.Count == 0
-            ? []
-            : AnsiConsole.Prompt(
-                new MultiSelectionPrompt<PackageMetadata>()
-                    .Title(localizer.Get(Localizer.SelectOfficialModules))
-                    .InstructionsText(localizer.Get(Localizer.CommandSelectTip))
-                    .NotRequired()
-                    .AddChoices(officialModules)
-                    .UseConverter(FormatOfficialModuleOption)
-            );
+        List<PackageMetadata> selectedOfficialModules = [];
+        if (!isLight)
+        {
+            var officialModules = await GetOfficialModulesAsync(cancellationToken);
+            selectedOfficialModules = officialModules.Count == 0
+                ? []
+                : AnsiConsole.Prompt(
+                    new MultiSelectionPrompt<PackageMetadata>()
+                        .Title(localizer.Get(Localizer.SelectOfficialModules))
+                        .InstructionsText(localizer.Get(Localizer.CommandSelectTip))
+                        .NotRequired()
+                        .AddChoices(officialModules)
+                        .UseConverter(FormatOfficialModuleOption)
+                );
+        }
 
         var frontType = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
@@ -140,7 +154,7 @@ public class NewCommand(
             {
                 Name = settings.Name,
                 Path = targetDirectory,
-                IsLight = solutionType == localizer.Get(Localizer.SolutionTypeMini),
+                IsLight = isLight,
                 DBType =
                     dbType == localizer.Get(Localizer.DatabasePostgreSql) ? DBType.PostgreSQL : DBType.SQLServer,
                 CacheType =

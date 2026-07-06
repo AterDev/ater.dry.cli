@@ -14,6 +14,26 @@ public class CreateSolutionDto
     [MaxLength(50)]
     public required string Name { get; set; }
 
+    public void ApplyTemplateDefaults()
+    {
+        if (IsLight)
+        {
+            DBType = DBType.PostgreSQL;
+            Modules.Clear();
+            OfficialModules.Clear();
+        }
+    }
+
+    public IReadOnlyList<DBType> GetAvailableDatabaseTypes()
+    {
+        if (IsLight)
+        {
+            return [DBType.PostgreSQL];
+        }
+
+        return [DBType.PostgreSQL, DBType.SQLServer];
+    }
+
     /// <summary>
     /// 路径
     /// </summary>

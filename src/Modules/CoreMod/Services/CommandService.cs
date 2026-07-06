@@ -61,6 +61,8 @@ public class CommandService(
 
     public async Task<bool> CreateSolutionAsync(CreateSolutionDto dto)
     {
+        dto.ApplyTemplateDefaults();
+
         // 生成项目
         string solutionPath = Path.Combine(dto.Path, dto.Name);
         string templateType = dto.IsLight ? ConstVal.Mini : ConstVal.WebApi;
@@ -169,7 +171,7 @@ public class CommandService(
             OutputHelper.Error(restoreMsg);
         }
 
-        if (dto.OfficialModules.Count > 0)
+        if (!dto.IsLight && dto.OfficialModules.Count > 0)
         {
             var targetService = solutionService.GetServices().FirstOrDefault();
             if (targetService == null)

@@ -9,148 +9,123 @@
 
 <div class="create-solution-page vh-default">
   <div class="create-solution-content">
-  <FluentStack Orientation="Orientation.Vertical"
-               VerticalGap="12"
-               Class="p-2">
-    <FluentLabel Typo="Typography.PageTitle">
-      ✨ @Lang(Localizer.Create, Localizer.Solution)
-    </FluentLabel>
+    <FluentStack Orientation="Orientation.Vertical" VerticalGap="12" Class="p-2">
+      <FluentLabel Typo="Typography.PageTitle">
+        ✨ @Lang(Localizer.Create, Localizer.Solution)
+      </FluentLabel>
 
-    <FluentLabel Typo="Typography.H3">🤟 @Lang(Localizer.Base, Localizer.Info)</FluentLabel>
+      <FluentLabel Typo="Typography.H3">🤟 @Lang(Localizer.Base, Localizer.Info)</FluentLabel>
 
-    <FluentStack Orientation="Orientation.Vertical"
-                 VerticalGap="2">
-      <FluentTextField Label="@Lang(Localizer.Solution, Localizer.Name)"
-                       Class="w-240"
-                       AutoComplete="off"
-                       Placeholder="@Lang(Localizer.Solution, Localizer.Name)"
-                       @bind-Value="AddDto.Name"
-                       Required="true" />
-    </FluentStack>
-
-    <FluentStack Orientation="Orientation.Vertical"
-                 VerticalGap="2">
-      <FluentTextField Label="@Lang(Localizer.Local, Localizer.Path)"
-                       @bind-Value="AddDto.Path"
-                       Class="w-240"
-                       AutoComplete="off"
-                       Placeholder="@Lang(Localizer.Local,Localizer.Path)"
-                       Required="true" />
-    </FluentStack>
-
-    <FluentLabel>
-      @if (!string.IsNullOrWhiteSpace(AddDto.Path))
-      {
-        <span>Solution File: </span>
-        <strong>@AddDto.Path\@AddDto.Name\@(AddDto.Name).slnx</strong>
-      }
-    </FluentLabel>
-
-    <FluentLabel>
-      @Lang(Localizer.SolutionType)
-    </FluentLabel>
-    <FluentRadioGroup TOption="string"
-                      Orientation="Orientation.Vertical"
-                      Required="true"
-                      @bind-Value="SelectedTemplateType">
-      @foreach (TemplateTypeOption option in TemplateTypeOptions)
-      {
-        <FluentRadio TOption="string"
-                     Value="@option.Value"
-                     Label="@option.Text" />
-      }
-    </FluentRadioGroup>
-
-    <FluentDivider Class="w-100" />
-    <FluentLabel Typo="Typography.H3">
-      📚 @Lang(Localizer.Component, Localizer.Configuration)
-    </FluentLabel>
-
-    <FluentLabel Typo="Typography.Subject">@Lang(Localizer.DatabaseProvider)</FluentLabel>
-
-    <FluentStack Orientation="Orientation.Vertical"
-                 VerticalGap="2">
-      <FluentSelect TOption="DBType"
-                    Items="@(Enum.GetValues<DBType>())"
-                    Width="240px"
-                    @bind-SelectedOption="@AddDto.DBType" />
-    </FluentStack>
-
-    <FluentSpacer></FluentSpacer>
-    <FluentLabel Typo="Typography.Subject">@Lang(Localizer.CacheType)</FluentLabel>
-
-    <FluentStack Orientation="Orientation.Vertical"
-                 VerticalGap="2">
-      <FluentSelect TOption="CacheType"
-                    Items="@(Enum.GetValues<CacheType>())"
-                    @bind-SelectedOption="@AddDto.CacheType"
-                    Width="240px" />
-    </FluentStack>
-    <FluentDivider Class="w-100"></FluentDivider>
-
-    <FluentLabel Typo="Typography.H3">
-      🎁 @Lang(Localizer.FeatureModules)
-    </FluentLabel>
-
-    @if (IsLoadingOfficialModules)
-    {
-      <FluentStack Orientation="Orientation.Horizontal"
-                   VerticalAlignment="VerticalAlignment.Center"
-                   HorizontalGap="8">
-        <FluentProgressRing />
-        <FluentLabel>@Lang(Localizer.LoadingOfficialModules)</FluentLabel>
+      <FluentStack Orientation="Orientation.Vertical" VerticalGap="2">
+        <FluentTextField Label="@Lang(Localizer.Solution, Localizer.Name)" Class="w-240" AutoComplete="off"
+                         Placeholder="@Lang(Localizer.Solution, Localizer.Name)" @bind-Value="AddDto.Name" Required="true" />
       </FluentStack>
-    }
-    else if (!string.IsNullOrWhiteSpace(OfficialModuleLoadError))
-    {
-      <FluentMessageBar Intent="MessageIntent.Warning">
-        @OfficialModuleLoadError
-      </FluentMessageBar>
-    }
-    else if (OfficialModuleOptions.Count == 0)
-    {
-      <FluentLabel>@Lang(Localizer.OfficialModuleListEmpty)</FluentLabel>
-    }
-    else
-    {
-      <div class="official-module-list">
-        @foreach (var module in OfficialModuleOptions)
+
+      <FluentStack Orientation="Orientation.Vertical" VerticalGap="2">
+        <FluentTextField Label="@Lang(Localizer.Local, Localizer.Path)" @bind-Value="AddDto.Path" Class="w-240"
+                         AutoComplete="off" Placeholder="@Lang(Localizer.Local,Localizer.Path)" Required="true" />
+      </FluentStack>
+
+      <FluentLabel>
+        @if (!string.IsNullOrWhiteSpace(AddDto.Path))
         {
-          <div class="official-module-row">
-            <FluentCheckbox @bind-Value="module.IsSelected" />
-            <div class="official-module-info">
-              <FluentLabel Typo="Typography.Body" Class="official-module-summary">
-                @GetOfficialModuleSummary(module.Metadata)
-              </FluentLabel>
-            </div>
+          <span>Solution File: </span>
+          <strong>@AddDto.Path\@AddDto.Name\@(AddDto.Name).slnx</strong>
+        }
+      </FluentLabel>
+
+      <FluentLabel>
+        @Lang(Localizer.SolutionType)
+      </FluentLabel>
+      <FluentRadioGroup TOption="string" Orientation="Orientation.Vertical" Required="true"
+                        @bind-Value="SelectedTemplateType">
+        @foreach (TemplateTypeOption option in TemplateTypeOptions)
+        {
+          <FluentRadio TOption="string" Value="@option.Value" Label="@option.Text" />
+        }
+      </FluentRadioGroup>
+
+      <FluentDivider Class="w-100" />
+      <FluentLabel Typo="Typography.H3">
+        📚 @Lang(Localizer.Component, Localizer.Configuration)
+      </FluentLabel>
+
+      <FluentLabel Typo="Typography.Subject">@Lang(Localizer.DatabaseProvider)</FluentLabel>
+
+      <FluentStack Orientation="Orientation.Vertical" VerticalGap="2">
+        <FluentSelect TOption="DBType" Items="@(GetAvailableDatabaseTypes())" Width="240px"
+                      @bind-SelectedOption="@AddDto.DBType" />
+      </FluentStack>
+
+      <FluentSpacer></FluentSpacer>
+      <FluentLabel Typo="Typography.Subject">@Lang(Localizer.CacheType)</FluentLabel>
+
+      <FluentStack Orientation="Orientation.Vertical" VerticalGap="2">
+        <FluentSelect TOption="CacheType" Items="@(Enum.GetValues<CacheType>())"
+                      @bind-SelectedOption="@AddDto.CacheType" Width="240px" />
+      </FluentStack>
+      @if (!AddDto.IsLight)
+      {
+        <FluentDivider Class="w-100"></FluentDivider>
+
+        <FluentLabel Typo="Typography.H3">
+          🎁 @Lang(Localizer.FeatureModules)
+        </FluentLabel>
+
+        @if (IsLoadingOfficialModules)
+        {
+          <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center" HorizontalGap="8">
+            <FluentProgressRing />
+            <FluentLabel>@Lang(Localizer.LoadingOfficialModules)</FluentLabel>
+          </FluentStack>
+        }
+        else if (!string.IsNullOrWhiteSpace(OfficialModuleLoadError))
+        {
+          <FluentMessageBar Intent="MessageIntent.Warning">
+            @OfficialModuleLoadError
+          </FluentMessageBar>
+        }
+        else if (OfficialModuleOptions.Count == 0)
+        {
+          <FluentLabel>@Lang(Localizer.OfficialModuleListEmpty)</FluentLabel>
+        }
+        else
+        {
+          <div class="official-module-list">
+            @foreach (var module in OfficialModuleOptions)
+            {
+              <div class="official-module-row">
+                <FluentCheckbox @bind-Value="module.IsSelected" />
+                <div class="official-module-info">
+                  <FluentLabel Typo="Typography.Body" Class="official-module-summary">
+                    @GetOfficialModuleSummary(module.Metadata)
+                  </FluentLabel>
+                </div>
+              </div>
+            }
           </div>
         }
-      </div>
-    }
+      }
 
-    <FluentDivider Class="w-100"></FluentDivider>
+      <FluentDivider Class="w-100"></FluentDivider>
 
-    <FluentLabel Typo="Typography.H3">
-      🅰️ @Lang(Localizer.FrontEnd, Localizer.Integration)
-    </FluentLabel>
+      <FluentLabel Typo="Typography.H3">
+        🅰️ @Lang(Localizer.FrontEnd, Localizer.Integration)
+      </FluentLabel>
 
-    <FluentLabel Typo="Typography.Subject">@Lang(Localizer.SelectFrontType)</FluentLabel>
+      <FluentLabel Typo="Typography.Subject">@Lang(Localizer.SelectFrontType)</FluentLabel>
 
-    <FluentSelect TOption="FrontType"
-                  Items="@(Enum.GetValues<FrontType>())"
-                  @bind-SelectedOption="@AddDto.FrontType"
-                  Width="240px" />
+      <FluentSelect TOption="FrontType" Items="@(Enum.GetValues<FrontType>())" @bind-SelectedOption="@AddDto.FrontType"
+                    Width="240px" />
 
-    <FluentStack Orientation="Orientation.Vertical" Class="mt-2">
-      <FluentStack HorizontalAlignment="HorizontalAlignment.Right">
-        <FluentButton Appearance="Appearance.Accent"
-                      OnClick="OpenSplashDefaultAsync"
-                      Disabled="!IsValid()">
-          🎊@Lang(Localizer.Create, Localizer.Solution)
-        </FluentButton>
+      <FluentStack Orientation="Orientation.Vertical" Class="mt-2">
+        <FluentStack HorizontalAlignment="HorizontalAlignment.Right">
+          <FluentButton Appearance="Appearance.Accent" OnClick="OpenSplashDefaultAsync" Disabled="!IsValid()">
+            🎊@Lang(Localizer.Create, Localizer.Solution)
+          </FluentButton>
+        </FluentStack>
       </FluentStack>
     </FluentStack>
-  </FluentStack>
   </div>
 </div>
 
@@ -173,6 +148,8 @@
 
       _selectedTemplateType = value;
       AddDto.IsLight = value == "light";
+      AddDto.ApplyTemplateDefaults();
+      _ = LoadOfficialModulesAsync();
     }
   }
   List<TemplateTypeOption> TemplateTypeOptions { get; set; } = [];
@@ -225,6 +202,11 @@
 
   }
 
+  private IReadOnlyList<DBType> GetAvailableDatabaseTypes()
+  {
+    return AddDto.GetAvailableDatabaseTypes();
+  }
+
   private async Task OpenSplashDefaultAsync()
   {
     if (!IsValid())
@@ -269,6 +251,15 @@
 
   private async Task LoadOfficialModulesAsync()
   {
+    if (AddDto.IsLight)
+    {
+      OfficialModuleOptions = [];
+      OfficialModuleLoadError = null;
+      IsLoadingOfficialModules = false;
+      await InvokeAsync(StateHasChanged);
+      return;
+    }
+
     IsLoadingOfficialModules = true;
     OfficialModuleLoadError = null;
 
