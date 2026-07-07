@@ -24,8 +24,8 @@ public class OutputHelper
             └─┘     └──────┘└─┘  └─┘└─┘ └─────┘  └─────┘ └─┘  └───┘
             """;
         string version = AssemblyHelper.GetCurrentToolVersion();
-        string sign1 = $"🗽for freedom.              ©dusi - {version}";
-        string docsLine = "[[docs]]:   [link]https://dusi.dev/docs/Perigon.html[/]";
+        string sign1 = $"🗽 for freedom.                                 {version}";
+        string docsLine = "[[docs]]  : [link]https://dusi.dev/docs/Perigon.html[/]";
         string gitHubLine = "[[GitHub]]: [link]https://github.com/AterDev/Perigon.CLI[/]";
 
         AnsiConsole.Write(
