@@ -48,6 +48,7 @@ public static class ConstVal
     public const string PerigonDir = "Perigon";
     public const string StudioDir = "PerigonStudio";
     public const string AppHostDir = "AppHost";
+    public const string FrontendDir = "Frontend";
 
     // names
     public const string Manager = "Manager";

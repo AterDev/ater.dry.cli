@@ -16,7 +16,7 @@ public class ModulePackageServiceTests
     [Fact]
     public async Task PackageModuleAsync_ShouldCreatePackage_ForSimpleAttributes()
     {
-        var metadata = await RunPackageAsync(
+        var result = await RunPackageAsync(
             """
             namespace CMSMod;
 
@@ -37,18 +37,19 @@ public class ModulePackageServiceTests
             """
         );
 
-        Assert.NotNull(metadata);
-        Assert.Equal("CMSMod", metadata!.ModuleName);
-        Assert.Equal("Perigon", metadata.Author);
-        Assert.Equal("CMSMod", metadata.DisplayName);
-        Assert.Equal("包含内容管理相关功能", metadata.Description);
-        Assert.True(metadata.UseSelfServices);
+        Assert.NotNull(result.Metadata);
+        Assert.Equal("CMSMod", result.Metadata!.ModuleName);
+        Assert.Equal("Perigon", result.Metadata.Author);
+        Assert.Equal("CMSMod", result.Metadata.DisplayName);
+        Assert.Equal("包含内容管理相关功能", result.Metadata.Description);
+        Assert.True(result.Metadata.UseSelfServices);
+        Assert.Null(result.Metadata.Frontend);
     }
 
     [Fact]
     public async Task PackageModuleAsync_ShouldCreatePackage_ForQualifiedAttributes()
     {
-        var metadata = await RunPackageAsync(
+        var result = await RunPackageAsync(
             """
             namespace CMSMod;
 
@@ -69,13 +70,65 @@ public class ModulePackageServiceTests
             """
         );
 
-        Assert.NotNull(metadata);
-        Assert.Equal("Perigon", metadata!.Author);
-        Assert.Equal("CMSMod", metadata.DisplayName);
-        Assert.Equal("包含内容管理相关功能", metadata.Description);
+        Assert.NotNull(result.Metadata);
+        Assert.Equal("Perigon", result.Metadata!.Author);
+        Assert.Equal("CMSMod", result.Metadata.DisplayName);
+        Assert.Equal("包含内容管理相关功能", result.Metadata.Description);
     }
 
-    private static async Task<PackageMetadata?> RunPackageAsync(string moduleExtensionsContent)
+    [Fact]
+    public async Task PackageModuleAsync_ShouldIncludeAngularFrontend_WhenFrontPathIsSpecified()
+    {
+        var result = await RunPackageAsync(
+            """
+            namespace CMSMod;
+
+            [DisplayName("Perigon::CMSMod")]
+            public static class ModuleExtensions
+            {
+                public static IHostApplicationBuilder AddCMSMod(this IHostApplicationBuilder builder)
+                {
+                    return builder;
+                }
+            }
+            """,
+            frontendPackageJson: """{"dependencies":{"@angular/core":"20.0.0"}}"""
+        );
+
+        Assert.NotNull(result.Metadata);
+        Assert.Equal("Angular", result.Metadata!.Frontend);
+        Assert.Contains("Frontend/cms.component.ts", result.EntryNames);
+    }
+
+    [Theory]
+    [InlineData("""{"dependencies":{"react":"19.0.0"}}""", "React")]
+    [InlineData("""{"devDependencies":{"vue":"3.0.0"}}""", "Vue")]
+    [InlineData("""{"dependencies":{"svelte":"5.0.0"}}""", "Else")]
+    public async Task PackageModuleAsync_ShouldDetectFrontendType(string packageJson, string expectedFrontend)
+    {
+        var result = await RunPackageAsync(
+            """
+            namespace CMSMod;
+
+            [DisplayName("Perigon::CMSMod")]
+            public static class ModuleExtensions
+            {
+                public static IHostApplicationBuilder AddCMSMod(this IHostApplicationBuilder builder)
+                {
+                    return builder;
+                }
+            }
+            """,
+            frontendPackageJson: packageJson
+        );
+
+        Assert.Equal(expectedFrontend, result.Metadata!.Frontend);
+    }
+
+    private static async Task<PackageResult> RunPackageAsync(
+        string moduleExtensionsContent,
+        string? frontendPackageJson = null
+    )
     {
         var root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
         var modulesPath = Path.Combine(root, PathConst.ModulesPath);
@@ -91,6 +144,23 @@ public class ModulePackageServiceTests
             moduleExtensionsContent,
             TestContext.Current.CancellationToken
         );
+
+        string? frontendPath = null;
+        if (frontendPackageJson != null)
+        {
+            frontendPath = Path.Combine(root, "frontend", "features", "cms");
+            Directory.CreateDirectory(frontendPath);
+            await File.WriteAllTextAsync(
+                Path.Combine(frontendPath, "cms.component.ts"),
+                "export class CmsComponent {}",
+                TestContext.Current.CancellationToken
+            );
+            await File.WriteAllTextAsync(
+                Path.Combine(root, "frontend", ConstVal.NodeProjectFile),
+                frontendPackageJson,
+                TestContext.Current.CancellationToken
+            );
+        }
 
         await File.WriteAllTextAsync(
             Path.Combine(entityPath, "CMSMod", "ContentEntity.cs"),
@@ -123,7 +193,7 @@ public class ModulePackageServiceTests
 
         try
         {
-            var packagePath = await service.PackageModuleAsync("CMSMod", "AdminService");
+            var packagePath = await service.PackageModuleAsync("CMSMod", "AdminService", frontendPath);
             Assert.NotNull(packagePath);
             Assert.True(File.Exists(packagePath));
 
@@ -133,10 +203,12 @@ public class ModulePackageServiceTests
 
             using var reader = new StreamReader(metadataEntry!.Open());
             var metadataJson = await reader.ReadToEndAsync(TestContext.Current.CancellationToken);
-            return JsonSerializer.Deserialize<PackageMetadata>(
+            var metadata = JsonSerializer.Deserialize<PackageMetadata>(
                 metadataJson,
                 ConstVal.DefaultJsonSerializerOptions
             );
+            var entryNames = archive.Entries.Select(entry => entry.FullName).ToList();
+            return new PackageResult(metadata, entryNames);
         }
         finally
         {
@@ -146,4 +218,6 @@ public class ModulePackageServiceTests
             }
         }
     }
+
+    private sealed record PackageResult(PackageMetadata? Metadata, List<string> EntryNames);
 }

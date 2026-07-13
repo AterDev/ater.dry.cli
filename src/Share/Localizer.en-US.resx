@@ -639,6 +639,12 @@
   <data name="InvalidPackageStructure" xml:space="preserve">
     <value>Invalid package structure</value>
   </data>
+  <data name="FrontendPathNotFound" xml:space="preserve">
+    <value>Frontend directory not found: {0}</value>
+  </data>
+  <data name="FrontendNotRestored" xml:space="preserve">
+    <value>The module contains {0} frontend code; it was not restored because --front-path was not specified.</value>
+  </data>
   <data name="GitHubConnectionFailed" xml:space="preserve">
     <value>Unable to connect to GitHub. Please check your network and try again.</value>
   </data>

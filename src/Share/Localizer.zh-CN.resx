@@ -639,6 +639,12 @@
   <data name="InvalidPackageStructure" xml:space="preserve">
     <value>无效的包结构</value>
   </data>
+  <data name="FrontendPathNotFound" xml:space="preserve">
+    <value>未找到前端目录: {0}</value>
+  </data>
+  <data name="FrontendNotRestored" xml:space="preserve">
+    <value>模块包含 {0} 前端代码；由于未指定 --front-path，前端代码未被还原。</value>
+  </data>
   <data name="GitHubConnectionFailed" xml:space="preserve">
     <value>无法连接到 GitHub，请检查网络后重试。</value>
   </data>

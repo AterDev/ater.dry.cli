@@ -23,7 +23,11 @@ public class ModulePackageService(
     /// <param name="moduleName">Module name (with Mod suffix)</param>
     /// <param name="serviceName">Service name</param>
     /// <returns>Path to the created package</returns>
-    public async Task<string?> PackageModuleAsync(string moduleName, string serviceName)
+    public async Task<string?> PackageModuleAsync(
+        string moduleName,
+        string serviceName,
+        string? frontPath = null
+    )
     {
         try
         {
@@ -48,7 +52,13 @@ public class ModulePackageService(
             }
 
             // Create package
-            return await CreatePackageAsync(moduleName, serviceName, metadata);
+            var frontendPath = GetFrontendPath(frontPath);
+            if (frontPath != null && frontendPath == null)
+            {
+                return null;
+            }
+
+            return await CreatePackageAsync(moduleName, serviceName, metadata, frontendPath);
         }
         catch (Exception ex)
         {
@@ -359,7 +369,8 @@ public class ModulePackageService(
     private async Task<string> CreatePackageAsync(
         string moduleName,
         string serviceName,
-        PackageMetadata metadata
+        PackageMetadata metadata,
+        string? frontendPath
     )
     {
         // Create package_modules directory
@@ -379,6 +390,11 @@ public class ModulePackageService(
 
         using (var archive = ZipFile.Open(packagePath, ZipArchiveMode.Create))
         {
+            if (frontendPath != null)
+            {
+                metadata.Frontend = await GetFrontendTypeAsync(frontendPath);
+            }
+
             // Add metadata
             var metadataEntry = archive.CreateEntry("metadata.json");
             using (var writer = new StreamWriter(metadataEntry.Open()))
@@ -417,10 +433,83 @@ public class ModulePackageService(
                     $"{ConstVal.ControllersDir}/{moduleName}"
                 );
             }
+
+            if (frontendPath != null)
+            {
+                AddDirectoryToArchive(archive, frontendPath, ConstVal.FrontendDir);
+            }
         }
 
         OutputHelper.Success(_localizer.Get(Localizer.PackageCreated, packagePath));
         return packagePath;
+    }
+
+    private string? GetFrontendPath(string? frontPath)
+    {
+        if (string.IsNullOrWhiteSpace(frontPath))
+        {
+            return null;
+        }
+
+        var resolvedPath = Path.IsPathRooted(frontPath)
+            ? Path.GetFullPath(frontPath)
+            : Path.GetFullPath(Path.Combine(_projectContext.SolutionPath!, frontPath));
+
+        if (Directory.Exists(resolvedPath))
+        {
+            return resolvedPath;
+        }
+
+        OutputHelper.Error(_localizer.Get(Localizer.FrontendPathNotFound, frontPath));
+        return null;
+    }
+
+    private static async Task<string> GetFrontendTypeAsync(string frontendPath)
+    {
+        var packageJsonPath = FindFrontendRoot(frontendPath);
+        if (packageJsonPath == null)
+        {
+            return "Else";
+        }
+
+        await using var stream = File.OpenRead(packageJsonPath);
+        using var packageJson = await JsonDocument.ParseAsync(stream);
+        var packageNames = packageJson.RootElement
+            .EnumerateObject()
+            .Where(property => property.Name is "dependencies" or "devDependencies")
+            .Where(property => property.Value.ValueKind == JsonValueKind.Object)
+            .SelectMany(property => property.Value.EnumerateObject())
+            .Select(property => property.Name)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        if (packageNames.Contains("@angular/core"))
+        {
+            return "Angular";
+        }
+
+        if (packageNames.Contains("react") || packageNames.Contains("react-dom"))
+        {
+            return "React";
+        }
+
+        return packageNames.Contains("vue") ? "Vue" : "Else";
+    }
+
+    private static string? FindFrontendRoot(string frontendPath)
+    {
+        var directory = new DirectoryInfo(frontendPath);
+        while (directory != null)
+        {
+            var packageJsonPath = Path.Combine(directory.FullName, ConstVal.NodeProjectFile);
+            if (File.Exists(packageJsonPath))
+            {
+                return packageJsonPath;
+            }
+
+            directory = directory.Parent;
+        }
+
+        return null;
     }
 
     /// <summary>

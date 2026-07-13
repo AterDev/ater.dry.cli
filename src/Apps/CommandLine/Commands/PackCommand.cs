@@ -22,6 +22,10 @@ public class PackCommand(
         [CommandArgument(1, "<ServiceName>")]
         [Description("Service name in Services directory")]
         public required string ServiceName { get; set; }
+
+        [CommandOption("--front-path <FRONT_PATH>")]
+        [Description("Frontend directory to include in the package")]
+        public string? FrontPath { get; set; }
     }
 
     public override async Task<int> ExecuteAsync(
@@ -41,7 +45,8 @@ public class PackCommand(
 
         var packagePath = await modulePackageService.PackageModuleAsync(
             settings.ModuleName,
-            settings.ServiceName
+            settings.ServiceName,
+            settings.FrontPath
         );
 
         return packagePath != null ? 0 : 1;

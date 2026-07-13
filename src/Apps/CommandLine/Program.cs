@@ -190,7 +190,7 @@ app.Configure(config =>
                 module
                     .AddCommand<PackCommand>(SubCommand.Pack)
                     .WithDescription(localizer.Get(Localizer.PackDes))
-                    .WithExample(["module", "pack", "FileManagerMod", "AdminService"]);
+                    .WithExample(["module", "pack", "FileManagerMod", "AdminService", "--front-path", "src/ClientApp/WebApp/src/app/modules/file-manager"]);
             }
         )
         .WithAlias("m");

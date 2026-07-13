@@ -38,6 +38,11 @@ public class PackageMetadata
     public bool UseSelfServices { get; set; }
 
     /// <summary>
+    /// Frontend framework bundled with the module package.
+    /// </summary>
+    public string? Frontend { get; set; }
+
+    /// <summary>
     /// Creation time
     /// </summary>
     public DateTime CreatedTime { get; set; } = DateTime.UtcNow;

@@ -29,9 +29,27 @@ public class ModuleInstallService(
     /// <param name="packagePath">Path to the package zip file</param>
     /// <param name="serviceName">Service name to install controllers</param>
     /// <returns>True if installation succeeded</returns>
+    public Task<bool> InstallModuleAsync(
+        string packagePath,
+        string serviceName,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return InstallModuleAsync(packagePath, serviceName, null, cancellationToken);
+    }
+
+    /// <summary>
+    /// Install a module package and optionally restore its frontend code.
+    /// </summary>
+    /// <param name="packagePath">Path to the module package</param>
+    /// <param name="serviceName">Service name to install controllers</param>
+    /// <param name="frontPath">Directory where bundled frontend code is restored</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>True if installation succeeded</returns>
     public async Task<bool> InstallModuleAsync(
         string packagePath,
         string serviceName,
+        string? frontPath,
         CancellationToken cancellationToken = default
     )
     {
@@ -76,7 +94,7 @@ public class ModuleInstallService(
             }
 
             // Extract and validate package
-            var metadata = await ExtractPackageAsync(resolvedPackagePath, serviceName);
+            var metadata = await ExtractPackageAsync(resolvedPackagePath, serviceName, frontPath);
             if (metadata == null)
             {
                 OutputHelper.Error("metadata is null");
@@ -466,10 +484,7 @@ public class ModuleInstallService(
     /// <summary>
     /// Extract package and install files
     /// </summary>
-    private async Task<PackageMetadata?> ExtractPackageAsync(
-        string packagePath,
-        string serviceName
-    )
+    private async Task<PackageMetadata?> ExtractPackageAsync(string packagePath, string serviceName, string? frontPath)
     {
         // Create temp directory for extraction
         var tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
@@ -570,6 +585,22 @@ public class ModuleInstallService(
                     metadata.ModuleName
                 );
                 CopyDirectory(controllerSourceDir, controllerTargetDir);
+            }
+
+            if (!string.IsNullOrWhiteSpace(metadata.Frontend))
+            {
+                var frontendSourceDir = Path.Combine(tempDir, ConstVal.FrontendDir);
+                if (string.IsNullOrWhiteSpace(frontPath))
+                {
+                    OutputHelper.Warning(_localizer.Get(Localizer.FrontendNotRestored, metadata.Frontend));
+                }
+                else if (Directory.Exists(frontendSourceDir))
+                {
+                    var frontendTargetDir = Path.IsPathRooted(frontPath)
+                        ? Path.GetFullPath(frontPath)
+                        : Path.GetFullPath(Path.Combine(_projectContext.SolutionPath!, frontPath));
+                    CopyDirectory(frontendSourceDir, frontendTargetDir);
+                }
             }
 
             return metadata;

@@ -24,6 +24,10 @@ public class InstallCommand(
         [CommandArgument(1, "[ServiceName]")]
         [Description("Service name in Services directory")]
         public string? ServiceName { get; set; }
+
+        [CommandOption("--front-path <FRONT_PATH>")]
+        [Description("Directory where bundled frontend code will be restored")]
+        public string? FrontPath { get; set; }
     }
 
     public override async Task<int> ExecuteAsync(
@@ -46,6 +50,7 @@ public class InstallCommand(
         var success = await moduleInstallService.InstallModuleAsync(
             settings.PackagePath,
             settings.ServiceName,
+            settings.FrontPath,
             cancellationToken
         );
 
