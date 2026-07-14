@@ -169,9 +169,6 @@ public class ModuleInstallService(
             {
                 _logger.LogWarning(ex, "Failed to add project reference from {Service} to {Module}", serviceName, metadata.ModuleName);
             }
-            // use self services
-            await SetSelfServices(metadata, servicePath);
-
             // Update service GlobalUsings.cs
             var globalUsingsPath = Path.Combine(servicePath, ConstVal.GlobalUsingsFile);
             var existingLines = new List<string>();
@@ -241,89 +238,6 @@ public class ModuleInstallService(
 
         // Ensure DefaultDbContext has DbSet for new entities
         await EnsureDbSetsForModuleEntitiesAsync(metadata);
-    }
-
-    private async Task SetSelfServices(PackageMetadata metadata, string servicePath)
-    {
-        if (metadata.UseSelfServices)
-        {
-            var programPath = Path.Combine(servicePath, "Program.cs");
-            try
-            {
-                var content = await File.ReadAllTextAsync(programPath);
-                var tree = CSharpSyntaxTree.ParseText(content);
-                var root = await tree.GetRootAsync();
-
-                // 查找并移除 builder.AddMiddlewareServices() 和 app.UseMiddlewareServices()
-                var invocations = root.DescendantNodes().OfType<InvocationExpressionSyntax>().ToList();
-                var nodesToRemove = new List<SyntaxNode>();
-
-                foreach (var invocation in invocations)
-                {
-                    if (invocation.Expression is MemberAccessExpressionSyntax memberAccess)
-                    {
-                        var methodName = memberAccess.Name.Identifier.Text;
-                        if (methodName == "AddMiddlewareServices" || methodName == "UseMiddlewareServices")
-                        {
-                            // 找到包含该调用的完整语句
-                            var statement = invocation.Ancestors().OfType<StatementSyntax>().FirstOrDefault();
-                            if (statement != null && !nodesToRemove.Contains(statement))
-                            {
-                                nodesToRemove.Add(statement);
-                            }
-                        }
-                    }
-                }
-
-                // 移除找到的节点
-                var newRoot = root;
-                foreach (var node in nodesToRemove)
-                {
-                    newRoot = newRoot.RemoveNode(node, SyntaxRemoveOptions.KeepNoTrivia)!;
-                }
-
-                // 查找 builder.Build() 调用
-                var buildInvocation = newRoot.DescendantNodes()
-                    .OfType<InvocationExpressionSyntax>()
-                    .FirstOrDefault(inv =>
-                    {
-                        if (inv.Expression is MemberAccessExpressionSyntax ma)
-                        {
-                            return ma.Name.Identifier.Text == "Build" &&
-                                   ma.Expression is IdentifierNameSyntax id &&
-                                   id.Identifier.Text == "builder";
-                        }
-                        return false;
-                    });
-
-                if (buildInvocation != null)
-                {
-                    // 找到包含 Build() 调用的语句
-                    var buildStatement = buildInvocation.Ancestors().OfType<StatementSyntax>().FirstOrDefault();
-                    if (buildStatement != null)
-                    {
-                        // 创建新的调用语句: app.Use{ModuleName}Services();
-                        var serviceCallStatement = SyntaxFactory.ParseStatement($"app.Use{metadata.ModuleName}Services();")
-                            .WithLeadingTrivia(buildStatement.GetLeadingTrivia())
-                            .WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed);
-
-                        // 在 buildStatement 之后插入新语句
-                        newRoot = newRoot.InsertNodesAfter(buildStatement, new[] { serviceCallStatement })!;
-                    }
-                }
-
-                // 如果有修改，保存文件
-                if (newRoot != root)
-                {
-                    var newContent = newRoot.NormalizeWhitespace().ToFullString();
-                    await File.WriteAllTextAsync(programPath, newContent);
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "Failed to update Program.cs for self services of module {Module}", metadata.ModuleName);
-            }
-        }
     }
 
     /// <summary>
@@ -599,7 +513,16 @@ public class ModuleInstallService(
                     var frontendTargetDir = Path.IsPathRooted(frontPath)
                         ? Path.GetFullPath(frontPath)
                         : Path.GetFullPath(Path.Combine(_projectContext.SolutionPath!, frontPath));
-                    CopyDirectory(frontendSourceDir, frontendTargetDir);
+                    foreach (var sourceDir in Directory.GetDirectories(frontendSourceDir))
+                    {
+                        var directoryName = Path.GetFileName(sourceDir);
+                        var targetDir = Path.Combine(frontendTargetDir, directoryName);
+                        CopyDirectory(
+                            sourceDir,
+                            targetDir,
+                            overwrite: !string.Equals(directoryName, "share", StringComparison.OrdinalIgnoreCase)
+                        );
+                    }
                 }
             }
 
@@ -618,7 +541,7 @@ public class ModuleInstallService(
     /// <summary>
     /// Copy directory recursively
     /// </summary>
-    private void CopyDirectory(string sourceDir, string targetDir)
+    private void CopyDirectory(string sourceDir, string targetDir, bool overwrite = true)
     {
         // Create target directory
         Directory.CreateDirectory(targetDir);
@@ -651,8 +574,13 @@ public class ModuleInstallService(
                 Directory.CreateDirectory(targetFileDir);
             }
 
+            if (!overwrite && File.Exists(targetPath))
+            {
+                continue;
+            }
+
             // Copy file
-            File.Copy(file, targetPath, overwrite: true);
+            File.Copy(file, targetPath, overwrite);
         }
     }
 }

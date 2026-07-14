@@ -317,12 +317,7 @@ export class EnumTextPipeModule { }
                     return builder;
                 }
 
-                // The module middlewares registration
-                public static WebApplication Use{{moduleName}}Services(this WebApplication app)
-                {
-                   // custom middlewares and init task
-                   return app;
-                }
+            }
             """;
     }
 

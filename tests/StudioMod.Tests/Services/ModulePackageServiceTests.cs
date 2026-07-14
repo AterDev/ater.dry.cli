@@ -6,6 +6,7 @@ using Moq;
 using Share;
 using Share.Models;
 using System.IO.Compression;
+using System.Reflection;
 using System.Text.Json;
 using Xunit;
 
@@ -42,7 +43,7 @@ public class ModulePackageServiceTests
         Assert.Equal("Perigon", result.Metadata.Author);
         Assert.Equal("CMSMod", result.Metadata.DisplayName);
         Assert.Equal("包含内容管理相关功能", result.Metadata.Description);
-        Assert.True(result.Metadata.UseSelfServices);
+        Assert.DoesNotContain("UseSelfServices", JsonSerializer.Serialize(result.Metadata));
         Assert.Null(result.Metadata.Frontend);
     }
 
@@ -97,7 +98,8 @@ public class ModulePackageServiceTests
 
         Assert.NotNull(result.Metadata);
         Assert.Equal("Angular", result.Metadata!.Frontend);
-        Assert.Contains("Frontend/cms.component.ts", result.EntryNames);
+        Assert.Contains("Frontend/cms/cms.component.ts", result.EntryNames);
+        Assert.Contains("Frontend/share/shared.component.ts", result.EntryNames);
     }
 
     [Theory]
@@ -123,6 +125,80 @@ public class ModulePackageServiceTests
         );
 
         Assert.Equal(expectedFrontend, result.Metadata!.Frontend);
+    }
+
+    [Fact]
+    public async Task ExtractPackageAsync_ShouldRestoreFrontendShareWithoutOverwritingExistingFiles()
+    {
+        var root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        var modulesPath = Path.Combine(root, PathConst.ModulesPath);
+        var entityPath = Path.Combine(root, PathConst.EntityPath);
+        var servicesPath = Path.Combine(root, PathConst.ServicesPath);
+        var frontendModulesPath = Path.Combine(root, "frontend", "features");
+        var frontendPath = Path.Combine(frontendModulesPath, "cms");
+        var sharePath = Path.Combine(root, "frontend", "features", "share");
+        var packagePath = Path.Combine(root, "CMSMod.zip");
+
+        try
+        {
+            Directory.CreateDirectory(Path.Combine(servicesPath, "AdminService"));
+            Directory.CreateDirectory(sharePath);
+            await File.WriteAllTextAsync(
+                Path.Combine(sharePath, "shared.component.ts"),
+                "existing",
+                TestContext.Current.CancellationToken
+            );
+
+            using (var archive = ZipFile.Open(packagePath, ZipArchiveMode.Create))
+            {
+                await WriteArchiveEntryAsync(
+                    archive,
+                    "metadata.json",
+                    JsonSerializer.Serialize(new PackageMetadata { ModuleName = "CMSMod", Frontend = "Angular" })
+                );
+                await WriteArchiveEntryAsync(archive, "Frontend/cms/cms.component.ts", "module");
+                await WriteArchiveEntryAsync(archive, "Frontend/share/shared.component.ts", "package");
+                await WriteArchiveEntryAsync(archive, "Frontend/share/new.component.ts", "new");
+            }
+
+            var context = new SolutionContext(new ServiceCollection().BuildServiceProvider())
+            {
+                SolutionPath = root,
+                ModulesPath = modulesPath,
+                EntityPath = entityPath,
+                ServicesPath = servicesPath
+            };
+            var service = new ModuleInstallService(
+                context,
+                CreateLocalizer(),
+                NullLogger<ModuleInstallService>.Instance,
+                null!,
+                null!
+            );
+            var extractMethod = typeof(ModuleInstallService).GetMethod(
+                "ExtractPackageAsync",
+                BindingFlags.Instance | BindingFlags.NonPublic
+            );
+            Assert.NotNull(extractMethod);
+
+            var task = (Task<PackageMetadata?>)extractMethod!.Invoke(
+                service,
+                [packagePath, "AdminService", frontendModulesPath]
+            )!;
+            var metadata = await task;
+
+            Assert.NotNull(metadata);
+            Assert.Equal("module", await File.ReadAllTextAsync(Path.Combine(frontendPath, "cms.component.ts")));
+            Assert.Equal("existing", await File.ReadAllTextAsync(Path.Combine(sharePath, "shared.component.ts")));
+            Assert.Equal("new", await File.ReadAllTextAsync(Path.Combine(sharePath, "new.component.ts")));
+        }
+        finally
+        {
+            if (Directory.Exists(root))
+            {
+                Directory.Delete(root, true);
+            }
+        }
     }
 
     private static async Task<PackageResult> RunPackageAsync(
@@ -160,6 +236,13 @@ public class ModulePackageServiceTests
                 frontendPackageJson,
                 TestContext.Current.CancellationToken
             );
+            var frontendSharePath = Path.Combine(root, "frontend", "features", "share");
+            Directory.CreateDirectory(frontendSharePath);
+            await File.WriteAllTextAsync(
+                Path.Combine(frontendSharePath, "shared.component.ts"),
+                "export class SharedComponent {}",
+                TestContext.Current.CancellationToken
+            );
         }
 
         await File.WriteAllTextAsync(
@@ -177,17 +260,9 @@ public class ModulePackageServiceTests
             ServicesPath = servicesPath
         };
 
-        var localizerMock = new Mock<IStringLocalizer<Localizer>>();
-        localizerMock
-            .Setup(x => x[It.IsAny<string>(), It.IsAny<object[]>()])
-            .Returns((string name, object[] arguments) => new LocalizedString(name, string.Format(name, arguments)));
-        localizerMock
-            .Setup(x => x[It.IsAny<string>()])
-            .Returns((string name) => new LocalizedString(name, name));
-
         var service = new ModulePackageService(
             solutionContext,
-            new Localizer(localizerMock.Object),
+            CreateLocalizer(),
             NullLogger<ModulePackageService>.Instance
         );
 
@@ -217,6 +292,26 @@ public class ModulePackageServiceTests
                 Directory.Delete(root, true);
             }
         }
+    }
+
+    private static Localizer CreateLocalizer()
+    {
+        var localizerMock = new Mock<IStringLocalizer<Localizer>>();
+        localizerMock
+            .Setup(x => x[It.IsAny<string>(), It.IsAny<object[]>()])
+            .Returns((string name, object[] arguments) => new LocalizedString(name, string.Format(name, arguments)));
+        localizerMock
+            .Setup(x => x[It.IsAny<string>()])
+            .Returns((string name) => new LocalizedString(name, name));
+        return new Localizer(localizerMock.Object);
+    }
+
+    private static async Task WriteArchiveEntryAsync(ZipArchive archive, string entryName, string content)
+    {
+        var entry = archive.CreateEntry(entryName);
+        await using var stream = entry.Open();
+        await using var writer = new StreamWriter(stream);
+        await writer.WriteAsync(content.AsMemory(), TestContext.Current.CancellationToken);
     }
 
     private sealed record PackageResult(PackageMetadata? Metadata, List<string> EntryNames);

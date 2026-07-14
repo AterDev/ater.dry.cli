@@ -33,11 +33,6 @@ public class PackageMetadata
     public string Version { get; set; } = "1.0.0";
 
     /// <summary>
-    /// use the module DI services instead of default services
-    /// </summary>
-    public bool UseSelfServices { get; set; }
-
-    /// <summary>
     /// Frontend framework bundled with the module package.
     /// </summary>
     public string? Frontend { get; set; }

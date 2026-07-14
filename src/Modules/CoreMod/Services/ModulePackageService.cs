@@ -203,16 +203,8 @@ public class ModulePackageService(
                 .Trim('"');
         }
 
-        var expectedMethodName = $"Use{moduleName}Services";
-        var hasMethod = root
-            .DescendantNodes()
-            .OfType<MethodDeclarationSyntax>()
-            .Any(method => method.Identifier.Text == expectedMethodName);
-
-        OutputHelper.Debug($"Use self services method '{expectedMethodName}' found: {hasMethod}");
-
         OutputHelper.Debug(
-            $"Module metadata result => ModuleName={moduleName}, Author={author ?? "<null>"}, DisplayName={displayName ?? "<null>"}, Description={description ?? "<null>"}, UseSelfServices={hasMethod}"
+            $"Module metadata result => ModuleName={moduleName}, Author={author ?? "<null>"}, DisplayName={displayName ?? "<null>"}, Description={description ?? "<null>"}"
         );
 
 
@@ -221,8 +213,7 @@ public class ModulePackageService(
             ModuleName = moduleName,
             Author = author,
             DisplayName = displayName,
-            Description = description,
-            UseSelfServices = hasMethod
+            Description = description
         };
     }
 
@@ -436,7 +427,22 @@ public class ModulePackageService(
 
             if (frontendPath != null)
             {
-                AddDirectoryToArchive(archive, frontendPath, ConstVal.FrontendDir);
+                var frontendModuleName = Path.GetFileName(frontendPath);
+                AddDirectoryToArchive(
+                    archive,
+                    frontendPath,
+                    Path.Combine(ConstVal.FrontendDir, frontendModuleName)
+                );
+
+                var frontendSharePath = Path.Combine(
+                    Directory.GetParent(frontendPath)!.FullName,
+                    "share"
+                );
+                AddDirectoryToArchive(
+                    archive,
+                    frontendSharePath,
+                    Path.Combine(ConstVal.FrontendDir, "share")
+                );
             }
         }
 
