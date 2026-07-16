@@ -64,23 +64,31 @@ public class SolutionService(
     /// </summary>
     public bool IsAOT()
     {
-        string? solutionPath = _projectContext.SolutionPath;
+        return IsAOT(_projectContext.SolutionPath);
+    }
+
+    /// <summary>
+    /// 判断指定解决方案是否启用 AOT
+    /// </summary>
+    /// <param name="solutionPath">解决方案根目录</param>
+    public static bool IsAOT(string? solutionPath)
+    {
         if (solutionPath.NotEmpty())
         {
-            string configPath = Path.Combine(solutionPath, "src", ".config", "perigon.config.toml");
+            string configPath = Path.Combine(solutionPath!, ".config", "perigon.config.toml");
             if (File.Exists(configPath))
             {
                 foreach (string line in File.ReadLines(configPath))
                 {
-                    string trimmedLine = line.Trim();
-                    if (trimmedLine.StartsWith("isAot", StringComparison.OrdinalIgnoreCase))
+                    string trimmedLine = line.Split('#', 2)[0].Trim();
+                    string[] parts = trimmedLine.Split('=', 2);
+                    if (
+                        parts.Length == 2
+                        && parts[0].Trim().Equals("isAOT", StringComparison.OrdinalIgnoreCase)
+                        && bool.TryParse(parts[1].Trim(), out bool isAot)
+                    )
                     {
-                        string[] parts = trimmedLine.Split('=', 2);
-                        if (parts.Length == 2)
-                        {
-                            string value = parts[1].Trim();
-                            return value.Equals("true", StringComparison.OrdinalIgnoreCase);
-                        }
+                        return isAot;
                     }
                 }
             }

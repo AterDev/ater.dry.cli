@@ -9,6 +9,9 @@ public partial class EntityInfoManager(
     SolutionContext projectContext
 ) : ManagerBase(logger)
 {
+    public const string AotCodeGenerationNotSupported =
+        "AOT projects do not support DTO, Manager, or Controller code generation.";
+
     public string ModuleName { get; set; } = string.Empty;
 
     /// <summary>
@@ -176,6 +179,11 @@ public partial class EntityInfoManager(
     public async Task<List<GenFileInfo>> GenerateAsync(GenerateDto dto)
     {
         OutputHelper.Info($"🚀 Starting code generation for: {dto.EntityPath}");
+        if (SolutionService.IsAOT(projectContext.SolutionPath))
+        {
+            throw new NotSupportedException(AotCodeGenerationNotSupported);
+        }
+
         if (!SolutionService.BuildProject(projectContext.EntityFrameworkPath!, false))
         {
             throw new Exception("Build EntityFramework project failed.");

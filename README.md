@@ -37,6 +37,8 @@ perigon 命令工具可以帮助开发者根据实体模型(.cs文件)生成常�
 - 控制器文件
 - 客户端请求服务
 
+> DTO、Manager 和 Controller 实体代码生成当前仅支持 Standard 项目。工具会读取解决方案根目录的 `.config/perigon.config.toml`；当 `isAOT = true` 时，将提示不支持 AOT 代码生成。
+
 ### 对Typescript的支持
 
 对于前端，可以根据swagger OpenApi的json内容，生成请求所需要的代码(.ts)，包括：

@@ -39,6 +39,8 @@ The command-line tool can assist developers in generating common code templates 
 - Protobuf files
 - Client request services
 
+> DTO, Manager, and Controller entity code generation currently supports Standard projects only. The tool reads `.config/perigon.config.toml` from the solution root and reports that AOT code generation is unsupported when `isAOT = true`.
+
 ### Support for Typescript
 
 For the frontend, it can generate the necessary code (.ts) for requests based on swagger OpenAPI's JSON content, including:
