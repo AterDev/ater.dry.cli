@@ -5,6 +5,7 @@ using Share.Models;
 using Share.Models.CommandDtos;
 using Share.Services;
 using System.ComponentModel;
+using System.Net.Http;
 
 namespace CommandLine.Commands;
 
@@ -192,11 +193,29 @@ public class NewCommand(
         {
             return await officialModuleService.GetOfficialModulesAsync(cancellationToken);
         }
+        catch (Exception ex) when (ContainsHttpRequestException(ex))
+        {
+            OutputHelper.Warning(localizer.Get(Localizer.GitHubConnectionFailed));
+            return [];
+        }
         catch (Exception ex)
         {
             OutputHelper.Warning(ex.Message);
             return [];
         }
+    }
+
+    private static bool ContainsHttpRequestException(Exception exception)
+    {
+        for (var current = exception; current is not null; current = current.InnerException)
+        {
+            if (current is HttpRequestException)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static string FormatOfficialModuleOption(PackageMetadata module)

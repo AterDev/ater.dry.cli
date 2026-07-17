@@ -646,7 +646,7 @@
     <value>模块包含 {0} 前端代码；由于未指定 --front-path，前端代码未被还原。</value>
   </data>
   <data name="GitHubConnectionFailed" xml:space="preserve">
-    <value>无法连接到 GitHub，请检查网络后重试。</value>
+    <value>无法访问 github.com 获取官方模块，将继续后续步骤。</value>
   </data>
   <data name="OfficialModulesFetchFailed" xml:space="preserve">
     <value>获取官方模块列表失败。</value>

@@ -646,7 +646,7 @@
     <value>The module contains {0} frontend code; it was not restored because --front-path was not specified.</value>
   </data>
   <data name="GitHubConnectionFailed" xml:space="preserve">
-    <value>Unable to connect to GitHub. Please check your network and try again.</value>
+    <value>Can't access github.com to get the official modules. Continuing with the next steps.</value>
   </data>
   <data name="OfficialModulesFetchFailed" xml:space="preserve">
     <value>Failed to fetch the official module list.</value>
