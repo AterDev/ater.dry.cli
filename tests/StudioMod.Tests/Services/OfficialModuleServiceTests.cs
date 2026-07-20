@@ -120,6 +120,21 @@ public class OfficialModuleServiceTests
     }
 
     [Fact]
+    public async Task GetOfficialModulesAsync_ShouldPropagateHttpRequestException()
+    {
+        var expected = new HttpRequestException("network failure");
+        var service = CreateService(
+            new StubHttpMessageHandler(_ => throw expected)
+        );
+
+        var actual = await Assert.ThrowsAsync<HttpRequestException>(
+            () => service.GetOfficialModulesAsync(TestContext.Current.CancellationToken)
+        );
+
+        Assert.Same(expected, actual);
+    }
+
+    [Fact]
     public async Task DownloadOfficialModulePackageAsync_ShouldPersistZipFile()
     {
         var cancellationToken = TestContext.Current.CancellationToken;

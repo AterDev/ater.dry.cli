@@ -121,6 +121,13 @@ public class OfficialModuleService
                 _modulesCacheLock.Release();
             }
         }
+        catch (Exception ex) when (ContainsHttpRequestException(ex))
+        {
+            // Network failures are handled by the CLI so solution creation can continue
+            // without official modules. Do not log the exception here because the
+            // transport details are not useful to the end user.
+            throw;
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to fetch official module metadata");
@@ -180,9 +187,30 @@ public class OfficialModuleService
         }
     }
 
+    private static bool ContainsHttpRequestException(Exception exception)
+    {
+        for (var current = exception; current is not null; current = current.InnerException)
+        {
+            if (current is HttpRequestException)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private static HttpClient CreateDefaultHttpClient()
     {
-        var client = new HttpClient();
+        // HttpClient.DefaultProxy is initialized from HTTP_PROXY, HTTPS_PROXY,
+        // ALL_PROXY and NO_PROXY by the runtime.
+        var client = new HttpClient(
+            new HttpClientHandler
+            {
+                UseProxy = true,
+                Proxy = HttpClient.DefaultProxy
+            }
+        );
         client.DefaultRequestHeaders.UserAgent.Add(
             new ProductInfoHeaderValue("Perigon.CLI", AssemblyHelper.GetCurrentToolVersion())
         );
