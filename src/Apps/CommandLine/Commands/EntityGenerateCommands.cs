@@ -6,7 +6,7 @@ using System.ComponentModel;
 
 namespace CommandLine.Commands;
 
-public abstract class EntityGenerateSettings : CommandSettings
+public class EntityGenerateSettings : CommandSettings
 {
     [CommandArgument(0, "<EntityPath>")]
     [Description("Entity file path")]
