@@ -372,6 +372,9 @@
   <data name="GenerateDtos" xml:space="preserve">
     <value>生成Dto</value>
   </data>
+  <data name="GenerateEntity" xml:space="preserve">
+    <value>生成实体模型的规则，帮助LLM生成具体代码</value>
+  </data>
   <data name="GenerateManagers" xml:space="preserve">
     <value>生成Manager</value>
   </data>

@@ -9,6 +9,7 @@ public class EntityGenerateCommandTests
     [Theory]
     [InlineData(typeof(EntityGenerateSettings))]
     [InlineData(typeof(GenerateControllerSettings))]
+    [InlineData(typeof(GenerateEntitySettings))]
     public void GenerateSettings_ShouldBeConcreteAndInstantiable(Type settingsType)
     {
         Assert.False(settingsType.IsAbstract);
@@ -27,5 +28,14 @@ public class EntityGenerateCommandTests
         Assert.NotNull(settingsType);
         Assert.False(settingsType!.IsAbstract);
         Assert.True(typeof(EntityGenerateSettings).IsAssignableFrom(settingsType));
+    }
+
+    [Fact]
+    public void GenerateEntityCommand_ShouldUseConcreteSettings()
+    {
+        var settingsType = typeof(GenerateEntityCommand).BaseType?.GetGenericArguments().Single();
+
+        Assert.Equal(typeof(GenerateEntitySettings), settingsType);
+        Assert.NotNull(Activator.CreateInstance(settingsType!));
     }
 }

@@ -34,7 +34,14 @@ if (isAgentRawCommand)
     Environment.SetEnvironmentVariable("PERIGON_MCP_STDIO", "1");
 }
 
-if (!isAgentRawCommand)
+var isHelpOrVersionCommand = args.Any(arg =>
+    arg.Equals("-h", StringComparison.OrdinalIgnoreCase)
+    || arg.Equals("--help", StringComparison.OrdinalIgnoreCase)
+    || arg.Equals("-v", StringComparison.OrdinalIgnoreCase)
+    || arg.Equals("--version", StringComparison.OrdinalIgnoreCase)
+);
+
+if (!isAgentRawCommand && isHelpOrVersionCommand)
 {
     OutputHelper.ShowLogo();
 }
@@ -59,6 +66,7 @@ builder.Services.AddScoped<EntityInfoManager>();
 builder.Services.AddScoped<NewCommand>();
 builder.Services.AddScoped<StudioCommand>();
 builder.Services.AddScoped<RequestCommand>();
+builder.Services.AddScoped<GenerateEntityCommand>();
 builder.Services.AddScoped<GenerateDtoCommand>();
 builder.Services.AddScoped<GenerateManagerCommand>();
 builder.Services.AddScoped<GenerateControllerCommand>();
@@ -133,6 +141,10 @@ app.Configure(config =>
             generate =>
             {
                 generate.SetDescription(localizer.Get(Localizer.GenerateDes));
+
+                generate
+                    .AddCommand<GenerateEntityCommand>(SubCommand.Entity)
+                    .WithDescription(localizer.Get(Localizer.GenerateEntity));
 
                 generate
                     .AddCommand<GenerateDtoCommand>(SubCommand.Dto)

@@ -1,9 +1,30 @@
 using System.ComponentModel;
 using CoreMod.Services;
+using CoreMod.McpTools;
 using Share.Helper;
 using Share.Services;
+using Spectre.Console;
+using Spectre.Console.Cli;
 
 namespace CommandLine.Commands;
+
+/// <summary>
+/// 输出实体模型生成规则。
+/// </summary>
+public sealed class GenerateEntitySettings : CommandSettings;
+
+public sealed class GenerateEntityCommand : Command<GenerateEntitySettings>
+{
+    public override int Execute(
+        CommandContext context,
+        GenerateEntitySettings settings,
+        CancellationToken cancellationToken
+    )
+    {
+        AnsiConsole.WriteLine(Prompts.CreateEntity().Text);
+        return 0;
+    }
+}
 
 /// <summary>
 /// 生成请求

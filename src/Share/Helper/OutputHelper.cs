@@ -121,6 +121,7 @@ public class SubCommand
     public const string Studio = "studio";
     public const string Update = "update";
     public const string Generate = "generate";
+    public const string Entity = "entity";
     public const string Dto = "dto";
     public const string Manager = "manager";
     public const string Controller = "controller";
