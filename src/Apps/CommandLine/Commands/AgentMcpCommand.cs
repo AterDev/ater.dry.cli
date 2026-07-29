@@ -15,6 +15,11 @@ public class AgentMcpCommand : AsyncCommand
     {
         Environment.SetEnvironmentVariable("PERIGON_MCP_STDIO", "1");
 
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return 0;
+        }
+
         var builder = Host.CreateApplicationBuilder();
         builder.Logging.ClearProviders();
         builder.Logging.AddConsole(options =>

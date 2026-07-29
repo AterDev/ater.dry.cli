@@ -6,7 +6,7 @@
     <ToolCommandName>perigon</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>
     <PackageId>Perigon.CLI</PackageId>
-    <Version>10.1.8</Version>
+    <Version>10.1.9</Version>
     <Description>
 			The AI workflow for .NET Web developers, help you generate code and build your project quickly.
 		</Description>
@@ -18,7 +18,7 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/AterDev/Perigon.CLI</RepositoryUrl>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>1. contain frontend codes when pack module.
+    <PackageReleaseNotes>1. fix code generator exception.
 		</PackageReleaseNotes>
     <PackageIcon>logo.png</PackageIcon>
     <ImplicitUsings>enable</ImplicitUsings>

@@ -17,6 +17,18 @@ $agentStagingPath = Join-Path $commandLinePath ".agent-temp"
 
 try {
     Set-Location $repoRoot
+
+    # Run the full test project before changing or publishing any build artifacts.
+    # PowerShell does not automatically stop when an external process returns a
+    # non-zero exit code, so check LASTEXITCODE explicitly.
+    $testProjectPath = Join-Path $repoRoot "tests/StudioMod.Tests/CoreMod.Tests.csproj"
+    Write-Host 'Running tests before publish...'
+    & dotnet test $testProjectPath -c Release -p:GeneratePackageOnBuild=false --verbosity minimal
+    if ($LASTEXITCODE -ne 0) {
+        throw "Tests failed with exit code $LASTEXITCODE. Publish was cancelled."
+    }
+    Write-Host 'Tests passed. Continuing with publish...'
+
     $commandLineProjectPath = Join-Path $commandLinePath "CommandLine.csproj";
     # get package name and version
     $VersionNode = Select-Xml -Path $commandLineProjectPath -XPath '/Project//PropertyGroup/Version'
@@ -165,4 +177,5 @@ try {
 catch {
     Set-Location $repoRoot
     Write-Host $_.Exception.Message
+    exit 1
 }

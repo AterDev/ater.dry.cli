@@ -245,14 +245,12 @@ public class ModuleInstallService(
     /// </summary>
     private async Task EnsureDbSetsForModuleEntitiesAsync(PackageMetadata metadata)
     {
-        OutputHelper.Debug("Ensuring DbSet properties for module entities...");
         try
         {
             // Locate entity directory for the module
             var entityDir = Path.Combine(_projectContext.EntityPath!, metadata.ModuleName);
             if (!Directory.Exists(entityDir))
             {
-
                 OutputHelper.Warning($"Entity directory not found for module {metadata.ModuleName}");
                 return;
             }
@@ -281,7 +279,7 @@ public class ModuleInstallService(
                 }
                 catch
                 {
-                    OutputHelper.Debug($"Failed to parse entity file: {ef}");
+                    OutputHelper.Warning($"Failed to parse entity file: {ef}");
                     // ignore parse errors for individual files
                 }
             }
@@ -317,8 +315,6 @@ public class ModuleInstallService(
                 }
             }
 
-            OutputHelper.Debug($"{dbContextPath}");
-
             if (string.IsNullOrEmpty(dbContextPath) || !File.Exists(dbContextPath))
             {
 
@@ -343,7 +339,6 @@ public class ModuleInstallService(
                         var propContent = $"public DbSet<{entity}> {propName} {{ get; set; }}";
                         helper.AddClassProperty(propContent);
 
-                        OutputHelper.Debug($"add  prop {propContent}");
                         dbChanged = true;
                     }
                 }
@@ -351,7 +346,6 @@ public class ModuleInstallService(
                 if (dbChanged && helper.SyntaxRoot != null)
                 {
                     var newDbText = helper.SyntaxRoot.NormalizeWhitespace().ToFullString();
-                    OutputHelper.Debug($"{newDbText}");
                     await File.WriteAllTextAsync(dbContextPath, newDbText);
                 }
             }

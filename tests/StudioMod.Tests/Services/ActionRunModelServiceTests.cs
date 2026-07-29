@@ -1,5 +1,5 @@
 using CoreMod.Services;
-using Moq;
+using Microsoft.Extensions.DependencyInjection;
 using Share;
 using Share.Entity;
 using Share.Models;
@@ -13,8 +13,8 @@ public class ActionRunModelServiceTests
     public void Create_ShouldMergeAndDistinctVariablesByKey()
     {
         // Arrange
-        var projectContext = new Mock<SolutionContext>();
-        var service = new ActionRunModelService(projectContext.Object);
+        var projectContext = new SolutionContext(new ServiceCollection().BuildServiceProvider());
+        var service = new ActionRunModelService(projectContext);
 
         var source = new List<Variable>
         {
@@ -42,8 +42,8 @@ public class ActionRunModelServiceTests
     public void ApplyModelInfo_ShouldSetModelPropertiesAndStandardVariables()
     {
         // Arrange
-        var projectContext = new Mock<SolutionContext>();
-        var service = new ActionRunModelService(projectContext.Object);
+        var projectContext = new SolutionContext(new ServiceCollection().BuildServiceProvider());
+        var service = new ActionRunModelService(projectContext);
         var model = service.Create(
             [new Variable { Key = "ModelName", Value = "OldName" }, new Variable { Key = "X", Value = "1" }],
             null

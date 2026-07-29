@@ -119,9 +119,6 @@ public class ModulePackageService(
             ConstVal.ModuleExtensionFile
         );
 
-        OutputHelper.Debug($"Parsing module metadata: {moduleName}");
-        OutputHelper.Debug($"ModuleExtensions path: {moduleExtensionsPath}");
-
         var content = await File.ReadAllTextAsync(moduleExtensionsPath);
         var tree = CSharpSyntaxTree.ParseText(content);
         var root = await tree.GetRootAsync();
@@ -139,8 +136,6 @@ public class ModulePackageService(
             return null;
         }
 
-        OutputHelper.Debug($"Found ModuleExtensions type for module {moduleName}");
-
         // Find DisplayName attribute
         var displayNameAttr = moduleExtensionType
             .AttributeLists
@@ -152,8 +147,6 @@ public class ModulePackageService(
             OutputHelper.Debug($"DisplayName attribute not found on ModuleExtensions for module {moduleName}");
             return null;
         }
-
-        OutputHelper.Debug($"DisplayName attribute found: {displayNameAttr}");
 
         // Parse DisplayName value
         string? author = null;
@@ -175,22 +168,11 @@ public class ModulePackageService(
             }
         }
 
-        OutputHelper.Debug($"Parsed DisplayName metadata: author={author ?? "<null>"}, displayName={displayName ?? "<null>"}");
-
         // Find Description attribute
         var descriptionAttr = moduleExtensionType
             .AttributeLists
             .SelectMany(list => list.Attributes)
             .FirstOrDefault(a => IsAttributeNamed(a, "Description"));
-
-        if (descriptionAttr != null)
-        {
-            OutputHelper.Debug($"Description attribute found: {descriptionAttr}");
-        }
-        else
-        {
-            OutputHelper.Debug($"Description attribute not found on ModuleExtensions for module {moduleName}");
-        }
 
         string? description = null;
         if (
