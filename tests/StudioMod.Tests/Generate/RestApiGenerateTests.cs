@@ -59,4 +59,29 @@ public class RestApiGenerateTests
         // Assert
         Assert.Contains(usings, u => u.Contains("Store.Domain.Entities"));
     }
+
+    [Fact]
+    public void GetRestApiContent_ShouldGenerateControllerContent_WithDefaultConfig()
+    {
+        var entityInfo = new EntityInfo
+        {
+            Name = "Product",
+            NamespaceName = "Store.Domain.Entities",
+            ModuleName = "StoreMod",
+            FilePath = "Product.cs",
+        };
+        var generator = new RestApiGenerate(
+            entityInfo,
+            new SolutionConfig(),
+            new ReadOnlyDictionary<string, DtoInfo>(new Dictionary<string, DtoInfo>())
+        );
+
+        var content = generator.GetRestApiContent(
+            "namespace @Model.Namespace; public class @(Model.EntityName)Controller { @Model.AddCodes }",
+            "StoreService"
+        );
+
+        Assert.Contains("namespace StoreService", content);
+        Assert.Contains("ProductController", content);
+    }
 }

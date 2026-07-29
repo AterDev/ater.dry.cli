@@ -4,12 +4,15 @@ param (
     [System.Boolean]
     $withStudio = $false
 )
-$repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
+$scriptRoot = (Resolve-Path -LiteralPath $PSScriptRoot).Path
+$repoRoot = (Resolve-Path -LiteralPath (Join-Path $scriptRoot "..")).Path
 $OutputEncoding = [System.Console]::OutputEncoding = [System.Console]::InputEncoding = [System.Text.Encoding]::UTF8
 
 $dotnetVersion = "net10.0"
-$commandLinePath = Join-Path $repoRoot "src/Apps/CommandLine";
-$studioPath = Join-Path $repoRoot "src/Apps/Dashboard";
+$commandLinePath = Join-Path $repoRoot "src/Apps/CommandLine"
+$studioPath = Join-Path $repoRoot "src/Apps/Dashboard"
+$artifactsPath = Join-Path $repoRoot "artifacts"
+$packageWorkspacePath = Join-Path $commandLinePath "nupkg"
 $shareDllsFile = Join-Path $commandLinePath "ShareDlls.txt"
 $agentRepoRoot = (Resolve-Path -LiteralPath (Join-Path (Split-Path -Parent $repoRoot) "Perigon.template\ApiStandard") -ErrorAction SilentlyContinue).Path
 $agentZipPath = Join-Path $commandLinePath "agent.zip"
@@ -37,8 +40,7 @@ try {
     $PackageId = $PackageNode.Node.InnerText
 
     # sync studio version
-    Set-Location $repoRoot
-    $studioProjectPath = Join-Path $studioPath "Dashboard.csproj";
+    $studioProjectPath = Join-Path $studioPath "Dashboard.csproj"
     $xml = [xml](Get-Content $studioProjectPath)
     $propertyGroup = $xml.Project.PropertyGroup[0]
     Write-Host "Current Version:"$Version
@@ -56,48 +58,48 @@ try {
 
     # build web project
     if ($withStudio -eq $true) {
-        Set-Location  $studioPath
-        if (Test-Path -Path ".\publish") {
-            Remove-Item .\publish -R -Force
+        $studioPublishPath = Join-Path $studioPath "publish"
+        if (Test-Path -LiteralPath $studioPublishPath) {
+            Remove-Item -LiteralPath $studioPublishPath -Recurse -Force
         }
         
-        dotnet publish -c release -o ./publish -p:GenerateDocumentationFile=false -p:DebugType=None
+        dotnet publish $studioProjectPath -c Release -o $studioPublishPath -p:GenerateDocumentationFile=false -p:DebugType=None
         # 移除部分 dll文件，减少体积
         # 读取ShareDlls.txt，获取dll列表
         if (Test-Path $shareDllsFile) {
             $shareDlls = Get-Content -Path $shareDllsFile
             foreach ($dll in $shareDlls) {
-                $dllPath = ".\publish\$dll"
-                if (Test-Path $dllPath) {
-                    Remove-Item -Path $dllPath -Force
+                $dllPath = Join-Path $studioPublishPath $dll
+                if (Test-Path -LiteralPath $dllPath) {
+                    Remove-Item -LiteralPath $dllPath -Force
                 }
             }
         }
         $pathsToRemove = @(
-            ".\publish\BuildHost-net472",
-            ".\publish\BuildHost-netcore",
-            ".\publish\runtimes",
-            ".\publish\Dashboard.exe"
+            (Join-Path $studioPublishPath "BuildHost-net472"),
+            (Join-Path $studioPublishPath "BuildHost-netcore"),
+            (Join-Path $studioPublishPath "runtimes"),
+            (Join-Path $studioPublishPath "Dashboard.exe")
         );
         foreach ($path in $pathsToRemove) {
-            if (Test-Path $path) {
-                Remove-Item $path -Recurse -Force
+            if (Test-Path -LiteralPath $path) {
+                Remove-Item -LiteralPath $path -Recurse -Force
             }
         }
 
         # remove pdb and xml files
-        $files = Get-ChildItem -Path .\publish -Recurse -Include *.pdb, *.xml, *.map
+        $files = Get-ChildItem -Path $studioPublishPath -Recurse -Include *.pdb, *.xml, *.map
         foreach ($file in $files) {
-            Remove-Item $file.FullName -Force
+            Remove-Item -LiteralPath $file.FullName -Force
         }
         $zipPath = Join-Path $commandLinePath "studio.zip";
-        if (Test-Path -Path $zipPath) {
-            Remove-Item $zipPath -Force
+        if (Test-Path -LiteralPath $zipPath) {
+            Remove-Item -LiteralPath $zipPath -Force
         }
-        Compress-Archive -Path .\publish\*  -DestinationPath $zipPath -CompressionLevel Optimal -Force
+        Compress-Archive -Path (Join-Path $studioPublishPath "*") -DestinationPath $zipPath -CompressionLevel Optimal -Force
 
         # 删除发布目录
-        Remove-Item .\publish -R -Force
+        Remove-Item -LiteralPath $studioPublishPath -Recurse -Force
     }
 
     if ($agentRepoRoot) {
@@ -112,10 +114,7 @@ try {
         New-Item -ItemType Directory -Path $agentStagingPath -Force | Out-Null
 
         $agentEntries = @(
-            ".agents\skill\perigon",
-            ".github\agents",
-            ".github\instructions",
-            ".github\prompts"
+            ".agents\skills\perigon"
         )
 
         foreach ($entry in $agentEntries) {
@@ -131,46 +130,53 @@ try {
         Remove-Item -Path $agentStagingPath -Recurse -Force
     }
 
-    Set-Location $repoRoot
-    Set-Location  $commandLinePath
     Write-Host 'Packing new version...'
 
     # pack
-    dotnet build -c release
-    dotnet pack -c release -o ./nupkg
+    dotnet build $commandLineProjectPath -c Release
+    dotnet pack $commandLineProjectPath -c Release -o $packageWorkspacePath
     $newPackName = $PackageId + "." + $Version + ".nupkg"
+    $packagePath = Join-Path $packageWorkspacePath $newPackName
+    $zipPackPath = [System.IO.Path]::ChangeExtension($packagePath, ".zip")
+    $expandedPackagePath = Join-Path $packageWorkspacePath $Version
+    $finalPackagePath = Join-Path $artifactsPath $newPackName
+
+    New-Item -ItemType Directory -Path $artifactsPath -Force | Out-Null
 
     # 将nupkg修改成zip，并解压
-    $zipPackName = $newPackName.Replace(".nupkg", ".zip")
-    Rename-Item -Path "./nupkg/$newPackName" -NewName "$zipPackName"
-    Expand-Archive -Path "./nupkg/$zipPackName" -DestinationPath "./nupkg/$Version"
+    Rename-Item -LiteralPath $packagePath -NewName ([System.IO.Path]::GetFileName($zipPackPath))
+    Expand-Archive -LiteralPath $zipPackPath -DestinationPath $expandedPackagePath
 
     ## 移除pdb文件
-    $files = Get-ChildItem -Path "./nupkg/$Version/tools/$dotnetVersion/any" -Recurse -Include *.pdb
+    $toolPackagePath = Join-Path $expandedPackagePath "tools/$dotnetVersion/any"
+    $files = Get-ChildItem -Path $toolPackagePath -Recurse -Include *.pdb
     foreach ($file in $files) {
-        Remove-Item $file.FullName -Force
+        Remove-Item -LiteralPath $file.FullName -Force
     }
 
     # 删除 BuildHost-net472
-    Remove-Item -Path "./nupkg/$Version/tools/$dotnetVersion/any/BuildHost-net472" -Recurse -Force
+    $buildHostPath = Join-Path $toolPackagePath "BuildHost-net472"
+    if (Test-Path -LiteralPath $buildHostPath) {
+        Remove-Item -LiteralPath $buildHostPath -Recurse -Force
+    }
 
     # 重新将文件压缩，不包含最外层目录
-    Compress-Archive -Path "./nupkg/$Version/*" -DestinationPath "./nupkg/$newPackName" -CompressionLevel Optimal -Force
+    Compress-Archive -Path (Join-Path $expandedPackagePath "*") -DestinationPath $finalPackagePath -CompressionLevel Optimal -Force
 
     # 获取并输出文件大小
-    $fileSize = (Get-Item "./nupkg/$newPackName").Length
+    $fileSize = (Get-Item -LiteralPath $finalPackagePath).Length
     Write-Host "New package size: $([Math]::Round($fileSize / 1MB, 2)) MB"
 
     # 删除临时文件
-    Remove-Item -Path "./nupkg/$Version" -Recurse -Force
-    Remove-Item -Path "./nupkg/$zipPackName" -Force
+    Remove-Item -LiteralPath $expandedPackagePath -Recurse -Force
+    Remove-Item -LiteralPath $zipPackPath -Force
 
     # uninstall old version
     Write-Host 'uninstall old version'
     dotnet tool uninstall -g $PackageId
 
     Write-Host 'install new version:'$PackageId $Version
-    dotnet tool install -g --add-source ./nupkg $PackageId --version $Version
+    dotnet tool install -g --add-source $artifactsPath $PackageId --version $Version
 
     Set-Location $repoRoot
 }

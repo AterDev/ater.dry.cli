@@ -73,7 +73,6 @@ public static class Extensions
         /// <summary>
         /// 不为空(字符串)时执行的条件
         /// </summary>
-        /// <typeparam name="TSource"></typeparam>
         /// <param name="field">要判断的字段</param>
         /// <param name="expression">不为空时执行的条件</param>
         /// <returns></returns>
@@ -137,7 +136,6 @@ public static class Extensions
         /// <summary>
         /// 排序
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="dic"></param>
         /// <returns></returns>
         public IOrderedQueryable<T> OrderBy(Dictionary<string, bool> dic)
@@ -262,7 +260,7 @@ public static class Extensions
         /// <param name="minVal"></param>
         /// <param name="maxVal"></param>
         /// <returns></returns>
-        public IQueryable<T> Between(Expression<Func<T, double>> propertyExpression, int minVal, int maxVal, int a = 1)
+        public IQueryable<T> Between(Expression<Func<T, double>> propertyExpression, int minVal, int maxVal)
         {
             return source.Between<T, double>(propertyExpression, minVal, maxVal);
         }

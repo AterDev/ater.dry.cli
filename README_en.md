@@ -1,6 +1,6 @@
 # Perigon.CLI
 
-![perigon](./perigon_logo320.png)
+![perigon](https://github.com/AterDev/Perigon.CLI/blob/v10/perigon_logo320.png?raw=true)
 
 **[中文](./README.md)**
 

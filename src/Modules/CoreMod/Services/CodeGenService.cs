@@ -25,6 +25,9 @@ public class CodeGenService(
         DtoType.Detail,
     ];
 
+    private SolutionConfig ProjectConfig =>
+        _projectContext.SolutionConfig ??= new SolutionConfig();
+
     /// <summary>
     /// 生成Dto
     /// </summary>
@@ -39,7 +42,7 @@ public class CodeGenService(
     )
     {
         _logger.LogInformation("🚀 Generating Dtos...");
-        var dtoGen = new DtoCodeGenerate(entityInfo, _projectContext.SolutionConfig?.UserIdKeys);
+        var dtoGen = new DtoCodeGenerate(entityInfo, ProjectConfig.UserIdKeys);
         var dirName = entityInfo.Name + "Dtos";
         // GlobalUsing
         var globalContent = string.Join(Environment.NewLine, dtoGen.GetGlobalUsings());
@@ -113,7 +116,7 @@ public class CodeGenService(
     {
         var managerGen = new ManagerGenerate(
             entityInfo,
-            _projectContext.SolutionConfig?.UserIdKeys ?? []
+            ProjectConfig.UserIdKeys
         );
         // GlobalUsing
         var globalContent = string.Join(Environment.NewLine, managerGen.GetGlobalUsings());
@@ -162,16 +165,16 @@ public class CodeGenService(
         // whether is management project
         var hasSystemMod = await SolutionService.HasProjectReferenceAsync(
             projectFile,
-            _projectContext.SolutionConfig!.SystemModName
+            ProjectConfig.SystemModName
         );
 
         OutputHelper.Important(
-            $"{serviceName} with {_projectContext.SolutionConfig!.SystemModName} hasSystemMod: {hasSystemMod}"
+            $"{serviceName} with {ProjectConfig.SystemModName} hasSystemMod: {hasSystemMod}"
         );
 
         var apiGen = new RestApiGenerate(
             entityInfo,
-            _projectContext.SolutionConfig,
+            ProjectConfig,
             GetDtoCache(entityInfo)
         );
         var content = apiGen.GetRestApiContent(tplContent, serviceName, hasSystemMod);
