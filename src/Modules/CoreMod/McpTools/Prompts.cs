@@ -16,7 +16,7 @@ public static class Prompts
             <rules>
             实体模型需要创建在`src/Definition`目录下的`Entity`项目中；
 
-            如果指定了模块名称，则需要在`Entity`程序集下创建一个新的文件夹，命名为模块名称+Mod，如`UserMod`，如果没有模块名称，则不创建文件夹；
+            如果指定了模块名称，则需要在`Entity`程序集下创建模块目录(如果没有)，命名为模块名称+Mod，如`UserMod`;
 
             如果模块不存在(`src/Modules`下没有对应模块)，则调用创建模块的工具先创建模块，再创建实体模型；
 
@@ -32,7 +32,7 @@ public static class Prompts
             8 如果是List类型，默认使用默认值`= []`;
             9 将枚举类型定义跟实体类型定义放在同一个文件中，枚举类型放在实体类型的后面；
             10 多对多的关系要添加中间表实体类，并定义导航属性外键，EF Core会自动创建外键，无需手动添加Index特性；
-            
+            11 DbContext中的DbSet属性使用标准{get;set;}定义;如无明确说明，不要使用ToTable等额外配置。
             </rules>
             """
         );
