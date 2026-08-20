@@ -55,7 +55,7 @@ jobs:
       - name: Build and pack CLI with Studio
         shell: pwsh
         run: |
-          pwsh -NoProfile -File './scripts/PublishToLocal.ps1' -withStudio 1
+          & './scripts/PublishToLocal.ps1' -withStudio:$true
           if ($LASTEXITCODE -ne 0) {
               throw "PublishToLocal.ps1 failed with exit code $LASTEXITCODE."
           }
