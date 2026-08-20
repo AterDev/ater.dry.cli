@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 concurrency:
   group: publish-nuget
@@ -50,15 +51,6 @@ jobs:
           "package_id=$packageId" >> $env:GITHUB_OUTPUT
           "package_version=$version" >> $env:GITHUB_OUTPUT
           "package_path=$packagePath" >> $env:GITHUB_OUTPUT
-
-      - name: Check NuGet credentials
-        shell: pwsh
-        env:
-          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-        run: |
-          if ([string]::IsNullOrWhiteSpace($env:NUGET_API_KEY)) {
-              throw 'Repository secret NUGET_API_KEY is not configured.'
-          }
 
       - name: Build and pack CLI with Studio
         shell: pwsh
@@ -116,10 +108,16 @@ jobs:
           path: ${{ steps.package.outputs.package_path }}
           if-no-files-found: error
 
+      - name: NuGet login (OIDC → temp API key)
+        uses: NuGet/login@v1
+        id: nuget-login
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
       - name: Push package to NuGet
         shell: pwsh
         env:
-          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+          NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
           PACKAGE_PATH: ${{ steps.package.outputs.package_path }}
         run: |
           $packagePath = Join-Path $env:GITHUB_WORKSPACE $env:PACKAGE_PATH
