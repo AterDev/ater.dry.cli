@@ -18,7 +18,8 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/AterDev/Perigon.CLI</RepositoryUrl>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>1. fix code generator exception.
+    <PackageReleaseNotes>1. add the generate entity command and refine entity generation rules.
+2. support multipart file upload client generation for OpenAPI 3.0 and 3.1, including mixed form fields.
 		</PackageReleaseNotes>
     <PackageIcon>logo.png</PackageIcon>
     <ImplicitUsings>enable</ImplicitUsings>
