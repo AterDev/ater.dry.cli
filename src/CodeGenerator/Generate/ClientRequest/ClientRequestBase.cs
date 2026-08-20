@@ -132,15 +132,18 @@ public abstract class ClientRequestBase(OpenApiDocument openApi)
                 function.ResponseReferencedTypes = OpenApiHelper.GetAllRefs(respSchema).ToList();
                 function.RequestType = GetLanguageType(reqSchema);
                 function.ResponseType = GetLanguageType(respSchema);
-                var multipartFile = OpenApiHelper.FindMultipartFileProperty(multipartContent?.Schema, Schemas);
-                if (multipartFile is { } file)
+                function.IsMultipart = multipartContent != null;
+                var multipartProperties = OpenApiHelper.GetMultipartProperties(
+                    multipartContent?.Schema,
+                    Schemas
+                );
+                if (multipartProperties.Count > 0)
                 {
-                    function.RequestType = GetLanguageType(file.Schema);
+                    function.RequestType = string.Empty;
                     function.RequestRefType = null;
                     function.RequestReferencedTypes = [];
-                    function.MultipartFileFieldName = file.Name;
                 }
-                function.Params = operation.Value?.Parameters?.Select(p =>
+                var parameters = operation.Value?.Parameters?.Select(p =>
                 {
                     string? location = p.In?.GetDisplayName();
                     bool? inpath = location?.ToLower()?.Equals("path");
@@ -158,7 +161,42 @@ public abstract class ClientRequestBase(OpenApiDocument openApi)
                         IsRequired = p.Required,
                         Type = type,
                     };
-                }).ToList();
+                }).ToList() ?? [];
+                foreach (var multipartProperty in multipartProperties)
+                {
+                    var propertySchema = OpenApiHelper.ResolveSchema(multipartProperty.Schema, Schemas);
+                    var isCollection = propertySchema?.Type?.HasFlag(JsonSchemaType.Array) == true;
+                    var valueSchema = isCollection ? propertySchema?.Items : propertySchema;
+                    var isFile = valueSchema != null
+                        && OpenApiHelper.IsBinarySchema(valueSchema, Schemas);
+                    var type = isFile
+                        ? isCollection ? "List<IFile>" : "IFile"
+                        : GetLanguageType(multipartProperty.Schema);
+                    var name = RequestClientHelper.NormalizeParameterName(
+                        multipartProperty.Name,
+                        usedParamNames
+                    );
+                    parameters.Add(
+                        new FunctionParams
+                        {
+                            Description = propertySchema?.Description,
+                            RefType = isFile
+                                ? null
+                                : OpenApiHelper.GetRootRef(multipartProperty.Schema),
+                            ReferencedTypes = isFile
+                                ? []
+                                : OpenApiHelper.GetAllRefs(multipartProperty.Schema).ToList(),
+                            Name = name,
+                            OriginalName = multipartProperty.Name,
+                            IsRequired = multipartProperty.IsRequired,
+                            InMultipart = true,
+                            IsFile = isFile,
+                            IsCollection = isCollection,
+                            Type = type,
+                        }
+                    );
+                }
+                function.Params = parameters;
                 // 处理相同方法，不同请求谓词的情况
                 if (RequestFunctions.Any(f => f.Name == function.Name))
                 {
@@ -244,4 +282,5 @@ public abstract class ClientRequestBase(OpenApiDocument openApi)
 public record FunctionBuildResult(string Name, string ParamsString, string Comments, string DataString, string Path)
 {
     public string ResponseType { get; set; } = string.Empty;
+    public string? BodySetup { get; set; }
 }

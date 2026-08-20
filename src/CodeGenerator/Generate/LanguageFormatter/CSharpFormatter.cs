@@ -110,7 +110,7 @@ public class CSharpFormatter : LanguageFormatterBase
 
         foreach (var property in meta.PropertyInfos)
         {
-            string propType = property.Type == "IFile" ? "Stream" : property.Type;
+            string propType = (property.Type ?? string.Empty).Replace("IFile", "Stream");
             if (property.IsNullable && !propType.EndsWith("?"))
             {
                 propType += "?";

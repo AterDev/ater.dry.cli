@@ -187,12 +187,12 @@ public class RequestClientCompatibilityTests
 
         // Assert
         Assert.Contains(
-            "LoadMapFileWaferMapLoadMapFilePostAsync(string mapId, Stream data, string fileName, CancellationToken cancellationToken = default)",
+            "LoadMapFileWaferMapLoadMapFilePostAsync(string mapId, MultipartFile mapFile, CancellationToken cancellationToken = default)",
             service
         );
         Assert.Contains("var url = $\"/waferMap/loadMapFile?map_id={mapId}\";", service);
         Assert.Contains(
-            "UploadFileAsync<object?>(url, new StreamContent(data), fileName, fieldName: \"map_file\", cancellationToken: cancellationToken)",
+            "form.Add(CreateMultipartFileContent(mapFile), \"map_file\", mapFile.FileName);",
             service
         );
         Assert.Contains("string fileName = \"file\", string fieldName = \"file\"", baseService);
@@ -220,16 +220,38 @@ public class RequestClientCompatibilityTests
         var models = generator.GetModelFiles("DemoClient");
 
         // Assert
+        Assert.Contains("MultipartFile mapFile", service);
+        Assert.Contains("IEnumerable<MultipartFile>? attachments", service);
+        Assert.Contains("string? description", service);
+        Assert.Contains("bool? overwrite", service);
         Assert.Contains(
-            "LoadmapfilewaferMaploadMapFilepostAsync(string mapId, Stream data, string fileName, CancellationToken cancellationToken = default)",
-            service
-        );
-        Assert.Contains(
-            "UploadFileAsync<ResponseMapRawData?>(url, new StreamContent(data), fileName, fieldName: \"map_file\", cancellationToken: cancellationToken)",
+            "form.Add(CreateMultipartFileContent(mapFile), \"map_file\", mapFile.FileName);",
             service
         );
 
         var uploadModel = models.Single(file => file.Name == "BodyLoadMapFileWaferMapLoadMapFilePost.cs").Content;
         Assert.Contains("public Stream MapFile", uploadModel);
+
+        // Angular
+        var angularService = new AngularClient(doc!)
+            .GenerateServices(doc!.Tags!, "demo")
+            .Single(file => file.Name == "wafer-map.service.ts")
+            .Content;
+        Assert.Contains("mapId: string, mapFile: File", angularService);
+        Assert.Contains("attachments: File[] | null", angularService);
+        Assert.Contains("description: string | null", angularService);
+        Assert.Contains("overwrite: boolean | null", angularService);
+        Assert.Contains("formData.append('map_file', mapFile, mapFile.name);", angularService);
+        Assert.Contains("attachments.forEach(file => formData.append('attachments', file, file.name));", angularService);
+        Assert.Contains("formData.append('description', String(description));", angularService);
+
+        // Axios
+        var axiosService = new AxiosClient(doc!).GenerateServices(doc!.Tags!, "demo").Single().Content;
+        Assert.Contains("mapId: string, mapFile: File", axiosService);
+        Assert.Contains("attachments: File[] | null", axiosService);
+        Assert.Contains("description: string | null", axiosService);
+        Assert.Contains("overwrite: boolean | null", axiosService);
+        Assert.Contains("formData.append('map_file', mapFile, mapFile.name);", axiosService);
+        Assert.Contains("attachments.forEach(file => formData.append('attachments', file, file.name));", axiosService);
     }
 }

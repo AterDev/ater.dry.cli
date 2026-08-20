@@ -230,7 +230,7 @@ public class OpenApiHelper
         return null;
     }
 
-    private static IOpenApiSchema? ResolveSchema(
+    public static IOpenApiSchema? ResolveSchema(
         IOpenApiSchema? schema,
         IDictionary<string, IOpenApiSchema>? schemas
     )
@@ -254,7 +254,7 @@ public class OpenApiHelper
         return current;
     }
 
-    private static bool IsBinarySchema(IOpenApiSchema schema, IDictionary<string, IOpenApiSchema>? schemas)
+    public static bool IsBinarySchema(IOpenApiSchema schema, IDictionary<string, IOpenApiSchema>? schemas)
     {
         var resolvedSchema = ResolveSchema(schema, schemas);
         if (resolvedSchema?.Type is not JsonSchemaType type || !type.HasFlag(JsonSchemaType.String))
@@ -273,6 +273,50 @@ public class OpenApiHelper
         return resolvedSchema.UnrecognizedKeywords?.TryGetValue("contentMediaType", out var value) == true
             && value is not null
             && !string.IsNullOrWhiteSpace(value.GetValue<string>());
+    }
+
+    /// <summary>
+    /// 获取 multipart/form-data 对象 schema 的字段。
+    /// </summary>
+    public static List<(string Name, IOpenApiSchema Schema, bool IsRequired)> GetMultipartProperties(
+        IOpenApiSchema? schema,
+        IDictionary<string, IOpenApiSchema>? schemas
+    )
+    {
+        var result = new List<(string Name, IOpenApiSchema Schema, bool IsRequired)>();
+        var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        void Collect(IOpenApiSchema? current)
+        {
+            var resolved = ResolveSchema(current, schemas);
+            if (resolved == null)
+            {
+                return;
+            }
+
+            var required = resolved.Required ?? new HashSet<string>();
+            if (resolved.Properties != null)
+            {
+                foreach (var property in resolved.Properties)
+                {
+                    if (names.Add(property.Key))
+                    {
+                        result.Add((property.Key, property.Value, required.Contains(property.Key)));
+                    }
+                }
+            }
+
+            if (resolved.AllOf != null)
+            {
+                foreach (var item in resolved.AllOf)
+                {
+                    Collect(item);
+                }
+            }
+        }
+
+        Collect(schema);
+        return result;
     }
 
 

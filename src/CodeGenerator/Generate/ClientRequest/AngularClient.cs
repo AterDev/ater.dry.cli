@@ -153,6 +153,13 @@ public class AngularClient(OpenApiDocument openApi) : TypeScriptClientBase(openA
             }
         }
         cw.OpenBlock($"{result.Name}({result.ParamsString}): Observable<{responseType}>");
+        if (!string.IsNullOrWhiteSpace(result.BodySetup))
+        {
+            foreach (var line in result.BodySetup.Split(Environment.NewLine))
+            {
+                cw.AppendLine(line);
+            }
+        }
         cw.AppendLine($"const _url = `{result.Path}`;");
         cw.AppendLine(
             $"return this.{method}{generics}('{function.Method.ToLower()}', _url{result.DataString});"

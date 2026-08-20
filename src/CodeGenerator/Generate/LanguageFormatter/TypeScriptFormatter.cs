@@ -26,7 +26,7 @@ public class TypeScriptFormatter : LanguageFormatterBase
         ["TimeOnly"] = "Date",
         ["TimeSpan"] = "number",
         ["object"] = "any",
-        ["IFile"] = "FormData",
+        ["IFile"] = "File",
     };
 
     public override string FormatType(

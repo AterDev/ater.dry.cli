@@ -62,6 +62,13 @@ public class AxiosClient(OpenApiDocument openApi) : TypeScriptClientBase(openApi
         cw.Indent();
         foreach (var line in result.Comments.Split('\n')) cw.AppendLine(line);
         cw.AppendLine($"{result.Name}({result.ParamsString}): Promise<{responseType}> {{").Indent();
+        if (!string.IsNullOrWhiteSpace(result.BodySetup))
+        {
+            foreach (var line in result.BodySetup.Split(Environment.NewLine))
+            {
+                cw.AppendLine(line);
+            }
+        }
         cw.AppendLine($"const _url = `{result.Path}`;");
         cw.AppendLine($"return this.request<{responseType}>('{function.Method.ToLower()}', _url{result.DataString});");
         cw.Unindent().AppendLine("}");

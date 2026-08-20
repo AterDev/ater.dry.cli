@@ -4,11 +4,19 @@
     "title": "WaferMapAnalyzer",
     "version": "1.0"
   },
+  "tags": [
+    {
+      "name": "WaferMap"
+    }
+  ],
   "paths": {
     "/waferMap/loadMapFile": {
       "post": {
         "summary": "Load Map File",
         "operationId": "load_map_file_waferMap_loadMapFile_post",
+        "tags": [
+          "WaferMap"
+        ],
         "parameters": [
           {
             "name": "map_id",
@@ -55,6 +63,19 @@
           "map_file": {
             "type": "string",
             "contentMediaType": "application/octet-stream"
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "contentMediaType": "application/octet-stream"
+            }
+          },
+          "description": {
+            "type": "string"
+          },
+          "overwrite": {
+            "type": "boolean"
           }
         }
       },

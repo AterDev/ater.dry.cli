@@ -154,8 +154,11 @@ public abstract class TypeScriptClientBase(OpenApiDocument openApi) : ClientRequ
                     .Select(p =>
                     {
                         var paramName = p.Name ?? p.OriginalName ?? "value";
-                        return p.IsRequired ? paramName + ": " + OpenApiHelper.FormatSchemaKey(p.Type)
-                            : paramName + ": " + OpenApiHelper.FormatSchemaKey(p.Type) + " | null";
+                        var type = p.InMultipart
+                            ? GetMultipartParameterType(p)
+                            : OpenApiHelper.FormatSchemaKey(p.Type);
+                        return p.IsRequired ? paramName + ": " + type
+                            : paramName + ": " + type + " | null";
                     }
                     )
                     .ToArray()
@@ -166,7 +169,7 @@ public abstract class TypeScriptClientBase(OpenApiDocument openApi) : ClientRequ
                 paramsComments += $" * @param {paramName} {p.Description ?? OpenApiHelper.FormatSchemaKey(p.Type)}\n";
             });
         }
-        if (!string.IsNullOrEmpty(requestType))
+        if (!function.IsMultipart && !string.IsNullOrEmpty(requestType))
         {
             if (@params?.Count > 0)
             {
@@ -207,7 +210,7 @@ public abstract class TypeScriptClientBase(OpenApiDocument openApi) : ClientRequ
             path = path.Replace("${" + originName + "}", "${" + paramName + "}");
         });
         List<FunctionParams>? reqParams = @params
-            ?.Where(p => !p.InPath && p.Type != "FormData")
+            ?.Where(p => !p.InPath && !p.InMultipart)
             .ToList();
         if (reqParams != null)
         {
@@ -225,10 +228,11 @@ public abstract class TypeScriptClientBase(OpenApiDocument openApi) : ClientRequ
                 path += "?" + queryParams;
             }
         }
-        FunctionParams? file = @params?.Where(p => p.Type!.Equals("FormData")).FirstOrDefault();
-        if (file != null)
+        string? bodySetup = null;
+        if (function.IsMultipart)
         {
-            dataString = ", " + (file.Name ?? file.OriginalName ?? "data");
+            bodySetup = BuildMultipartFormData(function);
+            dataString = ", formData";
         }
 
         if (addExtOptions)
@@ -243,6 +247,70 @@ public abstract class TypeScriptClientBase(OpenApiDocument openApi) : ClientRequ
             }
         }
 
-        return new FunctionBuildResult(name, paramsString, comments, dataString, path) { ResponseType = responseType };
+        return new FunctionBuildResult(name, paramsString, comments, dataString, path)
+        {
+            ResponseType = responseType,
+            BodySetup = bodySetup,
+        };
+    }
+
+    private string GetMultipartParameterType(FunctionParams parameter)
+    {
+        if (parameter.IsFile)
+        {
+            return parameter.IsCollection ? "File[]" : "File";
+        }
+
+        var type = parameter.Type ?? "object";
+        if (type.StartsWith("List<", StringComparison.Ordinal))
+        {
+            return type[5..^1] + "[]";
+        }
+
+        return Formatter.FormatType(type, isList: parameter.IsCollection);
+    }
+
+    private static string BuildMultipartFormData(RequestServiceFunction function)
+    {
+        var lines = new List<string> { "const formData = new FormData();" };
+        foreach (var parameter in function.Params?.Where(p => p.InMultipart) ?? [])
+        {
+            var name = EscapeStringLiteral(parameter.OriginalName ?? parameter.Name ?? "field");
+            var paramName = parameter.Name ?? parameter.OriginalName ?? "value";
+            if (parameter.IsFile)
+            {
+                if (parameter.IsCollection)
+                {
+                    lines.Add($"if ({paramName} !== null && {paramName} !== undefined) {{");
+                    lines.Add($"  {paramName}.forEach(file => formData.append('{name}', file, file.name));");
+                    lines.Add("}");
+                }
+                else
+                {
+                    lines.Add($"if ({paramName} !== null && {paramName} !== undefined) formData.append('{name}', {paramName}, {paramName}.name);");
+                }
+            }
+            else if (parameter.IsCollection)
+            {
+                lines.Add($"if ({paramName} !== null && {paramName} !== undefined) {{");
+                lines.Add($"  {paramName}.forEach(value => formData.append('{name}', String(value)));");
+                lines.Add("}");
+            }
+            else if (parameter.IsRequired)
+            {
+                lines.Add($"formData.append('{name}', String({paramName}));");
+            }
+            else
+            {
+                lines.Add($"if ({paramName} !== null && {paramName} !== undefined) formData.append('{name}', String({paramName}));");
+            }
+        }
+
+        return string.Join(Environment.NewLine, lines);
+    }
+
+    private static string EscapeStringLiteral(string value)
+    {
+        return value.Replace("\\", "\\\\").Replace("'", "\\'");
     }
 }

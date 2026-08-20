@@ -25,9 +25,9 @@ public class RequestServiceFunction
     public List<string> ResponseReferencedTypes { get; set; } = [];
     public string RequestType { get; set; } = string.Empty;
     /// <summary>
-    /// multipart/form-data 文件字段名。
+    /// 是否为 multipart/form-data 请求。
     /// </summary>
-    public string? MultipartFileFieldName { get; set; }
+    public bool IsMultipart { get; set; }
     /// <summary>
     /// 请求中的引用类型
     /// </summary>
@@ -73,4 +73,16 @@ public class FunctionParams
     /// 是否路由参数
     /// </summary>
     public bool InPath { get; set; }
+    /// <summary>
+    /// 是否为 multipart/form-data 字段。
+    /// </summary>
+    public bool InMultipart { get; set; }
+    /// <summary>
+    /// 是否为文件字段。
+    /// </summary>
+    public bool IsFile { get; set; }
+    /// <summary>
+    /// 是否为集合字段。
+    /// </summary>
+    public bool IsCollection { get; set; }
 }

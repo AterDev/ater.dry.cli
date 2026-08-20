@@ -266,9 +266,6 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : ClientRequestBase(o
         string paramsString = "";
         string paramsComments = "";
         string dataString = "";
-        bool isFileUpload = function.RequestType == "IFile";
-        string dataParameterName = GetUniqueParameterName(function.Params, "data");
-        string fileNameParameterName = GetUniqueParameterName(function.Params, "fileName");
 
         if (function.Params?.Count > 0)
         {
@@ -279,20 +276,26 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : ClientRequestBase(o
                 {
                     paramsString += ", ";
                 }
-                var typeName = ReplaceGenericPlaceholders(OpenApiHelper.FormatSchemaKey(p.Type), function);
+                var typeName = p.InMultipart
+                    ? GetMultipartParameterType(p)
+                    : OpenApiHelper.FormatSchemaKey(p.Type);
+                typeName = ReplaceGenericPlaceholders(typeName, function);
                 var paramName = p.Name ?? p.OriginalName ?? "value";
+                if (!p.IsRequired && !typeName.EndsWith("?"))
+                {
+                    typeName += "?";
+                }
                 paramsString += p.IsRequired
                     ? typeName + " " + paramName
-                    : typeName + "? " + paramName;
+                    : typeName + " " + paramName;
                 paramsComments +=
                     $"    /// <param name=\"{paramName}\">{p.Description ?? typeName} </param>\n";
             }
         }
-        if (!string.IsNullOrEmpty(function.RequestType))
+        if (!function.IsMultipart && !string.IsNullOrEmpty(function.RequestType))
         {
-            string requestType = isFileUpload
-                ? "Stream"
-                : OpenApiHelper.FormatSchemaKey(function.RequestType);
+            string requestType = OpenApiHelper.FormatSchemaKey(function.RequestType);
+            const string dataParameterName = "data";
 
             requestType = ReplaceGenericPlaceholders(requestType, function);
             if (function.Params?.Count > 0)
@@ -306,15 +309,6 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : ClientRequestBase(o
 
             dataString = $", {dataParameterName}";
             paramsComments += $"    /// <param name=\"{dataParameterName}\">{requestType}</param>\n";
-            if (isFileUpload)
-            {
-                if (!string.IsNullOrEmpty(paramsString))
-                {
-                    paramsString += ", ";
-                }
-                paramsString += $"string {fileNameParameterName}";
-                paramsComments += $"    /// <param name=\"{fileNameParameterName}\">上传文件名</param>\n";
-            }
         }
 
         if (!string.IsNullOrWhiteSpace(paramsString))
@@ -344,6 +338,7 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : ClientRequestBase(o
         List<FunctionParams>? reqParams = function
             .Params?.Where(p =>
                 !p.InPath
+                && !p.InMultipart
                 && p.Type != "IForm"
                 && p.Type != "FormData"
                 && p.Type != "IFile"
@@ -369,14 +364,6 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : ClientRequestBase(o
                 function.Path += "?" + queryParams;
             }
         }
-        FunctionParams? file = function
-            .Params?.Where(p => p.Type!.Equals("FormData"))
-            .FirstOrDefault();
-        if (file != null)
-        {
-            dataString = $", {file.Name ?? file.OriginalName ?? "data"}";
-        }
-
         string returnType = function.ResponseType == "IFile"
             ? "Stream"
             : OpenApiHelper.FormatSchemaKey(function.ResponseType);
@@ -389,15 +376,19 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : ClientRequestBase(o
                 ? $"DownloadFileAsync(url{dataString}, {cancellation})"
                 : $"{function.Method.ToLower().ToUpperFirst()}JsonAsync<{returnType}?>(url{dataString}, {cancellation})";
 
-        method =
-            isFileUpload
-                ? $"UploadFileAsync<{function.ResponseType}?>(url, new StreamContent({dataParameterName}), {fileNameParameterName}, fieldName: \"{EscapeStringLiteral(function.MultipartFileFieldName ?? "file")}\", {cancellation})"
-                : method;
+        var multipartContent = function.IsMultipart
+            ? BuildMultipartContent(function)
+            : string.Empty;
+        if (function.IsMultipart)
+        {
+            method = $"SendMultipartAsync<{returnType}?>(url, form, {cancellation})";
+        }
         string res = $$"""
             {{comments}}
                 public async Task<{{returnType}}?> {{function.Name.ToPascalCase()}}Async({{paramsString}}) 
                 {
                     var url = $"{{function.Path}}";
+            {{multipartContent}}
                     return await {{method}};
                 }
 
@@ -405,15 +396,72 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : ClientRequestBase(o
         return res;
     }
 
-    private static string GetUniqueParameterName(List<FunctionParams>? parameters, string name)
+    private static string GetMultipartParameterType(FunctionParams parameter)
     {
-        var usedNames = parameters?
-            .Select(parameter => parameter.Name)
-            .Where(parameter => !string.IsNullOrWhiteSpace(parameter))
-            .Cast<string>()
-            .ToHashSet(StringComparer.OrdinalIgnoreCase)
-            ?? [];
-        return RequestClientHelper.NormalizeParameterName(name, usedNames);
+        if (parameter.IsFile)
+        {
+            return parameter.IsCollection
+                ? "IEnumerable<MultipartFile>"
+                : "MultipartFile";
+        }
+
+        var type = parameter.Type ?? "object";
+        if (parameter.IsCollection && type.StartsWith("List<", StringComparison.Ordinal))
+        {
+            type = "IEnumerable" + type[4..];
+        }
+
+        return type;
+    }
+
+    private static string BuildMultipartContent(RequestServiceFunction function)
+    {
+        var lines = new List<string> { "var form = new MultipartFormDataContent();" };
+        foreach (var parameter in function.Params?.Where(p => p.InMultipart) ?? [])
+        {
+            var name = EscapeStringLiteral(parameter.OriginalName ?? parameter.Name ?? "field");
+            var paramName = parameter.Name ?? parameter.OriginalName ?? "value";
+            if (parameter.IsFile)
+            {
+                if (parameter.IsCollection)
+                {
+                    lines.Add($"if ({paramName} is not null)");
+                    lines.Add("{");
+                    lines.Add($"    foreach (var file in {paramName})");
+                    lines.Add("    {");
+                    lines.Add($"        form.Add(CreateMultipartFileContent(file), \"{name}\", file.FileName);");
+                    lines.Add("    }");
+                    lines.Add("}");
+                }
+                else
+                {
+                    lines.Add($"if ({paramName} is not null)");
+                    lines.Add("{");
+                    lines.Add($"    form.Add(CreateMultipartFileContent({paramName}), \"{name}\", {paramName}.FileName);");
+                    lines.Add("}");
+                }
+            }
+            else if (parameter.IsCollection)
+            {
+                lines.Add($"if ({paramName} is not null)");
+                lines.Add("{");
+                lines.Add($"    foreach (var value in {paramName})");
+                lines.Add("    {");
+                lines.Add($"        form.Add(new StringContent(ToFormValue(value)), \"{name}\");");
+                lines.Add("    }");
+                lines.Add("}");
+            }
+            else if (parameter.IsRequired)
+            {
+                lines.Add($"form.Add(new StringContent(ToFormValue({paramName})), \"{name}\");");
+            }
+            else
+            {
+                lines.Add($"if ({paramName} is not null) form.Add(new StringContent(ToFormValue({paramName})), \"{name}\");");
+            }
+        }
+
+        return string.Join(Environment.NewLine, lines.Select(line => "        " + line));
     }
 
     private static string EscapeStringLiteral(string value)

@@ -125,6 +125,62 @@ public class BaseService
     }
 
     /// <summary>
+    /// multipart/form-data 请求封装。
+    /// </summary>
+    protected async Task<TResult?> SendMultipartAsync<TResult>(string route, MultipartFormDataContent content, CancellationToken cancellationToken = default)
+    {
+        using (content)
+        {
+            HttpResponseMessage? res = await Http.PostAsync(route, content, cancellationToken);
+            if (res != null && res.IsSuccessStatusCode)
+            {
+                return await res.Content.ReadFromJsonAsync<TResult>(cancellationToken: cancellationToken);
+            }
+            else
+            {
+                try
+                {
+                    ErrorMsg = await res!.Content.ReadFromJsonAsync<ErrorResult>(cancellationToken: cancellationToken);
+                }
+                catch (Exception ex)
+                {
+                    var responseContent = await res!.Content.ReadAsStringAsync(cancellationToken);
+                    ErrorMsg = new ErrorResult
+                    {
+                        Title = ex.Message,
+                        Detail = responseContent,
+                    };
+                    return default;
+                }
+
+                return default;
+            }
+        }
+    }
+
+    protected static StreamContent CreateMultipartFileContent(MultipartFile file)
+    {
+        var content = new StreamContent(file.Content);
+        if (!string.IsNullOrWhiteSpace(file.ContentType))
+        {
+            content.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+        }
+
+        return content;
+    }
+
+    protected static string ToFormValue(object? value)
+    {
+        return value switch
+        {
+            null => string.Empty,
+            bool boolean => boolean ? "true" : "false",
+            IFormattable formattable => formattable.ToString(null, CultureInfo.InvariantCulture) ?? string.Empty,
+            _ => value.ToString() ?? string.Empty,
+        };
+    }
+
+    /// <summary>
     /// download file
     /// </summary>
     /// <param name="route"></param>
@@ -256,3 +312,5 @@ public class ErrorResult
     public string Detail { get; set; } = string.Empty;
     public int Number { get; set; }
 }
+
+public sealed record MultipartFile(Stream Content, string FileName, string? ContentType = null);
