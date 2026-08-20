@@ -266,6 +266,9 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : ClientRequestBase(o
         string paramsString = "";
         string paramsComments = "";
         string dataString = "";
+        bool isFileUpload = function.RequestType == "IFile";
+        string dataParameterName = GetUniqueParameterName(function.Params, "data");
+        string fileNameParameterName = GetUniqueParameterName(function.Params, "fileName");
 
         if (function.Params?.Count > 0)
         {
@@ -287,22 +290,31 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : ClientRequestBase(o
         }
         if (!string.IsNullOrEmpty(function.RequestType))
         {
-            string requestType = function.RequestType == "IFile"
+            string requestType = isFileUpload
                 ? "Stream"
                 : OpenApiHelper.FormatSchemaKey(function.RequestType);
 
             requestType = ReplaceGenericPlaceholders(requestType, function);
             if (function.Params?.Count > 0)
             {
-                paramsString += $", {requestType} data";
+                paramsString += $", {requestType} {dataParameterName}";
             }
             else
             {
-                paramsString = $"{requestType} data";
+                paramsString = $"{requestType} {dataParameterName}";
             }
 
-            dataString = ", data";
-            paramsComments += $"    /// <param name=\"data\">{requestType}</param>\n";
+            dataString = $", {dataParameterName}";
+            paramsComments += $"    /// <param name=\"{dataParameterName}\">{requestType}</param>\n";
+            if (isFileUpload)
+            {
+                if (!string.IsNullOrEmpty(paramsString))
+                {
+                    paramsString += ", ";
+                }
+                paramsString += $"string {fileNameParameterName}";
+                paramsComments += $"    /// <param name=\"{fileNameParameterName}\">上传文件名</param>\n";
+            }
         }
 
         if (!string.IsNullOrWhiteSpace(paramsString))
@@ -330,7 +342,12 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : ClientRequestBase(o
         });
         // 需要拼接的参数,特殊处理文件上传
         List<FunctionParams>? reqParams = function
-            .Params?.Where(p => !p.InPath && p.Type != "IForm")
+            .Params?.Where(p =>
+                !p.InPath
+                && p.Type != "IForm"
+                && p.Type != "FormData"
+                && p.Type != "IFile"
+            )
             ?.ToList();
 
         if (reqParams != null)
@@ -373,8 +390,8 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : ClientRequestBase(o
                 : $"{function.Method.ToLower().ToUpperFirst()}JsonAsync<{returnType}?>(url{dataString}, {cancellation})";
 
         method =
-            function.RequestType == "IFile"
-                ? $"UploadFileAsync<{function.ResponseType}?>(url, new StreamContent(data), {cancellation})"
+            isFileUpload
+                ? $"UploadFileAsync<{function.ResponseType}?>(url, new StreamContent({dataParameterName}), {fileNameParameterName}, fieldName: \"{EscapeStringLiteral(function.MultipartFileFieldName ?? "file")}\", {cancellation})"
                 : method;
         string res = $$"""
             {{comments}}
@@ -386,5 +403,21 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : ClientRequestBase(o
 
             """;
         return res;
+    }
+
+    private static string GetUniqueParameterName(List<FunctionParams>? parameters, string name)
+    {
+        var usedNames = parameters?
+            .Select(parameter => parameter.Name)
+            .Where(parameter => !string.IsNullOrWhiteSpace(parameter))
+            .Cast<string>()
+            .ToHashSet(StringComparer.OrdinalIgnoreCase)
+            ?? [];
+        return RequestClientHelper.NormalizeParameterName(name, usedNames);
+    }
+
+    private static string EscapeStringLiteral(string value)
+    {
+        return value.Replace("\\", "\\\\").Replace("\"", "\\\"");
     }
 }

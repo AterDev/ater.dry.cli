@@ -194,6 +194,74 @@ public class OpenApiHelper
         return properties;
     }
 
+    /// <summary>
+    /// 查找 multipart/form-data schema 中的文件字段。
+    /// </summary>
+    public static (string Name, IOpenApiSchema Schema)? FindMultipartFileProperty(
+        IOpenApiSchema? schema,
+        IDictionary<string, IOpenApiSchema>? schemas
+    )
+    {
+        var resolvedSchema = ResolveSchema(schema, schemas);
+        if (resolvedSchema == null)
+        {
+            return null;
+        }
+
+        if (IsBinarySchema(resolvedSchema, schemas))
+        {
+            return ("file", resolvedSchema);
+        }
+
+        if (resolvedSchema.Properties == null)
+        {
+            return null;
+        }
+
+        foreach (var property in resolvedSchema.Properties)
+        {
+            var propertySchema = ResolveSchema(property.Value, schemas);
+            if (propertySchema != null && IsBinarySchema(propertySchema, schemas))
+            {
+                return (property.Key, propertySchema);
+            }
+        }
+
+        return null;
+    }
+
+    private static IOpenApiSchema? ResolveSchema(
+        IOpenApiSchema? schema,
+        IDictionary<string, IOpenApiSchema>? schemas
+    )
+    {
+        if (schema is not OpenApiSchemaReference reference || schemas == null)
+        {
+            return schema;
+        }
+
+        var visited = new HashSet<string>(StringComparer.Ordinal);
+        var current = schema;
+        while (current is OpenApiSchemaReference currentReference)
+        {
+            var id = currentReference.Reference.Id;
+            if (string.IsNullOrWhiteSpace(id) || !visited.Add(id) || !schemas.TryGetValue(id, out current))
+            {
+                return null;
+            }
+        }
+
+        return current;
+    }
+
+    private static bool IsBinarySchema(IOpenApiSchema schema, IDictionary<string, IOpenApiSchema>? schemas)
+    {
+        var resolvedSchema = ResolveSchema(schema, schemas);
+        return resolvedSchema?.Type is JsonSchemaType type
+            && type.HasFlag(JsonSchemaType.String)
+            && string.Equals(resolvedSchema.Format, "binary", StringComparison.OrdinalIgnoreCase);
+    }
+
 
     /// <summary>
     /// fullname to model Name

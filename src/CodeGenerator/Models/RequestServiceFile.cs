@@ -25,6 +25,10 @@ public class RequestServiceFunction
     public List<string> ResponseReferencedTypes { get; set; } = [];
     public string RequestType { get; set; } = string.Empty;
     /// <summary>
+    /// multipart/form-data 文件字段名。
+    /// </summary>
+    public string? MultipartFileFieldName { get; set; }
+    /// <summary>
     /// 请求中的引用类型
     /// </summary>
     public string? RequestRefType { get; set; }

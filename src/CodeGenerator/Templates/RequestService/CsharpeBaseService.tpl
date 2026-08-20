@@ -89,13 +89,15 @@ public class BaseService
     /// <typeparam name="TResult"></typeparam>
     /// <param name="route"></param>
     /// <param name="file"></param>
+    /// <param name="fileName"></param>
+    /// <param name="fieldName"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    protected async Task<TResult?> UploadFileAsync<TResult>(string route, StreamContent file, CancellationToken cancellationToken = default)
+    protected async Task<TResult?> UploadFileAsync<TResult>(string route, StreamContent file, string fileName = "file", string fieldName = "file", CancellationToken cancellationToken = default)
     {
         HttpResponseMessage? res = await Http.PostAsync(route, new MultipartFormDataContent
         {
-            { file, "file", "file" }
+            { file, fieldName, fileName }
         }, cancellationToken);
         if (res != null && res.IsSuccessStatusCode)
         {

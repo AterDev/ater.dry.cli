@@ -1,0 +1,70 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "WaferMapService",
+    "version": "v1"
+  },
+  "tags": [
+    {
+      "name": "WaferMap",
+      "description": "Wafer map operations"
+    }
+  ],
+  "paths": {
+    "/waferMap/loadMapFile": {
+      "post": {
+        "summary": "Load Map File",
+        "operationId": "load_map_file_waferMap_loadMapFile_post",
+        "tags": [
+          "WaferMap"
+        ],
+        "parameters": [
+          {
+            "name": "map_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_load_map_file_waferMap_loadMapFile_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Body_load_map_file_waferMap_loadMapFile_post": {
+        "type": "object",
+        "required": [
+          "map_file"
+        ],
+        "properties": {
+          "map_file": {
+            "type": "string",
+            "format": "binary"
+          }
+        }
+      }
+    }
+  }
+}

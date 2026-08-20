@@ -168,4 +168,39 @@ public class RequestClientCompatibilityTests
         Assert.Contains("'#text': string;", ngSampleModel);
         Assert.Contains("'api-version': string;", ngSampleModel);
     }
+
+    [Fact]
+    public async Task MultipartOpenApiJson_ShouldGenerateCSharpFileUploadClient()
+    {
+        // Arrange
+        var fixturePath = Path.Combine(AppContext.BaseDirectory, "Generate", "Fixtures", "request-client-upload.openapi.json");
+        Assert.True(File.Exists(fixturePath), $"Fixture not found: {fixturePath}");
+
+        var (doc, _) = await OpenApiDocument.LoadAsync(fixturePath);
+        Assert.NotNull(doc);
+
+        // Act
+        var generator = new CSHttpClientGenerate(doc!);
+        var service = generator.GetServices("DemoClient").Single().Content;
+        var models = generator.GetModelFiles("DemoClient");
+        var baseService = CSHttpClientGenerate.GetBaseService("DemoClient");
+
+        // Assert
+        Assert.Contains(
+            "LoadMapFileWaferMapLoadMapFilePostAsync(string mapId, Stream data, string fileName, CancellationToken cancellationToken = default)",
+            service
+        );
+        Assert.Contains("var url = $\"/waferMap/loadMapFile?map_id={mapId}\";", service);
+        Assert.Contains(
+            "UploadFileAsync<object?>(url, new StreamContent(data), fileName, fieldName: \"map_file\", cancellationToken: cancellationToken)",
+            service
+        );
+        Assert.Contains("string fileName = \"file\", string fieldName = \"file\"", baseService);
+        Assert.Contains("{ file, fieldName, fileName }", baseService);
+
+        var uploadModel = models.Single(file => file.Name == "BodyLoadMapFileWaferMapLoadMapFilePost.cs").Content;
+        Assert.Contains("namespace DemoClient.Models;", uploadModel);
+        Assert.DoesNotContain("namespace DemoClient.Models.;", uploadModel);
+        Assert.Contains("public Stream MapFile", uploadModel);
+    }
 }

@@ -38,7 +38,11 @@ public class CSharpFormatter : LanguageFormatterBase
 
     public override string GenerateModel(TypeMeta meta, string projectName = "")
     {
-        var nspName = $"{projectName}.Models.{OpenApiHelper.GetNamespaceFirstPart(meta.Namespace)}";
+        var nspName = string.Join(
+            ".",
+            new[] { projectName, "Models", OpenApiHelper.GetNamespaceFirstPart(meta.Namespace) }
+                .Where(part => !string.IsNullOrWhiteSpace(part))
+        );
 
         return meta.IsEnum == true ? GenerateEnum(meta, nspName) : GenerateClass(meta, nspName);
     }
@@ -106,7 +110,7 @@ public class CSharpFormatter : LanguageFormatterBase
 
         foreach (var property in meta.PropertyInfos)
         {
-            string propType = property.Type;
+            string propType = property.Type == "IFile" ? "Stream" : property.Type;
             if (property.IsNullable && !propType.EndsWith("?"))
             {
                 propType += "?";

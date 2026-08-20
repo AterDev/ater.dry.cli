@@ -98,7 +98,11 @@ public abstract class ClientRequestBase(OpenApiDocument openApi)
                 {
                     function.Name = operation.Key + "_" + path.Key.Split('/').LastOrDefault();
                 }
-                var reqSchema = operation.Value?.RequestBody?.Content?.Values.FirstOrDefault()?.Schema;
+                var requestContent = operation.Value?.RequestBody?.Content;
+                var multipartContent = requestContent?.FirstOrDefault(content =>
+                    string.Equals(content.Key, "multipart/form-data", StringComparison.OrdinalIgnoreCase)
+                ).Value;
+                var reqSchema = requestContent?.Values.FirstOrDefault()?.Schema;
                 IOpenApiSchema? respSchema = null;
                 var responses = operation.Value?.Responses;
                 if (responses != null && responses.Count > 0)
@@ -128,6 +132,14 @@ public abstract class ClientRequestBase(OpenApiDocument openApi)
                 function.ResponseReferencedTypes = OpenApiHelper.GetAllRefs(respSchema).ToList();
                 function.RequestType = GetLanguageType(reqSchema);
                 function.ResponseType = GetLanguageType(respSchema);
+                var multipartFile = OpenApiHelper.FindMultipartFileProperty(multipartContent?.Schema, Schemas);
+                if (multipartFile is { } file)
+                {
+                    function.RequestType = GetLanguageType(file.Schema);
+                    function.RequestRefType = null;
+                    function.RequestReferencedTypes = [];
+                    function.MultipartFileFieldName = file.Name;
+                }
                 function.Params = operation.Value?.Parameters?.Select(p =>
                 {
                     string? location = p.In?.GetDisplayName();
