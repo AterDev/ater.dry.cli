@@ -203,4 +203,33 @@ public class RequestClientCompatibilityTests
         Assert.DoesNotContain("namespace DemoClient.Models.;", uploadModel);
         Assert.Contains("public Stream MapFile", uploadModel);
     }
+
+    [Fact]
+    public async Task MultipartOpenApi31Json_ShouldGenerateCSharpFileUploadClient()
+    {
+        // Arrange
+        var fixturePath = Path.Combine(AppContext.BaseDirectory, "Generate", "Fixtures", "request-client-upload.openapi31.json");
+        Assert.True(File.Exists(fixturePath), $"Fixture not found: {fixturePath}");
+
+        var (doc, _) = await OpenApiDocument.LoadAsync(fixturePath);
+        Assert.NotNull(doc);
+
+        // Act
+        var generator = new CSHttpClientGenerate(doc!);
+        var service = generator.GetServices("DemoClient").Single().Content;
+        var models = generator.GetModelFiles("DemoClient");
+
+        // Assert
+        Assert.Contains(
+            "LoadmapfilewaferMaploadMapFilepostAsync(string mapId, Stream data, string fileName, CancellationToken cancellationToken = default)",
+            service
+        );
+        Assert.Contains(
+            "UploadFileAsync<ResponseMapRawData?>(url, new StreamContent(data), fileName, fieldName: \"map_file\", cancellationToken: cancellationToken)",
+            service
+        );
+
+        var uploadModel = models.Single(file => file.Name == "BodyLoadMapFileWaferMapLoadMapFilePost.cs").Content;
+        Assert.Contains("public Stream MapFile", uploadModel);
+    }
 }

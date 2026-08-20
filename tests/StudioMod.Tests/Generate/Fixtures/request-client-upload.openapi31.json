@@ -1,0 +1,74 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "WaferMapAnalyzer",
+    "version": "1.0"
+  },
+  "paths": {
+    "/waferMap/loadMapFile": {
+      "post": {
+        "summary": "Load Map File",
+        "operationId": "load_map_file_waferMap_loadMapFile_post",
+        "parameters": [
+          {
+            "name": "map_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_load_map_file_waferMap_loadMapFile_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseMapRawData"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Body_load_map_file_waferMap_loadMapFile_post": {
+        "type": "object",
+        "required": [
+          "map_file"
+        ],
+        "properties": {
+          "map_file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream"
+          }
+        }
+      },
+      "ResponseMapRawData": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success"
+        ]
+      }
+    }
+  }
+}

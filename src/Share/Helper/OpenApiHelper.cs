@@ -257,9 +257,22 @@ public class OpenApiHelper
     private static bool IsBinarySchema(IOpenApiSchema schema, IDictionary<string, IOpenApiSchema>? schemas)
     {
         var resolvedSchema = ResolveSchema(schema, schemas);
-        return resolvedSchema?.Type is JsonSchemaType type
-            && type.HasFlag(JsonSchemaType.String)
-            && string.Equals(resolvedSchema.Format, "binary", StringComparison.OrdinalIgnoreCase);
+        if (resolvedSchema?.Type is not JsonSchemaType type || !type.HasFlag(JsonSchemaType.String))
+        {
+            return false;
+        }
+
+        if (string.Equals(resolvedSchema.Format, "binary", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        // OpenAPI 3.1 uses the JSON Schema contentMediaType keyword for
+        // binary string content. Microsoft.OpenApi exposes this keyword via
+        // UnrecognizedKeywords rather than a dedicated schema property.
+        return resolvedSchema.UnrecognizedKeywords?.TryGetValue("contentMediaType", out var value) == true
+            && value is not null
+            && !string.IsNullOrWhiteSpace(value.GetValue<string>());
     }
 
 
@@ -334,9 +347,10 @@ public class OpenApiHelper
             case JsonSchemaType.Number:
                 return "double";
             case JsonSchemaType.String:
-                return schema.Format switch
+                return IsBinarySchema(schema, null)
+                    ? "IFile"
+                    : schema.Format switch
                 {
-                    "binary" => "IFile",
                     "date-time" => "DateTimeOffset",
                     _ => "string",
                 };

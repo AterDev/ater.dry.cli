@@ -102,7 +102,7 @@ public abstract class ClientRequestBase(OpenApiDocument openApi)
                 var multipartContent = requestContent?.FirstOrDefault(content =>
                     string.Equals(content.Key, "multipart/form-data", StringComparison.OrdinalIgnoreCase)
                 ).Value;
-                var reqSchema = requestContent?.Values.FirstOrDefault()?.Schema;
+                var reqSchema = multipartContent?.Schema ?? SelectContentSchema(requestContent);
                 IOpenApiSchema? respSchema = null;
                 var responses = operation.Value?.Responses;
                 if (responses != null && responses.Count > 0)
@@ -123,7 +123,7 @@ public abstract class ClientRequestBase(OpenApiDocument openApi)
                             selectedResponse = responses.Values.First();
                         }
                     }
-                    respSchema = selectedResponse?.Content?.FirstOrDefault().Value?.Schema;
+                    respSchema = SelectContentSchema(selectedResponse?.Content);
                 }
                 var usedParamNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                 function.RequestRefType = OpenApiHelper.GetRootRef(reqSchema);
@@ -144,13 +144,14 @@ public abstract class ClientRequestBase(OpenApiDocument openApi)
                 {
                     string? location = p.In?.GetDisplayName();
                     bool? inpath = location?.ToLower()?.Equals("path");
-                    string type = GetLanguageType(p.Schema);
-                    string? refType = OpenApiHelper.GetRootRef(p.Schema);
+                    var parameterSchema = p.Schema ?? SelectContentSchema(p.Content);
+                    string type = GetLanguageType(parameterSchema);
+                    string? refType = OpenApiHelper.GetRootRef(parameterSchema);
                     return new FunctionParams
                     {
                         Description = p.Description,
                         RefType = refType,
-                        ReferencedTypes = OpenApiHelper.GetAllRefs(p.Schema).ToList(),
+                        ReferencedTypes = OpenApiHelper.GetAllRefs(parameterSchema).ToList(),
                         Name = RequestClientHelper.NormalizeParameterName(p.Name, usedParamNames),
                         OriginalName = p.Name,
                         InPath = inpath ?? false,
@@ -170,6 +171,21 @@ public abstract class ClientRequestBase(OpenApiDocument openApi)
 
         Console.WriteLine($"[ParseRoute]: {RequestFunctions.Count}");
         return RequestFunctions;
+    }
+
+    private static IOpenApiSchema? SelectContentSchema(
+        IDictionary<string, IOpenApiMediaType>? content
+    )
+    {
+        if (content == null || content.Count == 0)
+        {
+            return null;
+        }
+
+        var preferred = content.FirstOrDefault(media =>
+            string.Equals(media.Key, "application/json", StringComparison.OrdinalIgnoreCase)
+        ).Value;
+        return preferred?.Schema ?? content.Values.FirstOrDefault()?.Schema;
     }
 
     /// <summary>
