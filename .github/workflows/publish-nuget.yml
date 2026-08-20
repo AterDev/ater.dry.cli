@@ -1,0 +1,125 @@
+name: Publish Perigon.CLI to NuGet
+
+on:
+  push:
+    branches:
+      - nuget
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-nuget
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Pack and publish
+    runs-on: windows-latest
+    env:
+      DOTNET_NOLOGO: true
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Read package metadata
+        id: package
+        shell: pwsh
+        run: |
+          $projectPath = 'src/Apps/CommandLine/CommandLine.csproj'
+          $packageId = (Select-Xml -Path $projectPath -XPath '/Project//PackageId').Node.InnerText
+          $version = (Select-Xml -Path $projectPath -XPath '/Project//Version').Node.InnerText
+
+          if ([string]::IsNullOrWhiteSpace($packageId) -or [string]::IsNullOrWhiteSpace($version)) {
+              throw "PackageId or Version is missing from $projectPath."
+          }
+
+          $packagePath = "artifacts/$packageId.$version.nupkg"
+          "package_id=$packageId" >> $env:GITHUB_OUTPUT
+          "package_version=$version" >> $env:GITHUB_OUTPUT
+          "package_path=$packagePath" >> $env:GITHUB_OUTPUT
+
+      - name: Check NuGet credentials
+        shell: pwsh
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:NUGET_API_KEY)) {
+              throw 'Repository secret NUGET_API_KEY is not configured.'
+          }
+
+      - name: Build and pack CLI with Studio
+        shell: pwsh
+        run: |
+          pwsh -NoProfile -File './scripts/PublishToLocal.ps1' -withStudio $true
+          if ($LASTEXITCODE -ne 0) {
+              throw "PublishToLocal.ps1 failed with exit code $LASTEXITCODE."
+          }
+
+      - name: Validate package contents
+        shell: pwsh
+        env:
+          PACKAGE_PATH: ${{ steps.package.outputs.package_path }}
+          PACKAGE_VERSION: ${{ steps.package.outputs.package_version }}
+        run: |
+          $packagePath = Join-Path $env:GITHUB_WORKSPACE $env:PACKAGE_PATH
+          if (-not (Test-Path -LiteralPath $packagePath)) {
+              throw "Package was not created: $packagePath"
+          }
+
+          $archive = [System.IO.Compression.ZipFile]::OpenRead($packagePath)
+          try {
+              $studioEntry = $archive.Entries | Where-Object { $_.FullName -match '(^|/)studio\.zip$' } | Select-Object -First 1
+              if ($null -eq $studioEntry) {
+                  throw 'The NuGet package does not contain studio.zip.'
+              }
+
+              $nuspecEntry = $archive.Entries | Where-Object { $_.FullName -like '*.nuspec' } | Select-Object -First 1
+              if ($null -eq $nuspecEntry) {
+                  throw 'The NuGet package does not contain a .nuspec file.'
+              }
+
+              $reader = [System.IO.StreamReader]::new($nuspecEntry.Open())
+              try {
+                  [xml]$nuspec = $reader.ReadToEnd()
+              }
+              finally {
+                  $reader.Dispose()
+              }
+
+              if ([string]$nuspec.package.metadata.version -ne $env:PACKAGE_VERSION) {
+                  throw "Package version does not match $env:PACKAGE_VERSION."
+              }
+          }
+          finally {
+              $archive.Dispose()
+          }
+
+          Write-Host "Validated package: $packagePath"
+
+      - name: Upload package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Perigon.CLI-${{ steps.package.outputs.package_version }}
+          path: ${{ steps.package.outputs.package_path }}
+          if-no-files-found: error
+
+      - name: Push package to NuGet
+        shell: pwsh
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+          PACKAGE_PATH: ${{ steps.package.outputs.package_path }}
+        run: |
+          $packagePath = Join-Path $env:GITHUB_WORKSPACE $env:PACKAGE_PATH
+          dotnet nuget push $packagePath `
+            --api-key $env:NUGET_API_KEY `
+            --source 'https://api.nuget.org/v3/index.json' `
+            --skip-duplicate
