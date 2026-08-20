@@ -16,7 +16,7 @@ concurrency:
 jobs:
   publish:
     name: Pack and publish
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     env:
       DOTNET_NOLOGO: true
       DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
@@ -29,6 +29,10 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           global-json-file: global.json
+
+      - name: Verify PowerShell Core
+        shell: bash
+        run: pwsh --version
 
       - name: Read package metadata
         id: package

@@ -14,7 +14,8 @@ $studioPath = Join-Path $repoRoot "src/Apps/Dashboard"
 $artifactsPath = Join-Path $repoRoot "artifacts"
 $packageWorkspacePath = Join-Path $commandLinePath "nupkg"
 $shareDllsFile = Join-Path $commandLinePath "ShareDlls.txt"
-$agentRepoRoot = (Resolve-Path -LiteralPath (Join-Path (Split-Path -Parent $repoRoot) "Perigon.template\ApiStandard") -ErrorAction SilentlyContinue).Path
+$agentTemplatePath = Join-Path (Join-Path (Split-Path -Parent $repoRoot) "Perigon.template") "ApiStandard"
+$agentRepoRoot = (Resolve-Path -LiteralPath $agentTemplatePath -ErrorAction SilentlyContinue).Path
 $agentZipPath = Join-Path $commandLinePath "agent.zip"
 $agentStagingPath = Join-Path $commandLinePath ".agent-temp"
 
@@ -79,7 +80,8 @@ try {
             (Join-Path $studioPublishPath "BuildHost-net472"),
             (Join-Path $studioPublishPath "BuildHost-netcore"),
             (Join-Path $studioPublishPath "runtimes"),
-            (Join-Path $studioPublishPath "Dashboard.exe")
+            (Join-Path $studioPublishPath "Dashboard.exe"),
+            (Join-Path $studioPublishPath "Dashboard")
         );
         foreach ($path in $pathsToRemove) {
             if (Test-Path -LiteralPath $path) {
@@ -114,7 +116,7 @@ try {
         New-Item -ItemType Directory -Path $agentStagingPath -Force | Out-Null
 
         $agentEntries = @(
-            ".agents\skills\perigon"
+            ".agents/skills/perigon"
         )
 
         foreach ($entry in $agentEntries) {
