@@ -6,7 +6,7 @@
     <ToolCommandName>perigon</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>
     <PackageId>Perigon.CLI</PackageId>
-    <Version>10.1.13</Version>
+    <Version>10.1.14</Version>
     <Description>
 			The AI workflow for .NET Web developers, help you generate code and build your project quickly.
 		</Description>
@@ -18,8 +18,7 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/AterDev/Perigon.CLI</RepositoryUrl>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>1. normalize generated C# and TypeScript request service names when OpenAPI tags contain spaces or invalid leading characters.
-2. fix hyphenated generated request service filenames when OpenAPI tags contain spaces.
+    <PackageReleaseNotes>1. fix Linux package publishing by tracking ShareDlls.txt with the casing expected by the pack script, preventing duplicate shared assemblies from being included in the Studio archive.
 		</PackageReleaseNotes>
     <PackageIcon>logo.png</PackageIcon>
     <ImplicitUsings>enable</ImplicitUsings>
