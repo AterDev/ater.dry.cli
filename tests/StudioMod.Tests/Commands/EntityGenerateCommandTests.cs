@@ -38,4 +38,12 @@ public class EntityGenerateCommandTests
         Assert.Equal(typeof(GenerateEntitySettings), settingsType);
         Assert.NotNull(Activator.CreateInstance(settingsType!));
     }
+
+    [Fact]
+    public void RequestSettings_ShouldNotCoverBaseServiceByDefault()
+    {
+        var settings = new RequestSettings { OutputPath = string.Empty };
+
+        Assert.False(settings.CoverBaseService);
+    }
 }

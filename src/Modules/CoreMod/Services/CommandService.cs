@@ -205,7 +205,8 @@ public class CommandService(
         string url,
         string outputPath,
         RequestClientType type,
-        bool onlyModels = false
+        bool onlyModels = false,
+        bool coverBaseService = false
     )
     {
         try
@@ -221,7 +222,8 @@ public class CommandService(
                    url,
                    outputPath,
                    type,
-                   onlyModels
+                   onlyModels,
+                   coverBaseService
                ) ?? [];
             }
             codeGenService.GenerateFiles(genFiles);

@@ -226,12 +226,14 @@ public class CodeGenService(
     /// <param name="outputPath"></param>
     /// <param name="type"></param>
     /// <param name="onlyModels"></param>
+    /// <param name="coverBaseService">是否覆盖已有的 base.service.ts</param>
     /// <returns></returns>
     public async Task<List<GenFileInfo>?> GenerateWebRequestAsync(
         string url = "",
         string outputPath = "",
         RequestClientType type = RequestClientType.NgHttp,
-        bool onlyModels = false
+        bool onlyModels = false,
+        bool coverBaseService = false
     )
     {
         _logger.LogInformation("🚀 Generating ts models and {type} request services...", type);
@@ -260,7 +262,7 @@ public class CodeGenService(
             files.Add(new GenFileInfo("base.service.ts", content)
             {
                 FullName = Path.Combine(dir, "base.service.ts"),
-                IsCover = false,
+                IsCover = coverBaseService && !onlyModels,
             });
         }
 
@@ -311,7 +313,33 @@ public class CodeGenService(
         {
             if (Directory.Exists(oldPath))
             {
-                Directory.Delete(oldPath, true);
+                if (coverBaseService && !onlyModels)
+                {
+                    Directory.Delete(oldPath, true);
+                }
+                else
+                {
+                    foreach (var entry in Directory.EnumerateFileSystemEntries(oldPath))
+                    {
+                        if (string.Equals(
+                                Path.GetFileName(entry),
+                                "base.service.ts",
+                                StringComparison.OrdinalIgnoreCase
+                            ))
+                        {
+                            continue;
+                        }
+
+                        if (Directory.Exists(entry))
+                        {
+                            Directory.Delete(entry, true);
+                        }
+                        else
+                        {
+                            File.Delete(entry);
+                        }
+                    }
+                }
             }
         }
         catch (Exception ex)

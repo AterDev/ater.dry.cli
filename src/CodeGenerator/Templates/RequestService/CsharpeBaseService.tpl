@@ -95,7 +95,7 @@ public class BaseService
     /// <returns></returns>
     protected async Task<TResult?> UploadFileAsync<TResult>(string route, StreamContent file, string fileName = "file", string fieldName = "file", CancellationToken cancellationToken = default)
     {
-        HttpResponseMessage? res = await Http.PostAsync(route, new MultipartFormDataContent
+        HttpResponseMessage? res = await Http.PostAsync(BuildRequestUrl(route), new MultipartFormDataContent
         {
             { file, fieldName, fileName }
         }, cancellationToken);
@@ -131,7 +131,7 @@ public class BaseService
     {
         using (content)
         {
-            HttpResponseMessage? res = await Http.PostAsync(route, content, cancellationToken);
+            HttpResponseMessage? res = await Http.PostAsync(BuildRequestUrl(route), content, cancellationToken);
             if (res != null && res.IsSuccessStatusCode)
             {
                 return await res.Content.ReadFromJsonAsync<TResult>(cancellationToken: cancellationToken);
@@ -188,7 +188,7 @@ public class BaseService
     /// <returns></returns>
     protected async Task<Stream?> DownloadFileAsync(string route, CancellationToken cancellationToken = default)
     {
-        HttpResponseMessage? res = await Http.GetAsync(route, cancellationToken);
+        HttpResponseMessage? res = await Http.GetAsync(BuildRequestUrl(route), cancellationToken);
         if (res != null && res.IsSuccessStatusCode)
         {
             return await res.Content.ReadAsStreamAsync(cancellationToken);
@@ -223,7 +223,7 @@ public class BaseService
 
     protected async Task<TResult?> SendJsonAsync<TResult>(HttpMethod method, string route, object? data, CancellationToken cancellationToken = default)
     {
-        route = Http.BaseAddress + (route.StartsWith('/') ? route[1..] : route);
+        route = BuildRequestUrl(route);
         HttpResponseMessage? res = null;
         if (method == HttpMethod.Post)
         {
@@ -264,7 +264,7 @@ public class BaseService
 
     protected async Task<TResult?> SendJsonAsync<TResult>(HttpMethod method, string route, Dictionary<string, string?>? dic = null, CancellationToken cancellationToken = default)
     {
-        route = Http.BaseAddress + (route.StartsWith('/') ? route[1..] : route);
+        route = BuildRequestUrl(route);
         if (dic != null)
         {
             route = route + "?" + ToUrlParameters(dic);
@@ -303,6 +303,22 @@ public class BaseService
 
             return default;
         }
+    }
+
+    private string BuildRequestUrl(string route)
+    {
+        if (Uri.TryCreate(route, UriKind.Absolute, out _))
+        {
+            return route;
+        }
+
+        var baseAddress = Http.BaseAddress?.ToString();
+        if (string.IsNullOrWhiteSpace(baseAddress))
+        {
+            return route;
+        }
+
+        return $"{baseAddress.TrimEnd('/')}/{route.TrimStart('/')}";
     }
 }
 

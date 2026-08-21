@@ -53,7 +53,8 @@ public class RequestCommand(CommandService commandService) : AsyncCommand<Reques
                 settings.Path,
                 settings.OutputPath,
                 clientType,
-                settings.OnlyModel
+                settings.OnlyModel,
+                settings.CoverBaseService
             );
             return 0;
         }
@@ -84,6 +85,11 @@ public sealed class RequestSettings : CommandSettings
     [DefaultValue("false")]
     [Description("Only generate model files")]
     public bool OnlyModel { get; set; }
+
+    [CommandOption("-c|--cover-base-service")]
+    [DefaultValue("false")]
+    [Description("Overwrite generated base.service.ts")]
+    public bool CoverBaseService { get; set; }
 }
 
 public enum RequestType

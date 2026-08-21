@@ -136,6 +136,19 @@ public class RequestClientCompatibilityTests
     }
 
     [Fact]
+    public void CSharpBaseService_ShouldBuildBaseAddressUrl_ForFileOperations()
+    {
+        // Arrange
+        var baseService = CSHttpClientGenerate.GetBaseService("DemoClient");
+
+        // Assert
+        Assert.Contains("Http.PostAsync(BuildRequestUrl(route), new MultipartFormDataContent", baseService);
+        Assert.Contains("Http.PostAsync(BuildRequestUrl(route), content, cancellationToken)", baseService);
+        Assert.Contains("Http.GetAsync(BuildRequestUrl(route), cancellationToken)", baseService);
+        Assert.Contains("return $\"{baseAddress.TrimEnd('/')}/{route.TrimStart('/')}\";", baseService);
+    }
+
+    [Fact]
     public async Task RealOpenApiJson_ShouldGenerateExpectedOutput_ForDotnetAndAngular()
     {
         // Arrange
