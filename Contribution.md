@@ -104,3 +104,5 @@ V10版本将全面支持中英文双语环境，这要求用户交互的部分(�
 发包时请使用仓库内的 [release 技能](.agents/skills/release/SKILL.md)，它记录了版本递增、ReleaseNotes、双语文档、测试、`nuget` 分支合并和 CI 发布流程。
 
 默认情况下将 `src/Apps/CommandLine/CommandLine.csproj` 的版本号增加一个小版本，并同步 `src/Apps/Dashboard/Dashboard.csproj`。完成验证后，将发布提交合并并推送到 `nuget` 分支；`.github/workflows/publish-nuget.yml` 会自动打包并发布 NuGet。
+
+CI 会先使用 `scripts/CheckSharedDlls.ps1` 生成共享 DLL 清单，再复用 `scripts/PublishToLocal.ps1 -withStudio:$true` 完成打包，避免依赖开发机上未跟踪的本地清单文件。
