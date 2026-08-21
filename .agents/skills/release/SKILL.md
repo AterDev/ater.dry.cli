@@ -35,7 +35,7 @@ The CI-equivalent package/studio build is:
 pwsh ./scripts/PublishToLocal.ps1 -withStudio:$true
 ```
 
-The NuGet workflow first runs `scripts/CheckSharedDlls.ps1` with PowerShell Core to generate `src/Apps/CommandLine/ShareDlls.txt`, then reuses `PublishToLocal.ps1`. The shared DLL list is generated and is not committed, so do not rely on a local copy when validating packaging. `CheckSharedDlls.ps1` resolves the repository root from `$PSScriptRoot` and can be run from the repository root on Windows or Ubuntu.
+`PublishToLocal.ps1` reads the tracked `src/Apps/CommandLine/ShareDlls.txt` when packaging Studio and removes the listed duplicate DLLs. If project dependencies change, run `scripts/CheckSharedDlls.ps1` to refresh the list and commit the updated file.
 
 Run it only after tests pass; it creates local publish/package artifacts and may install the package locally.
 

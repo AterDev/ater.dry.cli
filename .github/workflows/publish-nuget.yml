@@ -52,22 +52,6 @@ jobs:
           "package_version=$version" >> $env:GITHUB_OUTPUT
           "package_path=$packagePath" >> $env:GITHUB_OUTPUT
 
-      - name: Prepare shared DLL list
-        shell: pwsh
-        run: |
-          & './scripts/CheckSharedDlls.ps1'
-          if ($LASTEXITCODE -ne 0) {
-              throw "CheckSharedDlls.ps1 failed with exit code $LASTEXITCODE."
-          }
-
-          $sharedDllList = './src/Apps/CommandLine/ShareDlls.txt'
-          if (-not (Test-Path -LiteralPath $sharedDllList)) {
-              throw "Shared DLL list was not generated: $sharedDllList"
-          }
-
-          Write-Host "Prepared shared DLL list:"
-          Get-Content -LiteralPath $sharedDllList
-
       - name: Build and pack CLI with Studio
         shell: pwsh
         run: |

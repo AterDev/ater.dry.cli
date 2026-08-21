@@ -1,52 +1,46 @@
-[CmdletBinding()]
-param()
+$location = Get-Location
 
-$repoRoot = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot "..")).Path
-$commandLineDir = Join-Path $repoRoot "src/Apps/CommandLine"
-$studioDir = Join-Path $repoRoot "src/Apps/Dashboard"
-$commandLinePublishPath = Join-Path $commandLineDir "publish"
-$studioPublishPath = Join-Path $studioDir "publish"
+$commandLineDir = Join-Path $location "..\src\Apps\CommandLine"
+$studioDir = Join-Path $location "..\src\Apps\Dashboard"
 $shareDllsFile = Join-Path $commandLineDir "ShareDlls.txt"
 
-# 清理旧的 publish 目录，避免把上一次构建的 DLL 纳入比较。
-Remove-Item -LiteralPath $commandLinePublishPath -Recurse -Force -ErrorAction SilentlyContinue
-Remove-Item -LiteralPath $studioPublishPath -Recurse -Force -ErrorAction SilentlyContinue
+# 清静publish
+Remove-Item -Path (Join-Path $commandLineDir "publish") -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item -Path (Join-Path $studioDir "publish") -Recurse -Force -ErrorAction SilentlyContinue
 
 ## 构建项目
-& dotnet publish (Join-Path $commandLineDir "CommandLine.csproj") -c Release -o $commandLinePublishPath -p:GeneratePackageOnBuild=false
-if ($LASTEXITCODE -ne 0) {
-    throw "CommandLine publish failed with exit code $LASTEXITCODE."
-}
-
-& dotnet publish (Join-Path $studioDir "Dashboard.csproj") -c Release -o $studioPublishPath -p:GeneratePackageOnBuild=false
-if ($LASTEXITCODE -ne 0) {
-    throw "Dashboard publish failed with exit code $LASTEXITCODE."
-}
+dotnet publish  (Join-Path $commandLineDir "CommandLine.csproj") -c Release -o (Join-Path $commandLineDir "publish")
+dotnet publish  (Join-Path $studioDir "Dashboard.csproj") -c Release -o (Join-Path $studioDir "publish")
 
 ## 检查共享的 DLL 文件
-$files1 = @(Get-ChildItem -LiteralPath $commandLinePublishPath -Filter "*.dll" -File | Select-Object -ExpandProperty Name)
-$files2 = @(Get-ChildItem -LiteralPath $studioPublishPath -Filter "*.dll" -File | Select-Object -ExpandProperty Name)
+$path1 = "../src/Apps/CommandLine/publish"
+$path2 = "../src/Apps/Dashboard/publish"
+$files1 = Get-ChildItem -Path $path1  -Filter *.dll | Select-Object -ExpandProperty Name
+$files2 = Get-ChildItem -Path $path2  -Filter *.dll | Select-Object -ExpandProperty Name
 
 # 转换为 HashSet 以便高效交集
+$set1 = [System.Collections.Generic.HashSet[string]]::new()
 $set2 = [System.Collections.Generic.HashSet[string]]::new()
-$files2 | ForEach-Object { [void]$set2.Add($_) }
+$files1 | ForEach-Object { $set1.Add($_) | Out-Null }
+$files2 | ForEach-Object { $set2.Add($_) | Out-Null }
 
-# 求交集并排序，确保生成结果稳定。
-$shareDlls = @($files1 | Where-Object { $set2.Contains($_) } | Sort-Object)
+# 求交集
+$shareDlls = $set1.Where({ $set2.Contains($_) })
 
+# 输出结果
 Write-Host "Total common DLL files: $($shareDlls.Count)"
 
-## 保存结果
-$shareDlls | Set-Content -LiteralPath $shareDllsFile -Encoding UTF8
-Write-Host "Generated shared DLL list: $shareDllsFile"
+## 保存到文件
 
-# common 的总大小
+$shareDlls | Out-File -FilePath $shareDllsFile -Encoding UTF8
+
+# common的总大小
 $totalSize = 0
 $shareDlls | ForEach-Object {
-    $filePath1 = Join-Path $commandLinePublishPath $_
+    $filePath1 = Join-Path $path1 $_
 
-    if (Test-Path -LiteralPath $filePath1) {
-        $totalSize += (Get-Item -LiteralPath $filePath1).Length
+    if (Test-Path $filePath1) {
+        $totalSize += (Get-Item $filePath1).Length
     }
 }
 Write-Host "Total size of common DLL files: $([Math]::Round($totalSize / 1MB, 2)) MB"

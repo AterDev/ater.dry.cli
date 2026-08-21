@@ -105,4 +105,4 @@ V10版本将全面支持中英文双语环境，这要求用户交互的部分(�
 
 默认情况下将 `src/Apps/CommandLine/CommandLine.csproj` 的版本号增加一个小版本，并同步 `src/Apps/Dashboard/Dashboard.csproj`。完成验证后，将发布提交合并并推送到 `nuget` 分支；`.github/workflows/publish-nuget.yml` 会自动打包并发布 NuGet。
 
-CI 会先使用 `scripts/CheckSharedDlls.ps1` 生成共享 DLL 清单，再复用 `scripts/PublishToLocal.ps1 -withStudio:$true` 完成打包，避免依赖开发机上未跟踪的本地清单文件。
+`src/Apps/CommandLine/ShareDlls.txt` 已纳入版本控制，CI 打包时由 `scripts/PublishToLocal.ps1 -withStudio:$true` 直接读取。项目依赖发生变化时，应先运行 `scripts/CheckSharedDlls.ps1` 更新该清单并一并提交。
