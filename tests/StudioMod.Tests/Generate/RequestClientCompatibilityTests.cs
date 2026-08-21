@@ -30,7 +30,7 @@ public class RequestClientCompatibilityTests
     }
 
     [Fact]
-    public void CSharpFormatter_ShouldEmitJsonPropertyName_ForSpecialJsonKeys()
+    public void CSharpFormatter_ShouldEmitJsonPropertyName_WhenGeneratedPropertyNameDiffers()
     {
         // Arrange
         var formatter = new CSharpFormatter();
@@ -43,6 +43,9 @@ public class RequestClientCompatibilityTests
             [
                 new PropertyInfo { Name = "api-version", Type = "string" },
                 new PropertyInfo { Name = "@id", Type = "string" },
+                new PropertyInfo { Name = "snake_name", Type = "string" },
+                new PropertyInfo { Name = "camelName", Type = "string" },
+                new PropertyInfo { Name = "PascalName", Type = "string" },
                 new PropertyInfo { Name = "normalName", Type = "string" },
             ]
         };
@@ -56,7 +59,13 @@ public class RequestClientCompatibilityTests
         Assert.Contains("public string ApiVersion { get; set; } = default!;", code);
         Assert.Contains("[JsonPropertyName(\"@id\")]", code);
         Assert.Contains("public string Id { get; set; } = default!;", code);
-        Assert.DoesNotContain("[JsonPropertyName(\"normalName\")]", code);
+        Assert.Contains("[JsonPropertyName(\"snake_name\")]", code);
+        Assert.Contains("public string SnakeName { get; set; } = default!;", code);
+        Assert.Contains("[JsonPropertyName(\"camelName\")]", code);
+        Assert.Contains("public string CamelName { get; set; } = default!;", code);
+        Assert.Contains("[JsonPropertyName(\"normalName\")]", code);
+        Assert.Contains("public string NormalName { get; set; } = default!;", code);
+        Assert.DoesNotContain("[JsonPropertyName(\"PascalName\")]", code);
     }
 
     [Fact]

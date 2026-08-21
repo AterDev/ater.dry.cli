@@ -193,31 +193,12 @@ public class CSharpFormatter : LanguageFormatterBase
             return false;
         }
 
-        return !IsValidCSharpIdentifier(rawName);
-    }
-
-    private static bool IsValidCSharpIdentifier(string value)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            return false;
-        }
-
-        if (!(char.IsLetter(value[0]) || value[0] == '_'))
-        {
-            return false;
-        }
-
-        for (int i = 1; i < value.Length; i++)
-        {
-            var ch = value[i];
-            if (!(char.IsLetterOrDigit(ch) || ch == '_'))
-            {
-                return false;
-            }
-        }
-
-        return true;
+        // The generated CLR property may be renamed even when the original
+        // OpenAPI name is a valid C# identifier (for example, snake_case or
+        // lowerCamelCase). Preserve the wire name whenever normalization
+        // changes it so both request serialization and response deserialization
+        // continue to follow the OpenAPI contract.
+        return !string.Equals(rawName, normalizedName, StringComparison.Ordinal);
     }
 
     private static string EscapeString(string text)
