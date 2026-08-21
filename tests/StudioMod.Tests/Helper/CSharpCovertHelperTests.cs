@@ -55,6 +55,7 @@ public class CSharpCovertHelperTests
     [InlineData("LastName", "last-name")]
     [InlineData("ID", "id")]
     [InlineData("TestProp", "test-prop")]
+    [InlineData("User Management", "user-management")]
     public void ToHyphen_ShouldConvertToHyphenCase(string input, string expected)
     {
         // Act

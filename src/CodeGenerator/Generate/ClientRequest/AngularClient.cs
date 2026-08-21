@@ -29,7 +29,7 @@ public class AngularClient(OpenApiDocument openApi) : TypeScriptClientBase(openA
             RequestServiceFile serviceFile = new()
             {
                 Description = currentTag.Description,
-                Name = currentTag.Name!,
+                Name = RequestClientHelper.NormalizeServiceName(currentTag.Name),
                 Functions = tagFunctions,
             };
 
@@ -109,7 +109,8 @@ public class AngularClient(OpenApiDocument openApi) : TypeScriptClientBase(openA
         cw.AppendLine("import { inject, Injectable } from '@angular/core';");
         foreach (var s in serviceNames)
         {
-            string className = s + "Service";
+            string serviceName = RequestClientHelper.NormalizeServiceName(s);
+            string className = serviceName + "Service";
             cw.AppendLine(
                 $"import {{ {className} }} from './{servicePath}/{s.ToHyphen()}.service';"
             );
@@ -120,10 +121,11 @@ public class AngularClient(OpenApiDocument openApi) : TypeScriptClientBase(openA
         cw.OpenBlock($"export class {docName.ToPascalCase()}Client");
         foreach (var s in serviceNames)
         {
-            string className = s + "Service";
+            string serviceName = RequestClientHelper.NormalizeServiceName(s);
+            string className = serviceName + "Service";
             var tag = ApiTags?.FirstOrDefault(t => t.Name == s);
             cw.AppendLine($"/** {tag?.Description ?? s} */");
-            cw.AppendLine($"public {s.ToCamelCase()} = inject({className});");
+            cw.AppendLine($"public {serviceName.ToCamelCase()} = inject({className});");
         }
         cw.CloseBlock();
         return cw.ToString();

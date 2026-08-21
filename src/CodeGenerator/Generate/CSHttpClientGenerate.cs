@@ -129,17 +129,18 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : ClientRequestBase(o
             List<RequestServiceFunction> tagFunctions = [.. group];
             OpenApiTag? currentTag = tags?.Where(t => t.Name == group.Key).FirstOrDefault();
             currentTag ??= new OpenApiTag { Name = group.Key, Description = group.Key };
+            string serviceName = RequestClientHelper.NormalizeServiceName(currentTag.Name);
             RequestServiceFile serviceFile = new()
             {
                 Description = currentTag.Description?.Replace("\r\n", ","),
-                Name = currentTag.Name!,
+                Name = serviceName,
                 Functions = tagFunctions,
             };
 
             string content = ToRequestService(serviceFile, nspName);
 
-            string fileName = currentTag.Name + "RestService.cs";
-            GenFileInfo file = new(fileName, content) { ModelName = currentTag.Name };
+            string fileName = serviceName + "RestService.cs";
+            GenFileInfo file = new(fileName, content) { ModelName = serviceName };
             files.Add(file);
         }
         return files;

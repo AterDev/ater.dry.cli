@@ -22,7 +22,7 @@ public class AxiosClient(OpenApiDocument openApi) : TypeScriptClientBase(openApi
             RequestServiceFile serviceFile = new()
             {
                 Description = currentTag.Description,
-                Name = currentTag.Name!,
+                Name = RequestClientHelper.NormalizeServiceName(currentTag.Name),
                 Functions = tagFunctions,
             };
             string content = ToAxiosRequestService(serviceFile);

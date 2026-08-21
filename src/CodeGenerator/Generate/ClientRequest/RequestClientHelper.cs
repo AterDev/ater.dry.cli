@@ -122,6 +122,25 @@ public static class RequestClientHelper
         return candidate;
     }
 
+    /// <summary>
+    /// 将 OpenAPI tag 转换为可用于 C# 和 TypeScript 服务类的 PascalCase 标识符。
+    /// </summary>
+    public static string NormalizeServiceName(string? rawName)
+    {
+        var name = ToPascalCaseInternal(rawName ?? string.Empty);
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return "Api";
+        }
+
+        if (!char.IsLetter(name[0]) && name[0] != '_')
+        {
+            name = "Api" + name;
+        }
+
+        return name;
+    }
+
     private static string ToCamelCaseInternal(string value)
     {
         var pascal = ToPascalCaseInternal(value);

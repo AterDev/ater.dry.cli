@@ -38,6 +38,7 @@ public static partial class StringExtension
             else if (item is '_' or ' ')
             {
                 _ = builder.Append(separator);
+                continue;
             }
             _ = builder.Append(char.ToLower(item));
         }

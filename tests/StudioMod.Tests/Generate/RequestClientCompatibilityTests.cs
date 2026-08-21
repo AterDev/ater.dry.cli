@@ -29,6 +29,43 @@ public class RequestClientCompatibilityTests
         Assert.Equal("classValue", keyword);
     }
 
+    [Theory]
+    [InlineData("User Management", "UserManagement")]
+    [InlineData("123 User", "Api123User")]
+    public void NormalizeServiceName_ShouldProduceCodeIdentifier(string tagName, string expected)
+    {
+        Assert.Equal(expected, RequestClientHelper.NormalizeServiceName(tagName));
+    }
+
+    [Fact]
+    public async Task RequestClients_ShouldNormalizeTagNamesForServicesAndClients()
+    {
+        // Arrange
+        var fixturePath = Path.Combine(AppContext.BaseDirectory, "Generate", "Fixtures", "request-client-tag-spaces.openapi.json");
+        var (doc, _) = await OpenApiDocument.LoadAsync(fixturePath);
+        Assert.NotNull(doc);
+
+        // Act
+        var csharpService = new CSHttpClientGenerate(doc!).GetServices("DemoClient").Single();
+        var angularFiles = new AngularClient(doc!).GenerateServices(doc!.Tags!, "demo");
+        var axiosService = new AxiosClient(doc!).GenerateServices(doc!.Tags!, "demo").Single();
+
+        // Assert - C#
+        Assert.Equal("UserManagementRestService.cs", csharpService.Name);
+        Assert.Contains("public class UserManagementRestService", csharpService.Content);
+
+        // Assert - Angular
+        var angularService = angularFiles.Single(file => file.Name == "user-management.service.ts");
+        var angularClient = angularFiles.Single(file => file.Name == "demo-client.ts");
+        Assert.Contains("export class UserManagementService extends BaseService", angularService.Content);
+        Assert.Contains("import { UserManagementService } from './services/user-management.service';", angularClient.Content);
+        Assert.Contains("public userManagement = inject(UserManagementService);", angularClient.Content);
+
+        // Assert - Axios
+        Assert.Equal("user-management.service.ts", axiosService.Name);
+        Assert.Contains("class UserManagementService extends BaseService", axiosService.Content);
+    }
+
     [Fact]
     public void CSharpFormatter_ShouldEmitJsonPropertyName_WhenGeneratedPropertyNameDiffers()
     {

@@ -1,0 +1,29 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "DemoService",
+    "version": "v1"
+  },
+  "tags": [
+    {
+      "name": "User Management",
+      "description": "User management operations"
+    }
+  ],
+  "paths": {
+    "/users": {
+      "get": {
+        "tags": [
+          "User Management"
+        ],
+        "operationId": "User Management_Get",
+        "summary": "Get users",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  }
+}
