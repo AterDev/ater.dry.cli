@@ -363,6 +363,7 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : ClientRequestBase(o
                 function.Path += "?" + queryParams;
             }
         }
+        var requestPath = function.Path.TrimStart('/');
         string returnType = hasResponse
             ? function.ResponseType == "IFile"
                 ? "Stream"
@@ -404,7 +405,7 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : ClientRequestBase(o
             {{comments}}
                 public async {{returnDeclaration}} {{function.Name.ToPascalCase()}}Async({{paramsString}})
                 {
-                    var url = $"{{function.Path}}";
+                    var url = $"{{requestPath}}";
             {{multipartContent}}
                     {{returnStatement}}
                 }
