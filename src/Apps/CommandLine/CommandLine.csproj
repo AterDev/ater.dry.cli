@@ -6,7 +6,7 @@
     <ToolCommandName>perigon</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>
     <PackageId>Perigon.CLI</PackageId>
-    <Version>10.1.14</Version>
+    <Version>10.1.15</Version>
     <Description>
 			The AI workflow for .NET Web developers, help you generate code and build your project quickly.
 		</Description>
@@ -18,7 +18,9 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/AterDev/Perigon.CLI</RepositoryUrl>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>1. fix Linux package publishing by tracking ShareDlls.txt with the casing expected by the pack script, preventing duplicate shared assemblies from being included in the Studio archive.
+    <PackageReleaseNotes>1. Support 204/205/304 and HEAD no-content responses in generated C# and TypeScript clients.
+2. Generate multipart and file-upload clients with the HTTP method declared by OpenAPI, including PUT.
+3. Preserve raw C# error response content and status metadata through ResponseContent.
 		</PackageReleaseNotes>
     <PackageIcon>logo.png</PackageIcon>
     <ImplicitUsings>enable</ImplicitUsings>
