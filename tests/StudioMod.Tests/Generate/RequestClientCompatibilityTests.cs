@@ -169,11 +169,11 @@ public class RequestClientCompatibilityTests
 
         // Assert
         Assert.Contains("GetAsync(string apiVersion, string? tenantId", code);
-        Assert.Contains("var url = $\"/users/{apiVersion}?x-tenant-id={tenantId}\";", code);
+        Assert.Contains("var url = $\"users/{apiVersion}?x-tenant-id={tenantId}\";", code);
     }
 
     [Fact]
-    public void CSharpBaseService_ShouldBuildBaseAddressUrl_ForFileOperations()
+    public void CSharpBaseService_ShouldUseRelativeRoutes_ForFileOperations()
     {
         // Arrange
         var baseService = CSHttpClientGenerate.GetBaseService("DemoClient");
@@ -187,8 +187,9 @@ public class RequestClientCompatibilityTests
         Assert.Contains("UploadFileAsync<TResult>(HttpMethod method", baseService);
         Assert.Contains("SendMultipartAsync<TResult>(HttpMethod method", baseService);
         Assert.Contains("SendMultipartRequestAsync(method, route, content", baseService);
-        Assert.Contains("Http.GetAsync(BuildRequestUrl(route), cancellationToken)", baseService);
-        Assert.Contains("return $\"{baseAddress.TrimEnd('/')}/{route.TrimStart('/')}\";", baseService);
+        Assert.Contains("new HttpRequestMessage(method, route)", baseService);
+        Assert.Contains("Http.GetAsync(route, cancellationToken)", baseService);
+        Assert.DoesNotContain("BuildRequestUrl", baseService);
 
         var client = CSHttpClientGenerate.GetClient([], "DemoClient", "Demo");
         Assert.Contains("public ResponseContent? ResponseContent", client);
@@ -219,6 +220,7 @@ public class RequestClientCompatibilityTests
         Assert.Contains("await SendNoContentAsync(HttpMethod.Delete, url, cancellationToken: cancellationToken);", csharpService);
         Assert.Contains("public async Task ReplaceFileAsync", csharpService);
         Assert.Contains("SendMultipartAsync(HttpMethod.Put, url, form, cancellationToken: cancellationToken)", csharpService);
+        Assert.DoesNotContain("var url = $\"/", csharpService);
         Assert.DoesNotContain("Task<object?> DeleteFileAsync", csharpService);
 
         var putMultipartWithResponse = CSHttpClientGenerate.ToRequestFunction(new RequestServiceFunction
@@ -277,7 +279,7 @@ public class RequestClientCompatibilityTests
         // Assert - C# service
         var csUserService = csServiceFiles.First(f => f.Name == "UserRestService.cs").Content;
         Assert.Contains("GetAsync(string apiVersion, string? xTenantId", csUserService);
-        Assert.Contains("var url = $\"/users/{apiVersion}?x-tenant-id={xTenantId}\";", csUserService);
+        Assert.Contains("var url = $\"users/{apiVersion}?x-tenant-id={xTenantId}\";", csUserService);
 
         // Assert - C# model
         var csSampleModel = csModelFiles.First(f => f.Name == "SampleDto.cs").Content;
@@ -323,7 +325,7 @@ public class RequestClientCompatibilityTests
             "LoadMapFileWaferMapLoadMapFilePostAsync(string mapId, MultipartFile mapFile, CancellationToken cancellationToken = default)",
             service
         );
-        Assert.Contains("var url = $\"/waferMap/loadMapFile?map_id={mapId}\";", service);
+        Assert.Contains("var url = $\"waferMap/loadMapFile?map_id={mapId}\";", service);
         Assert.Contains(
             "form.Add(CreateMultipartFileContent(mapFile), \"map_file\", mapFile.FileName);",
             service

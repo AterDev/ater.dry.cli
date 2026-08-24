@@ -155,7 +155,7 @@ public class BaseService
         MultipartFormDataContent content,
         CancellationToken cancellationToken)
     {
-        using var request = new HttpRequestMessage(method, BuildRequestUrl(route))
+        using var request = new HttpRequestMessage(method, route)
         {
             Content = content,
         };
@@ -192,7 +192,7 @@ public class BaseService
     /// <returns></returns>
     protected async Task<Stream?> DownloadFileAsync(string route, CancellationToken cancellationToken = default)
     {
-        HttpResponseMessage? res = await Http.GetAsync(BuildRequestUrl(route), cancellationToken);
+        HttpResponseMessage? res = await Http.GetAsync(route, cancellationToken);
         if (res != null && res.IsSuccessStatusCode)
         {
             return await res.Content.ReadAsStreamAsync(cancellationToken);
@@ -213,7 +213,7 @@ public class BaseService
 
     protected async Task SendNoContentAsync(HttpMethod method, string route, object? data = null, CancellationToken cancellationToken = default)
     {
-        using var request = new HttpRequestMessage(method, BuildRequestUrl(route));
+        using var request = new HttpRequestMessage(method, route);
         if (data != null)
         {
             request.Content = JsonContent.Create(data, data.GetType(), options: JsonSerializerOptions);
@@ -230,7 +230,6 @@ public class BaseService
 
     protected async Task<TResult?> SendJsonAsync<TResult>(HttpMethod method, string route, object? data, CancellationToken cancellationToken = default)
     {
-        route = BuildRequestUrl(route);
         HttpResponseMessage? res = null;
         if (method == HttpMethod.Post)
         {
@@ -257,7 +256,6 @@ public class BaseService
 
     protected async Task<TResult?> SendJsonAsync<TResult>(HttpMethod method, string route, Dictionary<string, string?>? dic = null, CancellationToken cancellationToken = default)
     {
-        route = BuildRequestUrl(route);
         if (dic != null)
         {
             route = route + "?" + ToUrlParameters(dic);
@@ -310,21 +308,6 @@ public class BaseService
         };
     }
 
-    private string BuildRequestUrl(string route)
-    {
-        if (Uri.TryCreate(route, UriKind.Absolute, out _))
-        {
-            return route;
-        }
-
-        var baseAddress = Http.BaseAddress?.ToString();
-        if (string.IsNullOrWhiteSpace(baseAddress))
-        {
-            return route;
-        }
-
-        return $"{baseAddress.TrimEnd('/')}/{route.TrimStart('/')}";
-    }
 }
 
 public class ResponseContent
