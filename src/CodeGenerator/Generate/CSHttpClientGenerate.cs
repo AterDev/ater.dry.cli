@@ -252,9 +252,7 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : ClientRequestBase(o
 
     public static string ToRequestFunction(RequestServiceFunction function)
     {
-        function.ResponseType = string.IsNullOrWhiteSpace(function.ResponseType)
-            ? "object"
-            : function.ResponseType;
+        bool hasResponse = !function.IsNoContent && !string.IsNullOrWhiteSpace(function.ResponseType);
 
         // 函数名处理，去除tag前缀，然后格式化
         function.Name = function
@@ -365,36 +363,70 @@ public class CSHttpClientGenerate(OpenApiDocument openApi) : ClientRequestBase(o
                 function.Path += "?" + queryParams;
             }
         }
-        string returnType = function.ResponseType == "IFile"
-            ? "Stream"
-            : OpenApiHelper.FormatSchemaKey(function.ResponseType);
+        string returnType = hasResponse
+            ? function.ResponseType == "IFile"
+                ? "Stream"
+                : OpenApiHelper.FormatSchemaKey(function.ResponseType)
+            : string.Empty;
 
-        returnType = ReplaceGenericPlaceholders(returnType, function);
+        if (hasResponse)
+        {
+            returnType = ReplaceGenericPlaceholders(returnType, function);
+        }
+
         string cancellation = "cancellationToken: cancellationToken";
+        string httpMethod = GetHttpMethodExpression(function.Method);
 
-        string method =
-            function.ResponseType == "IFile"
+        string method;
+        if (!hasResponse)
+        {
+            method = function.IsMultipart
+                ? $"SendMultipartAsync({httpMethod}, url, form, {cancellation})"
+                : $"SendNoContentAsync({httpMethod}, url{dataString}, {cancellation})";
+        }
+        else
+        {
+            method = function.ResponseType == "IFile"
                 ? $"DownloadFileAsync(url{dataString}, {cancellation})"
                 : $"{function.Method.ToLower().ToUpperFirst()}JsonAsync<{returnType}?>(url{dataString}, {cancellation})";
+        }
 
         var multipartContent = function.IsMultipart
             ? BuildMultipartContent(function)
             : string.Empty;
-        if (function.IsMultipart)
+        if (function.IsMultipart && hasResponse)
         {
-            method = $"SendMultipartAsync<{returnType}?>(url, form, {cancellation})";
+            method = $"SendMultipartAsync<{returnType}?>({httpMethod}, url, form, {cancellation})";
         }
+        string returnDeclaration = hasResponse ? $"Task<{returnType}?>" : "Task";
+        string returnStatement = hasResponse ? $"return await {method};" : $"await {method};";
         string res = $$"""
             {{comments}}
-                public async Task<{{returnType}}?> {{function.Name.ToPascalCase()}}Async({{paramsString}}) 
+                public async {{returnDeclaration}} {{function.Name.ToPascalCase()}}Async({{paramsString}})
                 {
                     var url = $"{{function.Path}}";
             {{multipartContent}}
-                    return await {{method}};
+                    {{returnStatement}}
                 }
 
             """;
         return res;
+    }
+
+    private static string GetHttpMethodExpression(string method)
+    {
+        return method.ToUpperInvariant() switch
+        {
+            "GET" => "HttpMethod.Get",
+            "POST" => "HttpMethod.Post",
+            "PUT" => "HttpMethod.Put",
+            "PATCH" => "HttpMethod.Patch",
+            "DELETE" => "HttpMethod.Delete",
+            "HEAD" => "HttpMethod.Head",
+            "OPTIONS" => "HttpMethod.Options",
+            "TRACE" => "HttpMethod.Trace",
+            _ => $"new HttpMethod(\"{method.ToUpperInvariant()}\")",
+        };
     }
 
     private static string GetMultipartParameterType(FunctionParams parameter)

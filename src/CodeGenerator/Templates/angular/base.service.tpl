@@ -35,6 +35,10 @@ export class BaseService {
         const isBinaryType = this.isBinaryContentType(contentType);
         const treatAsFile = isAttachment || isBinaryType;
 
+        if (resp.status === 204 || resp.status === 205) {
+          return from(Promise.resolve(undefined as T));
+        }
+
         if (treatAsFile) {
           return from(Promise.resolve(blob as unknown as T));
         }

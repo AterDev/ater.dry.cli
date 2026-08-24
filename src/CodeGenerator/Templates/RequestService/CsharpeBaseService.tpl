@@ -3,7 +3,7 @@ public class BaseService
 {
     protected HttpClient Http { get; init; }
     public JsonSerializerOptions JsonSerializerOptions { get; set; }
-    public ErrorResult? ErrorMsg { get; set; }
+    public ResponseContent? ResponseContent { get; set; }
 
     public BaseService(IHttpClientFactory httpClient)
     {
@@ -93,69 +93,73 @@ public class BaseService
     /// <param name="fieldName"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    protected async Task<TResult?> UploadFileAsync<TResult>(string route, StreamContent file, string fileName = "file", string fieldName = "file", CancellationToken cancellationToken = default)
+    protected Task<TResult?> UploadFileAsync<TResult>(string route, StreamContent file, string fileName = "file", string fieldName = "file", CancellationToken cancellationToken = default)
     {
-        HttpResponseMessage? res = await Http.PostAsync(BuildRequestUrl(route), new MultipartFormDataContent
+        return UploadFileAsync<TResult>(HttpMethod.Post, route, file, fileName, fieldName, cancellationToken);
+    }
+
+    protected async Task<TResult?> UploadFileAsync<TResult>(HttpMethod method, string route, StreamContent file, string fileName = "file", string fieldName = "file", CancellationToken cancellationToken = default)
+    {
+        var content = new MultipartFormDataContent
         {
             { file, fieldName, fileName }
-        }, cancellationToken);
-        if (res != null && res.IsSuccessStatusCode)
-        {
-            return await res.Content.ReadFromJsonAsync<TResult>(cancellationToken: cancellationToken);
-        }
-        else
-        {
-            try
-            {
-                ErrorMsg = await res!.Content.ReadFromJsonAsync<ErrorResult>(cancellationToken: cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                var content = await res!.Content.ReadAsStringAsync(cancellationToken);
-                ErrorMsg = new ErrorResult
-                {
-                    Title = ex.Message,
-                    Detail = content,
-                };
-                return default;
-            }
-
-            return default;
-        }
+        };
+        return await SendMultipartAsync<TResult>(method, route, content, cancellationToken);
     }
 
     /// <summary>
     /// multipart/form-data 请求封装。
     /// </summary>
-    protected async Task<TResult?> SendMultipartAsync<TResult>(string route, MultipartFormDataContent content, CancellationToken cancellationToken = default)
+    protected Task<TResult?> SendMultipartAsync<TResult>(string route, MultipartFormDataContent content, CancellationToken cancellationToken = default)
+    {
+        return SendMultipartAsync<TResult>(HttpMethod.Post, route, content, cancellationToken);
+    }
+
+    protected async Task<TResult?> SendMultipartAsync<TResult>(HttpMethod method, string route, MultipartFormDataContent content, CancellationToken cancellationToken = default)
     {
         using (content)
         {
-            HttpResponseMessage? res = await Http.PostAsync(BuildRequestUrl(route), content, cancellationToken);
-            if (res != null && res.IsSuccessStatusCode)
+            using HttpResponseMessage res = await SendMultipartRequestAsync(method, route, content, cancellationToken);
+            if (res.IsSuccessStatusCode)
             {
-                return await res.Content.ReadFromJsonAsync<TResult>(cancellationToken: cancellationToken);
+                return await ReadJsonResponseAsync<TResult>(res, cancellationToken);
             }
-            else
-            {
-                try
-                {
-                    ErrorMsg = await res!.Content.ReadFromJsonAsync<ErrorResult>(cancellationToken: cancellationToken);
-                }
-                catch (Exception ex)
-                {
-                    var responseContent = await res!.Content.ReadAsStringAsync(cancellationToken);
-                    ErrorMsg = new ErrorResult
-                    {
-                        Title = ex.Message,
-                        Detail = responseContent,
-                    };
-                    return default;
-                }
 
-                return default;
-            }
+            await SetResponseContentAsync(res, cancellationToken);
+            return default;
         }
+    }
+
+    protected Task SendMultipartAsync(string route, MultipartFormDataContent content, CancellationToken cancellationToken = default)
+    {
+        return SendMultipartAsync(HttpMethod.Post, route, content, cancellationToken);
+    }
+
+    protected async Task SendMultipartAsync(HttpMethod method, string route, MultipartFormDataContent content, CancellationToken cancellationToken = default)
+    {
+        using (content)
+        {
+            using HttpResponseMessage res = await SendMultipartRequestAsync(method, route, content, cancellationToken);
+            if (res.IsSuccessStatusCode)
+            {
+                return;
+            }
+
+            await SetResponseContentAsync(res, cancellationToken);
+        }
+    }
+
+    private async Task<HttpResponseMessage> SendMultipartRequestAsync(
+        HttpMethod method,
+        string route,
+        MultipartFormDataContent content,
+        CancellationToken cancellationToken)
+    {
+        using var request = new HttpRequestMessage(method, BuildRequestUrl(route))
+        {
+            Content = content,
+        };
+        return await Http.SendAsync(request, cancellationToken);
     }
 
     protected static StreamContent CreateMultipartFileContent(MultipartFile file)
@@ -195,21 +199,7 @@ public class BaseService
         }
         else
         {
-            try
-            {
-                ErrorMsg = await res!.Content.ReadFromJsonAsync<ErrorResult>(cancellationToken: cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                var content = await res!.Content.ReadAsStringAsync(cancellationToken);
-                ErrorMsg = new ErrorResult
-                {
-                    Title = ex.Message,
-                    Detail = content,
-                };
-                return default;
-            }
-
+            await SetResponseContentAsync(res!, cancellationToken);
             return default;
         }
     }
@@ -219,6 +209,23 @@ public class BaseService
         return string.Join("&", dic.Where(d => d.Value != null)
             .Select(d => string.Format("{0}={1}", d.Key, d.Value))
             );
+    }
+
+    protected async Task SendNoContentAsync(HttpMethod method, string route, object? data = null, CancellationToken cancellationToken = default)
+    {
+        using var request = new HttpRequestMessage(method, BuildRequestUrl(route));
+        if (data != null)
+        {
+            request.Content = JsonContent.Create(data, data.GetType(), options: JsonSerializerOptions);
+        }
+
+        using HttpResponseMessage res = await Http.SendAsync(request, cancellationToken);
+        if (res.IsSuccessStatusCode)
+        {
+            return;
+        }
+
+        await SetResponseContentAsync(res, cancellationToken);
     }
 
     protected async Task<TResult?> SendJsonAsync<TResult>(HttpMethod method, string route, object? data, CancellationToken cancellationToken = default)
@@ -239,25 +246,11 @@ public class BaseService
         }
         if (res != null && res.IsSuccessStatusCode)
         {
-            return await res.Content.ReadFromJsonAsync<TResult>(cancellationToken: cancellationToken);
+            return await ReadJsonResponseAsync<TResult>(res, cancellationToken);
         }
         else
         {
-            try
-            {
-                ErrorMsg = await res!.Content.ReadFromJsonAsync<ErrorResult>(cancellationToken: cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                var content = await res!.Content.ReadAsStringAsync(cancellationToken);
-                ErrorMsg = new ErrorResult
-                {
-                    Title = ex.Message,
-                    Detail = content,
-                };
-                return default;
-            }
-
+            await SetResponseContentAsync(res!, cancellationToken);
             return default;
         }
     }
@@ -282,27 +275,39 @@ public class BaseService
         }
         if (res != null && res.IsSuccessStatusCode)
         {
-            return await res.Content.ReadFromJsonAsync<TResult>(cancellationToken: cancellationToken);
+            return await ReadJsonResponseAsync<TResult>(res, cancellationToken);
         }
         else
         {
-            try
-            {
-                ErrorMsg = await res!.Content.ReadFromJsonAsync<ErrorResult>(cancellationToken: cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                var content = await res!.Content.ReadAsStringAsync(cancellationToken);
-                ErrorMsg = new ErrorResult
-                {
-                    Title = ex.Message,
-                    Detail = content,
-                };
-                return default;
-            }
-
+            await SetResponseContentAsync(res!, cancellationToken);
             return default;
         }
+    }
+
+    private static async Task<TResult?> ReadJsonResponseAsync<TResult>(
+        HttpResponseMessage response,
+        CancellationToken cancellationToken)
+    {
+        if ((response.StatusCode is System.Net.HttpStatusCode.NoContent
+                or System.Net.HttpStatusCode.ResetContent
+                or System.Net.HttpStatusCode.NotModified)
+            || response.Content.Headers.ContentLength == 0)
+        {
+            return default;
+        }
+
+        return await response.Content.ReadFromJsonAsync<TResult>(cancellationToken: cancellationToken);
+    }
+
+    private async Task SetResponseContentAsync(HttpResponseMessage response, CancellationToken cancellationToken)
+    {
+        var content = await response.Content.ReadAsStringAsync(cancellationToken);
+        ResponseContent = new ResponseContent
+        {
+            Content = content,
+            StatusCode = (int)response.StatusCode,
+            ReasonPhrase = response.ReasonPhrase,
+        };
     }
 
     private string BuildRequestUrl(string route)
@@ -322,11 +327,11 @@ public class BaseService
     }
 }
 
-public class ErrorResult
+public class ResponseContent
 {
-    public string Title { get; set; } = string.Empty;
-    public string Detail { get; set; } = string.Empty;
-    public int Number { get; set; }
+    public string Content { get; set; } = string.Empty;
+    public int StatusCode { get; set; }
+    public string? ReasonPhrase { get; set; }
 }
 
 public sealed record MultipartFile(Stream Content, string FileName, string? ContentType = null);

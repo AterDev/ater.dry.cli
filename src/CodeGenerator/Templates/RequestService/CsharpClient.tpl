@@ -6,7 +6,7 @@ public class #@ClassName#Client
     public string? AccessToken { get; set; }
     private readonly HttpClient Http;
     public JsonSerializerOptions JsonSerializerOptions { get; set; }
-    public ErrorResult? ErrorMsg { get; set; } = null;
+    public ResponseContent? ResponseContent { get; set; } = null;
 
     #region api services
 //[@Properties]
@@ -33,10 +33,9 @@ public class #@ClassName#Client
     }
 }
 
-public class ErrorResult
+public class ResponseContent
 {
-    public string? Title { get; set; }
-    public string? Detail { get; set; }
-    public int Status { get; set; } = 500;
-    public string? TraceId { get; set; }
+    public string? Content { get; set; }
+    public int StatusCode { get; set; }
+    public string? ReasonPhrase { get; set; }
 }

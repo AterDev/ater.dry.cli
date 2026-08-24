@@ -57,7 +57,8 @@ public class AxiosClient(OpenApiDocument openApi) : TypeScriptClientBase(openApi
     private string ToAxiosFunction(RequestServiceFunction function)
     {
         var result = BuildFunctionCommon(function, true);
-        string responseType = string.IsNullOrWhiteSpace(result.ResponseType) ? "any" : OpenApiHelper.FormatSchemaKey(result.ResponseType);
+        bool isNoContent = function.IsNoContent || string.IsNullOrWhiteSpace(result.ResponseType);
+        string responseType = isNoContent ? "void" : OpenApiHelper.FormatSchemaKey(result.ResponseType);
         var cw = new Helper.CodeWriter();
         cw.Indent();
         foreach (var line in result.Comments.Split('\n')) cw.AppendLine(line);

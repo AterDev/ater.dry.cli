@@ -179,10 +179,84 @@ public class RequestClientCompatibilityTests
         var baseService = CSHttpClientGenerate.GetBaseService("DemoClient");
 
         // Assert
-        Assert.Contains("Http.PostAsync(BuildRequestUrl(route), new MultipartFormDataContent", baseService);
-        Assert.Contains("Http.PostAsync(BuildRequestUrl(route), content, cancellationToken)", baseService);
+        Assert.Contains("public ResponseContent? ResponseContent { get; set; }", baseService);
+        Assert.Contains("Content = content", baseService);
+        Assert.Contains("StatusCode = (int)response.StatusCode", baseService);
+        Assert.Contains("ReasonPhrase = response.ReasonPhrase", baseService);
+        Assert.DoesNotContain("ReadFromJsonAsync<ErrorResult>", baseService);
+        Assert.Contains("UploadFileAsync<TResult>(HttpMethod method", baseService);
+        Assert.Contains("SendMultipartAsync<TResult>(HttpMethod method", baseService);
+        Assert.Contains("SendMultipartRequestAsync(method, route, content", baseService);
         Assert.Contains("Http.GetAsync(BuildRequestUrl(route), cancellationToken)", baseService);
         Assert.Contains("return $\"{baseAddress.TrimEnd('/')}/{route.TrimStart('/')}\";", baseService);
+
+        var client = CSHttpClientGenerate.GetClient([], "DemoClient", "Demo");
+        Assert.Contains("public ResponseContent? ResponseContent", client);
+        Assert.DoesNotContain("ErrorResult", client);
+    }
+
+    [Fact]
+    public async Task RequestClients_ShouldGenerateNoContentAndMultipartHttpMethods()
+    {
+        // Arrange
+        var fixturePath = Path.Combine(AppContext.BaseDirectory, "Generate", "Fixtures", "request-client-no-content.openapi.json");
+        var (doc, _) = await OpenApiDocument.LoadAsync(fixturePath);
+        Assert.NotNull(doc);
+
+        // Act
+        var csharpService = new CSHttpClientGenerate(doc!).GetServices("DemoClient").Single().Content;
+        var angularService = new AngularClient(doc!)
+            .GenerateServices(doc!.Tags!, "demo")
+            .Single(file => file.Name == "files.service.ts")
+            .Content;
+        var axiosService = new AxiosClient(doc!)
+            .GenerateServices(doc!.Tags!, "demo")
+            .Single()
+            .Content;
+
+        // Assert - C#
+        Assert.Contains("public async Task DeleteFileAsync", csharpService);
+        Assert.Contains("await SendNoContentAsync(HttpMethod.Delete, url, cancellationToken: cancellationToken);", csharpService);
+        Assert.Contains("public async Task ReplaceFileAsync", csharpService);
+        Assert.Contains("SendMultipartAsync(HttpMethod.Put, url, form, cancellationToken: cancellationToken)", csharpService);
+        Assert.DoesNotContain("Task<object?> DeleteFileAsync", csharpService);
+
+        var putMultipartWithResponse = CSHttpClientGenerate.ToRequestFunction(new RequestServiceFunction
+        {
+            Name = "upload_file",
+            Method = "Put",
+            Path = "/files",
+            ResponseType = "string",
+            IsMultipart = true,
+            Params =
+            [
+                new FunctionParams
+                {
+                    Name = "file",
+                    OriginalName = "file",
+                    InMultipart = true,
+                    IsFile = true,
+                    IsRequired = true,
+                }
+            ],
+        });
+        Assert.Contains("SendMultipartAsync<string?>(HttpMethod.Put, url, form", putMultipartWithResponse);
+
+        // Assert - Angular
+        Assert.Contains("deleteFile(fileId: string): Observable<void>", angularService);
+        Assert.Contains("replaceFile(fileId: string, file: File): Observable<void>", angularService);
+        Assert.Contains("return this.request<void>('put', _url, formData);", angularService);
+
+        // Assert - Axios
+        Assert.Contains("deleteFile(fileId: string, extOptions?: ExtOptions): Promise<void>", axiosService);
+        Assert.Contains("replaceFile(fileId: string, file: File, extOptions?: ExtOptions): Promise<void>", axiosService);
+        Assert.Contains("return this.request<void>('put', _url, formData, extOptions);", axiosService);
+
+        var angularBase = RequestClientHelper.GetBaseService(RequestClientType.NgHttp);
+        var axiosBase = RequestClientHelper.GetBaseService(RequestClientType.Axios);
+        Assert.Contains("resp.status === 204", angularBase);
+        Assert.Contains("response.status === 204", axiosBase);
+        Assert.Contains("['post', 'put', 'patch'].includes(normalizedMethod)", axiosBase);
     }
 
     [Fact]

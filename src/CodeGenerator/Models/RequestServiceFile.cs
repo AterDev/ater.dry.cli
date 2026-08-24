@@ -19,6 +19,10 @@ public class RequestServiceFunction
     public string Method { get; set; } = default!;
     public string? ResponseType { get; set; }
     /// <summary>
+    /// 响应是否明确不包含响应体，例如 204 No Content。
+    /// </summary>
+    public bool IsNoContent { get; set; }
+    /// <summary>
     /// 返回中的引用类型
     /// </summary>
     public string? ResponseRefType { get; set; }

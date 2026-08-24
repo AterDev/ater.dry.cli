@@ -107,23 +107,39 @@ public abstract class ClientRequestBase(OpenApiDocument openApi)
                 var responses = operation.Value?.Responses;
                 if (responses != null && responses.Count > 0)
                 {
-                    IOpenApiResponse? selectedResponse = null;
+                    KeyValuePair<string, IOpenApiResponse>? selectedResponse = null;
                     if (responses.Count == 1)
                     {
-                        selectedResponse = responses.Values.First();
+                        selectedResponse = responses.First();
                     }
                     else
                     {
-                        if (responses.ContainsKey("200"))
+                        if (responses.TryGetValue("200", out var okResponse))
                         {
-                            selectedResponse = responses["200"];
+                            selectedResponse = new KeyValuePair<string, IOpenApiResponse>("200", okResponse);
                         }
                         else
                         {
-                            selectedResponse = responses.Values.First();
+                            var successResponse = responses.FirstOrDefault(response =>
+                                int.TryParse(response.Key, out var statusCode)
+                                && statusCode >= 200
+                                && statusCode < 300
+                            );
+                            selectedResponse = successResponse.Value is not null
+                                ? successResponse
+                                : responses.First();
                         }
                     }
-                    respSchema = SelectContentSchema(selectedResponse?.Content);
+                    if (selectedResponse.HasValue)
+                    {
+                        var selected = selectedResponse.Value;
+                        function.IsNoContent = IsNoContentResponse(
+                            function.Method,
+                            selected.Key,
+                            selected.Value
+                        );
+                        respSchema = SelectContentSchema(selected.Value.Content);
+                    }
                 }
                 var usedParamNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                 function.RequestRefType = OpenApiHelper.GetRootRef(reqSchema);
@@ -224,6 +240,25 @@ public abstract class ClientRequestBase(OpenApiDocument openApi)
             string.Equals(media.Key, "application/json", StringComparison.OrdinalIgnoreCase)
         ).Value;
         return preferred?.Schema ?? content.Values.FirstOrDefault()?.Schema;
+    }
+
+    private static bool IsNoContentResponse(
+        string method,
+        string statusCode,
+        IOpenApiResponse? response
+    )
+    {
+        if (string.Equals(method, "Head", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        if (statusCode is "204" or "205" or "304")
+        {
+            return true;
+        }
+
+        return response?.Content == null || response.Content.Count == 0;
     }
 
     /// <summary>

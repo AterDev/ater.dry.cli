@@ -91,7 +91,9 @@ export class BaseService {
       (response) => {
         response.config.loading !== false && options.loadingService?.loadingClose()
         options.interceptors?.response?.(response)
-        return response.data
+        return response.status === 204 || response.status === 205
+          ? undefined
+          : response.data
       },
       (error) => {
         if (axios.isCancel(error)) {
@@ -159,11 +161,12 @@ export class BaseService {
     body?: any,
     ext?: ExtOptions
   ): Promise<R> {
+    const normalizedMethod = method.toLowerCase()
     return this.http.request<any, R, any>({
       url: path,
       method,
-      params: ['get', 'delete'].includes(method) ? body : undefined,
-      data: ['post', 'put'].includes(method) ? body : undefined,
+      params: ['get', 'delete'].includes(normalizedMethod) ? body : undefined,
+      data: ['post', 'put', 'patch'].includes(normalizedMethod) ? body : undefined,
       ...ext
     })
   }

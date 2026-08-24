@@ -1,0 +1,89 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "NoContentService",
+    "version": "v1"
+  },
+  "tags": [
+    {
+      "name": "Files",
+      "description": "File operations"
+    }
+  ],
+  "paths": {
+    "/files/{file_id}": {
+      "delete": {
+        "summary": "Delete file",
+        "operationId": "delete_file",
+        "tags": [
+          "Files"
+        ],
+        "parameters": [
+          {
+            "name": "file_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "File deleted"
+          }
+        }
+      }
+    },
+    "/files/{file_id}/content": {
+      "put": {
+        "summary": "Replace file",
+        "operationId": "replace_file",
+        "tags": [
+          "Files"
+        ],
+        "parameters": [
+          {
+            "name": "file_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/ReplaceFileBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "File replaced"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ReplaceFileBody": {
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary"
+          }
+        }
+      }
+    }
+  }
+}

@@ -134,8 +134,9 @@ public class AngularClient(OpenApiDocument openApi) : TypeScriptClientBase(openA
     private string ToNgRequestFunction(RequestServiceFunction function)
     {
         var result = BuildFunctionCommon(function, false);
-        string responseType = string.IsNullOrWhiteSpace(result.ResponseType)
-            ? "any"
+        bool isNoContent = function.IsNoContent || string.IsNullOrWhiteSpace(result.ResponseType);
+        string responseType = isNoContent
+            ? "void"
             : OpenApiHelper.FormatSchemaKey(result.ResponseType);
         string method = "request";
         string generics = $"<{responseType}>";
