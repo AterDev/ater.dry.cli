@@ -45,6 +45,7 @@ Run it only after tests pass; it creates local publish/package artifacts and may
 2. Push that branch if it is the requested source branch.
 3. Fetch `origin/nuget`, verify it has no unexpected divergence, merge the release commit into a local `nuget` branch, and push `nuget` without force-pushing.
 4. Confirm `.github/workflows/publish-nuget.yml` is triggered by the push and report the Actions run URL/status.
+5. add git tag `v<version>` to the release commit and push the tag.
 
 If the `nuget` branch has unrelated commits or conflicts, stop before merging and report the exact divergence. Do not reset, discard, or force-push user work.
 
