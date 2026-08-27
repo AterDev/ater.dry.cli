@@ -196,7 +196,9 @@ app.Configure(config =>
                         "module",
                         "install",
                         "./package_modules/FileManagerMod.zip",
-                        "AdminService"
+                        "AdminService",
+                        "--front-path",
+                        "src/ClientApp/WebApp"
                     ]);
 
                 module

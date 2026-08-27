@@ -643,10 +643,16 @@
     <value>Invalid package structure</value>
   </data>
   <data name="FrontendPathNotFound" xml:space="preserve">
-    <value>Frontend directory not found: {0}</value>
+    <value>Frontend project directory not found: {0}</value>
+  </data>
+  <data name="FrontendPathOutsideSolution" xml:space="preserve">
+    <value>The frontend project path must be under the solution root: {0}</value>
+  </data>
+  <data name="FrontendModulesPathNotFound" xml:space="preserve">
+    <value>Frontend module directory not found: {0}; set --front-path to the frontend project root.</value>
   </data>
   <data name="FrontendNotRestored" xml:space="preserve">
-    <value>The module contains {0} frontend code; it was not restored because --front-path was not specified.</value>
+    <value>The module contains {0} frontend code; it was not restored because --front-path was not specified. Set --front-path to the frontend project root to restore it.</value>
   </data>
   <data name="GitHubConnectionFailed" xml:space="preserve">
     <value>Can't access github.com to get the official modules. Continuing with the next steps.</value>

@@ -24,7 +24,7 @@ public class PackCommand(
         public required string ServiceName { get; set; }
 
         [CommandOption("--front-path <FRONT_PATH>")]
-        [Description("Frontend directory to include in the package")]
+        [Description("Frontend module directory to include in the package")]
         public string? FrontPath { get; set; }
     }
 

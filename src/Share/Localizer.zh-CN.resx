@@ -643,10 +643,16 @@
     <value>无效的包结构</value>
   </data>
   <data name="FrontendPathNotFound" xml:space="preserve">
-    <value>未找到前端目录: {0}</value>
+    <value>未找到前端项目目录: {0}</value>
+  </data>
+  <data name="FrontendPathOutsideSolution" xml:space="preserve">
+    <value>前端项目路径必须位于解决方案根目录下: {0}</value>
+  </data>
+  <data name="FrontendModulesPathNotFound" xml:space="preserve">
+    <value>前端项目中未找到模块目录: {0}，请将 --front-path 指向前端项目根目录。</value>
   </data>
   <data name="FrontendNotRestored" xml:space="preserve">
-    <value>模块包含 {0} 前端代码；由于未指定 --front-path，前端代码未被还原。</value>
+    <value>模块包含 {0} 前端代码；由于未指定 --front-path，前端代码未被还原。--front-path 应指向前端项目根目录。</value>
   </data>
   <data name="GitHubConnectionFailed" xml:space="preserve">
     <value>无法访问 github.com 获取官方模块，将继续后续步骤。</value>

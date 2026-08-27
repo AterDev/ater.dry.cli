@@ -26,7 +26,7 @@ public class InstallCommand(
         public string? ServiceName { get; set; }
 
         [CommandOption("--front-path <FRONT_PATH>")]
-        [Description("Directory where bundled frontend code will be restored")]
+        [Description("Frontend project root; the module is restored under its src/app/modules directory")]
         public string? FrontPath { get; set; }
     }
 
