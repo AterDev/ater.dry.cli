@@ -61,6 +61,9 @@ builder.Services.AddScoped<CommandService>();
 builder.Services.AddScoped<ModulePackageService>();
 builder.Services.AddScoped<OfficialModuleService>();
 builder.Services.AddScoped<ModuleInstallService>();
+builder.Services.AddSingleton<TemplateComparisonService>();
+builder.Services.AddSingleton<ICommandRunner, ProcessCommandRunner>();
+builder.Services.AddScoped<TemplateUpdateService>();
 builder.Services.AddScoped<EntityInfoManager>();
 
 builder.Services.AddScoped<NewCommand>();
@@ -74,6 +77,7 @@ builder.Services.AddScoped<AddModuleCommand>();
 builder.Services.AddScoped<AddServiceCommand>();
 builder.Services.AddScoped<PackCommand>();
 builder.Services.AddScoped<InstallCommand>();
+builder.Services.AddScoped<UpdateCommand>();
 builder.Services.AddScoped<ModuleListCommand>();
 builder.Services.AddScoped<AgentInitCommand>();
 builder.Services.AddScoped<AgentMcpCommand>();
@@ -99,6 +103,11 @@ app.Configure(config =>
         .AddCommand<NewCommand>(SubCommand.New)
         .WithDescription(localizer.Get(Localizer.NewDes))
         .WithExample(["new", "name"]);
+
+    config
+        .AddCommand<UpdateCommand>(SubCommand.Update)
+        .WithDescription(localizer.Get(Localizer.UpdateDes))
+        .WithExample([SubCommand.Update]);
 
     ConfiguratorExtensions
         .AddBranch(

@@ -183,6 +183,39 @@
   <data name="NewDes" xml:space="preserve">
     <value>创建新解决方案</value>
   </data>
+  <data name="UpdateDes" xml:space="preserve">
+    <value>将当前项目与最新 Perigon 模板对比并更新</value>
+  </data>
+  <data name="UpdateRiskWarning" xml:space="preserve">
+    <value>模板更新可能覆盖受管文件中的本地修改，建议先创建并切换到新的 Git 分支。</value>
+  </data>
+  <data name="UpdatePreparing" xml:space="preserve">
+    <value>正在更新模板并生成项目副本，请稍候...</value>
+  </data>
+  <data name="UpdateNoChanges" xml:space="preserve">
+    <value>当前项目与最新模板没有需要更新的文件。</value>
+  </data>
+  <data name="UpdateApplyConfirm" xml:space="preserve">
+    <value>是否将以上模板差异应用到当前项目？</value>
+  </data>
+  <data name="UpdateCancelled" xml:space="preserve">
+    <value>已取消更新，当前项目未改变。</value>
+  </data>
+  <data name="UpdateSuccess" xml:space="preserve">
+    <value>模板更新完成，已更新 {0} 个文件。</value>
+  </data>
+  <data name="UpdateFailed" xml:space="preserve">
+    <value>模板更新失败：{0}</value>
+  </data>
+  <data name="UpdateChangesTitle" xml:space="preserve">
+    <value>模板差异：</value>
+  </data>
+  <data name="UpdateNewFile" xml:space="preserve">
+    <value>新增</value>
+  </data>
+  <data name="UpdateModifiedFile" xml:space="preserve">
+    <value>修改</value>
+  </data>
   <data name="OrderModuleDes" xml:space="preserve">
     <value>订单管理</value>
   </data>

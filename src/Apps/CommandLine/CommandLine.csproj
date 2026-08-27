@@ -6,7 +6,7 @@
     <ToolCommandName>perigon</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>
     <PackageId>Perigon.CLI</PackageId>
-    <Version>10.1.16</Version>
+    <Version>10.1.17</Version>
     <Description>
 			The AI workflow for .NET Web developers, help you generate code and build your project quickly.
 		</Description>
@@ -18,7 +18,8 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/AterDev/Perigon.CLI</RepositoryUrl>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>1. Generate C# client routes as relative URIs and let HttpClient merge them with BaseAddress; BaseAddress must end with '/'.
+    <PackageReleaseNotes>1. Add the perigon update command and use reliable installed-template detection to compare existing projects with the latest Perigon templates.
+2. Apply only confirmed template changes within managed scopes, preserve project-only files, and protect against concurrent edits.
 		</PackageReleaseNotes>
     <PackageIcon>logo.png</PackageIcon>
     <ImplicitUsings>enable</ImplicitUsings>

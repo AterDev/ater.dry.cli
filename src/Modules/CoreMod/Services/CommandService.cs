@@ -512,7 +512,7 @@ public class CommandService(
     public static void UpdateTemplate()
     {
         // 安装模板
-        if (!ProcessHelper.RunCommand("dotnet", "new list ater", out string _))
+        if (!ProcessHelper.RunCommand("dotnet", "new list perigon", out string _))
         {
             if (!ProcessHelper.RunCommand("dotnet", "new install Perigon.templates", out _))
             {
