@@ -15,6 +15,7 @@
     <PackageVersion Include="Moq" Version="4.20.72" />
     <PackageVersion Include="Spectre.Console" Version="0.53.0" />
     <PackageVersion Include="Spectre.Console.Cli" Version="0.53.1" />
+    <PackageVersion Include="Spectre.Console.Testing" Version="0.53.1" />
     <!-- Ater infra / templates -->
     <PackageVersion Include="Perigon.AspNetCore.SourceGeneration" Version="1.0.0" />
     <!-- UI / Blazor -->

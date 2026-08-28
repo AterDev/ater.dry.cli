@@ -201,6 +201,27 @@
   <data name="UpdateChangesTitle" xml:space="preserve">
     <value>Template differences:</value>
   </data>
+  <data name="UpdateSelectionTitle" xml:space="preserve">
+    <value>Select files to update:</value>
+  </data>
+  <data name="UpdateDiffTitle" xml:space="preserve">
+    <value>Current file diff:</value>
+  </data>
+  <data name="UpdateSelectionSummary" xml:space="preserve">
+    <value>{0}/{1} file(s) selected.</value>
+  </data>
+  <data name="UpdateSelectionHelp" xml:space="preserve">
+    <value>↑↓ move  Space select/unselect  PgUp/PgDn scroll diff  Enter apply selected files  Esc cancel</value>
+  </data>
+  <data name="UpdateSelectAtLeastOne" xml:space="preserve">
+    <value>Select at least one file before pressing Enter.</value>
+  </data>
+  <data name="UpdateInteractiveRequired" xml:space="preserve">
+    <value>File selection for update requires an interactive terminal.</value>
+  </data>
+  <data name="UpdateBinaryChange" xml:space="preserve">
+    <value>binary</value>
+  </data>
   <data name="UpdateNewFile" xml:space="preserve">
     <value>new</value>
   </data>

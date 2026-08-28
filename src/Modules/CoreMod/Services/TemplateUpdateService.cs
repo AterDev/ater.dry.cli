@@ -115,6 +115,8 @@ public sealed class ProcessCommandRunner : ICommandRunner
 /// </summary>
 public sealed record TemplateFileChange
 {
+    private readonly Lazy<TemplateDiffResult> _diff;
+
     public TemplateFileChange(string relativePath, byte[]? currentBytes, byte[] templateBytes)
     {
         RelativePath = relativePath;
@@ -128,6 +130,7 @@ public sealed record TemplateFileChange
         TemplateContent = TemplateFileEncoding.TryDecode(TemplateBytes, out var templateContent)
             ? templateContent
             : null;
+        _diff = new(() => TemplateDiffFormatter.CreateDocument(this));
     }
 
     public TemplateFileChange(
@@ -153,8 +156,17 @@ public sealed record TemplateFileChange
     public bool IsBinary =>
         TemplateContent is null || (CurrentBytes is not null && CurrentContent is null);
 
-    public string Diff => TemplateDiffFormatter.Create(this);
+    public TemplateDiffStats DiffStats => _diff.Value.Stats;
+
+    public string Diff => _diff.Value.Content;
 }
+
+/// <summary>
+/// Summarizes the line changes shown for a template file.
+/// </summary>
+public sealed record TemplateDiffStats(int AddedLines, int RemovedLines);
+
+internal sealed record TemplateDiffResult(string Content, TemplateDiffStats Stats);
 
 internal static class TemplateFileEncoding
 {
@@ -170,6 +182,20 @@ internal static class TemplateFileEncoding
             return string.Equals(
                 NormalizeLineEndings(leftText),
                 NormalizeLineEndings(rightText),
+                StringComparison.Ordinal
+            );
+        }
+
+        return left.AsSpan().SequenceEqual(right);
+    }
+
+    public static bool AreEquivalent(byte[] left, byte[] right)
+    {
+        if (TryDecode(left, out var leftText) && TryDecode(right, out var rightText))
+        {
+            return string.Equals(
+                NormalizeWhitespace(leftText),
+                NormalizeWhitespace(rightText),
                 StringComparison.Ordinal
             );
         }
@@ -226,6 +252,39 @@ internal static class TemplateFileEncoding
     public static string NormalizeLineEndings(string content)
     {
         return content.Replace("\r\n", "\n").Replace('\r', '\n');
+    }
+
+    public static string NormalizeWhitespace(string content)
+    {
+        var lines = NormalizeLineEndings(content)
+            .Split('\n', StringSplitOptions.None)
+            .Where(line => !string.IsNullOrWhiteSpace(line))
+            .Select(NormalizeWhitespaceLine);
+        return string.Join('\n', lines);
+    }
+
+    public static string NormalizeWhitespaceLine(string line)
+    {
+        var builder = new StringBuilder(line.Length);
+        var whitespacePending = false;
+        foreach (var character in line)
+        {
+            if (char.IsWhiteSpace(character))
+            {
+                whitespacePending = true;
+                continue;
+            }
+
+            if (whitespacePending && builder.Length > 0)
+            {
+                builder.Append(' ');
+            }
+
+            builder.Append(character);
+            whitespacePending = false;
+        }
+
+        return builder.ToString();
     }
 
     public static string ConvertLineEndings(string content, string currentContent)
@@ -327,7 +386,7 @@ public sealed class TemplateComparisonService
                 currentBytes = await File.ReadAllBytesAsync(projectFile, cancellationToken);
             }
 
-            if (currentBytes is null || !TemplateFileEncoding.AreEqual(currentBytes, templateBytes))
+            if (currentBytes is null || !TemplateFileEncoding.AreEquivalent(currentBytes, templateBytes))
             {
                 changes.Add(new TemplateFileChange(relativePath, currentBytes, templateBytes));
             }
@@ -756,12 +815,38 @@ public sealed class TemplateUpdateService(
         CancellationToken cancellationToken = default
     )
     {
+        await ApplyAsync(plan, plan.Changes, cancellationToken);
+    }
+
+    public async Task ApplyAsync(
+        TemplateUpdatePlan plan,
+        IReadOnlyList<TemplateFileChange> changes,
+        CancellationToken cancellationToken = default
+    )
+    {
+        ArgumentNullException.ThrowIfNull(changes);
+
+        var preparedChanges = plan.Changes.ToDictionary(
+            change => change.RelativePath,
+            StringComparer.OrdinalIgnoreCase
+        );
+        foreach (var change in changes)
+        {
+            if (!preparedChanges.TryGetValue(change.RelativePath, out var preparedChange)
+                || !ReferenceEquals(preparedChange, change))
+            {
+                throw new InvalidOperationException(
+                    $"The selected update file was not part of the prepared plan: {change.RelativePath}"
+                );
+            }
+        }
+
         try
         {
             await comparisonService.ApplyAsync(
                 plan.ProjectRoot,
                 plan.TemplateRoot,
-                plan.Changes,
+                changes,
                 cancellationToken
             );
         }
@@ -859,11 +944,11 @@ internal static class TemplateDiffFormatter
     private const int MaxComparisonCells = 4_000_000;
     private const int ContextLineCount = 3;
 
-    public static string Create(TemplateFileChange change)
+    public static TemplateDiffResult CreateDocument(TemplateFileChange change)
     {
         if (!change.IsBinary)
         {
-            return Create(
+            return CreateTextDocument(
                 change.RelativePath,
                 change.CurrentContent,
                 change.TemplateContent!
@@ -886,10 +971,19 @@ internal static class TemplateDiffFormatter
             builder.Append($"template: {change.TemplateBytes.Length} bytes).");
         }
 
-        return builder.ToString().TrimEnd();
+        return new TemplateDiffResult(builder.ToString().TrimEnd(), new(0, 0));
     }
 
+    public static string Create(TemplateFileChange change) => CreateDocument(change).Content;
+
     public static string Create(
+        string relativePath,
+        string? currentContent,
+        string templateContent
+    )
+        => CreateTextDocument(relativePath, currentContent, templateContent).Content;
+
+    private static TemplateDiffResult CreateTextDocument(
         string relativePath,
         string? currentContent,
         string templateContent
@@ -902,23 +996,34 @@ internal static class TemplateDiffFormatter
 
         if (isNew)
         {
-            foreach (var line in SplitLines(templateContent))
+            var newTemplateLines = SplitLines(templateContent);
+            foreach (var line in newTemplateLines)
             {
                 builder.Append("+ ").AppendLine(line);
             }
 
-            return builder.ToString().TrimEnd();
+            return new TemplateDiffResult(
+                builder.ToString().TrimEnd(),
+                new(newTemplateLines.Length, 0)
+            );
         }
 
-        var currentLines = SplitLines(currentContent!);
-        var templateLines = SplitLines(templateContent);
+        var currentLines = RemoveWhitespaceOnlyLines(SplitLines(currentContent!));
+        var templateLines = RemoveWhitespaceOnlyLines(SplitLines(templateContent));
         if ((long)currentLines.Length * templateLines.Length > MaxComparisonCells)
         {
             AppendFullDiff(builder, currentLines, templateLines);
-            return builder.ToString().TrimEnd();
+            return new TemplateDiffResult(
+                builder.ToString().TrimEnd(),
+                new(templateLines.Length, currentLines.Length)
+            );
         }
 
         var operations = BuildOperations(currentLines, templateLines);
+        var stats = new TemplateDiffStats(
+            operations.Count(operation => operation.Kind == DiffLineKind.Added),
+            operations.Count(operation => operation.Kind == DiffLineKind.Removed)
+        );
         var changedIndexes = operations
             .Select((operation, index) => (operation, index))
             .Where(item => item.operation.Kind != DiffLineKind.Context)
@@ -927,8 +1032,8 @@ internal static class TemplateDiffFormatter
 
         if (changedIndexes.Length == 0)
         {
-            builder.AppendLine("! content differs only in line endings or encoding.");
-            return builder.ToString().TrimEnd();
+            builder.AppendLine("! content differs only in whitespace, line endings, or encoding.");
+            return new TemplateDiffResult(builder.ToString().TrimEnd(), stats);
         }
 
         var includedIndexes = new HashSet<int>();
@@ -961,17 +1066,19 @@ internal static class TemplateDiffFormatter
             previousIndex = index;
         }
 
-        return builder.ToString().TrimEnd();
+        return new TemplateDiffResult(builder.ToString().TrimEnd(), stats);
     }
 
     private static List<DiffLine> BuildOperations(string[] currentLines, string[] templateLines)
     {
+        var currentKeys = currentLines.Select(NormalizeLineForDiff).ToArray();
+        var templateKeys = templateLines.Select(NormalizeLineForDiff).ToArray();
         var lcs = new int[currentLines.Length + 1, templateLines.Length + 1];
         for (var currentIndex = currentLines.Length - 1; currentIndex >= 0; currentIndex--)
         {
             for (var templateIndex = templateLines.Length - 1; templateIndex >= 0; templateIndex--)
             {
-                lcs[currentIndex, templateIndex] = currentLines[currentIndex] == templateLines[templateIndex]
+                lcs[currentIndex, templateIndex] = currentKeys[currentIndex] == templateKeys[templateIndex]
                     ? lcs[currentIndex + 1, templateIndex + 1] + 1
                     : Math.Max(lcs[currentIndex + 1, templateIndex], lcs[currentIndex, templateIndex + 1]);
             }
@@ -984,9 +1091,10 @@ internal static class TemplateDiffFormatter
         {
             if (current < currentLines.Length
                 && template < templateLines.Length
-                && currentLines[current] == templateLines[template])
+                && currentKeys[current] == templateKeys[template])
             {
                 operations.Add(new(DiffLineKind.Context, currentLines[current++]));
+                template++;
             }
             else if (template < templateLines.Length
                 && (current == currentLines.Length
@@ -1002,6 +1110,14 @@ internal static class TemplateDiffFormatter
 
         return operations;
     }
+
+    private static string[] RemoveWhitespaceOnlyLines(string[] lines)
+    {
+        return lines.Where(line => !string.IsNullOrWhiteSpace(line)).ToArray();
+    }
+
+    private static string NormalizeLineForDiff(string line) =>
+        TemplateFileEncoding.NormalizeWhitespaceLine(line);
 
     private static void AppendFullDiff(
         StringBuilder builder,
@@ -1022,7 +1138,18 @@ internal static class TemplateDiffFormatter
 
     private static string[] SplitLines(string content)
     {
-        return content.Replace("\r\n", "\n").Replace('\r', '\n').Split('\n');
+        var normalized = content.Replace("\r\n", "\n").Replace('\r', '\n');
+        if (normalized.Length == 0)
+        {
+            return [];
+        }
+
+        if (normalized[^1] == '\n')
+        {
+            normalized = normalized[..^1];
+        }
+
+        return normalized.Split('\n');
     }
 
     private enum DiffLineKind

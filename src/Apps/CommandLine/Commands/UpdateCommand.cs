@@ -35,20 +35,24 @@ public sealed class UpdateCommand(
                 return 0;
             }
 
-            ShowChanges(plan.Changes, localizer);
-
-            var shouldApply = AnsiConsole.Confirm(
-                localizer.Get(Localizer.UpdateApplyConfirm),
-                defaultValue: false
+            var selection = await TemplateUpdateSelector.SelectAsync(
+                AnsiConsole.Console,
+                plan.Changes,
+                localizer,
+                cancellationToken
             );
-            if (!shouldApply)
+            if (!selection.ShouldApply)
             {
                 OutputHelper.Info(localizer.Get(Localizer.UpdateCancelled));
                 return 0;
             }
 
-            await templateUpdateService.ApplyAsync(plan, cancellationToken);
-            OutputHelper.Success(localizer.Get(Localizer.UpdateSuccess, plan.Changes.Count));
+            await templateUpdateService.ApplyAsync(
+                plan,
+                selection.Changes,
+                cancellationToken
+            );
+            OutputHelper.Success(localizer.Get(Localizer.UpdateSuccess, selection.Changes.Count));
             return 0;
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -63,20 +67,4 @@ public sealed class UpdateCommand(
         }
     }
 
-    private static void ShowChanges(IReadOnlyList<TemplateFileChange> changes, Localizer localizer)
-    {
-        AnsiConsole.WriteLine();
-        AnsiConsole.WriteLine(localizer.Get(Localizer.UpdateChangesTitle));
-        foreach (var change in changes)
-        {
-            AnsiConsole.WriteLine();
-            var changeType = localizer.Get(
-                change.IsNew ? Localizer.UpdateNewFile : Localizer.UpdateModifiedFile
-            );
-            AnsiConsole.WriteLine($"[{changeType}] {change.RelativePath}");
-            AnsiConsole.WriteLine(change.Diff);
-        }
-
-        AnsiConsole.WriteLine();
-    }
 }

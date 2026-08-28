@@ -78,6 +78,50 @@ public sealed class TemplateUpdateServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task CompareAsync_ShouldIgnoreWhitespaceOnlyDifferences()
+    {
+        var cancellationToken = TestContext.Current.CancellationToken;
+        var projectRoot = Path.Combine(_root, "project");
+        var templateRoot = Path.Combine(_root, "template");
+        Directory.CreateDirectory(projectRoot);
+        Directory.CreateDirectory(templateRoot);
+
+        await WriteAsync(
+            projectRoot,
+            "src/Perigon/Formatting.cs",
+            "  first  \r\n\t\t\r\n    second\t\r\n  third  value \r\n"
+        );
+        await WriteAsync(
+            templateRoot,
+            "src/Perigon/Formatting.cs",
+            "first\nsecond\nthird value\n"
+        );
+
+        var changes = await new TemplateComparisonService().CompareAsync(
+            projectRoot,
+            templateRoot,
+            cancellationToken
+        );
+
+        Assert.Empty(changes);
+    }
+
+    [Fact]
+    public void TemplateFileChange_ShouldReportMeaningfulLineStats()
+    {
+        var change = new TemplateFileChange(
+            "src/Perigon/Changed.cs",
+            "same\nold\nkeep",
+            "same\nnew\nadded\nkeep"
+        );
+
+        Assert.Equal(2, change.DiffStats.AddedLines);
+        Assert.Equal(1, change.DiffStats.RemovedLines);
+        Assert.Contains("- old", change.Diff);
+        Assert.Contains("+ new", change.Diff);
+    }
+
+    [Fact]
     public async Task ApplyAsync_ShouldCopyOnlyThePreparedChanges()
     {
         var cancellationToken = TestContext.Current.CancellationToken;
@@ -104,6 +148,47 @@ public sealed class TemplateUpdateServiceTests : IDisposable
             "keep context",
             await ReadAsync(projectRoot, "src/Definition/EntityFramework/DefaultDbContext.cs")
         );
+    }
+
+    [Fact]
+    public async Task TemplateUpdateService_ShouldApplyOnlySelectedChanges()
+    {
+        var cancellationToken = TestContext.Current.CancellationToken;
+        var projectRoot = Path.Combine(_root, "project");
+        var templateRoot = Path.Combine(_root, "template");
+        Directory.CreateDirectory(projectRoot);
+        Directory.CreateDirectory(templateRoot);
+
+        await WriteAsync(projectRoot, "src/Perigon/Changed.cs", "old");
+        await WriteAsync(templateRoot, "src/Perigon/Changed.cs", "new");
+        await WriteAsync(templateRoot, "src/Perigon/Added.cs", "added");
+
+        var comparison = new TemplateComparisonService();
+        var changes = await comparison.CompareAsync(projectRoot, templateRoot, cancellationToken);
+        using var plan = new TemplateUpdatePlan(
+            projectRoot,
+            templateRoot,
+            changes,
+            Path.Combine(_root, "working")
+        );
+        var context = new SolutionContext(new ServiceCollection().BuildServiceProvider())
+        {
+            SolutionPath = projectRoot,
+        };
+        var service = new TemplateUpdateService(
+            context,
+            comparison,
+            new RecordingCommandRunner(),
+            NullLogger<TemplateUpdateService>.Instance
+        );
+
+        var selectedChanges = changes
+            .Where(change => change.RelativePath == "src/Perigon/Changed.cs")
+            .ToArray();
+        await service.ApplyAsync(plan, selectedChanges, cancellationToken);
+
+        Assert.Equal("new", await ReadAsync(projectRoot, "src/Perigon/Changed.cs"));
+        Assert.False(File.Exists(Path.Combine(projectRoot, "src", "Perigon", "Added.cs")));
     }
 
     [Fact]

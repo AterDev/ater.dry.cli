@@ -6,7 +6,7 @@
     <ToolCommandName>perigon</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>
     <PackageId>Perigon.CLI</PackageId>
-    <Version>10.1.17</Version>
+    <Version>10.2.0</Version>
     <Description>
 			The AI workflow for .NET Web developers, help you generate code and build your project quickly.
 		</Description>
@@ -20,6 +20,8 @@
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <PackageReleaseNotes>1. Add the perigon update command and use reliable installed-template detection to compare existing projects with the latest Perigon templates.
 2. Apply only confirmed template changes within managed scopes, preserve project-only files, and protect against concurrent edits.
+3. Add an interactive two-pane update selector with colorized diffs, multi-file selection, and per-file line statistics.
+4. Ignore non-semantic whitespace differences during template comparison while retaining strict snapshots before applying changes.
 		</PackageReleaseNotes>
     <PackageIcon>logo.png</PackageIcon>
     <ImplicitUsings>enable</ImplicitUsings>

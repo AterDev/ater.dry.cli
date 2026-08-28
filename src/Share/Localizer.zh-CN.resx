@@ -210,6 +210,27 @@
   <data name="UpdateChangesTitle" xml:space="preserve">
     <value>模板差异：</value>
   </data>
+  <data name="UpdateSelectionTitle" xml:space="preserve">
+    <value>选择要更新的文件：</value>
+  </data>
+  <data name="UpdateDiffTitle" xml:space="preserve">
+    <value>当前文件差异：</value>
+  </data>
+  <data name="UpdateSelectionSummary" xml:space="preserve">
+    <value>已选择 {0}/{1} 个文件。</value>
+  </data>
+  <data name="UpdateSelectionHelp" xml:space="preserve">
+    <value>↑↓ 移动  空格 选择/取消  PgUp/PgDn 滚动右侧差异  回车 应用已选择文件  Esc 取消</value>
+  </data>
+  <data name="UpdateSelectAtLeastOne" xml:space="preserve">
+    <value>请至少选择一个文件后再按回车。</value>
+  </data>
+  <data name="UpdateInteractiveRequired" xml:space="preserve">
+    <value>更新文件选择需要在交互式终端中运行。</value>
+  </data>
+  <data name="UpdateBinaryChange" xml:space="preserve">
+    <value>二进制</value>
+  </data>
   <data name="UpdateNewFile" xml:space="preserve">
     <value>新增</value>
   </data>
