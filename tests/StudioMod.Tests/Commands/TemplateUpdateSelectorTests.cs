@@ -129,8 +129,41 @@ public sealed class TemplateUpdateSelectorTests
 
         Assert.False(result.ShouldApply);
         Assert.Contains("file-5.cs", console.Output);
-        Assert.Contains("▲", console.Output);
-        Assert.Contains("▼", console.Output);
+        Assert.Contains("█", console.Output);
+        Assert.Contains("│", console.Output);
+    }
+
+    [Fact]
+    public async Task Selector_ShouldScrollDiffWithArrowKeysWhenDiffPaneIsActive()
+    {
+        var change = new TemplateFileChange(
+            "file.cs",
+            string.Join(Environment.NewLine, Enumerable.Range(0, 30).Select(line => $"old-{line}")),
+            string.Join(Environment.NewLine, Enumerable.Range(0, 30).Select(line => $"new-{line}"))
+        );
+        using var console = new TestConsole()
+            .Interactive()
+            .EmitAnsiSequences()
+            .Width(120)
+            .Height(14);
+        console.Input.PushKey(ConsoleKey.RightArrow);
+        for (var index = 0; index < 5; index++)
+        {
+            console.Input.PushKey(ConsoleKey.DownArrow);
+        }
+
+        console.Input.PushKey(ConsoleKey.Escape);
+
+        var result = await TemplateUpdateSelector.SelectAsync(
+            console,
+            [change],
+            CreateLocalizer(),
+            TestContext.Current.CancellationToken
+        );
+
+        Assert.False(result.ShouldApply);
+        Assert.Contains("new-3", console.Output);
+        Assert.Contains("█", console.Output);
     }
 
     private static Localizer CreateLocalizer()

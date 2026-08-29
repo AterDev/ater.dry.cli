@@ -83,7 +83,12 @@ internal static class TemplateUpdateSelector
 {
     private const int FooterHeight = 4;
     private const int PanelOverhead = 6;
-    private const int ScrollMarkerRows = 2;
+
+    private enum ActivePane
+    {
+        Files,
+        Diff,
+    }
 
     public static async Task<TemplateUpdateSelectionResult> SelectAsync(
         IAnsiConsole console,
@@ -103,7 +108,15 @@ internal static class TemplateUpdateSelector
         var state = new TemplateUpdateSelectionState(changes);
         string? validationMessage = null;
         var diffScrollOffset = 0;
-        var layout = CreateLayout(console, state, localizer, validationMessage, diffScrollOffset);
+        var activePane = ActivePane.Files;
+        var layout = CreateLayout(
+            console,
+            state,
+            localizer,
+            validationMessage,
+            diffScrollOffset,
+            activePane
+        );
 
         return await console
             .Live(layout)
@@ -136,26 +149,82 @@ internal static class TemplateUpdateSelector
                     switch (key.Value.Key)
                     {
                         case ConsoleKey.UpArrow:
-                            state.MovePrevious();
-                            diffScrollOffset = 0;
+                            if (activePane == ActivePane.Files)
+                            {
+                                state.MovePrevious();
+                                diffScrollOffset = 0;
+                            }
+                            else
+                            {
+                                diffScrollOffset = ScrollDiffByRows(
+                                    console,
+                                    state.Changes[state.CurrentIndex],
+                                    diffScrollOffset,
+                                    -1
+                                );
+                            }
                             validationMessage = null;
                             break;
                         case ConsoleKey.DownArrow:
-                            state.MoveNext();
-                            diffScrollOffset = 0;
+                            if (activePane == ActivePane.Files)
+                            {
+                                state.MoveNext();
+                                diffScrollOffset = 0;
+                            }
+                            else
+                            {
+                                diffScrollOffset = ScrollDiffByRows(
+                                    console,
+                                    state.Changes[state.CurrentIndex],
+                                    diffScrollOffset,
+                                    1
+                                );
+                            }
                             validationMessage = null;
                             break;
                         case ConsoleKey.Home:
-                            state.MoveFirst();
-                            diffScrollOffset = 0;
+                            if (activePane == ActivePane.Files)
+                            {
+                                state.MoveFirst();
+                                diffScrollOffset = 0;
+                            }
+                            else
+                            {
+                                diffScrollOffset = 0;
+                            }
                             validationMessage = null;
                             break;
                         case ConsoleKey.End:
-                            state.MoveLast();
-                            diffScrollOffset = 0;
+                            if (activePane == ActivePane.Files)
+                            {
+                                state.MoveLast();
+                                diffScrollOffset = 0;
+                            }
+                            else
+                            {
+                                diffScrollOffset = GetMaximumDiffOffset(
+                                    console,
+                                    state.Changes[state.CurrentIndex]
+                                );
+                            }
+                            validationMessage = null;
+                            break;
+                        case ConsoleKey.Tab:
+                            activePane = activePane == ActivePane.Files
+                                ? ActivePane.Diff
+                                : ActivePane.Files;
+                            validationMessage = null;
+                            break;
+                        case ConsoleKey.LeftArrow:
+                            activePane = ActivePane.Files;
+                            validationMessage = null;
+                            break;
+                        case ConsoleKey.RightArrow:
+                            activePane = ActivePane.Diff;
                             validationMessage = null;
                             break;
                         case ConsoleKey.PageUp:
+                            activePane = ActivePane.Diff;
                             diffScrollOffset = ScrollDiff(
                                 console,
                                 state.Changes[state.CurrentIndex],
@@ -165,6 +234,7 @@ internal static class TemplateUpdateSelector
                             validationMessage = null;
                             break;
                         case ConsoleKey.PageDown:
+                            activePane = ActivePane.Diff;
                             diffScrollOffset = ScrollDiff(
                                 console,
                                 state.Changes[state.CurrentIndex],
@@ -197,7 +267,8 @@ internal static class TemplateUpdateSelector
                             state,
                             localizer,
                             validationMessage,
-                            diffScrollOffset
+                            diffScrollOffset,
+                            activePane
                         )
                     );
                 }
@@ -209,14 +280,22 @@ internal static class TemplateUpdateSelector
         TemplateUpdateSelectionState state,
         Localizer localizer,
         string? validationMessage,
-        int diffScrollOffset
+        int diffScrollOffset,
+        ActivePane activePane
     )
     {
         var body = new Layout("body").SplitColumns(
             new Layout("files")
                 .Ratio(1)
                 .MinimumSize(30)
-                .Update(CreateFilePanel(console, state, localizer)),
+                .Update(
+                    CreateFilePanel(
+                        console,
+                        state,
+                        localizer,
+                        activePane == ActivePane.Files
+                    )
+                ),
             new Layout("diff")
                 .Ratio(3)
                 .MinimumSize(50)
@@ -225,7 +304,8 @@ internal static class TemplateUpdateSelector
                         console,
                         state.Changes[state.CurrentIndex],
                         localizer,
-                        diffScrollOffset
+                        diffScrollOffset,
+                        activePane == ActivePane.Diff
                     )
                 )
         );
@@ -250,15 +330,12 @@ internal static class TemplateUpdateSelector
     private static Panel CreateFilePanel(
         IAnsiConsole console,
         TemplateUpdateSelectionState state,
-        Localizer localizer
+        Localizer localizer,
+        bool isActive
     )
     {
         var availableRows = GetPanelContentRows(console);
-        var visibleRows = GetVisibleRows(
-            state.Changes.Count,
-            availableRows,
-            out var showScrollMarkers
-        );
+        var visibleRows = GetVisibleRows(state.Changes.Count, availableRows);
         var start = Math.Clamp(
             state.CurrentIndex - visibleRows / 2,
             0,
@@ -267,19 +344,10 @@ internal static class TemplateUpdateSelector
         var end = Math.Min(state.Changes.Count, start + visibleRows);
         var rows = new List<IRenderable>();
 
-        if (showScrollMarkers && start > 0)
-        {
-            rows.Add(new Markup("[grey]  ▲[/]"));
-        }
-
         for (var index = start; index < end; index++)
         {
-            rows.Add(new Markup(RenderFileRow(state, index, localizer)));
-        }
-
-        if (showScrollMarkers && end < state.Changes.Count)
-        {
-            rows.Add(new Markup("[grey]  ▼[/]"));
+            var scrollBar = RenderScrollBar(start, visibleRows, state.Changes.Count, index - start);
+            rows.Add(CreateSingleLineMarkup($"{scrollBar} {RenderFileRow(state, index, localizer)}"));
         }
 
         return new Panel(new Rows(rows))
@@ -288,7 +356,7 @@ internal static class TemplateUpdateSelector
                 + $"[grey]({start + 1}-{end}/{state.Changes.Count})[/]"
             )
             .Border(BoxBorder.Rounded)
-            .BorderColor(Color.Grey);
+            .BorderColor(isActive ? Color.Yellow : Color.Grey);
     }
 
     private static string RenderFileRow(
@@ -315,30 +383,22 @@ internal static class TemplateUpdateSelector
         IAnsiConsole console,
         TemplateFileChange change,
         Localizer localizer,
-        int diffScrollOffset
+        int diffScrollOffset,
+        bool isActive
     )
     {
         var lines = GetDiffLines(change);
         var availableRows = GetPanelContentRows(console);
-        var visibleRows = GetVisibleRows(lines.Length, availableRows, out var showScrollMarkers);
+        var visibleRows = GetVisibleRows(lines.Length, availableRows);
         var maxOffset = Math.Max(0, lines.Length - visibleRows);
         var start = Math.Clamp(diffScrollOffset, 0, maxOffset);
         var end = Math.Min(lines.Length, start + visibleRows);
         var rows = new List<IRenderable>();
 
-        if (showScrollMarkers && start > 0)
-        {
-            rows.Add(new Markup("[grey]  ▲[/]"));
-        }
-
         for (var index = start; index < end; index++)
         {
-            rows.Add(new Markup(RenderDiffLine(lines[index])));
-        }
-
-        if (showScrollMarkers && end < lines.Length)
-        {
-            rows.Add(new Markup("[grey]  ▼[/]"));
+            var scrollBar = RenderScrollBar(start, visibleRows, lines.Length, index - start);
+            rows.Add(CreateSingleLineMarkup($"{scrollBar} {RenderDiffLine(lines[index])}"));
         }
 
         var range = lines.Length == 0 ? "0/0" : $"{start + 1}-{end}/{lines.Length}";
@@ -348,7 +408,7 @@ internal static class TemplateUpdateSelector
         return new Panel(new Rows(rows))
             .Header(title)
             .Border(BoxBorder.Rounded)
-            .BorderColor(Color.Grey);
+            .BorderColor(isActive ? Color.Yellow : Color.Grey);
     }
 
     private static string[] GetDiffLines(TemplateFileChange change) =>
@@ -364,25 +424,64 @@ internal static class TemplateUpdateSelector
         var lines = GetDiffLines(change);
         var visibleRows = GetVisibleRows(
             lines.Length,
-            GetPanelContentRows(console),
-            out _
+            GetPanelContentRows(console)
         );
         var maxOffset = Math.Max(0, lines.Length - visibleRows);
         var pageSize = Math.Max(1, visibleRows);
         return Math.Clamp(currentOffset + (pageDirection * pageSize), 0, maxOffset);
     }
 
-    private static int GetVisibleRows(
-        int totalRows,
-        int availableRows,
-        out bool showScrollMarkers
+    private static int ScrollDiffByRows(
+        IAnsiConsole console,
+        TemplateFileChange change,
+        int currentOffset,
+        int rowDelta
     )
     {
-        showScrollMarkers = totalRows > availableRows && availableRows > ScrollMarkerRows;
-        return showScrollMarkers
-            ? availableRows - ScrollMarkerRows
-            : Math.Max(1, availableRows);
+        return Math.Clamp(
+            currentOffset + rowDelta,
+            0,
+            GetMaximumDiffOffset(console, change)
+        );
     }
+
+    private static int GetMaximumDiffOffset(IAnsiConsole console, TemplateFileChange change)
+    {
+        var lineCount = GetDiffLines(change).Length;
+        return Math.Max(
+            0,
+            lineCount - GetVisibleRows(lineCount, GetPanelContentRows(console))
+        );
+    }
+
+    private static int GetVisibleRows(int totalRows, int availableRows) =>
+        Math.Max(1, Math.Min(totalRows, availableRows));
+
+    private static string RenderScrollBar(
+        int offset,
+        int visibleRows,
+        int totalRows,
+        int viewportRow
+    )
+    {
+        if (totalRows <= visibleRows)
+        {
+            return " ";
+        }
+
+        var thumbSize = Math.Max(1, (int)Math.Round((double)visibleRows * visibleRows / totalRows));
+        var trackTravel = visibleRows - thumbSize;
+        var maximumOffset = totalRows - visibleRows;
+        var thumbStart = maximumOffset == 0
+            ? 0
+            : (int)Math.Round((double)offset * trackTravel / maximumOffset);
+        return viewportRow >= thumbStart && viewportRow < thumbStart + thumbSize
+            ? "[cyan]█[/]"
+            : "[grey]│[/]";
+    }
+
+    private static Markup CreateSingleLineMarkup(string content) =>
+        new(content) { Overflow = Overflow.Ellipsis };
 
     private static int GetPanelContentRows(IAnsiConsole console)
     {

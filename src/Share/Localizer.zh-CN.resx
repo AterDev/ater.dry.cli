@@ -220,7 +220,7 @@
     <value>已选择 {0}/{1} 个文件。</value>
   </data>
   <data name="UpdateSelectionHelp" xml:space="preserve">
-    <value>↑↓ 移动  空格 选择/取消  PgUp/PgDn 滚动右侧差异  回车 应用已选择文件  Esc 取消</value>
+    <value>Tab/←→ 切换栏  ↑↓ 移动/滚动  空格 选择  PgUp/PgDn 翻页  Enter 应用  Esc 取消</value>
   </data>
   <data name="UpdateSelectAtLeastOne" xml:space="preserve">
     <value>请至少选择一个文件后再按回车。</value>
