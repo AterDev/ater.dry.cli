@@ -211,16 +211,22 @@
     <value>模板差异：</value>
   </data>
   <data name="UpdateSelectionTitle" xml:space="preserve">
-    <value>选择要更新的文件：</value>
+    <value>选择要更新的文件或技能：</value>
   </data>
   <data name="UpdateDiffTitle" xml:space="preserve">
     <value>当前文件差异：</value>
+  </data>
+  <data name="UpdateSkillDiffTitle" xml:space="preserve">
+    <value>技能差异：</value>
+  </data>
+  <data name="UpdateSkillFiles" xml:space="preserve">
+    <value>{0} 个文件</value>
   </data>
   <data name="UpdateSelectionSummary" xml:space="preserve">
     <value>已选择 {0}/{1} 个文件。</value>
   </data>
   <data name="UpdateSelectionHelp" xml:space="preserve">
-    <value>Tab/←→ 切换栏  ↑↓ 移动/滚动  空格 选择  PgUp/PgDn 翻页  Enter 应用  Esc 取消</value>
+    <value>Tab/←→ 切换栏  ↑↓ 移动/滚动  空格 选择文件/技能  PgUp/PgDn 翻页  Enter 应用  Esc 取消</value>
   </data>
   <data name="UpdateSelectAtLeastOne" xml:space="preserve">
     <value>请至少选择一个文件后再按回车。</value>

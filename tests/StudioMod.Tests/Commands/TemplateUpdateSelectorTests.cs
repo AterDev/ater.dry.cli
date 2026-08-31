@@ -166,6 +166,87 @@ public sealed class TemplateUpdateSelectorTests
         Assert.Contains("█", console.Output);
     }
 
+    [Fact]
+    public async Task Selector_ShouldGroupSkillFilesIntoOneSelectableItem()
+    {
+        var regular = new TemplateFileChange("src/Perigon/Regular.cs", "old", "new");
+        var skillFile = new TemplateFileChange(
+            ".agents/skills/update/SKILL.md",
+            "old skill",
+            "new skill"
+        );
+        var skillGuide = new TemplateFileChange(
+            ".agents/skills/update/README.md",
+            "old guide",
+            "new guide"
+        );
+        var otherSkill = new TemplateFileChange(
+            ".agents/skills/release/SKILL.md",
+            "old release",
+            "new release"
+        );
+        using var console = new TestConsole()
+            .Interactive()
+            .EmitAnsiSequences()
+            .Width(120)
+            .Height(24);
+        console.Input.PushKey(ConsoleKey.DownArrow);
+        console.Input.PushKey(ConsoleKey.Spacebar);
+        console.Input.PushKey(ConsoleKey.Enter);
+
+        var result = await TemplateUpdateSelector.SelectAsync(
+            console,
+            [regular, skillFile, skillGuide, otherSkill],
+            CreateLocalizer(),
+            TestContext.Current.CancellationToken
+        );
+
+        Assert.True(result.ShouldApply);
+        Assert.Equal([skillFile, skillGuide], result.Changes);
+        Assert.Contains(".agents/skills/update", console.Output);
+        Assert.Contains(".agents/skills/update/SKILL.md", console.Output);
+        Assert.Contains(".agents/skills/update/README.md", console.Output);
+        Assert.Contains("UpdateSkillDiffTitle", console.Output);
+    }
+
+    [Fact]
+    public async Task Selector_ShouldHandleLongRowsWhenMovingDownInNarrowConsole()
+    {
+        var changes = Enumerable
+            .Range(0, 12)
+            .Select(
+                index =>
+                    new TemplateFileChange(
+                        $"src/Perigon/{new string('a', 160)}-{index}.cs",
+                        new string('o', 500),
+                        new string('n', 500)
+                    )
+            )
+            .ToArray();
+        using var console = new TestConsole()
+            .Interactive()
+            .EmitAnsiSequences()
+            .Width(80)
+            .Height(12);
+        for (var index = 0; index < changes.Length; index++)
+        {
+            console.Input.PushKey(ConsoleKey.DownArrow);
+        }
+
+        console.Input.PushKey(ConsoleKey.Escape);
+
+        var result = await TemplateUpdateSelector.SelectAsync(
+            console,
+            changes,
+            CreateLocalizer(),
+            TestContext.Current.CancellationToken
+        );
+
+        Assert.False(result.ShouldApply);
+        Assert.Contains("█", console.Output);
+        Assert.Contains("…", console.Output);
+    }
+
     private static Localizer CreateLocalizer()
     {
         var localizer = new Mock<IStringLocalizer<Localizer>>();

@@ -592,13 +592,16 @@ public sealed class TemplateComparisonService
             excludeBuildOutput: true
         );
 
-        AddFilesUnder(
-            templateRoot,
-            ".agents",
-            _ => true,
-            files,
-            excludeBuildOutput: false
-        );
+        foreach (var agentDirectory in new[] { ".agent", ".agents" })
+        {
+            AddFilesUnder(
+                templateRoot,
+                agentDirectory,
+                _ => true,
+                files,
+                excludeBuildOutput: false
+            );
+        }
 
         return files.Values;
     }

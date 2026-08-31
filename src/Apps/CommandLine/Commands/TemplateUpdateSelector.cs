@@ -5,29 +5,87 @@ using Spectre.Console.Rendering;
 namespace CommandLine.Commands;
 
 /// <summary>
-/// Tracks the focused file and the files selected for a template update.
+/// A selectable entry in the template update list.
 /// </summary>
-public sealed class TemplateUpdateSelectionState
+public sealed class TemplateUpdateSelectionItem
 {
-    private readonly bool[] _selected;
+    private readonly List<TemplateFileChange> _changes;
 
-    public TemplateUpdateSelectionState(IReadOnlyList<TemplateFileChange> changes)
+    public TemplateUpdateSelectionItem(
+        string displayPath,
+        IReadOnlyList<TemplateFileChange> changes,
+        bool isSkill
+    )
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(displayPath);
         ArgumentNullException.ThrowIfNull(changes);
         if (changes.Count == 0)
         {
             throw new ArgumentException("At least one template change is required.", nameof(changes));
         }
 
-        Changes = changes.ToArray();
-        _selected = new bool[Changes.Count];
+        DisplayPath = displayPath;
+        _changes = changes.ToList();
+        IsSkill = isSkill;
+    }
+
+    public string DisplayPath { get; }
+
+    public IReadOnlyList<TemplateFileChange> Changes => _changes;
+
+    public bool IsSkill { get; }
+
+    public int ChangeCount => _changes.Count;
+
+    public int AddedLines => _changes.Sum(change => change.DiffStats.AddedLines);
+
+    public int RemovedLines => _changes.Sum(change => change.DiffStats.RemovedLines);
+
+    internal void AddChange(TemplateFileChange change)
+    {
+        ArgumentNullException.ThrowIfNull(change);
+        _changes.Add(change);
+    }
+}
+
+/// <summary>
+/// Tracks the focused update item and the files selected for a template update.
+/// </summary>
+public sealed class TemplateUpdateSelectionState
+{
+    private readonly bool[] _selected;
+
+    public TemplateUpdateSelectionState(IReadOnlyList<TemplateFileChange> changes)
+        : this(CreateFileItems(changes))
+    {
+    }
+
+    private TemplateUpdateSelectionState(IReadOnlyList<TemplateUpdateSelectionItem> items)
+    {
+        ArgumentNullException.ThrowIfNull(items);
+        if (items.Count == 0)
+        {
+            throw new ArgumentException("At least one template change is required.", nameof(items));
+        }
+
+        Items = items.ToArray();
+        Changes = Items.SelectMany(item => item.Changes).ToArray();
+        _selected = new bool[Items.Count];
     }
 
     public IReadOnlyList<TemplateFileChange> Changes { get; }
 
+    public IReadOnlyList<TemplateUpdateSelectionItem> Items { get; }
+
     public int CurrentIndex { get; private set; }
 
-    public int SelectedCount => _selected.Count(selected => selected);
+    public int SelectedCount => Items
+        .Select((item, index) => _selected[index] ? item.ChangeCount : 0)
+        .Sum();
+
+    public int TotalChangeCount => Changes.Count;
+
+    public TemplateUpdateSelectionItem CurrentItem => Items[CurrentIndex];
 
     public bool IsSelected(int index)
     {
@@ -42,7 +100,7 @@ public sealed class TemplateUpdateSelectionState
 
     public void MoveNext()
     {
-        CurrentIndex = Math.Min(Changes.Count - 1, CurrentIndex + 1);
+        CurrentIndex = Math.Min(Items.Count - 1, CurrentIndex + 1);
     }
 
     public void MoveFirst()
@@ -52,25 +110,46 @@ public sealed class TemplateUpdateSelectionState
 
     public void MoveLast()
     {
-        CurrentIndex = Changes.Count - 1;
+        CurrentIndex = Items.Count - 1;
     }
 
     public void ToggleCurrent()
     {
+        ValidateIndex(CurrentIndex);
         _selected[CurrentIndex] = !_selected[CurrentIndex];
     }
 
     public IReadOnlyList<TemplateFileChange> GetSelectedChanges()
     {
-        return Changes.Where((_, index) => _selected[index]).ToArray();
+        return Items
+            .SelectMany(
+                (item, index) => _selected[index]
+                    ? item.Changes
+                    : Array.Empty<TemplateFileChange>()
+            )
+            .ToArray();
     }
 
     private void ValidateIndex(int index)
     {
-        if (index < 0 || index >= Changes.Count)
+        if (index < 0 || index >= Items.Count)
         {
             throw new ArgumentOutOfRangeException(nameof(index));
         }
+    }
+
+    internal static TemplateUpdateSelectionState CreateGrouped(
+        IReadOnlyList<TemplateUpdateSelectionItem> items
+    ) => new(items);
+
+    private static IReadOnlyList<TemplateUpdateSelectionItem> CreateFileItems(
+        IReadOnlyList<TemplateFileChange> changes
+    )
+    {
+        ArgumentNullException.ThrowIfNull(changes);
+        return changes
+            .Select(change => new TemplateUpdateSelectionItem(change.RelativePath, [change], isSkill: false))
+            .ToArray();
     }
 }
 
@@ -83,6 +162,9 @@ internal static class TemplateUpdateSelector
 {
     private const int FooterHeight = 4;
     private const int PanelOverhead = 6;
+    private const string SkillRootName = "skills";
+    private const string SkillFilesLocalizationKey = "UpdateSkillFiles";
+    private const string SkillDiffTitleLocalizationKey = "UpdateSkillDiffTitle";
 
     private enum ActivePane
     {
@@ -105,7 +187,7 @@ internal static class TemplateUpdateSelector
             throw new InvalidOperationException(localizer.Get(Localizer.UpdateInteractiveRequired));
         }
 
-        var state = new TemplateUpdateSelectionState(changes);
+        var state = TemplateUpdateSelectionState.CreateGrouped(CreateSelectionItems(changes));
         string? validationMessage = null;
         var diffScrollOffset = 0;
         var activePane = ActivePane.Files;
@@ -158,7 +240,7 @@ internal static class TemplateUpdateSelector
                             {
                                 diffScrollOffset = ScrollDiffByRows(
                                     console,
-                                    state.Changes[state.CurrentIndex],
+                                    state.CurrentItem,
                                     diffScrollOffset,
                                     -1
                                 );
@@ -175,7 +257,7 @@ internal static class TemplateUpdateSelector
                             {
                                 diffScrollOffset = ScrollDiffByRows(
                                     console,
-                                    state.Changes[state.CurrentIndex],
+                                    state.CurrentItem,
                                     diffScrollOffset,
                                     1
                                 );
@@ -204,7 +286,7 @@ internal static class TemplateUpdateSelector
                             {
                                 diffScrollOffset = GetMaximumDiffOffset(
                                     console,
-                                    state.Changes[state.CurrentIndex]
+                                    state.CurrentItem
                                 );
                             }
                             validationMessage = null;
@@ -227,7 +309,7 @@ internal static class TemplateUpdateSelector
                             activePane = ActivePane.Diff;
                             diffScrollOffset = ScrollDiff(
                                 console,
-                                state.Changes[state.CurrentIndex],
+                                state.CurrentItem,
                                 diffScrollOffset,
                                 -1
                             );
@@ -237,7 +319,7 @@ internal static class TemplateUpdateSelector
                             activePane = ActivePane.Diff;
                             diffScrollOffset = ScrollDiff(
                                 console,
-                                state.Changes[state.CurrentIndex],
+                                state.CurrentItem,
                                 diffScrollOffset,
                                 1
                             );
@@ -302,7 +384,7 @@ internal static class TemplateUpdateSelector
                 .Update(
                     CreateDiffPanel(
                         console,
-                        state.Changes[state.CurrentIndex],
+                        state.CurrentItem,
                         localizer,
                         diffScrollOffset,
                         activePane == ActivePane.Diff
@@ -311,7 +393,7 @@ internal static class TemplateUpdateSelector
         );
 
         var footerText = validationMessage
-            ?? localizer.Get(Localizer.UpdateSelectionSummary, state.SelectedCount, state.Changes.Count);
+            ?? localizer.Get(Localizer.UpdateSelectionSummary, state.SelectedCount, state.TotalChangeCount);
         var footer = new Panel(
                 new Markup(
                     $"[yellow]{Markup.Escape(footerText)}[/]\n"
@@ -335,45 +417,56 @@ internal static class TemplateUpdateSelector
     )
     {
         var availableRows = GetPanelContentRows(console);
-        var visibleRows = GetVisibleRows(state.Changes.Count, availableRows);
+        var visibleRows = GetVisibleRows(state.Items.Count, availableRows);
         var start = Math.Clamp(
             state.CurrentIndex - visibleRows / 2,
             0,
-            Math.Max(0, state.Changes.Count - visibleRows)
+            Math.Max(0, state.Items.Count - visibleRows)
         );
-        var end = Math.Min(state.Changes.Count, start + visibleRows);
+        var end = Math.Min(state.Items.Count, start + visibleRows);
         var rows = new List<IRenderable>();
 
         for (var index = start; index < end; index++)
         {
-            var scrollBar = RenderScrollBar(start, visibleRows, state.Changes.Count, index - start);
-            rows.Add(CreateSingleLineMarkup($"{scrollBar} {RenderFileRow(state, index, localizer)}"));
+            var scrollBar = RenderScrollBar(start, visibleRows, state.Items.Count, index - start);
+            rows.Add(
+                CreateSingleLineMarkup(
+                    $"{scrollBar} {RenderSelectionItemRow(console, state, index, localizer)}"
+                )
+            );
         }
 
         return new Panel(new Rows(rows))
             .Header(
                 $"{localizer.Get(Localizer.UpdateSelectionTitle)} "
-                + $"[grey]({start + 1}-{end}/{state.Changes.Count})[/]"
+                + $"[grey]({start + 1}-{end}/{state.Items.Count})[/]"
             )
             .Border(BoxBorder.Rounded)
             .BorderColor(isActive ? Color.Yellow : Color.Grey);
     }
 
-    private static string RenderFileRow(
+    private static string RenderSelectionItemRow(
+        IAnsiConsole console,
         TemplateUpdateSelectionState state,
         int index,
         Localizer localizer
     )
     {
-        var change = state.Changes[index];
+        var item = state.Items[index];
         var isCurrent = state.CurrentIndex == index;
         var cursor = isCurrent ? "[yellow]>[/]" : " ";
         var checkbox = state.IsSelected(index) ? "[green][[x]][/]" : "[grey][[ ]][/]";
-        var kind = change.IsNew ? "[green]+[/]" : "[yellow]~[/]";
-        var path = Markup.Escape(change.RelativePath);
-        var count = change.IsBinary
-            ? $"[grey]{Markup.Escape(localizer.Get(Localizer.UpdateBinaryChange))}[/]"
-            : $"[green]+{change.DiffStats.AddedLines}[/] [red]-{change.DiffStats.RemovedLines}[/]";
+        var kind = item.IsSkill
+            ? "[cyan]◆[/]"
+            : item.Changes[0].IsNew ? "[green]+[/]" : "[yellow]~[/]";
+        var displayPath = item.IsSkill ? GetSkillName(item.DisplayPath) : item.DisplayPath;
+        var pathBudget = GetFilePathWidth(console, item);
+        var path = Markup.Escape(TruncateText(displayPath, pathBudget));
+        var count = item.IsSkill
+            ? $"[grey]{Markup.Escape(localizer.Get(SkillFilesLocalizationKey, item.ChangeCount))}[/]"
+            : item.Changes[0].IsBinary
+                ? $"[grey]{Markup.Escape(localizer.Get(Localizer.UpdateBinaryChange))}[/]"
+                : $"[green]+{item.AddedLines}[/] [red]-{item.RemovedLines}[/]";
         var row = $"{cursor} {checkbox} {kind} {path} ({count})";
 
         return isCurrent ? $"[bold]{row}[/]" : row;
@@ -381,13 +474,13 @@ internal static class TemplateUpdateSelector
 
     private static Panel CreateDiffPanel(
         IAnsiConsole console,
-        TemplateFileChange change,
+        TemplateUpdateSelectionItem item,
         Localizer localizer,
         int diffScrollOffset,
         bool isActive
     )
     {
-        var lines = GetDiffLines(change);
+        var lines = GetDiffLines(item);
         var availableRows = GetPanelContentRows(console);
         var visibleRows = GetVisibleRows(lines.Length, availableRows);
         var maxOffset = Math.Max(0, lines.Length - visibleRows);
@@ -398,30 +491,106 @@ internal static class TemplateUpdateSelector
         for (var index = start; index < end; index++)
         {
             var scrollBar = RenderScrollBar(start, visibleRows, lines.Length, index - start);
-            rows.Add(CreateSingleLineMarkup($"{scrollBar} {RenderDiffLine(lines[index])}"));
+            rows.Add(
+                CreateSingleLineMarkup(
+                    $"{scrollBar} {RenderDiffLine(lines[index], GetDiffContentWidth(console))}"
+                )
+            );
         }
 
         var range = lines.Length == 0 ? "0/0" : $"{start + 1}-{end}/{lines.Length}";
+        var titleKey = item.IsSkill ? SkillDiffTitleLocalizationKey : Localizer.UpdateDiffTitle;
+        var itemInfo = item.IsSkill
+            ? $", {localizer.Get(SkillFilesLocalizationKey, item.ChangeCount)}"
+            : string.Empty;
         var title =
-            $"{localizer.Get(Localizer.UpdateDiffTitle)} "
-            + $"{Markup.Escape(change.RelativePath)} [grey]({range})[/]";
+            $"{localizer.Get(titleKey)} "
+            + $"{Markup.Escape(item.DisplayPath)} "
+            + $"[grey]({range}{itemInfo})[/]";
         return new Panel(new Rows(rows))
             .Header(title)
             .Border(BoxBorder.Rounded)
             .BorderColor(isActive ? Color.Yellow : Color.Grey);
     }
 
+    private static string[] GetDiffLines(TemplateUpdateSelectionItem item)
+    {
+        var lines = new List<string>();
+        foreach (var change in item.Changes)
+        {
+            if (lines.Count > 0)
+            {
+                lines.Add(string.Empty);
+            }
+
+            lines.AddRange(GetDiffLines(change));
+        }
+
+        return lines.Count == 0 ? [string.Empty] : lines.ToArray();
+    }
+
     private static string[] GetDiffLines(TemplateFileChange change) =>
         change.Diff.Split(["\r\n", "\n", "\r"], StringSplitOptions.None);
 
+    private static IReadOnlyList<TemplateUpdateSelectionItem> CreateSelectionItems(
+        IReadOnlyList<TemplateFileChange> changes
+    )
+    {
+        var items = new List<TemplateUpdateSelectionItem>();
+        var skillItems = new Dictionary<string, TemplateUpdateSelectionItem>(
+            StringComparer.OrdinalIgnoreCase
+        );
+
+        foreach (var change in changes)
+        {
+            if (!TryGetSkillRoot(change.RelativePath, out var skillRoot))
+            {
+                items.Add(new TemplateUpdateSelectionItem(change.RelativePath, [change], isSkill: false));
+                continue;
+            }
+
+            if (!skillItems.TryGetValue(skillRoot, out var skillItem))
+            {
+                skillItem = new TemplateUpdateSelectionItem(skillRoot, [change], isSkill: true);
+                skillItems.Add(skillRoot, skillItem);
+                items.Add(skillItem);
+            }
+            else
+            {
+                skillItem.AddChange(change);
+            }
+        }
+
+        return items;
+    }
+
+    private static bool TryGetSkillRoot(string relativePath, out string skillRoot)
+    {
+        var parts = relativePath
+            .Replace('\\', '/')
+            .Split('/', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length < 4
+            || (!parts[0].Equals(".agent", StringComparison.OrdinalIgnoreCase)
+                && !parts[0].Equals(".agents", StringComparison.OrdinalIgnoreCase))
+            || !parts[1].Equals(SkillRootName, StringComparison.OrdinalIgnoreCase)
+            || string.IsNullOrWhiteSpace(parts[2]))
+        {
+            skillRoot = string.Empty;
+            return false;
+        }
+
+        skillRoot = $"{parts[0]}/{parts[1]}/{parts[2]}";
+        return true;
+    }
+
     private static int ScrollDiff(
         IAnsiConsole console,
-        TemplateFileChange change,
+        TemplateUpdateSelectionItem item,
         int currentOffset,
         int pageDirection
     )
     {
-        var lines = GetDiffLines(change);
+        var lines = GetDiffLines(item);
         var visibleRows = GetVisibleRows(
             lines.Length,
             GetPanelContentRows(console)
@@ -433,7 +602,7 @@ internal static class TemplateUpdateSelector
 
     private static int ScrollDiffByRows(
         IAnsiConsole console,
-        TemplateFileChange change,
+        TemplateUpdateSelectionItem item,
         int currentOffset,
         int rowDelta
     )
@@ -441,13 +610,13 @@ internal static class TemplateUpdateSelector
         return Math.Clamp(
             currentOffset + rowDelta,
             0,
-            GetMaximumDiffOffset(console, change)
+            GetMaximumDiffOffset(console, item)
         );
     }
 
-    private static int GetMaximumDiffOffset(IAnsiConsole console, TemplateFileChange change)
+    private static int GetMaximumDiffOffset(IAnsiConsole console, TemplateUpdateSelectionItem item)
     {
-        var lineCount = GetDiffLines(change).Length;
+        var lineCount = GetDiffLines(item).Length;
         return Math.Max(
             0,
             lineCount - GetVisibleRows(lineCount, GetPanelContentRows(console))
@@ -466,7 +635,7 @@ internal static class TemplateUpdateSelector
     {
         if (totalRows <= visibleRows)
         {
-            return " ";
+            return "[grey]│[/]";
         }
 
         var thumbSize = Math.Max(1, (int)Math.Round((double)visibleRows * visibleRows / totalRows));
@@ -480,8 +649,74 @@ internal static class TemplateUpdateSelector
             : "[grey]│[/]";
     }
 
-    private static Markup CreateSingleLineMarkup(string content) =>
-        new(content) { Overflow = Overflow.Ellipsis };
+    private static Markup CreateSingleLineMarkup(string content) => new(content);
+
+    private static int GetFilePathWidth(
+        IAnsiConsole console,
+        TemplateUpdateSelectionItem item
+    )
+    {
+        var fixedWidth = item.IsSkill ? 14 : 18;
+        return Math.Max(8, GetFilePanelContentWidth(console) - fixedWidth);
+    }
+
+    private static string GetSkillName(string skillRoot)
+    {
+        var parts = skillRoot.Split('/', StringSplitOptions.RemoveEmptyEntries);
+        return parts.LastOrDefault() ?? skillRoot;
+    }
+
+    private static int GetFilePanelContentWidth(IAnsiConsole console)
+    {
+        var totalWidth = GetConsoleWidth(console);
+        var filePanelWidth = Math.Max(30, totalWidth / 4);
+        return Math.Max(8, filePanelWidth - 4);
+    }
+
+    private static int GetDiffContentWidth(IAnsiConsole console)
+    {
+        var totalWidth = GetConsoleWidth(console);
+        var filePanelWidth = Math.Max(30, totalWidth / 4);
+        var diffPanelWidth = Math.Max(50, totalWidth - filePanelWidth);
+        return Math.Max(8, diffPanelWidth - 4);
+    }
+
+    private static int GetConsoleWidth(IAnsiConsole console)
+    {
+        var width = console.Profile.Width;
+        if (console.Profile.Out.IsTerminal && !Console.IsOutputRedirected)
+        {
+            try
+            {
+                width = Math.Min(width, Console.WindowWidth);
+            }
+            catch (IOException)
+            {
+                // Some terminals do not expose a window size. Keep the profile size.
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                // The terminal can be resized while the selector is rendering.
+            }
+        }
+
+        return Math.Max(1, width);
+    }
+
+    private static string TruncateText(string text, int maxWidth)
+    {
+        if (maxWidth <= 0)
+        {
+            return string.Empty;
+        }
+
+        if (text.Length <= maxWidth)
+        {
+            return text;
+        }
+
+        return maxWidth == 1 ? "…" : text[..(maxWidth - 1)] + "…";
+    }
 
     private static int GetPanelContentRows(IAnsiConsole console)
     {
@@ -505,9 +740,9 @@ internal static class TemplateUpdateSelector
         return Math.Max(1, height - FooterHeight - PanelOverhead);
     }
 
-    private static string RenderDiffLine(string line)
+    private static string RenderDiffLine(string line, int maxWidth)
     {
-        var escaped = Markup.Escape(line);
+        var escaped = Markup.Escape(TruncateText(line, maxWidth));
         if (line.StartsWith("---", StringComparison.Ordinal)
             || line.StartsWith("+++", StringComparison.Ordinal))
         {

@@ -107,6 +107,27 @@ public sealed class TemplateUpdateServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task CompareAsync_ShouldIncludeSingularAgentSkillsDirectory()
+    {
+        var cancellationToken = TestContext.Current.CancellationToken;
+        var projectRoot = Path.Combine(_root, "project");
+        var templateRoot = Path.Combine(_root, "template");
+        Directory.CreateDirectory(projectRoot);
+        Directory.CreateDirectory(templateRoot);
+
+        await WriteAsync(templateRoot, ".agent/skills/update/SKILL.md", "new skill");
+
+        var changes = await new TemplateComparisonService().CompareAsync(
+            projectRoot,
+            templateRoot,
+            cancellationToken
+        );
+
+        var change = Assert.Single(changes);
+        Assert.Equal(".agent/skills/update/SKILL.md", change.RelativePath);
+    }
+
+    [Fact]
     public void TemplateFileChange_ShouldReportMeaningfulLineStats()
     {
         var change = new TemplateFileChange(
