@@ -116,7 +116,13 @@ try {
         New-Item -ItemType Directory -Path $agentStagingPath -Force | Out-Null
 
         $agentEntries = @(
-            ".agents/skills/perigon"
+            ".agents/skills/perigon",
+            ".agents/skills/code-review",
+            ".agents/skills/commit-message",
+            ".agents/skills/delivery-loop",
+            ".agents/skills/docs",
+            ".agents/skills/test",
+            "docs"
         )
 
         foreach ($entry in $agentEntries) {

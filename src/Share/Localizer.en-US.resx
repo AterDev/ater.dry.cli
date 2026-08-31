@@ -742,7 +742,19 @@
     <value>Model Context Protocol tools</value>
   </data>
   <data name="McpInitDes" xml:space="preserve">
-    <value>Initialize and write MCP stdio config to .vscode/mcp.json</value>
+    <value>Add perigon MCP/Skill/Loop spec support</value>
+  </data>
+  <data name="AgentInitSelectActions" xml:space="preserve">
+    <value>Select agent setup actions</value>
+  </data>
+  <data name="AgentInitMcpChoiceDescription" xml:space="preserve">
+    <value>add mcp.json to .agents</value>
+  </data>
+  <data name="AgentInitSkillChoiceDescription" xml:space="preserve">
+    <value>add Perigon Skill</value>
+  </data>
+  <data name="AgentInitLoopSpecChoiceDescription" xml:space="preserve">
+    <value>add skills and doc structure for Loop spec</value>
   </data>
   <data name="AgentMcpDes" xml:space="preserve">
     <value>Start MCP server with stdio transport</value>
