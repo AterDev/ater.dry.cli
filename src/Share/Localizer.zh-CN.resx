@@ -748,7 +748,19 @@
     <value>Model Context Protocol 工具</value>
   </data>
   <data name="McpInitDes" xml:space="preserve">
-    <value>初始化并写入 MCP stdio 配置到 .vscode/mcp.json</value>
+    <value>添加 perigon mcp/skill/loop spec 支持</value>
+  </data>
+  <data name="AgentInitSelectActions" xml:space="preserve">
+    <value>选择 agent 初始化操作</value>
+  </data>
+  <data name="AgentInitMcpChoiceDescription" xml:space="preserve">
+    <value>添加 mcp.json 到 .agents</value>
+  </data>
+  <data name="AgentInitSkillChoiceDescription" xml:space="preserve">
+    <value>添加 Perigon Skill</value>
+  </data>
+  <data name="AgentInitLoopSpecChoiceDescription" xml:space="preserve">
+    <value>添加 Loop spec 所需的 skills 和 docs 结构</value>
   </data>
   <data name="AgentMcpDes" xml:space="preserve">
     <value>通过 stdio 传输启动 MCP 服务</value>
