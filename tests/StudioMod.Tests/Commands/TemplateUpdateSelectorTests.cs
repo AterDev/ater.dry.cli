@@ -11,6 +11,24 @@ namespace CoreMod.Tests.Commands;
 public sealed class TemplateUpdateSelectorTests
 {
     [Fact]
+    public void FileListDisplayPath_ShouldUseOnlyTheFileName()
+    {
+        var item = new TemplateUpdateSelectionItem(
+            "src/Perigon/Perigon.AspNetCore/Long/Changed.cs",
+            [
+                new TemplateFileChange(
+                    "src/Perigon/Perigon.AspNetCore/Long/Changed.cs",
+                    "old",
+                    "new"
+                ),
+            ],
+            isSkill: false
+        );
+
+        Assert.Equal("Changed.cs", TemplateUpdateSelector.GetFileListDisplayPath(item));
+    }
+
+    [Fact]
     public void SelectionState_ShouldToggleAndReturnSelectedChangesInFileOrder()
     {
         var first = new TemplateFileChange("first.cs", "old", "new");

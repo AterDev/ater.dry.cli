@@ -37,7 +37,6 @@ public class AgentMcpCommand : AsyncCommand
         builder.Services.AddScoped<CodeGenService>();
         builder.Services.AddScoped<CommandService>();
         builder.Services.AddScoped<EntityInfoManager>();
-        builder.Services.AddScoped<GenActionManager>();
         builder.Services.AddScoped<ActionRunModelService>();
 
         builder.Services

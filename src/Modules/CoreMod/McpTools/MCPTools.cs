@@ -1,5 +1,4 @@
 using CoreMod.Managers;
-using CoreMod.Models.GenActionDtos;
 using CoreMod.Services;
 using ModelContextProtocol.Server;
 
@@ -13,7 +12,6 @@ public class MCPTools(
     ILogger<MCPTools> logger,
     EntityInfoManager manager,
     SolutionService solutionService,
-    GenActionManager genAction,
     DefaultDbContext dbContext,
     SolutionContext projectContext,
     CommandService commandService,
@@ -153,50 +151,6 @@ public class MCPTools(
             return ex.Message + ex.StackTrace;
         }
     }
-
-
-    [McpServerTool, Description("execute generate task")]
-    public async Task<string> ExecuteGenerateTaskAsync(McpServer server,
-        [Description("the generate task id")] int? taskId,
-        [Description("the entity model file absolute path")] string entityPath
-        )
-    {
-        if (taskId == null)
-        {
-            var actions = dbContext.GenActions.Select(s => new
-            {
-                s.Id,
-                s.Name,
-                s.Description
-            }).ToList();
-            var actionJson = JsonSerializer.Serialize(actions);
-            return "需要提供任务id，请根据用户描述选择对应的任务，选择对应的任务id后重试:" + actionJson;
-        }
-        await SetProjectContextAsync(server);
-        try
-        {
-            var dto = new GenActionRunDto
-            {
-                Id = taskId.Value,
-                SourceFilePath = entityPath,
-                OnlyOutput = false
-            };
-            var res = await genAction.ExecuteActionAsync(dto);
-            return res.ErrorMsg ?? "generate success";
-        }
-        catch (Exception ex)
-        {
-            logger.LogError("{ex}", ex);
-            return "generate error:：" + ex.Message;
-        }
-        finally
-        {
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-        }
-
-    }
-
 
 
     /// <summary>

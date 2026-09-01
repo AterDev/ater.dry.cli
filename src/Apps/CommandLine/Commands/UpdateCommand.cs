@@ -52,6 +52,8 @@ public sealed class UpdateCommand(
                 selection.Changes,
                 cancellationToken
             );
+            OutputHelper.Info(localizer.Get(Localizer.UpdateBuilding));
+            await templateUpdateService.BuildAsync(plan, cancellationToken);
             OutputHelper.Success(localizer.Get(Localizer.UpdateSuccess, selection.Changes.Count));
             return 0;
         }

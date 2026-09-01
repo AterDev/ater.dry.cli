@@ -46,10 +46,12 @@ public sealed class TemplateUpdateServiceTests : IDisposable
         await WriteAsync(templateRoot, "src/Definition/ServiceDefaults/Existing.cs", "new");
         await WriteAsync(templateRoot, "src/Definition/Share/Added.cs", "added");
         await WriteAsync(templateRoot, "src/Definition/EntityFramework/Extensions.cs", "new");
+        await WriteAsync(templateRoot, "src/Definition/EntityFramework/Migrations/Initial.cs", "must ignore");
         await WriteAsync(templateRoot, "src/Definition/EntityFramework/DefaultDbContext.cs", "must ignore");
         await WriteAsync(templateRoot, "src/Definition/EntityFramework/AppDbContext/AnalysisDbContext.cs", "must ignore");
         await WriteAsync(templateRoot, "src/Definition/EntityFramework/AppDbContext/ReadonlyDbContext.cs", "must ignore");
         await WriteAsync(templateRoot, "src/Services/NotManaged.cs", "must ignore");
+        await WriteAsync(templateRoot, "src/Perigon/Perigon.AspNetCore/Constants/WebConst.cs", "must ignore");
         await WriteAsync(templateRoot, "scripts/New.ps1", "new script");
         await WriteAsync(projectRoot, "scripts/Existing.ps1", "project only");
         await WriteAsync(templateRoot, ".agents/skills/update/SKILL.md", "new skill");
@@ -336,6 +338,60 @@ public sealed class TemplateUpdateServiceTests : IDisposable
         );
     }
 
+    [Fact]
+    public async Task BuildAsync_ShouldBuildTheUpdatedSolution()
+    {
+        var projectRoot = Path.Combine(_root, "project");
+        var templateRoot = Path.Combine(_root, "template");
+        Directory.CreateDirectory(projectRoot);
+        Directory.CreateDirectory(templateRoot);
+        var runner = new RecordingCommandRunner();
+        var context = new SolutionContext(new ServiceCollection().BuildServiceProvider())
+        {
+            SolutionPath = projectRoot,
+        };
+        var service = new TemplateUpdateService(
+            context,
+            new TemplateComparisonService(),
+            runner,
+            NullLogger<TemplateUpdateService>.Instance
+        );
+        using var plan = new TemplateUpdatePlan(projectRoot, templateRoot, [], _root);
+
+        await service.BuildAsync(plan, TestContext.Current.CancellationToken);
+
+        var call = Assert.Single(runner.Calls);
+        Assert.Equal("dotnet", call.Command);
+        Assert.Equal(["build"], call.Arguments);
+        Assert.Equal(projectRoot, call.WorkingDirectory);
+    }
+
+    [Fact]
+    public async Task BuildAsync_ShouldReportBuildOutputWhenCompilationFails()
+    {
+        var projectRoot = Path.Combine(_root, "project");
+        var templateRoot = Path.Combine(_root, "template");
+        Directory.CreateDirectory(projectRoot);
+        Directory.CreateDirectory(templateRoot);
+        var context = new SolutionContext(new ServiceCollection().BuildServiceProvider())
+        {
+            SolutionPath = projectRoot,
+        };
+        var service = new TemplateUpdateService(
+            context,
+            new TemplateComparisonService(),
+            new FailedBuildCommandRunner(),
+            NullLogger<TemplateUpdateService>.Instance
+        );
+        using var plan = new TemplateUpdatePlan(projectRoot, templateRoot, [], _root);
+
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => service.BuildAsync(plan, TestContext.Current.CancellationToken)
+        );
+
+        Assert.Contains("compiler error", exception.Message);
+    }
+
     private static async Task WriteAsync(string root, string relativePath, string content)
     {
         var path = Path.Combine(root, relativePath.Replace('/', Path.DirectorySeparatorChar));
@@ -391,6 +447,11 @@ public sealed class TemplateUpdateServiceTests : IDisposable
                 return Task.FromResult(new CommandExecutionResult(0, "updated"));
             }
 
+            if (arguments.SequenceEqual(["build"]))
+            {
+                return Task.FromResult(new CommandExecutionResult(0, "build succeeded"));
+            }
+
             if (arguments.Count >= 2
                 && arguments[0] == "new"
                 && (arguments[1] == ConstVal.WebApi || arguments[1] == ConstVal.Mini))
@@ -404,6 +465,16 @@ public sealed class TemplateUpdateServiceTests : IDisposable
 
             throw new InvalidOperationException($"Unexpected command: {command} {string.Join(' ', arguments)}");
         }
+    }
+
+    private sealed class FailedBuildCommandRunner : ICommandRunner
+    {
+        public Task<CommandExecutionResult> RunAsync(
+            string command,
+            IReadOnlyList<string> arguments,
+            string? workingDirectory = null,
+            CancellationToken cancellationToken = default
+        ) => Task.FromResult(new CommandExecutionResult(1, "compiler error"));
     }
 
     private sealed record CommandCall(

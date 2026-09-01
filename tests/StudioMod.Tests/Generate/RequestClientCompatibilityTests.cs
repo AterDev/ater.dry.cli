@@ -42,7 +42,10 @@ public class RequestClientCompatibilityTests
     {
         // Arrange
         var fixturePath = Path.Combine(AppContext.BaseDirectory, "Generate", "Fixtures", "request-client-tag-spaces.openapi.json");
-        var (doc, _) = await OpenApiDocument.LoadAsync(fixturePath);
+        var (doc, _) = await OpenApiDocument.LoadAsync(
+            fixturePath,
+            token: TestContext.Current.CancellationToken
+        );
         Assert.NotNull(doc);
 
         // Act
@@ -201,7 +204,10 @@ public class RequestClientCompatibilityTests
     {
         // Arrange
         var fixturePath = Path.Combine(AppContext.BaseDirectory, "Generate", "Fixtures", "request-client-no-content.openapi.json");
-        var (doc, _) = await OpenApiDocument.LoadAsync(fixturePath);
+        var (doc, _) = await OpenApiDocument.LoadAsync(
+            fixturePath,
+            token: TestContext.Current.CancellationToken
+        );
         Assert.NotNull(doc);
 
         // Act
@@ -268,7 +274,10 @@ public class RequestClientCompatibilityTests
         var fixturePath = Path.Combine(AppContext.BaseDirectory, "Generate", "Fixtures", "request-client-special.openapi.json");
         Assert.True(File.Exists(fixturePath), $"Fixture not found: {fixturePath}");
 
-        var (doc, _) = await OpenApiDocument.LoadAsync(fixturePath);
+        var (doc, _) = await OpenApiDocument.LoadAsync(
+            fixturePath,
+            token: TestContext.Current.CancellationToken
+        );
         Assert.NotNull(doc);
 
         // Act - C#
@@ -311,7 +320,10 @@ public class RequestClientCompatibilityTests
         var fixturePath = Path.Combine(AppContext.BaseDirectory, "Generate", "Fixtures", "request-client-upload.openapi.json");
         Assert.True(File.Exists(fixturePath), $"Fixture not found: {fixturePath}");
 
-        var (doc, _) = await OpenApiDocument.LoadAsync(fixturePath);
+        var (doc, _) = await OpenApiDocument.LoadAsync(
+            fixturePath,
+            token: TestContext.Current.CancellationToken
+        );
         Assert.NotNull(doc);
 
         // Act
@@ -346,7 +358,10 @@ public class RequestClientCompatibilityTests
         var fixturePath = Path.Combine(AppContext.BaseDirectory, "Generate", "Fixtures", "request-client-upload.openapi31.json");
         Assert.True(File.Exists(fixturePath), $"Fixture not found: {fixturePath}");
 
-        var (doc, _) = await OpenApiDocument.LoadAsync(fixturePath);
+        var (doc, _) = await OpenApiDocument.LoadAsync(
+            fixturePath,
+            token: TestContext.Current.CancellationToken
+        );
         Assert.NotNull(doc);
 
         // Act

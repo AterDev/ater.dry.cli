@@ -121,7 +121,10 @@ public class SampleDbContext : ContextBase
 }
 public class TestEntity { }
 ";
-        var syntaxTree = CSharpSyntaxTree.ParseText(dbContextSource);
+        var syntaxTree = CSharpSyntaxTree.ParseText(
+            dbContextSource,
+            cancellationToken: TestContext.Current.CancellationToken
+        );
         var references = new[]
         {
             MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
@@ -133,7 +136,10 @@ public class TestEntity { }
             references,
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
         );
-        var emitResult = compilation.Emit(efDllPath);
+        var emitResult = compilation.Emit(
+            efDllPath,
+            cancellationToken: TestContext.Current.CancellationToken
+        );
         Assert.True(emitResult.Success, string.Join(";", emitResult.Diagnostics));
 
         // Act

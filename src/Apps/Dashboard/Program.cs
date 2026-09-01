@@ -16,10 +16,7 @@ builder.AddBlazorServices();
 
 builder.Services.AddScoped<SolutionManager>();
 builder.Services.AddScoped<EntityInfoManager>();
-builder.Services.AddScoped<GenActionManager>();
-builder.Services.AddScoped<GenStepManager>();
 builder.Services.AddScoped<ApiDocInfoManager>();
-builder.Services.AddScoped<McpToolManager>();
 builder.Services.AddScoped<ToolsManager>();
 
 // services
@@ -30,7 +27,6 @@ builder.Services.AddScoped<CommandService>();
 builder.Services.AddScoped<SolutionService>();
 builder.Services.AddScoped<OfficialModuleService>();
 builder.Services.AddScoped<ModuleInstallService>();
-builder.Services.AddScoped<ActionRunModelService>();
 builder.Services.AddSingleton<StorageService>();
 
 

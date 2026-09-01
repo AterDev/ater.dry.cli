@@ -193,7 +193,10 @@
     <value>Update cancelled; the current project was not changed.</value>
   </data>
   <data name="UpdateSuccess" xml:space="preserve">
-    <value>Template update completed; {0} file(s) updated.</value>
+    <value>Template update completed; {0} file(s) updated and the solution build succeeded.</value>
+  </data>
+  <data name="UpdateBuilding" xml:space="preserve">
+    <value>Files updated. Building the solution...</value>
   </data>
   <data name="UpdateFailed" xml:space="preserve">
     <value>Template update failed: {0}</value>

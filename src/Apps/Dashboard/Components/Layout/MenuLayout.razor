@@ -34,57 +34,6 @@
           </FluentNavLink>
         </ChildContent>
       </FluentNavGroup>
-      <FluentNavGroup Icon="@(new Icons.Regular.Size24.BrainCircuit())"
-                      Expanded="true"
-                      Gap="0">
-        <TitleTemplate>
-          <FluentLabel Typo="Typography.Subject">@Localizer.Get(Localizer.CodeGen)</FluentLabel>
-        </TitleTemplate>
-        <ChildContent>
-          <FluentNavLink Icon="@(new Icons.Regular.Size24.TaskListLtr())"
-                         Href='@($"/codegen/task")'>
-            <FluentLabel Typo="Typography.Subject">
-
-              @Localizer.Get(Localizer.Generate)@Localizer.Get(Localizer.Task)
-            </FluentLabel>
-          </FluentNavLink>
-
-          <FluentNavLink Icon="@(new Icons.Regular.Size24.LinkSquare())"
-                         Href='@($"/codegen/mcp")'>
-
-            <FluentLabel Typo="Typography.Subject">
-              @Localizer.Get(Localizer.MCP)
-            </FluentLabel>
-          </FluentNavLink>
-        </ChildContent>
-
-      </FluentNavGroup>
-      <FluentNavGroup Icon="@(new Icons.Regular.Size24.BookNumber())"
-                      Expanded="true"
-                      Gap="0">
-        <TitleTemplate>
-          <FluentLabel Typo="Typography.Subject">
-            @Localizer.Get(Localizer.Data)@Localizer.Get(Localizer.Manage)
-          </FluentLabel>
-        </TitleTemplate>
-        <ChildContent>
-          <FluentNavLink Icon="@(new Icons.Regular.Size24.DocumentCopy())"
-                         Href='@($"/data/template")'>
-            <FluentLabel Typo="Typography.Subject">
-              @Localizer.Get(Localizer.Template)
-            </FluentLabel>
-          </FluentNavLink>
-
-          <FluentNavLink Icon="@(new Icons.Regular.Size24.Prompt())"
-                         Href='@($"/data/prompt")'>
-            <FluentLabel Typo="Typography.Subject">
-              @Localizer.Get(Localizer.Prompt)
-            </FluentLabel>
-          </FluentNavLink>
-        </ChildContent>
-
-      </FluentNavGroup>
-
     </FluentNavMenu>
   </div>
   <div class="col" style="height:calc(100vh - 56px);overflow-y:auto">

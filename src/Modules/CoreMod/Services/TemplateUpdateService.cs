@@ -360,6 +360,9 @@ public sealed class TemplateComparisonService
         "ReadonlyDbContext.cs",
     ];
 
+    private const string ExcludedWebConstPath =
+        "src/Perigon/Perigon.AspNetCore/Constants/WebConst.cs";
+
     public async Task<IReadOnlyList<TemplateFileChange>> CompareAsync(
         string projectRoot,
         string templateRoot,
@@ -548,7 +551,9 @@ public sealed class TemplateComparisonService
         AddFilesUnder(
             templateRoot,
             Path.Combine(ConstVal.SrcDir, ConstVal.PerigonDir),
-            file => file.EndsWith(".cs", StringComparison.OrdinalIgnoreCase),
+            file => file.EndsWith(".cs", StringComparison.OrdinalIgnoreCase)
+                && !NormalizeRelativePath(Path.GetRelativePath(templateRoot, file))
+                    .Equals(ExcludedWebConstPath, StringComparison.OrdinalIgnoreCase),
             files,
             excludeBuildOutput: true
         );
@@ -576,6 +581,16 @@ public sealed class TemplateComparisonService
             templateRoot,
             Path.Combine(ConstVal.SrcDir, ConstVal.DefinitionDir, ConstVal.EntityFrameworkName),
             file => file.EndsWith(".cs", StringComparison.OrdinalIgnoreCase)
+                && !IsUnderDirectory(
+                    Path.Combine(
+                        templateRoot,
+                        ConstVal.SrcDir,
+                        ConstVal.DefinitionDir,
+                        ConstVal.EntityFrameworkName,
+                        "Migrations"
+                    ),
+                    file
+                )
                 && !ExcludedEntityFrameworkFiles.Contains(
                     Path.GetFileName(file),
                     StringComparer.OrdinalIgnoreCase
@@ -644,6 +659,20 @@ public sealed class TemplateComparisonService
             .Split([Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar], StringSplitOptions.RemoveEmptyEntries)
             .Any(part => part.Equals("bin", StringComparison.OrdinalIgnoreCase)
                 || part.Equals("obj", StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static bool IsUnderDirectory(string directory, string file)
+    {
+        var normalizedDirectory = Path.GetFullPath(directory)
+            .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        var normalizedFile = Path.GetFullPath(file);
+        var comparison = OperatingSystem.IsWindows()
+            ? StringComparison.OrdinalIgnoreCase
+            : StringComparison.Ordinal;
+        return normalizedFile.StartsWith(
+            normalizedDirectory + Path.DirectorySeparatorChar,
+            comparison
+        );
     }
 
     private static string GetSafePath(string root, string relativePath)
@@ -819,6 +848,33 @@ public sealed class TemplateUpdateService(
     )
     {
         await ApplyAsync(plan, plan.Changes, cancellationToken);
+    }
+
+    public async Task BuildAsync(
+        TemplateUpdatePlan plan,
+        CancellationToken cancellationToken = default
+    )
+    {
+        ArgumentNullException.ThrowIfNull(plan);
+
+        var result = await commandRunner.RunAsync(
+            "dotnet",
+            ["build"],
+            plan.ProjectRoot,
+            cancellationToken
+        );
+        if (!result.Succeeded)
+        {
+            logger.LogError(
+                "Failed to build the updated solution {ProjectRoot}. ExitCode={ExitCode}; Output={Output}",
+                plan.ProjectRoot,
+                result.ExitCode,
+                result.Output
+            );
+            throw new InvalidOperationException(
+                $"dotnet build failed: {FormatCommandOutput(result)}"
+            );
+        }
     }
 
     public async Task ApplyAsync(

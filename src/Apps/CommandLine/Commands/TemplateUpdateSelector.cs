@@ -459,7 +459,7 @@ internal static class TemplateUpdateSelector
         var kind = item.IsSkill
             ? "[cyan]◆[/]"
             : item.Changes[0].IsNew ? "[green]+[/]" : "[yellow]~[/]";
-        var displayPath = item.IsSkill ? GetSkillName(item.DisplayPath) : item.DisplayPath;
+        var displayPath = GetFileListDisplayPath(item);
         var pathBudget = GetFilePathWidth(console, item);
         var path = Markup.Escape(TruncateText(displayPath, pathBudget));
         var count = item.IsSkill
@@ -664,6 +664,14 @@ internal static class TemplateUpdateSelector
     {
         var parts = skillRoot.Split('/', StringSplitOptions.RemoveEmptyEntries);
         return parts.LastOrDefault() ?? skillRoot;
+    }
+
+    internal static string GetFileListDisplayPath(TemplateUpdateSelectionItem item)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+        return item.IsSkill
+            ? GetSkillName(item.DisplayPath)
+            : Path.GetFileName(item.DisplayPath.Replace('/', Path.DirectorySeparatorChar));
     }
 
     private static int GetFilePanelContentWidth(IAnsiConsole console)
