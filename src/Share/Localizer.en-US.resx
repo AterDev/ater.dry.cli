@@ -696,6 +696,9 @@
   <data name="PackageCreated" xml:space="preserve">
     <value>Module package created: {0}</value>
   </data>
+  <data name="PackageVersionDefaultWarning" xml:space="preserve">
+    <value>Package version was not provided; using default version {0}.</value>
+  </data>
   <data name="PackageInstalled" xml:space="preserve">
     <value>Module package installed: {0}</value>
   </data>

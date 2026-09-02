@@ -101,6 +101,12 @@ perigon agent mcp
 
 或者使用`perigon [command] --help` 查看具体命令帮助信息。
 
+打包模块时可以通过`-v`或`--version`指定写入安装包的版本号；省略时默认使用`1.0.0`并显示警告：
+
+```pwsh
+perigon module pack FileManagerMod AdminService --version 1.2.0
+```
+
 ## 📄 文档
 
 [官方文档](https://www.dusi.dev/docs/Perigon.html)

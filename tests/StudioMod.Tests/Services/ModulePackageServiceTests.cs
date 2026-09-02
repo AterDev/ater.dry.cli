@@ -43,8 +43,32 @@ public class ModulePackageServiceTests
         Assert.Equal("Perigon", result.Metadata.Author);
         Assert.Equal("CMSMod", result.Metadata.DisplayName);
         Assert.Equal("包含内容管理相关功能", result.Metadata.Description);
+        Assert.Equal(PackageMetadata.DefaultVersion, result.Metadata.Version);
         Assert.DoesNotContain("UseSelfServices", JsonSerializer.Serialize(result.Metadata));
         Assert.Null(result.Metadata.Frontend);
+    }
+
+    [Fact]
+    public async Task PackageModuleAsync_ShouldUseExplicitVersion()
+    {
+        var result = await RunPackageAsync(
+            """
+            namespace CMSMod;
+
+            [DisplayName("Perigon::CMSMod")]
+            public static class ModuleExtensions
+            {
+                public static IHostApplicationBuilder AddCMSMod(this IHostApplicationBuilder builder)
+                {
+                    return builder;
+                }
+            }
+            """,
+            version: "1.1.0"
+        );
+
+        Assert.NotNull(result.Metadata);
+        Assert.Equal("1.1.0", result.Metadata!.Version);
     }
 
     [Fact]
@@ -277,7 +301,8 @@ public class ModulePackageServiceTests
 
     private static async Task<PackageResult> RunPackageAsync(
         string moduleExtensionsContent,
-        string? frontendPackageJson = null
+        string? frontendPackageJson = null,
+        string? version = null
     )
     {
         var root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
@@ -342,7 +367,12 @@ public class ModulePackageServiceTests
 
         try
         {
-            var packagePath = await service.PackageModuleAsync("CMSMod", "AdminService", frontendPath);
+            var packagePath = await service.PackageModuleAsync(
+                "CMSMod",
+                "AdminService",
+                frontendPath,
+                version
+            );
             Assert.NotNull(packagePath);
             Assert.True(File.Exists(packagePath));
 

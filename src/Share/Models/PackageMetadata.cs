@@ -6,6 +6,11 @@ namespace Share.Models;
 public class PackageMetadata
 {
     /// <summary>
+    /// Default module package version when no version is specified.
+    /// </summary>
+    public const string DefaultVersion = "1.0.0";
+
+    /// <summary>
     /// Module name
     /// </summary>
     public required string ModuleName { get; set; }
@@ -30,7 +35,7 @@ public class PackageMetadata
     /// <summary>
     /// Package version
     /// </summary>
-    public string Version { get; set; } = "1.0.0";
+    public string Version { get; set; } = DefaultVersion;
 
     /// <summary>
     /// Frontend framework bundled with the module package.

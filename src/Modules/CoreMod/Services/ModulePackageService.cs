@@ -22,11 +22,14 @@ public class ModulePackageService(
     /// </summary>
     /// <param name="moduleName">Module name (with Mod suffix)</param>
     /// <param name="serviceName">Service name</param>
+    /// <param name="frontPath">Optional frontend module path</param>
+    /// <param name="version">Optional package version</param>
     /// <returns>Path to the created package</returns>
     public async Task<string?> PackageModuleAsync(
         string moduleName,
         string serviceName,
-        string? frontPath = null
+        string? frontPath = null,
+        string? version = null
     )
     {
         try
@@ -43,6 +46,11 @@ public class ModulePackageService(
             {
                 OutputHelper.Error(_localizer.Get(Localizer.DisplayNameAttributeNotFound));
                 return null;
+            }
+
+            if (!string.IsNullOrWhiteSpace(version))
+            {
+                metadata.Version = version;
             }
 
             // Analyze dependencies

@@ -105,6 +105,12 @@ You can use `perigon --help` to view command help information.
 
 Or use `perigon [command] --help` to view specific command help information.
 
+When packaging a module, use `-v` or `--version` to set the package version. If omitted, the command uses `1.0.0` and prints a warning:
+
+```pwsh
+perigon module pack FileManagerMod AdminService --version 1.2.0
+```
+
 ## Documentation
 
 [Official Document](https://www.dusi.dev/docs/Perigon.html)

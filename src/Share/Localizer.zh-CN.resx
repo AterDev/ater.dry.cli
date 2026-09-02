@@ -696,6 +696,9 @@
   <data name="PackageCreated" xml:space="preserve">
     <value>模块包已创建: {0}</value>
   </data>
+  <data name="PackageVersionDefaultWarning" xml:space="preserve">
+    <value>未提供模块包版本号，将使用默认版本 {0}。</value>
+  </data>
   <data name="PackageInstalled" xml:space="preserve">
     <value>模块包已安装: {0}</value>
   </data>
