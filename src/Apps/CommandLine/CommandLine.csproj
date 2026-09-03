@@ -6,7 +6,7 @@
     <ToolCommandName>perigon</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>
     <PackageId>Perigon.CLI</PackageId>
-    <Version>10.2.0</Version>
+    <Version>1.2.0</Version>
     <Description>
 			The AI workflow for .NET Web developers, help you generate code and build your project quickly.
 		</Description>
@@ -18,10 +18,10 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/AterDev/Perigon.CLI</RepositoryUrl>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>1. Add the perigon update command and use reliable installed-template detection to compare existing projects with the latest Perigon templates.
-2. Apply only confirmed template changes within managed scopes, preserve project-only files, and protect against concurrent edits.
-3. Add an interactive two-pane update selector with colorized diffs, multi-file selection, and per-file line statistics.
-4. Ignore non-semantic whitespace differences during template comparison while retaining strict snapshots before applying changes.
+    <PackageReleaseNotes>1. Add the perigon update command with an interactive two-pane selector for reviewing and applying confirmed template changes.
+2. Preserve project-only files, ignore non-semantic whitespace differences during comparison, and protect against concurrent edits before applying changes.
+3. Add Agent initialization options, stdio MCP startup, and secure archive extraction while removing obsolete Studio generation and MCP configuration pages.
+4. Add -v/--version to module pack so module packages can carry an explicit version; omitted versions default to 1.0.0 with a warning.
 		</PackageReleaseNotes>
     <PackageIcon>logo.png</PackageIcon>
     <ImplicitUsings>enable</ImplicitUsings>
