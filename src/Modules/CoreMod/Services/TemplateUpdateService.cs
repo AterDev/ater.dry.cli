@@ -749,7 +749,7 @@ public sealed class TemplateUpdatePlan : IDisposable
 }
 
 /// <summary>
-/// Updates the installed Perigon template, prepares a fresh project, and applies an approved plan.
+/// Installs the latest Perigon template, prepares a fresh project, and applies an approved plan.
 /// </summary>
 public sealed class TemplateUpdateService(
     SolutionContext projectContext,
@@ -778,7 +778,7 @@ public sealed class TemplateUpdateService(
         Directory.CreateDirectory(workingDirectory);
         try
         {
-            await EnsureLatestTemplateAsync(projectRoot, cancellationToken);
+            await InstallLatestTemplateAsync(projectRoot, cancellationToken);
 
             var templateType = SolutionService.IsAOT(projectRoot)
                 ? ConstVal.Mini
@@ -916,49 +916,21 @@ public sealed class TemplateUpdateService(
         }
     }
 
-    private async Task EnsureLatestTemplateAsync(
+    private async Task InstallLatestTemplateAsync(
         string projectRoot,
         CancellationToken cancellationToken
     )
     {
-        var listResult = await commandRunner.RunAsync(
+        var installResult = await commandRunner.RunAsync(
             "dotnet",
-            ["new", "list", "perigon"],
+            ["new", "install", ConstVal.TemplatePackageId],
             projectRoot,
             cancellationToken
         );
-        var templateInstalled = listResult.Succeeded
-            && (listResult.Output.Contains(ConstVal.WebApi, StringComparison.OrdinalIgnoreCase)
-                || listResult.Output.Contains(ConstVal.Mini, StringComparison.OrdinalIgnoreCase));
-
-        if (!templateInstalled)
-        {
-            var installResult = await commandRunner.RunAsync(
-                "dotnet",
-                ["new", "install", ConstVal.TemplatePackageId],
-                projectRoot,
-                cancellationToken
-            );
-            if (!installResult.Succeeded)
-            {
-                throw new InvalidOperationException(
-                    $"Failed to install {ConstVal.TemplatePackageId}: {FormatCommandOutput(installResult)}"
-                );
-            }
-
-            return;
-        }
-
-        var updateResult = await commandRunner.RunAsync(
-            "dotnet",
-            ["new", "update"],
-            projectRoot,
-            cancellationToken
-        );
-        if (!updateResult.Succeeded)
+        if (!installResult.Succeeded)
         {
             throw new InvalidOperationException(
-                $"Failed to update {ConstVal.TemplatePackageId}: {FormatCommandOutput(updateResult)}"
+                $"Failed to install {ConstVal.TemplatePackageId}: {FormatCommandOutput(installResult)}"
             );
         }
     }

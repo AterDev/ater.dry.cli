@@ -269,7 +269,7 @@ public sealed class TemplateUpdateServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task CreatePlanAsync_ShouldUpdateTemplateBeforeCreatingComparisonProject()
+    public async Task CreatePlanAsync_ShouldInstallLatestTemplateBeforeCreatingComparisonProject()
     {
         var cancellationToken = TestContext.Current.CancellationToken;
         var projectRoot = Path.Combine(_root, "project");
@@ -291,10 +291,10 @@ public sealed class TemplateUpdateServiceTests : IDisposable
         using var plan = await service.CreatePlanAsync(cancellationToken);
 
         Assert.Equal(
-            ["new list perigon", "new update"],
-            runner.Calls.Take(2).Select(call => string.Join(' ', call.Arguments)).ToArray()
+            "new install Perigon.templates",
+            string.Join(' ', runner.Calls[0].Arguments)
         );
-        Assert.Equal("new perigon-webapi", string.Join(' ', runner.Calls[2].Arguments.Take(2)));
+        Assert.Equal("new perigon-webapi", string.Join(' ', runner.Calls[1].Arguments.Take(2)));
         Assert.Contains(
             plan.Changes,
             change => change.RelativePath == "src/Perigon/Changed.cs" && !change.IsNew
@@ -329,10 +329,10 @@ public sealed class TemplateUpdateServiceTests : IDisposable
 
         using var plan = await service.CreatePlanAsync(cancellationToken);
 
-        Assert.Equal("new perigon-miniapi", string.Join(' ', runner.Calls[2].Arguments.Take(2)));
+        Assert.Equal("new perigon-miniapi", string.Join(' ', runner.Calls[1].Arguments.Take(2)));
         Assert.Equal(
             ["--frontType", "Angular"],
-            runner.Calls[2].Arguments.SkipWhile(argument => argument != "--frontType")
+            runner.Calls[1].Arguments.SkipWhile(argument => argument != "--frontType")
                 .Take(2)
                 .ToArray()
         );
@@ -437,14 +437,9 @@ public sealed class TemplateUpdateServiceTests : IDisposable
             cancellationToken.ThrowIfCancellationRequested();
             Calls.Add(new(command, arguments.ToArray(), workingDirectory));
 
-            if (arguments.SequenceEqual(["new", "list", "perigon"]))
+            if (arguments.SequenceEqual(["new", "install", ConstVal.TemplatePackageId]))
             {
-                return Task.FromResult(new CommandExecutionResult(0, ConstVal.WebApi));
-            }
-
-            if (arguments.SequenceEqual(["new", "update"]))
-            {
-                return Task.FromResult(new CommandExecutionResult(0, "updated"));
+                return Task.FromResult(new CommandExecutionResult(0, "installed"));
             }
 
             if (arguments.SequenceEqual(["build"]))

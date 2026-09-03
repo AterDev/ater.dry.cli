@@ -59,6 +59,7 @@ try {
 
     # build web project
     if ($withStudio -eq $true) {
+        write-host 'Publishing Studio project...'
         $studioPublishPath = Join-Path $studioPath "publish"
         if (Test-Path -LiteralPath $studioPublishPath) {
             Remove-Item -LiteralPath $studioPublishPath -Recurse -Force
@@ -105,6 +106,7 @@ try {
     }
 
     if ($agentRepoRoot) {
+        Write-Host 'Packing agent repository...'
         if (Test-Path -Path $agentZipPath) {
             Remove-Item -Path $agentZipPath -Force
         }
