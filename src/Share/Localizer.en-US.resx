@@ -174,6 +174,69 @@
   <data name="NewDes" xml:space="preserve">
     <value>Create new .NET solution</value>
   </data>
+  <data name="UpdateDes" xml:space="preserve">
+    <value>Compare and update the current project from the latest Perigon template</value>
+  </data>
+  <data name="UpdateRiskWarning" xml:space="preserve">
+    <value>Template updates may overwrite local changes in managed files. Create and switch to a new Git branch before continuing.</value>
+  </data>
+  <data name="UpdatePreparing" xml:space="preserve">
+    <value>Updating the template and creating a comparison project...</value>
+  </data>
+  <data name="UpdateNoChanges" xml:space="preserve">
+    <value>The current project has no files to update from the latest template.</value>
+  </data>
+  <data name="UpdateApplyConfirm" xml:space="preserve">
+    <value>Apply the template differences above to the current project?</value>
+  </data>
+  <data name="UpdateCancelled" xml:space="preserve">
+    <value>Update cancelled; the current project was not changed.</value>
+  </data>
+  <data name="UpdateSuccess" xml:space="preserve">
+    <value>Template update completed; {0} file(s) updated and the solution build succeeded.</value>
+  </data>
+  <data name="UpdateBuilding" xml:space="preserve">
+    <value>Files updated. Building the solution...</value>
+  </data>
+  <data name="UpdateFailed" xml:space="preserve">
+    <value>Template update failed: {0}</value>
+  </data>
+  <data name="UpdateChangesTitle" xml:space="preserve">
+    <value>Template differences:</value>
+  </data>
+  <data name="UpdateSelectionTitle" xml:space="preserve">
+    <value>Select files or skills to update:</value>
+  </data>
+  <data name="UpdateDiffTitle" xml:space="preserve">
+    <value>Current file diff:</value>
+  </data>
+  <data name="UpdateSkillDiffTitle" xml:space="preserve">
+    <value>Skill differences:</value>
+  </data>
+  <data name="UpdateSkillFiles" xml:space="preserve">
+    <value>{0} file(s)</value>
+  </data>
+  <data name="UpdateSelectionSummary" xml:space="preserve">
+    <value>{0}/{1} file(s) selected.</value>
+  </data>
+  <data name="UpdateSelectionHelp" xml:space="preserve">
+    <value>Tab/←→ switch pane  ↑↓ move/scroll  Space select file/skill  PgUp/PgDn page  Enter apply  Esc cancel</value>
+  </data>
+  <data name="UpdateSelectAtLeastOne" xml:space="preserve">
+    <value>Select at least one file before pressing Enter.</value>
+  </data>
+  <data name="UpdateInteractiveRequired" xml:space="preserve">
+    <value>File selection for update requires an interactive terminal.</value>
+  </data>
+  <data name="UpdateBinaryChange" xml:space="preserve">
+    <value>binary</value>
+  </data>
+  <data name="UpdateNewFile" xml:space="preserve">
+    <value>new</value>
+  </data>
+  <data name="UpdateModifiedFile" xml:space="preserve">
+    <value>modified</value>
+  </data>
   <data name="OrderModuleDes" xml:space="preserve">
     <value>Order Management</value>
   </data>
@@ -633,6 +696,9 @@
   <data name="PackageCreated" xml:space="preserve">
     <value>Module package created: {0}</value>
   </data>
+  <data name="PackageVersionDefaultWarning" xml:space="preserve">
+    <value>Package version was not provided; using default version {0}.</value>
+  </data>
   <data name="PackageInstalled" xml:space="preserve">
     <value>Module package installed: {0}</value>
   </data>
@@ -643,10 +709,16 @@
     <value>Invalid package structure</value>
   </data>
   <data name="FrontendPathNotFound" xml:space="preserve">
-    <value>Frontend directory not found: {0}</value>
+    <value>Frontend project directory not found: {0}</value>
+  </data>
+  <data name="FrontendPathOutsideSolution" xml:space="preserve">
+    <value>The frontend project path must be under the solution root: {0}</value>
+  </data>
+  <data name="FrontendModulesPathNotFound" xml:space="preserve">
+    <value>Frontend module directory not found: {0}; set --front-path to the frontend project root.</value>
   </data>
   <data name="FrontendNotRestored" xml:space="preserve">
-    <value>The module contains {0} frontend code; it was not restored because --front-path was not specified.</value>
+    <value>The module contains {0} frontend code; it was not restored because --front-path was not specified. Set --front-path to the frontend project root to restore it.</value>
   </data>
   <data name="GitHubConnectionFailed" xml:space="preserve">
     <value>Can't access github.com to get the official modules. Continuing with the next steps.</value>
@@ -682,7 +754,19 @@
     <value>Model Context Protocol tools</value>
   </data>
   <data name="McpInitDes" xml:space="preserve">
-    <value>Initialize and write MCP stdio config to .vscode/mcp.json</value>
+    <value>Add perigon MCP/Skill/Loop spec support</value>
+  </data>
+  <data name="AgentInitSelectActions" xml:space="preserve">
+    <value>Select agent setup actions</value>
+  </data>
+  <data name="AgentInitMcpChoiceDescription" xml:space="preserve">
+    <value>add mcp.json to .agents</value>
+  </data>
+  <data name="AgentInitSkillChoiceDescription" xml:space="preserve">
+    <value>add Perigon Skill</value>
+  </data>
+  <data name="AgentInitLoopSpecChoiceDescription" xml:space="preserve">
+    <value>add skills and doc structure for Loop spec</value>
   </data>
   <data name="AgentMcpDes" xml:space="preserve">
     <value>Start MCP server with stdio transport</value>

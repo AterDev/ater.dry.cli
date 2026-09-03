@@ -5,9 +5,9 @@
 🌐 **[English](./README_en.md)**
 
 **Perigon.CLI** 是一个快速开发辅助工具，帮助你快速构建基于`Aspire/AspNetCore/EF Core`的Web应用。
-它提供**命令行**，**WebUI**以及**MCP Server**多种方式，在经过实战的精心设计的项目架构中，通过代码生成和LLM技术，减少各种各样的模板化代码，智能生成简单的业务实现逻辑，极大的提高开发效率，改善开发体验！
+它提供**命令行**，**WebUI**以及通过 stdio 运行的**MCP Server**多种方式，在经过实战的精心设计的项目架构中，通过代码生成和LLM技术，减少各种各样的模板化代码，智能生成简单的业务实现逻辑，极大的提高开发效率，改善开发体验！
 
-它作为`dotnet`命令行工具提供，同时支持`Web UI`操作界面以及`MCP Server`。
+它作为`dotnet`命令行工具提供，同时支持`Web UI`操作界面以及通过 stdio 运行的`MCP Server`。
 
 ## 🚀 特性
 
@@ -26,7 +26,7 @@
   - 包含命令行工具的所有功能
   - 自定义的代码生成步骤和内容(通过Razor模板)，自定义生成内容
   
-- 提供MCP服务，以支持各类编辑器中的Agent模式
+- 提供基于 stdio 的MCP服务，以支持各类编辑器中的Agent模式
 
 ### 对ASP.NET Core的支持
 
@@ -83,15 +83,29 @@ perigon studio
 该命令将自动开浏览器页面，端口为`19160`。
 
 > [!NOTE]
-> studio同时提供`MCP Server`，其地址为:`http://localhost:19160/mcp`.
+> `perigon studio` 启动 Web UI，默认端口为`19160`；若端口被占用，则使用`9160`。
 >
-> 默认端口为19160，若被占用，会使用9160.
+> MCP Server 不再通过 HTTP 地址提供，而是通过 stdio 方式启动。
+
+### 使用 MCP Server
+
+```pwsh
+perigon agent mcp
+```
+
+在项目根目录运行`perigon agent init`，可以自动生成`.agents/mcp.json`，其中配置的启动命令为`perigon agent mcp`。
 
 ### 使用命令行
 
 你可以使用`perigon --help` 查看命令帮助信息。
 
 或者使用`perigon [command] --help` 查看具体命令帮助信息。
+
+打包模块时可以通过`-v`或`--version`指定写入安装包的版本号；省略时默认使用`1.0.0`并显示警告：
+
+```pwsh
+perigon module pack FileManagerMod AdminService --version 1.2.0
+```
 
 ## 📄 文档
 

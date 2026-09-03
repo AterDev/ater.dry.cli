@@ -43,7 +43,7 @@ public class ModuleInstallService(
     /// </summary>
     /// <param name="packagePath">Path to the module package</param>
     /// <param name="serviceName">Service name to install controllers</param>
-    /// <param name="frontPath">Directory where bundled frontend code is restored</param>
+    /// <param name="frontPath">Frontend project root; bundled modules are restored under its src/app/modules directory</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>True if installation succeeded</returns>
     public async Task<bool> InstallModuleAsync(
@@ -460,6 +460,16 @@ public class ModuleInstallService(
                 return null;
             }
 
+            string? frontendModulesTargetDir = null;
+            if (!string.IsNullOrWhiteSpace(metadata.Frontend) && !string.IsNullOrWhiteSpace(frontPath))
+            {
+                frontendModulesTargetDir = ResolveFrontendModulesPath(frontPath);
+                if (frontendModulesTargetDir == null)
+                {
+                    return null;
+                }
+            }
+
             // Install Entity files
             var entitySourceDir = Path.Combine(tempDir, ConstVal.EntityName, metadata.ModuleName);
             if (Directory.Exists(entitySourceDir))
@@ -502,15 +512,12 @@ public class ModuleInstallService(
                 {
                     OutputHelper.Warning(_localizer.Get(Localizer.FrontendNotRestored, metadata.Frontend));
                 }
-                else if (Directory.Exists(frontendSourceDir))
+                else if (Directory.Exists(frontendSourceDir) && frontendModulesTargetDir != null)
                 {
-                    var frontendTargetDir = Path.IsPathRooted(frontPath)
-                        ? Path.GetFullPath(frontPath)
-                        : Path.GetFullPath(Path.Combine(_projectContext.SolutionPath!, frontPath));
                     foreach (var sourceDir in Directory.GetDirectories(frontendSourceDir))
                     {
                         var directoryName = Path.GetFileName(sourceDir);
-                        var targetDir = Path.Combine(frontendTargetDir, directoryName);
+                        var targetDir = Path.Combine(frontendModulesTargetDir, directoryName);
                         CopyDirectory(
                             sourceDir,
                             targetDir,
@@ -533,6 +540,60 @@ public class ModuleInstallService(
     }
 
     /// <summary>
+    /// Resolve the frontend project root to its Angular-style app/modules directory.
+    /// </summary>
+    private string? ResolveFrontendModulesPath(string frontPath)
+    {
+        var frontendProjectPath = Path.IsPathRooted(frontPath)
+            ? Path.GetFullPath(frontPath)
+            : Path.GetFullPath(Path.Combine(_projectContext.SolutionPath!, frontPath));
+
+        if (!Directory.Exists(frontendProjectPath))
+        {
+            OutputHelper.Error(_localizer.Get(Localizer.FrontendPathNotFound, frontPath));
+            return null;
+        }
+
+        if (!IsPathWithin(_projectContext.SolutionPath!, frontendProjectPath))
+        {
+            OutputHelper.Error(_localizer.Get(Localizer.FrontendPathOutsideSolution, frontPath));
+            return null;
+        }
+
+        var frontendModulesPath = Path.Combine(
+            frontendProjectPath,
+            PathConst.FrontendModulesPath
+        );
+        if (!Directory.Exists(frontendModulesPath))
+        {
+            OutputHelper.Error(
+                _localizer.Get(Localizer.FrontendModulesPathNotFound, frontendModulesPath)
+            );
+            return null;
+        }
+
+        return frontendModulesPath;
+    }
+
+    private static bool IsPathWithin(string rootPath, string candidatePath)
+    {
+        var normalizedRoot = Path.GetFullPath(rootPath)
+            .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        var normalizedCandidate = Path.GetFullPath(candidatePath)
+            .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+        return string.Equals(normalizedRoot, normalizedCandidate, StringComparison.OrdinalIgnoreCase)
+            || normalizedCandidate.StartsWith(
+                normalizedRoot + Path.DirectorySeparatorChar,
+                StringComparison.OrdinalIgnoreCase
+            )
+            || normalizedCandidate.StartsWith(
+                normalizedRoot + Path.AltDirectorySeparatorChar,
+                StringComparison.OrdinalIgnoreCase
+            );
+    }
+
+    /// <summary>
     /// Copy directory recursively
     /// </summary>
     private void CopyDirectory(string sourceDir, string targetDir, bool overwrite = true)
@@ -543,7 +604,7 @@ public class ModuleInstallService(
         // Validate target directory is within expected bounds
         var fullTargetDir = Path.GetFullPath(targetDir);
         var solutionPath = Path.GetFullPath(_projectContext.SolutionPath!);
-        if (!fullTargetDir.StartsWith(solutionPath, StringComparison.OrdinalIgnoreCase))
+        if (!IsPathWithin(solutionPath, fullTargetDir))
         {
             throw new InvalidOperationException("Target directory is outside solution path");
         }
@@ -556,7 +617,7 @@ public class ModuleInstallService(
 
             // Validate target path to prevent directory traversal
             var fullTargetPath = Path.GetFullPath(targetPath);
-            if (!fullTargetPath.StartsWith(fullTargetDir, StringComparison.OrdinalIgnoreCase))
+            if (!IsPathWithin(fullTargetDir, fullTargetPath))
             {
                 throw new InvalidOperationException("Target path is outside target directory");
             }

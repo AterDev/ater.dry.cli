@@ -133,6 +133,11 @@ public static class PathConst
         ConstVal.ServicesDir
     );
     public static readonly string AppHostPath = Path.Combine(ConstVal.SrcDir, ConstVal.AppHostDir);
+    public static readonly string FrontendModulesPath = Path.Combine(
+        ConstVal.SrcDir,
+        "app",
+        "modules"
+    );
     public static readonly string AterPath = Path.Combine(ConstVal.SrcDir, ConstVal.PerigonDir);
     public static readonly string PromptPath = Path.Combine(".github", "prompts");
 }

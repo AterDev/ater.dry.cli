@@ -44,6 +44,7 @@ Run it only after tests pass; it creates local publish/package artifacts and may
 1. Commit the Perigon.CLI release changes on the current development branch with a conventional emoji-prefixed message such as `🚀 release: prepare Perigon.CLI 10.1.12`.
 2. Push that branch if it is the requested source branch.
 3. Fetch `origin/nuget`, verify it has no unexpected divergence, merge the release commit into a local `nuget` branch, and push `nuget` without force-pushing.
+4. add git tag `v<version>` to the release commit and push the tag.
 
 If the `nuget` branch has unrelated commits or conflicts, stop before merging and report the exact divergence. Do not reset, discard, or force-push user work.
 

@@ -43,8 +43,32 @@ public class ModulePackageServiceTests
         Assert.Equal("Perigon", result.Metadata.Author);
         Assert.Equal("CMSMod", result.Metadata.DisplayName);
         Assert.Equal("包含内容管理相关功能", result.Metadata.Description);
+        Assert.Equal(PackageMetadata.DefaultVersion, result.Metadata.Version);
         Assert.DoesNotContain("UseSelfServices", JsonSerializer.Serialize(result.Metadata));
         Assert.Null(result.Metadata.Frontend);
+    }
+
+    [Fact]
+    public async Task PackageModuleAsync_ShouldUseExplicitVersion()
+    {
+        var result = await RunPackageAsync(
+            """
+            namespace CMSMod;
+
+            [DisplayName("Perigon::CMSMod")]
+            public static class ModuleExtensions
+            {
+                public static IHostApplicationBuilder AddCMSMod(this IHostApplicationBuilder builder)
+                {
+                    return builder;
+                }
+            }
+            """,
+            version: "1.1.0"
+        );
+
+        Assert.NotNull(result.Metadata);
+        Assert.Equal("1.1.0", result.Metadata!.Version);
     }
 
     [Fact]
@@ -128,15 +152,16 @@ public class ModulePackageServiceTests
     }
 
     [Fact]
-    public async Task ExtractPackageAsync_ShouldRestoreFrontendShareWithoutOverwritingExistingFiles()
+    public async Task ExtractPackageAsync_ShouldRestoreFrontendUnderFrontendProjectModulesDirectory()
     {
         var root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
         var modulesPath = Path.Combine(root, PathConst.ModulesPath);
         var entityPath = Path.Combine(root, PathConst.EntityPath);
         var servicesPath = Path.Combine(root, PathConst.ServicesPath);
-        var frontendModulesPath = Path.Combine(root, "frontend", "features");
+        var frontendProjectPath = Path.Combine(root, "frontend");
+        var frontendModulesPath = Path.Combine(frontendProjectPath, PathConst.FrontendModulesPath);
         var frontendPath = Path.Combine(frontendModulesPath, "cms");
-        var sharePath = Path.Combine(root, "frontend", "features", "share");
+        var sharePath = Path.Combine(frontendModulesPath, "share");
         var packagePath = Path.Combine(root, "CMSMod.zip");
 
         try
@@ -183,14 +208,87 @@ public class ModulePackageServiceTests
 
             var task = (Task<PackageMetadata?>)extractMethod!.Invoke(
                 service,
-                [packagePath, "AdminService", frontendModulesPath]
+                [packagePath, "AdminService", "frontend"]
             )!;
             var metadata = await task;
 
             Assert.NotNull(metadata);
-            Assert.Equal("module", await File.ReadAllTextAsync(Path.Combine(frontendPath, "cms.component.ts")));
-            Assert.Equal("existing", await File.ReadAllTextAsync(Path.Combine(sharePath, "shared.component.ts")));
-            Assert.Equal("new", await File.ReadAllTextAsync(Path.Combine(sharePath, "new.component.ts")));
+            Assert.Equal("module", await File.ReadAllTextAsync(
+                Path.Combine(frontendPath, "cms.component.ts"),
+                TestContext.Current.CancellationToken
+            ));
+            Assert.Equal("existing", await File.ReadAllTextAsync(
+                Path.Combine(sharePath, "shared.component.ts"),
+                TestContext.Current.CancellationToken
+            ));
+            Assert.Equal("new", await File.ReadAllTextAsync(
+                Path.Combine(sharePath, "new.component.ts"),
+                TestContext.Current.CancellationToken
+            ));
+            Assert.False(Directory.Exists(Path.Combine(frontendProjectPath, "cms")));
+        }
+        finally
+        {
+            if (Directory.Exists(root))
+            {
+                Directory.Delete(root, true);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task ExtractPackageAsync_ShouldRejectFrontendProjectWithoutAppModulesDirectory()
+    {
+        var root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        var modulesPath = Path.Combine(root, PathConst.ModulesPath);
+        var entityPath = Path.Combine(root, PathConst.EntityPath);
+        var servicesPath = Path.Combine(root, PathConst.ServicesPath);
+        var frontendProjectPath = Path.Combine(root, "frontend");
+        var packagePath = Path.Combine(root, "CMSMod.zip");
+
+        try
+        {
+            Directory.CreateDirectory(Path.Combine(servicesPath, "AdminService"));
+            Directory.CreateDirectory(frontendProjectPath);
+
+            using (var archive = ZipFile.Open(packagePath, ZipArchiveMode.Create))
+            {
+                await WriteArchiveEntryAsync(
+                    archive,
+                    "metadata.json",
+                    JsonSerializer.Serialize(new PackageMetadata { ModuleName = "CMSMod", Frontend = "Angular" })
+                );
+                await WriteArchiveEntryAsync(archive, "Frontend/cms/cms.component.ts", "module");
+            }
+
+            var context = new SolutionContext(new ServiceCollection().BuildServiceProvider())
+            {
+                SolutionPath = root,
+                ModulesPath = modulesPath,
+                EntityPath = entityPath,
+                ServicesPath = servicesPath
+            };
+            var service = new ModuleInstallService(
+                context,
+                CreateLocalizer(),
+                NullLogger<ModuleInstallService>.Instance,
+                null!,
+                null!
+            );
+            var extractMethod = typeof(ModuleInstallService).GetMethod(
+                "ExtractPackageAsync",
+                BindingFlags.Instance | BindingFlags.NonPublic
+            );
+            Assert.NotNull(extractMethod);
+
+            var task = (Task<PackageMetadata?>)extractMethod!.Invoke(
+                service,
+                [packagePath, "AdminService", "frontend"]
+            )!;
+            var metadata = await task;
+
+            Assert.Null(metadata);
+            Assert.False(Directory.Exists(Path.Combine(frontendProjectPath, "cms")));
         }
         finally
         {
@@ -203,7 +301,8 @@ public class ModulePackageServiceTests
 
     private static async Task<PackageResult> RunPackageAsync(
         string moduleExtensionsContent,
-        string? frontendPackageJson = null
+        string? frontendPackageJson = null,
+        string? version = null
     )
     {
         var root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
@@ -268,7 +367,12 @@ public class ModulePackageServiceTests
 
         try
         {
-            var packagePath = await service.PackageModuleAsync("CMSMod", "AdminService", frontendPath);
+            var packagePath = await service.PackageModuleAsync(
+                "CMSMod",
+                "AdminService",
+                frontendPath,
+                version
+            );
             Assert.NotNull(packagePath);
             Assert.True(File.Exists(packagePath));
 

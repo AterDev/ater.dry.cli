@@ -16,6 +16,7 @@ public static class ProcessHelper
     /// <param name="command">命令程序</param>
     /// <param name="args">参数</param>
     /// <param name="output"></param>
+    /// <param name="timeoutMilliseconds">超时时间（毫秒）</param>
     /// <returns></returns>
     public static bool RunCommand(
         string command,

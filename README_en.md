@@ -5,10 +5,10 @@
 **[中文](./README.md)**
 
 **Perigon.CLI** is an fast development assistance tool that helps you quickly build front-end and back-end services based on `Aspire/AspNetCore/EF Core`.
-It provides **command line**, **WebUI** and **MCP Server**. In the well-designed project architecture after actual combat, it reduces various template codes through code generation and LLM technology,
+It provides **command line**, **WebUI** and an **MCP Server** over stdio. In the well-designed project architecture after actual combat, it reduces various template codes through code generation and LLM technology,
 and intelligently generates simple business implementation logic, which greatly improves development efficiency and improves development experience!
 
-It is provided as a `dotnet` command-line tool and also supports a `Web UI` and `MCP Server`.
+It is provided as a `dotnet` command-line tool and also supports a `Web UI` and an `MCP Server` over stdio.
 
 ## 🚀 Features
 
@@ -27,7 +27,7 @@ It is provided as a `dotnet` command-line tool and also supports a `Web UI` and 
   - Include all the functions of the command line tool
   - Custom code generation steps and content (through Razor templates), custom generated content
 
-- Provide MCP services to support Agent mode in various editors
+- Provide MCP services over stdio to support Agent mode in various editors
 
 ### Support for ASP.NET Core
 
@@ -87,15 +87,29 @@ perigon studio
 This command will automatically open the browser page, the port is `19160`.
 
 > [!NOTE]
-> The studio also provides `MCP Server`, its address is: `http://localhost:19160/mcp`.
+> `perigon studio` starts the Web UI. Its default port is `19160`; if the port is occupied, `9160` is used.
 >
-> The default port is 19160, if it is occupied, 9160 will be used.
+> The MCP server is no longer exposed through an HTTP URL; it is started over stdio.
+
+### Using the MCP Server
+
+```pwsh
+perigon agent mcp
+```
+
+Run `perigon agent init` in the project root to generate `.agents/mcp.json` automatically. The generated configuration starts the server with `perigon agent mcp`.
 
 ### Using the Command Line
 
 You can use `perigon --help` to view command help information.
 
 Or use `perigon [command] --help` to view specific command help information.
+
+When packaging a module, use `-v` or `--version` to set the package version. If omitted, the command uses `1.0.0` and prints a warning:
+
+```pwsh
+perigon module pack FileManagerMod AdminService --version 1.2.0
+```
 
 ## Documentation
 

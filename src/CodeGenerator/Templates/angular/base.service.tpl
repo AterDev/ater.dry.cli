@@ -81,10 +81,13 @@ export class BaseService {
   }
 
   protected getHeaders(): HttpHeaders {
-    return new HttpHeaders({
-      Accept: 'application/json, text/plain, */*',
-      Authorization: 'Bearer ' + localStorage.getItem('accessToken')
+    const headers = new HttpHeaders({
+      Accept: 'application/json, text/plain, */*'
     });
+    const accessToken = localStorage.getItem('accessToken');
+    return accessToken
+      ? headers.set('Authorization', `Bearer ${accessToken}`)
+      : headers;
   }
   public isMobile(): boolean {
     const ua = navigator.userAgent;

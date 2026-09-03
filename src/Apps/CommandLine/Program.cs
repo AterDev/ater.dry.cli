@@ -61,6 +61,9 @@ builder.Services.AddScoped<CommandService>();
 builder.Services.AddScoped<ModulePackageService>();
 builder.Services.AddScoped<OfficialModuleService>();
 builder.Services.AddScoped<ModuleInstallService>();
+builder.Services.AddSingleton<TemplateComparisonService>();
+builder.Services.AddSingleton<ICommandRunner, ProcessCommandRunner>();
+builder.Services.AddScoped<TemplateUpdateService>();
 builder.Services.AddScoped<EntityInfoManager>();
 
 builder.Services.AddScoped<NewCommand>();
@@ -74,6 +77,7 @@ builder.Services.AddScoped<AddModuleCommand>();
 builder.Services.AddScoped<AddServiceCommand>();
 builder.Services.AddScoped<PackCommand>();
 builder.Services.AddScoped<InstallCommand>();
+builder.Services.AddScoped<UpdateCommand>();
 builder.Services.AddScoped<ModuleListCommand>();
 builder.Services.AddScoped<AgentInitCommand>();
 builder.Services.AddScoped<AgentMcpCommand>();
@@ -99,6 +103,11 @@ app.Configure(config =>
         .AddCommand<NewCommand>(SubCommand.New)
         .WithDescription(localizer.Get(Localizer.NewDes))
         .WithExample(["new", "name"]);
+
+    config
+        .AddCommand<UpdateCommand>(SubCommand.Update)
+        .WithDescription(localizer.Get(Localizer.UpdateDes))
+        .WithExample([SubCommand.Update]);
 
     ConfiguratorExtensions
         .AddBranch(
@@ -196,13 +205,24 @@ app.Configure(config =>
                         "module",
                         "install",
                         "./package_modules/FileManagerMod.zip",
-                        "AdminService"
+                        "AdminService",
+                        "--front-path",
+                        "src/ClientApp/WebApp"
                     ]);
 
                 module
                     .AddCommand<PackCommand>(SubCommand.Pack)
                     .WithDescription(localizer.Get(Localizer.PackDes))
-                    .WithExample(["module", "pack", "FileManagerMod", "AdminService", "--front-path", "src/ClientApp/WebApp/src/app/modules/file-manager"]);
+                    .WithExample([
+                        "module",
+                        "pack",
+                        "FileManagerMod",
+                        "AdminService",
+                        "--version",
+                        "1.0.0",
+                        "--front-path",
+                        "src/ClientApp/WebApp/src/app/modules/file-manager"
+                    ]);
             }
         )
         .WithAlias("m");
